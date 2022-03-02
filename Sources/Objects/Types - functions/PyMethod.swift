@@ -16,15 +16,11 @@ public struct PyMethod: PyObjectMixin {
     Create a bound instance method object.
     """
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyMethodLayout()
-
-  internal var functionPtr: Ptr<PyFunction> { self.ptr[Self.layout.functionOffset] }
-  internal var objectPtr: Ptr<PyObject> { self.ptr[Self.layout.objectOffset] }
-
+  // sourcery: includeInLayout
   /// The callable object implementing the method
   internal var function: PyFunction { self.functionPtr.pointee }
+
+  // sourcery: includeInLayout
   /// The instance it is bound to
   internal var object: PyObject { self.objectPtr.pointee }
 

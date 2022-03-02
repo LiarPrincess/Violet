@@ -31,36 +31,35 @@ public struct PyFunction: PyObjectMixin {
 
   // MARK: - Properties
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyFunctionLayout()
-
-  internal var namePtr: Ptr<PyString> { self.ptr[Self.layout.nameOffset] }
-  internal var qualnamePtr: Ptr<PyString> { self.ptr[Self.layout.qualnameOffset] }
-  internal var docPtr: Ptr<PyString?> { self.ptr[Self.layout.docOffset] }
-  internal var modulePtr: Ptr<PyObject> { self.ptr[Self.layout.moduleOffset] }
-  internal var codePtr: Ptr<PyCode> { self.ptr[Self.layout.codeOffset] }
-  internal var globalsPtr: Ptr<PyDict> { self.ptr[Self.layout.globalsOffset] }
-  internal var defaultsPtr: Ptr<PyTuple?> { self.ptr[Self.layout.defaultsOffset] }
-  internal var kwDefaultsPtr: Ptr<PyDict?> { self.ptr[Self.layout.kwDefaultsOffset] }
-  internal var closurePtr: Ptr<PyTuple?> { self.ptr[Self.layout.closureOffset] }
-  internal var annotationsPtr: Ptr<PyDict?> { self.ptr[Self.layout.annotationsOffset] }
-
+  // sourcery: includeInLayout
   /// The `__name__` attribute, a string object
   internal var name: PyString { self.namePtr.pointee }
+
+  // sourcery: includeInLayout
   /// The qualified name
   internal var qualname: PyString { self.qualnamePtr.pointee }
+
+  // sourcery: includeInLayout
   /// The `__doc__` attribute
   internal var doc: PyString? { self.docPtr.pointee }
+
+  // sourcery: includeInLayout
   /// The `__module__` attribute, can be anything
   internal var module: PyObject { self.modulePtr.pointee }
+
+  // sourcery: includeInLayout
   /// A code object, the `__code__` attribute
   internal var code: PyCode { self.codePtr.pointee }
 
+  // sourcery: includeInLayout
   internal var globals: PyDict { self.globalsPtr.pointee }
+  // sourcery: includeInLayout
   internal var defaults: PyTuple? { self.defaultsPtr.pointee }
+  // sourcery: includeInLayout
   internal var kwDefaults: PyDict? { self.kwDefaultsPtr.pointee }
+  // sourcery: includeInLayout
   internal var closure: PyTuple? { self.closurePtr.pointee }
+  // sourcery: includeInLayout
   internal var annotations: PyDict? { self.annotationsPtr.pointee }
 
   // MARK: - Swift init

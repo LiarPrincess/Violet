@@ -28,18 +28,13 @@ public struct PyRange: PyObjectMixin {
 
   // MARK: - Properties
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyRangeLayout()
-
-  internal var startPtr: Ptr<PyInt> { self.ptr[Self.layout.startOffset] }
-  internal var stopPtr: Ptr<PyInt> { self.ptr[Self.layout.stopOffset] }
-  internal var stepPtr: Ptr<PyInt> { self.ptr[Self.layout.stepOffset] }
-  internal var lengthPtr: Ptr<PyInt> { self.ptr[Self.layout.lengthOffset] }
-
+  // sourcery: includeInLayout
   internal var start: PyInt { self.startPtr.pointee }
+  // sourcery: includeInLayout
   internal var stop: PyInt { self.stopPtr.pointee }
+  // sourcery: includeInLayout
   internal var step: PyInt { self.stepPtr.pointee }
+  // sourcery: includeInLayout
   /// Number of elements in range.
   internal var length: PyInt { self.lengthPtr.pointee }
 

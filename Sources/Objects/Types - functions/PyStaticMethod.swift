@@ -28,11 +28,7 @@ public struct PyStaticMethod: PyObjectMixin {
     For a more advanced concept, see the classmethod builtin.
     """
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyStaticMethodLayout()
-
-  internal var callablePtr: Ptr<PyObject?> { self.ptr[Self.layout.callableOffset] }
+  // sourcery: includeInLayout
   internal var callable: PyObject? { self.callablePtr.pointee }
 
   public let ptr: RawPtr

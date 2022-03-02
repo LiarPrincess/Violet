@@ -16,14 +16,6 @@ public struct RawPtr {
     self.value = UnsafeRawPointer(value)
   }
 
-  // MARK: - Subscript
-
-  public subscript<Pointee>(offset: Int) -> Ptr<Pointee> {
-    let unsafeRawPtr = self.value.advanced(by: offset)
-    let rawPtr = RawPtr(unsafeRawPtr)
-    return rawPtr.bind(to: Pointee.self)
-  }
-
   // MARK: - Bind
 
   /// Binds the memory to the specified type and returns a typed pointer to the

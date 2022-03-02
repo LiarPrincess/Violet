@@ -23,11 +23,7 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
     Build an immutable unordered collection of unique elements.
     """
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyFrozenSetLayout()
-
-  internal var elementsPtr: Ptr<PyFrozenSet.OrderedSet> { self.ptr[Self.layout.elementsOffset] }
+  // sourcery: includeInLayout
   internal var elements: OrderedSet { self.elementsPtr.pointee }
 
   public let ptr: RawPtr

@@ -11,14 +11,9 @@ public struct PyByteArrayIterator: PyObjectMixin {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyByteArrayIteratorLayout()
-
-  internal var bytesPtr: Ptr<PyByteArray> { self.ptr[Self.layout.bytesOffset] }
-  internal var indexPtr: Ptr<Int> { self.ptr[Self.layout.indexOffset] }
-
+  // sourcery: includeInLayout
   internal var bytes: PyByteArray { self.bytesPtr.pointee }
+  // sourcery: includeInLayout
   internal var index: Int { self.indexPtr.pointee }
 
   public let ptr: RawPtr

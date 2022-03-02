@@ -18,20 +18,20 @@ import VioletCompiler
 
 // This file contains:
 // - For 'PyObjectHeader':
-//   - PyObjectHeader.Layout
+//   - PyObjectHeader.Layout - mainly field offsets
 //   - PyObjectHeader.xxxPtr - pointer properties to fields
 // - PyMemory.newTypeAndObjectTypes - because they have recursive dependency
-// - then for each type:
-//   - PyMemory.[TYPE_NAME]Layout - mainly field offsets
-//   - PyMemory.new[TYPE_NAME] - to create new object of this type
+// - Then for each type:
+//   - [TYPE_NAME].Layout - mainly field offsets
 //   - [TYPE_NAME].deinitialize(ptr:) - to deinitialize this object before deletion
+//   - PyMemory.new[TYPE_NAME] - to create new object of this type
 
 // MARK: - PyObjectHeader
 
 extension PyObjectHeader {
 
   /// This type was automatically generated based on `PyObjectHeader` fields
-  /// with `sourcery: storeInMemory` annotation.
+  /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
     internal let typeOffset: Int
     internal let lazy__dict__Offset: Int
@@ -44,9 +44,9 @@ extension PyObjectHeader {
         initialOffset: 0,
         initialAlignment: 0,
         fields: [
-          PyMemory.FieldLayout(from: PyType.self),
-          PyMemory.FieldLayout(from: PyObjectHeader.LazyDict.self),
-          PyMemory.FieldLayout(from: Flags.self)
+          PyMemory.FieldLayout(from: PyType.self), // type
+          PyMemory.FieldLayout(from: PyObjectHeader.LazyDict.self), // lazy__dict__
+          PyMemory.FieldLayout(from: Flags.self) // flags
         ]
       )
 
@@ -115,10 +115,11 @@ extension PyMemory {
 
 // MARK: - PyBool
 
-extension PyMemory {
+extension PyBool {
 
-  /// This type was automatically generated based on `PyBool` fields.
-  internal struct PyBoolLayout {
+  /// This type was automatically generated based on `PyBool` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let valueOffset: Int
     internal let size: Int
     internal let alignment: Int
@@ -128,7 +129,7 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: BigInt.self)
+          PyMemory.FieldLayout(from: BigInt.self) // value
         ]
       )
 
@@ -138,6 +139,21 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var valuePtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyBool(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.valuePtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `bool` type.
   public func newBool(
@@ -150,7 +166,7 @@ extension PyMemory {
     let result = PyBool(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       value: value
     )
@@ -159,22 +175,13 @@ extension PyMemory {
   }
 }
 
-extension PyBool {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyBool(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.valuePtr.deinitialize()
-  }
-}
-
 // MARK: - PyBuiltinFunction
 
-extension PyMemory {
+extension PyBuiltinFunction {
 
-  /// This type was automatically generated based on `PyBuiltinFunction` fields.
-  internal struct PyBuiltinFunctionLayout {
+  /// This type was automatically generated based on `PyBuiltinFunction` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let functionOffset: Int
     internal let moduleOffset: Int
     internal let docOffset: Int
@@ -186,9 +193,9 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: FunctionWrapper.self),
-          FieldLayout(from: PyObject?.self),
-          FieldLayout(from: String?.self)
+          PyMemory.FieldLayout(from: FunctionWrapper.self), // function
+          PyMemory.FieldLayout(from: PyObject?.self), // module
+          PyMemory.FieldLayout(from: String?.self) // doc
         ]
       )
 
@@ -200,6 +207,25 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var functionPtr: Ptr<FunctionWrapper> { Ptr(self.ptr, offset: Self.layout.functionOffset) }
+  internal var modulePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.moduleOffset) }
+  internal var docPtr: Ptr<String?> { Ptr(self.ptr, offset: Self.layout.docOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyBuiltinFunction(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.functionPtr.deinitialize()
+    zelf.modulePtr.deinitialize()
+    zelf.docPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `builtinFunction` type.
   public func newBuiltinFunction(
@@ -214,7 +240,7 @@ extension PyMemory {
     let result = PyBuiltinFunction(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       function: function,
       module: module,
@@ -225,24 +251,13 @@ extension PyMemory {
   }
 }
 
-extension PyBuiltinFunction {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyBuiltinFunction(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.functionPtr.deinitialize()
-    zelf.modulePtr.deinitialize()
-    zelf.docPtr.deinitialize()
-  }
-}
-
 // MARK: - PyBuiltinMethod
 
-extension PyMemory {
+extension PyBuiltinMethod {
 
-  /// This type was automatically generated based on `PyBuiltinMethod` fields.
-  internal struct PyBuiltinMethodLayout {
+  /// This type was automatically generated based on `PyBuiltinMethod` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let functionOffset: Int
     internal let objectOffset: Int
     internal let moduleOffset: Int
@@ -255,10 +270,10 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: FunctionWrapper.self),
-          FieldLayout(from: PyObject.self),
-          FieldLayout(from: PyObject?.self),
-          FieldLayout(from: String?.self)
+          PyMemory.FieldLayout(from: FunctionWrapper.self), // function
+          PyMemory.FieldLayout(from: PyObject.self), // object
+          PyMemory.FieldLayout(from: PyObject?.self), // module
+          PyMemory.FieldLayout(from: String?.self) // doc
         ]
       )
 
@@ -271,6 +286,27 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var functionPtr: Ptr<FunctionWrapper> { Ptr(self.ptr, offset: Self.layout.functionOffset) }
+  internal var objectPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.objectOffset) }
+  internal var modulePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.moduleOffset) }
+  internal var docPtr: Ptr<String?> { Ptr(self.ptr, offset: Self.layout.docOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyBuiltinMethod(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.functionPtr.deinitialize()
+    zelf.objectPtr.deinitialize()
+    zelf.modulePtr.deinitialize()
+    zelf.docPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `builtinMethod` type.
   public func newBuiltinMethod(
@@ -286,7 +322,7 @@ extension PyMemory {
     let result = PyBuiltinMethod(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       function: function,
       object: object,
@@ -298,25 +334,13 @@ extension PyMemory {
   }
 }
 
-extension PyBuiltinMethod {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyBuiltinMethod(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.functionPtr.deinitialize()
-    zelf.objectPtr.deinitialize()
-    zelf.modulePtr.deinitialize()
-    zelf.docPtr.deinitialize()
-  }
-}
-
 // MARK: - PyByteArray
 
-extension PyMemory {
+extension PyByteArray {
 
-  /// This type was automatically generated based on `PyByteArray` fields.
-  internal struct PyByteArrayLayout {
+  /// This type was automatically generated based on `PyByteArray` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let elementsOffset: Int
     internal let size: Int
     internal let alignment: Int
@@ -326,7 +350,7 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: Data.self)
+          PyMemory.FieldLayout(from: Data.self) // elements
         ]
       )
 
@@ -336,6 +360,21 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var elementsPtr: Ptr<Data> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyByteArray(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.elementsPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `bytearray` type.
   public func newByteArray(
@@ -348,7 +387,7 @@ extension PyMemory {
     let result = PyByteArray(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       elements: elements
     )
@@ -357,22 +396,13 @@ extension PyMemory {
   }
 }
 
-extension PyByteArray {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyByteArray(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.elementsPtr.deinitialize()
-  }
-}
-
 // MARK: - PyByteArrayIterator
 
-extension PyMemory {
+extension PyByteArrayIterator {
 
-  /// This type was automatically generated based on `PyByteArrayIterator` fields.
-  internal struct PyByteArrayIteratorLayout {
+  /// This type was automatically generated based on `PyByteArrayIterator` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let bytesOffset: Int
     internal let indexOffset: Int
     internal let size: Int
@@ -383,8 +413,8 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyByteArray.self),
-          FieldLayout(from: Int.self)
+          PyMemory.FieldLayout(from: PyByteArray.self), // bytes
+          PyMemory.FieldLayout(from: Int.self) // index
         ]
       )
 
@@ -395,6 +425,23 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var bytesPtr: Ptr<PyByteArray> { Ptr(self.ptr, offset: Self.layout.bytesOffset) }
+  internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyByteArrayIterator(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.bytesPtr.deinitialize()
+    zelf.indexPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `bytearray_iterator` type.
   public func newByteArrayIterator(
@@ -407,7 +454,7 @@ extension PyMemory {
     let result = PyByteArrayIterator(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       bytes: bytes
     )
@@ -416,23 +463,13 @@ extension PyMemory {
   }
 }
 
-extension PyByteArrayIterator {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyByteArrayIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.bytesPtr.deinitialize()
-    zelf.indexPtr.deinitialize()
-  }
-}
-
 // MARK: - PyBytes
 
-extension PyMemory {
+extension PyBytes {
 
-  /// This type was automatically generated based on `PyBytes` fields.
-  internal struct PyBytesLayout {
+  /// This type was automatically generated based on `PyBytes` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let elementsOffset: Int
     internal let size: Int
     internal let alignment: Int
@@ -442,7 +479,7 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: Data.self)
+          PyMemory.FieldLayout(from: Data.self) // elements
         ]
       )
 
@@ -452,6 +489,21 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var elementsPtr: Ptr<Data> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyBytes(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.elementsPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `bytes` type.
   public func newBytes(
@@ -464,7 +516,7 @@ extension PyMemory {
     let result = PyBytes(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       elements: elements
     )
@@ -473,22 +525,13 @@ extension PyMemory {
   }
 }
 
-extension PyBytes {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyBytes(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.elementsPtr.deinitialize()
-  }
-}
-
 // MARK: - PyBytesIterator
 
-extension PyMemory {
+extension PyBytesIterator {
 
-  /// This type was automatically generated based on `PyBytesIterator` fields.
-  internal struct PyBytesIteratorLayout {
+  /// This type was automatically generated based on `PyBytesIterator` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let bytesOffset: Int
     internal let indexOffset: Int
     internal let size: Int
@@ -499,8 +542,8 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyBytes.self),
-          FieldLayout(from: Int.self)
+          PyMemory.FieldLayout(from: PyBytes.self), // bytes
+          PyMemory.FieldLayout(from: Int.self) // index
         ]
       )
 
@@ -511,6 +554,23 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var bytesPtr: Ptr<PyBytes> { Ptr(self.ptr, offset: Self.layout.bytesOffset) }
+  internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyBytesIterator(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.bytesPtr.deinitialize()
+    zelf.indexPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `bytes_iterator` type.
   public func newBytesIterator(
@@ -523,7 +583,7 @@ extension PyMemory {
     let result = PyBytesIterator(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       bytes: bytes
     )
@@ -532,23 +592,13 @@ extension PyMemory {
   }
 }
 
-extension PyBytesIterator {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyBytesIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.bytesPtr.deinitialize()
-    zelf.indexPtr.deinitialize()
-  }
-}
-
 // MARK: - PyCallableIterator
 
-extension PyMemory {
+extension PyCallableIterator {
 
-  /// This type was automatically generated based on `PyCallableIterator` fields.
-  internal struct PyCallableIteratorLayout {
+  /// This type was automatically generated based on `PyCallableIterator` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let callableOffset: Int
     internal let sentinelOffset: Int
     internal let size: Int
@@ -559,8 +609,8 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyObject.self),
-          FieldLayout(from: PyObject.self)
+          PyMemory.FieldLayout(from: PyObject.self), // callable
+          PyMemory.FieldLayout(from: PyObject.self) // sentinel
         ]
       )
 
@@ -571,6 +621,23 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var callablePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.callableOffset) }
+  internal var sentinelPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.sentinelOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyCallableIterator(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.callablePtr.deinitialize()
+    zelf.sentinelPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `callable_iterator` type.
   public func newCallableIterator(
@@ -584,7 +651,7 @@ extension PyMemory {
     let result = PyCallableIterator(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       callable: callable,
       sentinel: sentinel
@@ -594,23 +661,13 @@ extension PyMemory {
   }
 }
 
-extension PyCallableIterator {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyCallableIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.callablePtr.deinitialize()
-    zelf.sentinelPtr.deinitialize()
-  }
-}
-
 // MARK: - PyCell
 
-extension PyMemory {
+extension PyCell {
 
-  /// This type was automatically generated based on `PyCell` fields.
-  internal struct PyCellLayout {
+  /// This type was automatically generated based on `PyCell` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let contentOffset: Int
     internal let size: Int
     internal let alignment: Int
@@ -620,7 +677,7 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyObject?.self)
+          PyMemory.FieldLayout(from: PyObject?.self) // content
         ]
       )
 
@@ -630,6 +687,21 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var contentPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.contentOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyCell(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.contentPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `cell` type.
   public func newCell(
@@ -642,7 +714,7 @@ extension PyMemory {
     let result = PyCell(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       content: content
     )
@@ -651,22 +723,13 @@ extension PyMemory {
   }
 }
 
-extension PyCell {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyCell(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.contentPtr.deinitialize()
-  }
-}
-
 // MARK: - PyClassMethod
 
-extension PyMemory {
+extension PyClassMethod {
 
-  /// This type was automatically generated based on `PyClassMethod` fields.
-  internal struct PyClassMethodLayout {
+  /// This type was automatically generated based on `PyClassMethod` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let callableOffset: Int
     internal let size: Int
     internal let alignment: Int
@@ -676,7 +739,7 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyObject?.self)
+          PyMemory.FieldLayout(from: PyObject?.self) // callable
         ]
       )
 
@@ -686,6 +749,21 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var callablePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.callableOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyClassMethod(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.callablePtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `classmethod` type.
   public func newClassMethod(
@@ -698,7 +776,7 @@ extension PyMemory {
     let result = PyClassMethod(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       callable: callable
     )
@@ -707,22 +785,13 @@ extension PyMemory {
   }
 }
 
-extension PyClassMethod {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyClassMethod(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.callablePtr.deinitialize()
-  }
-}
-
 // MARK: - PyCode
 
-extension PyMemory {
+extension PyCode {
 
-  /// This type was automatically generated based on `PyCode` fields.
-  internal struct PyCodeLayout {
+  /// This type was automatically generated based on `PyCode` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let nameOffset: Int
     internal let qualifiedNameOffset: Int
     internal let filenameOffset: Int
@@ -745,20 +814,20 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyString.self),
-          FieldLayout(from: PyString.self),
-          FieldLayout(from: PyString.self),
-          FieldLayout(from: [Instruction].self),
-          FieldLayout(from: SourceLine.self),
-          FieldLayout(from: [SourceLine].self),
-          FieldLayout(from: [PyObject].self),
-          FieldLayout(from: [CodeObject.Label].self),
-          FieldLayout(from: [PyString].self),
-          FieldLayout(from: [MangledName].self),
-          FieldLayout(from: [MangledName].self),
-          FieldLayout(from: [MangledName].self),
-          FieldLayout(from: Int.self),
-          FieldLayout(from: Int.self)
+          PyMemory.FieldLayout(from: PyString.self), // name
+          PyMemory.FieldLayout(from: PyString.self), // qualifiedName
+          PyMemory.FieldLayout(from: PyString.self), // filename
+          PyMemory.FieldLayout(from: [Instruction].self), // instructions
+          PyMemory.FieldLayout(from: SourceLine.self), // firstLine
+          PyMemory.FieldLayout(from: [SourceLine].self), // instructionLines
+          PyMemory.FieldLayout(from: [PyObject].self), // constants
+          PyMemory.FieldLayout(from: [CodeObject.Label].self), // labels
+          PyMemory.FieldLayout(from: [PyString].self), // names
+          PyMemory.FieldLayout(from: [MangledName].self), // variableNames
+          PyMemory.FieldLayout(from: [MangledName].self), // cellVariableNames
+          PyMemory.FieldLayout(from: [MangledName].self), // freeVariableNames
+          PyMemory.FieldLayout(from: Int.self), // argCount
+          PyMemory.FieldLayout(from: Int.self) // kwOnlyArgCount
         ]
       )
 
@@ -782,27 +851,23 @@ extension PyMemory {
     }
   }
 
-  /// Allocate a new instance of `code` type.
-  public func newCode(
-    _ py: Py,
-    type: PyType,
-    code: CodeObject
-  ) -> PyCode {
-    let typeLayout = PyCode.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyCode(ptr: ptr)
+  internal static let layout = Layout()
 
-    result.initialize(
-      _: py,
-      type: type,
-      code: code
-    )
+  internal var namePtr: Ptr<PyString> { Ptr(self.ptr, offset: Self.layout.nameOffset) }
+  internal var qualifiedNamePtr: Ptr<PyString> { Ptr(self.ptr, offset: Self.layout.qualifiedNameOffset) }
+  internal var filenamePtr: Ptr<PyString> { Ptr(self.ptr, offset: Self.layout.filenameOffset) }
+  internal var instructionsPtr: Ptr<[Instruction]> { Ptr(self.ptr, offset: Self.layout.instructionsOffset) }
+  internal var firstLinePtr: Ptr<SourceLine> { Ptr(self.ptr, offset: Self.layout.firstLineOffset) }
+  internal var instructionLinesPtr: Ptr<[SourceLine]> { Ptr(self.ptr, offset: Self.layout.instructionLinesOffset) }
+  internal var constantsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Self.layout.constantsOffset) }
+  internal var labelsPtr: Ptr<[CodeObject.Label]> { Ptr(self.ptr, offset: Self.layout.labelsOffset) }
+  internal var namesPtr: Ptr<[PyString]> { Ptr(self.ptr, offset: Self.layout.namesOffset) }
+  internal var variableNamesPtr: Ptr<[MangledName]> { Ptr(self.ptr, offset: Self.layout.variableNamesOffset) }
+  internal var cellVariableNamesPtr: Ptr<[MangledName]> { Ptr(self.ptr, offset: Self.layout.cellVariableNamesOffset) }
+  internal var freeVariableNamesPtr: Ptr<[MangledName]> { Ptr(self.ptr, offset: Self.layout.freeVariableNamesOffset) }
+  internal var argCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.argCountOffset) }
+  internal var kwOnlyArgCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.kwOnlyArgCountOffset) }
 
-    return result
-  }
-}
-
-extension PyCode {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyCode(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -825,12 +890,35 @@ extension PyCode {
   }
 }
 
-// MARK: - PyComplex
-
 extension PyMemory {
 
-  /// This type was automatically generated based on `PyComplex` fields.
-  internal struct PyComplexLayout {
+  /// Allocate a new instance of `code` type.
+  public func newCode(
+    _ py: Py,
+    type: PyType,
+    code: CodeObject
+  ) -> PyCode {
+    let typeLayout = PyCode.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyCode(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      code: code
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyComplex
+
+extension PyComplex {
+
+  /// This type was automatically generated based on `PyComplex` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let realOffset: Int
     internal let imagOffset: Int
     internal let size: Int
@@ -841,8 +929,8 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: Double.self),
-          FieldLayout(from: Double.self)
+          PyMemory.FieldLayout(from: Double.self), // real
+          PyMemory.FieldLayout(from: Double.self) // imag
         ]
       )
 
@@ -853,6 +941,23 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var realPtr: Ptr<Double> { Ptr(self.ptr, offset: Self.layout.realOffset) }
+  internal var imagPtr: Ptr<Double> { Ptr(self.ptr, offset: Self.layout.imagOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyComplex(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.realPtr.deinitialize()
+    zelf.imagPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `complex` type.
   public func newComplex(
@@ -866,7 +971,7 @@ extension PyMemory {
     let result = PyComplex(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       real: real,
       imag: imag
@@ -876,23 +981,13 @@ extension PyMemory {
   }
 }
 
-extension PyComplex {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyComplex(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.realPtr.deinitialize()
-    zelf.imagPtr.deinitialize()
-  }
-}
-
 // MARK: - PyDict
 
-extension PyMemory {
+extension PyDict {
 
-  /// This type was automatically generated based on `PyDict` fields.
-  internal struct PyDictLayout {
+  /// This type was automatically generated based on `PyDict` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let elementsOffset: Int
     internal let size: Int
     internal let alignment: Int
@@ -902,7 +997,7 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyDict.OrderedDictionary.self)
+          PyMemory.FieldLayout(from: OrderedDictionary.self) // elements
         ]
       )
 
@@ -912,6 +1007,21 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var elementsPtr: Ptr<OrderedDictionary> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyDict(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.elementsPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `dict` type.
   public func newDict(
@@ -924,7 +1034,7 @@ extension PyMemory {
     let result = PyDict(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       elements: elements
     )
@@ -933,22 +1043,13 @@ extension PyMemory {
   }
 }
 
-extension PyDict {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyDict(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.elementsPtr.deinitialize()
-  }
-}
-
 // MARK: - PyDictItemIterator
 
-extension PyMemory {
+extension PyDictItemIterator {
 
-  /// This type was automatically generated based on `PyDictItemIterator` fields.
-  internal struct PyDictItemIteratorLayout {
+  /// This type was automatically generated based on `PyDictItemIterator` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let dictOffset: Int
     internal let indexOffset: Int
     internal let initialCountOffset: Int
@@ -960,9 +1061,9 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyDict.self),
-          FieldLayout(from: Int.self),
-          FieldLayout(from: Int.self)
+          PyMemory.FieldLayout(from: PyDict.self), // dict
+          PyMemory.FieldLayout(from: Int.self), // index
+          PyMemory.FieldLayout(from: Int.self) // initialCount
         ]
       )
 
@@ -974,6 +1075,25 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
+  internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+  internal var initialCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.initialCountOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyDictItemIterator(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.dictPtr.deinitialize()
+    zelf.indexPtr.deinitialize()
+    zelf.initialCountPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `dict_itemiterator` type.
   public func newDictItemIterator(
@@ -986,7 +1106,7 @@ extension PyMemory {
     let result = PyDictItemIterator(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       dict: dict
     )
@@ -995,24 +1115,13 @@ extension PyMemory {
   }
 }
 
-extension PyDictItemIterator {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyDictItemIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.dictPtr.deinitialize()
-    zelf.indexPtr.deinitialize()
-    zelf.initialCountPtr.deinitialize()
-  }
-}
-
 // MARK: - PyDictItems
 
-extension PyMemory {
+extension PyDictItems {
 
-  /// This type was automatically generated based on `PyDictItems` fields.
-  internal struct PyDictItemsLayout {
+  /// This type was automatically generated based on `PyDictItems` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let dictOffset: Int
     internal let size: Int
     internal let alignment: Int
@@ -1022,7 +1131,7 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyDict.self)
+          PyMemory.FieldLayout(from: PyDict.self) // dict
         ]
       )
 
@@ -1032,6 +1141,21 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyDictItems(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.dictPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `dict_items` type.
   public func newDictItems(
@@ -1044,7 +1168,7 @@ extension PyMemory {
     let result = PyDictItems(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       dict: dict
     )
@@ -1053,22 +1177,13 @@ extension PyMemory {
   }
 }
 
-extension PyDictItems {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyDictItems(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.dictPtr.deinitialize()
-  }
-}
-
 // MARK: - PyDictKeyIterator
 
-extension PyMemory {
+extension PyDictKeyIterator {
 
-  /// This type was automatically generated based on `PyDictKeyIterator` fields.
-  internal struct PyDictKeyIteratorLayout {
+  /// This type was automatically generated based on `PyDictKeyIterator` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let dictOffset: Int
     internal let indexOffset: Int
     internal let initialCountOffset: Int
@@ -1080,9 +1195,9 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyDict.self),
-          FieldLayout(from: Int.self),
-          FieldLayout(from: Int.self)
+          PyMemory.FieldLayout(from: PyDict.self), // dict
+          PyMemory.FieldLayout(from: Int.self), // index
+          PyMemory.FieldLayout(from: Int.self) // initialCount
         ]
       )
 
@@ -1094,6 +1209,25 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
+  internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+  internal var initialCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.initialCountOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyDictKeyIterator(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.dictPtr.deinitialize()
+    zelf.indexPtr.deinitialize()
+    zelf.initialCountPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `dict_keyiterator` type.
   public func newDictKeyIterator(
@@ -1106,7 +1240,7 @@ extension PyMemory {
     let result = PyDictKeyIterator(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       dict: dict
     )
@@ -1115,24 +1249,13 @@ extension PyMemory {
   }
 }
 
-extension PyDictKeyIterator {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyDictKeyIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.dictPtr.deinitialize()
-    zelf.indexPtr.deinitialize()
-    zelf.initialCountPtr.deinitialize()
-  }
-}
-
 // MARK: - PyDictKeys
 
-extension PyMemory {
+extension PyDictKeys {
 
-  /// This type was automatically generated based on `PyDictKeys` fields.
-  internal struct PyDictKeysLayout {
+  /// This type was automatically generated based on `PyDictKeys` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let dictOffset: Int
     internal let size: Int
     internal let alignment: Int
@@ -1142,7 +1265,7 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyDict.self)
+          PyMemory.FieldLayout(from: PyDict.self) // dict
         ]
       )
 
@@ -1152,6 +1275,21 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyDictKeys(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.dictPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `dict_keys` type.
   public func newDictKeys(
@@ -1164,7 +1302,7 @@ extension PyMemory {
     let result = PyDictKeys(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       dict: dict
     )
@@ -1173,22 +1311,13 @@ extension PyMemory {
   }
 }
 
-extension PyDictKeys {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyDictKeys(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.dictPtr.deinitialize()
-  }
-}
-
 // MARK: - PyDictValueIterator
 
-extension PyMemory {
+extension PyDictValueIterator {
 
-  /// This type was automatically generated based on `PyDictValueIterator` fields.
-  internal struct PyDictValueIteratorLayout {
+  /// This type was automatically generated based on `PyDictValueIterator` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let dictOffset: Int
     internal let indexOffset: Int
     internal let initialCountOffset: Int
@@ -1200,9 +1329,9 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyDict.self),
-          FieldLayout(from: Int.self),
-          FieldLayout(from: Int.self)
+          PyMemory.FieldLayout(from: PyDict.self), // dict
+          PyMemory.FieldLayout(from: Int.self), // index
+          PyMemory.FieldLayout(from: Int.self) // initialCount
         ]
       )
 
@@ -1215,27 +1344,12 @@ extension PyMemory {
     }
   }
 
-  /// Allocate a new instance of `dict_valueiterator` type.
-  public func newDictValueIterator(
-    _ py: Py,
-    type: PyType,
-    dict: PyDict
-  ) -> PyDictValueIterator {
-    let typeLayout = PyDictValueIterator.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyDictValueIterator(ptr: ptr)
+  internal static let layout = Layout()
 
-    result.initialize(
-      _: py,
-      type: type,
-      dict: dict
-    )
+  internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
+  internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+  internal var initialCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.initialCountOffset) }
 
-    return result
-  }
-}
-
-extension PyDictValueIterator {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyDictValueIterator(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -1247,12 +1361,35 @@ extension PyDictValueIterator {
   }
 }
 
-// MARK: - PyDictValues
-
 extension PyMemory {
 
-  /// This type was automatically generated based on `PyDictValues` fields.
-  internal struct PyDictValuesLayout {
+  /// Allocate a new instance of `dict_valueiterator` type.
+  public func newDictValueIterator(
+    _ py: Py,
+    type: PyType,
+    dict: PyDict
+  ) -> PyDictValueIterator {
+    let typeLayout = PyDictValueIterator.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyDictValueIterator(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      dict: dict
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyDictValues
+
+extension PyDictValues {
+
+  /// This type was automatically generated based on `PyDictValues` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let dictOffset: Int
     internal let size: Int
     internal let alignment: Int
@@ -1262,7 +1399,7 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyDict.self)
+          PyMemory.FieldLayout(from: PyDict.self) // dict
         ]
       )
 
@@ -1272,6 +1409,21 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyDictValues(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.dictPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `dict_values` type.
   public func newDictValues(
@@ -1284,7 +1436,7 @@ extension PyMemory {
     let result = PyDictValues(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       dict: dict
     )
@@ -1293,22 +1445,13 @@ extension PyMemory {
   }
 }
 
-extension PyDictValues {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyDictValues(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.dictPtr.deinitialize()
-  }
-}
-
 // MARK: - PyEllipsis
 
-extension PyMemory {
+extension PyEllipsis {
 
-  /// This type was automatically generated based on `PyEllipsis` fields.
-  internal struct PyEllipsisLayout {
+  /// This type was automatically generated based on `PyEllipsis` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let size: Int
     internal let alignment: Int
 
@@ -1325,6 +1468,18 @@ extension PyMemory {
     }
   }
 
+  internal static let layout = Layout()
+
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyEllipsis(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
   /// Allocate a new instance of `ellipsis` type.
   public func newEllipsis(
     _ py: Py,
@@ -1335,7 +1490,7 @@ extension PyMemory {
     let result = PyEllipsis(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type
     )
 
@@ -1343,20 +1498,13 @@ extension PyMemory {
   }
 }
 
-extension PyEllipsis {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyEllipsis(ptr: ptr)
-    zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
-  }
-}
-
 // MARK: - PyEnumerate
 
-extension PyMemory {
+extension PyEnumerate {
 
-  /// This type was automatically generated based on `PyEnumerate` fields.
-  internal struct PyEnumerateLayout {
+  /// This type was automatically generated based on `PyEnumerate` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let iteratorOffset: Int
     internal let nextIndexOffset: Int
     internal let size: Int
@@ -1367,8 +1515,8 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyObject.self),
-          FieldLayout(from: BigInt.self)
+          PyMemory.FieldLayout(from: PyObject.self), // iterator
+          PyMemory.FieldLayout(from: BigInt.self) // nextIndex
         ]
       )
 
@@ -1379,6 +1527,23 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var iteratorPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.iteratorOffset) }
+  internal var nextIndexPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.nextIndexOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyEnumerate(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.iteratorPtr.deinitialize()
+    zelf.nextIndexPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `enumerate` type.
   public func newEnumerate(
@@ -1392,7 +1557,7 @@ extension PyMemory {
     let result = PyEnumerate(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       iterator: iterator,
       initialIndex: initialIndex
@@ -1402,23 +1567,13 @@ extension PyMemory {
   }
 }
 
-extension PyEnumerate {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyEnumerate(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.iteratorPtr.deinitialize()
-    zelf.nextIndexPtr.deinitialize()
-  }
-}
-
 // MARK: - PyFilter
 
-extension PyMemory {
+extension PyFilter {
 
-  /// This type was automatically generated based on `PyFilter` fields.
-  internal struct PyFilterLayout {
+  /// This type was automatically generated based on `PyFilter` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let fnOffset: Int
     internal let iteratorOffset: Int
     internal let size: Int
@@ -1429,8 +1584,8 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyObject.self),
-          FieldLayout(from: PyObject.self)
+          PyMemory.FieldLayout(from: PyObject.self), // fn
+          PyMemory.FieldLayout(from: PyObject.self) // iterator
         ]
       )
 
@@ -1441,6 +1596,23 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var fnPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.fnOffset) }
+  internal var iteratorPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.iteratorOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyFilter(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.fnPtr.deinitialize()
+    zelf.iteratorPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `filter` type.
   public func newFilter(
@@ -1454,7 +1626,7 @@ extension PyMemory {
     let result = PyFilter(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       fn: fn,
       iterator: iterator
@@ -1464,23 +1636,13 @@ extension PyMemory {
   }
 }
 
-extension PyFilter {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyFilter(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.fnPtr.deinitialize()
-    zelf.iteratorPtr.deinitialize()
-  }
-}
-
 // MARK: - PyFloat
 
-extension PyMemory {
+extension PyFloat {
 
-  /// This type was automatically generated based on `PyFloat` fields.
-  internal struct PyFloatLayout {
+  /// This type was automatically generated based on `PyFloat` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let valueOffset: Int
     internal let size: Int
     internal let alignment: Int
@@ -1490,7 +1652,7 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: Double.self)
+          PyMemory.FieldLayout(from: Double.self) // value
         ]
       )
 
@@ -1500,6 +1662,21 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var valuePtr: Ptr<Double> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyFloat(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.valuePtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `float` type.
   public func newFloat(
@@ -1512,7 +1689,7 @@ extension PyMemory {
     let result = PyFloat(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       value: value
     )
@@ -1521,22 +1698,13 @@ extension PyMemory {
   }
 }
 
-extension PyFloat {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyFloat(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.valuePtr.deinitialize()
-  }
-}
-
 // MARK: - PyFrame
 
-extension PyMemory {
+extension PyFrame {
 
-  /// This type was automatically generated based on `PyFrame` fields.
-  internal struct PyFrameLayout {
+  /// This type was automatically generated based on `PyFrame` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let codeOffset: Int
     internal let parentOffset: Int
     internal let stackOffset: Int
@@ -1557,18 +1725,18 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyCode.self),
-          FieldLayout(from: PyFrame?.self),
-          FieldLayout(from: PyFrame.ObjectStack.self),
-          FieldLayout(from: PyFrame.BlockStack.self),
-          FieldLayout(from: PyDict.self),
-          FieldLayout(from: PyDict.self),
-          FieldLayout(from: PyDict.self),
-          FieldLayout(from: [PyObject?].self),
-          FieldLayout(from: [PyCell].self),
-          FieldLayout(from: [PyCell].self),
-          FieldLayout(from: Int?.self),
-          FieldLayout(from: Int.self)
+          PyMemory.FieldLayout(from: PyCode.self), // code
+          PyMemory.FieldLayout(from: PyFrame?.self), // parent
+          PyMemory.FieldLayout(from: ObjectStack.self), // stack
+          PyMemory.FieldLayout(from: BlockStack.self), // blocks
+          PyMemory.FieldLayout(from: PyDict.self), // locals
+          PyMemory.FieldLayout(from: PyDict.self), // globals
+          PyMemory.FieldLayout(from: PyDict.self), // builtins
+          PyMemory.FieldLayout(from: [PyObject?].self), // fastLocals
+          PyMemory.FieldLayout(from: [PyCell].self), // cellVariables
+          PyMemory.FieldLayout(from: [PyCell].self), // freeVariables
+          PyMemory.FieldLayout(from: Int?.self), // currentInstructionIndex
+          PyMemory.FieldLayout(from: Int.self) // nextInstructionIndex
         ]
       )
 
@@ -1590,33 +1758,21 @@ extension PyMemory {
     }
   }
 
-  /// Allocate a new instance of `frame` type.
-  public func newFrame(
-    _ py: Py,
-    type: PyType,
-    code: PyCode,
-    locals: PyDict,
-    globals: PyDict,
-    parent: PyFrame?
-  ) -> PyFrame {
-    let typeLayout = PyFrame.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyFrame(ptr: ptr)
+  internal static let layout = Layout()
 
-    result.initialize(
-      _: py,
-      type: type,
-      code: code,
-      locals: locals,
-      globals: globals,
-      parent: parent
-    )
+  internal var codePtr: Ptr<PyCode> { Ptr(self.ptr, offset: Self.layout.codeOffset) }
+  internal var parentPtr: Ptr<PyFrame?> { Ptr(self.ptr, offset: Self.layout.parentOffset) }
+  internal var stackPtr: Ptr<ObjectStack> { Ptr(self.ptr, offset: Self.layout.stackOffset) }
+  internal var blocksPtr: Ptr<BlockStack> { Ptr(self.ptr, offset: Self.layout.blocksOffset) }
+  internal var localsPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.localsOffset) }
+  internal var globalsPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.globalsOffset) }
+  internal var builtinsPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.builtinsOffset) }
+  internal var fastLocalsPtr: Ptr<[PyObject?]> { Ptr(self.ptr, offset: Self.layout.fastLocalsOffset) }
+  internal var cellVariablesPtr: Ptr<[PyCell]> { Ptr(self.ptr, offset: Self.layout.cellVariablesOffset) }
+  internal var freeVariablesPtr: Ptr<[PyCell]> { Ptr(self.ptr, offset: Self.layout.freeVariablesOffset) }
+  internal var currentInstructionIndexPtr: Ptr<Int?> { Ptr(self.ptr, offset: Self.layout.currentInstructionIndexOffset) }
+  internal var nextInstructionIndexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.nextInstructionIndexOffset) }
 
-    return result
-  }
-}
-
-extension PyFrame {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFrame(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -1637,12 +1793,41 @@ extension PyFrame {
   }
 }
 
-// MARK: - PyFrozenSet
-
 extension PyMemory {
 
-  /// This type was automatically generated based on `PyFrozenSet` fields.
-  internal struct PyFrozenSetLayout {
+  /// Allocate a new instance of `frame` type.
+  public func newFrame(
+    _ py: Py,
+    type: PyType,
+    code: PyCode,
+    locals: PyDict,
+    globals: PyDict,
+    parent: PyFrame?
+  ) -> PyFrame {
+    let typeLayout = PyFrame.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyFrame(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      code: code,
+      locals: locals,
+      globals: globals,
+      parent: parent
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyFrozenSet
+
+extension PyFrozenSet {
+
+  /// This type was automatically generated based on `PyFrozenSet` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let elementsOffset: Int
     internal let size: Int
     internal let alignment: Int
@@ -1652,7 +1837,7 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyFrozenSet.OrderedSet.self)
+          PyMemory.FieldLayout(from: OrderedSet.self) // elements
         ]
       )
 
@@ -1662,6 +1847,21 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var elementsPtr: Ptr<OrderedSet> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyFrozenSet(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.elementsPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `frozenset` type.
   public func newFrozenSet(
@@ -1674,7 +1874,7 @@ extension PyMemory {
     let result = PyFrozenSet(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       elements: elements
     )
@@ -1683,22 +1883,13 @@ extension PyMemory {
   }
 }
 
-extension PyFrozenSet {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyFrozenSet(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.elementsPtr.deinitialize()
-  }
-}
-
 // MARK: - PyFunction
 
-extension PyMemory {
+extension PyFunction {
 
-  /// This type was automatically generated based on `PyFunction` fields.
-  internal struct PyFunctionLayout {
+  /// This type was automatically generated based on `PyFunction` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let nameOffset: Int
     internal let qualnameOffset: Int
     internal let docOffset: Int
@@ -1717,16 +1908,16 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyString.self),
-          FieldLayout(from: PyString.self),
-          FieldLayout(from: PyString?.self),
-          FieldLayout(from: PyObject.self),
-          FieldLayout(from: PyCode.self),
-          FieldLayout(from: PyDict.self),
-          FieldLayout(from: PyTuple?.self),
-          FieldLayout(from: PyDict?.self),
-          FieldLayout(from: PyTuple?.self),
-          FieldLayout(from: PyDict?.self)
+          PyMemory.FieldLayout(from: PyString.self), // name
+          PyMemory.FieldLayout(from: PyString.self), // qualname
+          PyMemory.FieldLayout(from: PyString?.self), // doc
+          PyMemory.FieldLayout(from: PyObject.self), // module
+          PyMemory.FieldLayout(from: PyCode.self), // code
+          PyMemory.FieldLayout(from: PyDict.self), // globals
+          PyMemory.FieldLayout(from: PyTuple?.self), // defaults
+          PyMemory.FieldLayout(from: PyDict?.self), // kwDefaults
+          PyMemory.FieldLayout(from: PyTuple?.self), // closure
+          PyMemory.FieldLayout(from: PyDict?.self) // annotations
         ]
       )
 
@@ -1746,33 +1937,19 @@ extension PyMemory {
     }
   }
 
-  /// Allocate a new instance of `function` type.
-  public func newFunction(
-    _ py: Py,
-    type: PyType,
-    qualname: PyString?,
-    module: PyObject,
-    code: PyCode,
-    globals: PyDict
-  ) -> PyFunction {
-    let typeLayout = PyFunction.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyFunction(ptr: ptr)
+  internal static let layout = Layout()
 
-    result.initialize(
-      _: py,
-      type: type,
-      qualname: qualname,
-      module: module,
-      code: code,
-      globals: globals
-    )
+  internal var namePtr: Ptr<PyString> { Ptr(self.ptr, offset: Self.layout.nameOffset) }
+  internal var qualnamePtr: Ptr<PyString> { Ptr(self.ptr, offset: Self.layout.qualnameOffset) }
+  internal var docPtr: Ptr<PyString?> { Ptr(self.ptr, offset: Self.layout.docOffset) }
+  internal var modulePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.moduleOffset) }
+  internal var codePtr: Ptr<PyCode> { Ptr(self.ptr, offset: Self.layout.codeOffset) }
+  internal var globalsPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.globalsOffset) }
+  internal var defaultsPtr: Ptr<PyTuple?> { Ptr(self.ptr, offset: Self.layout.defaultsOffset) }
+  internal var kwDefaultsPtr: Ptr<PyDict?> { Ptr(self.ptr, offset: Self.layout.kwDefaultsOffset) }
+  internal var closurePtr: Ptr<PyTuple?> { Ptr(self.ptr, offset: Self.layout.closureOffset) }
+  internal var annotationsPtr: Ptr<PyDict?> { Ptr(self.ptr, offset: Self.layout.annotationsOffset) }
 
-    return result
-  }
-}
-
-extension PyFunction {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFunction(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -1791,12 +1968,41 @@ extension PyFunction {
   }
 }
 
-// MARK: - PyInt
-
 extension PyMemory {
 
-  /// This type was automatically generated based on `PyInt` fields.
-  internal struct PyIntLayout {
+  /// Allocate a new instance of `function` type.
+  public func newFunction(
+    _ py: Py,
+    type: PyType,
+    qualname: PyString?,
+    module: PyObject,
+    code: PyCode,
+    globals: PyDict
+  ) -> PyFunction {
+    let typeLayout = PyFunction.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyFunction(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      qualname: qualname,
+      module: module,
+      code: code,
+      globals: globals
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyInt
+
+extension PyInt {
+
+  /// This type was automatically generated based on `PyInt` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let valueOffset: Int
     internal let size: Int
     internal let alignment: Int
@@ -1806,7 +2012,7 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: BigInt.self)
+          PyMemory.FieldLayout(from: BigInt.self) // value
         ]
       )
 
@@ -1816,6 +2022,21 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var valuePtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyInt(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.valuePtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `int` type.
   public func newInt(
@@ -1828,7 +2049,7 @@ extension PyMemory {
     let result = PyInt(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       value: value
     )
@@ -1837,22 +2058,13 @@ extension PyMemory {
   }
 }
 
-extension PyInt {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyInt(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.valuePtr.deinitialize()
-  }
-}
-
 // MARK: - PyIterator
 
-extension PyMemory {
+extension PyIterator {
 
-  /// This type was automatically generated based on `PyIterator` fields.
-  internal struct PyIteratorLayout {
+  /// This type was automatically generated based on `PyIterator` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let sequenceOffset: Int
     internal let indexOffset: Int
     internal let size: Int
@@ -1863,8 +2075,8 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyObject.self),
-          FieldLayout(from: Int.self)
+          PyMemory.FieldLayout(from: PyObject.self), // sequence
+          PyMemory.FieldLayout(from: Int.self) // index
         ]
       )
 
@@ -1875,6 +2087,23 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var sequencePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.sequenceOffset) }
+  internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyIterator(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.sequencePtr.deinitialize()
+    zelf.indexPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `iterator` type.
   public func newIterator(
@@ -1887,7 +2116,7 @@ extension PyMemory {
     let result = PyIterator(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       sequence: sequence
     )
@@ -1896,23 +2125,13 @@ extension PyMemory {
   }
 }
 
-extension PyIterator {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.sequencePtr.deinitialize()
-    zelf.indexPtr.deinitialize()
-  }
-}
-
 // MARK: - PyList
 
-extension PyMemory {
+extension PyList {
 
-  /// This type was automatically generated based on `PyList` fields.
-  internal struct PyListLayout {
+  /// This type was automatically generated based on `PyList` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let elementsOffset: Int
     internal let size: Int
     internal let alignment: Int
@@ -1922,7 +2141,7 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: [PyObject].self)
+          PyMemory.FieldLayout(from: [PyObject].self) // elements
         ]
       )
 
@@ -1932,6 +2151,21 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var elementsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyList(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.elementsPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `list` type.
   public func newList(
@@ -1944,7 +2178,7 @@ extension PyMemory {
     let result = PyList(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       elements: elements
     )
@@ -1953,22 +2187,13 @@ extension PyMemory {
   }
 }
 
-extension PyList {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyList(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.elementsPtr.deinitialize()
-  }
-}
-
 // MARK: - PyListIterator
 
-extension PyMemory {
+extension PyListIterator {
 
-  /// This type was automatically generated based on `PyListIterator` fields.
-  internal struct PyListIteratorLayout {
+  /// This type was automatically generated based on `PyListIterator` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let listOffset: Int
     internal let indexOffset: Int
     internal let size: Int
@@ -1979,8 +2204,8 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyList.self),
-          FieldLayout(from: Int.self)
+          PyMemory.FieldLayout(from: PyList.self), // list
+          PyMemory.FieldLayout(from: Int.self) // index
         ]
       )
 
@@ -1991,6 +2216,23 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var listPtr: Ptr<PyList> { Ptr(self.ptr, offset: Self.layout.listOffset) }
+  internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyListIterator(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.listPtr.deinitialize()
+    zelf.indexPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `list_iterator` type.
   public func newListIterator(
@@ -2003,7 +2245,7 @@ extension PyMemory {
     let result = PyListIterator(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       list: list
     )
@@ -2012,23 +2254,13 @@ extension PyMemory {
   }
 }
 
-extension PyListIterator {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyListIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.listPtr.deinitialize()
-    zelf.indexPtr.deinitialize()
-  }
-}
-
 // MARK: - PyListReverseIterator
 
-extension PyMemory {
+extension PyListReverseIterator {
 
-  /// This type was automatically generated based on `PyListReverseIterator` fields.
-  internal struct PyListReverseIteratorLayout {
+  /// This type was automatically generated based on `PyListReverseIterator` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let listOffset: Int
     internal let indexOffset: Int
     internal let size: Int
@@ -2039,8 +2271,8 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyList.self),
-          FieldLayout(from: Int.self)
+          PyMemory.FieldLayout(from: PyList.self), // list
+          PyMemory.FieldLayout(from: Int.self) // index
         ]
       )
 
@@ -2051,6 +2283,23 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var listPtr: Ptr<PyList> { Ptr(self.ptr, offset: Self.layout.listOffset) }
+  internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyListReverseIterator(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.listPtr.deinitialize()
+    zelf.indexPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `list_reverseiterator` type.
   public func newListReverseIterator(
@@ -2063,7 +2312,7 @@ extension PyMemory {
     let result = PyListReverseIterator(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       list: list
     )
@@ -2072,23 +2321,13 @@ extension PyMemory {
   }
 }
 
-extension PyListReverseIterator {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyListReverseIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.listPtr.deinitialize()
-    zelf.indexPtr.deinitialize()
-  }
-}
-
 // MARK: - PyMap
 
-extension PyMemory {
+extension PyMap {
 
-  /// This type was automatically generated based on `PyMap` fields.
-  internal struct PyMapLayout {
+  /// This type was automatically generated based on `PyMap` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let fnOffset: Int
     internal let iteratorsOffset: Int
     internal let size: Int
@@ -2099,8 +2338,8 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyObject.self),
-          FieldLayout(from: [PyObject].self)
+          PyMemory.FieldLayout(from: PyObject.self), // fn
+          PyMemory.FieldLayout(from: [PyObject].self) // iterators
         ]
       )
 
@@ -2111,6 +2350,23 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var fnPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.fnOffset) }
+  internal var iteratorsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Self.layout.iteratorsOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyMap(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.fnPtr.deinitialize()
+    zelf.iteratorsPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `map` type.
   public func newMap(
@@ -2124,7 +2380,7 @@ extension PyMemory {
     let result = PyMap(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       fn: fn,
       iterators: iterators
@@ -2134,23 +2390,13 @@ extension PyMemory {
   }
 }
 
-extension PyMap {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyMap(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.fnPtr.deinitialize()
-    zelf.iteratorsPtr.deinitialize()
-  }
-}
-
 // MARK: - PyMethod
 
-extension PyMemory {
+extension PyMethod {
 
-  /// This type was automatically generated based on `PyMethod` fields.
-  internal struct PyMethodLayout {
+  /// This type was automatically generated based on `PyMethod` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let functionOffset: Int
     internal let objectOffset: Int
     internal let size: Int
@@ -2161,8 +2407,8 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyFunction.self),
-          FieldLayout(from: PyObject.self)
+          PyMemory.FieldLayout(from: PyFunction.self), // function
+          PyMemory.FieldLayout(from: PyObject.self) // object
         ]
       )
 
@@ -2173,6 +2419,23 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var functionPtr: Ptr<PyFunction> { Ptr(self.ptr, offset: Self.layout.functionOffset) }
+  internal var objectPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.objectOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyMethod(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.functionPtr.deinitialize()
+    zelf.objectPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `method` type.
   public func newMethod(
@@ -2186,7 +2449,7 @@ extension PyMemory {
     let result = PyMethod(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       function: function,
       object: object
@@ -2196,23 +2459,13 @@ extension PyMemory {
   }
 }
 
-extension PyMethod {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyMethod(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.functionPtr.deinitialize()
-    zelf.objectPtr.deinitialize()
-  }
-}
-
 // MARK: - PyModule
 
-extension PyMemory {
+extension PyModule {
 
-  /// This type was automatically generated based on `PyModule` fields.
-  internal struct PyModuleLayout {
+  /// This type was automatically generated based on `PyModule` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let size: Int
     internal let alignment: Int
 
@@ -2228,6 +2481,18 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyModule(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `module` type.
   public func newModule(
@@ -2242,7 +2507,7 @@ extension PyMemory {
     let result = PyModule(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       name: name,
       doc: doc,
@@ -2253,20 +2518,13 @@ extension PyMemory {
   }
 }
 
-extension PyModule {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyModule(ptr: ptr)
-    zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
-  }
-}
-
 // MARK: - PyNamespace
 
-extension PyMemory {
+extension PyNamespace {
 
-  /// This type was automatically generated based on `PyNamespace` fields.
-  internal struct PyNamespaceLayout {
+  /// This type was automatically generated based on `PyNamespace` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let size: Int
     internal let alignment: Int
 
@@ -2282,6 +2540,18 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyNamespace(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `SimpleNamespace` type.
   public func newNamespace(
@@ -2294,7 +2564,7 @@ extension PyMemory {
     let result = PyNamespace(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       __dict__: __dict__
     )
@@ -2303,20 +2573,13 @@ extension PyMemory {
   }
 }
 
-extension PyNamespace {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyNamespace(ptr: ptr)
-    zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
-  }
-}
-
 // MARK: - PyNone
 
-extension PyMemory {
+extension PyNone {
 
-  /// This type was automatically generated based on `PyNone` fields.
-  internal struct PyNoneLayout {
+  /// This type was automatically generated based on `PyNone` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let size: Int
     internal let alignment: Int
 
@@ -2332,6 +2595,18 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyNone(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `NoneType` type.
   public func newNone(
@@ -2343,7 +2618,7 @@ extension PyMemory {
     let result = PyNone(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type
     )
 
@@ -2351,20 +2626,13 @@ extension PyMemory {
   }
 }
 
-extension PyNone {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyNone(ptr: ptr)
-    zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
-  }
-}
-
 // MARK: - PyNotImplemented
 
-extension PyMemory {
+extension PyNotImplemented {
 
-  /// This type was automatically generated based on `PyNotImplemented` fields.
-  internal struct PyNotImplementedLayout {
+  /// This type was automatically generated based on `PyNotImplemented` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let size: Int
     internal let alignment: Int
 
@@ -2380,6 +2648,18 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyNotImplemented(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `NotImplementedType` type.
   public func newNotImplemented(
@@ -2391,7 +2671,7 @@ extension PyMemory {
     let result = PyNotImplemented(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type
     )
 
@@ -2399,20 +2679,13 @@ extension PyMemory {
   }
 }
 
-extension PyNotImplemented {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyNotImplemented(ptr: ptr)
-    zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
-  }
-}
-
 // MARK: - PyObject
 
-extension PyMemory {
+extension PyObject {
 
-  /// This type was automatically generated based on `PyObject` fields.
-  internal struct PyObjectLayout {
+  /// This type was automatically generated based on `PyObject` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let size: Int
     internal let alignment: Int
 
@@ -2429,6 +2702,18 @@ extension PyMemory {
     }
   }
 
+  internal static let layout = Layout()
+
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyObject(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
   /// Allocate a new instance of `object` type.
   public func newObject(
     _ py: Py,
@@ -2439,7 +2724,7 @@ extension PyMemory {
     let result = PyObject(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type
     )
 
@@ -2447,20 +2732,13 @@ extension PyMemory {
   }
 }
 
-extension PyObject {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyObject(ptr: ptr)
-    zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
-  }
-}
-
 // MARK: - PyProperty
 
-extension PyMemory {
+extension PyProperty {
 
-  /// This type was automatically generated based on `PyProperty` fields.
-  internal struct PyPropertyLayout {
+  /// This type was automatically generated based on `PyProperty` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let _getOffset: Int
     internal let _setOffset: Int
     internal let _delOffset: Int
@@ -2473,10 +2751,10 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyObject?.self),
-          FieldLayout(from: PyObject?.self),
-          FieldLayout(from: PyObject?.self),
-          FieldLayout(from: PyObject?.self)
+          PyMemory.FieldLayout(from: PyObject?.self), // _get
+          PyMemory.FieldLayout(from: PyObject?.self), // _set
+          PyMemory.FieldLayout(from: PyObject?.self), // _del
+          PyMemory.FieldLayout(from: PyObject?.self) // doc
         ]
       )
 
@@ -2489,6 +2767,27 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var _getPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout._getOffset) }
+  internal var _setPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout._setOffset) }
+  internal var _delPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout._delOffset) }
+  internal var docPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.docOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyProperty(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf._getPtr.deinitialize()
+    zelf._setPtr.deinitialize()
+    zelf._delPtr.deinitialize()
+    zelf.docPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `property` type.
   public func newProperty(
@@ -2504,7 +2803,7 @@ extension PyMemory {
     let result = PyProperty(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       get: get,
       set: set,
@@ -2516,25 +2815,13 @@ extension PyMemory {
   }
 }
 
-extension PyProperty {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyProperty(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf._getPtr.deinitialize()
-    zelf._setPtr.deinitialize()
-    zelf._delPtr.deinitialize()
-    zelf.docPtr.deinitialize()
-  }
-}
-
 // MARK: - PyRange
 
-extension PyMemory {
+extension PyRange {
 
-  /// This type was automatically generated based on `PyRange` fields.
-  internal struct PyRangeLayout {
+  /// This type was automatically generated based on `PyRange` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let startOffset: Int
     internal let stopOffset: Int
     internal let stepOffset: Int
@@ -2547,10 +2834,10 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyInt.self),
-          FieldLayout(from: PyInt.self),
-          FieldLayout(from: PyInt.self),
-          FieldLayout(from: PyInt.self)
+          PyMemory.FieldLayout(from: PyInt.self), // start
+          PyMemory.FieldLayout(from: PyInt.self), // stop
+          PyMemory.FieldLayout(from: PyInt.self), // step
+          PyMemory.FieldLayout(from: PyInt.self) // length
         ]
       )
 
@@ -2563,6 +2850,27 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var startPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Self.layout.startOffset) }
+  internal var stopPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Self.layout.stopOffset) }
+  internal var stepPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Self.layout.stepOffset) }
+  internal var lengthPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Self.layout.lengthOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyRange(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.startPtr.deinitialize()
+    zelf.stopPtr.deinitialize()
+    zelf.stepPtr.deinitialize()
+    zelf.lengthPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `range` type.
   public func newRange(
@@ -2577,7 +2885,7 @@ extension PyMemory {
     let result = PyRange(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       start: start,
       stop: stop,
@@ -2588,25 +2896,13 @@ extension PyMemory {
   }
 }
 
-extension PyRange {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyRange(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.startPtr.deinitialize()
-    zelf.stopPtr.deinitialize()
-    zelf.stepPtr.deinitialize()
-    zelf.lengthPtr.deinitialize()
-  }
-}
-
 // MARK: - PyRangeIterator
 
-extension PyMemory {
+extension PyRangeIterator {
 
-  /// This type was automatically generated based on `PyRangeIterator` fields.
-  internal struct PyRangeIteratorLayout {
+  /// This type was automatically generated based on `PyRangeIterator` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let startOffset: Int
     internal let stepOffset: Int
     internal let lengthOffset: Int
@@ -2619,10 +2915,10 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: BigInt.self),
-          FieldLayout(from: BigInt.self),
-          FieldLayout(from: BigInt.self),
-          FieldLayout(from: BigInt.self)
+          PyMemory.FieldLayout(from: BigInt.self), // start
+          PyMemory.FieldLayout(from: BigInt.self), // step
+          PyMemory.FieldLayout(from: BigInt.self), // length
+          PyMemory.FieldLayout(from: BigInt.self) // index
         ]
       )
 
@@ -2635,6 +2931,27 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var startPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.startOffset) }
+  internal var stepPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.stepOffset) }
+  internal var lengthPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.lengthOffset) }
+  internal var indexPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyRangeIterator(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.startPtr.deinitialize()
+    zelf.stepPtr.deinitialize()
+    zelf.lengthPtr.deinitialize()
+    zelf.indexPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `range_iterator` type.
   public func newRangeIterator(
@@ -2649,7 +2966,7 @@ extension PyMemory {
     let result = PyRangeIterator(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       start: start,
       step: step,
@@ -2660,25 +2977,13 @@ extension PyMemory {
   }
 }
 
-extension PyRangeIterator {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyRangeIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.startPtr.deinitialize()
-    zelf.stepPtr.deinitialize()
-    zelf.lengthPtr.deinitialize()
-    zelf.indexPtr.deinitialize()
-  }
-}
-
 // MARK: - PyReversed
 
-extension PyMemory {
+extension PyReversed {
 
-  /// This type was automatically generated based on `PyReversed` fields.
-  internal struct PyReversedLayout {
+  /// This type was automatically generated based on `PyReversed` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let sequenceOffset: Int
     internal let indexOffset: Int
     internal let size: Int
@@ -2689,8 +2994,8 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyObject.self),
-          FieldLayout(from: Int.self)
+          PyMemory.FieldLayout(from: PyObject.self), // sequence
+          PyMemory.FieldLayout(from: Int.self) // index
         ]
       )
 
@@ -2701,6 +3006,23 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var sequencePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.sequenceOffset) }
+  internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyReversed(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.sequencePtr.deinitialize()
+    zelf.indexPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `reversed` type.
   public func newReversed(
@@ -2714,7 +3036,7 @@ extension PyMemory {
     let result = PyReversed(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       sequence: sequence,
       count: count
@@ -2724,23 +3046,13 @@ extension PyMemory {
   }
 }
 
-extension PyReversed {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyReversed(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.sequencePtr.deinitialize()
-    zelf.indexPtr.deinitialize()
-  }
-}
-
 // MARK: - PySet
 
-extension PyMemory {
+extension PySet {
 
-  /// This type was automatically generated based on `PySet` fields.
-  internal struct PySetLayout {
+  /// This type was automatically generated based on `PySet` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let elementsOffset: Int
     internal let size: Int
     internal let alignment: Int
@@ -2750,7 +3062,7 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PySet.OrderedSet.self)
+          PyMemory.FieldLayout(from: OrderedSet.self) // elements
         ]
       )
 
@@ -2760,6 +3072,21 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var elementsPtr: Ptr<OrderedSet> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PySet(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.elementsPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `set` type.
   public func newSet(
@@ -2772,7 +3099,7 @@ extension PyMemory {
     let result = PySet(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       elements: elements
     )
@@ -2781,22 +3108,13 @@ extension PyMemory {
   }
 }
 
-extension PySet {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PySet(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.elementsPtr.deinitialize()
-  }
-}
-
 // MARK: - PySetIterator
 
-extension PyMemory {
+extension PySetIterator {
 
-  /// This type was automatically generated based on `PySetIterator` fields.
-  internal struct PySetIteratorLayout {
+  /// This type was automatically generated based on `PySetIterator` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let setOffset: Int
     internal let indexOffset: Int
     internal let initialCountOffset: Int
@@ -2808,9 +3126,9 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyAnySet.self),
-          FieldLayout(from: Int.self),
-          FieldLayout(from: Int.self)
+          PyMemory.FieldLayout(from: PyAnySet.self), // set
+          PyMemory.FieldLayout(from: Int.self), // index
+          PyMemory.FieldLayout(from: Int.self) // initialCount
         ]
       )
 
@@ -2823,6 +3141,25 @@ extension PyMemory {
     }
   }
 
+  internal static let layout = Layout()
+
+  internal var setPtr: Ptr<PyAnySet> { Ptr(self.ptr, offset: Self.layout.setOffset) }
+  internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+  internal var initialCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.initialCountOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PySetIterator(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.setPtr.deinitialize()
+    zelf.indexPtr.deinitialize()
+    zelf.initialCountPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
+
   /// Allocate a new instance of `set_iterator` type.
   public func newSetIterator(
     _ py: Py,
@@ -2834,7 +3171,7 @@ extension PyMemory {
     let result = PySetIterator(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       set: set
     )
@@ -2853,7 +3190,7 @@ extension PyMemory {
     let result = PySetIterator(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       frozenSet: frozenSet
     )
@@ -2862,24 +3199,13 @@ extension PyMemory {
   }
 }
 
-extension PySetIterator {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PySetIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.setPtr.deinitialize()
-    zelf.indexPtr.deinitialize()
-    zelf.initialCountPtr.deinitialize()
-  }
-}
-
 // MARK: - PySlice
 
-extension PyMemory {
+extension PySlice {
 
-  /// This type was automatically generated based on `PySlice` fields.
-  internal struct PySliceLayout {
+  /// This type was automatically generated based on `PySlice` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let startOffset: Int
     internal let stopOffset: Int
     internal let stepOffset: Int
@@ -2891,9 +3217,9 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyObject.self),
-          FieldLayout(from: PyObject.self),
-          FieldLayout(from: PyObject.self)
+          PyMemory.FieldLayout(from: PyObject.self), // start
+          PyMemory.FieldLayout(from: PyObject.self), // stop
+          PyMemory.FieldLayout(from: PyObject.self) // step
         ]
       )
 
@@ -2905,6 +3231,25 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var startPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.startOffset) }
+  internal var stopPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.stopOffset) }
+  internal var stepPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.stepOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PySlice(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.startPtr.deinitialize()
+    zelf.stopPtr.deinitialize()
+    zelf.stepPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `slice` type.
   public func newSlice(
@@ -2919,7 +3264,7 @@ extension PyMemory {
     let result = PySlice(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       start: start,
       stop: stop,
@@ -2930,24 +3275,13 @@ extension PyMemory {
   }
 }
 
-extension PySlice {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PySlice(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.startPtr.deinitialize()
-    zelf.stopPtr.deinitialize()
-    zelf.stepPtr.deinitialize()
-  }
-}
-
 // MARK: - PyStaticMethod
 
-extension PyMemory {
+extension PyStaticMethod {
 
-  /// This type was automatically generated based on `PyStaticMethod` fields.
-  internal struct PyStaticMethodLayout {
+  /// This type was automatically generated based on `PyStaticMethod` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let callableOffset: Int
     internal let size: Int
     internal let alignment: Int
@@ -2957,7 +3291,7 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyObject?.self)
+          PyMemory.FieldLayout(from: PyObject?.self) // callable
         ]
       )
 
@@ -2967,6 +3301,21 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var callablePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.callableOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyStaticMethod(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.callablePtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `staticmethod` type.
   public func newStaticMethod(
@@ -2979,7 +3328,7 @@ extension PyMemory {
     let result = PyStaticMethod(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       callable: callable
     )
@@ -2988,22 +3337,13 @@ extension PyMemory {
   }
 }
 
-extension PyStaticMethod {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyStaticMethod(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.callablePtr.deinitialize()
-  }
-}
-
 // MARK: - PyString
 
-extension PyMemory {
+extension PyString {
 
-  /// This type was automatically generated based on `PyString` fields.
-  internal struct PyStringLayout {
+  /// This type was automatically generated based on `PyString` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let valueOffset: Int
     internal let cachedCountOffset: Int
     internal let cachedHashOffset: Int
@@ -3015,9 +3355,9 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: String.self),
-          FieldLayout(from: Int.self),
-          FieldLayout(from: PyHash.self)
+          PyMemory.FieldLayout(from: String.self), // value
+          PyMemory.FieldLayout(from: Int.self), // cachedCount
+          PyMemory.FieldLayout(from: PyHash.self) // cachedHash
         ]
       )
 
@@ -3030,27 +3370,12 @@ extension PyMemory {
     }
   }
 
-  /// Allocate a new instance of `str` type.
-  public func newString(
-    _ py: Py,
-    type: PyType,
-    value: String
-  ) -> PyString {
-    let typeLayout = PyString.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyString(ptr: ptr)
+  internal static let layout = Layout()
 
-    result.initialize(
-      _: py,
-      type: type,
-      value: value
-    )
+  internal var valuePtr: Ptr<String> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
+  internal var cachedCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.cachedCountOffset) }
+  internal var cachedHashPtr: Ptr<PyHash> { Ptr(self.ptr, offset: Self.layout.cachedHashOffset) }
 
-    return result
-  }
-}
-
-extension PyString {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyString(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -3062,12 +3387,35 @@ extension PyString {
   }
 }
 
-// MARK: - PyStringIterator
-
 extension PyMemory {
 
-  /// This type was automatically generated based on `PyStringIterator` fields.
-  internal struct PyStringIteratorLayout {
+  /// Allocate a new instance of `str` type.
+  public func newString(
+    _ py: Py,
+    type: PyType,
+    value: String
+  ) -> PyString {
+    let typeLayout = PyString.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyString(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      value: value
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyStringIterator
+
+extension PyStringIterator {
+
+  /// This type was automatically generated based on `PyStringIterator` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let stringOffset: Int
     internal let indexOffset: Int
     internal let size: Int
@@ -3078,8 +3426,8 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyString.self),
-          FieldLayout(from: Int.self)
+          PyMemory.FieldLayout(from: PyString.self), // string
+          PyMemory.FieldLayout(from: Int.self) // index
         ]
       )
 
@@ -3090,6 +3438,23 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var stringPtr: Ptr<PyString> { Ptr(self.ptr, offset: Self.layout.stringOffset) }
+  internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyStringIterator(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.stringPtr.deinitialize()
+    zelf.indexPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `str_iterator` type.
   public func newStringIterator(
@@ -3102,7 +3467,7 @@ extension PyMemory {
     let result = PyStringIterator(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       string: string
     )
@@ -3111,23 +3476,13 @@ extension PyMemory {
   }
 }
 
-extension PyStringIterator {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyStringIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.stringPtr.deinitialize()
-    zelf.indexPtr.deinitialize()
-  }
-}
-
 // MARK: - PySuper
 
-extension PyMemory {
+extension PySuper {
 
-  /// This type was automatically generated based on `PySuper` fields.
-  internal struct PySuperLayout {
+  /// This type was automatically generated based on `PySuper` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let thisClassOffset: Int
     internal let objectOffset: Int
     internal let objectTypeOffset: Int
@@ -3139,9 +3494,9 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyType?.self),
-          FieldLayout(from: PyObject?.self),
-          FieldLayout(from: PyType?.self)
+          PyMemory.FieldLayout(from: PyType?.self), // thisClass
+          PyMemory.FieldLayout(from: PyObject?.self), // object
+          PyMemory.FieldLayout(from: PyType?.self) // objectType
         ]
       )
 
@@ -3153,6 +3508,25 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var thisClassPtr: Ptr<PyType?> { Ptr(self.ptr, offset: Self.layout.thisClassOffset) }
+  internal var objectPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.objectOffset) }
+  internal var objectTypePtr: Ptr<PyType?> { Ptr(self.ptr, offset: Self.layout.objectTypeOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PySuper(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.thisClassPtr.deinitialize()
+    zelf.objectPtr.deinitialize()
+    zelf.objectTypePtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `super` type.
   public func newSuper(
@@ -3167,7 +3541,7 @@ extension PyMemory {
     let result = PySuper(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       requestedType: requestedType,
       object: object,
@@ -3178,24 +3552,13 @@ extension PyMemory {
   }
 }
 
-extension PySuper {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PySuper(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.thisClassPtr.deinitialize()
-    zelf.objectPtr.deinitialize()
-    zelf.objectTypePtr.deinitialize()
-  }
-}
-
 // MARK: - PyTextFile
 
-extension PyMemory {
+extension PyTextFile {
 
-  /// This type was automatically generated based on `PyTextFile` fields.
-  internal struct PyTextFileLayout {
+  /// This type was automatically generated based on `PyTextFile` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let nameOffset: Int
     internal let fdOffset: Int
     internal let modeOffset: Int
@@ -3209,11 +3572,11 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: String?.self),
-          FieldLayout(from: FileDescriptorType.self),
-          FieldLayout(from: FileMode.self),
-          FieldLayout(from: PyString.Encoding.self),
-          FieldLayout(from: PyString.ErrorHandling.self)
+          PyMemory.FieldLayout(from: String?.self), // name
+          PyMemory.FieldLayout(from: FileDescriptorType.self), // fd
+          PyMemory.FieldLayout(from: FileMode.self), // mode
+          PyMemory.FieldLayout(from: PyString.Encoding.self), // encoding
+          PyMemory.FieldLayout(from: PyString.ErrorHandling.self) // errorHandling
         ]
       )
 
@@ -3227,6 +3590,29 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var namePtr: Ptr<String?> { Ptr(self.ptr, offset: Self.layout.nameOffset) }
+  internal var fdPtr: Ptr<FileDescriptorType> { Ptr(self.ptr, offset: Self.layout.fdOffset) }
+  internal var modePtr: Ptr<FileMode> { Ptr(self.ptr, offset: Self.layout.modeOffset) }
+  internal var encodingPtr: Ptr<PyString.Encoding> { Ptr(self.ptr, offset: Self.layout.encodingOffset) }
+  internal var errorHandlingPtr: Ptr<PyString.ErrorHandling> { Ptr(self.ptr, offset: Self.layout.errorHandlingOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyTextFile(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.namePtr.deinitialize()
+    zelf.fdPtr.deinitialize()
+    zelf.modePtr.deinitialize()
+    zelf.encodingPtr.deinitialize()
+    zelf.errorHandlingPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `TextFile` type.
   public func newTextFile(
@@ -3244,7 +3630,7 @@ extension PyMemory {
     let result = PyTextFile(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       name: name,
       fd: fd,
@@ -3258,26 +3644,13 @@ extension PyMemory {
   }
 }
 
-extension PyTextFile {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyTextFile(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.namePtr.deinitialize()
-    zelf.fdPtr.deinitialize()
-    zelf.modePtr.deinitialize()
-    zelf.encodingPtr.deinitialize()
-    zelf.errorHandlingPtr.deinitialize()
-  }
-}
-
 // MARK: - PyTuple
 
-extension PyMemory {
+extension PyTuple {
 
-  /// This type was automatically generated based on `PyTuple` fields.
-  internal struct PyTupleLayout {
+  /// This type was automatically generated based on `PyTuple` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let elementsOffset: Int
     internal let size: Int
     internal let alignment: Int
@@ -3287,7 +3660,7 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: [PyObject].self)
+          PyMemory.FieldLayout(from: [PyObject].self) // elements
         ]
       )
 
@@ -3297,6 +3670,21 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var elementsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyTuple(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.elementsPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `tuple` type.
   public func newTuple(
@@ -3309,7 +3697,7 @@ extension PyMemory {
     let result = PyTuple(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       elements: elements
     )
@@ -3318,22 +3706,13 @@ extension PyMemory {
   }
 }
 
-extension PyTuple {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyTuple(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.elementsPtr.deinitialize()
-  }
-}
-
 // MARK: - PyTupleIterator
 
-extension PyMemory {
+extension PyTupleIterator {
 
-  /// This type was automatically generated based on `PyTupleIterator` fields.
-  internal struct PyTupleIteratorLayout {
+  /// This type was automatically generated based on `PyTupleIterator` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let tupleOffset: Int
     internal let indexOffset: Int
     internal let size: Int
@@ -3344,8 +3723,8 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: PyTuple.self),
-          FieldLayout(from: Int.self)
+          PyMemory.FieldLayout(from: PyTuple.self), // tuple
+          PyMemory.FieldLayout(from: Int.self) // index
         ]
       )
 
@@ -3356,6 +3735,23 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var tuplePtr: Ptr<PyTuple> { Ptr(self.ptr, offset: Self.layout.tupleOffset) }
+  internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyTupleIterator(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.tuplePtr.deinitialize()
+    zelf.indexPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `tuple_iterator` type.
   public func newTupleIterator(
@@ -3368,7 +3764,7 @@ extension PyMemory {
     let result = PyTupleIterator(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       tuple: tuple
     )
@@ -3377,23 +3773,13 @@ extension PyMemory {
   }
 }
 
-extension PyTupleIterator {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyTupleIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.tuplePtr.deinitialize()
-    zelf.indexPtr.deinitialize()
-  }
-}
-
 // MARK: - PyType
 
-extension PyMemory {
+extension PyType {
 
-  /// This type was automatically generated based on `PyType` fields.
-  internal struct PyTypeLayout {
+  /// This type was automatically generated based on `PyType` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let nameOffset: Int
     internal let qualnameOffset: Int
     internal let baseOffset: Int
@@ -3412,16 +3798,16 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: String.self),
-          FieldLayout(from: String.self),
-          FieldLayout(from: PyType?.self),
-          FieldLayout(from: [PyType].self),
-          FieldLayout(from: [PyType].self),
-          FieldLayout(from: [PyType].self),
-          FieldLayout(from: PyType.MemoryLayout.self),
-          FieldLayout(from: PyStaticCall.KnownNotOverriddenMethods.self),
-          FieldLayout(from: PyType.DebugFn.self),
-          FieldLayout(from: PyType.DeinitializeFn.self)
+          PyMemory.FieldLayout(from: String.self), // name
+          PyMemory.FieldLayout(from: String.self), // qualname
+          PyMemory.FieldLayout(from: PyType?.self), // base
+          PyMemory.FieldLayout(from: [PyType].self), // bases
+          PyMemory.FieldLayout(from: [PyType].self), // mro
+          PyMemory.FieldLayout(from: [PyType].self), // subclasses
+          PyMemory.FieldLayout(from: MemoryLayout.self), // layout
+          PyMemory.FieldLayout(from: PyStaticCall.KnownNotOverriddenMethods.self), // staticMethods
+          PyMemory.FieldLayout(from: DebugFn.self), // debugFn
+          PyMemory.FieldLayout(from: DeinitializeFn.self) // deinitialize
         ]
       )
 
@@ -3440,6 +3826,39 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var namePtr: Ptr<String> { Ptr(self.ptr, offset: Self.layout.nameOffset) }
+  internal var qualnamePtr: Ptr<String> { Ptr(self.ptr, offset: Self.layout.qualnameOffset) }
+  internal var basePtr: Ptr<PyType?> { Ptr(self.ptr, offset: Self.layout.baseOffset) }
+  internal var basesPtr: Ptr<[PyType]> { Ptr(self.ptr, offset: Self.layout.basesOffset) }
+  internal var mroPtr: Ptr<[PyType]> { Ptr(self.ptr, offset: Self.layout.mroOffset) }
+  internal var subclassesPtr: Ptr<[PyType]> { Ptr(self.ptr, offset: Self.layout.subclassesOffset) }
+  internal var layoutPtr: Ptr<MemoryLayout> { Ptr(self.ptr, offset: Self.layout.layoutOffset) }
+  internal var staticMethodsPtr: Ptr<PyStaticCall.KnownNotOverriddenMethods> { Ptr(self.ptr, offset: Self.layout.staticMethodsOffset) }
+  internal var debugFnPtr: Ptr<DebugFn> { Ptr(self.ptr, offset: Self.layout.debugFnOffset) }
+  internal var deinitializePtr: Ptr<DeinitializeFn> { Ptr(self.ptr, offset: Self.layout.deinitializeOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyType(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.namePtr.deinitialize()
+    zelf.qualnamePtr.deinitialize()
+    zelf.basePtr.deinitialize()
+    zelf.basesPtr.deinitialize()
+    zelf.mroPtr.deinitialize()
+    zelf.subclassesPtr.deinitialize()
+    zelf.layoutPtr.deinitialize()
+    zelf.staticMethodsPtr.deinitialize()
+    zelf.debugFnPtr.deinitialize()
+    zelf.deinitializePtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `type` type.
   public func newType(
@@ -3462,7 +3881,7 @@ extension PyMemory {
     let result = PyType(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       name: name,
       qualname: qualname,
@@ -3481,31 +3900,13 @@ extension PyMemory {
   }
 }
 
-extension PyType {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyType(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.namePtr.deinitialize()
-    zelf.qualnamePtr.deinitialize()
-    zelf.basePtr.deinitialize()
-    zelf.basesPtr.deinitialize()
-    zelf.mroPtr.deinitialize()
-    zelf.subclassesPtr.deinitialize()
-    zelf.layoutPtr.deinitialize()
-    zelf.staticMethodsPtr.deinitialize()
-    zelf.debugFnPtr.deinitialize()
-    zelf.deinitializePtr.deinitialize()
-  }
-}
-
 // MARK: - PyZip
 
-extension PyMemory {
+extension PyZip {
 
-  /// This type was automatically generated based on `PyZip` fields.
-  internal struct PyZipLayout {
+  /// This type was automatically generated based on `PyZip` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
     internal let iteratorsOffset: Int
     internal let size: Int
     internal let alignment: Int
@@ -3515,7 +3916,7 @@ extension PyMemory {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          FieldLayout(from: [PyObject].self)
+          PyMemory.FieldLayout(from: [PyObject].self) // iterators
         ]
       )
 
@@ -3525,6 +3926,21 @@ extension PyMemory {
       self.alignment = layout.alignment
     }
   }
+
+  internal static let layout = Layout()
+
+  internal var iteratorsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Self.layout.iteratorsOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyZip(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.iteratorsPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
 
   /// Allocate a new instance of `zip` type.
   public func newZip(
@@ -3537,22 +3953,12 @@ extension PyMemory {
     let result = PyZip(ptr: ptr)
 
     result.initialize(
-      _: py,
+      py,
       type: type,
       iterators: iterators
     )
 
     return result
-  }
-}
-
-extension PyZip {
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyZip(ptr: ptr)
-    zelf.beforeDeinitialize()
-
-    zelf.header.deinitialize()
-    zelf.iteratorsPtr.deinitialize()
   }
 }
 

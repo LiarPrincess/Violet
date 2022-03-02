@@ -10,12 +10,8 @@
 /// can interact with value in parent frame.
 public struct PyCell: PyObjectMixin {
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyCellLayout()
-
+  // sourcery: includeInLayout
   // This has to be public for performance
-  internal var contentPtr: Ptr<PyObject?> { self.ptr[Self.layout.contentOffset] }
   internal var content: PyObject? { self.contentPtr.pointee }
 
   public let ptr: RawPtr

@@ -14,18 +14,13 @@ public struct PyRangeIterator: PyObjectMixin {
 
   // MARK: - Properties
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyRangeIteratorLayout()
-
-  internal var startPtr: Ptr<BigInt> { self.ptr[Self.layout.startOffset] }
-  internal var stepPtr: Ptr<BigInt> { self.ptr[Self.layout.stepOffset] }
-  internal var lengthPtr: Ptr<BigInt> { self.ptr[Self.layout.lengthOffset] }
-  internal var indexPtr: Ptr<BigInt> { self.ptr[Self.layout.indexOffset] }
-
+  // sourcery: includeInLayout
   internal var start: BigInt { self.startPtr.pointee }
+  // sourcery: includeInLayout
   internal var step: BigInt { self.stepPtr.pointee }
+  // sourcery: includeInLayout
   internal var length: BigInt { self.lengthPtr.pointee }
+  // sourcery: includeInLayout
   internal var index: BigInt { self.indexPtr.pointee }
 
   // MARK: - Swift init

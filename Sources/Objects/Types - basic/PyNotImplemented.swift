@@ -11,10 +11,6 @@ public struct PyNotImplemented: PyObjectMixin {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyNotImplementedLayout()
-
   public let ptr: RawPtr
 
   public init(ptr: RawPtr) {

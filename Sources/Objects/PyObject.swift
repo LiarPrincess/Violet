@@ -19,10 +19,6 @@ public struct PyObject: PyObjectMixin {
     The most base type
     """
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyObjectLayout()
-
   public let ptr: RawPtr
 
   public init(ptr: RawPtr) {

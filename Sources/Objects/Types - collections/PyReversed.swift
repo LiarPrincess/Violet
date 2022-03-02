@@ -18,16 +18,11 @@ public struct PyReversed: PyObjectMixin {
     Return a reverse iterator over the values of the given sequence.
     """
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyReversedLayout()
-
   private static let endIndex = -1
 
-  internal var sequencePtr: Ptr<PyObject> { self.ptr[Self.layout.sequenceOffset] }
-  internal var indexPtr: Ptr<Int> { self.ptr[Self.layout.indexOffset] }
-
+  // sourcery: includeInLayout
   internal var sequence: PyObject { self.sequencePtr.pointee }
+  // sourcery: includeInLayout
   internal var index: Int { self.indexPtr.pointee }
 
   public let ptr: RawPtr

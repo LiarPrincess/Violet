@@ -31,11 +31,7 @@ public struct PyClassMethod: PyObjectMixin {
     If you want those, see the staticmethod builtin.
     """
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyClassMethodLayout()
-
-  internal var callablePtr: Ptr<PyObject?> { self.ptr[Self.layout.callableOffset] }
+  // sourcery: includeInLayout
   internal var callable: PyObject? { self.callablePtr.pointee }
 
   public let ptr: RawPtr

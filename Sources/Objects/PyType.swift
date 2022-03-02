@@ -18,43 +18,36 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     type(name, bases, dict) -> a new type
     """
 
-  public typealias DebugFn = (RawPtr) -> String
-  public typealias DeinitializeFn = (RawPtr) -> Void
-
-  // MARK: - Properties
-
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyTypeLayout()
-
-  // swiftlint:disable line_length
-  internal var namePtr: Ptr<String> { self.ptr[Self.layout.nameOffset] }
-  internal var qualnamePtr: Ptr<String> { self.ptr[Self.layout.qualnameOffset] }
-  internal var basePtr: Ptr<PyType?> { self.ptr[Self.layout.baseOffset] }
-  internal var basesPtr: Ptr<[PyType]> { self.ptr[Self.layout.basesOffset] }
-  internal var mroPtr: Ptr<[PyType]> { self.ptr[Self.layout.mroOffset] }
-  internal var subclassesPtr: Ptr<[PyType]> { self.ptr[Self.layout.subclassesOffset] }
-  internal var layoutPtr: Ptr<PyType.MemoryLayout> { self.ptr[Self.layout.layoutOffset] }
-  internal var staticMethodsPtr: Ptr<PyStaticCall.KnownNotOverriddenMethods> { self.ptr[Self.layout.staticMethodsOffset] }
-  internal var debugFnPtr: Ptr<PyType.DebugFn> { self.ptr[Self.layout.debugFnOffset] }
-  internal var deinitializePtr: Ptr<PyType.DeinitializeFn> { self.ptr[Self.layout.deinitializeOffset] }
-  // swiftlint:enable line_length
-
+  // Just a reminder:
   //             | Type     | Base       | MRO
   // object type | typeType | nil        | [self]
   // type type   | typeType | objectType | [self, objectType]
   // normal type | typeType | objectType | [self, (...), objectType]
+
+  // MARK: - Properties
+
+  public typealias DebugFn = (RawPtr) -> String
+  public typealias DeinitializeFn = (RawPtr) -> Void
+
+  // sourcery: includeInLayout
   internal var name: String { self.namePtr.pointee }
+  // sourcery: includeInLayout
   internal var qualname: String { self.qualnamePtr.pointee }
+  // sourcery: includeInLayout
   internal var base: PyType? { self.basePtr.pointee }
+  // sourcery: includeInLayout
   internal var bases: [PyType] { self.basesPtr.pointee }
+  // sourcery: includeInLayout
   internal var mro: [PyType] { self.mroPtr.pointee }
+  // sourcery: includeInLayout
   internal var subclasses: [PyType] { self.subclassesPtr.pointee }
 
+  // sourcery: includeInLayout
   /// Swift storage (layout).
   /// See `PyType.MemoryLayout` documentation for details.
   internal var layout: MemoryLayout { self.layoutPtr.pointee }
 
+  // sourcery: includeInLayout
   /// Methods needed to make `PyStaticCall` work.
   ///
   /// See `PyStaticCall` documentation for more information.
@@ -62,8 +55,10 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     self.staticMethodsPtr.pointee
   }
 
+  // sourcery: includeInLayout
   internal var debugFn: DebugFn { self.debugFnPtr.pointee }
-  internal var deinitializer: DeinitializeFn { self.deinitializePtr.pointee }
+  // sourcery: includeInLayout
+  internal var deinitialize: DeinitializeFn { self.deinitializePtr.pointee }
 
   /// `PyObjectHeader.flags` that are only available on `type` instances.
   internal var typeFlags: TypeFlags {

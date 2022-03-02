@@ -11,14 +11,9 @@ import VioletCore
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-   // Layout will be automatically generated, from `Ptr` fields.
-   // Just remember to initialize them in `initialize`!
-   internal static let layout = PyMemory.PyTupleIteratorLayout()
-
-   internal var tuplePtr: Ptr<PyTuple> { self.ptr[Self.layout.tupleOffset] }
-   internal var indexPtr: Ptr<Int> { self.ptr[Self.layout.indexOffset] }
-
+   // sourcery: includeInLayout
    internal var tuple: PyTuple { self.tuplePtr.pointee }
+   // sourcery: includeInLayout
    internal var index: Int { self.indexPtr.pointee }
 
    public let ptr: RawPtr

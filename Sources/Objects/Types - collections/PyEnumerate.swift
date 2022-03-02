@@ -29,15 +29,10 @@ public struct PyEnumerate: PyObjectMixin {
     (0, seq[0]), (1, seq[1]), (2, seq[2]), ...
     """
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyEnumerateLayout()
-
-  internal var iteratorPtr: Ptr<PyObject> { self.ptr[Self.layout.iteratorOffset] }
-  internal var nextIndexPtr: Ptr<BigInt> { self.ptr[Self.layout.nextIndexOffset] }
-
+  // sourcery: includeInLayout
   /// Secondary iterator of enumeration
   internal var iterator: PyObject { self.iteratorPtr.pointee }
+  // sourcery: includeInLayout
   /// Next used index of enumeration
   internal var nextIndex: BigInt { self.nextIndexPtr.pointee }
 

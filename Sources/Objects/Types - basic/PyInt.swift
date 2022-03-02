@@ -34,12 +34,8 @@ public struct PyInt: PyObjectMixin {
     4
     """
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyIntLayout()
-
+  // sourcery: includeInLayout
   // Do not add 'set' to 'self.value' - we cache most used ints!
-  internal var valuePtr: Ptr<BigInt> { self.ptr[Self.layout.valueOffset] }
   internal var value: BigInt { self.valuePtr.pointee }
 
   public let ptr: RawPtr

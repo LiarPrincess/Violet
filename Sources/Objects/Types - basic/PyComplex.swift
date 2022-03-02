@@ -22,13 +22,9 @@ public struct PyComplex: PyObjectMixin {
     This is equivalent to (real + imag*1j) where imag defaults to 0.
     """
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyComplexLayout()
-
-  internal var realPtr: Ptr<Double> { self.ptr[Self.layout.realOffset] }
-  internal var imagPtr: Ptr<Double> { self.ptr[Self.layout.imagOffset] }
+  // sourcery: includeInLayout
   internal var real: Double { self.realPtr.pointee }
+  // sourcery: includeInLayout
   internal var imag: Double { self.imagPtr.pointee }
 
   public let ptr: RawPtr

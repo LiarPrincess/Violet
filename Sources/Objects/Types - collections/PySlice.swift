@@ -24,16 +24,11 @@ public struct PySlice: PyObjectMixin {
 
   // MARK: - Properties
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PySliceLayout()
-
-  internal var startPtr: Ptr<PyObject> { self.ptr[Self.layout.startOffset] }
-  internal var stopPtr: Ptr<PyObject> { self.ptr[Self.layout.stopOffset] }
-  internal var stepPtr: Ptr<PyObject> { self.ptr[Self.layout.stepOffset] }
-
+  // sourcery: includeInLayout
   internal var start: PyObject { self.startPtr.pointee }
+  // sourcery: includeInLayout
   internal var stop: PyObject { self.stopPtr.pointee }
+  // sourcery: includeInLayout
   internal var step: PyObject { self.stepPtr.pointee }
 
   // MARK: - Swift init
