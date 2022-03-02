@@ -203,7 +203,8 @@ def print_type_things(t: TypeInfo):
     print_layout(swift_type_name, initial_offset, initial_alignment, pointer_fields)
     print()
     print_pointer_properties(pointer_fields)
-    print()
+    if len(pointer_fields):
+        print()
 
     # ====================
     # === Deinitialize ===

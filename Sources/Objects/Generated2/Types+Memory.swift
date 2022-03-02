@@ -1517,7 +1517,6 @@ extension PyEllipsis {
 
   internal static let layout = Layout()
 
-
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyEllipsis(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -2531,7 +2530,6 @@ extension PyModule {
 
   internal static let layout = Layout()
 
-
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyModule(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -2590,7 +2588,6 @@ extension PyNamespace {
 
   internal static let layout = Layout()
 
-
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyNamespace(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -2645,7 +2642,6 @@ extension PyNone {
 
   internal static let layout = Layout()
 
-
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyNone(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -2698,7 +2694,6 @@ extension PyNotImplemented {
 
   internal static let layout = Layout()
 
-
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyNotImplemented(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -2750,7 +2745,6 @@ extension PyObject {
   }
 
   internal static let layout = Layout()
-
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyObject(ptr: ptr)
@@ -4090,6 +4084,192 @@ extension PyMemory {
   }
 }
 
+// MARK: - PyArithmeticError
+
+extension PyArithmeticError {
+
+  /// This type was automatically generated based on `PyArithmeticError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyArithmeticError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `ArithmeticError` type.
+  public func newArithmeticError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyArithmeticError {
+    let typeLayout = PyArithmeticError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyArithmeticError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyAssertionError
+
+extension PyAssertionError {
+
+  /// This type was automatically generated based on `PyAssertionError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyAssertionError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `AssertionError` type.
+  public func newAssertionError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyAssertionError {
+    let typeLayout = PyAssertionError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyAssertionError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyAttributeError
+
+extension PyAttributeError {
+
+  /// This type was automatically generated based on `PyAttributeError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyAttributeError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `AttributeError` type.
+  public func newAttributeError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyAttributeError {
+    let typeLayout = PyAttributeError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyAttributeError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
 // MARK: - PyBaseException
 
 extension PyBaseException {
@@ -4115,7 +4295,6 @@ extension PyBaseException {
 
   internal static let layout = Layout()
 
-
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBaseException(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -4138,6 +4317,3416 @@ extension PyMemory {
     let typeLayout = PyBaseException.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
     let result = PyBaseException(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyBlockingIOError
+
+extension PyBlockingIOError {
+
+  /// This type was automatically generated based on `PyBlockingIOError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyBlockingIOError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `BlockingIOError` type.
+  public func newBlockingIOError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyBlockingIOError {
+    let typeLayout = PyBlockingIOError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyBlockingIOError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyBrokenPipeError
+
+extension PyBrokenPipeError {
+
+  /// This type was automatically generated based on `PyBrokenPipeError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyBrokenPipeError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `BrokenPipeError` type.
+  public func newBrokenPipeError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyBrokenPipeError {
+    let typeLayout = PyBrokenPipeError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyBrokenPipeError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyBufferError
+
+extension PyBufferError {
+
+  /// This type was automatically generated based on `PyBufferError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyBufferError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `BufferError` type.
+  public func newBufferError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyBufferError {
+    let typeLayout = PyBufferError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyBufferError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyBytesWarning
+
+extension PyBytesWarning {
+
+  /// This type was automatically generated based on `PyBytesWarning` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyBytesWarning(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `BytesWarning` type.
+  public func newBytesWarning(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyBytesWarning {
+    let typeLayout = PyBytesWarning.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyBytesWarning(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyChildProcessError
+
+extension PyChildProcessError {
+
+  /// This type was automatically generated based on `PyChildProcessError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyChildProcessError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `ChildProcessError` type.
+  public func newChildProcessError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyChildProcessError {
+    let typeLayout = PyChildProcessError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyChildProcessError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyConnectionAbortedError
+
+extension PyConnectionAbortedError {
+
+  /// This type was automatically generated based on `PyConnectionAbortedError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyConnectionAbortedError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `ConnectionAbortedError` type.
+  public func newConnectionAbortedError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyConnectionAbortedError {
+    let typeLayout = PyConnectionAbortedError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyConnectionAbortedError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyConnectionError
+
+extension PyConnectionError {
+
+  /// This type was automatically generated based on `PyConnectionError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyConnectionError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `ConnectionError` type.
+  public func newConnectionError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyConnectionError {
+    let typeLayout = PyConnectionError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyConnectionError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyConnectionRefusedError
+
+extension PyConnectionRefusedError {
+
+  /// This type was automatically generated based on `PyConnectionRefusedError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyConnectionRefusedError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `ConnectionRefusedError` type.
+  public func newConnectionRefusedError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyConnectionRefusedError {
+    let typeLayout = PyConnectionRefusedError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyConnectionRefusedError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyConnectionResetError
+
+extension PyConnectionResetError {
+
+  /// This type was automatically generated based on `PyConnectionResetError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyConnectionResetError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `ConnectionResetError` type.
+  public func newConnectionResetError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyConnectionResetError {
+    let typeLayout = PyConnectionResetError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyConnectionResetError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyDeprecationWarning
+
+extension PyDeprecationWarning {
+
+  /// This type was automatically generated based on `PyDeprecationWarning` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyDeprecationWarning(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `DeprecationWarning` type.
+  public func newDeprecationWarning(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyDeprecationWarning {
+    let typeLayout = PyDeprecationWarning.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyDeprecationWarning(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyEOFError
+
+extension PyEOFError {
+
+  /// This type was automatically generated based on `PyEOFError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyEOFError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `EOFError` type.
+  public func newEOFError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyEOFError {
+    let typeLayout = PyEOFError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyEOFError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyException
+
+extension PyException {
+
+  /// This type was automatically generated based on `PyException` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyException(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `Exception` type.
+  public func newException(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyException {
+    let typeLayout = PyException.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyException(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyFileExistsError
+
+extension PyFileExistsError {
+
+  /// This type was automatically generated based on `PyFileExistsError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyFileExistsError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `FileExistsError` type.
+  public func newFileExistsError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyFileExistsError {
+    let typeLayout = PyFileExistsError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyFileExistsError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyFileNotFoundError
+
+extension PyFileNotFoundError {
+
+  /// This type was automatically generated based on `PyFileNotFoundError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyFileNotFoundError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `FileNotFoundError` type.
+  public func newFileNotFoundError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyFileNotFoundError {
+    let typeLayout = PyFileNotFoundError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyFileNotFoundError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyFloatingPointError
+
+extension PyFloatingPointError {
+
+  /// This type was automatically generated based on `PyFloatingPointError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyFloatingPointError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `FloatingPointError` type.
+  public func newFloatingPointError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyFloatingPointError {
+    let typeLayout = PyFloatingPointError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyFloatingPointError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyFutureWarning
+
+extension PyFutureWarning {
+
+  /// This type was automatically generated based on `PyFutureWarning` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyFutureWarning(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `FutureWarning` type.
+  public func newFutureWarning(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyFutureWarning {
+    let typeLayout = PyFutureWarning.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyFutureWarning(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyGeneratorExit
+
+extension PyGeneratorExit {
+
+  /// This type was automatically generated based on `PyGeneratorExit` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyGeneratorExit(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `GeneratorExit` type.
+  public func newGeneratorExit(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyGeneratorExit {
+    let typeLayout = PyGeneratorExit.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyGeneratorExit(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyImportWarning
+
+extension PyImportWarning {
+
+  /// This type was automatically generated based on `PyImportWarning` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyImportWarning(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `ImportWarning` type.
+  public func newImportWarning(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyImportWarning {
+    let typeLayout = PyImportWarning.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyImportWarning(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyIndentationError
+
+extension PyIndentationError {
+
+  /// This type was automatically generated based on `PyIndentationError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyIndentationError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `IndentationError` type.
+  public func newIndentationError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyIndentationError {
+    let typeLayout = PyIndentationError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyIndentationError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyIndexError
+
+extension PyIndexError {
+
+  /// This type was automatically generated based on `PyIndexError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyIndexError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `IndexError` type.
+  public func newIndexError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyIndexError {
+    let typeLayout = PyIndexError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyIndexError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyInterruptedError
+
+extension PyInterruptedError {
+
+  /// This type was automatically generated based on `PyInterruptedError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyInterruptedError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `InterruptedError` type.
+  public func newInterruptedError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyInterruptedError {
+    let typeLayout = PyInterruptedError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyInterruptedError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyIsADirectoryError
+
+extension PyIsADirectoryError {
+
+  /// This type was automatically generated based on `PyIsADirectoryError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyIsADirectoryError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `IsADirectoryError` type.
+  public func newIsADirectoryError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyIsADirectoryError {
+    let typeLayout = PyIsADirectoryError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyIsADirectoryError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyKeyboardInterrupt
+
+extension PyKeyboardInterrupt {
+
+  /// This type was automatically generated based on `PyKeyboardInterrupt` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyKeyboardInterrupt(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `KeyboardInterrupt` type.
+  public func newKeyboardInterrupt(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyKeyboardInterrupt {
+    let typeLayout = PyKeyboardInterrupt.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyKeyboardInterrupt(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyLookupError
+
+extension PyLookupError {
+
+  /// This type was automatically generated based on `PyLookupError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyLookupError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `LookupError` type.
+  public func newLookupError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyLookupError {
+    let typeLayout = PyLookupError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyLookupError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyMemoryError
+
+extension PyMemoryError {
+
+  /// This type was automatically generated based on `PyMemoryError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyMemoryError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `MemoryError` type.
+  public func newMemoryError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyMemoryError {
+    let typeLayout = PyMemoryError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyMemoryError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyModuleNotFoundError
+
+extension PyModuleNotFoundError {
+
+  /// This type was automatically generated based on `PyModuleNotFoundError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyModuleNotFoundError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `ModuleNotFoundError` type.
+  public func newModuleNotFoundError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyModuleNotFoundError {
+    let typeLayout = PyModuleNotFoundError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyModuleNotFoundError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyNameError
+
+extension PyNameError {
+
+  /// This type was automatically generated based on `PyNameError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyNameError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `NameError` type.
+  public func newNameError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyNameError {
+    let typeLayout = PyNameError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyNameError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyNotADirectoryError
+
+extension PyNotADirectoryError {
+
+  /// This type was automatically generated based on `PyNotADirectoryError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyNotADirectoryError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `NotADirectoryError` type.
+  public func newNotADirectoryError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyNotADirectoryError {
+    let typeLayout = PyNotADirectoryError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyNotADirectoryError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyNotImplementedError
+
+extension PyNotImplementedError {
+
+  /// This type was automatically generated based on `PyNotImplementedError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyNotImplementedError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `NotImplementedError` type.
+  public func newNotImplementedError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyNotImplementedError {
+    let typeLayout = PyNotImplementedError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyNotImplementedError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyOSError
+
+extension PyOSError {
+
+  /// This type was automatically generated based on `PyOSError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyOSError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `OSError` type.
+  public func newOSError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyOSError {
+    let typeLayout = PyOSError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyOSError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyOverflowError
+
+extension PyOverflowError {
+
+  /// This type was automatically generated based on `PyOverflowError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyOverflowError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `OverflowError` type.
+  public func newOverflowError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyOverflowError {
+    let typeLayout = PyOverflowError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyOverflowError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyPendingDeprecationWarning
+
+extension PyPendingDeprecationWarning {
+
+  /// This type was automatically generated based on `PyPendingDeprecationWarning` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyPendingDeprecationWarning(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `PendingDeprecationWarning` type.
+  public func newPendingDeprecationWarning(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyPendingDeprecationWarning {
+    let typeLayout = PyPendingDeprecationWarning.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyPendingDeprecationWarning(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyPermissionError
+
+extension PyPermissionError {
+
+  /// This type was automatically generated based on `PyPermissionError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyPermissionError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `PermissionError` type.
+  public func newPermissionError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyPermissionError {
+    let typeLayout = PyPermissionError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyPermissionError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyProcessLookupError
+
+extension PyProcessLookupError {
+
+  /// This type was automatically generated based on `PyProcessLookupError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyProcessLookupError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `ProcessLookupError` type.
+  public func newProcessLookupError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyProcessLookupError {
+    let typeLayout = PyProcessLookupError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyProcessLookupError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyRecursionError
+
+extension PyRecursionError {
+
+  /// This type was automatically generated based on `PyRecursionError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyRecursionError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `RecursionError` type.
+  public func newRecursionError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyRecursionError {
+    let typeLayout = PyRecursionError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyRecursionError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyReferenceError
+
+extension PyReferenceError {
+
+  /// This type was automatically generated based on `PyReferenceError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyReferenceError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `ReferenceError` type.
+  public func newReferenceError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyReferenceError {
+    let typeLayout = PyReferenceError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyReferenceError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyResourceWarning
+
+extension PyResourceWarning {
+
+  /// This type was automatically generated based on `PyResourceWarning` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyResourceWarning(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `ResourceWarning` type.
+  public func newResourceWarning(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyResourceWarning {
+    let typeLayout = PyResourceWarning.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyResourceWarning(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyRuntimeError
+
+extension PyRuntimeError {
+
+  /// This type was automatically generated based on `PyRuntimeError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyRuntimeError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `RuntimeError` type.
+  public func newRuntimeError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyRuntimeError {
+    let typeLayout = PyRuntimeError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyRuntimeError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyRuntimeWarning
+
+extension PyRuntimeWarning {
+
+  /// This type was automatically generated based on `PyRuntimeWarning` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyRuntimeWarning(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `RuntimeWarning` type.
+  public func newRuntimeWarning(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyRuntimeWarning {
+    let typeLayout = PyRuntimeWarning.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyRuntimeWarning(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyStopAsyncIteration
+
+extension PyStopAsyncIteration {
+
+  /// This type was automatically generated based on `PyStopAsyncIteration` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyStopAsyncIteration(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `StopAsyncIteration` type.
+  public func newStopAsyncIteration(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyStopAsyncIteration {
+    let typeLayout = PyStopAsyncIteration.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyStopAsyncIteration(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PySyntaxWarning
+
+extension PySyntaxWarning {
+
+  /// This type was automatically generated based on `PySyntaxWarning` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PySyntaxWarning(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `SyntaxWarning` type.
+  public func newSyntaxWarning(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PySyntaxWarning {
+    let typeLayout = PySyntaxWarning.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PySyntaxWarning(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PySystemError
+
+extension PySystemError {
+
+  /// This type was automatically generated based on `PySystemError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PySystemError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `SystemError` type.
+  public func newSystemError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PySystemError {
+    let typeLayout = PySystemError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PySystemError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyTabError
+
+extension PyTabError {
+
+  /// This type was automatically generated based on `PyTabError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyTabError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `TabError` type.
+  public func newTabError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyTabError {
+    let typeLayout = PyTabError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyTabError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyTimeoutError
+
+extension PyTimeoutError {
+
+  /// This type was automatically generated based on `PyTimeoutError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyTimeoutError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `TimeoutError` type.
+  public func newTimeoutError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyTimeoutError {
+    let typeLayout = PyTimeoutError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyTimeoutError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyTypeError
+
+extension PyTypeError {
+
+  /// This type was automatically generated based on `PyTypeError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyTypeError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `TypeError` type.
+  public func newTypeError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyTypeError {
+    let typeLayout = PyTypeError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyTypeError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyUnboundLocalError
+
+extension PyUnboundLocalError {
+
+  /// This type was automatically generated based on `PyUnboundLocalError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyUnboundLocalError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `UnboundLocalError` type.
+  public func newUnboundLocalError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyUnboundLocalError {
+    let typeLayout = PyUnboundLocalError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyUnboundLocalError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyUnicodeDecodeError
+
+extension PyUnicodeDecodeError {
+
+  /// This type was automatically generated based on `PyUnicodeDecodeError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyUnicodeDecodeError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `UnicodeDecodeError` type.
+  public func newUnicodeDecodeError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyUnicodeDecodeError {
+    let typeLayout = PyUnicodeDecodeError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyUnicodeDecodeError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyUnicodeEncodeError
+
+extension PyUnicodeEncodeError {
+
+  /// This type was automatically generated based on `PyUnicodeEncodeError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyUnicodeEncodeError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `UnicodeEncodeError` type.
+  public func newUnicodeEncodeError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyUnicodeEncodeError {
+    let typeLayout = PyUnicodeEncodeError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyUnicodeEncodeError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyUnicodeError
+
+extension PyUnicodeError {
+
+  /// This type was automatically generated based on `PyUnicodeError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyUnicodeError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `UnicodeError` type.
+  public func newUnicodeError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyUnicodeError {
+    let typeLayout = PyUnicodeError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyUnicodeError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyUnicodeTranslateError
+
+extension PyUnicodeTranslateError {
+
+  /// This type was automatically generated based on `PyUnicodeTranslateError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyUnicodeTranslateError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `UnicodeTranslateError` type.
+  public func newUnicodeTranslateError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyUnicodeTranslateError {
+    let typeLayout = PyUnicodeTranslateError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyUnicodeTranslateError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyUnicodeWarning
+
+extension PyUnicodeWarning {
+
+  /// This type was automatically generated based on `PyUnicodeWarning` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyUnicodeWarning(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `UnicodeWarning` type.
+  public func newUnicodeWarning(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyUnicodeWarning {
+    let typeLayout = PyUnicodeWarning.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyUnicodeWarning(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyUserWarning
+
+extension PyUserWarning {
+
+  /// This type was automatically generated based on `PyUserWarning` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyUserWarning(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `UserWarning` type.
+  public func newUserWarning(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyUserWarning {
+    let typeLayout = PyUserWarning.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyUserWarning(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyValueError
+
+extension PyValueError {
+
+  /// This type was automatically generated based on `PyValueError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyValueError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `ValueError` type.
+  public func newValueError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyValueError {
+    let typeLayout = PyValueError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyValueError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyWarning
+
+extension PyWarning {
+
+  /// This type was automatically generated based on `PyWarning` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyWarning(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `Warning` type.
+  public func newWarning(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyWarning {
+    let typeLayout = PyWarning.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyWarning(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyZeroDivisionError
+
+extension PyZeroDivisionError {
+
+  /// This type was automatically generated based on `PyZeroDivisionError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyZeroDivisionError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `ZeroDivisionError` type.
+  public func newZeroDivisionError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyZeroDivisionError {
+    let typeLayout = PyZeroDivisionError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyZeroDivisionError(ptr: ptr)
 
     result.initialize(
       py,
