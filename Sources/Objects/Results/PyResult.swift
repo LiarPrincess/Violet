@@ -40,7 +40,6 @@ public enum PyResult<Wrapped> {
 // MARK: - Wrapped = Void
 
 extension PyResult where Wrapped == Void {
-
   public static func value() -> PyResult {
     return PyResult.value(())
   }
@@ -49,13 +48,44 @@ extension PyResult where Wrapped == Void {
 // MARK: - Wrapped = PyObject
 
 extension PyResult where Wrapped == PyObject {
-
-  internal static func none(_ py: Py) -> PyResult {
+  public static func none(_ py: Py) -> PyResult {
     return .value(py.none.asObject)
   }
 
-  internal static func notImplemented(_ py: Py) -> PyResult {
+  public static func notImplemented(_ py: Py) -> PyResult {
     return .value(py.notImplemented.asObject)
+  }
+}
+
+// MARK: - PyResult + asObject
+
+extension PyResult where Wrapped: PyObjectMixin {
+  public var asObject: PyResult<PyObject> {
+    return self.map { $0.asObject }
+  }
+}
+
+extension PyResult where Wrapped == Int {
+  public func asObject(_ py: Py) -> PyResult<PyObject> {
+    switch self {
+    case let .value(int):
+      let pyInt = py.newInt(int)
+      return .value(pyInt.asObject)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+}
+
+extension PyResult where Wrapped == String {
+  public func asObject(_ py: Py) -> PyResult<PyObject> {
+    switch self {
+    case let .value(string):
+      let pyString = py.newString(string)
+      return .value(pyString.asObject)
+    case let .error(e):
+      return .error(e)
+    }
   }
 }
 

@@ -28,38 +28,54 @@ public struct PyNotImplemented: PyObjectMixin {
     let zelf = PyNotImplemented(ptr: ptr)
     return "PyNotImplemented(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
-}
-
-/* MARKER
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
-    return "NotImplemented"
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard py.cast.isNotImplemented(zelf) else {
+      return Self.invalidSelfArgument(py, zelf)
+    }
+
+    let result = py.intern(string: "NotImplemented")
+    return .value(result.asObject)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNotImplemented> {
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
     let noArgs = args.isEmpty
     let noKwargs = kwargs?.elements.isEmpty ?? true
     guard noArgs && noKwargs else {
-      return .typeError("NotImplementedType takes no arguments")
+      return .typeError(py, message: "NotImplementedType takes no arguments")
     }
 
-    return .value(Py.notImplemented)
+    let result = py.notImplemented
+    return .value(result.asObject)
+  }
+
+  // MARK: - Helpers
+
+  internal static func invalidSelfArgument(
+    _ py: Py,
+    _ object: PyObject,
+    swiftFnName: StaticString = #function
+  ) -> PyResult<PyObject> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: "NotImplementedType",
+                                               swiftFnName: swiftFnName)
+
+    return .error(error.asBaseException)
   }
 }
-
-*/
