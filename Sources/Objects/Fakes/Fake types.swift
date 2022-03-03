@@ -1,6 +1,8 @@
 // swiftlint:disable fatal_error_message
 // swiftlint:disable unavailable_function
 
+// MARK: - PyType
+
 extension PyType {
   public struct MemoryLayout {
     internal func isEqual(to other: MemoryLayout) -> Bool {
@@ -15,7 +17,11 @@ extension PyType {
   public static func pyNew(type: PyType, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> { fatalError() }
 }
 
+// MARK: - PyDict
+
 extension PyDict {
+
+  internal func isEqual(_ other: PyDict) -> CompareResult { fatalError() }
 
   public enum GetResult {
     case value(PyObject)
@@ -44,18 +50,32 @@ extension PyDict {
   public func del(key: PyObject) -> DelResult { fatalError() }
 
   public func copy() -> PyDict { fatalError() }
+
+  public enum OnUpdateKeyDuplicate {
+    /// This is probably what you want.
+    case `continue`
+    /// Do not allow duplicates.
+    case error
+  }
+
+  public func update(from object: PyDict, onKeyDuplicate: OnUpdateKeyDuplicate) -> PyResult<PyNone> { fatalError() }
+  public func update(from object: PyObject, onKeyDuplicate: OnUpdateKeyDuplicate) -> PyResult<PyNone> { fatalError() }
 }
+
+// MARK: - Collections
 
 extension PyList {
   public func sort(key: Int?, isReverse: Bool?) -> PyResult<PyObject> { fatalError() }
 }
 
-extension PyModule {
-  public func getName() -> PyResult<PyObject> { fatalError() }
-}
-
 extension PyString {
   public func repr() -> String { fatalError() }
+}
+
+// MARK: - Functions
+
+extension PyModule {
+  public func getName() -> PyResult<PyObject> { fatalError() }
 }
 
 extension PyProperty {
@@ -65,6 +85,8 @@ extension PyProperty {
     set: (Py, PyObject, PyObject) -> PyResult<PyObject>,
     del: (Py, PyObject) -> PyResult<PyObject>
   ) -> PyProperty { fatalError() }
+
+  internal func bind(to object: PyObject) -> PyResult<PyObject> {fatalError() }
 }
 
 extension PyBuiltinFunction {
@@ -79,4 +101,10 @@ extension PyBuiltinFunction {
     doc: String?,
     fn: (Py, PyObject, PyObject, PyObject?) -> PyResult<PyObject>
   ) -> PyBuiltinFunction { fatalError() }
+
+  public func bind(to object: PyObject) -> PyBuiltinMethod { fatalError() }
+}
+
+extension PyFunction {
+  public func bind(to object: PyObject) -> PyMethod { fatalError() }
 }

@@ -33,89 +33,122 @@ public struct PyNamespace: PyObjectMixin {
     let zelf = PyNamespace(ptr: ptr)
     return "PyNamespace(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
-}
-
-/* MARKER
 
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> CompareResult {
-    guard let other = PyCast.asNamespace(other) else {
+  internal static func __eq__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf)
+    }
+
+    let result = zelf.isEqual(py, other: other)
+    return result.toResult(py)
+  }
+
+  // sourcery: pymethod = __ne__
+  internal static func __ne__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf)
+    }
+
+    let result = zelf.isEqual(py, other: other).not
+    return result.toResult(py)
+  }
+
+  private func isEqual(_ py: Py, other: PyObject) -> CompareResult {
+    guard let other = py.cast.asNamespace(other) else {
       return .notImplemented
     }
 
     return self.__dict__.isEqual(other.__dict__)
   }
 
-  // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> CompareResult {
-    return self.isEqual(other).not
-  }
-
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> CompareResult {
-    return .notImplemented
+  internal static func __lt__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    return .notImplemented(py)
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    return .notImplemented
+  internal static func __le__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    return .notImplemented(py)
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> CompareResult {
-    return .notImplemented
+  internal static func __gt__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    return .notImplemented(py)
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
-    return .notImplemented
+  internal static func __ge__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    return .notImplemented(py)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf)
+    }
+
+    let result = zelf.__dict__
+    return .value(result.asObject)
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
-    let isBuiltin = self.type === Py.types.simpleNamespace
-    let name = isBuiltin ? "namespace" : self.typeName
-
-    if self.hasReprLock {
-      return .value(name + "(...)")
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf)
     }
 
-    return self.withReprLock {
+    let isBuiltin = zelf.type === py.types.simpleNamespace
+    let name = isBuiltin ? "namespace" : zelf.typeName
+
+    if zelf.hasReprLock {
+      let result = py.intern(string: name + "(...)")
+      return .value(result.asObject)
+    }
+
+    return zelf.withReprLock {
       var values = ""
 
-      for (index, entry) in self.__dict__.elements.enumerated() {
+      for (index, entry) in zelf.__dict__.elements.enumerated() {
         if index > 0 {
           values.append(", ")
         }
 
         let keyRepr: String
-        switch Py.reprString(object: entry.key.object) {
+        switch py.reprString(object: entry.key.object) {
         case let .value(r): keyRepr = r
         case let .error(e): return .error(e)
         }
 
         let valueRepr: String
-        switch Py.reprString(object: entry.value) {
+        switch py.reprString(object: entry.value) {
         case let .value(r): valueRepr = r
         case let .error(e): return .error(e)
         }
@@ -123,62 +156,106 @@ public struct PyNamespace: PyObjectMixin {
         values.append("\(keyRepr)=\(valueRepr)")
       }
 
-      return .value("\(name)(\(values))")
+      let result = py.newString("\(name)(\(values))")
+      return .value(result.asObject)
     }
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf)
+    }
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
 
   // sourcery: pymethod = __setattr__
-  internal func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
-    return AttributeHelper.setAttribute(on: self, name: name, to: value)
+  internal static func __setattr__(_ py: Py,
+                                   zelf: PyObject,
+                                   name: PyObject,
+                                   value: PyObject?) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf)
+    }
+
+    return AttributeHelper.setAttribute(py, object: zelf.asObject, name: name, value: value)
   }
 
   // sourcery: pymethod = __delattr__
-  internal func delAttribute(name: PyObject) -> PyResult<PyNone> {
-    return AttributeHelper.delAttribute(on: self, name: name)
+  internal static func __delattr__(_ py: Py,
+                                   zelf: PyObject,
+                                   name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf)
+    }
+
+    return AttributeHelper.delAttribute(py, object: zelf.asObject, name: name)
   }
 
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNamespace> {
-    let dict = Py.newDict()
-    let result = PyMemory.newNamespace(type: type, dict: dict)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let dict = py.newDict()
+    let result = py.memory.newNamespace(py, type: type, __dict__: dict)
+    return .value(result.asObject)
   }
 
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf)
+    }
+
     guard args.isEmpty else {
-      return .typeError("no positional arguments expected")
+      return .typeError(py, message: "no positional arguments expected")
     }
 
     guard let kwargs = kwargs else {
-      return .value(Py.none)
+      return .none(py)
     }
 
-    switch ArgumentParser.guaranteeStringKeywords(kwargs: kwargs) {
+    switch ArgumentParser.guaranteeStringKeywords(py, kwargs: kwargs) {
     case .value: break
     case .error(let e): return .error(e)
     }
 
-    switch self.__dict__.update(from: kwargs, onKeyDuplicate: .continue) {
+    switch zelf.__dict__.update(from: kwargs, onKeyDuplicate: .continue) {
     case .value: break
     case .error(let e): return .error(e)
     }
 
-    return .value(Py.none)
+    return .none(py)
+  }
+
+  // MARK: - Helpers
+
+  internal static func castZelf(_ py: Py, _ object: PyObject) -> PyNamespace? {
+    return py.cast.asNamespace(object)
+  }
+
+  internal static func invalidSelfArgument(
+    _ py: Py,
+    _ object: PyObject,
+    swiftFnName: StaticString = #function
+  ) -> PyResult<PyObject> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: "SimpleNamespace",
+                                               swiftFnName: swiftFnName)
+
+    return .error(error.asBaseException)
   }
 }
-
-*/

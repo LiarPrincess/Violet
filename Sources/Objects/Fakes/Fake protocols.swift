@@ -1,11 +1,17 @@
 import Foundation
 
 public struct FunctionWrapper { }
-public protocol HasCustomGetMethod {}
-public protocol AbstractSequence {}
-public protocol AbstractDictViewIterator {}
-public protocol AbstractDictView {}
-public protocol AbstractSet {}
-public protocol AbstractString {}
-public protocol AbstractBytes {}
-public protocol AbstractBuiltinFunction {}
+
+internal protocol HasCustomGetMethod {
+  func getMethod(_ py: Py,
+                 selector: PyString,
+                 allowsCallableFromDict: Bool) -> Py.GetMethodResult
+}
+
+internal protocol AbstractSequence {}
+internal protocol AbstractDictViewIterator {}
+internal protocol AbstractDictView {}
+internal protocol AbstractSet {}
+internal protocol AbstractString {}
+internal protocol AbstractBytes {}
+internal protocol AbstractBuiltinFunction {}

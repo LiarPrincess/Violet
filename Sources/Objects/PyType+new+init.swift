@@ -185,12 +185,16 @@ extension PyType {
       dictForCurrentlyCreatedType: args.dict
     )
 
-    let type = py.newType(
+    let type = py.memory.newType(
+      py,
+      type: metatype, // <- Important!
       name: name,
       qualname: name, // May be overridden later (if we have it in dict)
       flags: typeFlags,
       base: base,
-      mro: mro,
+      bases: mro.baseClasses,
+      mroWithoutSelf: mro.resolutionOrder,
+      subclasses: [],
       layout: base.layout,
       staticMethods: staticMethods,
       debugFn: base.debugFn,
@@ -659,8 +663,8 @@ extension PyType {
                                  zelf: PyObject,
                                  args: [PyObject],
                                  kwargs: PyDict?) -> PyResult<PyObject> {
-    guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf)
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf)
     }
 
     if let kwargs = kwargs {
