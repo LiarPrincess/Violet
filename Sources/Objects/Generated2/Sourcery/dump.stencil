@@ -2,6 +2,13 @@
 {# === Macros === #}
 {# ============== #}
 
+{% macro print_method marker python_name method %}
+{% set swift_selector_with_types %}{{ method.name }}{% endset %}
+{% set swift_return_type %}{{ method.returnTypeName }}{% endset %}
+{% set swift_static_doc_property %}{{ method.annotations.doc }}{% endset %}
+{{marker}}|{{python_name}}|{{swift_selector_with_types}}|{{swift_return_type}}|{{swift_static_doc_property}}
+{% endmacro %}
+
 {% macro print_type marker python_name type %}
 
 {% set swift_name %}{{ type.name }}{% endset %}
@@ -28,6 +35,21 @@ SwiftField|{{field.name}}|{{field.typeName}}
 {% for method in type.allMethods where method.shortName == "initialize" %}
 {% set swift_selector_with_types %}{{ method.name }}{% endset %}
 SwiftInit|{{swift_selector_with_types}}
+{% endfor %}
+
+{% for method in type.staticMethods|annotated:"pymethod" %}
+{% set python_name %}{{ method.annotations.pymethod }}{% endset %}
+{% call print_method "PyMethod" python_name method %}
+{% endfor %}
+
+{% for method in type.staticMethods|annotated:"pystaticmethod" %}
+{% set python_name %}{{ method.annotations.pystaticmethod }}{% endset %}
+{% call print_method "PyStaticMethod" python_name method %}
+{% endfor %}
+
+{% for method in type.staticMethods|annotated:"pyclassmethod" %}
+{% set python_name %}{{ method.annotations.pyclassmethod }}{% endset %}
+{% call print_method "PyClassMethod" python_name method %}
 {% endfor %}
 {% endmacro %}
 

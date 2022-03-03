@@ -137,30 +137,30 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   }
 
   // We use mirrors to create description.
-//  public var customMirror: Mirror {
-//    let base = self.base?.name ?? "nil"
-//    let bases = self.bases.map { $0.name }
-//    let mro = self.mro.map { $0.name }
-//
-//    return Mirror(
-//      self,
-//      children: [
-//        "name": self.name,
-//        "qualname": self.qualname,
-//        "typeFlags": self.typeFlags,
-//        "base": base,
-//        "bases": bases,
-//        "mro": mro
-//      ]
-//    )
-//  }
+  //  public var customMirror: Mirror {
+  //    let base = self.base?.name ?? "nil"
+  //    let bases = self.bases.map { $0.name }
+  //    let mro = self.mro.map { $0.name }
+  //
+  //    return Mirror(
+  //      self,
+  //      children: [
+  //        "name": self.name,
+  //        "qualname": self.qualname,
+  //        "typeFlags": self.typeFlags,
+  //        "base": base,
+  //        "bases": bases,
+  //        "mro": mro
+  //      ]
+  //    )
+  //  }
 
   // MARK: - Name
 
-  // sourcery: pyproperty = __name__, setter = setName
-  internal static func getName(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  // sourcery: pyproperty = __name__, setter
+  internal static func __name__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__name__")
+      return Self.invalidSelfArgument(py, object: zelf)
     }
 
     let name = zelf.getNameString()
@@ -182,11 +182,11 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     return self.name
   }
 
-  internal static func setName(_ py: Py,
-                               zelf: PyObject,
-                               value: PyObject?) -> PyResult<PyObject> {
+  internal static func __name__(_ py: Py,
+                                zelf: PyObject,
+                                value: PyObject?) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__name__")
+      return Self.invalidSelfArgument(py, object: zelf)
     }
 
     let object: PyObject
@@ -206,10 +206,10 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
 
   // MARK: - Qualname
 
-  // sourcery: pyproperty = __qualname__, setter = setQualname
+  // sourcery: pyproperty = __qualname__, setter
   internal static func getQualname(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__qualname__")
+      return Self.invalidSelfArgument(py, object: zelf)
     }
 
     let qualname = zelf.getQualnameString()
@@ -225,11 +225,11 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     return self.getNameString()
   }
 
-  internal static func setQualname(_ py: Py,
-                                   zelf: PyObject,
-                                   value: PyObject?) -> PyResult<PyObject> {
+  internal static func __qualname__(_ py: Py,
+                                    zelf: PyObject,
+                                    value: PyObject?) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__qualname__")
+      return Self.invalidSelfArgument(py, object: zelf)
     }
 
     switch zelf.setQualname(py, value: value) {
@@ -258,10 +258,10 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
 
   // MARK: - Doc
 
-  // sourcery: pyproperty = __doc__, setter = setDoc
+  // sourcery: pyproperty = __doc__, setter
   internal static func getDoc(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__doc__")
+      return Self.invalidSelfArgument(py, object: zelf)
     }
 
     guard let doc = zelf.__dict__.get(id: .__doc__) else {
@@ -275,11 +275,11 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     return .value(doc)
   }
 
-  internal static func setDoc(_ py: Py,
-                              zelf: PyObject,
-                              value: PyObject?) -> PyResult<PyObject> {
+  internal static func __doc__(_ py: Py,
+                               zelf: PyObject,
+                               value: PyObject?) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__doc__")
+      return Self.invalidSelfArgument(py, object: zelf)
     }
 
     let object: PyObject
@@ -311,10 +311,10 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
 
   // MARK: - Module
 
-  // sourcery: pyproperty = __module__, setter = setModule
-  internal static func getModule(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  // sourcery: pyproperty = __module__, setter
+  internal static func __module__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__module__")
+      return Self.invalidSelfArgument(py, object: zelf)
     }
 
     switch zelf.getModuleNameRaw(py) {
@@ -398,11 +398,11 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     return .builtins
   }
 
-  internal static func setModule(_ py: Py,
-                                 zelf: PyObject,
-                                 value: PyObject?) -> PyResult<PyObject> {
+  internal static func __module__(_ py: Py,
+                                  zelf: PyObject,
+                                  value: PyObject?) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__module__")
+      return Self.invalidSelfArgument(py, object: zelf)
     }
 
     switch zelf.setModule(py, value: value) {
@@ -427,9 +427,9 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__dict__")
+      return Self.invalidSelfArgument(py, object: zelf)
     }
 
     let result = zelf.__dict__
@@ -439,16 +439,16 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, zelf: PyObject) -> PyType {
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
     return zelf.type
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func repr(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__repr__")
+      return Self.invalidSelfArgument(py, object: zelf)
     }
 
     switch zelf.getModuleName(py) {
@@ -468,9 +468,9 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   // MARK: - Base
 
   // sourcery: pyproperty = __base__
-  internal static func getBase(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __base__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__base__")
+      return Self.invalidSelfArgument(py, object: zelf)
     }
 
     guard let base = zelf.base else {
@@ -482,10 +482,10 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
 
   // MARK: - Bases
 
-  // sourcery: pyproperty = __bases__, setter = setBases
-  internal static func getBases(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  // sourcery: pyproperty = __bases__, setter
+  internal static func __bases__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__bases__")
+      return Self.invalidSelfArgument(py, object: zelf)
     }
 
     let bases = zelf.bases.map { $0.asObject }
@@ -493,11 +493,11 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     return .value(result.asObject)
   }
 
-  internal static func setBases(_ py: Py,
-                                zelf: PyObject,
-                                value: PyObject?) -> PyResult<PyObject> {
+  internal static func __bases__(_ py: Py,
+                                 zelf: PyObject,
+                                 value: PyObject?) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__bases__")
+      return Self.invalidSelfArgument(py, object: zelf)
     }
 
     // Violet currently does not support this
@@ -507,9 +507,9 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   // MARK: - Mro
 
   // sourcery: pyproperty = __mro__
-  internal static func get__mro__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __mro__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__mro__")
+      return Self.invalidSelfArgument(py, object: zelf)
     }
 
     let mro = zelf.mro.map { $0.asObject }
@@ -517,17 +517,17 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     return .value(result.asObject)
   }
 
-  internal static let mroPyDoc = """
+  internal static let mroDoc = """
     mro($self, /)
     --
 
     Return a type's method resolution order.
     """
 
-  // sourcery: pymethod = mro, doc = mroPyDoc
-  internal static func getMRO(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  // sourcery: pymethod = mro, doc = mroDoc
+  internal static func mro(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "mro")
+      return Self.invalidSelfArgument(py, object: zelf)
     }
 
     let mro = zelf.mro.map { $0.asObject }
@@ -538,11 +538,11 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   // MARK: - Subtypes
 
   // sourcery: pymethod = __subclasscheck__
-  internal static func isSubtype(_ py: Py,
-                                 zelf: PyObject,
-                                 object: PyObject) -> PyResult<PyObject> {
+  internal static func __subclasscheck__(_ py: Py,
+                                         zelf: PyObject,
+                                         object: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__subclasscheck__")
+      return Self.invalidSelfArgument(py, object: zelf)
     }
 
     guard let otherType = py.cast.asType(object) else {
@@ -559,11 +559,11 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   }
 
   // sourcery: pymethod = __instancecheck__
-  internal static func isType(_ py: Py,
-                              zelf: PyObject,
-                              object: PyObject) -> PyResult<PyObject> {
+  internal static func __instancecheck__(_ py: Py,
+                                         zelf: PyObject,
+                                         object: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__instancecheck__")
+      return Self.invalidSelfArgument(py, object: zelf)
     }
 
     let bool = object.type.isSubtype(of: zelf)
@@ -572,9 +572,9 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   }
 
   // sourcery: pymethod = __subclasses__
-  internal static func getSubclasses(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __subclasses__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__subclasses__")
+      return Self.invalidSelfArgument(py, object: zelf)
     }
 
     let subclasses = zelf.subclasses.map { $0.asObject }
@@ -585,11 +585,11 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal static func getAttribute(_ py: Py,
-                                    zelf: PyObject,
-                                    name: PyObject) -> PyResult<PyObject> {
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__getattribute__")
+      return Self.invalidSelfArgument(py, object: zelf)
     }
 
     switch AttributeHelper.extractName(py, name: name) {
@@ -658,12 +658,12 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   }
 
   // sourcery: pymethod = __setattr__
-  internal static func setAttribute(_ py: Py,
-                                    zelf: PyObject,
-                                    name: PyObject,
-                                    value: PyObject?) -> PyResult<PyObject> {
+  internal static func __setattr__(_ py: Py,
+                                   zelf: PyObject,
+                                   name: PyObject,
+                                   value: PyObject?) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__setattr__")
+      return Self.invalidSelfArgument(py, object: zelf)
     }
 
     if let error = zelf.preventSetAttributeOnBuiltin(py) {
@@ -705,11 +705,11 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   }
 
   // sourcery: pymethod = __delattr__
-  internal static func delAttribute(_ py: Py,
-                                    zelf: PyObject,
-                                    name: PyObject) -> PyResult<PyObject> {
+  internal static func __delattr__(_ py: Py,
+                                   zelf: PyObject,
+                                   name: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__delattr__")
+      return Self.invalidSelfArgument(py, object: zelf)
     }
 
     return zelf.setAttribute(py, name: name, value: nil)
@@ -743,9 +743,9 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   ///
   /// We deliberately don't suck up its __class__, as methods belonging to the
   /// metaclass would probably be more confusing than helpful.
-  internal func dir(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal func __dir__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__dir__")
+      return Self.invalidSelfArgument(py, object: zelf)
     }
 
     switch zelf.dir(py) {
@@ -821,12 +821,12 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   // sourcery: pymethod = __call__
   /// static PyObject *
   /// type_call(PyTypeObject *type, PyObject *args, PyObject *kwds)
-  internal static func call(_ py: Py,
-                            zelf: PyObject,
-                            args: [PyObject],
-                            kwargs: PyDict?) -> PyResult<PyObject> {
+  internal static func __call__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__call__")
+      return Self.invalidSelfArgument(py, object: zelf)
     }
 
     let object: PyObject
@@ -935,12 +935,14 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     return .value(value)
   }
 
-  internal static func invalidSelfArgument(_ py: Py,
-                                           object: PyObject,
-                                           fnName: String) -> PyResult<PyObject> {
+  internal static func invalidSelfArgument(
+    _ py: Py,
+    object: PyObject,
+    swiftFnName: StaticString = #function
+  ) -> PyResult<PyObject> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: "type",
-                                               fnName: fnName)
+                                               swiftFnName: swiftFnName)
     return .error(error.asBaseException)
   }
 }

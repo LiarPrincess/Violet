@@ -24,7 +24,6 @@ private struct PyTypeNewArgs {
 }
 
 extension PyType {
-/* MARKER
 
   // MARK: - Python new
 
@@ -36,25 +35,27 @@ extension PyType {
   // sourcery: pystaticmethod = __new__
   /// static PyObject *
   /// type_new(PyTypeObject *metatype, PyObject *args, PyObject *kwds)
-  internal static func pyNew(type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyObject> {
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
     // Special case: type(x) should return x->ob_type
-    if type === Py.types.type {
+    if type === py.types.type {
       let hasSingleArg = args.count == 1
       let noKwargs = kwargs?.elements.isEmpty ?? true
 
       if hasSingleArg && noKwargs {
-        return .value(args[0].type)
+        let result = args[0].type
+        return .value(result.asObject)
       }
 
       if args.count != 3 {
-        return .typeError("type() takes 1 or 3 arguments")
+        return .typeError(py, message: "type() takes 1 or 3 arguments")
       }
     }
 
     // class type(name, bases, dict)
-    switch self.newArguments.bind(args: args, kwargs: kwargs) {
+    switch self.newArguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 3, "Invalid required argument count.")
       assert(binding.optionalCount == 0, "Invalid optional argument count.")
@@ -62,23 +63,23 @@ extension PyType {
       let arg0 = binding.required(at: 0)
       guard let name = py.cast.asString(arg0) else {
         let t = arg0.typeName
-        return .typeError("type.__new__() argument 1 must be str, not \(t)")
+        return .typeError(py, message: "type.__new__() argument 1 must be str, not \(t)")
       }
 
       let arg1 = binding.required(at: 1)
       guard let bases = py.cast.asTuple(arg1) else {
         let t = arg1.typeName
-        return .typeError("type.__new__() argument 2 must be tuple, not \(t)")
+        return .typeError(py, message: "type.__new__() argument 2 must be tuple, not \(t)")
       }
 
       let arg2 = binding.required(at: 2)
       guard let dict = py.cast.asDict(arg2) else {
         let t = arg2.typeName
-        return .typeError("type.__new__() argument 3 must be dict, not \(t)")
+        return .typeError(py, message: "type.__new__() argument 3 must be dict, not \(t)")
       }
 
       var baseTypes = [PyType]()
-      switch PyType.guaranteeAllBasesAreTypes(bases: bases) {
+      switch PyType.guaranteeAllBasesAreTypes(py, bases: bases) {
       case let .value(r): baseTypes = r
       case let .error(e): return .error(e)
       }
@@ -92,7 +93,7 @@ extension PyType {
         dict: dict
       )
 
-      return PyType.pyNew(args: args)
+      return PyType.__new__(py, args: args)
 
     case let .error(e):
       return .error(e)
@@ -100,6 +101,7 @@ extension PyType {
   }
 
   private static func guaranteeAllBasesAreTypes(
+    _ py: Py,
     bases: PyTuple
   ) -> PyResult<[PyType]> {
     var result = [PyType]()
@@ -107,12 +109,13 @@ extension PyType {
 
     for object in bases.elements {
       guard let base = py.cast.asType(object) else {
-        return .typeError("bases must be types")
+        return .typeError(py, message: "bases must be types")
       }
 
       guard base.typeFlags.isBaseType else {
         let baseName = base.getNameString()
-        return .typeError("type '\(baseName)' is not an acceptable base type")
+        let message = "type '\(baseName)' is not an acceptable base type"
+        return .typeError(py, message: message)
       }
 
       result.append(base)
@@ -120,10 +123,10 @@ extension PyType {
 
     return .value(result)
   }
-*/
+
   /// static PyObject *
   /// type_new(PyTypeObject *metatype, PyObject *args, PyObject *kwds)
-  private static func pyNew(_ py: Py, args: PyTypeNewArgs) -> PyResult<PyObject> {
+  private static func __new__(_ py: Py, args: PyTypeNewArgs) -> PyResult<PyObject> {
     let base: PyType
     var bases = args.bases
     var metatype = args.metatype
@@ -466,7 +469,7 @@ extension PyType {
   private static func getHeapType__dict__(_ py: Py,
                                           zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__dict__")
+      return Self.invalidSelfArgumentFor__dict__(py, object: zelf)
     }
 
     let result = zelf.__dict__
@@ -477,7 +480,7 @@ extension PyType {
                                           zelf: PyObject,
                                           value: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__dict__")
+      return Self.invalidSelfArgumentFor__dict__(py, object: zelf)
     }
 
     guard let dict = py.cast.asDict(value) else {
@@ -492,7 +495,7 @@ extension PyType {
   private static func delHeapType__dict__(_ py: Py,
                                           zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__dict__")
+      return Self.invalidSelfArgumentFor__dict__(py, object: zelf)
     }
 
     // There always has to be an dict:
@@ -504,6 +507,16 @@ extension PyType {
     // {}
     zelf.__dict__ = py.newDict()
     return .none(py)
+  }
+
+  private static func invalidSelfArgumentFor__dict__(
+    _ py: Py,
+    object: PyObject
+  ) -> PyResult<PyObject> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: "type",
+                                               fnName: "__dict__")
+    return .error(error.asBaseException)
   }
 
   // MARK: - __getattribute__ method
@@ -642,12 +655,12 @@ extension PyType {
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  internal static  func pyInit(_ py: Py,
-                               zelf: PyObject,
-                               args: [PyObject],
-                               kwargs: PyDict?) -> PyResult<PyObject> {
+  internal static  func __init__(_ py: Py,
+                                 zelf: PyObject,
+                                 args: [PyObject],
+                                 kwargs: PyDict?) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgument(py, object: zelf, fnName: "__init__")
+      return Self.invalidSelfArgument(py, object: zelf)
     }
 
     if let kwargs = kwargs {
@@ -666,6 +679,6 @@ extension PyType {
     }
 
     // Call object.__init__(self) now.
-    return PyObject.pyInit(py, zelf: zelf.asObject, args: [], kwargs: nil)
+    return PyObject.__init__(py, zelf: zelf.asObject, args: [], kwargs: nil)
   }
 }
