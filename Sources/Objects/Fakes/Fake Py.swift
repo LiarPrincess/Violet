@@ -37,6 +37,36 @@ public struct Py {
   public func newList(elements: [PyObject]) -> PyList { fatalError() }
   public func newDict() -> PyDict { fatalError() }
 
+  public func newStaticMethod(callable: PyFunction) -> PyStaticMethod { fatalError() }
+  public func newClassMethod(callable: PyFunction) -> PyClassMethod { fatalError() }
+
+  internal func newType(
+    name: String,
+    qualname: String,
+    flags: PyType.TypeFlags,
+    base: PyType,
+    mro: MethodResolutionOrder,
+    layout: PyType.MemoryLayout,
+    staticMethods: PyStaticCall.KnownNotOverriddenMethods,
+    debugFn: @escaping PyType.DebugFn,
+    deinitialize: @escaping PyType.DeinitializeFn
+  ) -> PyType {
+    let metatype = self.types.type
+    return self.memory.newType(self,
+                               type: metatype,
+                               name: name,
+                               qualname: qualname,
+                               flags: flags,
+                               base: base,
+                               bases: mro.baseClasses,
+                               mroWithoutSelf: mro.resolutionOrder,
+                               subclasses: [],
+                               layout: layout,
+                               staticMethods: staticMethods,
+                               debugFn: debugFn,
+                               deinitialize: deinitialize)
+  }
+
   // MARK: - String
 
   public func repr(object: PyObject) -> PyResult<PyString> { fatalError() }
@@ -69,6 +99,7 @@ public struct Py {
   public func intern(string: String) -> PyString { fatalError() }
   public func hashNotAvailable(_ o: PyObject) -> PyBaseException { fatalError() }
   public func get__dict__(object: PyObject) -> PyDict? { fatalError() }
+  public func globals() -> PyResult<PyDict> { fatalError() }
 
   // MARK: - Collections
 
@@ -83,9 +114,34 @@ public struct Py {
 
   public typealias ForEachFn = (PyObject) -> ForEachStep
 
-  public func forEach(iterable: PyObject, fn: ForEachFn) -> PyBaseException? {
-    fatalError()
-  }
+  public func forEach(iterable: PyObject, fn: ForEachFn) -> PyBaseException? { fatalError() }
+  public func toArray(iterable: PyObject) -> PyResult<[PyObject]> { fatalError() }
+
+  // MARK: - Attributes
+
+  public func getAttribute(object: PyObject,
+                           name: String,
+                           default: PyObject? = nil) -> PyResult<PyObject> { fatalError() }
+  public func getAttribute(object: PyObject,
+                           name: IdString,
+                           default: PyObject? = nil) -> PyResult<PyObject> { fatalError() }
+  public func getAttribute(object: PyObject,
+                           name: PyObject,
+                           default: PyObject? = nil) -> PyResult<PyObject> { fatalError() }
+
+  public func hasAttribute(object: PyObject, name: String) -> PyResult<Bool> { fatalError() }
+  public func hasAttribute(object: PyObject, name: IdString) -> PyResult<Bool> { fatalError() }
+  public func hasAttribute(object: PyObject, name: PyObject) -> PyResult<Bool> { fatalError() }
+
+  public func setAttribute(object: PyObject,
+                           name: String,
+                           value: PyObject) -> PyResult<PyNone> { fatalError() }
+  public func setAttribute(object: PyObject,
+                           name: IdString,
+                           value: PyObject) -> PyResult<PyNone> { fatalError() }
+  public func setAttribute(object: PyObject,
+                           name: PyObject,
+                           value: PyObject) -> PyResult<PyNone> { fatalError() }
 
   // MARK: - Errors
 

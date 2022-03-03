@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // swiftlint:disable file_length
@@ -14,6 +13,43 @@ import VioletCore
 
 /// Structure responsible for binding runtime parameters to function signature.
 /// In CPython `typedef struct _PyArg_Parser`.
+///
+/// We will reuse CPython format/convention.
+/// Mostly because this way we can just compare code/format specifiers
+/// to check for errors. We could write this ourselves, but why?
+///
+/// For example for `int(value, base)`:
+/// ```C
+/// static const char * const _keywords[] = {"", "base", NULL};
+/// static _PyArg_Parser _parser = {"|OO:int", _keywords, 0};
+/// ```
+/// And then:
+/// ```C
+/// static int parser_init(struct _PyArg_Parser *parser)
+/// ```
+/// - Parameter arguments: Argument names. But only for keyword arguments.
+///                        Positional arguments should use empty string.
+/// - Parameter format: Argument format:
+///                     - `O` - Python object
+///                     - `|` - end of the required arguments (`minArgCount`)
+///                     - `$` - end of the positional arguments (`maxPositionalArgCount`)
+///                     - `:` - end of the argument format, what follows is a function name
+///                     - other - ignored
+///
+/// For example (this is `int.__new__`):
+/// ```
+/// let parser = ArgumentParser.create(
+///   arguments: ["", "base"],
+///   format: "|OO:int"
+/// )
+/// ```
+///
+/// Means:
+/// - 1st argument is a positional argument without name (1st entry in `arguments`)
+/// - 2nd argument is a keyword argument called `base` (2nd entry in `arguments`)
+/// - both arguments are Python objects (`format` has `OO`)
+/// - none of the arguments are required (`format` starts with `|`)
+/// - function name is `int` (part of the `format` after `:`)
 ///
 /// Most of the time it should use static allocation.
 internal struct ArgumentParser {
@@ -39,52 +75,13 @@ internal struct ArgumentParser {
     return self.positionalOnlyArgCount + self.keywordArgNames.count
   }
 
-  // MARK: - Create
-
-  /// Create new ArgumentParser.
-  ///
-  /// We will reuse CPython format/convention.
-  /// Mostly because this way we can just compare code/format specifiers
-  /// to check for errors. We could write this ourselves, but why?
-  ///
-  /// For example for `int(value, base)`:
-  /// ```C
-  /// static const char * const _keywords[] = {"", "base", NULL};
-  /// static _PyArg_Parser _parser = {"|OO:int", _keywords, 0};
-  /// ```
-  /// And then:
-  /// ```C
-  /// static int parser_init(struct _PyArg_Parser *parser)
-  /// ```
-  /// - Parameter arguments: Argument names. But only for keyword arguments.
-  ///                        Positional arguments should use empty string.
-  /// - Parameter format: Argument format:
-  ///                     - `O` - Python object
-  ///                     - `|` - end of the required arguments (`minArgCount`)
-  ///                     - `$` - end of the positional arguments (`maxPositionalArgCount`)
-  ///                     - `:` - end of the argument format, what follows is a function name
-  ///                     - other - ignored
-  ///
-  /// For example (this is `int.__new__`):
-  /// ```
-  /// let parser = ArgumentParser.create(
-  ///   arguments: ["", "base"],
-  ///   format: "|OO:int"
-  /// )
-  /// ```
-  ///
-  /// Means:
-  /// - 1st argument is a positional argument without name (1st entry in `arguments`)
-  /// - 2nd argument is a keyword argument called `base` (2nd entry in `arguments`)
-  /// - both arguments are Python objects (`format` has `OO`)
-  /// - none of the arguments are required (`format` starts with `|`)
-  /// - function name is `int` (part of the `format` after `:`)
-  internal static func create(arguments: [String],
-                              format: String) -> PyResult<ArgumentParser> {
+  internal init(arguments: [String], format: String) {
     let name: String
     switch ArgumentParser.extractFunctionName(format: format) {
-    case let .value(n): name = n
-    case let .error(e): return .error(e)
+    case let .value(n):
+      name = n
+    case let .error(message):
+      trap("\(format): \(message)")
     }
 
     let firstKeywordArgIndex = arguments.firstIndex { !$0.isEmpty }
@@ -95,83 +92,72 @@ internal struct ArgumentParser {
       keywordArgumentNames = Array(arguments[keywordStart...])
       let hasKeywordWithoutName = keywordArgumentNames.contains { $0.isEmpty }
       if hasKeywordWithoutName {
-        return .systemError("Empty keyword parameter name")
+        trap("\(format): Empty keyword parameter name")
       }
     }
 
-    let parsedFormat: ParsedFormat
+    let minArgCount: Int
+    let maxPositionalArgCount: Int
     switch ArgumentParser.parseFormat(format: format,
                                       argCount: arguments.count,
                                       positionalArgCount: positionalArgCount) {
-    case let .value(f): parsedFormat = f
-    case let .error(e): return .error(e)
+    case let .value(minArgCount: min, maxPositionalArgCount: max):
+      minArgCount = min
+      maxPositionalArgCount = max
+    case let .error(message):
+      trap("\(format): \(message)")
     }
 
-    return .value(
-      ArgumentParser(
-        fnName: name,
-        requiredArgCount: Swift.min(parsedFormat.min, arguments.count),
-        positionalOnlyArgCount: positionalArgCount,
-        maxPositionalArgCount: Swift.min(parsedFormat.max, arguments.count),
-        keywordArgNames: keywordArgumentNames
-      )
-    )
+    self.fnName = name
+    self.requiredArgCount = min(minArgCount, arguments.count)
+    self.positionalOnlyArgCount = positionalArgCount
+    self.maxPositionalArgCount = min(maxPositionalArgCount, arguments.count)
+    self.keywordArgNames = keywordArgumentNames
   }
 
-  /// Create parser using `ArgumentParser.create` or trap.
-  ///
-  /// See `ArgumentParser.create` for parameter descriptions.
-  internal static func createOrTrap(arguments: [String],
-                                    format: String) -> ArgumentParser {
-    switch ArgumentParser.create(arguments: arguments, format: format) {
-    case let .value(r):
-      return r
-    case let .error(e):
-      trap(String(describing: e))
-    }
+  private enum FunctionNameResult {
+    case value(String)
+    case error(String)
   }
 
   /// Function name starts after ':' in format.
-  private static func extractFunctionName(format: String) -> PyResult<String> {
+  private static func extractFunctionName(format: String) -> FunctionNameResult {
     guard var startIndex = format.firstIndex(of: ":") else {
-      return .systemError("Format does not contain a function name")
+      return .error("Format does not contain a function name")
     }
 
     // Go after ':'
     format.formIndex(after: &startIndex) // after ':'
     if startIndex == format.endIndex {
-      return .systemError("Format does not contain a function name")
+      return .error("Format does not contain a function name")
     }
 
     return .value(String(format[startIndex...]))
   }
 
-  private struct ParsedFormat {
-    fileprivate let min: Int
-    fileprivate let max: Int
+  private enum ParseFormatResult {
+    case value(minArgCount: Int, maxPositionalArgCount: Int)
+    case error(String)
   }
 
-  private static func parseFormat(
-    format: String,
-    argCount: Int,
-    positionalArgCount: Int
-  ) -> PyResult<ParsedFormat> {
+  private static func parseFormat(format: String,
+                                  argCount: Int,
+                                  positionalArgCount: Int) -> ParseFormatResult {
     var minArgCount = Int.max
     var maxPositionalArgCount = Int.max
 
     var formatIndex = format.startIndex
     for i in 0..<argCount {
       if formatIndex == format.endIndex {
-        let msg = "More keyword list entries (\(argCount)) than format specifiers (\(i))"
-        return .systemError(msg)
+        return .error("More keyword list entries (\(argCount)) than format specifiers (\(i))")
       }
 
       if format[formatIndex] == "|" {
         if minArgCount != Int.max {
-          return .systemError("Invalid format string (| specified twice)")
+          return .error("Invalid format string (| specified twice)")
         }
         if maxPositionalArgCount != Int.max {
-          return .systemError("Invalid format string ($ before |)")
+          return .error("Invalid format string ($ before |)")
         }
 
         minArgCount = i
@@ -180,10 +166,10 @@ internal struct ArgumentParser {
 
       if format[formatIndex] == "$" {
         if maxPositionalArgCount != Int.max {
-          return .systemError("Invalid format string ($ specified twice)")
+          return .error("Invalid format string ($ specified twice)")
         }
         if i < positionalArgCount {
-          return .systemError("Empty parameter name after $")
+          return .error("Empty parameter name after $")
         }
 
         maxPositionalArgCount = i
@@ -192,18 +178,17 @@ internal struct ArgumentParser {
 
       // We expect argument formatter (for example 'O') here
       if formatIndex == format.endIndex || self.isFormatEnd(format[formatIndex]) {
-        let msg = "More keyword list entries (\(argCount)) than format specifiers (\(i))"
-        return .systemError(msg)
+        return .error("More keyword list entries (\(argCount)) than format specifiers (\(i))")
       }
 
       format.formIndex(after: &formatIndex)
     }
 
     if formatIndex != format.endIndex && !self.isFormatEnd(format[formatIndex]) {
-      return .systemError("More argument specifiers than keyword list entries")
+      return .error("More argument specifiers than keyword list entries")
     }
 
-    return .value(ParsedFormat(min: minArgCount, max: maxPositionalArgCount))
+    return .value(minArgCount: minArgCount, maxPositionalArgCount: maxPositionalArgCount)
   }
 
   private static func isFormatEnd(_ c: Character) -> Bool {
@@ -263,15 +248,16 @@ internal struct ArgumentParser {
   ///                           PyObject *kwargs, PyObject *kwnames,
   ///                           struct _PyArg_Parser *parser,
   ///                           va_list *p_va, int flags)
-  internal func bind(args: PyObject,
+  internal func bind(_ py: Py,
+                     args: PyObject,
                      kwargs: PyObject?) -> PyResult<Binding> {
     let argsArray: [PyObject]
-    switch ArgumentParser.unpackArgsTuple(args: args) {
+    switch ArgumentParser.unpackArgsTuple(py, args: args) {
     case let .value(o): argsArray = o
     case let .error(e): return .error(e)
     }
 
-    return self.bind(args: argsArray, kwargs: kwargs)
+    return self.bind(py, args: argsArray, kwargs: kwargs)
   }
 
   /// static int
@@ -279,15 +265,16 @@ internal struct ArgumentParser {
   ///                           PyObject *kwargs, PyObject *kwnames,
   ///                           struct _PyArg_Parser *parser,
   ///                           va_list *p_va, int flags)
-  internal func bind(args: [PyObject],
+  internal func bind(_ py: Py,
+                     args: [PyObject],
                      kwargs: PyObject?) -> PyResult<Binding> {
     let kwargsData: PyDict?
-    switch ArgumentParser.unpackKwargsDict(kwargs: kwargs) {
+    switch ArgumentParser.unpackKwargsDict(py, kwargs: kwargs) {
     case let .value(o): kwargsData = o
     case let .error(e): return .error(e)
     }
 
-    return self.bind(args: args, kwargs: kwargsData)
+    return self.bind(py, args: args, kwargs: kwargsData)
   }
 
   /// static int
@@ -295,17 +282,18 @@ internal struct ArgumentParser {
   ///                           PyObject *kwargs, PyObject *kwnames,
   ///                           struct _PyArg_Parser *parser,
   ///                           va_list *p_va, int flags)
-  internal func bind(args: [PyObject],
+  internal func bind(_ py: Py,
+                     args: [PyObject],
                      kwargs: PyDict?) -> PyResult<Binding> {
     // We do not expect large kwargs dictionaries,
     // so the allocation should be minimal.
     var kwargsDict: [String: PyObject]
-    switch ArgumentParser.guaranteeStringKeywords(kwargs: kwargs) {
+    switch ArgumentParser.guaranteeStringKeywords(py, kwargs: kwargs) {
     case let .value(r): kwargsDict = r
     case let .error(e): return .error(e)
     }
 
-    return self.bind(args: args, kwargs: kwargsDict)
+    return self.bind(py, args: args, kwargs: kwargsDict)
   }
 
   /// static int
@@ -313,14 +301,17 @@ internal struct ArgumentParser {
   ///                           PyObject *kwargs, PyObject *kwnames,
   ///                           struct _PyArg_Parser *parser,
   ///                           va_list *p_va, int flags)
-  internal func bind(args: [PyObject],
+  internal func bind(_ py: Py,
+                     args: [PyObject],
                      kwargs: [String: PyObject]) -> PyResult<Binding> {
     if args.count + kwargs.count > self.argumentCount {
-      return .error(self.tooMuchArgumentsError(args: args, kwargs: kwargs))
+      let error = self.tooMuchArgumentsError(py, args: args, kwargs: kwargs)
+      return .error(error.asBaseException)
     }
 
     if args.count > self.maxPositionalArgCount {
-      return .error(self.tooMuchPositionalArgumentsError(args: args))
+      let error = self.tooMuchPositionalArgumentsError(py, args: args)
+      return .error(error.asBaseException)
     }
 
     var result = Binding()
@@ -347,8 +338,8 @@ internal struct ArgumentParser {
 
       // We have not filled 'i' argument from args or kwargs
       if isRequired {
-        let e = self.missingArgumentError(argIndex: i, args: args, kwargs: kwargs)
-        return .error(e)
+        let e = self.missingArgumentError(py, argIndex: i, args: args, kwargs: kwargs)
+        return .error(e.asBaseException)
       }
 
       // This is an optional argument, just set it to 'nil'
@@ -356,13 +347,13 @@ internal struct ArgumentParser {
     }
 
     // Make sure there are no arguments given by name and position
-    if let e = self.checkArgumentGivenAsPositionalAndKwarg(args: args, kwargs: kwargs) {
-      return .error(e)
+    if let e = self.checkArgumentGivenAsPositionalAndKwarg(py, args: args, kwargs: kwargs) {
+      return .error(e.asBaseException)
     }
 
     // Make sure there are no extraneous keyword arguments
-    if let e = self.checkExtraneousKeywordArguments(kwargs: kwargs) {
-      return .error(e)
+    if let e = self.checkExtraneousKeywordArguments(py, kwargs: kwargs) {
+      return .error(e.asBaseException)
     }
 
     assert(result._required.count == self.requiredArgCount)
@@ -372,10 +363,9 @@ internal struct ArgumentParser {
 
   // MARK: - Parsing errors
 
-  private func tooMuchArgumentsError(
-    args: [PyObject],
-    kwargs: [String: PyObject]
-  ) -> PyBaseException {
+  private func tooMuchArgumentsError(_ py: Py,
+                                     args: [PyObject],
+                                     kwargs: [String: PyObject]) -> PyTypeError {
     let providedCount = args.count + kwargs.count
     assert(providedCount > self.argumentCount)
 
@@ -383,33 +373,32 @@ internal struct ArgumentParser {
     let keyword = args.isEmpty ? "keyword " : ""
     let arguments = self.argumentCount == 1 ? "argument" : "arguments"
 
-    let msg = "\(fn) takes at most \(self.argumentCount) " +
-              "\(keyword)\(arguments) " +
-              "(\(providedCount) given)"
+    let message = "\(fn) takes at most \(self.argumentCount) " +
+                  "\(keyword)\(arguments) (\(providedCount) given)"
 
-    return Py.newTypeError(msg: msg)
+    return py.newTypeError(message: message)
   }
 
-  private func tooMuchPositionalArgumentsError(
-    args: [PyObject]
-  ) -> PyBaseException {
+  private func tooMuchPositionalArgumentsError(_ py: Py,
+                                               args: [PyObject]) -> PyTypeError {
     assert(args.count > self.maxPositionalArgCount)
 
     let fn = self.fnName + "()"
     switch self.maxPositionalArgCount {
     case 0:
-      let msg = "\(fn) takes no positional arguments"
-      return Py.newTypeError(msg: msg)
+      let message = "\(fn) takes no positional arguments"
+      return py.newTypeError(message: message)
     case let max:
       let s = self.requiredArgCount == Int.max ? "exactly" : "at most"
-      let msg = "\(fn) takes \(s) \(max) positional arguments (\(args.count) given)"
-      return Py.newTypeError(msg: msg)
+      let message = "\(fn) takes \(s) \(max) positional arguments (\(args.count) given)"
+      return py.newTypeError(message: message)
     }
   }
 
-  private func missingArgumentError(argIndex: Int,
+  private func missingArgumentError(_ py: Py,
+                                    argIndex: Int,
                                     args: [PyObject],
-                                    kwargs: [String: PyObject]) -> PyBaseException {
+                                    kwargs: [String: PyObject]) -> PyTypeError {
     let fn = self.fnName + "()"
 
     if argIndex < self.positionalOnlyArgCount {
@@ -417,20 +406,22 @@ internal struct ArgumentParser {
         "at least" :
         "exactly"
 
-      let msg = "\(fn) takes \(atLeast) \(self.requiredArgCount) positional arguments " +
-                "(\(args.count) given)"
-      return Py.newTypeError(msg: msg)
+      let message = "\(fn) takes \(atLeast) \(self.requiredArgCount) positional arguments " +
+                    "(\(args.count) given)"
+
+      return py.newTypeError(message: message)
     }
 
     let keyword = self.keywordArgNames[argIndex - self.positionalOnlyArgCount]
-    let msg = "\(fn) missing required argument '\(keyword)' (pos \(argIndex + 1))"
-    return Py.newTypeError(msg: msg)
+    let message = "\(fn) missing required argument '\(keyword)' (pos \(argIndex + 1))"
+    return py.newTypeError(message: message)
   }
 
   private func checkArgumentGivenAsPositionalAndKwarg(
+    _ py: Py,
     args: [PyObject],
-    kwargs: [String: PyObject]) -> PyBaseException? {
-
+    kwargs: [String: PyObject]
+  ) -> PyTypeError? {
     // We are missing some positional args (it may be OK, they may be optional)
     if args.count < self.positionalOnlyArgCount {
       return nil
@@ -440,22 +431,21 @@ internal struct ArgumentParser {
       let keyword = self.keywordArgNames[i - self.positionalOnlyArgCount]
       if kwargs.contains(keyword) {
         let fn = self.fnName + "()"
-        let msg = "argument for \(fn) given by name ('\(keyword)') and position (\(i + 1))"
-        return Py.newTypeError(msg: msg)
+        let message = "argument for \(fn) given by name ('\(keyword)') and position (\(i + 1))"
+        return py.newTypeError(message: message)
       }
     }
 
     return nil
   }
 
-  private func checkExtraneousKeywordArguments(
-    kwargs: [String: PyObject]
-  ) -> PyBaseException? {
+  private func checkExtraneousKeywordArguments(_ py: Py,
+                                               kwargs: [String: PyObject]) -> PyTypeError? {
 
     for key in kwargs.keys {
       if !self.keywordArgNames.contains(key) {
-        let msg = "'\(key)' is an invalid keyword argument for \(self.fnName)()"
-        return Py.newTypeError(msg: msg)
+        let message = "'\(key)' is an invalid keyword argument for \(self.fnName)()"
+        return py.newTypeError(message: message)
       }
     }
 
@@ -464,23 +454,25 @@ internal struct ArgumentParser {
 
   // MARK: - Unpack
 
-  internal static func unpackArgsTuple(args: PyObject) -> PyResult<[PyObject]> {
-    guard let tuple = PyCast.asTuple(args) else {
-      let t = args.typeName
-      return .typeError("Function positional arguments should be a tuple, not \(t)")
+  internal static func unpackArgsTuple(_ py: Py,
+                                       args: PyObject) -> PyResult<[PyObject]> {
+    guard let tuple = py.cast.asTuple(args) else {
+      let msg = "Function positional arguments should be a tuple, not \(args.typeName)"
+      return .typeError(py, message: msg)
     }
 
     return .value(tuple.elements)
   }
 
-  internal static func unpackKwargsDict(kwargs: PyObject?) -> PyResult<PyDict?> {
+  internal static func unpackKwargsDict(_ py: Py,
+                                        kwargs: PyObject?) -> PyResult<PyDict?> {
     guard let kwargs = kwargs else {
       return .value(nil)
     }
 
-    guard let kwargsDict = PyCast.asDict(kwargs) else {
-      let t = kwargs.typeName
-      return .typeError("Function keyword arguments should be a dict, not \(t)")
+    guard let kwargsDict = py.cast.asDict(kwargs) else {
+      let msg = "Function keyword arguments should be a dict, not \(kwargs.typeName)"
+      return .typeError(py, message: msg)
     }
 
     return .value(kwargsDict)
@@ -492,10 +484,11 @@ internal struct ArgumentParser {
   /// PyArg_UnpackTuple(PyObject *args,
   ///                   const char *name,
   ///                   Py_ssize_t min, Py_ssize_t max, ...)
-  internal static func guaranteeArgsCountOrError(fnName: String,
+  internal static func guaranteeArgsCountOrError(_ py: Py,
+                                                 fnName: String,
                                                  args: [PyObject],
                                                  min: Int,
-                                                 max: Int) -> PyBaseException? {
+                                                 max: Int) -> PyTypeError? {
     assert(min >= 0)
     assert(max >= 0)
     assert(min <= max)
@@ -503,14 +496,14 @@ internal struct ArgumentParser {
     let nargs = args.count
 
     if min == 0 && max == 0 && args.any {
-      let msg = "\(fnName) takes no positional arguments, got \(nargs)"
-      return Py.newTypeError(msg: msg)
+      let message = "\(fnName) takes no positional arguments, got \(nargs)"
+      return py.newTypeError(message: message)
     }
 
     if nargs < min {
       let s = min == max ? "" : "at least "
-      let msg = "\(fnName) expected \(s)\(max) arguments, got \(nargs)"
-      return Py.newTypeError(msg: msg)
+      let message = "\(fnName) expected \(s)\(max) arguments, got \(nargs)"
+      return py.newTypeError(message: message)
     }
 
     if nargs == 0 {
@@ -519,8 +512,8 @@ internal struct ArgumentParser {
 
     if nargs > max {
       let s = min == max ? "" : "at most "
-      let msg = "\(fnName) expected \(s)\(max) arguments, got \(nargs)"
-      return Py.newTypeError(msg: msg)
+      let message = "\(fnName) expected \(s)\(max) arguments, got \(nargs)"
+      return py.newTypeError(message: message)
     }
 
     return nil
@@ -528,27 +521,30 @@ internal struct ArgumentParser {
 
   /// int
   /// _PyArg_NoKeywords(const char *funcname, PyObject *kwargs)
-  internal static func noKwargsOrError(fnName: String,
-                                       kwargs: PyDict?) -> PyBaseException? {
+  internal static func noKwargsOrError(_ py: Py,
+                                       fnName: String,
+                                       kwargs: PyDict?) -> PyTypeError? {
     let noKwargs = kwargs?.elements.isEmpty ?? true
     if noKwargs {
       return nil
     }
 
-    return Py.newTypeError(msg: "\(fnName) takes no keyword arguments")
+    let message = "\(fnName) takes no keyword arguments"
+    return py.newTypeError(message: message)
   }
 
   // MARK: - String keywords
 
+  internal typealias NameToValue = [String: PyObject]
+
   /// int
   /// PyArg_ValidateKeywordArguments(PyObject *kwargs)
-  internal static func guaranteeStringKeywords(
-    kwargs: PyDict?
-  ) -> PyResult<[String: PyObject]> {
+  internal static func guaranteeStringKeywords(_ py: Py,
+                                               kwargs: PyDict?) -> PyResult<NameToValue> {
 
     switch kwargs {
     case .some(let kwargs):
-      return ArgumentParser.guaranteeStringKeywords(kwargs: kwargs)
+      return ArgumentParser.guaranteeStringKeywords(py, kwargs: kwargs)
     case .none:
       return .value([:])
     }
@@ -556,18 +552,17 @@ internal struct ArgumentParser {
 
   /// int
   /// PyArg_ValidateKeywordArguments(PyObject *kwargs)
-  internal static func guaranteeStringKeywords(
-    kwargs: PyDict
-  ) -> PyResult<[String: PyObject]> {
+  internal static func guaranteeStringKeywords(_ py: Py,
+                                               kwargs: PyDict) -> PyResult<NameToValue> {
 
     var result = [String: PyObject]()
 
     for entry in kwargs.elements {
-      switch PyCast.asString(entry.key.object) {
+      switch py.cast.asString(entry.key.object) {
       case let .some(keyString):
         result[keyString.value] = entry.value
       case .none:
-        return .typeError("keywords must be strings")
+        return .typeError(py, message: "keywords must be strings")
       }
     }
 
@@ -587,5 +582,3 @@ internal struct ArgumentParser {
     print("total argumentCount: \(self.argumentCount)")
   }
 }
-
-*/

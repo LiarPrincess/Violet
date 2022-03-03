@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // swiftlint:disable function_body_length
@@ -25,10 +24,11 @@ private struct PyTypeNewArgs {
 }
 
 extension PyType {
+/* MARKER
 
   // MARK: - Python new
 
-  private static let newArguments = ArgumentParser.createOrTrap(
+  private static let newArguments = ArgumentParser(
     arguments: ["name", "bases", "dict"],
     format: "OOO:type.__new__"
   )
@@ -60,19 +60,19 @@ extension PyType {
       assert(binding.optionalCount == 0, "Invalid optional argument count.")
 
       let arg0 = binding.required(at: 0)
-      guard let name = PyCast.asString(arg0) else {
+      guard let name = py.cast.asString(arg0) else {
         let t = arg0.typeName
         return .typeError("type.__new__() argument 1 must be str, not \(t)")
       }
 
       let arg1 = binding.required(at: 1)
-      guard let bases = PyCast.asTuple(arg1) else {
+      guard let bases = py.cast.asTuple(arg1) else {
         let t = arg1.typeName
         return .typeError("type.__new__() argument 2 must be tuple, not \(t)")
       }
 
       let arg2 = binding.required(at: 2)
-      guard let dict = PyCast.asDict(arg2) else {
+      guard let dict = py.cast.asDict(arg2) else {
         let t = arg2.typeName
         return .typeError("type.__new__() argument 3 must be dict, not \(t)")
       }
@@ -106,7 +106,7 @@ extension PyType {
     result.reserveCapacity(bases.elements.count)
 
     for object in bases.elements {
-      guard let base = PyCast.asType(object) else {
+      guard let base = py.cast.asType(object) else {
         return .typeError("bases must be types")
       }
 
@@ -120,20 +120,20 @@ extension PyType {
 
     return .value(result)
   }
-
+*/
   /// static PyObject *
   /// type_new(PyTypeObject *metatype, PyObject *args, PyObject *kwds)
-  private static func pyNew(args: PyTypeNewArgs) -> PyResult<PyObject> {
+  private static func pyNew(_ py: Py, args: PyTypeNewArgs) -> PyResult<PyObject> {
     let base: PyType
     var bases = args.bases
     var metatype = args.metatype
 
     if bases.isEmpty {
-      base = Py.types.object
+      base = py.types.object
       bases = [base]
     } else {
       // Search the bases for the proper metatype to deal with this
-      switch Self.calculateMetaclass(metatype: metatype, bases: bases) {
+      switch Self.calculateMetaclass(py, metatype: metatype, bases: bases) {
       case let .value(t): metatype = t
       case let .error(e): return .error(e)
       }
@@ -141,22 +141,21 @@ extension PyType {
       // Calculate best base using bases memory layout (layout conflict -> error).
       // We will call this base 'solid' - our new type will have the same memory
       // layout (+- '__dict__' because it does not matter).
-      switch Self.getSolidBase(bases: bases) {
+      switch Self.getSolidBase(py, bases: bases) {
       case let .value(r): base = r
       case let .error(e): return .error(e)
       }
     }
 
     // Assuming we don't have slots
-    let mro: MRO
-    switch MRO.linearize(baseClasses: bases) {
+    let mro: MethodResolutionOrder
+    switch MethodResolutionOrder.linearize(py, baseClasses: bases) {
     case let .value(r): mro = r
     case let .error(e): return .error(e)
     }
 
     // Create type object
     let name = args.name.value
-    let layout = base.layout
 
     var typeFlags = TypeFlags()
     typeFlags.isDefault = true
@@ -177,26 +176,28 @@ extension PyType {
     typeFlags.instancesHave__dict__ = base.typeFlags.instancesHave__dict__
       || base.typeFlags.subclassInstancesHave__dict__
 
-    let staticMethods = StaticallyKnownNotOverriddenMethods(
-      mroWithoutCurrentlyCreatedType: mro,
+    let staticMethods = PyStaticCall.KnownNotOverriddenMethods(
+      py,
+      mroWithoutCurrentlyCreatedType: mro.resolutionOrder,
       dictForCurrentlyCreatedType: args.dict
     )
 
-    let type = PyMemory.newType(
+    let type = py.newType(
       name: name,
       qualname: name, // May be overridden later (if we have it in dict)
-      metatype: metatype,
+      flags: typeFlags,
       base: base,
       mro: mro,
-      typeFlags: typeFlags,
+      layout: base.layout,
       staticMethods: staticMethods,
-      layout: layout
+      debugFn: base.debugFn,
+      deinitialize: base.deinitialize
     )
 
     // Initialize '__dict__' from passed-in dict
     // Also: we have to COPY it! Swift COW will take care of this.
     let dict = args.dict.copy()
-    type.setDict(value: dict)
+    type.__dict__ = dict
 
     // =========================================================================
     // === We filled flags and set __dict__, so the 'core' type is finished. ===
@@ -204,13 +205,13 @@ extension PyType {
     // =========================================================================
 
     // Set __module__ (but remember that we may already have it)
-    if let e = Self.setModuleFromCurrentFrameGlobalsIfNotPresent(type: type) {
+    if let e = Self.setModuleFromCurrentFrameGlobalsIfNotPresent(py, type: type) {
       return .error(e)
     }
 
     // Set qualname to dict['__qualname__'] if available.
     // Otherwise it will stay the same as during 'init' (see ctor call above).
-    if let e = Self.setQualnameFromDictIfPresent(type: type) {
+    if let e = Self.setQualnameFromDictIfPresent(py, type: type) {
       return .error(e)
     }
 
@@ -218,37 +219,37 @@ extension PyType {
     // We don't have to, because we store '__doc__' in dict (and not as property).
 
     // Special-case __new__: if it's a plain function, make it a static
-    Self.convertFunctionToStaticMethodIfNeeded(type: type, fnName: .__new__)
+    Self.convertFunctionToStaticMethodIfNeeded(py, type: type, fnName: .__new__)
 
     // Special-case '__init_subclass__' and '__class_getitem__':
     // if they are plain functions, make them class methods
-    Self.convertFunctionToClassMethodIfNeeded(type: type, fnName: .__init_subclass__)
-    Self.convertFunctionToClassMethodIfNeeded(type: type, fnName: .__class_getitem__)
+    Self.convertFunctionToClassMethodIfNeeded(py, type: type, fnName: .__init_subclass__)
+    Self.convertFunctionToClassMethodIfNeeded(py, type: type, fnName: .__class_getitem__)
 
     // Add properties/methods connected to '__dict__'
-    Self.add__dict__PropertyIfNotPresent(type: type)
-    Self.add__getattribute__MethodIfNotPresent(type: type)
-    Self.add__setattr__MethodIfNotPresent(type: type)
+    Self.add__dict__PropertyIfNotPresent(py, type: type)
+    Self.add__getattribute__MethodIfNotPresent(py, type: type)
+    Self.add__setattr__MethodIfNotPresent(py, type: type)
 
     // Store type in class cell if one is supplied
     // class Elsa:
     //   def let_it_go(self):
     //     c = __class__ # <-- this uses '__class__' cell
-    if let e = Self.fill__classcell__(type: type) {
-      return .error(e)
+    if let e = Self.fill__classcell__(py, type: type) {
+      return .error(e.asBaseException)
     }
 
     // Call '__set_name__' on all descriptors in a newly generated type
-    if let e = Self.call__set_name__OnDictEntries(type: type) {
+    if let e = Self.call__set_name__OnDictEntries(py, type: type) {
       return .error(e)
     }
 
     // Call '__init_subclass__' on the parent of a newly generated type
-    if let e = Self.call__init_subclass__OnParent(type: type, kwargs: args.kwargs) {
-      return .error(e)
+    if let e = Self.call__init_subclass__OnParent(py, type: type, kwargs: args.kwargs) {
+      return .error(e.asBaseException)
     }
 
-    return .value(type)
+    return .value(type.asObject)
   }
 
   // MARK: - Metaclass
@@ -256,8 +257,9 @@ extension PyType {
   /// Determine the most derived metatype.
   /// PyTypeObject *
   /// _PyType_CalculateMetaclass(PyTypeObject *metatype, PyObject *bases)
-  internal static func calculateMetaclass(metatype: PyType,
-                                          bases: [PyObject]) -> PyResult<PyType> {
+  internal static func calculateMetaclass(_ py: Py,
+                                          metatype: PyType,
+                                          bases: [PyType]) -> PyResult<PyType> {
     var winner = metatype
     for tmp in bases {
       let tmpType = tmp.type
@@ -272,8 +274,10 @@ extension PyType {
         continue
       }
 
-      return .typeError("metaclass conflict: the metaclass of a derived class " +
-        "must be a (non-strict) subclass of the metaclasses of all its bases")
+      let message = "metaclass conflict: the metaclass of a derived class " +
+      "must be a (non-strict) subclass of the metaclasses of all its bases"
+
+      return .typeError(py, message: message)
     }
 
     return .value(winner)
@@ -292,7 +296,7 @@ extension PyType {
   ///
   /// static PyTypeObject *
   /// best_base(PyObject *bases)
-  private static func getSolidBase(bases: [PyType]) -> PyResult<PyType> {
+  private static func getSolidBase(_ py: Py, bases: [PyType]) -> PyResult<PyType> {
     assert(bases.any)
 
     var result: PyType?
@@ -315,7 +319,8 @@ extension PyType {
         // nothing, 'currentResult' has already more fields
       } else {
         // we are in different 'branches' of layout hierarchy
-        return .typeError("multiple bases have instance lay-out conflict")
+        let message = "multiple bases have instance lay-out conflict"
+        return .typeError(py, message: message)
       }
     }
 
@@ -327,23 +332,23 @@ extension PyType {
   // MARK: - __module__
 
   private static func setModuleFromCurrentFrameGlobalsIfNotPresent(
+    _ py: Py,
     type: PyType
   ) -> PyBaseException? {
-
-    let dict = type.getDict()
+    let dict = type.__dict__
     let isAlreadyPresent = dict.get(id: .__module__) != nil
     if isAlreadyPresent {
       return nil
     }
 
     let globals: PyDict
-    switch Py.globals() {
+    switch py.globals() {
     case let .value(g): globals = g
     case let .error(e): return e
     }
 
     if let module = globals.get(id: .__name__) {
-      switch type.setModule(module) {
+      switch type.setModule(py, value: module) {
       case .value: break
       case .error(let e): return e
       }
@@ -355,13 +360,14 @@ extension PyType {
   // MARK: - __qualname__
 
   private static func setQualnameFromDictIfPresent(
+    _ py: Py,
     type: PyType
   ) -> PyBaseException? {
-    let dict = type.getDict()
+    let dict = type.__dict__
 
     // Otherwise it will stay the same as during 'init'
     if let qualname = dict.get(id: .__qualname__) {
-      switch type.setQualname(qualname) {
+      switch type.setQualname(py, value: qualname) {
       case .value: break
       case .error(let e): return e
       }
@@ -373,70 +379,73 @@ extension PyType {
   // MARK: - Function -> Static/class method
 
   private static func convertFunctionToStaticMethodIfNeeded(
+    _ py: Py,
     type: PyType,
     fnName: IdString
   ) {
-    let dict = type.getDict()
+    let dict = type.__dict__
 
     guard let object = dict.get(id: fnName) else {
       return
     }
 
-    guard let function = PyCast.asFunction(object) else {
+    guard let function = py.cast.asFunction(object) else {
       return
     }
 
-    let method = PyMemory.newStaticMethod(callable: function)
-    dict.set(id: fnName, to: method)
+    let method = py.newStaticMethod(callable: function)
+    dict.set(id: fnName, to: method.asObject)
   }
 
   private static func convertFunctionToClassMethodIfNeeded(
+ _ py: Py,
     type: PyType,
     fnName: IdString
   ) {
-    let dict = type.getDict()
+    let dict = type.__dict__
 
     guard let object = dict.get(id: fnName) else {
       return
     }
 
-    guard let function = PyCast.asFunction(object) else {
+    guard let function = py.cast.asFunction(object) else {
       return
     }
 
-    let method = PyMemory.newClassMethod(callable: function)
-    dict.set(id: fnName, to: method)
+    let method = py.newClassMethod(callable: function)
+    dict.set(id: fnName, to: method.asObject)
   }
 
   // MARK: - __dict__ property
 
-  private static func add__dict__PropertyIfNotPresent(type: PyType) {
+  private static func add__dict__PropertyIfNotPresent(_ py: Py, type: PyType) {
     // If any base class has '__dict__' then we don't have to re-add it.
     // To be really honest, I'm not really sure if this check is needed.
     // Even if we have custom '__dict__' getter what else can it return?
     // Anyway, we will not override it.
 
-    if Self.isInMroExcludingObject(type: type, name: .__dict__) {
+    if Self.isInMroExcludingObject(py, type: type, name: .__dict__) {
       return
     }
 
     let property = PyProperty.wrap(
       doc: nil,
-      get: Self.getHeapType__dict__(object:),
-      set: Self.setHeapType__dict__(object:value:),
-      del: Self.delHeapType__dict__(object:)
+      get: Self.getHeapType__dict__(_:zelf:),
+      set: Self.setHeapType__dict__(_:zelf:value:),
+      del: Self.delHeapType__dict__(_:zelf:)
     )
 
-    let dict = type.getDict()
-    dict.set(id: .__dict__, to: property)
+    let dict = type.__dict__
+    dict.set(id: .__dict__, to: property.asObject)
   }
 
-  private static func isInMroExcludingObject(type: PyType,
+  private static func isInMroExcludingObject(_ py: Py,
+                                             type: PyType,
                                              name: IdString) -> Bool {
-    let mro = type.getMRO()
+    let mro = type.mro
 
     for base in mro {
-      let isObject = base === Py.types.object
+      let isObject = base === py.types.object
       if isObject {
         // 'Excluding object' <- see this method name
         // 'break' because object is always last in 'mro'
@@ -454,22 +463,38 @@ extension PyType {
 
   /// This method will be called when we get `__dict__` property
   /// on heap type instance.
-  private static func getHeapType__dict__(object: PyObject) -> PyDict {
-    return object.__dict__
-  }
-
-  private static func setHeapType__dict__(object: PyObject,
-                                          value: PyObject) -> PyResult<PyNone> {
-    guard let dict = PyCast.asDict(value) else {
-      let t = value.typeName
-      return .typeError("__dict__ must be set to a dictionary, not a '\(t)'")
+  private static func getHeapType__dict__(_ py: Py,
+                                          zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = py.cast.asType(zelf) else {
+      return Self.invalidSelfArgument(py, object: zelf, fnName: "__dict__")
     }
 
-    object.__dict__ = dict
-    return .value(Py.none)
+    let result = zelf.__dict__
+    return .value(result.asObject)
   }
 
-  private static func delHeapType__dict__(object: PyObject) -> PyResult<PyNone> {
+  private static func setHeapType__dict__(_ py: Py,
+                                          zelf: PyObject,
+                                          value: PyObject) -> PyResult<PyObject> {
+    guard let zelf = py.cast.asType(zelf) else {
+      return Self.invalidSelfArgument(py, object: zelf, fnName: "__dict__")
+    }
+
+    guard let dict = py.cast.asDict(value) else {
+      let message = "__dict__ must be set to a dictionary, not a '\(value.typeName)'"
+      return .typeError(py, message: message)
+    }
+
+    zelf.__dict__ = dict
+    return .none(py)
+  }
+
+  private static func delHeapType__dict__(_ py: Py,
+                                          zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = py.cast.asType(zelf) else {
+      return Self.invalidSelfArgument(py, object: zelf, fnName: "__dict__")
+    }
+
     // There always has to be an dict:
     // >>> class Princess(): pass
     // ...
@@ -477,62 +502,63 @@ extension PyType {
     // >>> del elsa.__dict__
     // >>> print(elsa.__dict__)
     // {}
-    object.__dict__ = Py.newDict()
-    return .value(Py.none)
+    zelf.__dict__ = py.newDict()
+    return .none(py)
   }
 
   // MARK: - __getattribute__ method
 
-  private static func add__getattribute__MethodIfNotPresent(type: PyType) {
+  private static func add__getattribute__MethodIfNotPresent(_ py: Py, type: PyType) {
     // If any base class has '__getattribute__' then we don't have to re-add it.
-    if Self.isInMroExcludingObject(type: type, name: .__getattribute__) {
+    if Self.isInMroExcludingObject(py, type: type, name: .__getattribute__) {
       return
     }
 
     let getattribute = PyBuiltinFunction.wrap(
       name: "__getattribute__",
       doc: nil,
-      fn: AttributeHelper.getAttribute(from:name:)
+      fn: AttributeHelper.getAttribute(_:object:name:)
     )
 
-    let dict = type.getDict()
-    dict.set(id: .__getattribute__, to: getattribute)
+    let dict = type.__dict__
+    dict.set(id: .__getattribute__, to: getattribute.asObject)
   }
 
   // MARK: - __setattr__ method
 
-  private static func add__setattr__MethodIfNotPresent(type: PyType) {
+  private static func add__setattr__MethodIfNotPresent(_ py: Py, type: PyType) {
     // If any base class has '__setattr__' then we don't have to re-add it.
-    if Self.isInMroExcludingObject(type: type, name: .__setattr__) {
+    if Self.isInMroExcludingObject(py, type: type, name: .__setattr__) {
       return
     }
 
     let setattr = PyBuiltinFunction.wrap(
       name: "__setattr__",
       doc: nil,
-      fn: AttributeHelper.setAttribute(on:name:to:)
+      fn: AttributeHelper.setAttribute(_:object:name:value:)
     )
 
-    let dict = type.getDict()
-    dict.set(id: .__setattr__, to: setattr)
+    let dict = type.__dict__
+    dict.set(id: .__setattr__, to: setattr.asObject)
   }
 
   // MARK: - __classcell__
 
-  private static func fill__classcell__(type: PyType) -> PyBaseException? {
-    let dict = type.getDict()
+  private static func fill__classcell__(_ py: Py,
+                                        type: PyType) -> PyTypeError? {
+    let dict = type.__dict__
 
     guard let __classcell__ = dict.get(id: .__classcell__) else {
       return nil
     }
 
-    guard let cell = PyCast.asCell(__classcell__) else {
+    guard let cell = py.cast.asCell(__classcell__) else {
       let t = __classcell__.typeName
-      let msg = "__classcell__ must be a nonlocal cell, not \(t)"
-      return Py.newTypeError(msg: msg)
+      let message = "__classcell__ must be a nonlocal cell, not \(t)"
+      return py.newTypeError(message: message)
     }
 
-    cell.content = type
+    cell.content = type.asObject
     _ = dict.del(id: .__classcell__)
     return nil
   }
@@ -542,9 +568,10 @@ extension PyType {
   /// static int
   /// set_names(PyTypeObject *type)
   private static func call__set_name__OnDictEntries(
+    _ py: Py,
     type: PyType
   ) -> PyBaseException? {
-    let dict = type.getDict()
+    let dict = type.__dict__
 
     for entry in dict.elements {
       let key = entry.key.object
@@ -556,8 +583,8 @@ extension PyType {
       }
 
       let callable = lookup.object
-      let args = [type, key]
-      let callResult = Py.call(callable: callable, args: args, kwargs: nil)
+      let args = [type.asObject, key]
+      let callResult = py.call(callable: callable, args: args, kwargs: nil)
 
       switch callResult {
       case .value:
@@ -576,14 +603,14 @@ extension PyType {
   /// static int
   /// init_subclass(PyTypeObject *type, PyObject *kwds)
   private static func call__init_subclass__OnParent(
+    _ py: Py,
     type: PyType,
     kwargs: PyDict?
   ) -> PyBaseException? {
+    let superType = py.types.super.asObject
 
     let superInstance: PyObject
-    let superType = Py.types.super
-
-    switch Py.call(callable: superType, args: [type, type], kwargs: nil) {
+    switch py.call(callable: superType, args: [type.asObject, type.asObject], kwargs: nil) {
     case let .value(s):
       superInstance = s
     case let .notCallable(e),
@@ -592,18 +619,18 @@ extension PyType {
     }
 
     let __init_subclass__: PyObject
-    switch Py.getAttribute(object: superInstance, name: .__init_subclass__) {
+    switch py.getAttribute(object: superInstance, name: .__init_subclass__) {
     case let .value(i):
       __init_subclass__ = i
     case let .error(e):
-      if PyCast.isAttributeError(e) {
+      if py.cast.isAttributeError(e.asObject) {
         return nil
       }
 
       return e
     }
 
-    switch Py.call(callable: __init_subclass__, args: [], kwargs: kwargs) {
+    switch py.call(callable: __init_subclass__, args: [], kwargs: kwargs) {
     case .value:
       return nil
     case .notCallable(let e),
@@ -615,23 +642,30 @@ extension PyType {
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  internal static  func pyInit(_ py: Py,
+                               zelf: PyObject,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = py.cast.asType(zelf) else {
+      return Self.invalidSelfArgument(py, object: zelf, fnName: "__init__")
+    }
+
     if let kwargs = kwargs {
       let hasSingleArg = args.count == 1
       let hasKwargs = kwargs.elements.any
 
       if hasSingleArg && hasKwargs {
-        return .typeError("type.__init__() takes no keyword arguments")
+        let message = "type.__init__() takes no keyword arguments"
+        return .typeError(py, message: message)
       }
     }
 
     guard args.count == 1 || args.count == 3 else {
-      return .typeError("type.__init__() takes 1 or 3 arguments")
+      let message = "type.__init__() takes 1 or 3 arguments"
+      return .typeError(py, message: message)
     }
 
     // Call object.__init__(self) now.
-    return PyObjectType.pyInit(zelf: self, args: [], kwargs: nil)
+    return PyObject.pyInit(py, zelf: zelf.asObject, args: [], kwargs: nil)
   }
 }
-
-*/
