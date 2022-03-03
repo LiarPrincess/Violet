@@ -2,6 +2,7 @@ import os.path
 from typing import List, Union
 
 from Sourcery.TypeInfo import TypeInfo, SwiftFieldInMemoryInfo, SwiftInitializerInfo, PyPropertyInfo, PyFunctionInfo
+from Sourcery.validateSwiftFunctionName import validateSwiftFunctionNames
 
 def get_types() -> List[TypeInfo]:
     dir_path = os.path.dirname(__file__)
@@ -78,10 +79,31 @@ def get_types() -> List[TypeInfo]:
                 init = SwiftInitializerInfo(selector_with_types)
                 current_type.swift_initializers.append(init)
 
+            elif line_type == 'PyMethod' or line_type == 'PyClassMethod' or line_type == 'PyStaticMethod':
+                assert current_type
+                assert len(split) == 5
+                python_name = split[1]
+                swift_selector_with_types = split[2]
+                swift_return_type = split[3]
+                swift_static_doc_property = split[4]
+
+                fn = PyFunctionInfo(python_name,
+                                    swift_selector_with_types,
+                                    swift_return_type,
+                                    swift_static_doc_property)
+
+                if line_type == 'PyMethod':
+                    current_type.python_methods.append(fn)
+                elif line_type == 'PyStaticMethod':
+                    current_type.python_static_functions.append(fn)
+                elif line_type == 'PyClassMethod':
+                    current_type.python_class_functions.append(fn)
+
             else:
                 assert False, f"Unknown line type: '{line_type}'"
 
     # Commit last type
     commit_current_type()
 
+    validateSwiftFunctionNames(result)
     return result

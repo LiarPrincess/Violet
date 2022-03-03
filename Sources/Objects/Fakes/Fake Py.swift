@@ -147,9 +147,17 @@ public struct Py {
 
   public func newInvalidSelfArgumentError(object: PyObject,
                                           expectedType: String,
+                                          swiftFnName: StaticString) -> PyTypeError {
+    // Note that 'swiftFnName' is a full selector!
+    // For example: '__repr__(_:zelf:)'
+    fatalError()
+  }
+
+  public func newInvalidSelfArgumentError(object: PyObject,
+                                          expectedType: String,
                                           fnName: String) -> PyTypeError {
-    let message = "descriptor '\(fnName)' requires a '\(expectedType)' object " +
-                  "but received a '\(object.typeName)'"
+    let t = object.typeName
+    let message = "descriptor '\(fnName)' requires a '\(expectedType)' object but received a '\(t)'"
     return self.newTypeError(message: message)
   }
 
