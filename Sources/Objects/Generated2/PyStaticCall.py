@@ -1,4 +1,4 @@
-from Helpers import generated_warning, STATIC_METHODS
+from Helpers import generated_warning, ALL_STATIC_METHODS
 
 INSERT_NEW_LINE_BEFORE = (
     '__hash__',
@@ -114,7 +114,7 @@ public enum PyStaticCall {{
 ''')
 
     already_printed_kinds = set()
-    for m in STATIC_METHODS:
+    for m in ALL_STATIC_METHODS:
         kind = m.kind
         name = kind.name
         if name in already_printed_kinds:
@@ -147,7 +147,7 @@ public enum PyStaticCall {{
     // So each of those functions is exactly 16 bytes.
 ''')
 
-    for m in STATIC_METHODS:
+    for m in ALL_STATIC_METHODS:
         if m.name in INSERT_NEW_LINE_BEFORE:
             print()
 
@@ -164,7 +164,7 @@ public enum PyStaticCall {{
     print("    // We need 'init' without params, because we also have other 'init'.")
     print('    public init() {')
 
-    for m in STATIC_METHODS:
+    for m in ALL_STATIC_METHODS:
         if m.name in INSERT_NEW_LINE_BEFORE:
             print()
 
@@ -203,7 +203,7 @@ public enum PyStaticCall {{
 ''')
 
     print('    private mutating func copyMethods(from other: KnownNotOverriddenMethods) {')
-    for m in STATIC_METHODS:
+    for m in ALL_STATIC_METHODS:
         if m.name in INSERT_NEW_LINE_BEFORE:
             print()
 
@@ -225,7 +225,7 @@ public enum PyStaticCall {{
         switch string.value {\
 ''')
 
-    for m in STATIC_METHODS:
+    for m in ALL_STATIC_METHODS:
         if m.name in INSERT_NEW_LINE_BEFORE:
             print()
 
@@ -257,7 +257,7 @@ public enum PyStaticCall {{
     # === Functions ===
     # =================
 
-    for m in STATIC_METHODS:
+    for m in ALL_STATIC_METHODS:
         name = m.name
         return_type = m.kind.return_type
         arguments = m.kind.arguments

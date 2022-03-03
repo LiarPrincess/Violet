@@ -90,34 +90,34 @@ public enum PyStaticCall {
 
     // MARK: - Aliases
 
-    public typealias StringConversion = (Py, PyObject) -> PyResult<String>
+    public typealias StringConversion = (Py, PyObject) -> PyResult<PyObject>
     public typealias Hash = (Py, PyObject) -> PyResult<PyObject>
     public typealias Dir = (Py, PyObject) -> PyResult<PyObject>
     public typealias Comparison = (Py, PyObject, PyObject) -> PyResult<PyObject>
-    public typealias AsBool = (Py, PyObject) -> Bool
+    public typealias AsBool = (Py, PyObject) -> PyBool
     public typealias AsInt = (Py, PyObject) -> PyResult<PyInt>
     public typealias AsFloat = (Py, PyObject) -> PyResult<PyFloat>
     public typealias AsComplex = (Py, PyObject) -> PyObject
-    public typealias AsIndex = (Py, PyObject) -> BigInt
+    public typealias AsIndex = (Py, PyObject) -> PyInt
     public typealias GetAttribute = (Py, PyObject, PyObject) -> PyResult<PyObject>
-    public typealias SetAttribute = (Py, PyObject, PyObject, PyObject?) -> PyResult<PyNone>
-    public typealias DelAttribute = (Py, PyObject, PyObject) -> PyResult<PyNone>
+    public typealias SetAttribute = (Py, PyObject, PyObject, PyObject?) -> PyResult<PyObject>
+    public typealias DelAttribute = (Py, PyObject, PyObject) -> PyResult<PyObject>
     public typealias GetItem = (Py, PyObject, PyObject) -> PyResult<PyObject>
-    public typealias SetItem = (Py, PyObject, PyObject, PyObject) -> PyResult<PyNone>
-    public typealias DelItem = (Py, PyObject, PyObject) -> PyResult<PyNone>
+    public typealias SetItem = (Py, PyObject, PyObject, PyObject) -> PyResult<PyObject>
+    public typealias DelItem = (Py, PyObject, PyObject) -> PyResult<PyObject>
     public typealias Iter = (Py, PyObject) -> PyObject
     public typealias Next = (Py, PyObject) -> PyResult<PyObject>
-    public typealias GetLength = (Py, PyObject) -> BigInt
-    public typealias Contains = (Py, PyObject, PyObject) -> PyResult<Bool>
+    public typealias GetLength = (Py, PyObject) -> PyInt
+    public typealias Contains = (Py, PyObject, PyObject) -> PyResult<PyBool>
     public typealias Reversed = (Py, PyObject) -> PyObject
     public typealias Keys = (Py, PyObject) -> PyObject
-    public typealias Del = (Py, PyObject) -> PyResult<PyNone>
+    public typealias Del = (Py, PyObject) -> PyResult<PyObject>
     public typealias Call = (Py, PyObject, [PyObject], PyDict?) -> PyResult<PyObject>
-    public typealias InstanceCheck = (Py, PyObject, PyObject) -> Bool
-    public typealias SubclassCheck = (Py, PyObject, PyObject) -> PyResult<Bool>
-    public typealias IsAbstractMethod = (Py, PyObject) -> PyResult<Bool>
+    public typealias InstanceCheck = (Py, PyObject, PyObject) -> PyBool
+    public typealias SubclassCheck = (Py, PyObject, PyObject) -> PyResult<PyBool>
+    public typealias IsAbstractMethod = (Py, PyObject) -> PyResult<PyBool>
     public typealias NumericUnary = (Py, PyObject) -> PyObject
-    public typealias NumericTrunc = (Py, PyObject) -> PyResult<PyInt>
+    public typealias NumericTrunc = (Py, PyObject) -> PyResult<PyObject>
     public typealias NumericRound = (Py, PyObject, PyObject?) -> PyResult<PyObject>
     public typealias NumericBinary = (Py, PyObject, PyObject) -> PyResult<PyObject>
     public typealias NumericPow = (Py, PyObject, PyObject, PyObject) -> PyResult<PyObject>
@@ -564,7 +564,7 @@ public enum PyStaticCall {
 
   // MARK: - __repr__
 
-  internal static func __repr__(_ py: Py, object: PyObject) -> PyResult<String>? {
+  internal static func __repr__(_ py: Py, object: PyObject) -> PyResult<PyObject>? {
     if let method = object.type.staticMethods.__repr__ {
       return method(py, object)
     }
@@ -574,7 +574,7 @@ public enum PyStaticCall {
 
   // MARK: - __str__
 
-  internal static func __str__(_ py: Py, object: PyObject) -> PyResult<String>? {
+  internal static func __str__(_ py: Py, object: PyObject) -> PyResult<PyObject>? {
     if let method = object.type.staticMethods.__str__ {
       return method(py, object)
     }
@@ -664,7 +664,7 @@ public enum PyStaticCall {
 
   // MARK: - __bool__
 
-  internal static func __bool__(_ py: Py, object: PyObject) -> Bool? {
+  internal static func __bool__(_ py: Py, object: PyObject) -> PyBool? {
     if let method = object.type.staticMethods.__bool__ {
       return method(py, object)
     }
@@ -704,7 +704,7 @@ public enum PyStaticCall {
 
   // MARK: - __index__
 
-  internal static func __index__(_ py: Py, object: PyObject) -> BigInt? {
+  internal static func __index__(_ py: Py, object: PyObject) -> PyInt? {
     if let method = object.type.staticMethods.__index__ {
       return method(py, object)
     }
@@ -734,7 +734,7 @@ public enum PyStaticCall {
 
   // MARK: - __setattr__
 
-  internal static func __setattr__(_ py: Py, object: PyObject, name: PyObject, value: PyObject?) -> PyResult<PyNone>? {
+  internal static func __setattr__(_ py: Py, object: PyObject, name: PyObject, value: PyObject?) -> PyResult<PyObject>? {
     if let method = object.type.staticMethods.__setattr__ {
       return method(py, object, name, value)
     }
@@ -744,7 +744,7 @@ public enum PyStaticCall {
 
   // MARK: - __delattr__
 
-  internal static func __delattr__(_ py: Py, object: PyObject, name: PyObject) -> PyResult<PyNone>? {
+  internal static func __delattr__(_ py: Py, object: PyObject, name: PyObject) -> PyResult<PyObject>? {
     if let method = object.type.staticMethods.__delattr__ {
       return method(py, object, name)
     }
@@ -764,7 +764,7 @@ public enum PyStaticCall {
 
   // MARK: - __setitem__
 
-  internal static func __setitem__(_ py: Py, object: PyObject, index: PyObject, value: PyObject) -> PyResult<PyNone>? {
+  internal static func __setitem__(_ py: Py, object: PyObject, index: PyObject, value: PyObject) -> PyResult<PyObject>? {
     if let method = object.type.staticMethods.__setitem__ {
       return method(py, object, index, value)
     }
@@ -774,7 +774,7 @@ public enum PyStaticCall {
 
   // MARK: - __delitem__
 
-  internal static func __delitem__(_ py: Py, object: PyObject, index: PyObject) -> PyResult<PyNone>? {
+  internal static func __delitem__(_ py: Py, object: PyObject, index: PyObject) -> PyResult<PyObject>? {
     if let method = object.type.staticMethods.__delitem__ {
       return method(py, object, index)
     }
@@ -804,7 +804,7 @@ public enum PyStaticCall {
 
   // MARK: - __len__
 
-  internal static func __len__(_ py: Py, object: PyObject) -> BigInt? {
+  internal static func __len__(_ py: Py, object: PyObject) -> PyInt? {
     if let method = object.type.staticMethods.__len__ {
       return method(py, object)
     }
@@ -814,7 +814,7 @@ public enum PyStaticCall {
 
   // MARK: - __contains__
 
-  internal static func __contains__(_ py: Py, object: PyObject, element: PyObject) -> PyResult<Bool>? {
+  internal static func __contains__(_ py: Py, object: PyObject, element: PyObject) -> PyResult<PyBool>? {
     if let method = object.type.staticMethods.__contains__ {
       return method(py, object, element)
     }
@@ -844,7 +844,7 @@ public enum PyStaticCall {
 
   // MARK: - __del__
 
-  internal static func __del__(_ py: Py, object: PyObject) -> PyResult<PyNone>? {
+  internal static func __del__(_ py: Py, object: PyObject) -> PyResult<PyObject>? {
     if let method = object.type.staticMethods.__del__ {
       return method(py, object)
     }
@@ -864,7 +864,7 @@ public enum PyStaticCall {
 
   // MARK: - __instancecheck__
 
-  internal static func __instancecheck__(_ py: Py, type: PyObject, object: PyObject) -> Bool? {
+  internal static func __instancecheck__(_ py: Py, type: PyObject, object: PyObject) -> PyBool? {
     if let method = type.type.staticMethods.__instancecheck__ {
       return method(py, type, object)
     }
@@ -874,7 +874,7 @@ public enum PyStaticCall {
 
   // MARK: - __subclasscheck__
 
-  internal static func __subclasscheck__(_ py: Py, type: PyObject, base: PyObject) -> PyResult<Bool>? {
+  internal static func __subclasscheck__(_ py: Py, type: PyObject, base: PyObject) -> PyResult<PyBool>? {
     if let method = type.type.staticMethods.__subclasscheck__ {
       return method(py, type, base)
     }
@@ -884,7 +884,7 @@ public enum PyStaticCall {
 
   // MARK: - __isabstractmethod__
 
-  internal static func __isabstractmethod__(_ py: Py, object: PyObject) -> PyResult<Bool>? {
+  internal static func __isabstractmethod__(_ py: Py, object: PyObject) -> PyResult<PyBool>? {
     if let method = object.type.staticMethods.__isabstractmethod__ {
       return method(py, object)
     }
@@ -934,7 +934,7 @@ public enum PyStaticCall {
 
   // MARK: - __trunc__
 
-  internal static func __trunc__(_ py: Py, object: PyObject) -> PyResult<PyInt>? {
+  internal static func __trunc__(_ py: Py, object: PyObject) -> PyResult<PyObject>? {
     if let method = object.type.staticMethods.__trunc__ {
       return method(py, object)
     }

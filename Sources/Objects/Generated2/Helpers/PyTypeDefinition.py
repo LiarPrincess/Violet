@@ -1,7 +1,7 @@
 from typing import List
 from Sourcery import TypeInfo
 from Helpers.NewTypeArguments import NewTypeArguments
-from Helpers.static_methods import STATIC_METHODS
+from Helpers.StaticMethod import ALL_STATIC_METHODS
 from Helpers.PyTypeDefinition_helpers import (
     get_property_name,
     get_property_name_escaped,
@@ -9,7 +9,7 @@ from Helpers.PyTypeDefinition_helpers import (
     get_layout_property_name
 )
 
-STATIC_METHOD_NAMES = map(lambda m: m.name, STATIC_METHODS)
+STATIC_METHOD_NAMES = map(lambda m: m.name, ALL_STATIC_METHODS)
 STATIC_METHOD_NAMES = set(STATIC_METHOD_NAMES)
 
 class PyTypeDefinition:
