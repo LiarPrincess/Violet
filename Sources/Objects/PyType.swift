@@ -7,6 +7,10 @@ import VioletCore
 // Objects -> typeobject.c
 // https://docs.python.org/3/c-api/typeobj.html
 
+internal func ===(lhs: PyType, rhs: PyType) -> Bool {
+  return lhs.ptr === rhs.ptr
+}
+
 // sourcery: pytype = type, isDefault, hasGC, isBaseType, isTypeSubclass
 // sourcery: instancesHave__dict__
 public struct PyType: PyObjectMixin, HasCustomGetMethod {
@@ -99,7 +103,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
                            debugFn: @escaping PyType.DebugFn,
                            deinitialize: @escaping PyType.DeinitializeFn) {
     if let b = base {
-      assert(mro.contains { $0.ptr === b.ptr })
+      assert(mro.contains { $0 === b })
     }
 
     let mro = [self] + mroWithoutSelf
@@ -114,6 +118,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     self.staticMethodsPtr.initialize(to: staticMethods)
     self.debugFnPtr.initialize(to: debugFn)
     self.deinitializePtr.initialize(to: deinitialize)
+
     self.flags.setCustomFlags(from: typeFlags.objectFlags)
 
     for base in bases {
@@ -185,14 +190,14 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     }
 
     let object: PyObject
-    switch zelf.checkSetSpecialAttribute(name: .__name__, value: value) {
+    switch zelf.checkSetSpecialAttribute(py, name: .__name__, value: value) {
     case let .value(v): object = v
     case let .error(e): return .error(e)
     }
 
     guard let string = py.cast.asString(object) else {
-      let t = object.typeName
-      return .typeError("can only assign string to \(zelf.name).__name__, not '\(t)'")
+      let msg = "can only assign string to \(zelf.name).__name__, not '\(object.typeName)'"
+      return .typeError(py, message: msg)
     }
 
     zelf.name = string.value
@@ -227,19 +232,28 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
       return Self.invalidSelfArgument(py, object: zelf, fnName: "__qualname__")
     }
 
+    switch zelf.setQualname(py, value: value) {
+    case .value:
+      return .none(py)
+    case .error(let e):
+      return .error(e)
+    }
+  }
+
+  internal func setQualname(_ py: Py, value: PyObject?) -> PyResult<Void> {
     let object: PyObject
-    switch zelf.checkSetSpecialAttribute(name: .__qualname__, value: value) {
+    switch self.checkSetSpecialAttribute(py, name: .__qualname__, value: value) {
     case let .value(v): object = v
     case let .error(e): return .error(e)
     }
 
     guard let string = py.cast.asString(object) else {
-      let t = object.typeName
-      return .typeError("can only assign string to \(zelf.name).__qualname__, not '\(t)'")
+      let msg = "can only assign string to \(self.name).__qualname__, not '\(object.typeName)'"
+      return .typeError(py, message: msg)
     }
 
-    zelf.qualname = string.value
-    return .none(py)
+    self.qualname = string.value
+    return .value()
   }
 
   // MARK: - Doc
@@ -269,7 +283,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     }
 
     let object: PyObject
-    switch zelf.checkSetSpecialAttribute(name: .__doc__, value: value) {
+    switch zelf.checkSetSpecialAttribute(py, name: .__doc__, value: value) {
     case let .value(v): object = v
     case let .error(e): return .error(e)
     }
@@ -377,7 +391,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     }
 
     if let dotIndex = self.name.firstIndex(of: ".") {
-       let moduleName = self.name.prefix(upTo: dotIndex)
+      let moduleName = self.name.prefix(upTo: dotIndex)
       return .string(String(moduleName))
     }
 
@@ -391,14 +405,23 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
       return Self.invalidSelfArgument(py, object: zelf, fnName: "__module__")
     }
 
+    switch zelf.setModule(py, value: value) {
+    case .value:
+      return .none(py)
+    case .error(let e):
+      return .error(e)
+    }
+  }
+
+  internal func setModule(_ py: Py, value: PyObject?) -> PyResult<Void> {
     let object: PyObject
-    switch zelf.checkSetSpecialAttribute(name: .__module__, value: value) {
+    switch self.checkSetSpecialAttribute(py, name: .__module__, value: value) {
     case let .value(v): object = v
     case let .error(e): return .error(e)
     }
 
-    zelf.__dict__.set(id: .__module__, to: object)
-    return .none(py)
+    self.__dict__.set(id: .__module__, to: object)
+    return .value()
   }
 
   // MARK: - Dict
@@ -478,7 +501,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     }
 
     // Violet currently does not support this
-    return .typeError("can't set \(zelf.name).__bases__")
+    return .typeError(py, message: "can't set \(zelf.name).__bases__")
   }
 
   // MARK: - Mro
@@ -523,8 +546,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     }
 
     guard let otherType = py.cast.asType(object) else {
-      let error = py.newTypeError(message: "issubclass() arg 1 must be a class")
-      return .error(error.asBaseException)
+      return .typeError(py, message: "issubclass() arg 1 must be a class")
     }
 
     let bool = zelf.isSubtype(of: otherType)
@@ -533,7 +555,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   }
 
   internal func isSubtype(of type: PyType) -> Bool {
-    return self.mro.contains { $0.ptr === type.ptr }
+    return self.mro.contains { $0 === type }
   }
 
   // sourcery: pymethod = __instancecheck__
@@ -632,8 +654,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
 
     let nameQuoted = name.repr().quoted
     let message = "type object '\(self.name)' has no attribute \(nameQuoted)"
-    let error = py.newAttributeError(message: message)
-    return .error(error.asBaseException)
+    return .typeError(py, message: message)
   }
 
   // sourcery: pymethod = __setattr__
@@ -818,7 +839,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
 
     // Ugly exception: when the call was type(something),
     // don't call tp_init on the result.
-    let isTypeNotSubclass = zelf.ptr === py.types.type.ptr
+    let isTypeNotSubclass = zelf === py.types.type
     let hasSingleArg = args.count == 1
     let hasEmptyKwargs = kwargs?.elements.isEmpty ?? true
 
@@ -844,13 +865,14 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
                            kwargs: PyDict?) -> PyResult<PyObject> {
     // Fast path for 'type' type.
     // Mostly because of how common type checks are (e.g. 'type(elsa)')
-    if self.ptr === py.types.type.ptr {
+    if self === py.types.type {
       return PyType.pyNew(type: self, args: args, kwargs: kwargs)
     }
 
     // '__new__' is a static method, so we can't just use 'callMethod'
     guard let newLookup = self.mroLookup(name: .__new__) else {
-      return .typeError("cannot create '\(self.name)' instances")
+      let message = "cannot create '\(self.name)' instances"
+      return .typeError(py, message: message)
     }
 
     // '__new__' can (and probably will) be an descriptor,
@@ -887,34 +909,35 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
 
     switch result {
     case .value,
-         .missingMethod:
+        .missingMethod:
       return .none(py)
     case .error(let e),
-         .notCallable(let e):
+        .notCallable(let e):
       return .error(e)
     }
   }
 
   // MARK: - Helpers
 
-  private func checkSetSpecialAttribute(name: IdString,
+  private func checkSetSpecialAttribute(_ py: Py,
+                                        name: IdString,
                                         value: PyObject?) -> PyResult<PyObject> {
     let string = name.value.value
 
     guard self.typeFlags.isHeapType else {
-      return .typeError("can't set \(self.name).\(string)")
+      return .typeError(py, message: "can't set \(self.name).\(string)")
     }
 
     guard let value = value else {
-      return .typeError("can't delete \(self.name).\(string)")
+      return .typeError(py, message: "can't delete \(self.name).\(string)")
     }
 
     return .value(value)
   }
 
-  private static func invalidSelfArgument(_ py: Py,
-                                          object: PyObject,
-                                          fnName: String) -> PyResult<PyObject> {
+  internal static func invalidSelfArgument(_ py: Py,
+                                           object: PyObject,
+                                           fnName: String) -> PyResult<PyObject> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: "type",
                                                fnName: fnName)

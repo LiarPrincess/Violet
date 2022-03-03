@@ -21,7 +21,10 @@ extension PyObjectMixin {
   ///
   /// Accessing `__dict__` on object that does not have it will trap!
   /// Use `Py.get__dict__` instead.
-  internal var __dict__: PyDict { self.header.__dict__ }
+  internal var __dict__: PyDict {
+    get { self.header.__dict__ }
+    nonmutating set { self.header.__dict__ = newValue }
+  }
 
   /// Various flags that describe the current state of the `PyObject`.
   ///

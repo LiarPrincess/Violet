@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import VioletCore
 
@@ -8,7 +7,8 @@ import VioletCore
 // Objects -> typeobject.c
 
 /// Method Resolution Order
-public struct MRO {
+public struct MethodResolutionOrder {
+
   internal let baseClasses: [PyType]
   internal let resolutionOrder: [PyType]
 
@@ -20,32 +20,18 @@ public struct MRO {
     self.resolutionOrder = resolutionOrder
   }
 
-  // MARK: - Builtin type
-
-  /// Create (trivial) C3 linearization using given class.
-  /// [doc](https://www.python.org/download/releases/2.3/mro/)
-  ///
-  /// Special overload for builtin types, because during `Py.initialize` we can't
-  /// call python methods (and also we exactly know the expected result).
-  ///
-  /// It will not take into account `self` (which should be 1st in MRO)!
-  internal static func linearizeForBuiltinType(baseClass: PyType) -> MRO {
-    // Normally we should use 'Py.callMethod(object: type, selector: .mro)',
-    // but for builtins we know that they are not overloaded.
-    let mro = baseClass.getMRO()
-    return MRO(baseClasses: [baseClass], resolutionOrder: mro)
-  }
-
   // MARK: - From single type
 
+  internal typealias Result = PyResult<MethodResolutionOrder>
+
   /// Create (trivial) C3 linearization using given class.
   /// [doc](https://www.python.org/download/releases/2.3/mro/)
   ///
   /// It will not take into account `self` (which should be 1st in MRO)!
-  internal static func linearize(baseClass: PyType) -> PyResult<MRO> {
-    switch Self.getMro(type: baseClass) {
+  internal static func linearize(_ py: Py, baseClass: PyType) -> Result {
+    switch Self.getMro(py, type: baseClass) {
     case let .value(mro):
-      let result = MRO(baseClasses: [baseClass], resolutionOrder: mro)
+      let result = MethodResolutionOrder(baseClasses: [baseClass], resolutionOrder: mro)
       return .value(result)
     case let .error(e):
       return .error(e)
@@ -58,37 +44,38 @@ public struct MRO {
   /// [doc](https://www.python.org/download/releases/2.3/mro/)
   ///
   /// It will not take into account `self` (which should be 1st in MRO)!
-  internal static func linearize(baseClasses: [PyObject]) -> PyResult<MRO> {
-    guard let baseTypes = Self.asTypes(objects: baseClasses) else {
-      return .typeError("bases must be types")
+  internal static func linearize(_ py: Py, baseClasses: [PyObject]) -> Result {
+    guard let baseTypes = Self.asTypes(py, objects: baseClasses) else {
+      return .typeError(py, message: "bases must be types")
     }
 
-    return Self.linearize(baseClasses: baseTypes)
+    return Self.linearize(py, baseClasses: baseTypes)
   }
 
   // MARK: - From types
 
-  internal static func linearize(baseClasses: [PyType]) -> PyResult<MRO> {
+  internal static func linearize(_ py: Py, baseClasses: [PyType]) -> Result {
     // No base classes? Empty MRO.
     if baseClasses.isEmpty {
-      return .value(MRO(baseClasses: [], resolutionOrder: []))
+      let mro = MethodResolutionOrder(baseClasses: [], resolutionOrder: [])
+      return .value(mro)
     }
 
     // Fast path: if there is a single base, constructing the MRO is trivial.
     if baseClasses.count == 1 {
-      return Self.linearize(baseClass: baseClasses[0])
+      return Self.linearize(py, baseClass: baseClasses[0])
     }
 
     // Sanity check.
     if let duplicate = Self.getDuplicateBaseClass(baseClasses) {
-      let qualname = duplicate.getQualname()
-      return .typeError("duplicate base class \(qualname)")
+      let qualname = duplicate.getQualnameString()
+      return .typeError(py, message: "duplicate base class \(qualname)")
     }
 
     // Get mros to linearize.
     var mros = [[PyType]]()
     for type in baseClasses {
-      switch Self.getMro(type: type) {
+      switch Self.getMro(py, type: type) {
       case let .value(mro): mros.append(mro)
       case let .error(e): return .error(e)
       }
@@ -102,7 +89,7 @@ public struct MRO {
     while Self.hasAnyClassRemaining(mros) {
       guard let base = Self.getNextBase(mros) else {
         let msg = "Cannot create a consistent method resolution order (MRO) for bases"
-        return .typeError(msg)
+        return .typeError(py, message: msg)
       }
 
       result.append(base)
@@ -114,14 +101,15 @@ public struct MRO {
     }
 
     assert(result.count == expectedMroCount)
-    return .value(MRO(baseClasses: baseClasses, resolutionOrder: result))
+    let mro = MethodResolutionOrder(baseClasses: baseClasses, resolutionOrder: result)
+    return .value(mro)
   }
 
   private static func getDuplicateBaseClass(_ baseClasses: [PyType]) -> PyType? {
-    var visited = Set<ObjectIdentifier>()
+    var visited = Set<Int>()
 
     for base in baseClasses {
-      let id = ObjectIdentifier(base)
+      let id = Int(bitPattern: base.ptr)
 
       if visited.contains(id) {
         return base
@@ -162,11 +150,12 @@ public struct MRO {
 
   private static func countUniqueTypes(mros: [[PyType]]) -> Int {
     var result = 0
-    var visited = Set<ObjectIdentifier>()
+    var visited = Set<Int>()
 
     for classList in mros {
       for type in classList {
-        let id = ObjectIdentifier(type)
+        let id = Int(bitPattern: type.ptr)
+
         if !visited.contains(id) {
           result += 1
           visited.insert(id)
@@ -179,14 +168,13 @@ public struct MRO {
 
   // MARK: - Get type MRO
 
-  private static func getMro(type: PyType) -> PyResult<[PyType]> {
+  private static func getMro(_ py: Py, type: PyType) -> PyResult<[PyType]> {
     // If this is just a boring type which has 'Py.types.type' as type
     // then we know exactly what method should be called.
     // For example 'int' type has 'type' set to 'Py.types.type'
-    if type.type === Py.types.type {
-      // We will end up here in 99% of the cases.
-      let result = type.getMRO()
-      return .value(result)
+    if type.type === py.types.type {
+      // We will end up here in the 99% of the cases.
+      return .value(type.mro)
     }
 
     // Otherwise it is a 'type' which is an instance of 'god knows what':
@@ -198,7 +186,7 @@ public struct MRO {
     // We should use it instead of 'hello world' when teaching programming…
 
     let mroObject: PyObject
-    switch Py.callMethod(object: type, selector: .mro) {
+    switch py.callMethod(object: type.asObject, selector: .mro) {
     case let .value(o):
       mroObject = o
     case let .missingMethod(e),
@@ -208,27 +196,27 @@ public struct MRO {
     }
 
     let mroEntries: [PyObject]
-    switch Py.toArray(iterable: mroObject) {
+    switch py.toArray(iterable: mroObject) {
     case let .value(es):
       mroEntries = es
     case let .error(e):
       return .error(e)
     }
 
-    guard let mro = Self.asTypes(objects: mroEntries) else {
-      return .typeError("MRO entries have to be types")
+    guard let mro = Self.asTypes(py, objects: mroEntries) else {
+      return .typeError(py, message: "MRO entries have to be types")
     }
 
     return .value(mro)
   }
 
   // swiftlint:disable:next discouraged_optional_collection
-  private static func asTypes(objects: [PyObject]) -> [PyType]? {
+  private static func asTypes(_ py: Py, objects: [PyObject]) -> [PyType]? {
     var result = [PyType]()
     result.reserveCapacity(objects.count)
 
     for object in objects {
-      switch PyCast.asType(object) {
+      switch py.cast.asType(object) {
       case .some(let t): result.append(t)
       case .none: return .none
       }
@@ -237,5 +225,3 @@ public struct MRO {
     return result
   }
 }
-
-*/

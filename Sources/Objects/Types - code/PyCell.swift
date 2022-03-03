@@ -12,7 +12,10 @@ public struct PyCell: PyObjectMixin {
 
   // sourcery: includeInLayout
   // This has to be public for performance
-  internal var content: PyObject? { self.contentPtr.pointee }
+  internal var content: PyObject? {
+    get { self.contentPtr.pointee }
+    nonmutating set { self.contentPtr.pointee = newValue }
+  }
 
   public let ptr: RawPtr
 

@@ -51,7 +51,7 @@ extension Py {{
     }}
 
     private func isExactlyInstance(_ object: PyObject, of type: PyType) -> Bool {{
-      return object.type.ptr === type.ptr
+      return object.type === type
     }}\
 ''')
 
