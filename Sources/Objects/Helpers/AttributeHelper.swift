@@ -144,7 +144,7 @@ internal enum AttributeHelper {
                                    name: PyObject) -> PyResult<PyString> {
     guard let string = py.cast.asString(name) else {
       let msg = "attribute name must be string, not '\(name.typeName)'"
-      return .typeError(msg)
+      return .typeError(py, message: msg)
     }
 
     return .value(string)

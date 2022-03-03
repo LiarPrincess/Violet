@@ -61,7 +61,8 @@ extension PyString {
 
     /// Decode `data`.
     /// If this fails -> handle error according to `errorHandling` argument.
-    internal func decodeOrError(data: Data,
+    internal func decodeOrError(_ py: Py,
+                                data: Data,
                                 onError: ErrorHandling) -> PyResult<String> {
       if let string = self.decode(data: data) {
         return .value(string)
@@ -70,7 +71,7 @@ extension PyString {
       // static int _PyCodecRegistry_Init(void)
       switch onError {
       case .strict:
-        return .unicodeDecodeError(encoding: self, data: data)
+        return .unicodeDecodeError(py, encoding: self, data: data)
       case .ignore:
         return .value("")
       }
@@ -85,7 +86,8 @@ extension PyString {
 
     /// Encode `data`.
     /// If this fails -> handle error according to `errorHandling` argument.
-    internal func encodeOrError(string: String,
+    internal func encodeOrError(_ py: Py,
+                                string: String,
                                 onError: ErrorHandling) -> PyResult<Data> {
       if let data = self.encode(string: string) {
         return .value(data)
@@ -94,7 +96,7 @@ extension PyString {
       // static int _PyCodecRegistry_Init(void)
       switch onError {
       case .strict:
-        return .unicodeEncodeError(encoding: self, string: string)
+        return .unicodeEncodeError(py, encoding: self, string: string)
       case .ignore:
         return .value(Data())
       }
@@ -109,14 +111,15 @@ extension PyString {
       }
 
       guard let string = py.cast.asString(object) else {
-        return .typeError("encoding must be str, not \(object.typeName)")
+        let message = "encoding must be str, not \(object.typeName)"
+        return .typeError(py, message: message)
       }
 
-      return Self.from(string: string.value)
+      return Self.from(py, string: string.value)
     }
 
     // swiftlint:disable:next function_body_length
-    internal static func from(string: String) -> PyResult<Encoding> {
+    internal static func from(_ py: Py, string: String) -> PyResult<Encoding> {
       switch string {
       case "ascii",
            "646",
@@ -158,7 +161,7 @@ extension PyString {
            "UTF-32LE":
         return .value(.utf32LittleEndian)
       default:
-        return .unboundLocalError(variableName: "unknown encoding: \(string)")
+        return .unboundLocalError(py, variableName: "unknown encoding: \(string)")
       }
     }
   }

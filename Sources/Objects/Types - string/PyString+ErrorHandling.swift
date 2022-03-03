@@ -16,20 +16,22 @@ extension PyString {
       }
 
       guard let string = py.cast.asString(object) else {
-        return .typeError("errors have to be str, not \(object.typeName)")
+        let message = "errors have to be str, not \(object.typeName)"
+        return .typeError(py, message: message)
       }
 
-      return Self.from(string: string.value)
+      return Self.from(py, string: string.value)
     }
 
-    internal static func from(string: String) -> PyResult<ErrorHandling> {
+    internal static func from(_ py: Py, string: String) -> PyResult<ErrorHandling> {
       switch string {
       case "strict":
         return .value(.strict)
       case "ignore":
         return .value(.ignore)
       default:
-        return .lookupError("unknown error handler name '\(string)'")
+        let message = "unknown error handler name '\(string)'"
+        return .lookupError(py, message: message)
       }
     }
   }

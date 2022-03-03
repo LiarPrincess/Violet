@@ -131,7 +131,7 @@ public struct PyObject: PyObjectMixin {
     }
 
     let msg = "unsupported format string passed to \(zelf.typeName).__format__"
-    return .typeError(msg)
+    return .typeError(py, message: msg)
   }
 
   // MARK: - Class
@@ -250,12 +250,12 @@ public struct PyObject: PyObjectMixin {
       if Self.hasOverridden__new__(py, type: type) {
         let msg = "object.__new__() takes exactly one argument " +
                   "(the type to instantiate)"
-        return .typeError(msg)
+        return .typeError(py, message: msg)
       }
 
       if !Self.hasOverridden__init__(py, type: type) {
         let typeName = type.getNameString()
-        return .typeError("\(typeName) takes no arguments")
+        return .typeError(py, message: "\(typeName) takes no arguments")
       }
     }
 
@@ -269,23 +269,23 @@ public struct PyObject: PyObjectMixin {
   internal static func pyInit(_ py: Py,
                               zelf: PyObject,
                               args: [PyObject],
-                              kwargs: PyDict?) -> PyResult<PyNone> {
+                              kwargs: PyDict?) -> PyResult<PyObject> {
     if Self.hasExcessArgs(args: args, kwargs: kwargs) {
       if Self.hasOverridden__init__(py, type: zelf.type) {
         let msg = "object.__init__() takes exactly one argument " +
                   "(the instance to initialize)"
-        return .typeError(msg)
+        return .typeError(py, message: msg)
       }
 
       if !Self.hasOverridden__new__(py, type: zelf.type) {
         let typeName = zelf.type.getNameString()
         let msg = "\(typeName).__init__() takes exactly one argument " +
                   "(the instance to initialize)"
-        return .typeError(msg)
+        return .typeError(py, message: msg)
       }
     }
 
-    return .value(py.none)
+    return .none(py)
   }
 
   /// static int

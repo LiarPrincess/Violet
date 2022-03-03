@@ -97,11 +97,33 @@ public struct Py {
     return self.newTypeError(message: message)
   }
 
+  public func newSystemError(message: String) -> PySystemError { fatalError() }
   public func newTypeError(message: String) -> PyTypeError { fatalError() }
   public func newAttributeError(message: String) -> PyAttributeError { fatalError() }
   public func newAttributeError(object: PyObject, hasNoAttribute: PyString) -> PyAttributeError { fatalError() }
   public func newAttributeError(object: PyObject, attributeIsReadOnly: PyString) -> PyAttributeError { fatalError() }
-
+  public func newIndexError(message: String) -> PySystemError { fatalError() }
+  public func newZeroDivisionError(message: String) -> PySystemError { fatalError() }
+  public func newOverflowError(message: String) -> PySystemError { fatalError() }
+  public func newNameError(message: String) -> PySystemError { fatalError() }
+  public func newKeyError(message: String) -> PySystemError { fatalError() }
+  public func newValueError(message: String) -> PySystemError { fatalError() }
+  public func newLookupError(message: String) -> PySystemError { fatalError() }
+  public func newRuntimeError(message: String) -> PySystemError { fatalError() }
+  public func newOSError(message: String) -> PySystemError { fatalError() }
+  public func newAssertionError(message: String) -> PySystemError { fatalError() }
+  public func newEOFError(message: String) -> PySystemError { fatalError() }
+  public func newKeyError(key: PyObject) -> PyKeyError { fatalError() }
+  public func newStopIteration(value: PyObject?) -> PyStopIteration { fatalError() }
+  public func newUnboundLocalError(variableName: String) -> PyUnboundLocalError { fatalError() }
+  public func newUnicodeDecodeError(data: Data, encoding: PyString.Encoding) -> PyUnicodeDecodeError { fatalError() }
+  public func newUnicodeEncodeError(string: String, encoding: PyString.Encoding) -> PyUnicodeEncodeError { fatalError() }
+  public func newImportError(message: String,
+                             moduleName: String?,
+                             modulePath: String?) -> PyImportError { fatalError() }
+  public func newImportError(message: String,
+                             moduleName: String?,
+                             modulePath: Path?) -> PyImportError { fatalError() }
   // MARK: - Call
 
   public enum CallResult {
@@ -166,110 +188,3 @@ public struct Py {
     fatalError()
   }
 }
-
-/* MARKER
-
-// MARK: - Errors
-
-extension PyResult {
-
-  public static func typeError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(Py.newTypeError(msg: msg))
-  }
-
-  public static func valueError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(Py.newValueError(msg: msg))
-  }
-
-  public static func indexError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(Py.newIndexError(msg: msg))
-  }
-
-  public static func attributeError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(Py.newAttributeError(msg: msg))
-  }
-
-  public static func zeroDivisionError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(Py.newZeroDivisionError(msg: msg))
-  }
-
-  public static func overflowError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(Py.newOverflowError(msg: msg))
-  }
-
-  public static func systemError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(Py.newSystemError(msg: msg))
-  }
-
-  public static func nameError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(Py.newNameError(msg: msg))
-  }
-
-  public static func keyError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(Py.newKeyError(msg: msg))
-  }
-
-  public static func keyError(key: PyObject) -> PyResult<Wrapped> {
-    return PyResult.error(Py.newKeyError(key: key))
-  }
-
-  /// `Value` is used by generators and coroutines to hold `return` value.
-  public static func stopIteration(value: PyObject? = nil) -> PyResult<Wrapped> {
-    return PyResult.error(Py.newStopIteration(value: value))
-  }
-
-  public static func runtimeError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(Py.newRuntimeError(msg: msg))
-  }
-
-  public static func unboundLocalError(variableName: String) -> PyResult<Wrapped> {
-    return PyResult.error(Py.newUnboundLocalError(variableName: variableName))
-  }
-
-  public static func lookupError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(Py.newLookupError(msg: msg))
-  }
-
-  public static func unicodeDecodeError(encoding: PyString.Encoding,
-                                        data: Data) -> PyResult<Wrapped> {
-    let error = Py.newUnicodeDecodeError(data: data, encoding: encoding)
-    return PyResult.error(error)
-  }
-
-  public static func unicodeEncodeError(encoding: PyString.Encoding,
-                                        string: String) -> PyResult<Wrapped> {
-    let error = Py.newUnicodeEncodeError(string: string, encoding: encoding)
-    return PyResult.error(error)
-  }
-
-  public static func osError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(Py.newOSError(msg: msg))
-  }
-
-  public static func assertionError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(Py.newAssertionError(msg: msg))
-  }
-
-  public static func importError(_ msg: String,
-                                 moduleName: String?,
-                                 modulePath: Path?) -> PyResult<Wrapped> {
-    let error = Py.newImportError(msg: msg,
-                                  moduleName: moduleName,
-                                  modulePath: modulePath)
-    return PyResult.error(error)
-  }
-
-  public static func importError(_ msg: String,
-                                 moduleName: String? = nil,
-                                 modulePath: String? = nil) -> PyResult<Wrapped> {
-    let error = Py.newImportError(msg: msg,
-                                  moduleName: moduleName,
-                                  modulePath: modulePath)
-    return PyResult.error(error)
-  }
-
-  public static func eofError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(Py.newEOFError(msg: msg))
-  }
-}
-*/
