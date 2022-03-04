@@ -34,7 +34,7 @@ public struct PyNone: PyObjectMixin, HasCustomGetMethod {
   // sourcery: pymethod = __repr__
   internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard py.cast.isNone(zelf) else {
-      return Self.invalidSelfArgument(py, zelf)
+      return Self.invalidSelfArgument(py, zelf, "__repr__")
     }
 
     let result = py.intern(string: "None")
@@ -46,7 +46,7 @@ public struct PyNone: PyObjectMixin, HasCustomGetMethod {
   // sourcery: pymethod = __bool__
   internal static func __bool__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard py.cast.isNone(zelf) else {
-      return Self.invalidSelfArgument(py, zelf)
+      return Self.invalidSelfArgument(py, zelf, "__bool__")
     }
 
     let result = py.false
@@ -67,7 +67,7 @@ public struct PyNone: PyObjectMixin, HasCustomGetMethod {
                                         zelf: PyObject,
                                         name: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asNone(zelf) else {
-      return Self.invalidSelfArgument(py, zelf)
+      return Self.invalidSelfArgument(py, zelf, "__getattribute__")
     }
 
     switch AttributeHelper.extractName(py, name: name) {
@@ -181,14 +181,12 @@ public struct PyNone: PyObjectMixin, HasCustomGetMethod {
 
   // MARK: - Helpers
 
-  internal static func invalidSelfArgument(
-    _ py: Py,
-    _ object: PyObject,
-    swiftFnName: StaticString = #function
-  ) -> PyResult<PyObject> {
+  internal static func invalidSelfArgument(_ py: Py,
+                                           _ object: PyObject,
+                                           _ fnName: String) -> PyResult<PyObject> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: "NoneType",
-                                               swiftFnName: swiftFnName)
+                                               fnName: fnName)
 
     return .error(error.asBaseException)
   }

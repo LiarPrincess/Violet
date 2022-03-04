@@ -107,6 +107,23 @@ public struct PyInt: PyObjectMixin {
     return Self.compareOperation(py, zelf: zelf, other: other, fnName: "__ge__") { $0 >= $1 }
   }
 
+  private static func compareOperation(_ py: Py,
+                                       zelf: PyObject,
+                                       other: PyObject,
+                                       fnName: String,
+                                       fn: (BigInt, BigInt) -> Bool) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName)
+    }
+
+    guard let other = py.cast.asInt(other) else {
+      return .notImplemented(py)
+    }
+
+    let result = fn(zelf.value, other.value)
+    return result.toResult(py)
+  }
+
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
@@ -132,7 +149,7 @@ public struct PyInt: PyObjectMixin {
                                zelf: PyObject,
                                fnName: String) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
+      return Self.invalidSelfArgument(py, zelf, fnName)
     }
 
     let value = zelf.value
@@ -150,7 +167,7 @@ public struct PyInt: PyObjectMixin {
   // sourcery: pymethod = __bool__
   internal static func __bool__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName: "__bool__")
+      return Self.invalidSelfArgument(py, zelf, "__bool__")
     }
 
     let result = zelf.value.isTrue
@@ -165,10 +182,10 @@ public struct PyInt: PyObjectMixin {
   // sourcery: pymethod = __float__
   internal static func __float__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName: "__float__")
+      return Self.invalidSelfArgument(py, zelf, "__float__")
     }
 
-    switch Self.asDouble(int: zelf.value) {
+    switch Self.asDouble(py, int: zelf.value) {
     case let .value(d):
       let result = py.newFloat(d)
       return .value(result.asObject)
@@ -208,7 +225,7 @@ public struct PyInt: PyObjectMixin {
     return Self.identityOperation(py, zelf: zelf, fnName: "conjugate")
   }
 
-  // MARK: - numerator, denominator
+  // MARK: - Numerator, denominator
 
   // sourcery: pyproperty = numerator
   internal static func numerator(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
@@ -227,7 +244,7 @@ public struct PyInt: PyObjectMixin {
                                         zelf: PyObject,
                                         name: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName: "__getattribute__")
+      return Self.invalidSelfArgument(py, zelf, "__getattribute__")
     }
 
     return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
@@ -237,7 +254,7 @@ public struct PyInt: PyObjectMixin {
 
   // sourcery: pymethod = __pos__
   internal static func __pos__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    // 'int' is immutable, so if we are exactly int (not an subclass),
+    // 'int' is immutable, so if we are exactly 'int' (not an subclass),
     // then we can return ourself. (This saves an allocation).
     if let int = py.cast.asExactlyInt(zelf) {
       return .value(int.asObject)
@@ -258,7 +275,7 @@ public struct PyInt: PyObjectMixin {
 
   // sourcery: pymethod = __abs__
   internal static func __abs__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    // 'int' is immutable, so if we are exactly int (not a subclass) and '>=0',
+    // 'int' is immutable, so if we are exactly 'int' (not a subclass) and '>=0',
     // then we can return ourself. (This saves an allocation).
     if let int = py.cast.asExactlyInt(zelf), int.value >= 0 {
       return .value(int.asObject)
@@ -363,7 +380,7 @@ public struct PyInt: PyObjectMixin {
                                mod: PyObject?,
                                other: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName: "__pow__")
+      return Self.invalidSelfArgument(py, zelf, "__pow__")
     }
 
     guard let exp = py.cast.asInt(exp) else {
@@ -388,7 +405,7 @@ public struct PyInt: PyObjectMixin {
         return divMod.mod.toResult(py)
 
       case let .fraction(powDouble):
-        switch Self.asDouble(int: modulo) {
+        switch Self.asDouble(py, int: modulo) {
         case let .value(d):
           let result = powDouble.truncatingRemainder(dividingBy: d)
           return result.toResult(py)
@@ -412,7 +429,7 @@ public struct PyInt: PyObjectMixin {
                                 mod: PyObject?,
                                 other: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName: "__rpow__")
+      return Self.invalidSelfArgument(py, zelf, "__rpow__")
     }
 
     guard let base = py.cast.asInt(base) else {
@@ -483,7 +500,7 @@ public struct PyInt: PyObjectMixin {
     }
 
     // exp is negative: return 1 / result
-    switch Self.asDouble(int: result) {
+    switch Self.asDouble(py, int: result) {
     case .value(let d):
       return .fraction(Double(1.0) / d)
     case .overflow:
@@ -531,7 +548,7 @@ public struct PyInt: PyObjectMixin {
                                        fnName: String,
                                        isZelfLeft: Bool) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
+      return Self.invalidSelfArgument(py, zelf, fnName)
     }
 
     guard let other = py.cast.asInt(other) else {
@@ -543,13 +560,13 @@ public struct PyInt: PyObjectMixin {
     // But it is 'close enough' for most of the cases.
 
     let zelfDouble: Double
-    switch Self.asDouble(int: zelf) {
+    switch Self.asDouble(py, int: zelf) {
     case let .value(d): zelfDouble = d
     case let .overflow(e): return .error(e)
     }
 
     let otherDouble: Double
-    switch Self.asDouble(int: other) {
+    switch Self.asDouble(py, int: other) {
     case let .value(d): otherDouble = d
     case let .overflow(e): return .error(e)
     }
@@ -595,7 +612,7 @@ public struct PyInt: PyObjectMixin {
                                         fnName: String,
                                         isZelfLeft: Bool) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
+      return Self.invalidSelfArgument(py, zelf, fnName)
     }
 
     guard let other = py.cast.asInt(other) else {
@@ -643,7 +660,7 @@ public struct PyInt: PyObjectMixin {
                                    fnName: String,
                                    isZelfLeft: Bool) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
+      return Self.invalidSelfArgument(py, zelf, fnName)
     }
 
     guard let other = py.cast.asInt(other) else {
@@ -691,7 +708,7 @@ public struct PyInt: PyObjectMixin {
                                       fnName: String,
                                       isZelfLeft: Bool) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
+      return Self.invalidSelfArgument(py, zelf, fnName)
     }
 
     guard let other = py.cast.asInt(other) else {
@@ -804,7 +821,7 @@ public struct PyInt: PyObjectMixin {
                                       fnName: String,
                                       isZelfValue: Bool) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
+      return Self.invalidSelfArgument(py, zelf, fnName)
     }
 
     guard let other = py.cast.asInt(other) else {
@@ -861,7 +878,7 @@ public struct PyInt: PyObjectMixin {
                                       fnName: String,
                                       isZelfValue: Bool) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
+      return Self.invalidSelfArgument(py, zelf, fnName)
     }
 
     guard let other = py.cast.asInt(other) else {
@@ -939,7 +956,7 @@ public struct PyInt: PyObjectMixin {
                                  zelf: PyObject,
                                  nDigits _nDigits: PyObject?) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName: "__round__")
+      return Self.invalidSelfArgument(py, zelf, "__round__")
     }
 
     let nDigits: BigInt
@@ -1083,25 +1100,17 @@ public struct PyInt: PyObjectMixin {
         return .typeError(py, message: "int() missing string argument")
       }
 
-      let result = Self.allocate(py, type: type, value: 0)
-      return .value(result)
+      return Self.allocate(py, type: type, value: 0)
     }
 
     // If we do not have base -> try to cast 'object' as 'int'
     guard let base = base else {
-      let parsed = Self.parse(py, objectWithoutBase: object)
+      let parsed = Self.new(py, fromObjectWithoutBase: object)
       switch parsed {
       case .pyInt(let pyInt):
-        // 'int' is immutable, so we can return the same thing (saves allocation).
-        if py.cast.isExactlyInt(pyInt.asObject) {
-          return .value(pyInt.asObject)
-        }
-
-        let result = Self.allocate(py, type: type, value: pyInt.value)
-        return .value(result)
+        return Self.allocate(py, type: type, value: pyInt)
       case .bigInt(let value):
-        let result = Self.allocate(py, type: type, value: value)
-        return .value(result)
+        return Self.allocate(py, type: type, value: value)
       case .error(let e):
         return .error(e)
       }
@@ -1127,10 +1136,9 @@ public struct PyInt: PyObjectMixin {
     }
 
     // Parse 'object' with a given 'base'
-    switch Self.parseBigInt(py, object: object, base: baseInt) {
+    switch Self.new(py, fromString: object, base: baseInt) {
     case .value(let value):
-      let result = Self.allocate(py, type: type, value: value)
-      return .value(result)
+      return Self.allocate(py, type: type, value: value)
     case .notString:
       let message = "int() can't convert non-string with explicit base"
       return .typeError(py, message: message)
@@ -1139,19 +1147,37 @@ public struct PyInt: PyObjectMixin {
     }
   }
 
+  private static func isBuiltinIntType(_ py: Py, type: PyType) -> Bool {
+    return type === py.types.int
+  }
+
   private static func allocate(_ py: Py,
                                type: PyType,
-                               value: BigInt) -> PyObject {
+                               value: PyInt) -> PyResult<PyObject> {
+    // 'int' is immutable, so we can return the same thing (saves allocation).
+    let isBuiltin = Self.isBuiltinIntType(py, type: type)
+    let isNotSubclass = py.cast.isExactlyInt(value.asObject)
+
+    if isBuiltin && isNotSubclass {
+      return .value(value.asObject)
+    }
+
+    return Self.allocate(py, type: type, value: value.value)
+  }
+
+  private static func allocate(_ py: Py,
+                               type: PyType,
+                               value: BigInt) -> PyResult<PyObject> {
     // If this is a builtin then try to re-use interned values
-    let isBuiltin = type === py.types.int
+    let isBuiltin = Self.isBuiltinIntType(py, type: type)
     let result = isBuiltin ?
       py.newInt(value) :
       py.memory.newInt(py, type: type, value: value)
 
-    return result.asObject
+    return .value(result.asObject)
   }
 
-  private enum ParseResult {
+  private enum NewWithoutBaseResult {
     case pyInt(PyInt)
     case bigInt(BigInt)
     case error(PyBaseException)
@@ -1159,8 +1185,10 @@ public struct PyInt: PyObjectMixin {
 
   /// PyObject *
   /// PyNumber_Long(PyObject *o)
-  private static func parse(_ py: Py,
-                            objectWithoutBase object: PyObject) -> ParseResult {
+  private static func new(
+    _ py: Py,
+    fromObjectWithoutBase object: PyObject
+  ) -> NewWithoutBaseResult {
     // '__int__' and '__trunc__' have to be before 'py.cast.asInt',
     // because they can be overridden
 
@@ -1180,7 +1208,7 @@ public struct PyInt: PyObjectMixin {
       return .pyInt(int)
     }
 
-    switch Self.parseBigInt(py, object: object, base: 10) {
+    switch Self.new(py, fromString: object, base: 10) {
     case .value(let v): return .bigInt(v)
     case .notString: break
     case .error(let e): return .error(e)
@@ -1252,15 +1280,15 @@ public struct PyInt: PyObjectMixin {
     }
   }
 
-  private enum ParseBigIntResult {
+  private enum NewFromStringResult {
     case value(BigInt)
     case notString
     case error(PyBaseException)
   }
 
-  private static func parseBigInt(_ py: Py,
-                                  object: PyObject,
-                                  base: Int) -> ParseBigIntResult {
+  private static func new(_ py: Py,
+                          fromString object: PyObject,
+                          base: Int) -> NewFromStringResult {
     let string: String
     switch py.getString(object: object, encoding: nil) {
     case .string(_, let s),
@@ -1291,11 +1319,11 @@ public struct PyInt: PyObjectMixin {
                                         zelf: PyObject,
                                         fnName: String) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
+      return Self.invalidSelfArgument(py, zelf, fnName)
     }
 
-    // Normally we could return ourself (as in exactly the same object as 'zelf').
-    // But if we are an 'int' subclass then we have to convert to 'int':
+    // Normally we could return ourself (as in: exactly the same object as 'zelf').
+    // But if we are an subclass then we have to convert to 'int':
     // >>> True.imag
     // 0
     // >>> True.__index__()
@@ -1314,7 +1342,7 @@ public struct PyInt: PyObjectMixin {
                                    fnName: String,
                                    fn: (BigInt) -> Int) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
+      return Self.invalidSelfArgument(py, zelf, fnName)
     }
 
     let result = fn(zelf.value)
@@ -1326,7 +1354,7 @@ public struct PyInt: PyObjectMixin {
                                      fnName: String,
                                      fn: (BigInt) -> BigInt) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
+      return Self.invalidSelfArgument(py, zelf, fnName)
     }
 
     let result = fn(zelf.value)
@@ -1339,24 +1367,7 @@ public struct PyInt: PyObjectMixin {
                                       fnName: String,
                                       fn: (BigInt, BigInt) -> BigInt) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
-    }
-
-    guard let other = py.cast.asInt(other) else {
-      return .notImplemented(py)
-    }
-
-    let result = fn(zelf.value, other.value)
-    return result.toResult(py)
-  }
-
-  private static func compareOperation(_ py: Py,
-                                       zelf: PyObject,
-                                       other: PyObject,
-                                       fnName: String,
-                                       fn: (BigInt, BigInt) -> Bool) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
+      return Self.invalidSelfArgument(py, zelf, fnName)
     }
 
     guard let other = py.cast.asInt(other) else {
@@ -1369,23 +1380,21 @@ public struct PyInt: PyObjectMixin {
 
   // MARK: - Helpers
 
-  internal static func asDouble(int: PyInt) -> PyFloat.IntAsDouble {
-    return Self.asDouble(int: int.value)
+  internal static func asDouble(_ py: Py, int: PyInt) -> PyFloat.IntAsDouble {
+    return PyFloat.asDouble(py, int: int)
   }
 
-  internal static func asDouble(int: BigInt) -> PyFloat.IntAsDouble {
-    return PyFloat.asDouble(int: int)
+  internal static func asDouble(_ py: Py, int: BigInt) -> PyFloat.IntAsDouble {
+    return PyFloat.asDouble(py, int: int)
   }
 
   private static func castZelf(_ py: Py, _ object: PyObject) -> PyInt? {
     return py.cast.asInt(object)
   }
 
-  private static func invalidSelfArgument(
-    _ py: Py,
-    _ object: PyObject,
-    fnName: String
-  ) -> PyResult<PyObject> {
+  private static func invalidSelfArgument(_ py: Py,
+                                          _ object: PyObject,
+                                          _ fnName: String) -> PyResult<PyObject> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: "int",
                                                fnName: fnName)

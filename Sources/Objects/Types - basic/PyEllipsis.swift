@@ -37,7 +37,7 @@ public struct PyEllipsis: PyObjectMixin {
   // sourcery: pymethod = __repr__
   internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard py.cast.isEllipsis(zelf) else {
-      return Self.invalidSelfArgument(py, zelf)
+      return Self.invalidSelfArgument(py, zelf, "__repr__")
     }
 
     let result = py.intern(string: "Ellipsis")
@@ -56,7 +56,7 @@ public struct PyEllipsis: PyObjectMixin {
   // sourcery: pymethod = __reduce__
   internal static func __reduce__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard py.cast.isEllipsis(zelf) else {
-      return Self.invalidSelfArgument(py, zelf)
+      return Self.invalidSelfArgument(py, zelf, "__reduce__")
     }
 
     let result = py.intern(string: "Ellipsis")
@@ -70,7 +70,7 @@ public struct PyEllipsis: PyObjectMixin {
                                         zelf: PyObject,
                                         name: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asEllipsis(zelf) else {
-      return Self.invalidSelfArgument(py, zelf)
+      return Self.invalidSelfArgument(py, zelf, "__getattribute__")
     }
 
     return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
@@ -95,14 +95,12 @@ public struct PyEllipsis: PyObjectMixin {
 
   // MARK: - Helpers
 
-  internal static func invalidSelfArgument(
-    _ py: Py,
-    _ object: PyObject,
-    swiftFnName: StaticString = #function
-  ) -> PyResult<PyObject> {
+  internal static func invalidSelfArgument(_ py: Py,
+                                           _ object: PyObject,
+                                           _ fnName: String) -> PyResult<PyObject> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: "ellipsis",
-                                               swiftFnName: swiftFnName)
+                                               fnName: fnName)
 
     return .error(error.asBaseException)
   }

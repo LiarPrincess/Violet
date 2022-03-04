@@ -71,7 +71,7 @@ public struct PyBool: PyObjectMixin {
                                zelf: PyObject,
                                fnName: String) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
+      return Self.invalidSelfArgument(py, zelf, fnName)
     }
 
     let result = zelf.isTrue ?
@@ -205,7 +205,7 @@ public struct PyBool: PyObjectMixin {
     intFn: (Py, PyObject, PyObject) -> PyResult<PyObject>
   ) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
+      return Self.invalidSelfArgument(py, zelf, fnName)
     }
 
     guard let other = py.cast.asBool(other) else {
@@ -220,11 +220,9 @@ public struct PyBool: PyObjectMixin {
     return py.cast.asBool(object)
   }
 
-  private static func invalidSelfArgument(
-    _ py: Py,
-    _ object: PyObject,
-    fnName: String
-  ) -> PyResult<PyObject> {
+  private static func invalidSelfArgument(_ py: Py,
+                                          _ object: PyObject,
+                                          _ fnName: String) -> PyResult<PyObject> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: "bool",
                                                fnName: fnName)
