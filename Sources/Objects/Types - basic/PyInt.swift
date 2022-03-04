@@ -377,8 +377,7 @@ public struct PyInt: PyObjectMixin {
   internal static func __pow__(_ py: Py,
                                zelf: PyObject,
                                exp: PyObject,
-                               mod: PyObject?,
-                               other: PyObject) -> PyResult<PyObject> {
+                               mod: PyObject?) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
       return Self.invalidSelfArgument(py, zelf, "__pow__")
     }
@@ -426,8 +425,7 @@ public struct PyInt: PyObjectMixin {
   internal static func __rpow__(_ py: Py,
                                 zelf: PyObject,
                                 base: PyObject,
-                                mod: PyObject?,
-                                other: PyObject) -> PyResult<PyObject> {
+                                mod: PyObject?) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
       return Self.invalidSelfArgument(py, zelf, "__rpow__")
     }

@@ -50,71 +50,111 @@ public struct PyComplex: PyObjectMixin {
     let imag = zelf.imag
     return "PyComplex(type: \(typeName), flags: \(flags), real: \(real), imag: \(imag))"
   }
-}
 
-/* MARKER
-
-  // MARK: - Equatable
+  // MARK: - Equatable, comparable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> CompareResult {
-    if let complex = PyCast.asComplex(other) {
-      let result = self.real == complex.real && self.imag == complex.imag
-      return .value(result)
+  internal static func __eq__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__eq__")
     }
 
-    if let float = PyCast.asFloat(other) {
-      guard self.imag.isZero else {
-        return .value(false)
-      }
-
-      return FloatCompareHelper.isEqual(left: self.real, right: float)
-    }
-
-    if let int = PyCast.asInt(other) {
-      guard self.imag.isZero else {
-        return .value(false)
-      }
-
-      return FloatCompareHelper.isEqual(left: self.real, right: int)
-    }
-
-    return .notImplemented
+    let isEqual = Self.isEqual(py, zelf: zelf, other: other)
+    return isEqual.toResult(py)
   }
 
   // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> CompareResult {
-    return self.isEqual(other).not
+  internal static func __ne__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__ne__")
+    }
+
+    let isEqual = Self.isEqual(py, zelf: zelf, other: other)
+    return isEqual.not.toResult(py)
   }
 
-  // MARK: - Comparable
+  private static func isEqual(_ py: Py,
+                              zelf: PyComplex,
+                              other: PyObject) -> CompareResult {
+    let real = zelf.real
+    let imag = zelf.imag
+
+    if let other = py.cast.asComplex(other) {
+      let result = real == other.real && imag == other.imag
+      return .value(result)
+    }
+
+    if let otherFloat = py.cast.asFloat(other) {
+      guard imag.isZero else {
+        return .value(false)
+      }
+
+      return FloatCompareHelper.isEqual(py, left: real, right: otherFloat.asObject)
+    }
+
+    if let otherInt = py.cast.asInt(other) {
+      guard imag.isZero else {
+        return .value(false)
+      }
+
+      return FloatCompareHelper.isEqual(py, left: real, right: otherInt.asObject)
+    }
+
+    return .notImplemented
+  }
 
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> CompareResult {
-    return .notImplemented
+  internal static func __lt__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    return Self.compareOperation(py, zelf: zelf, fnName: "__lt__")
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    return .notImplemented
+  internal static func __le__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    return Self.compareOperation(py, zelf: zelf, fnName: "__le__")
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> CompareResult {
-    return .notImplemented
+  internal static func __gt__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    return Self.compareOperation(py, zelf: zelf, fnName: "__gt__")
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
-    return .notImplemented
+  internal static func __ge__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    return Self.compareOperation(py, zelf: zelf, fnName: "__ge__")
+  }
+
+  private static func compareOperation(_ py: Py,
+                                       zelf: PyObject,
+                                       fnName: String) -> PyResult<PyObject> {
+    guard py.cast.isComplex(zelf.asObject) else {
+      return Self.invalidSelfArgument(py, zelf, fnName)
+    }
+
+    return .notImplemented(py)
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> PyHash {
-    let realHash = Py.hasher.hash(self.real)
-    let imagHash = Py.hasher.hash(self.imag)
+  internal static func __hash__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__hash__")
+    }
+
+    let realHash = py.hasher.hash(zelf.real)
+    let imagHash = py.hasher.hash(zelf.imag)
 
     // If the imaginary part is 0, imagHash is 0 now,
     // so the following returns realHash unchanged.
@@ -124,26 +164,47 @@ public struct PyComplex: PyObjectMixin {
 
     // Overflows are acceptable (and surprisingly common).
     let imagHashNeg = Hasher.imag &* imagHash
-    return realHash &+ imagHashNeg
+    let result = realHash &+ imagHashNeg
+    return result.toResult(py)
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
-    // Real part is 0: just output the imaginary part and do not include parens.
-    if self.real.isZero {
-      let imag = self.dimensionRepr(self.imag)
-      return imag + "j"
-    }
-
-    let sign = self.imag >= 0 ? "+" : ""
-    let real = self.dimensionRepr(self.real)
-    let imag = self.dimensionRepr(self.imag)
-    return "(\(real)\(sign)\(imag)j)"
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.toString(py, zelf: zelf, fnName: "__repr__")
   }
 
-  private func dimensionRepr(_ value: Double) -> String {
+  // sourcery: pymethod = __str__
+  internal static func __str__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.toString(py, zelf: zelf, fnName: "__str__")
+  }
+
+  private static func toString(_ py: Py,
+                               zelf: PyObject,
+                               fnName: String) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName)
+    }
+
+    let real = zelf.real
+    let imag = zelf.imag
+
+    // Real part is 0: just output the imaginary part and do not include parens.
+    if real.isZero {
+      let imagDim = Self.dimensionRepr(imag)
+      let result = imagDim + "j"
+      return result.toResult(py)
+    }
+
+    let sign = imag >= 0 ? "+" : ""
+    let realDim = Self.dimensionRepr(real)
+    let imagDim = Self.dimensionRepr(imag)
+    let result = "(\(realDim)\(sign)\(imagDim)j)"
+    return result.toResult(py)
+  }
+
+  private static func dimensionRepr(_ value: Double) -> String {
     let result = String(describing: value)
 
     // If it is 'int' then remove '.0'
@@ -155,179 +216,229 @@ public struct PyComplex: PyObjectMixin {
     return result
   }
 
-  // sourcery: pymethod = __str__
-  internal func str() -> String {
-    return self.repr()
-  }
-
-  // MARK: - Convertible
+  // MARK: - As bool/int/float
 
   // sourcery: pymethod = __bool__
-  internal func asBool() -> Bool {
-    let bothZero = self.real.isZero && self.imag.isZero
-    return !bothZero
+  internal static func __bool__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__bool__")
+    }
+
+    let bothZero = zelf.real.isZero && zelf.imag.isZero
+    let result = !bothZero
+    return result.toResult(py)
   }
 
   // sourcery: pymethod = __int__
-  internal func asInt() -> PyResult<PyInt> {
-    return .typeError("can't convert complex to int")
+  internal static func __int__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard py.cast.isComplex(zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__int__")
+    }
+
+    return .typeError(py, message: "can't convert complex to int")
   }
 
   // sourcery: pymethod = __float__
-  internal func asFloat() -> PyResult<PyFloat> {
-    return .typeError("can't convert complex to float")
-  }
+  internal static func __float__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard py.cast.isComplex(zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__float__")
+    }
 
-  // sourcery: pyproperty = real
-  internal func asReal() -> PyObject {
-    return Py.newFloat(self.real)
-  }
-
-  // sourcery: pyproperty = imag
-  internal func asImag() -> PyObject {
-    return Py.newFloat(self.imag)
+    return .typeError(py, message: "can't convert complex to float")
   }
 
   // MARK: - Imaginary
 
+  // sourcery: pyproperty = real
+  internal static func real(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "real")
+    }
+
+    let result = zelf.real
+    return result.toResult(py)
+  }
+
+  // sourcery: pyproperty = imag
+  internal static func imag(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "real")
+    }
+
+    let result = zelf.imag
+    return result.toResult(py)
+  }
+
   // sourcery: pymethod = conjugate
   /// float.conjugate
   /// Return self, the complex conjugate of any float.
-  internal func conjugate() -> PyObject {
-    return Py.newComplex(real: self.real, imag: -self.imag)
+  internal static func conjugate(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.unaryOperation(py, zelf: zelf, fnName: "conjugate", fn: Self.conjugate(_:))
+  }
+
+  private static func conjugate(_ raw: Raw) -> Raw {
+    return Raw(real: raw.real, imag: -raw.imag)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__getattribute__")
+    }
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
 
   // MARK: - Sign
 
   // sourcery: pymethod = __pos__
-  internal func positive() -> PyObject {
-    return self
+  internal static func __pos__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    // 'complex' is immutable, so if we are exactly 'complex' (not an subclass),
+    // then we can return ourself. (This saves an allocation).
+    if py.cast.isExactlyComplex(zelf.asObject) {
+      return .value(zelf.asObject)
+    }
+
+    return Self.unaryOperation(py, zelf: zelf, fnName: "__pos__", fn: Self.pos(_:))
+  }
+
+  private static func pos(_ raw: Raw) -> Raw {
+    return Raw(real: raw.real, imag: raw.imag)
   }
 
   // sourcery: pymethod = __neg__
-  internal func negative() -> PyObject {
-    return Py.newComplex(real: -self.real, imag: -self.imag)
+  internal static func __neg__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.unaryOperation(py, zelf: zelf, fnName: "__neg__", fn: Self.neg(_:))
+  }
+
+  private static func neg(_ raw: Raw) -> Raw {
+    return Raw(real: -raw.real, imag: -raw.imag)
   }
 
   // MARK: - Abs
 
   // sourcery: pymethod = __abs__
-  internal func abs() -> PyObject {
-    let bothFinite = self.real.isFinite && self.imag.isFinite
-    guard bothFinite else {
-      if self.real.isInfinite {
-        return Py.newFloat(Swift.abs(self.real))
-      }
-
-      if self.imag.isInfinite {
-        return Py.newFloat(Swift.abs(self.imag))
-      }
-
-      return Py.newFloat(.nan)
+  internal static func __abs__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__abs__")
     }
 
-    let result = hypot(self.real, self.imag)
-    return Py.newFloat(result)
+    let real = zelf.real
+    let imag = zelf.imag
+
+    let result: Double
+    switch (real.isFinite, imag.isFinite) {
+    case (true, true): result = hypot(zelf.real, zelf.imag)
+    case (true, _): result = Swift.abs(imag)
+    case (_, true): result = Swift.abs(real)
+    case (_, _): result = .nan
+    }
+
+    return result.toResult(py)
   }
 
   // MARK: - Add
 
   // sourcery: pymethod = __add__
-  internal func add(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asComplex(object: other) {
-    case .value(let r):
-      let real = self.real + r.real
-      let imag = self.imag + r.imag
-      return .value(Py.newComplex(real: real, imag: imag))
-    case .intOverflow(_, let e):
-      return .error(e)
-    case .notComplex:
-      return .value(Py.notImplemented)
-    }
+  internal static func __add__(_ py: Py,
+                               zelf: PyObject,
+                               other: PyObject) -> PyResult<PyObject> {
+    return Self.binaryOperation(py,
+                                zelf: zelf,
+                                other: other,
+                                fnName: "__add__",
+                                fn: Self.add(left:right:))
   }
 
   // sourcery: pymethod = __radd__
-  internal func radd(_ other: PyObject) -> PyResult<PyObject> {
-    return self.add(other)
+  internal static func __radd__(_ py: Py,
+                                zelf: PyObject,
+                                other: PyObject) -> PyResult<PyObject> {
+    return Self.binaryOperation(py,
+                                zelf: zelf,
+                                other: other,
+                                fnName: "__radd__",
+                                fn: Self.add(left:right:))
+  }
+
+  private static func add(left: Raw, right: Raw) -> Raw {
+    let real = left.real + right.real
+    let imag = left.imag + right.imag
+    return Raw(real: real, imag: imag)
   }
 
   // MARK: - Sub
 
   // sourcery: pymethod = __sub__
-  internal func sub(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asComplex(object: other) {
-    case .value(let r):
-      let result = self.sub(left: self.raw, right: r)
-      return .value(result)
-    case .intOverflow(_, let e):
-      return .error(e)
-    case .notComplex:
-      return .value(Py.notImplemented)
-    }
+  internal static func __sub__(_ py: Py,
+                               zelf: PyObject,
+                               other: PyObject) -> PyResult<PyObject> {
+    return Self.binaryOperation(py,
+                                zelf: zelf,
+                                other: other,
+                                fnName: "__sub__",
+                                fn: Self.sub(left:right:))
+  }
+
+  private static func sub(left: Raw, right: Raw) -> Raw {
+    let real = left.real - right.real
+    let imag = left.imag - right.imag
+    return Raw(real: real, imag: imag)
   }
 
   // sourcery: pymethod = __rsub__
-  internal func rsub(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asComplex(object: other) {
-    case .value(let r):
-      let result = self.sub(left: r, right: self.raw)
-      return .value(result)
-    case .intOverflow(_, let e):
-      return .error(e)
-    case .notComplex:
-      return .value(Py.notImplemented)
-    }
+  internal static func __rsub__(_ py: Py,
+                                zelf: PyObject,
+                                other: PyObject) -> PyResult<PyObject> {
+    return Self.binaryOperation(py,
+                                zelf: zelf,
+                                other: other,
+                                fnName: "__rsub__",
+                                fn: Self.rsub(left:right:))
   }
 
-  private func sub(left: Raw, right: Raw) -> PyComplex {
-    let real = left.real - right.real
-    let imag = left.imag - right.imag
-    return Py.newComplex(real: real, imag: imag)
+  private static func rsub(left: Raw, right: Raw) -> Raw {
+    let real = right.real - left.real
+    let imag = right.imag - left.imag
+    return Raw(real: real, imag: imag)
   }
 
   // MARK: - Mul
 
   // sourcery: pymethod = __mul__
-  internal func mul(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asComplex(object: other) {
-    case .value(let r):
-      let result = self.mul(left: self.raw, right: r)
-      return .value(result)
-    case .intOverflow(_, let e):
-      return .error(e)
-    case .notComplex:
-      return .value(Py.notImplemented)
-    }
+  internal static func __mul__(_ py: Py,
+                               zelf: PyObject,
+                               other: PyObject) -> PyResult<PyObject> {
+    return Self.binaryOperation(py,
+                                zelf: zelf,
+                                other: other,
+                                fnName: "__mul__",
+                                fn: Self.mul(left:right:))
   }
 
   // sourcery: pymethod = __rmul__
-  internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asComplex(object: other) {
-    case .value(let r):
-      let result = self.mul(left: r, right: self.raw)
-      return .value(result)
-    case .intOverflow(_, let e):
-      return .error(e)
-    case .notComplex:
-      return .value(Py.notImplemented)
-    }
+  internal static func __rmul__(_ py: Py,
+                                zelf: PyObject,
+                                other: PyObject) -> PyResult<PyObject> {
+    return Self.binaryOperation(py,
+                                zelf: zelf,
+                                other: other,
+                                fnName: "__rmul__",
+                                fn: Self.mul(left:right:))
   }
 
-  private func mul(left: Raw, right: Raw) -> PyComplex {
+  private static func mul(left: Raw, right: Raw) -> Raw {
     // >>> a = 1 + 2j
     // >>> b = 3 + 4j
     // >>> a * b
@@ -335,54 +446,77 @@ public struct PyComplex: PyObjectMixin {
     // because: 1*3 - 2*4 + (1*4 + 2*3)j = 3-8 + (4+3)j = -5 + 10j
     let real = left.real * right.real - left.imag * right.imag
     let imag = left.real * right.imag + left.imag * right.real
-    return Py.newComplex(real: real, imag: imag)
+    return Raw(real: real, imag: imag)
   }
 
   // MARK: - Pow
 
   // sourcery: pymethod = __pow__
-  internal func pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject> {
-    guard PyCast.isNilOrNone(mod) else {
-      return .valueError("complex modulo")
-    }
-
-    switch Self.asComplex(object: exp) {
-    case .value(let exp):
-      return self.pow(base: self.raw, exp: exp)
-    case .intOverflow(_, let e):
-      return .error(e)
-    case .notComplex:
-      return .value(Py.notImplemented)
-    }
+  internal static func __pow__(_ py: Py,
+                               zelf: PyObject,
+                               exp: PyObject,
+                               mod: PyObject?) -> PyResult<PyObject> {
+    return Self.powOperation(py,
+                             zelf: zelf,
+                             other: exp,
+                             mod: mod,
+                             fnName: "__pow__",
+                             isZelfBase: true)
   }
 
   // sourcery: pymethod = __rpow__
-  internal func rpow(base: PyObject, mod: PyObject?) -> PyResult<PyObject> {
-    guard PyCast.isNilOrNone(mod) else {
-      return .valueError("complex modulo")
+  internal static func __rpow__(_ py: Py,
+                                zelf: PyObject,
+                                base: PyObject,
+                                mod: PyObject?) -> PyResult<PyObject> {
+    return Self.powOperation(py,
+                             zelf: zelf,
+                             other: base,
+                             mod: mod,
+                             fnName: "__rpow__",
+                             isZelfBase: false)
+  }
+
+  private static func powOperation(_ py: Py,
+                                   zelf: PyObject,
+                                   other: PyObject,
+                                   mod: PyObject?,
+                                   fnName: String,
+                                   isZelfBase: Bool) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName)
     }
 
-    switch Self.asComplex(object: base) {
-    case .value(let base):
-      return self.pow(base: base, exp: self.raw)
+    guard py.cast.isNilOrNone(mod) else {
+      return .valueError(py, message: "complex modulo")
+    }
+
+    switch Self.asComplex(py, object: other) {
+    case .value(let other):
+      let base = isZelfBase ? Raw(zelf) : other
+      let exp = isZelfBase ? other : Raw(zelf)
+      return Self.pow(py, base: base, exp: exp)
+
     case .intOverflow(_, let e):
       return .error(e)
     case .notComplex:
-      return .value(Py.notImplemented)
+      return .notImplemented(py)
     }
   }
 
-  private func pow(base: Raw, exp: Raw) -> PyResult<PyObject> {
+  private static func pow(_ py: Py, base: Raw, exp: Raw) -> PyResult<PyObject> {
     if exp.real.isZero && exp.real.isZero {
-      return .value(Py.newComplex(real: 1.0, imag: 0.0))
+      let result = py.newComplex(real: 1.0, imag: 0.0)
+      return .value(result.asObject)
     }
 
     if base.real.isZero && base.imag.isZero {
       if exp.real < 0.0 || exp.imag != 0.0 {
-        return .valueError("complex zero to negative or complex power")
+        return .valueError(py, message: "complex zero to negative or complex power")
       }
 
-      return .value(Py.newComplex(real: 0.0, imag: 0.0))
+      let result = py.newComplex(real: 0.0, imag: 0.0)
+      return .value(result.asObject)
     }
 
     let vabs = Foundation.hypot(base.real, base.imag)
@@ -397,140 +531,210 @@ public struct PyComplex: PyObjectMixin {
 
     let real = len * cos(phase)
     let imag = len * sin(phase)
-    return .value(Py.newComplex(real: real, imag: imag))
+    let result = py.newComplex(real: real, imag: imag)
+    return .value(result.asObject)
   }
 
   // MARK: - True div
 
   // sourcery: pymethod = __truediv__
-  internal func truediv(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asComplex(object: other) {
-    case .value(let r):
-      return self.truediv(left: self.raw, right: r)
-    case .intOverflow(_, let e):
-      return .error(e)
-    case .notComplex:
-      return .value(Py.notImplemented)
-    }
+  internal static func __truediv__(_ py: Py,
+                                   zelf: PyObject,
+                                   other: PyObject) -> PyResult<PyObject> {
+    return Self.truedivOperation(py,
+                                 zelf: zelf,
+                                 other: other,
+                                 fnName: "__truediv__",
+                                 isZelfLeft: true)
   }
 
   // sourcery: pymethod = __rtruediv__
-  internal func rtruediv(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asComplex(object: other) {
-    case .value(let r):
-      return self.truediv(left: r, right: self.raw)
+  internal static func __rtruediv__(_ py: Py,
+                                    zelf: PyObject,
+                                    other: PyObject) -> PyResult<PyObject> {
+    return Self.truedivOperation(py,
+                                 zelf: zelf,
+                                 other: other,
+                                 fnName: "__rtruediv__",
+                                 isZelfLeft: false)
+  }
+
+  private static func truedivOperation(_ py: Py,
+                                       zelf: PyObject,
+                                       other: PyObject,
+                                       fnName: String,
+                                       isZelfLeft: Bool) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName)
+    }
+
+    switch Self.asComplex(py, object: other) {
+    case .value(let other):
+      let left = isZelfLeft ? Raw(zelf) : other
+      let right = isZelfLeft ? other : Raw(zelf)
+
+      // We implement the 'incorrect' version because it is simpler.
+      // See comment in 'Py_complex _Py_c_quot(Py_complex a, Py_complex b)' for details.
+
+      let d = right.real * right.real + right.imag * right.imag
+      if d.isZero {
+        return .zeroDivisionError(py, message: "complex division by zero")
+      }
+
+      let real = (left.real * right.real + left.imag * right.imag) / d
+      let imag = (left.imag * right.real - left.real * right.imag) / d
+      let result = py.newComplex(real: real, imag: imag)
+      return .value(result.asObject)
+
     case .intOverflow(_, let e):
       return .error(e)
     case .notComplex:
-      return .value(Py.notImplemented)
+      return .notImplemented(py)
     }
-  }
-
-  private func truediv(left: Raw, right: Raw) -> PyResult<PyObject> {
-    // We implement the 'incorrect' version because it is simpler.
-    // See comment in 'Py_complex _Py_c_quot(Py_complex a, Py_complex b)' for details.
-
-    let d = right.real * right.real + right.imag * right.imag
-    if d.isZero {
-      return .zeroDivisionError("complex division by zero")
-    }
-
-    let real = (left.real * right.real + left.imag * right.imag) / d
-    let imag = (left.imag * right.real - left.real * right.imag) / d
-    return .value(Py.newComplex(real: real, imag: imag))
   }
 
   // MARK: - Floor div
 
+  private static let floordivError = "can't take floor of complex number."
+
   // sourcery: pymethod = __floordiv__
-  internal func floordiv(_ other: PyObject) -> PyResult<PyObject> {
-    return .typeError("can't take floor of complex number.")
+  internal static func __floordiv__(_ py: Py,
+                                    zelf: PyObject,
+                                    other: PyObject) -> PyResult<PyObject> {
+    guard py.cast.isComplex(zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__floordiv__")
+    }
+
+    return .typeError(py, message: Self.floordivError)
   }
 
   // sourcery: pymethod = __rfloordiv__
-  internal func rfloordiv(_ other: PyObject) -> PyResult<PyObject> {
-    return self.floordiv(other)
+  internal static func __rfloordiv__(_ py: Py,
+                                     zelf: PyObject,
+                                     other: PyObject) -> PyResult<PyObject> {
+    guard py.cast.isComplex(zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__rfloordiv__")
+    }
+
+    return .typeError(py, message: Self.floordivError)
   }
 
   // MARK: - Mod
 
+  private static let modError = "can't mod complex numbers."
+
   // sourcery: pymethod = __mod__
-  internal func mod(_ other: PyObject) -> PyResult<PyObject> {
-    return .typeError("can't mod complex numbers.")
+  internal static func __mod__(_ py: Py,
+                               zelf: PyObject,
+                               other: PyObject) -> PyResult<PyObject> {
+    guard py.cast.isComplex(zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__mod__")
+    }
+
+    return .typeError(py, message: Self.modError)
   }
 
   // sourcery: pymethod = __rmod__
-  internal func rmod(_ other: PyObject) -> PyResult<PyObject> {
-    return self.mod(other)
+  internal static func __rmod__(_ py: Py,
+                                zelf: PyObject,
+                                other: PyObject) -> PyResult<PyObject> {
+    guard py.cast.isComplex(zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__rmod__")
+    }
+
+    return .typeError(py, message: Self.modError)
   }
 
   // MARK: - Div mod
 
+  private static let divmodError = "can't take floor or mod of complex number."
+
   // sourcery: pymethod = __divmod__
-  internal func divmod(_ other: PyObject) -> PyResult<PyObject> {
-    return .typeError("can't take floor or mod of complex number.")
+  internal static func __divmod__(_ py: Py,
+                                  zelf: PyObject,
+                                  other: PyObject) -> PyResult<PyObject> {
+    guard py.cast.isComplex(zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__divmod__")
+    }
+
+    return .typeError(py, message: Self.divmodError)
   }
 
   // sourcery: pymethod = __rdivmod__
-  internal func rdivmod(_ other: PyObject) -> PyResult<PyObject> {
-    return self.divmod(other)
+  internal static func __rdivmod__(_ py: Py,
+                                   zelf: PyObject,
+                                   other: PyObject) -> PyResult<PyObject> {
+    guard py.cast.isComplex(zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__rdivmod__")
+    }
+
+    return .typeError(py, message: Self.divmodError)
   }
 
   // MARK: - NewArgs
 
   // sourcery: pymethod = __getnewargs__
-  internal func getNewArgs() -> PyTuple {
-    let r = Py.newFloat(self.real)
-    let i = Py.newFloat(self.imag)
-    return Py.newTuple(r, i)
+  internal static func __getnewargs__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__getnewargs__")
+    }
+
+    let real = py.newFloat(zelf.real)
+    let imag = py.newFloat(zelf.imag)
+    let result = py.newTuple(elements: real.asObject, imag.asObject)
+    return .value(result.asObject)
   }
 
   // MARK: - Python new
 
-  private static let newArguments = ArgumentParser.createOrTrap(
+  private static let newArguments = ArgumentParser(
     arguments: ["real", "imag"],
     format: "|OO:complex"
   )
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyNew(type: PyType,
-                            args: [PyObject],
-                            kwargs: PyDict?) -> PyResult<PyComplex> {
-    switch self.newArguments.bind(args: args, kwargs: kwargs) {
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    switch Self.newArguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
       assert(binding.optionalCount == 2, "Invalid optional argument count.")
 
       let arg0 = binding.optional(at: 0)
       let arg1 = binding.optional(at: 1)
-      return PyComplex.pyNew(type: type, arg0: arg0, arg1: arg1)
+      return Self.__new__(py, type: type, arg0: arg0, arg1: arg1)
     case let .error(e):
       return .error(e)
     }
   }
 
-  private class func pyNew(type: PyType,
-                           arg0: PyObject?,
-                           arg1: PyObject?) -> PyResult<PyComplex> {
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               arg0: PyObject?,
+                               arg1: PyObject?) -> PyResult<PyObject> {
     // Special-case for a identity.
-    let arg0Complex = arg0.flatMap(PyCast.asComplex(_:))
+    let arg0Complex = arg0.flatMap(py.cast.asComplex(_:))
     if let complex = arg0Complex, arg1 == nil {
-      return .value(complex)
+      return .value(complex.asObject)
     }
 
-    let arg0String = arg0.flatMap(PyCast.asString(_:))
+    let arg0String = arg0.flatMap(py.cast.asString(_:))
     if let str = arg0String {
       guard arg1 == nil else {
-        return .typeError("complex() can't take second arg if first is a string")
+        return .typeError(py, message: "complex() can't take second arg if first is a string")
       }
 
-      let parsed = PyComplex.parse(str.value)
-      return parsed.map { Self.allocate(type: type, real: $0.real, imag: $0.imag) }
+      switch Self.new(py, fromString: str.value) {
+      case let .value(raw): return Self.allocate(py, type: type, value: raw)
+      case let .error(e): return .error(e)
+      }
     }
 
-    let arg1IsString = arg1.flatMap(PyCast.isString(_:)) ?? false
+    let arg1IsString = arg1.flatMap(py.cast.isString(_:)) ?? false
     if arg1IsString {
-      return .typeError("complex() second arg can't be a string")
+      return .typeError(py, message: "complex() second arg can't be a string")
     }
 
     // If we get this far, then the "real" and "imag" parts should
@@ -542,29 +746,39 @@ public struct PyComplex: PyObjectMixin {
     // (-5+0j)
 
     let a: Raw
-    switch PyComplex.extractComplex(arg0) {
-    case let .value(o): a = o
+    switch PyComplex.new(py, fromNumber: arg0) {
+    case let .pyComplex(o): a = Raw(o)
+    case let .complex(o): a = o
     case let .error(e): return .error(e)
     }
 
     let b: Raw
-    switch PyComplex.extractComplex(arg1) {
-    case let .value(o): b = o
+    switch PyComplex.new(py, fromNumber: arg1) {
+    case let .pyComplex(o): b = Raw(o)
+    case let .complex(o): b = o
     case let .error(e): return .error(e)
     }
 
     // a + b * j = (a.r + a.i) + (b.r + b.i) * j = (a.r - b.i) + (a.i + b.r)j
-    let result = Self.allocate(type: type, real: a.real - b.imag, imag: a.imag + b.real)
-    return .value(result)
+    let result = Raw(real: a.real - b.imag, imag: a.imag + b.real)
+    return Self.allocate(py, type: type, value: result)
   }
 
-  private static func allocate(type: PyType, real: Double, imag: Double) -> PyComplex {
+  internal static func isBuiltinComplexType(_ py: Py, type: PyType) -> Bool {
+    return type === py.types.complex
+  }
+
+  private static func allocate(_ py: Py,
+                               type: PyType,
+                               value: Raw) -> PyResult<PyObject> {
     // If this is a builtin then try to re-use interned values
     // (do we even have interned complex?)
-    let isBuiltin = type === Py.types.complex
-    return isBuiltin ?
-      Py.newComplex(real: real, imag: imag) :
-      PyMemory.newComplex(type: type, real: real, imag: imag)
+    let isBuiltin = Self.isBuiltinComplexType(py, type: type)
+    let result = isBuiltin ?
+      py.newComplex(real: value.real, imag: value.imag) :
+      py.memory.newComplex(py, type: type, real: value.real, imag: value.imag)
+
+    return .value(result.asObject)
   }
 
   /// A valid complex string usually takes one of the three forms:
@@ -577,12 +791,12 @@ public struct PyComplex: PyObjectMixin {
   ///
   /// `<signed-float>` is any string of the form `<float>` whose first
   /// character is '+' or '-'
-  internal static func parse(_ arg: String) -> PyResult<Raw> {
+  internal static func new(_ py: Py, fromString arg: String) -> PyResult<Raw> {
     // swiftlint:disable:previous cyclomatic_complexity
 
     let s = arg.trimmingCharacters(in: .whitespacesAndNewlines)
     if s.isEmpty {
-      return .valueError("complex() arg is a malformed string")
+      return .valueError(py, message: "complex() arg is a malformed string")
     }
 
     var index = s.startIndex
@@ -601,7 +815,7 @@ public struct PyComplex: PyObjectMixin {
     }
 
     guard let real = Double(s[..<index]) else {
-      return .valueError("complex() '\(s)' cannot be interpreted as complex")
+      return .valueError(py, message: "complex() '\(s)' cannot be interpreted as complex")
     }
 
     // complex('123') -> (123+0j)
@@ -613,7 +827,7 @@ public struct PyComplex: PyObjectMixin {
     if s[index] == "j" {
       s.formIndex(after: &index) // consume 'j'
       guard index == s.endIndex else {
-        return .valueError("complex() arg is a malformed string")
+        return .valueError(py, message: "complex() arg is a malformed string")
       }
 
       return .value(Raw(real: 0.0, imag: real))
@@ -627,33 +841,43 @@ public struct PyComplex: PyObjectMixin {
 
     // Missing 'j'
     if index == s.endIndex {
-      return .valueError("complex() arg is a malformed string")
+      return .valueError(py, message: "complex() arg is a malformed string")
     }
 
     guard let imag = Double(s[imagStart..<index]) else {
-      return .valueError("complex() '\(s)' cannot be interpreted as complex")
+      return .valueError(py, message: "complex() '\(s)' cannot be interpreted as complex")
     }
 
     s.formIndex(after: &index) // consume 'j'
     guard index == s.endIndex else {
-      return .valueError("complex() arg is a malformed string")
+      return .valueError(py, message: "complex() arg is a malformed string")
     }
 
     return .value(Raw(real: real, imag: imag))
   }
 
-  private static func extractComplex(_ object: PyObject?) -> PyResult<Raw> {
+  private enum NewFromNumber {
+    case pyComplex(PyComplex)
+    case complex(Raw)
+    case error(PyBaseException)
+  }
+
+  private static func new(_ py: Py, fromNumber object: PyObject?) -> NewFromNumber {
     guard let object = object else {
-      return .value(Raw(real: 0.0, imag: 0.0))
+      return .complex(Raw(real: 0.0, imag: 0.0))
     }
 
     // Call has to be before 'Self.asComplex', because it can override
-    switch PyComplex.callComplex(object) {
+    switch PyComplex.callComplex(py, object: object) {
     case .value(let o):
-      guard let complex = PyCast.asComplex(o) else {
-        return .typeError("__complex__ returned non-Complex (type \(o.typeName))")
+      guard let complex = py.cast.asComplex(o) else {
+        let message = "__complex__ returned non-Complex (type \(o.typeName))"
+        let error = py.newTypeError(message: message)
+        return .error(error.asBaseException)
       }
-      return .value(Raw(real: complex.real, imag: complex.imag))
+
+      return .pyComplex(complex)
+
     case .missingMethod:
       break // try other possibilities
     case .error(let e),
@@ -661,37 +885,90 @@ public struct PyComplex: PyObjectMixin {
       return .error(e)
     }
 
-    switch Self.asComplex(object: object) {
-    case .value(let r):
-      return .value(r)
+    if let complex = py.cast.asComplex(object) {
+      return .pyComplex(complex)
+    }
+
+    switch Self.asComplex(py, object: object) {
+    case .value(let raw):
+      return .complex(raw)
     case .intOverflow(_, let e):
       return .error(e)
     case .notComplex:
       break
     }
 
-    let t = object.type
-    let msg = "complex() argument must be a string or a number, not '\(t)'"
-    return .typeError(msg)
+    let message = "complex() argument must be a string or a number, not '\(object.type)'"
+    let error = py.newTypeError(message: message)
+    return .error(error.asBaseException)
   }
 
-  private static func callComplex(
-    _ object: PyObject
-  ) -> PyInstance.CallMethodResult {
-    if let result = PyStaticCall.__complex__(object) {
+  private static func callComplex(_ py: Py, object: PyObject) -> Py.CallMethodResult {
+    if let result = PyStaticCall.__complex__(py, object: object) {
       return .value(result)
     }
 
-    return Py.callMethod(object: object, selector: .__complex__)
+    return py.callMethod(object: object, selector: .__complex__)
   }
 
-  // MARK: - As complex
+  // MARK: - Operations
 
   /// Simple light-weight stack-allocated container for `real` and `imag`.
   internal struct Raw {
     internal let real: Double
     internal let imag: Double
+
+    fileprivate init(real: Double, imag: Double) {
+      self.real = real
+      self.imag = imag
+    }
+
+    fileprivate init(_ complex: PyComplex) {
+      self.real = complex.real
+      self.imag = complex.imag
+    }
+
+    fileprivate func toResult(_ py: Py) -> PyResult<PyObject> {
+      let result = py.newComplex(real: self.real, imag: self.imag)
+      return .value(result.asObject)
+    }
   }
+
+  private static func unaryOperation(_ py: Py,
+                                     zelf: PyObject,
+                                     fnName: String,
+                                     fn: (Raw) -> Raw) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName)
+    }
+
+    let zelfRaw = Raw(zelf)
+    let result = fn(zelfRaw)
+    return result.toResult(py)
+  }
+
+  private static func binaryOperation(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject,
+                                      fnName: String,
+                                      fn: (Raw, Raw) -> Raw) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName)
+    }
+
+    switch Self.asComplex(py, object: other) {
+    case .value(let other):
+      let zelfRaw = Raw(zelf)
+      let result = fn(zelfRaw, other)
+      return result.toResult(py)
+    case .intOverflow(_, let e):
+      return .error(e)
+    case .notComplex:
+      return .notImplemented(py)
+    }
+  }
+
+  // MARK: - As complex
 
   internal enum AsComplex {
     case value(Raw)
@@ -699,23 +976,19 @@ public struct PyComplex: PyObjectMixin {
     case notComplex
   }
 
-  private var raw: Raw {
-    return Raw(real: self.real, imag: self.imag)
-  }
-
-  private static func asComplex(object: PyObject) -> AsComplex {
-    if let complex = PyCast.asComplex(object) {
-      let result = Raw(real: complex.real, imag: complex.imag)
+  private static func asComplex(_ py: Py, object: PyObject) -> AsComplex {
+    if let complex = py.cast.asComplex(object) {
+      let result = Raw(complex)
       return .value(result)
     }
 
-    if let float = PyCast.asFloat(object) {
+    if let float = py.cast.asFloat(object) {
       let result = Self.asComplex(float: float)
       return .value(result)
     }
 
-    if let int = PyCast.asInt(object) {
-      switch Self.asComplex(int: int) {
+    if let int = py.cast.asInt(object) {
+      switch Self.asComplex(py, int: int) {
       case let .value(r):
         return .value(r)
       case let .overflow(e):
@@ -735,14 +1008,28 @@ public struct PyComplex: PyObjectMixin {
     case overflow(PyBaseException)
   }
 
-  internal static func asComplex(int: PyInt) -> IntAsComplex {
-    switch PyInt.asDouble(int: int) {
+  internal static func asComplex(_ py: Py, int: PyInt) -> IntAsComplex {
+    switch PyInt.asDouble(py, int: int) {
     case let .value(d):
       return .value(Raw(real: d, imag: 0))
     case let .overflow(e):
       return .overflow(e)
     }
   }
-}
 
-*/
+  // MARK: - Helpers
+
+  private static func castZelf(_ py: Py, _ object: PyObject) -> PyComplex? {
+    return py.cast.asComplex(object)
+  }
+
+  private static func invalidSelfArgument(_ py: Py,
+                                          _ object: PyObject,
+                                          _ fnName: String) -> PyResult<PyObject> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: "complex",
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
+  }
+}
