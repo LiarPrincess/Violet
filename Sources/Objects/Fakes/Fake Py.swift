@@ -102,6 +102,11 @@ public struct Py {
   public func get__dict__(object: PyObject) -> PyDict? { fatalError() }
   public func globals() -> PyResult<PyDict> { fatalError() }
 
+  // MARK: - Bool
+  public func not(object: PyObject) -> PyResult<PyBool> { fatalError() }
+  public func isTrue(object: PyObject) -> PyResult<PyBool> { fatalError() }
+  public func isTrueBool(object: PyBool) -> Bool { fatalError() }
+
   // MARK: - Collections
 
   public enum ForEachStep {
