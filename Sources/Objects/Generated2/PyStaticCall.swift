@@ -117,7 +117,7 @@ public enum PyStaticCall {
     public typealias SubclassCheck = (Py, PyObject, PyObject) -> PyResult<PyBool>
     public typealias IsAbstractMethod = (Py, PyObject) -> PyResult<PyBool>
     public typealias NumericUnary = (Py, PyObject) -> PyObject
-    public typealias NumericTrunc = (Py, PyObject) -> PyResult<PyObject>
+    public typealias NumericTrunc = (Py, PyObject) -> PyResult<PyInt>
     public typealias NumericRound = (Py, PyObject, PyObject?) -> PyResult<PyObject>
     public typealias NumericBinary = (Py, PyObject, PyObject) -> PyResult<PyObject>
     public typealias NumericPow = (Py, PyObject, PyObject, PyObject) -> PyResult<PyObject>
@@ -934,7 +934,7 @@ public enum PyStaticCall {
 
   // MARK: - __trunc__
 
-  internal static func __trunc__(_ py: Py, object: PyObject) -> PyResult<PyObject>? {
+  internal static func __trunc__(_ py: Py, object: PyObject) -> PyResult<PyInt>? {
     if let method = object.type.staticMethods.__trunc__ {
       return method(py, object)
     }

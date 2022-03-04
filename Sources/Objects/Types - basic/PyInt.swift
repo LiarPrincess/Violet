@@ -57,203 +57,285 @@ public struct PyInt: PyObjectMixin {
     let value = zelf.value
     return "PyInt(type: \(zelf.typeName), flags: \(zelf.flags), value: \(value))"
   }
-}
 
-/* MARKER
-
-  // MARK: - Equatable
+  // MARK: - Equatable, comparable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other) { $0 == $1 }
+  internal static func __eq__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    return Self.compareOperation(py, zelf: zelf, other: other, fnName: "__eq__") { $0 == $1 }
   }
 
+  // sourcery: pymethod = __ne__
+  internal static func __ne__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    return Self.compareOperation(py, zelf: zelf, other: other, fnName: "__ne__") { $0 != $1 }
+  }
+
+  // This is used in some other parts of this module.
   internal func isEqual(_ other: PyInt) -> Bool {
     return self.value == other.value
   }
 
-  // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> CompareResult {
-    return self.isEqual(other).not
-  }
-
-  // MARK: - Comparable
-
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other) { $0 < $1 }
+  internal static func __lt__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    return Self.compareOperation(py, zelf: zelf, other: other, fnName: "__lt__") { $0 < $1 }
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other) { $0 <= $1 }
+  internal static func __le__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    return Self.compareOperation(py, zelf: zelf, other: other, fnName: "__le__") { $0 <= $1 }
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other) { $0 > $1 }
+  internal static func __gt__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    return Self.compareOperation(py, zelf: zelf, other: other, fnName: "__gt__") { $0 > $1 }
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other) { $0 >= $1 }
-  }
-
-  private func compare(
-    with other: PyObject,
-    using compareFn: (BigInt, BigInt) -> Bool
-  ) -> CompareResult {
-    guard let other = PyCast.asInt(other) else {
-      return .notImplemented
-    }
-
-    let result = compareFn(self.value, other.value)
-    return .value(result)
+  internal static func __ge__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    return Self.compareOperation(py, zelf: zelf, other: other, fnName: "__ge__") { $0 >= $1 }
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> PyHash {
-    return Py.hasher.hash(self.value)
+  internal static func __hash__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.intOperation(py, zelf: zelf, fnName: "__hash__") { py.hasher.hash($0) }
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
-    return String(describing: self.value)
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.toString(py, zelf: zelf, fnName: "__repr__")
   }
 
   // sourcery: pymethod = __str__
-  internal func str() -> String {
-    return String(describing: self.value)
+  internal static func __str__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.toString(py, zelf: zelf, fnName: "__str__")
   }
 
-  // MARK: - Convertible
+  private static let stringInternRange: ClosedRange<BigInt> = -10...256
+
+  private static func toString(_ py: Py,
+                               zelf: PyObject,
+                               fnName: String) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
+    }
+
+    let value = zelf.value
+    let string = String(describing: value)
+
+    let pyString = Self.stringInternRange.contains(value) ?
+    py.intern(string: string) :
+    py.newString(string)
+
+    return .value(pyString.asObject)
+  }
+
+  // MARK: - As bool/int/float/index
 
   // sourcery: pymethod = __bool__
-  internal func asBool() -> Bool {
-    return self.value.isTrue
+  internal static func __bool__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName: "__bool__")
+    }
+
+    let result = zelf.value.isTrue
+    return result.toResult(py)
   }
 
   // sourcery: pymethod = __int__
-  internal func asInt() -> PyInt {
-    return self
+  internal static func __int__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.identityOperation(py, zelf: zelf, fnName: "__int__")
   }
 
   // sourcery: pymethod = __float__
-  internal func asFloat() -> PyResult<PyFloat> {
-    switch Self.asDouble(int: self.value) {
+  internal static func __float__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName: "__float__")
+    }
+
+    switch Self.asDouble(int: zelf.value) {
     case let .value(d):
-      return .value(Py.newFloat(d))
+      let result = py.newFloat(d)
+      return .value(result.asObject)
     case let .overflow(e):
       return .error(e)
     }
   }
 
   // sourcery: pymethod = __index__
-  internal func asIndex() -> BigInt {
-    return self.value
+  internal static func __index__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.identityOperation(py, zelf: zelf, fnName: "__index__")
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Imaginary
 
   // sourcery: pyproperty = real
-  internal func asReal() -> PyObject {
-    // Sometimes cannot just return 'self' because of 'bool':
-    // if we call 'True.real' then the result should be '1' not 'True'.
-    if PyCast.isExactlyInt(self) {
-      return self
-    }
-
-    return Py.newInt(self.value)
+  internal static func real(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.identityOperation(py, zelf: zelf, fnName: "real")
   }
 
   // sourcery: pyproperty = imag
-  internal func asImag() -> PyObject {
-    return Py.newInt(0)
+  internal static func imag(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.intOperation(py, zelf: zelf, fnName: "imag") { _ in 0 }
   }
 
   // sourcery: pymethod = conjugate
   /// int.conjugate
   /// Return self, the complex conjugate of any int.
-  internal func conjugate() -> PyObject {
-    return self
+  internal static func conjugate(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.identityOperation(py, zelf: zelf, fnName: "conjugate")
   }
 
+  // MARK: - numerator, denominator
+
   // sourcery: pyproperty = numerator
-  internal func numerator() -> PyInt {
-    return self
+  internal static func numerator(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.identityOperation(py, zelf: zelf, fnName: "numerator")
   }
 
   // sourcery: pyproperty = denominator
-  internal func denominator() -> PyInt {
-    return Py.newInt(1)
+  internal static func denominator(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.intOperation(py, zelf: zelf, fnName: "imag") { _ in 1 }
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName: "__getattribute__")
+    }
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
 
-  // MARK: - Sign
+  // MARK: - Pos, neg, invert, abs
 
   // sourcery: pymethod = __pos__
-  internal func positive() -> PyObject {
-    return self
+  internal static func __pos__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    // 'int' is immutable, so if we are exactly int (not an subclass),
+    // then we can return ourself. (This saves an allocation).
+    if let int = py.cast.asExactlyInt(zelf) {
+      return .value(int.asObject)
+    }
+
+    return Self.unaryOperation(py, zelf: zelf, fnName: "__pos__") { $0 }
   }
 
   // sourcery: pymethod = __neg__
-  internal func negative() -> PyObject {
-    return Py.newInt(-self.value)
+  internal static func __neg__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.unaryOperation(py, zelf: zelf, fnName: "__neg__") { -$0 }
   }
 
-  // MARK: - Abs
+  // sourcery: pymethod = __invert__
+  internal static func __invert__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.unaryOperation(py, zelf: zelf, fnName: "__invert__") { ~$0 }
+  }
 
   // sourcery: pymethod = __abs__
-  internal func abs() -> PyObject {
-    let result = Swift.abs(self.value)
-    return Py.newInt(result)
+  internal static func __abs__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    // 'int' is immutable, so if we are exactly int (not a subclass) and '>=0',
+    // then we can return ourself. (This saves an allocation).
+    if let int = py.cast.asExactlyInt(zelf), int.value >= 0 {
+      return .value(int.asObject)
+    }
+
+    return Self.unaryOperation(py, zelf: zelf, fnName: "__abs__") { Swift.abs($0) }
   }
 
-  // MARK: - Trunc
+  // MARK: - Trunc, floor, ceil
 
   internal static let truncDoc = "Truncating an Integral returns itself."
 
   // sourcery: pymethod = __trunc__, doc = truncDoc
-  internal func trunc() -> PyResult<PyInt> {
-    return .value(self)
+  internal static func __trunc__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.identityOperation(py, zelf: zelf, fnName: "__trunc__")
   }
-
-  // MARK: - Floor
 
   internal static let floorDoc = "Flooring an Integral returns itself."
 
   // sourcery: pymethod = __floor__, doc = floorDoc
-  internal func floor() -> PyObject {
-    return self
+  internal static func __floor__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.identityOperation(py, zelf: zelf, fnName: "__trunc__")
   }
-
-  // MARK: - Ceil
 
   internal static let ceilDoc = "Ceiling of an Integral returns itself."
 
   // sourcery: pymethod = __ceil__, doc = ceilDoc
-  internal func ceil() -> PyObject {
-    return self
+  internal static func __ceil__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.identityOperation(py, zelf: zelf, fnName: "__trunc__")
   }
 
-  // MARK: - Bit length
+  // MARK: - Add, sub, mul
+
+  // sourcery: pymethod = __add__
+  internal static func __add__(_ py: Py,
+                               zelf: PyObject,
+                               other: PyObject) -> PyResult<PyObject> {
+    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__add__") { $0 + $1 }
+  }
+
+  // sourcery: pymethod = __radd__
+  internal static func __radd__(_ py: Py,
+                                zelf: PyObject,
+                                other: PyObject) -> PyResult<PyObject> {
+    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__radd__") { $1 + $0 }
+  }
+
+  // sourcery: pymethod = __sub__
+  internal static func __sub__(_ py: Py,
+                               zelf: PyObject,
+                               other: PyObject) -> PyResult<PyObject> {
+    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__sub__") { $0 - $1 }
+  }
+
+  // sourcery: pymethod = __rsub__
+  internal static func __rsub__(_ py: Py,
+                                zelf: PyObject,
+                                other: PyObject) -> PyResult<PyObject> {
+    // Important: OTHER - ZELF (not zelf - other)
+    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__sub__") { $1 - $0 }
+  }
+
+  // sourcery: pymethod = __mul__
+  internal static func __mul__(_ py: Py,
+                               zelf: PyObject,
+                               other: PyObject) -> PyResult<PyObject> {
+    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__mul__") { $0 * $1 }
+  }
+
+  // sourcery: pymethod = __rmul__
+  internal static func __rmul__(_ py: Py,
+                                zelf: PyObject,
+                                other: PyObject) -> PyResult<PyObject> {
+    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__mul__") { $1 * $0 }
+  }
+
+  // MARK: - bit_length
 
   internal static let bitLengthDoc = """
     bit_length($self, /)
@@ -268,96 +350,48 @@ public struct PyInt: PyObjectMixin {
     """
 
   // sourcery: pymethod = bit_length, doc = bitLengthDoc
-  internal func bitLength() -> Int {
-    return self.value.minRequiredWidth
-  }
-
-  // MARK: - Add
-
-  // sourcery: pymethod = __add__
-  internal func add(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyCast.asInt(other) else {
-      return .value(Py.notImplemented)
-    }
-
-    let result = self.value + other.value
-    return .value(Py.newInt(result))
-  }
-
-  // sourcery: pymethod = __radd__
-  internal func radd(_ other: PyObject) -> PyResult<PyObject> {
-    return self.add(other)
-  }
-
-  // MARK: - Sub
-
-  // sourcery: pymethod = __sub__
-  internal func sub(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyCast.asInt(other) else {
-      return .value(Py.notImplemented)
-    }
-
-    let result = self.value - other.value
-    return .value(Py.newInt(result))
-  }
-
-  // sourcery: pymethod = __rsub__
-  internal func rsub(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyCast.asInt(other) else {
-      return .value(Py.notImplemented)
-    }
-
-    let result = other.value - self.value
-    return .value(Py.newInt(result))
-  }
-
-  // MARK: - Mul
-
-  // sourcery: pymethod = __mul__
-  internal func mul(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyCast.asInt(other) else {
-      return .value(Py.notImplemented)
-    }
-
-    let result = self.value * other.value
-    return .value(Py.newInt(result))
-  }
-
-  // sourcery: pymethod = __rmul__
-  internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
-    return self.mul(other)
+  internal static func bit_length(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.intOperation(py, zelf: zelf, fnName: "bit_length") { $0.minRequiredWidth }
   }
 
   // MARK: - Pow
 
   // sourcery: pymethod = __pow__
-  internal func pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject> {
-    guard let exp = PyCast.asInt(exp) else {
-      return .value(Py.notImplemented)
+  internal static func __pow__(_ py: Py,
+                               zelf: PyObject,
+                               exp: PyObject,
+                               mod: PyObject?,
+                               other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName: "__pow__")
     }
 
-    switch self.parsePowMod(mod: mod) {
+    guard let exp = py.cast.asInt(exp) else {
+      return .notImplemented(py)
+    }
+
+    switch zelf.parsePowMod(py, mod: mod) {
     case .none: // No modulo, just pow
-      let result = self.pow(base: self.value, exp: exp.value)
-      return result.asObject()
+      let result = zelf.pow(py, base: zelf.value, exp: exp.value)
+      return result.toResult(py)
 
     case .int(let moduloPy): // pow and then modulo
       let modulo = moduloPy.value
 
       if modulo.isZero {
-        return .valueError("pow() 3rd argument cannot be 0")
+        return .valueError(py, message: "pow() 3rd argument cannot be 0")
       }
 
-      switch self.pow(base: self.value, exp: exp.value) {
+      switch zelf.pow(py, base: zelf.value, exp: exp.value) {
       case let .int(powInt):
-        let divMod = self.divmodWithUncheckedZero(left: powInt, right: modulo)
-        return .value(Py.newInt(divMod.mod))
+        let divMod = Self.divmodWithUncheckedZero(left: powInt, right: modulo)
+        return divMod.mod.toResult(py)
 
       case let .fraction(powDouble):
         switch Self.asDouble(int: modulo) {
         case let .value(d):
           let result = powDouble.truncatingRemainder(dividingBy: d)
-          return .value(Py.newFloat(result))
+          return result.toResult(py)
         case let .overflow(e):
           return .error(e)
         }
@@ -367,25 +401,33 @@ public struct PyInt: PyObjectMixin {
       }
 
     case .notImplemented:
-      return .value(Py.notImplemented)
+      return .notImplemented(py)
     }
   }
 
   // sourcery: pymethod = __rpow__
-  internal func rpow(base: PyObject, mod: PyObject?) -> PyResult<PyObject> {
-    guard let base = PyCast.asInt(base) else {
-      return .value(Py.notImplemented)
+  internal static func __rpow__(_ py: Py,
+                                zelf: PyObject,
+                                base: PyObject,
+                                mod: PyObject?,
+                                other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName: "__rpow__")
     }
 
-    switch self.parsePowMod(mod: mod) {
+    guard let base = py.cast.asInt(base) else {
+      return .notImplemented(py)
+    }
+
+    switch zelf.parsePowMod(py, mod: mod) {
     case .none:
-      let result = self.pow(base: base.value, exp: self.value)
-      return result.asObject()
+      let result = zelf.pow(py, base: base.value, exp: zelf.value)
+      return result.toResult(py)
     case .int:
       // 3-arg power doesn't use __rpow__.
-      return .value(Py.notImplemented)
+      return .notImplemented(py)
     case .notImplemented:
-      return .value(Py.notImplemented)
+      return .notImplemented(py)
     }
   }
 
@@ -395,16 +437,16 @@ public struct PyInt: PyObjectMixin {
     case notImplemented
   }
 
-  private func parsePowMod(mod: PyObject?) -> PowMod {
+  private func parsePowMod(_ py: Py, mod: PyObject?) -> PowMod {
     guard let mod = mod else {
       return .none
     }
 
-    if PyCast.isNone(mod) {
+    if py.cast.isNone(mod) {
       return .none
     }
 
-    if let int = PyCast.asInt(mod) {
+    if let int = py.cast.asInt(mod) {
       return .int(int)
     }
 
@@ -416,22 +458,23 @@ public struct PyInt: PyObjectMixin {
     case fraction(Double)
     case error(PyBaseException)
 
-    fileprivate func asObject() -> PyResult<PyObject> {
+    fileprivate func toResult(_ py: Py) -> PyResult<PyObject> {
       switch self {
       case let .int(i):
-        return .value(Py.newInt(i))
+        return i.toResult(py)
       case let .fraction(f):
-        return .value(Py.newFloat(f))
+        return f.toResult(py)
       case let .error(e):
         return .error(e)
       }
     }
   }
 
-  private func pow(base: BigInt, exp: BigInt) -> PowResult {
+  private func pow(_ py: Py, base: BigInt, exp: BigInt) -> PowResult {
     if base.isZero && exp.isNegative {
-      let msg = "0.0 cannot be raised to a negative power"
-      return .error(Py.newZeroDivisionError(msg: msg))
+      let message = "0.0 cannot be raised to a negative power"
+      let error = py.newZeroDivisionError(message: message)
+      return .error(error.asBaseException)
     }
 
     let result = self.powNonNegativeExp(base: base, exp: Swift.abs(exp))
@@ -459,147 +502,232 @@ public struct PyInt: PyObjectMixin {
   // MARK: - True div
 
   // sourcery: pymethod = __truediv__
-  internal func truediv(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyCast.asInt(other) else {
-      return .value(Py.notImplemented)
-    }
-
-    return self.truediv(left: self.value, right: other.value)
+  internal static func __truediv__(_ py: Py,
+                                   zelf: PyObject,
+                                   other: PyObject) -> PyResult<PyObject> {
+    return Self.truedivOperation(py,
+                                 zelf: zelf,
+                                 other: other,
+                                 fnName: "__truediv__",
+                                 isZelfLeft: true)
   }
 
   // sourcery: pymethod = __rtruediv__
-  internal func rtruediv(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyCast.asInt(other) else {
-      return .value(Py.notImplemented)
-    }
-
-    return self.truediv(left: other.value, right: self.value)
+  internal static func __rtruediv__(_ py: Py,
+                                    zelf: PyObject,
+                                    other: PyObject) -> PyResult<PyObject> {
+    return Self.truedivOperation(py,
+                                 zelf: zelf,
+                                 other: other,
+                                 fnName: "__rtruediv__",
+                                 isZelfLeft: false)
   }
 
   /// static PyObject *
   /// long_true_divide(PyObject *v, PyObject *w)
-  private func truediv(left: BigInt, right: BigInt) -> PyResult<PyObject> {
+  private static func truedivOperation(_ py: Py,
+                                       zelf: PyObject,
+                                       other: PyObject,
+                                       fnName: String,
+                                       isZelfLeft: Bool) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
+    }
+
+    guard let other = py.cast.asInt(other) else {
+      return .notImplemented(py)
+    }
+
     // This is not the 'correct' implementation!
-    // We are waaay to trigger-happy on overflow.
+    // We are waaay too trigger-happy on overflow.
     // But it is 'close enough' for most of the cases.
 
-    let l: Double
-    switch Self.asDouble(int: left) {
-    case let .value(d): l = d
+    let zelfDouble: Double
+    switch Self.asDouble(int: zelf) {
+    case let .value(d): zelfDouble = d
     case let .overflow(e): return .error(e)
     }
 
-    let r: Double
-    switch Self.asDouble(int: right) {
-    case let .value(d): r = d
+    let otherDouble: Double
+    switch Self.asDouble(int: other) {
+    case let .value(d): otherDouble = d
     case let .overflow(e): return .error(e)
     }
 
-    if r.isZero {
-      return .zeroDivisionError("division by zero")
+    let left = isZelfLeft ? zelfDouble : otherDouble
+    let right = isZelfLeft ? otherDouble : zelfDouble
+
+    if right.isZero {
+      return .zeroDivisionError(py, message: "division by zero")
     }
 
-    let result = l / r
-    return .value(Py.newFloat(result))
+    let result = left / right
+    return result.toResult(py)
   }
 
   // MARK: - Floor div
 
   // sourcery: pymethod = __floordiv__
-  internal func floordiv(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyCast.asInt(other) else {
-      return .value(Py.notImplemented)
-    }
-
-    return self.floordiv(left: self.value, right: other.value)
+  internal static func __floordiv__(_ py: Py,
+                                    zelf: PyObject,
+                                    other: PyObject) -> PyResult<PyObject> {
+    return Self.floordivOperation(py,
+                                  zelf: zelf,
+                                  other: other,
+                                  fnName: "__floordiv__",
+                                  isZelfLeft: true)
   }
 
   // sourcery: pymethod = __rfloordiv__
-  internal func rfloordiv(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyCast.asInt(other) else {
-      return .value(Py.notImplemented)
-    }
-
-    return self.floordiv(left: other.value, right: self.value)
+  internal static func __rfloordiv__(_ py: Py,
+                                     zelf: PyObject,
+                                     other: PyObject) -> PyResult<PyObject> {
+    return Self.floordivOperation(py,
+                                  zelf: zelf,
+                                  other: other,
+                                  fnName: "__rfloordiv__",
+                                  isZelfLeft: false)
   }
 
-  private func floordiv(left: BigInt, right: BigInt) -> PyResult<PyObject> {
-    if right.isZero {
-      return .zeroDivisionError("division by zero")
+  private static func floordivOperation(_ py: Py,
+                                        zelf: PyObject,
+                                        other: PyObject,
+                                        fnName: String,
+                                        isZelfLeft: Bool) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
     }
 
-    let divMod = self.divmod(left: left, right: right)
-    return divMod.map { Py.newInt($0.div) }
+    guard let other = py.cast.asInt(other) else {
+      return .notImplemented(py)
+    }
+
+    let left = isZelfLeft ? zelf.value : other.value
+    let right = isZelfLeft ? other.value : zelf.value
+
+    if right.isZero {
+      return .zeroDivisionError(py, message: "division by zero")
+    }
+
+    let divMod = Self.divmodWithUncheckedZero(left: left, right: right)
+    return divMod.div.toResult(py)
   }
 
   // MARK: - Mod
 
   // sourcery: pymethod = __mod__
-  internal func mod(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyCast.asInt(other) else {
-      return .value(Py.notImplemented)
-    }
-
-    return self.mod(left: self.value, right: other.value)
+  internal static func __mod__(_ py: Py,
+                               zelf: PyObject,
+                               other: PyObject) -> PyResult<PyObject> {
+    return Self.modOperation(py,
+                             zelf: zelf,
+                             other: other,
+                             fnName: "__mod__",
+                             isZelfLeft: true)
   }
 
   // sourcery: pymethod = __rmod__
-  internal func rmod(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyCast.asInt(other) else {
-      return .value(Py.notImplemented)
-    }
-
-    return self.mod(left: other.value, right: self.value)
+  internal static func __rmod__(_ py: Py,
+                                zelf: PyObject,
+                                other: PyObject) -> PyResult<PyObject> {
+    return Self.modOperation(py,
+                             zelf: zelf,
+                             other: other,
+                             fnName: "__rmod__",
+                             isZelfLeft: false)
   }
 
-  private func mod(left: BigInt, right: BigInt) -> PyResult<PyObject> {
-    if right.isZero {
-      return .zeroDivisionError("modulo by zero")
+  private static func modOperation(_ py: Py,
+                                   zelf: PyObject,
+                                   other: PyObject,
+                                   fnName: String,
+                                   isZelfLeft: Bool) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
     }
 
-    let divMod = self.divmod(left: left, right: right)
-    return divMod.map { Py.newInt($0.mod) }
+    guard let other = py.cast.asInt(other) else {
+      return .notImplemented(py)
+    }
+
+    let left = isZelfLeft ? zelf.value : other.value
+    let right = isZelfLeft ? other.value : zelf.value
+
+    if right.isZero {
+      return .zeroDivisionError(py, message: "modulo by zero")
+    }
+
+    let divMod = Self.divmodWithUncheckedZero(left: left, right: right)
+    return divMod.mod.toResult(py)
   }
 
   // MARK: - Div mod
 
   // sourcery: pymethod = __divmod__
-  internal func divmod(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyCast.asInt(other) else {
-      return .value(Py.notImplemented)
-    }
-
-    let result = self.divmod(left: self.value, right: other.value)
-    return result.map { $0.asTuple() }
+  internal static func __divmod__(_ py: Py,
+                                  zelf: PyObject,
+                                  other: PyObject) -> PyResult<PyObject> {
+    return Self.divmodOperation(py,
+                                zelf: zelf,
+                                other: other,
+                                fnName: "__divmod__",
+                                isZelfLeft: true)
   }
 
   // sourcery: pymethod = __rdivmod__
-  internal func rdivmod(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyCast.asInt(other) else {
-      return .value(Py.notImplemented)
+  internal static func __rdivmod__(_ py: Py,
+                                   zelf: PyObject,
+                                   other: PyObject) -> PyResult<PyObject> {
+    return Self.divmodOperation(py,
+                                zelf: zelf,
+                                other: other,
+                                fnName: "__rdivmod__",
+                                isZelfLeft: false)
+  }
+
+  private static func divmodOperation(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject,
+                                      fnName: String,
+                                      isZelfLeft: Bool) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
     }
 
-    let result = self.divmod(left: other.value, right: self.value)
-    return result.map { $0.asTuple() }
+    guard let other = py.cast.asInt(other) else {
+      return .notImplemented(py)
+    }
+
+    let left = isZelfLeft ? zelf.value : other.value
+    let right = isZelfLeft ? other.value : zelf.value
+
+    if right.isZero {
+      return .zeroDivisionError(py, message: "divmod() by zero")
+    }
+
+    let divModResult = Self.divmod(py, left: left, right: right)
+    switch divModResult {
+    case let .value(divMod):
+      let d = py.newInt(divMod.div)
+      let m = py.newInt(divMod.mod)
+      let result = py.newTuple(elements: d.asObject, m.asObject)
+      return .value(result.asObject)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   private struct Divmod {
     fileprivate var div: BigInt
     fileprivate var mod: BigInt
-
-    fileprivate func asTuple() -> PyTuple {
-      let q = Py.newInt(self.div)
-      let r = Py.newInt(self.mod)
-      return Py.newTuple(q, r)
-    }
   }
 
-  private func divmod(left: BigInt, right: BigInt) -> PyResult<Divmod> {
+  private static func divmod(_ py: Py, left: BigInt, right: BigInt) -> PyResult<Divmod> {
     if right.isZero {
-      return .zeroDivisionError("divmod() by zero")
+      return .zeroDivisionError(py, message: "divmod() by zero")
     }
 
-    let result = self.divmodWithUncheckedZero(left: left, right: right)
+    let result = Self.divmodWithUncheckedZero(left: left, right: right)
     return .value(result)
   }
 
@@ -624,7 +752,7 @@ public struct PyInt: PyObjectMixin {
   ///
   /// This is different than what Swift does
   /// (even the method is named `quotientAndRemainder` not `quotientAndModulo`).
-  private func divmodWithUncheckedZero(left: BigInt, right: BigInt) -> Divmod {
+  private static func divmodWithUncheckedZero(left: BigInt, right: BigInt) -> Divmod {
     assert(
       !right.isZero,
       "div by 0 should be handled before calling 'PyInt.divmodWithUncheckedZero'"
@@ -647,132 +775,152 @@ public struct PyInt: PyObjectMixin {
   // sourcery: pymethod = __lshift__
   /// static PyObject *
   /// long_lshift(PyObject *v, PyObject *w)
-  internal func lshift(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyCast.asInt(other) else {
-      return .value(Py.notImplemented)
-    }
-
-    return self.lshift(value: self.value, count: other.value)
+  internal static func __lshift__(_ py: Py,
+                                  zelf: PyObject,
+                                  other: PyObject) -> PyResult<PyObject> {
+    return Self.lshiftOperation(py,
+                                zelf: zelf,
+                                other: other,
+                                fnName: "__lshift__",
+                                isZelfValue: true)
   }
 
   // sourcery: pymethod = __rlshift__
   /// static PyObject *
   /// long_rshift(PyLongObject *a, PyLongObject *b)
-  internal func rlshift(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyCast.asInt(other) else {
-      return .value(Py.notImplemented)
-    }
-
-    return self.lshift(value: other.value, count: self.value)
+  internal static func __rlshift__(_ py: Py,
+                                   zelf: PyObject,
+                                   other: PyObject) -> PyResult<PyObject> {
+    return Self.lshiftOperation(py,
+                                zelf: zelf,
+                                other: other,
+                                fnName: "__rlshift__",
+                                isZelfValue: false)
   }
 
-  private func lshift(value: BigInt,
-                      count countBig: BigInt) -> PyResult<PyObject> {
+  private static func lshiftOperation(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject,
+                                      fnName: String,
+                                      isZelfValue: Bool) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
+    }
+
+    guard let other = py.cast.asInt(other) else {
+      return .notImplemented(py)
+    }
+
+    let value = isZelfValue ? zelf.value : other.value
+    let countBig = isZelfValue ? other.value : zelf.value
+
     if countBig.isNegative {
-      return .valueError("negative shift count")
+      return .valueError(py, message: "negative shift count")
     }
 
     if value.isZero {
-      let result = Py.newInt(0)
-      return .value(result)
+      let result = py.newInt(0)
+      return .value(result.asObject)
     }
 
     guard let count = Int(exactly: countBig) else {
-      return .overflowError("too many digits in integer")
+      return .overflowError(py, message: "too many digits in integer")
     }
 
     let result = value << count
-    return .value(Py.newInt(result))
+    return result.toResult(py)
   }
 
   // MARK: - RShift
 
   // sourcery: pymethod = __rshift__
-  internal func rshift(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyCast.asInt(other) else {
-      return .value(Py.notImplemented)
-    }
-
-    return self.rshift(left: self.value, right: other.value)
+  internal static func __rshift__(_ py: Py,
+                                  zelf: PyObject,
+                                  other: PyObject) -> PyResult<PyObject> {
+    return Self.rshiftOperation(py,
+                                zelf: zelf,
+                                other: other,
+                                fnName: "__rshift__",
+                                isZelfValue: true)
   }
 
   // sourcery: pymethod = __rrshift__
-  internal func rrshift(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyCast.asInt(other) else {
-      return .value(Py.notImplemented)
-    }
-
-    return self.rshift(left: other.value, right: self.value)
+  internal static func __rrshift__(_ py: Py,
+                                   zelf: PyObject,
+                                   other: PyObject) -> PyResult<PyObject> {
+    return Self.rshiftOperation(py,
+                                zelf: zelf,
+                                other: other,
+                                fnName: "__rrshift__",
+                                isZelfValue: false)
   }
 
-  private func rshift(left: BigInt, right: BigInt) -> PyResult<PyObject> {
-    if right.isNegative {
-      return .valueError("negative shift count")
+  private static func rshiftOperation(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject,
+                                      fnName: String,
+                                      isZelfValue: Bool) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
     }
 
-    let result = left >> right
-    return .value(Py.newInt(result))
+    guard let other = py.cast.asInt(other) else {
+      return .notImplemented(py)
+    }
+
+    let value = isZelfValue ? zelf.value : other.value
+    let count = isZelfValue ? other.value : zelf.value
+
+    if count.isNegative {
+      return .valueError(py, message: "negative shift count")
+    }
+
+    let result = value >> count
+    return result.toResult(py)
   }
 
-  // MARK: - And
+  // MARK: - And, or, xor
 
   // sourcery: pymethod = __and__
-  internal func and(_ other: PyObject) -> PyResult<PyObject> {
-    // Why static? See comment at the top of 'PyBool'.
-    guard let other = PyCast.asInt(other) else {
-      return .value(Py.notImplemented)
-    }
-
-    let result = self.value & other.value
-    return .value(Py.newInt(result))
+  internal static func __and__(_ py: Py,
+                               zelf: PyObject,
+                               other: PyObject) -> PyResult<PyObject> {
+    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__and__") { $0 & $1 }
   }
 
   // sourcery: pymethod = __rand__
-  internal func rand(_ other: PyObject) -> PyResult<PyObject> {
-    return self.and(other)
+  internal static func __rand__(_ py: Py,
+                                zelf: PyObject,
+                                other: PyObject) -> PyResult<PyObject> {
+    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__rand__") { $1 & $0 }
   }
 
-  // MARK: - Or
-
   // sourcery: pymethod = __or__
-  internal func or(_ other: PyObject) -> PyResult<PyObject> {
-    // Why static? See comment at the top of 'PyBool'.
-    guard let other = PyCast.asInt(other) else {
-      return .value(Py.notImplemented)
-    }
-
-    let result = self.value | other.value
-    return .value(Py.newInt(result))
+  internal static func __or__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__or__") { $0 | $1 }
   }
 
   // sourcery: pymethod = __ror__
-  internal func ror(_ other: PyObject) -> PyResult<PyObject> {
-    return self.or(other)
+  internal static func __ror__(_ py: Py,
+                               zelf: PyObject,
+                               other: PyObject) -> PyResult<PyObject> {
+    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__ror__") { $1 | $0 }
   }
 
-  // MARK: - Xor
-
   // sourcery: pymethod = __xor__
-  internal func xor(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyCast.asInt(other) else {
-      return .value(Py.notImplemented)
-    }
-
-    let result = self.value ^ other.value
-    return .value(Py.newInt(result))
+  internal static func __xor__(_ py: Py,
+                               zelf: PyObject,
+                               other: PyObject) -> PyResult<PyObject> {
+    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__xor__") { $0 ^ $1 }
   }
 
   // sourcery: pymethod = __rxor__
-  internal func rxor(_ other: PyObject) -> PyResult<PyObject> {
-    return self.xor(other)
-  }
-
-  // MARK: - Invert
-
-  // sourcery: pymethod = __invert__
-  internal func invert() -> PyObject {
-    let result = ~self.value
-    return Py.newInt(result)
+  internal static func __rxor__(_ py: Py,
+                                zelf: PyObject,
+                                other: PyObject) -> PyResult<PyObject> {
+    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__rxor__") { $1 ^ $0 }
   }
 
   // MARK: - Round
@@ -787,41 +935,55 @@ public struct PyInt: PyObjectMixin {
   ///
   /// static PyObject *
   /// long_round(PyObject *self, PyObject *args)
-  internal func round(nDigits _nDigits: PyObject?) -> PyResult<PyObject> {
+  internal static func __round__(_ py: Py,
+                                 zelf: PyObject,
+                                 nDigits _nDigits: PyObject?) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName: "__round__")
+    }
+
     let nDigits: BigInt
-    switch self.parseRoundDigitCount(object: _nDigits) {
+    switch Self.parseRoundDigitCount(py, object: _nDigits) {
     case let .value(n): nDigits = n
     case let .error(e): return .error(e)
     }
 
-    // if digits >= 0 then no rounding is necessary; return self unchanged
+    // If digits >= 0 then no rounding is necessary; return self unchanged.
+    // Unless we are subclass -> convert to int:
+    // >>> round(True)
+    // 1
     if nDigits.isPositiveOrZero {
-      return .value(self)
+      if py.cast.isExactlyInt(zelf.asObject) {
+        return .value(zelf.asObject)
+      }
+
+      let value = zelf.value
+      return value.toResult(py)
     }
 
     // result = self - divmod_near(self, 10 ** -ndigits)[1]
-    let pow10 = self.powNonNegativeExp(base: 10, exp: -nDigits)
+    let pow10 = zelf.powNonNegativeExp(base: 10, exp: -nDigits)
 
-    let divMod: Divmod
-    switch self.divmodNear(left: self.value, right: pow10) {
-    case let .value(d): divMod = d
-    case let .error(e): return .error(e)
+    switch self.divmodNear(py, left: zelf.value, right: pow10) {
+    case let .value(divMod):
+      let result = zelf.value - divMod.mod
+      return result.toResult(py)
+    case let .error(e):
+      return .error(e)
     }
-
-    let result = self.value - divMod.mod
-    return .value(Py.newInt(result))
   }
 
-  private func parseRoundDigitCount(object: PyObject?) -> PyResult<BigInt> {
+  private static func parseRoundDigitCount(_ py: Py,
+                                           object: PyObject?) -> PyResult<BigInt> {
     guard let object = object else {
       return .value(0)
     }
 
-    switch IndexHelper.bigInt(object) {
-    case let .value(int):
-      return .value(int)
+    switch IndexHelper.pyInt(py, object: object) {
+    case let .value(pyInt):
+      return .value(pyInt.value)
     case let .notIndex(lazyError):
-      let e = lazyError.create()
+      let e = lazyError.create(py)
       return .error(e)
     case let .error(e):
       return .error(e)
@@ -835,7 +997,9 @@ public struct PyInt: PyObjectMixin {
   ///
   /// PyObject *
   /// _PyLong_DivmodNear(PyObject *a, PyObject *b)
-  private func divmodNear(left a: BigInt, right b: BigInt) -> PyResult<Divmod> {
+  private static func divmodNear(_ py: Py,
+                                 left a: BigInt,
+                                 right b: BigInt) -> PyResult<Divmod> {
     // Equivalent Python code:
     //
     // def divmod_near(a, b):
@@ -854,7 +1018,7 @@ public struct PyInt: PyObjectMixin {
     let quotientIsNegative = a.isNegative != b.isNegative
 
     var result: Divmod
-    switch self.divmod(left: a, right: b) {
+    switch Self.divmod(py, left: a, right: b) {
     case let .value(d):
       result = d
     case let .error(e):
@@ -886,116 +1050,146 @@ public struct PyInt: PyObjectMixin {
 
   // MARK: - Python new
 
-  private static let newArguments = ArgumentParser.createOrTrap(
+  private static let newArguments = ArgumentParser(
     arguments: ["", "base"],
     format: "|OO:int"
   )
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyInt> {
-    switch self.newArguments.bind(args: args, kwargs: kwargs) {
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    switch self.newArguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
       assert(binding.optionalCount == 2, "Invalid optional argument count.")
 
       let object = binding.optional(at: 0)
       let base = binding.optional(at: 1)
-      return Self.pyNew(type: type, object: object, base: base)
+      return Self.__new__(py, type: type, object: object, base: base)
     case let .error(e):
       return .error(e)
     }
   }
 
-  private static func pyNew(type: PyType,
-                            object: PyObject?,
-                            base: PyObject?) -> PyResult<PyInt> {
+  private static func __new__(_ py: Py,
+                              type: PyType,
+                              object: PyObject?,
+                              base: PyObject?) -> PyResult<PyObject> {
     // If we do not have 1st argument -> 0
     guard let object = object else {
       if base != nil {
-        return .typeError("int() missing string argument")
+        return .typeError(py, message: "int() missing string argument")
       }
 
-      return .value(Self.allocate(type: type, value: 0))
+      let result = Self.allocate(py, type: type, value: 0)
+      return .value(result)
     }
 
     // If we do not have base -> try to cast 'object' as 'int'
     guard let base = base else {
-      let parsed = Self.parseBigInt(objectWithoutBase: object)
-      return parsed.map { Self.allocate(type: type, value: $0) }
+      let parsed = Self.parse(py, objectWithoutBase: object)
+      switch parsed {
+      case .pyInt(let pyInt):
+        // 'int' is immutable, so we can return the same thing (saves allocation).
+        if py.cast.isExactlyInt(pyInt.asObject) {
+          return .value(pyInt.asObject)
+        }
+
+        let result = Self.allocate(py, type: type, value: pyInt.value)
+        return .value(result)
+      case .bigInt(let value):
+        let result = Self.allocate(py, type: type, value: value)
+        return .value(result)
+      case .error(let e):
+        return .error(e)
+      }
     }
 
     // Check if base is 'int'
     let baseInt: Int
-    switch IndexHelper.int(base, onOverflow: .overflowError) {
+    switch IndexHelper.int(py, object: base, onOverflow: .overflowError) {
     case let .value(b):
       baseInt = b
     case let .notIndex(lazyError):
-      let e = lazyError.create()
-      return .error(e)
+      let error = lazyError.create(py)
+      return .error(error)
     case let .overflow(_, lazyError):
-      let e = lazyError.create()
-      return .error(e)
+      let error = lazyError.create(py)
+      return .error(error)
     case let .error(e):
       return .error(e)
     }
 
     guard (baseInt == 0 || baseInt >= 2) && baseInt <= 36 else {
-      return .valueError("int() base must be >= 2 and <= 36, or 0")
+      return .valueError(py, message: "int() base must be >= 2 and <= 36, or 0")
     }
 
     // Parse 'object' with a given 'base'
-    switch Self.parseBigInt(string: object, base: baseInt) {
-    case .value(let v): return .value(Self.allocate(type: type, value: v))
-    case .notString: break
-    case .error(let e): return .error(e)
+    switch Self.parseBigInt(py, object: object, base: baseInt) {
+    case .value(let value):
+      let result = Self.allocate(py, type: type, value: value)
+      return .value(result)
+    case .notString:
+      let message = "int() can't convert non-string with explicit base"
+      return .typeError(py, message: message)
+    case .error(let e):
+      return .error(e)
     }
-
-    return .typeError("int() can't convert non-string with explicit base")
   }
 
-  private static func allocate(type: PyType, value: BigInt) -> PyInt {
+  private static func allocate(_ py: Py,
+                               type: PyType,
+                               value: BigInt) -> PyObject {
     // If this is a builtin then try to re-use interned values
-    let isBuiltin = type === Py.types.int
-    return isBuiltin ?
-      Py.newInt(value) :
-      PyMemory.newInt(type: type, value: value)
+    let isBuiltin = type === py.types.int
+    let result = isBuiltin ?
+      py.newInt(value) :
+      py.memory.newInt(py, type: type, value: value)
+
+    return result.asObject
+  }
+
+  private enum ParseResult {
+    case pyInt(PyInt)
+    case bigInt(BigInt)
+    case error(PyBaseException)
   }
 
   /// PyObject *
   /// PyNumber_Long(PyObject *o)
-  private static func parseBigInt(
-    objectWithoutBase object: PyObject
-  ) -> PyResult<BigInt> {
-    // '__int__' and '__trunc__' have to be before 'PyCast.asInt',
+  private static func parse(_ py: Py,
+                            objectWithoutBase object: PyObject) -> ParseResult {
+    // '__int__' and '__trunc__' have to be before 'py.cast.asInt',
     // because they can be overridden
 
-    switch Self.call__int__(object: object) {
-    case .value(let int): return .value(int.value)
+    switch Self.call__int__(py, object: object) {
+    case .value(let int): return .pyInt(int)
     case .missingMethod: break // try other
     case .error(let e): return .error(e)
     }
 
-    switch Self.call__trunc__(object: object) {
-    case .value(let int): return .value(int.value)
+    switch Self.call__trunc__(py, object: object) {
+    case .value(let int): return .pyInt(int)
     case .missingMethod: break // try other
     case .error(let e): return .error(e)
     }
 
-    if let int = PyCast.asInt(object) {
-      return .value(int.value)
+    if let int = py.cast.asInt(object) {
+      return .pyInt(int)
     }
 
-    switch Self.parseBigInt(string: object, base: 10) {
-    case .value(let v): return .value(v)
+    switch Self.parseBigInt(py, object: object, base: 10) {
+    case .value(let v): return .bigInt(v)
     case .notString: break
     case .error(let e): return .error(e)
     }
 
-    let msg = "int() argument must be a string, a bytes-like object " +
+    let message = "int() argument must be a string, a bytes-like object " +
       "or a number, not '\(object.typeName)'"
-    return .typeError(msg)
+    let error = py.newTypeError(message: message)
+    return .error(error.asBaseException)
   }
 
   private enum NumberConverterResult {
@@ -1004,19 +1198,21 @@ public struct PyInt: PyObjectMixin {
     case error(PyBaseException)
   }
 
-  private static func call__int__(object: PyObject) -> NumberConverterResult {
-    if let result = PyStaticCall.__int__(object) {
+  private static func call__int__(_ py: Py,
+                                  object: PyObject) -> NumberConverterResult {
+    if let result = PyStaticCall.__int__(py, object: object) {
       switch result {
       case let .value(int): return .value(int)
       case let .error(e): return .error(e)
       }
     }
 
-    switch Py.callMethod(object: object, selector: .__int__) {
+    switch py.callMethod(object: object, selector: .__int__) {
     case .value(let o):
-      guard let int = PyCast.asInt(o) else {
-        let msg = "__int__ returned non-int (type \(o.typeName)"
-        return .error(Py.newTypeError(msg: msg))
+      guard let int = py.cast.asInt(o) else {
+        let message = "__int__ returned non-int (type \(o.typeName)"
+        let error = py.newTypeError(message: message)
+        return .error(error.asBaseException)
       }
 
       return .value(int)
@@ -1029,22 +1225,24 @@ public struct PyInt: PyObjectMixin {
     }
   }
 
-  private static func call__trunc__(object: PyObject) -> NumberConverterResult {
-    if let result = PyStaticCall.__trunc__(object) {
+  private static func call__trunc__(_ py: Py,
+                                    object: PyObject) -> NumberConverterResult {
+    if let result = PyStaticCall.__trunc__(py, object: object) {
       switch result {
       case let .value(int): return .value(int)
       case let .error(e): return .error(e)
       }
     }
 
-    switch Py.callMethod(object: object, selector: .__trunc__) {
+    switch py.callMethod(object: object, selector: .__trunc__) {
     case .value(let o):
-      if let int = PyCast.asInt(o) {
+      if let int = py.cast.asInt(o) {
         return .value(int)
       }
 
-      let msg = "__trunc__ returned non-Integral (type \(o.typeName))"
-      return .error(Py.newTypeError(msg: msg))
+      let message = "__trunc__ returned non-Integral (type \(o.typeName))"
+      let error = py.newTypeError(message: message)
+      return .error(error.asBaseException)
 
     case .missingMethod:
       return .missingMethod
@@ -1054,23 +1252,24 @@ public struct PyInt: PyObjectMixin {
     }
   }
 
-  private enum IntFromString {
+  private enum ParseBigIntResult {
     case value(BigInt)
     case notString
     case error(PyBaseException)
   }
 
-  private static func parseBigInt(string object: PyObject,
-                                  base: Int) -> IntFromString {
+  private static func parseBigInt(_ py: Py,
+                                  object: PyObject,
+                                  base: Int) -> ParseBigIntResult {
     let string: String
-    switch Py.getString(object: object) {
+    switch py.getString(object: object, encoding: nil) {
     case .string(_, let s),
          .bytes(_, let s):
       string = s
     case .byteDecodingError(let bytes):
-      let ptr = bytes.object.ptr
-      let msg = "int() bytes at '\(ptr)' cannot be interpreted as str"
-      return .error(Py.newValueError(msg: msg))
+      let message = "int() bytes at '\(bytes.object.ptr)' cannot be interpreted as str"
+      let error = py.newValueError(message: message)
+      return .error(error.asBaseException)
     case .notStringOrBytes:
       return .notString
     }
@@ -1079,9 +1278,93 @@ public struct PyInt: PyObjectMixin {
       let result = try BigInt(parseUsingPythonRules: string, base: base)
       return .value(result)
     } catch {
-      let msg = "int() '\(string)' cannot be interpreted as int: \(error)"
-      return .error(Py.newValueError(msg: msg))
+      let message = "int() '\(string)' cannot be interpreted as int: \(error)"
+      let error = py.newValueError(message: message)
+      return .error(error.asBaseException)
     }
+  }
+
+  // MARK: - Operations
+
+  /// Operation that returns ourself.
+  private static func identityOperation(_ py: Py,
+                                        zelf: PyObject,
+                                        fnName: String) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
+    }
+
+    // Normally we could return ourself (as in exactly the same object as 'zelf').
+    // But if we are an 'int' subclass then we have to convert to 'int':
+    // >>> True.imag
+    // 0
+    // >>> True.__index__()
+    // 1
+    if py.cast.isExactlyInt(zelf.asObject) {
+      return .value(zelf.asObject)
+    }
+
+    let value = zelf.value
+    return value.toResult(py)
+  }
+
+  /// Operation that returns an `int`
+  private static func intOperation(_ py: Py,
+                                   zelf: PyObject,
+                                   fnName: String,
+                                   fn: (BigInt) -> Int) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
+    }
+
+    let result = fn(zelf.value)
+    return result.toResult(py)
+  }
+
+  private static func unaryOperation(_ py: Py,
+                                     zelf: PyObject,
+                                     fnName: String,
+                                     fn: (BigInt) -> BigInt) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
+    }
+
+    let result = fn(zelf.value)
+    return result.toResult(py)
+  }
+
+  private static func binaryOperation(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject,
+                                      fnName: String,
+                                      fn: (BigInt, BigInt) -> BigInt) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
+    }
+
+    guard let other = py.cast.asInt(other) else {
+      return .notImplemented(py)
+    }
+
+    let result = fn(zelf.value, other.value)
+    return result.toResult(py)
+  }
+
+  private static func compareOperation(_ py: Py,
+                                       zelf: PyObject,
+                                       other: PyObject,
+                                       fnName: String,
+                                       fn: (BigInt, BigInt) -> Bool) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName: fnName)
+    }
+
+    guard let other = py.cast.asInt(other) else {
+      return .notImplemented(py)
+    }
+
+    let result = fn(zelf.value, other.value)
+    return result.toResult(py)
   }
 
   // MARK: - Helpers
@@ -1093,6 +1376,20 @@ public struct PyInt: PyObjectMixin {
   internal static func asDouble(int: BigInt) -> PyFloat.IntAsDouble {
     return PyFloat.asDouble(int: int)
   }
-}
 
-*/
+  private static func castZelf(_ py: Py, _ object: PyObject) -> PyInt? {
+    return py.cast.asInt(object)
+  }
+
+  private static func invalidSelfArgument(
+    _ py: Py,
+    _ object: PyObject,
+    fnName: String
+  ) -> PyResult<PyObject> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: "int",
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
+  }
+}

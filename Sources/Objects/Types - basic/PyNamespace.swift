@@ -40,32 +40,39 @@ public struct PyNamespace: PyObjectMixin {
   internal static func __eq__(_ py: Py,
                               zelf: PyObject,
                               other: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf)
-    }
-
-    let result = zelf.isEqual(py, other: other)
-    return result.toResult(py)
+    return Self.isEqual(py, zelf: zelf, other: other, fnName: "__eq__", not: false)
   }
 
   // sourcery: pymethod = __ne__
   internal static func __ne__(_ py: Py,
                               zelf: PyObject,
                               other: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf)
-    }
-
-    let result = zelf.isEqual(py, other: other).not
-    return result.toResult(py)
+    return Self.isEqual(py, zelf: zelf, other: other, fnName: "__ne__", not: true)
   }
 
-  private func isEqual(_ py: Py, other: PyObject) -> CompareResult {
-    guard let other = py.cast.asNamespace(other) else {
-      return .notImplemented
+  private static func isEqual(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject,
+                              fnName: String,
+                              not: Bool) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName)
     }
 
-    return self.__dict__.isEqual(other.__dict__)
+    guard let other = py.cast.asNamespace(other) else {
+      return .notImplemented(py)
+    }
+
+    let result = zelf.__dict__.isEqual(other.__dict__)
+    switch result {
+    case .value(let isEqual):
+      let result = not ? !isEqual : isEqual
+      return result.toResult(py)
+    case .notImplemented:
+      return .notImplemented(py)
+    case .error(let e):
+      return .error(e)
+    }
   }
 
   // MARK: - Comparable
@@ -110,7 +117,7 @@ public struct PyNamespace: PyObjectMixin {
   // sourcery: pyproperty = __dict__
   internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf)
+      return Self.invalidSelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.__dict__
@@ -122,7 +129,7 @@ public struct PyNamespace: PyObjectMixin {
   // sourcery: pymethod = __repr__
   internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf)
+      return Self.invalidSelfArgument(py, zelf, "__repr__")
     }
 
     let isBuiltin = zelf.type === py.types.simpleNamespace
@@ -168,7 +175,7 @@ public struct PyNamespace: PyObjectMixin {
                                         zelf: PyObject,
                                         name: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf)
+      return Self.invalidSelfArgument(py, zelf, "__getattribute__")
     }
 
     return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
@@ -180,7 +187,7 @@ public struct PyNamespace: PyObjectMixin {
                                    name: PyObject,
                                    value: PyObject?) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf)
+      return Self.invalidSelfArgument(py, zelf, "__setattr__")
     }
 
     return AttributeHelper.setAttribute(py, object: zelf.asObject, name: name, value: value)
@@ -191,7 +198,7 @@ public struct PyNamespace: PyObjectMixin {
                                    zelf: PyObject,
                                    name: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf)
+      return Self.invalidSelfArgument(py, zelf, "__delattr__")
     }
 
     return AttributeHelper.delAttribute(py, object: zelf.asObject, name: name)
@@ -217,7 +224,7 @@ public struct PyNamespace: PyObjectMixin {
                                 args: [PyObject],
                                 kwargs: PyDict?) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf)
+      return Self.invalidSelfArgument(py, zelf, "__init__")
     }
 
     guard args.isEmpty else {
@@ -250,11 +257,11 @@ public struct PyNamespace: PyObjectMixin {
   internal static func invalidSelfArgument(
     _ py: Py,
     _ object: PyObject,
-    swiftFnName: StaticString = #function
+    _ fnName: String
   ) -> PyResult<PyObject> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: "SimpleNamespace",
-                                               swiftFnName: swiftFnName)
+                                               fnName: fnName)
 
     return .error(error.asBaseException)
   }

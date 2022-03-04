@@ -453,13 +453,11 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
 
     switch zelf.getModuleName(py) {
     case .builtins:
-      let string = "<class '\(zelf.name)'>"
-      let pyString = py.newString(string)
-      return .value(pyString.asObject)
+      let result = "<class '\(zelf.name)'>"
+      return result.toResult(py)
     case .string(let module):
-      let string = "<class '\(module).\(zelf.name)'>"
-      let pyString = py.newString(string)
-      return .value(pyString.asObject)
+      let result = "<class '\(module).\(zelf.name)'>"
+      return result.toResult(py)
     case .error(let e):
       return .error(e)
     }

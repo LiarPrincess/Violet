@@ -1,4 +1,5 @@
 import Foundation
+import BigInt
 import FileSystem
 import VioletCore
 
@@ -86,6 +87,43 @@ extension PyResult where Wrapped == String {
     case let .error(e):
       return .error(e)
     }
+  }
+}
+
+// MARK: - To result
+
+extension Bool {
+  public func toResult(_ py: Py) -> PyResult<PyObject> {
+    let bool = py.newBool(self)
+    return .value(bool.asObject)
+  }
+}
+
+extension Int {
+  public func toResult(_ py: Py) -> PyResult<PyObject> {
+    let int = py.newInt(self)
+    return .value(int.asObject)
+  }
+}
+
+extension BigInt {
+  public func toResult(_ py: Py) -> PyResult<PyObject> {
+    let int = py.newInt(self)
+    return .value(int.asObject)
+  }
+}
+
+extension Double {
+  public func toResult(_ py: Py) -> PyResult<PyObject> {
+    let double = py.newFloat(self)
+    return .value(double.asObject)
+  }
+}
+
+extension String {
+  public func toResult(_ py: Py) -> PyResult<PyObject> {
+    let string = py.newString(self)
+    return .value(string.asObject)
   }
 }
 
