@@ -1,4 +1,3 @@
-/* MARKER
 import BigInt
 import VioletCore
 
@@ -11,7 +10,7 @@ internal enum IndexHelper {
 
   internal enum IntIndex {
     case value(Int)
-    case overflow(BigInt, LazyIntOverflowError)
+    case overflow(PyInt, LazyIntOverflowError)
     case notIndex(LazyNotIndexError)
     case error(PyBaseException)
   }
@@ -64,8 +63,8 @@ internal enum IndexHelper {
       self.errorKind = onOverflow.errorKind
     }
 
-    internal func create() -> PyBaseException {
-      let msg: String = {
+    internal func create(_ py: Py) -> PyBaseException {
+      let message: String = {
         switch self.msg {
         case let .generic(typeName: typeName):
           return "cannot fit '\(typeName)' into an index-sized integer"
@@ -75,8 +74,12 @@ internal enum IndexHelper {
       }()
 
       switch self.errorKind {
-      case .overflow: return Py.newOverflowError(msg: msg)
-      case .index: return Py.newIndexError(msg: msg)
+      case .overflow:
+        let error = py.newOverflowError(message: message)
+        return error.asBaseException
+      case .index:
+        let error = py.newIndexError(message: message)
+        return error.asBaseException
       }
     }
   }
@@ -91,27 +94,28 @@ internal enum IndexHelper {
   /// Py_ssize_t PyNumber_AsSsize_t(PyObject *item, PyObject *err)
   /// _PyEval_SliceIndexNotNone
   /// ```
-  internal static func int(_ object: PyObject,
+  internal static func int(_ py: Py,
+                           object: PyObject,
                            onOverflow: OnIntOverflow) -> IntIndex {
-    let bigInt: BigInt
-    switch Self.bigInt(object) {
-    case .value(let v): bigInt = v
+    let pyInt: PyInt
+    switch Self.pyInt(py, object: object) {
+    case .value(let i): pyInt = i
     case .notIndex(let i): return .notIndex(i)
     case .error(let e): return .error(e)
     }
 
-    if let int = Int(exactly: bigInt) {
+    if let int = Int(exactly: pyInt.value) {
       return .value(int)
     }
 
     let e = LazyIntOverflowError(convertedObject: object, onOverflow: onOverflow)
-    return .overflow(bigInt, e)
+    return .overflow(pyInt, e)
   }
 
-  // MARK: - BigInt
+  // MARK: - PyInt
 
-  internal enum BigIntIndex {
-    case value(BigInt)
+  internal enum PyIntIndex {
+    case value(PyInt)
     case notIndex(LazyNotIndexError)
     case error(PyBaseException)
   }
@@ -121,9 +125,10 @@ internal enum IndexHelper {
   internal struct LazyNotIndexError {
     fileprivate let typeName: String
 
-    internal func create() -> PyBaseException {
-      let msg = "'\(typeName)' object cannot be interpreted as an integer"
-      return Py.newTypeError(msg: msg)
+    internal func create(_ py: Py) -> PyBaseException {
+      let message = "'\(typeName)' object cannot be interpreted as an integer"
+      let error = py.newTypeError(message: message)
+      return error.asBaseException
     }
   }
 
@@ -136,34 +141,35 @@ internal enum IndexHelper {
   /// PyObject *
   /// PyNumber_Index(PyObject *item)
   /// ```
-  internal static func bigInt(_ object: PyObject) -> BigIntIndex {
-    if let int = PyCast.asInt(object) {
-      return .value(int.value)
+  internal static func pyInt(_ py: Py,object: PyObject) -> PyIntIndex {
+    if let int = py.cast.asExactlyInt(object) {
+      return .value(int)
     }
 
-    if let result = PyStaticCall.__index__(object) {
+    if let result = PyStaticCall.__index__(py, object: object) {
       return .value(result)
     }
 
-    switch Py.callMethod(object: object, selector: .__index__) {
+    switch py.callMethod(object: object, selector: .__index__) {
     case .value(let object):
-      guard let int = PyCast.asInt(object) else {
-        let msg = "__index__ returned non-int (type \(object.typeName)"
-        return .error(Py.newTypeError(msg: msg))
+      guard let int = py.cast.asInt(object) else {
+        let message = "__index__ returned non-int (type \(object.typeName)"
+        let error = py.newTypeError(message: message)
+        return .error(error.asBaseException)
       }
 
-      let isIntSubclass = !PyCast.isExactlyInt(int)
+      let isIntSubclass = !py.cast.isExactlyInt(int.asObject)
       if isIntSubclass {
-        let msg = "__index__ returned non-int (type \(int.typeName)).  " +
+        let message = "__index__ returned non-int (type \(int.typeName)).  " +
           "The ability to return an instance of a strict subclass of int " +
           "is deprecated, and may be removed in a future version of Python."
 
-        if let e = Py.warn(type: .deprecation, msg: msg) {
+        if let e = py.warn(type: .deprecation, message: message) {
           return .error(e)
         }
       }
 
-      return .value(int.value)
+      return .value(int)
 
     case .missingMethod:
       let e = LazyNotIndexError(typeName: object.typeName)
@@ -175,5 +181,3 @@ internal enum IndexHelper {
     }
   }
 }
-
-*/
