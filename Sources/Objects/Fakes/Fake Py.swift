@@ -28,6 +28,7 @@ public struct Py {
   public func newInt(_ value: Int) -> PyInt { fatalError() }
   public func newInt(_ value: UInt8) -> PyInt { fatalError() }
   public func newInt(_ value: BigInt) -> PyInt { fatalError() }
+  public func newInt(double value: Double) -> PyResult<PyInt> { fatalError() }
   public func newFloat(_ value: Double) -> PyFloat { fatalError() }
   public func newComplex(real: Double, imag: Double) -> PyComplex { fatalError() }
   public func newString(_ s: String) -> PyString { fatalError() }
@@ -172,17 +173,17 @@ public struct Py {
   public func newAttributeError(message: String) -> PyAttributeError { fatalError() }
   public func newAttributeError(object: PyObject, hasNoAttribute: PyString) -> PyAttributeError { fatalError() }
   public func newAttributeError(object: PyObject, attributeIsReadOnly: PyString) -> PyAttributeError { fatalError() }
-  public func newIndexError(message: String) -> PySystemError { fatalError() }
-  public func newZeroDivisionError(message: String) -> PySystemError { fatalError() }
-  public func newOverflowError(message: String) -> PySystemError { fatalError() }
-  public func newNameError(message: String) -> PySystemError { fatalError() }
-  public func newKeyError(message: String) -> PySystemError { fatalError() }
-  public func newValueError(message: String) -> PySystemError { fatalError() }
-  public func newLookupError(message: String) -> PySystemError { fatalError() }
-  public func newRuntimeError(message: String) -> PySystemError { fatalError() }
-  public func newOSError(message: String) -> PySystemError { fatalError() }
-  public func newAssertionError(message: String) -> PySystemError { fatalError() }
-  public func newEOFError(message: String) -> PySystemError { fatalError() }
+  public func newIndexError(message: String) -> PyIndexError { fatalError() }
+  public func newZeroDivisionError(message: String) -> PyZeroDivisionError { fatalError() }
+  public func newOverflowError(message: String) -> PyOverflowError { fatalError() }
+  public func newNameError(message: String) -> PyNameError { fatalError() }
+  public func newKeyError(message: String) -> PyKeyError { fatalError() }
+  public func newValueError(message: String) -> PyValueError { fatalError() }
+  public func newLookupError(message: String) -> PyLookupError { fatalError() }
+  public func newRuntimeError(message: String) -> PyRuntimeError { fatalError() }
+  public func newOSError(message: String) -> PyOSError { fatalError() }
+  public func newAssertionError(message: String) -> PyAssertionError { fatalError() }
+  public func newEOFError(message: String) -> PyEOFError { fatalError() }
   public func newKeyError(key: PyObject) -> PyKeyError { fatalError() }
   public func newStopIteration(value: PyObject?) -> PyStopIteration { fatalError() }
   public func newUnboundLocalError(variableName: String) -> PyUnboundLocalError { fatalError() }

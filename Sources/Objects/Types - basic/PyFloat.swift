@@ -47,92 +47,180 @@ public struct PyFloat: PyObjectMixin {
     let value = zelf.value
     return "PyFloat(type: \(zelf.typeName), flags: \(zelf.flags), value: \(value))"
   }
-}
 
-/* MARKER
-
-  // MARK: - Equatable
+  // MARK: - Equatable, comparable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> CompareResult {
-    return FloatCompareHelper.isEqual(left: self.value, right: other)
-  }
+  internal static func __eq__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__eq__")
+    }
 
+    let result = FloatCompareHelper.isEqual(py, left:zelf.value, right: other)
+    return result.toResult(py)
+  }
   // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> CompareResult {
-    return self.isEqual(other).not
-  }
+  internal static func __ne__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__ne__")
+    }
 
-  // MARK: - Comparable
+    let result = FloatCompareHelper.isNotEqual(py, left:zelf.value, right: other)
+    return result.toResult(py)
+  }
 
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> CompareResult {
-    return FloatCompareHelper.isLess(left: self.value, right: other)
+  internal static func __lt__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__lt__")
+    }
+
+    let result = FloatCompareHelper.isLess(py, left:zelf.value, right: other)
+    return result.toResult(py)
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    return FloatCompareHelper.isLessEqual(left: self.value, right: other)
+  internal static func __le__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__le__")
+    }
+
+    let result = FloatCompareHelper.isLessEqual(py, left:zelf.value, right: other)
+    return result.toResult(py)
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> CompareResult {
-    return FloatCompareHelper.isGreater(left: self.value, right: other)
+  internal static func __gt__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__gt__")
+    }
+
+    let result = FloatCompareHelper.isGreater(py, left:zelf.value, right: other)
+    return result.toResult(py)
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
-    return FloatCompareHelper.isGreaterEqual(left: self.value, right: other)
+  internal static func __ge__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__ge__")
+    }
+
+    let result = FloatCompareHelper.isGreaterEqual(py, left:zelf.value, right: other)
+    return result.toResult(py)
   }
 
-  // MARK: - Hashable
+ // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> PyHash {
-    return Py.hasher.hash(self.value)
+  internal static func __hash__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__hash__")
+    }
+
+    let result = py.hasher.hash(zelf.value)
+    return result.toResult(py)
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
-    return String(describing: self.value)
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.toString(py, zelf: zelf, fnName: "__repr__")
   }
 
   // sourcery: pymethod = __str__
-  internal func str() -> String {
-    return self.repr()
+  internal static func __str__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.toString(py, zelf: zelf, fnName: "__str__")
   }
 
-  // MARK: - Convertible
+  private static func toString(_ py: Py,
+                               zelf: PyObject,
+                               fnName: String) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName)
+    }
+
+    let value = zelf.value
+    let result = Self.toString(py, value: value)
+    return .value(result.asObject)
+  }
+
+  private static func toString(_ py: Py, value: Double) -> PyString {
+    // 'str' is immutable, so we can intern most common values.
+    if value.isNaN {
+      return py.intern(string: "nan")
+    }
+
+    switch value.sign {
+    case .plus:
+      if value.isInfinite { return py.intern(string: "inf") }
+      if value.isZero { return py.intern(string: "0.0") }
+      if value == 1.0 { return py.intern(string: "1.0") }
+    case .minus:
+      if value.isInfinite { return py.intern(string: "-inf") }
+      if value.isZero { return py.intern(string: "-0.0") }
+      if value == -1.0 { return py.intern(string: "-1.0") }
+    }
+
+    let result = String(describing: value)
+    return py.newString(result)
+  }
+
+  // MARK: - As bool/int/float/index
 
   // sourcery: pymethod = __bool__
-  internal func asBool() -> Bool {
-    return !self.value.isZero
+  internal static func __bool__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__bool__")
+    }
+
+    let result = !zelf.value.isZero
+    return result.toResult(py)
   }
 
   // sourcery: pymethod = __int__
-  internal func asInt() -> PyInt {
-    let result = BigInt(self.value)
-    return Py.newInt(result)
+  internal static func __int__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__int__")
+    }
+
+    let result = BigInt(zelf.value)
+    return result.toResult(py)
   }
 
   // sourcery: pymethod = __float__
-  internal func asFloat() -> PyResult<PyFloat> {
-    return .value(self)
-  }
-
-  // sourcery: pyproperty = real
-  internal func asReal() -> PyObject {
-    return self
-  }
-
-  // sourcery: pyproperty = imag
-  internal func asImag() -> PyObject {
-    return Py.newFloat(0.0)
+  internal static func __float__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.identityOperation(py, zelf: zelf, fnName: "__float__")
   }
 
   // MARK: - Imaginary
+
+  // sourcery: pyproperty = real
+  internal static func real(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.identityOperation(py, zelf: zelf, fnName: "real")
+  }
+
+  // sourcery: pyproperty = imag
+  internal static func imag(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard py.cast.isFloat(zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "imag")
+    }
+
+    let result = py.newFloat(0.0)
+    return .value(result.asObject)
+  }
 
   internal static let conjugateDoc = """
     conjugate($self, /)
@@ -144,41 +232,58 @@ public struct PyFloat: PyObjectMixin {
   // sourcery: pymethod = conjugate, doc = conjugateDoc
   /// float.conjugate
   /// Return self, the complex conjugate of any float.
-  internal func conjugate() -> PyObject {
-    return self
+  internal static func conjugate(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return self.identityOperation(py, zelf: zelf, fnName: "conjugate")
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__getattribute__")
+    }
+
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
-  // MARK: - Sign
+  // MARK: - Pos, neg, abs
 
   // sourcery: pymethod = __pos__
-  internal func positive() -> PyObject {
-    return self
+   internal static func __pos__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+     // 'float' is immutable, so if we are exactly 'float' (not an subclass),
+     // then we can return ourself. (This saves an allocation).
+     if let float = py.cast.asExactlyFloat(zelf) {
+       return .value(float.asObject)
+     }
+
+     return Self.unaryOperation(py, zelf: zelf, fnName: "__pos__") { $0 }
   }
 
   // sourcery: pymethod = __neg__
-  internal func negative() -> PyObject {
-    return Py.newFloat(-self.value)
+  internal static func __neg__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.unaryOperation(py, zelf: zelf, fnName: "__neg__") { -$0 }
   }
 
-  // MARK: - Abs
-
   // sourcery: pymethod = __abs__
-  internal func abs() -> PyObject {
-    return Py.newFloat(Swift.abs(self.value))
+  internal static func __abs__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    // 'float' is immutable, so if we are exactly 'float' (not a subclass) and '>=0',
+    // then we can return ourself. (This saves an allocation).
+    if let float = py.cast.asExactlyFloat(zelf), float.value >= 0 {
+      return .value(float.asObject)
+    }
+
+    return Self.unaryOperation(py, zelf: zelf, fnName: "__abs__") { Swift.abs($0) }
   }
 
   // MARK: - Is integer
@@ -190,14 +295,20 @@ public struct PyFloat: PyObjectMixin {
     Return True if the float is an integer.
     """
 
-  // sourcery: pymethod = is_integer, , doc = isIntegerDoc
-  internal func isInteger() -> PyBool {
-    guard self.value.isFinite else {
-      return Py.false
+  // sourcery: pymethod = is_integer, doc = isIntegerDoc
+  internal static func is_integer(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "is_integer")
     }
 
-    let result = floor(self.value) == self.value
-    return Py.newBool(result)
+    let value = zelf.value
+    guard value.isFinite else {
+      let result = py.false
+      return .value(result.asObject)
+    }
+
+    let result = floor(value) == value
+    return result.toResult(py)
   }
 
   // MARK: - Integer ratio
@@ -222,16 +333,23 @@ public struct PyFloat: PyObjectMixin {
     """
 
   // sourcery: pymethod = as_integer_ratio, doc = asIntegerRatioDoc
-  internal func asIntegerRatio() -> PyResult<PyObject> {
-    if self.value.isInfinite {
-      return .overflowError("cannot convert Infinity to integer ratio")
+  internal static func as_integer_ratio(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "as_integer_ratio")
     }
 
-    if self.value.isNaN {
-      return .valueError("cannot convert NaN to integer ratio")
+    let value = zelf.value
+
+
+    if value.isInfinite {
+      return .overflowError(py, message: "cannot convert Infinity to integer ratio")
     }
 
-    let frexp = Frexp(value: self.value)
+    if value.isNaN {
+      return .valueError(py, message: "cannot convert NaN to integer ratio")
+    }
+
+    let frexp = Frexp(value: value)
     var exponent = frexp.exponent
     var mantissa = frexp.mantissa
 
@@ -244,335 +362,363 @@ public struct PyFloat: PyObjectMixin {
       exponent -= 1
     }
 
-    var numerator: BigInt
-    switch Py.newInt(double: mantissa) {
-    case let .value(i): numerator = i.value
+    var pyMantissa: PyInt
+    switch py.newInt(double: mantissa) {
+    case let .value(i): pyMantissa = i
     case let .error(e): return .error(e)
     }
 
-    var denominator = BigInt(1)
-
+    let numerator: PyInt
+    let denominator: PyInt
     if exponent > 0 {
-      numerator = numerator << exponent
+      numerator = py.newInt(pyMantissa.value << exponent)
+      denominator = py.newInt(1)
     } else {
-      denominator = denominator << -exponent // notice '-'!
+      numerator = pyMantissa
+      denominator = py.newInt(BigInt(1) << -exponent) // notice '-'!
     }
 
-    let pyNumerator = Py.newInt(numerator)
-    let pyDenominator = Py.newInt(denominator)
-    return .value(Py.newTuple(pyNumerator, pyDenominator))
+    let result = py.newTuple(elements: numerator.asObject, denominator.asObject)
+    return .value(result.asObject)
   }
 
-  // MARK: - Add
+  // MARK: - Add, sub, mul
 
   // sourcery: pymethod = __add__
-  internal func add(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asDouble(object: other) {
-    case let .value(d):
-      let result = self.value + d
-      return .value(Py.newFloat(result))
-
-    case let .intOverflow(_, e):
-      return .error(e)
-
-    case .notDouble:
-      return .value(Py.notImplemented)
-    }
+  internal static func __add__(_ py: Py,
+                               zelf: PyObject,
+                               other: PyObject) -> PyResult<PyObject> {
+    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__add__") { $0 + $1 }
   }
 
   // sourcery: pymethod = __radd__
-  internal func radd(_ other: PyObject) -> PyResult<PyObject> {
-    return self.add(other)
+  internal static func __radd__(_ py: Py,
+                                zelf: PyObject,
+                                other: PyObject) -> PyResult<PyObject> {
+    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__radd__") { $1 + $0 }
   }
 
-  // MARK: - Sub
-
   // sourcery: pymethod = __sub__
-  internal func sub(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asDouble(object: other) {
-    case let .value(d):
-      let result = self.value - d
-      return .value(Py.newFloat(result))
-
-    case let .intOverflow(_, e):
-      return .error(e)
-
-    case .notDouble:
-      return .value(Py.notImplemented)
-    }
+  internal static func __sub__(_ py: Py,
+                               zelf: PyObject,
+                               other: PyObject) -> PyResult<PyObject> {
+    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__sub__") { $0 - $1 }
   }
 
   // sourcery: pymethod = __rsub__
-  internal func rsub(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asDouble(object: other) {
-    case let .value(d):
-      let result = d - self.value
-      return .value(Py.newFloat(result))
-
-    case let .intOverflow(_, e):
-      return .error(e)
-
-    case .notDouble:
-      return .value(Py.notImplemented)
-    }
+  internal static func __rsub__(_ py: Py,
+                                zelf: PyObject,
+                                other: PyObject) -> PyResult<PyObject> {
+    // Important: OTHER - ZELF (not zelf - other)
+    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__sub__") { $1 - $0 }
   }
 
-  // MARK: - Mul
-
   // sourcery: pymethod = __mul__
-  internal func mul(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asDouble(object: other) {
-    case let .value(d):
-      let result = self.value * d
-      return .value(Py.newFloat(result))
-
-    case let .intOverflow(_, e):
-      return .error(e)
-
-    case .notDouble:
-      return .value(Py.notImplemented)
-    }
+  internal static func __mul__(_ py: Py,
+                               zelf: PyObject,
+                               other: PyObject) -> PyResult<PyObject> {
+    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__mul__") { $0 * $1 }
   }
 
   // sourcery: pymethod = __rmul__
-  internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
-    return self.mul(other)
+  internal static func __rmul__(_ py: Py,
+                                zelf: PyObject,
+                                other: PyObject) -> PyResult<PyObject> {
+    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__mul__") { $1 * $0 }
   }
 
   // MARK: - Pow
 
   // sourcery: pymethod = __pow__
-  internal func pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject> {
-    if let e = self.disallowPowMod(mod: mod) {
-      return .error(e)
-    }
-
-    switch Self.asDouble(object: exp) {
-    case let .value(exp):
-      let base = self.value
-
-      if let e = self.checkPowInvariants(base: base, exp: exp) {
-        return .error(e)
-      }
-
-      let result = Foundation.pow(base, exp)
-      return .value(Py.newFloat(result))
-
-    case let .intOverflow(_, e):
-      return .error(e)
-
-    case .notDouble:
-      return .value(Py.notImplemented)
-    }
+ internal static func __pow__(_ py: Py,
+                              zelf: PyObject,
+                              exp: PyObject,
+                              mod: PyObject?,
+                              other: PyObject) -> PyResult<PyObject> {
+   return Self.powOperation(py,
+                            zelf: zelf,
+                            other: other,
+                            mod: mod,
+                            fnName: "__pow__",
+                            isZelfBase: true)
   }
 
   // sourcery: pymethod = __rpow__
-  internal func rpow(base: PyObject, mod: PyObject?) -> PyResult<PyObject> {
-    if let e = self.disallowPowMod(mod: mod) {
-      return .error(e)
+  internal static func __rpow__(_ py: Py,
+                                zelf: PyObject,
+                                base: PyObject,
+                                mod: PyObject?,
+                                other: PyObject) -> PyResult<PyObject> {
+    return Self.powOperation(py,
+                             zelf: zelf,
+                             other: other,
+                             mod: mod,
+                             fnName: "__rpow__",
+                             isZelfBase: false)
+  }
+
+  private static func powOperation(_ py: Py,
+                                   zelf: PyObject,
+                                   other: PyObject,
+                                   mod: PyObject?,
+                                   fnName: String,
+                                   isZelfBase: Bool) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName)
     }
 
-    switch Self.asDouble(object: base) {
-    case let .value(base):
-      let exp = self.value
+    guard py.cast.isNilOrNone(mod) else {
+      let message = "pow() 3rd argument not allowed unless all arguments are integers"
+      return .typeError(py, message: message)
+    }
 
-      if let e = self.checkPowInvariants(base: base, exp: exp) {
-        return .error(e)
+    switch Self.asDouble(py, object: other) {
+    case let .value(other):
+      let base = isZelfBase ? zelf.value : other
+      let exp = isZelfBase ? other : zelf.value
+
+      if base.isZero && exp < 0 {
+        let message = "0.0 cannot be raised to a negative power"
+        return .zeroDivisionError(py, message: message)
       }
 
       let result = Foundation.pow(base, exp)
-      return .value(Py.newFloat(result))
+      return result.toResult(py)
 
     case let .intOverflow(_, e):
       return .error(e)
-
     case .notDouble:
-      return .value(Py.notImplemented)
+      return .notImplemented(py)
     }
-  }
-
-  private func disallowPowMod(mod: PyObject?) -> PyBaseException? {
-    if PyCast.isNilOrNone(mod) {
-      return nil
-    }
-
-    let msg = "pow() 3rd argument not allowed unless all arguments are integers"
-    return Py.newTypeError(msg: msg)
-  }
-
-  private func checkPowInvariants(base: Double, exp: Double) -> PyBaseException? {
-    if base.isZero && exp < 0 {
-      let msg = "0.0 cannot be raised to a negative power"
-      return Py.newZeroDivisionError(msg: msg)
-    }
-
-    return nil
   }
 
   // MARK: - True div
 
   // sourcery: pymethod = __truediv__
-  internal func truediv(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asDouble(object: other) {
-    case let .value(d):
-      return self.truediv(left: self.value, right: d)
-    case let .intOverflow(_, e):
-      return .error(e)
-    case .notDouble:
-      return .value(Py.notImplemented)
-    }
+  internal static func __truediv__(_ py: Py,
+                                   zelf: PyObject,
+                                   other: PyObject) -> PyResult<PyObject> {
+    return Self.truedivOperation(py,
+                                 zelf: zelf,
+                                 other: other,
+                                 fnName: "__truediv__",
+                                 isZelfLeft: true)
   }
 
   // sourcery: pymethod = __rtruediv__
-  internal func rtruediv(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asDouble(object: other) {
-    case let .value(d):
-      return self.truediv(left: d, right: self.value)
+  internal static func __rtruediv__(_ py: Py,
+                                    zelf: PyObject,
+                                    other: PyObject) -> PyResult<PyObject> {
+    return Self.truedivOperation(py,
+                                 zelf: zelf,
+                                 other: other,
+                                 fnName: "__rtruediv__",
+                                 isZelfLeft: false)
+  }
+
+  private static func truedivOperation(_ py: Py,
+                                       zelf: PyObject,
+                                       other: PyObject,
+                                       fnName: String,
+                                       isZelfLeft: Bool) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName)
+    }
+
+    switch Self.asDouble(py, object: other) {
+    case let .value(other):
+      let left = isZelfLeft ? zelf.value : other
+      let right = isZelfLeft ? other : zelf.value
+
+      if right.isZero {
+        return .zeroDivisionError(py, message: "float division by zero")
+      }
+
+      let result = left / right
+      return result.toResult(py)
+
     case let .intOverflow(_, e):
       return .error(e)
     case .notDouble:
-      return .value(Py.notImplemented)
+      return .notImplemented(py)
     }
-  }
-
-  private func truediv(left: Double, right: Double) -> PyResult<PyObject> {
-    if right.isZero {
-      return .zeroDivisionError("float division by zero")
-    }
-
-    return .value(Py.newFloat(left / right))
   }
 
   // MARK: - Floor div
 
   // sourcery: pymethod = __floordiv__
-  internal func floordiv(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asDouble(object: other) {
-    case let .value(d):
-      return self.floordiv(left: self.value, right: d)
-    case let .intOverflow(_, e):
-      return .error(e)
-    case .notDouble:
-      return .value(Py.notImplemented)
-    }
+  internal static func __floordiv__(_ py: Py,
+                                    zelf: PyObject,
+                                    other: PyObject) -> PyResult<PyObject> {
+    return Self.floordivOperation(py,
+                                  zelf: zelf,
+                                  other: other,
+                                  fnName: "__floordiv__",
+                                  isZelfLeft: true)
   }
 
   // sourcery: pymethod = __rfloordiv__
-  internal func rfloordiv(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asDouble(object: other) {
-    case let .value(d):
-      return self.floordiv(left: d, right: self.value)
+  internal static func __rfloordiv__(_ py: Py,
+                                     zelf: PyObject,
+                                     other: PyObject) -> PyResult<PyObject> {
+    return Self.floordivOperation(py,
+                                  zelf: zelf,
+                                  other: other,
+                                  fnName: "__rfloordiv__",
+                                  isZelfLeft: false)
+  }
+
+  private static func floordivOperation(_ py: Py,
+                                        zelf: PyObject,
+                                        other: PyObject,
+                                        fnName: String,
+                                        isZelfLeft: Bool) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName)
+    }
+
+    switch Self.asDouble(py, object: other) {
+    case let .value(other):
+      let left = isZelfLeft ? zelf.value : other
+      let right = isZelfLeft ? other : zelf.value
+
+      if right.isZero {
+        return .zeroDivisionError(py, message: "float floor division by zero")
+      }
+
+      let result = self.floordivUncheckedZero(left: left, right: right)
+      return result.toResult(py)
+
     case let .intOverflow(_, e):
       return .error(e)
     case .notDouble:
-      return .value(Py.notImplemented)
+      return .notImplemented(py)
     }
   }
 
-  private func floordiv(left: Double, right: Double) -> PyResult<PyObject> {
-    if right.isZero {
-      return .zeroDivisionError("float floor division by zero")
-    }
-
-    let result = self.floordivUncheckedZero(left: left, right: right)
-    return .value(Py.newFloat(result))
-  }
-
-  private func floordivUncheckedZero(left: Double, right: Double) -> Double {
+  private static func floordivUncheckedZero(left: Double, right: Double) -> Double {
     return Foundation.floor(left / right)
   }
 
   // MARK: - Mod
 
   // sourcery: pymethod = __mod__
-  internal func mod(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asDouble(object: other) {
-    case let .value(d):
-      return self.mod(left: self.value, right: d)
-    case let .intOverflow(_, e):
-      return .error(e)
-    case .notDouble:
-      return .value(Py.notImplemented)
-    }
+  internal static func __mod__(_ py: Py,
+                               zelf: PyObject,
+                               other: PyObject) -> PyResult<PyObject> {
+    return Self.modOperation(py,
+                             zelf: zelf,
+                             other: other,
+                             fnName: "__mod__",
+                             isZelfLeft: true)
   }
 
   // sourcery: pymethod = __rmod__
-  internal func rmod(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asDouble(object: other) {
-    case let .value(d):
-      return self.mod(left: d, right: self.value)
+  internal static func __rmod__(_ py: Py,
+                                zelf: PyObject,
+                                other: PyObject) -> PyResult<PyObject> {
+    return Self.modOperation(py,
+                             zelf: zelf,
+                             other: other,
+                             fnName: "__rmod__",
+                             isZelfLeft: false)
+  }
+
+  private static func modOperation(_ py: Py,
+                                   zelf: PyObject,
+                                   other: PyObject,
+                                   fnName: String,
+                                   isZelfLeft: Bool) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName)
+    }
+
+    switch Self.asDouble(py, object: other) {
+    case let .value(other):
+      let left = isZelfLeft ? zelf.value : other
+      let right = isZelfLeft ? other : zelf.value
+
+      if right.isZero {
+        return .zeroDivisionError(py, message: "float modulo by zero")
+      }
+
+      let result = Self.modUncheckedZero(left: left, right: right)
+      return result.toResult(py)
+
     case let .intOverflow(_, e):
       return .error(e)
     case .notDouble:
-      return .value(Py.notImplemented)
+      return .notImplemented(py)
     }
   }
 
-  private func mod(left: Double, right: Double) -> PyResult<PyObject> {
-    if right.isZero {
-      return .zeroDivisionError("float modulo by zero")
-    }
-
-    let result = self.modUncheckedZero(left: left, right: right)
-    return .value(Py.newFloat(result))
-  }
-
-  private func modUncheckedZero(left: Double, right: Double) -> Double {
+  private static func modUncheckedZero(left: Double, right: Double) -> Double {
     return left.remainder(dividingBy: right)
   }
 
   // MARK: - Div mod
 
   // sourcery: pymethod = __divmod__
-  internal func divmod(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asDouble(object: other) {
-    case let .value(d):
-      return self.divmod(left: self.value, right: d)
-    case let .intOverflow(_, e):
-      return .error(e)
-    case .notDouble:
-      return .value(Py.notImplemented)
-    }
+  internal static func __divmod__(_ py: Py,
+                                  zelf: PyObject,
+                                  other: PyObject) -> PyResult<PyObject> {
+    return Self.divmodOperation(py,
+                                zelf: zelf,
+                                other: other,
+                                fnName: "__divmod__",
+                                isZelfLeft: true)
   }
 
   // sourcery: pymethod = __rdivmod__
-  internal func rdivmod(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asDouble(object: other) {
-    case let .value(d):
-      return self.divmod(left: d, right: self.value)
+  internal static func __rdivmod__(_ py: Py,
+                                   zelf: PyObject,
+                                   other: PyObject) -> PyResult<PyObject> {
+    return Self.divmodOperation(py,
+                                zelf: zelf,
+                                other: other,
+                                fnName: "__rdivmod__",
+                                isZelfLeft: false)
+  }
+
+  private static func divmodOperation(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject,
+                                      fnName: String,
+                                      isZelfLeft: Bool) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName)
+    }
+
+    switch Self.asDouble(py, object: other) {
+    case let .value(other):
+      let left = isZelfLeft ? zelf.value : other
+      let right = isZelfLeft ? other : zelf.value
+
+      if right.isZero {
+        return .zeroDivisionError(py, message: "float divmod() by zero")
+      }
+
+      let div = self.floordivUncheckedZero(left: left, right: right)
+      let mod = self.modUncheckedZero(left: left, right: right)
+
+      let element0 = py.newFloat(div)
+      let element1 = py.newFloat(mod)
+      let result = py.newTuple(elements: element0.asObject, element1.asObject)
+      return .value(result.asObject)
+
     case let .intOverflow(_, e):
       return .error(e)
     case .notDouble:
-      return .value(Py.notImplemented)
+      return .notImplemented(py)
     }
   }
-
-  private func divmod(left: Double, right: Double) -> PyResult<PyObject> {
-    if right.isZero {
-      return .zeroDivisionError("float divmod() by zero")
-    }
-
-    let div = self.floordivUncheckedZero(left: left, right: right)
-    let mod = self.modUncheckedZero(left: left, right: right)
-
-    let tuple0 = Py.newFloat(div)
-    let tuple1 = Py.newFloat(mod)
-    return .value(Py.newTuple(tuple0, tuple1))
-  }
-
   // MARK: - Round
 
-  /// See comment in `round(nDigits: PyObject?)`.
-  private var roundDigitCountMax: Int {
-    // swiftformat:disable:next numberFormatting
-    return Int(Double(DBL_MANT_DIG - DBL_MIN_EXP) * 0.301_03)
-  }
+  /// See comment in `round(_:zelf:nDigits: PyObject?)`.
+  private static let roundDigitCountMax = Int(Double(DBL_MANT_DIG - DBL_MIN_EXP) * 0.301_03)
 
-  /// See comment in `round(nDigits: PyObject?)`.
-  private var roundDigitCountMin: Int {
-    // swiftformat:disable:next numberFormatting
-    return -Int(Double(DBL_MAX_EXP + 1) * 0.301_03)
-  }
+  /// See comment in `round(_:zelf:nDigits: PyObject?)`.
+  private static let roundDigitCountMin = -Int(Double(DBL_MAX_EXP + 1) * 0.301_03)
 
   internal static let roundDoc = """
     __round__($self, ndigits=None, /)
@@ -591,17 +737,23 @@ public struct PyFloat: PyObjectMixin {
   ///
   /// If `nDigits` is not given or is `None` returns the nearest integer.
   /// If `nDigits` is given returns the number rounded off to the `ndigits`.
-  internal func round(nDigits: PyObject?) -> PyResult<PyObject> {
-    switch self.parseRoundDigitCount(object: nDigits) {
+  internal static func __round__(_ py: Py,
+                                 zelf: PyObject,
+                                 nDigits: PyObject?) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__round__")
+    }
+
+    switch Self.parseRoundDigitCount(py, object: nDigits) {
     case .none:
-      let rounded = self.roundToEven(value: self.value)
-      let result = Py.newInt(double: rounded)
-      return result.map { $0 as PyObject }
+      let rounded = Self.roundToEven(value: zelf.value)
+      let result = py.newInt(double: rounded)
+      return result.map { $0.asObject }
 
     case .int(let nDigits):
       // nans and infinities round to themselves
-      guard self.value.isFinite else {
-        return .value(self)
+      guard zelf.value.isFinite else {
+        return .value(zelf.asObject)
       }
 
       // Dark magic incoming (well above our $0 pay grade):
@@ -610,16 +762,17 @@ public struct PyFloat: PyObjectMixin {
       // For ndigits < NDIGITS_MIN, x always rounds to +-0.0.
       // Here 0.30103 is an upper bound for log10(2).
 
-      if nDigits > self.roundDigitCountMax {
-        return .value(self)
+      if nDigits > Self.roundDigitCountMax {
+        return .value(zelf.asObject)
       }
 
-      if nDigits < self.roundDigitCountMin {
-        let zero = Double(signOf: self.value, magnitudeOf: 0.0)
-        return .value(Py.newFloat(zero))
+      if nDigits < Self.roundDigitCountMin {
+        let zero = Double(signOf: zelf.value, magnitudeOf: 0.0)
+        return zero.toResult(py)
       }
 
-      return self.round(nDigit: nDigits)
+      let result = Self.round(py, zelf: zelf, nDigit: nDigits)
+      return result.asObject
 
     case .error(let e):
       return .error(e)
@@ -632,23 +785,23 @@ public struct PyFloat: PyObjectMixin {
     case error(PyBaseException)
   }
 
-  private func parseRoundDigitCount(object: PyObject?) -> RoundDigits {
+  private static func parseRoundDigitCount(_ py: Py, object: PyObject?) -> RoundDigits {
     guard let object = object else {
       return .none
     }
 
-    if PyCast.isNone(object) {
+    if py.cast.isNone(object) {
       return .none
     }
 
-    switch IndexHelper.int(object, onOverflow: .overflowError) {
+    switch IndexHelper.int(py, object: object, onOverflow: .overflowError) {
     case let .value(i):
       return .int(i)
     case let .notIndex(lazyError):
-      let e = lazyError.create()
+      let e = lazyError.create(py)
       return .error(e)
     case let .overflow(_, lazyError):
-      let e = lazyError.create()
+      let e = lazyError.create(py)
       return .error(e)
     case let .error(e):
       return .error(e)
@@ -659,7 +812,7 @@ public struct PyFloat: PyObjectMixin {
   /// if two values are equally close, the even one is chosen.
   ///
   /// AFAIK it is te same as `value.round(.toNearestOrEven)`.
-  private func roundToEven(value: Double) -> Double {
+  private static func roundToEven(value: Double) -> Double {
     let result = Foundation.round(value)
 
     if Foundation.fabs(value - result) == 0.5 {
@@ -683,33 +836,34 @@ public struct PyFloat: PyObjectMixin {
   ///
   /// We are implementing version with 'PY_NO_SHORT_FLOAT_REPR'
   /// even though we actually have 'SHORT_FLOAT_REPR'.
-  private func round(nDigit: Int) -> PyResult<PyObject> {
+  private static func round(_ py: Py, zelf: PyFloat, nDigit: Int) -> PyResult<PyFloat> {
     assert(self.roundDigitCountMin <= nDigit && nDigit <= self.roundDigitCountMax)
 
     let scaledToDigits: Double, pow10: Double
     if nDigit >= 0 {
       // CPython has special case for overflow, we are too lazy for that
       pow10 = Foundation.pow(10.0, Double(nDigit))
-      scaledToDigits = self.value * pow10
+      scaledToDigits = zelf.value * pow10
 
       // Because 'mul' can overflow
       guard scaledToDigits.isFinite else {
-        return .value(self)
+        return .value(zelf)
       }
     } else {
       pow10 = Foundation.pow(10.0, -Double(nDigit))
-      scaledToDigits = self.value / pow10
+      scaledToDigits = zelf.value / pow10
     }
 
-    let rounded = self.roundToEven(value: scaledToDigits)
+    let rounded = Self.roundToEven(value: scaledToDigits)
     let rescaled = nDigit >= 0 ? rounded / pow10 : rounded * pow10
 
     // if computation resulted in overflow, raise OverflowError
     guard rescaled.isFinite else {
-      return .overflowError("overflow occurred during round")
+      return .overflowError(py, message: "overflow occurred during round")
     }
 
-    return .value(Py.newFloat(rescaled))
+    let result = py.newFloat(rescaled)
+    return .value(result)
   }
 
   // MARK: - Trunc
@@ -722,10 +876,16 @@ public struct PyFloat: PyObjectMixin {
     """
 
   // sourcery: pymethod = __trunc__, doc = truncDoc
-  internal func trunc() -> PyResult<PyInt> {
+  internal static func __trunc__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__trunc__")
+    }
+
     var intPart: Double = 0
-    _ = Foundation.modf(self.value, &intPart)
-    return Py.newInt(double: intPart)
+    _ = Foundation.modf(zelf.value, &intPart)
+
+    let result = py.newInt(double: intPart)
+    return result.asObject
   }
 
   // MARK: - Python new
@@ -738,98 +898,128 @@ public struct PyFloat: PyObjectMixin {
     """
 
   // sourcery: pystaticmethod = __new__, doc = newDoc
-  internal class func pyNew(type: PyType,
-                            args: [PyObject],
-                            kwargs: PyDict?) -> PyResult<PyFloat> {
-    let isBuiltin = type === Py.types.float
-    if isBuiltin {
-      if let e = ArgumentParser.noKwargsOrError(fnName: "float", kwargs: kwargs) {
-        return .error(e)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    if Self.isBuiltinFloatType(py, type: type) {
+      if let e = ArgumentParser.noKwargsOrError(py, fnName: "float", kwargs: kwargs) {
+        return .error(e.asBaseException)
       }
     }
 
-    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "float",
+    if let e = ArgumentParser.guaranteeArgsCountOrError(py,
+                                                        fnName: "float",
                                                         args: args,
                                                         min: 0,
                                                         max: 1) {
-      return .error(e)
+      return .error(e.asBaseException)
     }
 
     if args.isEmpty {
-      return .value(Self.allocate(type: type, value: 0.0))
+      return Self.allocate(py, type: type, value: 0.0)
     }
 
     let arg0 = args[0]
-    switch Self.pyNew(fromString: arg0) {
-    case .value(let d): return .value(Self.allocate(type: type, value: d))
+
+    switch Self.new(py, fromString: arg0) {
+    case .value(let d): return Self.allocate(py, type: type, value: d)
     case .notString: break
-    case .error(let e): return .error(e)
+    case .error(let e): return .error(e.asBaseException)
     }
 
-    switch Self.pyNew(fromNumber: arg0) {
-    case .value(let d): return .value(Self.allocate(type: type, value: d))
+    switch Self.new(py, fromNumber: arg0) {
+    case .pyFloat(let pyFloat): return Self.allocate(py, type: type, value: pyFloat)
+    case .double(let double): return Self.allocate(py, type: type, value: double)
     case .notNumber: break
     case .error(let e): return .error(e)
     }
 
-    let msg = "float() argument must be a string, or a number, not '\(arg0.typeName)'"
-    return .typeError(msg)
+    let message = "float() argument must be a string, or a number, not '\(arg0.typeName)'"
+    return .typeError(py, message: message)
   }
 
-  private static func allocate(type: PyType, value: Double) -> PyFloat {
+  internal static func isBuiltinFloatType(_ py: Py, type: PyType) -> Bool {
+    return type === py.types.float
+  }
+
+  private static func allocate(_ py: Py,
+                               type: PyType,
+                               value: PyFloat) -> PyResult<PyObject> {
+    // 'float' is immutable, so we can return the same thing (saves allocation).
+    let isBuiltin = Self.isBuiltinFloatType(py, type: type)
+    let isNotSubclass = py.cast.isExactlyFloat(value.asObject)
+
+    if isBuiltin && isNotSubclass {
+      return .value(value.asObject)
+    }
+
+    return Self.allocate(py, type: type, value: value.value)
+  }
+
+  private static func allocate(_ py: Py,
+                               type: PyType,
+                               value: Double) -> PyResult<PyObject> {
     // If this is a builtin then try to re-use interned values
     // (do we even have interned floats?)
-    let isBuiltin = type === Py.types.float
-    return isBuiltin ?
-      Py.newFloat(value) :
-      PyMemory.newFloat(type: type, value: value)
+    let isBuiltin = Self.isBuiltinFloatType(py, type: type)
+    let result = isBuiltin ?
+      py.newFloat(value) :
+      py.memory.newFloat(py, type: type, value: value)
+
+    return .value(result.asObject)
   }
 
   private enum DoubleFromString {
     case value(Double)
     case notString
-    case error(PyBaseException)
+    case error(PyValueError)
   }
 
-  private static func pyNew(fromString object: PyObject) -> DoubleFromString {
-    switch Py.getString(object: object) {
+  private static func new(_ py: Py, fromString object: PyObject) -> DoubleFromString {
+    switch py.getString(object: object, encoding: nil) {
     case .string(_, let s),
          .bytes(_, let s):
       guard let value = Double(parseUsingPythonRules: s) else {
-        let msg = "float() '\(s)' cannot be interpreted as float"
-        return .error(Py.newValueError(msg: msg))
+        let message = "float() '\(s)' cannot be interpreted as float"
+        let error = py.newValueError(message: message)
+        return .error(error)
       }
 
       return .value(value)
 
     case .byteDecodingError(let bytes):
       let ptr = bytes.object.ptr
-      let msg = "float() bytes at '\(ptr)' cannot be interpreted as str"
-      return .error(Py.newValueError(msg: msg))
+      let message = "float() bytes at '\(ptr)' cannot be interpreted as str"
+      let error = py.newValueError(message: message)
+      return .error(error)
 
     case .notStringOrBytes:
       return .notString
     }
   }
 
-  private enum DoubleFromNumber {
-    case value(Double)
+  private enum NewFromNumber {
+    case pyFloat(PyFloat)
+    case double(Double)
     case error(PyBaseException)
     case notNumber
   }
 
   /// PyObject *
   /// PyNumber_Float(PyObject *o)
-  private static func pyNew(fromNumber object: PyObject) -> DoubleFromNumber {
+  private static func new(_ py: Py, fromNumber object: PyObject) -> NewFromNumber {
     // Call has to be before 'Self.asDouble', because it can override
-    switch Self.callFloat(object) {
+    switch Self.callFloat(py, object: object) {
     case .value(let o):
-      guard let f = PyCast.asFloat(o) else {
-        let ot = o.typeName
-        let msg = "\(object.typeName).__float__ returned non-float (type \(ot))"
-        return .error(Py.newTypeError(msg: msg))
+      guard let f = py.cast.asFloat(o) else {
+        let message = "\(object.typeName).__float__ returned non-float (type \(o.typeName))"
+        let error = py.newTypeError(message: message)
+        return .error(error.asBaseException)
       }
-      return .value(f.value)
+
+      return .pyFloat(f)
+
     case .missingMethod:
       break // try other possibilities
     case .error(let e),
@@ -837,9 +1027,13 @@ public struct PyFloat: PyObjectMixin {
       return .error(e)
     }
 
-    switch Self.asDouble(object: object) {
+    if let f = py.cast.asFloat(object) {
+      return .pyFloat(f)
+    }
+
+    switch Self.asDouble(py, object: object) {
     case let .value(d):
-      return .value(d)
+      return .double(d)
     case let .intOverflow(_, e):
       return .error(e)
     case .notDouble:
@@ -847,15 +1041,76 @@ public struct PyFloat: PyObjectMixin {
     }
   }
 
-  private static func callFloat(_ object: PyObject) -> PyInstance.CallMethodResult {
-    if let result = PyStaticCall.__float__(object) {
+  private static func callFloat(_ py: Py, object: PyObject) -> Py.CallMethodResult {
+    if let result = PyStaticCall.__float__(py, object: object) {
       switch result {
-      case let .value(f): return .value(f)
-      case let .error(e): return .error(e)
+      case let .value(f):
+        return .value(f.asObject)
+      case let .error(e):
+        return .error(e)
       }
     }
 
-    return Py.callMethod(object: object, selector: .__float__)
+    return py.callMethod(object: object, selector: .__float__)
+  }
+
+  // MARK: - Operations
+
+  /// Operation that returns ourself.
+  private static func identityOperation(_ py: Py,
+                                        zelf: PyObject,
+                                        fnName: String) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName)
+    }
+
+    // Normally we could return ourself (as in: exactly the same object as 'zelf').
+    // But if we are an subclass then we have to convert to 'float':
+    // >>> class f(float): pass
+    // ...
+    // >>> x = f(1.6)
+    // >>> type(x.__float__())
+    // <class 'float'>
+    if py.cast.isExactlyFloat(zelf.asObject) {
+      return .value(zelf.asObject)
+    }
+
+    let value = zelf.value
+    return value.toResult(py)
+  }
+
+  private static func unaryOperation(_ py: Py,
+                                     zelf: PyObject,
+                                     fnName: String,
+                                     fn: (Double) -> Double) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName)
+    }
+
+    let result = fn(zelf.value)
+    return result.toResult(py)
+  }
+
+  private static func binaryOperation(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject,
+                                      fnName: String,
+                                      fn: (Double, Double) -> Double) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, fnName)
+    }
+
+    switch Self.asDouble(py, object: other) {
+    case let .value(d):
+      let result = fn(zelf.value, d)
+      return result.toResult(py)
+
+    case let .intOverflow(_, e):
+      return .error(e)
+
+    case .notDouble:
+      return .notImplemented(py)
+    }
   }
 
   // MARK: - As double
@@ -869,13 +1124,13 @@ public struct PyFloat: PyObjectMixin {
   /// Try to extract `double` from `float` or `int`.
   ///
   /// CPython: `define CONVERT_TO_DOUBLE(obj, dbl)`
-  internal static func asDouble(object: PyObject) -> AsDouble {
-    if let pyFloat = PyCast.asFloat(object) {
+  internal static func asDouble(_ py: Py, object: PyObject) -> AsDouble {
+    if let pyFloat = py.cast.asFloat(object) {
       return .value(pyFloat.value)
     }
 
-    if let int = PyCast.asInt(object) {
-      switch Self.asDouble(int: int) {
+    if let int = py.cast.asInt(object) {
+      switch Self.asDouble(py, int: int) {
       case let .value(d):
         return .value(d)
       case let .overflow(e):
@@ -891,11 +1146,11 @@ public struct PyFloat: PyObjectMixin {
     case overflow(PyBaseException)
   }
 
-  internal static func asDouble(int: PyInt) -> IntAsDouble {
-    return Self.asDouble(int: int.value)
+  internal static func asDouble(_ py: Py, int: PyInt) -> IntAsDouble {
+    return Self.asDouble(py, int: int.value)
   }
 
-  internal static func asDouble(int: BigInt) -> IntAsDouble {
+  internal static func asDouble(_ py: Py, int: BigInt) -> IntAsDouble {
     // This is not the best way…
     // But in general conversion 'Int -> Double' is a very complicated thing.
     // But it falls onto 'close enough' category.
@@ -904,12 +1159,27 @@ public struct PyFloat: PyObjectMixin {
     assert(!result.isNaN && !result.isSubnormal)
 
     guard result.isFinite else {
-      let e = Py.newOverflowError(msg: "int too large to convert to float")
-      return .overflow(e)
+      let message = "int too large to convert to float"
+      let error = py.newOverflowError(message: message)
+      return .overflow(error.asBaseException)
     }
 
     return .value(result)
   }
-}
 
-*/
+  // MARK: - Helpers
+
+  internal static func castZelf(_ py: Py, _ object: PyObject) -> PyFloat? {
+    return py.cast.asFloat(object)
+  }
+
+  internal static func invalidSelfArgument(_ py: Py,
+                                           _ object: PyObject,
+                                           _ fnName: String) -> PyResult<PyObject> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: "float",
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
+  }
+}

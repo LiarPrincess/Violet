@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import BigInt
 import VioletCore
@@ -33,10 +32,12 @@ private enum FloatSign: BigInt, Equatable {
 
 extension Abstract {
 
-  fileprivate static func compare(left: Double, right: PyObject) -> CompareResult {
+  fileprivate static func compare(_ py: Py,
+                                  left: Double,
+                                  right: PyObject) -> CompareResult {
     // If both are floats then use standard Swift compare
     // (even if one of them is nan/inf/whatever).
-    if let rightFloat = PyCast.asFloat(right) {
+    if let rightFloat = py.cast.asFloat(right) {
       let result = Self.compare(left: left, right: rightFloat.value)
       return .value(result)
     }
@@ -45,7 +46,7 @@ extension Abstract {
     // so it doesn't matter which int we compare it with.
     // If 'left' is a NaN, similarly.
     guard left.isFinite else {
-      if PyCast.isInt(right) {
+      if py.cast.isInt(right) {
         let result = Self.compare(left: left, right: 0.0)
         return .value(result)
       }
@@ -53,14 +54,14 @@ extension Abstract {
       return .notImplemented
     }
 
-    if let rightInt = PyCast.asInt(right) {
-      return Self.compare(left: left, right: rightInt.value)
+    if let rightInt = py.cast.asInt(right) {
+      return Self.compare(py, left: left, right: rightInt.value)
     }
 
     return .notImplemented
   }
 
-  private static func compare(left: Double, right: BigInt) -> CompareResult {
+  private static func compare(_ py: Py, left: Double, right: BigInt) -> CompareResult {
     // Easy case: different signs
     let leftSign = Self.getSign(left)
     let rightSign = Self.getSign(right)
@@ -75,7 +76,7 @@ extension Abstract {
     // but that's what CPython does.
     let nBits = right.minRequiredWidth
     if nBits <= 48 {
-      switch PyFloat.asDouble(int: right) {
+      switch PyFloat.asDouble(py, int: right) {
       case .value(let d):
         let result = Self.compare(left: left, right: d)
         return .value(result)
@@ -154,8 +155,6 @@ extension Abstract {
   }
 }
 
-// MARK: - Implementation
-
 internal enum FloatCompareHelper {
 
   // MARK: - Equal
@@ -173,9 +172,17 @@ internal enum FloatCompareHelper {
     }
   }
 
-  internal static func isEqual(left: Double,
+  internal static func isEqual(_ py: Py,
+                               left: Double,
                                right: PyObject) -> CompareResult {
-    return EqualCompare.compare(left: left, right: right)
+    return EqualCompare.compare(py, left: left, right: right)
+  }
+
+  internal static func isNotEqual(_ py: Py,
+                                  left: Double,
+                                  right: PyObject) -> CompareResult {
+    let isEqual = Self.isEqual(py, left: left, right: right)
+    return isEqual.not
   }
 
   // MARK: - Less
@@ -193,9 +200,10 @@ internal enum FloatCompareHelper {
     }
   }
 
-  internal static func isLess(left: Double,
+  internal static func isLess(_ py: Py,
+                              left: Double,
                               right: PyObject) -> CompareResult {
-    return LessCompare.compare(left: left, right: right)
+    return LessCompare.compare(py, left: left, right: right)
   }
 
   private enum LessEqualCompare: Abstract {
@@ -211,9 +219,10 @@ internal enum FloatCompareHelper {
     }
   }
 
-  internal static func isLessEqual(left: Double,
+  internal static func isLessEqual(_ py: Py,
+                                   left: Double,
                                    right: PyObject) -> CompareResult {
-    return LessEqualCompare.compare(left: left, right: right)
+    return LessEqualCompare.compare(py, left: left, right: right)
   }
 
   // MARK: - Greater
@@ -231,9 +240,10 @@ internal enum FloatCompareHelper {
     }
   }
 
-  internal static func isGreater(left: Double,
+  internal static func isGreater(_ py: Py,
+                                 left: Double,
                                  right: PyObject) -> CompareResult {
-    return GreaterCompare.compare(left: left, right: right)
+    return GreaterCompare.compare(py, left: left, right: right)
   }
 
   private enum GreaterEqualCompare: Abstract {
@@ -249,10 +259,9 @@ internal enum FloatCompareHelper {
     }
   }
 
-  internal static func isGreaterEqual(left: Double,
+  internal static func isGreaterEqual(_ py: Py,
+                                      left: Double,
                                       right: PyObject) -> CompareResult {
-    return GreaterEqualCompare.compare(left: left, right: right)
+    return GreaterEqualCompare.compare(py, left: left, right: right)
   }
 }
-
-*/
