@@ -121,7 +121,7 @@ public struct PyFloat: PyObjectMixin {
     return result.toResult(py)
   }
 
- // MARK: - Hashable
+  // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
   internal static func __hash__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
@@ -260,14 +260,14 @@ public struct PyFloat: PyObjectMixin {
   // MARK: - Pos, neg, abs
 
   // sourcery: pymethod = __pos__
-   internal static func __pos__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-     // 'float' is immutable, so if we are exactly 'float' (not an subclass),
-     // then we can return ourself. (This saves an allocation).
-     if let float = py.cast.asExactlyFloat(zelf) {
-       return .value(float.asObject)
-     }
+  internal static func __pos__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    // 'float' is immutable, so if we are exactly 'float' (not an subclass),
+    // then we can return ourself. (This saves an allocation).
+    if let float = py.cast.asExactlyFloat(zelf) {
+      return .value(float.asObject)
+    }
 
-     return Self.unaryOperation(py, zelf: zelf, fnName: "__pos__") { $0 }
+    return Self.unaryOperation(py, zelf: zelf, fnName: "__pos__") { $0 }
   }
 
   // sourcery: pymethod = __neg__
@@ -430,28 +430,26 @@ public struct PyFloat: PyObjectMixin {
   // MARK: - Pow
 
   // sourcery: pymethod = __pow__
- internal static func __pow__(_ py: Py,
-                              zelf: PyObject,
-                              exp: PyObject,
-                              mod: PyObject?,
-                              other: PyObject) -> PyResult<PyObject> {
-   return Self.powOperation(py,
-                            zelf: zelf,
-                            other: other,
-                            mod: mod,
-                            fnName: "__pow__",
-                            isZelfBase: true)
+  internal static func __pow__(_ py: Py,
+                               zelf: PyObject,
+                               exp: PyObject,
+                               mod: PyObject?) -> PyResult<PyObject> {
+    return Self.powOperation(py,
+                             zelf: zelf,
+                             other: exp,
+                             mod: mod,
+                             fnName: "__pow__",
+                             isZelfBase: true)
   }
 
   // sourcery: pymethod = __rpow__
   internal static func __rpow__(_ py: Py,
                                 zelf: PyObject,
                                 base: PyObject,
-                                mod: PyObject?,
-                                other: PyObject) -> PyResult<PyObject> {
+                                mod: PyObject?) -> PyResult<PyObject> {
     return Self.powOperation(py,
                              zelf: zelf,
-                             other: other,
+                             other: base,
                              mod: mod,
                              fnName: "__rpow__",
                              isZelfBase: false)
@@ -1012,13 +1010,13 @@ public struct PyFloat: PyObjectMixin {
     // Call has to be before 'Self.asDouble', because it can override
     switch Self.callFloat(py, object: object) {
     case .value(let o):
-      guard let f = py.cast.asFloat(o) else {
+      guard let float = py.cast.asFloat(o) else {
         let message = "\(object.typeName).__float__ returned non-float (type \(o.typeName))"
         let error = py.newTypeError(message: message)
         return .error(error.asBaseException)
       }
 
-      return .pyFloat(f)
+      return .pyFloat(float)
 
     case .missingMethod:
       break // try other possibilities
@@ -1027,8 +1025,8 @@ public struct PyFloat: PyObjectMixin {
       return .error(e)
     }
 
-    if let f = py.cast.asFloat(object) {
-      return .pyFloat(f)
+    if let float = py.cast.asFloat(object) {
+      return .pyFloat(float)
     }
 
     switch Self.asDouble(py, object: object) {
