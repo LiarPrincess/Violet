@@ -254,11 +254,9 @@ public struct PyNamespace: PyObjectMixin {
     return py.cast.asNamespace(object)
   }
 
-  internal static func invalidSelfArgument(
-    _ py: Py,
-    _ object: PyObject,
-    _ fnName: String
-  ) -> PyResult<PyObject> {
+  internal static func invalidSelfArgument(_ py: Py,
+                                           _ object: PyObject,
+                                           _ fnName: String) -> PyResult<PyObject> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: "SimpleNamespace",
                                                fnName: fnName)
