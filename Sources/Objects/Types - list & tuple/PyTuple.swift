@@ -205,7 +205,6 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
     return Self.abstract__contains__(py, zelf: zelf, object: object)
   }
 
-
   // sourcery: pymethod = count
   internal static func count(_ py: Py,
                              zelf: PyObject,

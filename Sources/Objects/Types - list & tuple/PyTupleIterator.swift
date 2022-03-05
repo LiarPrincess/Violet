@@ -97,8 +97,8 @@ public struct PyTupleIterator: PyObjectMixin {
       return Self.invalidSelfArgument(py, zelf, "__length_hint__")
     }
 
-    let tupleCount = zelf.tuple.count
-    let result = tupleCount - zelf.index
+    let count = zelf.tuple.count
+    let result = count - zelf.index
     return result.toResult(py)
   }
 

@@ -38,6 +38,8 @@ public struct Py {
   public func newTuple(elements: PyObject...) -> PyTuple { fatalError() }
   public func newTupleIterator(tuple: PyTuple) -> PyTupleIterator { fatalError() }
   public func newList(elements: [PyObject]) -> PyList { fatalError() }
+  public func newListIterator(list: PyList) -> PyListIterator { fatalError() }
+  public func newListReverseIterator(list: PyList) -> PyListReverseIterator { fatalError() }
   public func newDict() -> PyDict { fatalError() }
 
   public func newStaticMethod(callable: PyFunction) -> PyStaticMethod { fatalError() }
@@ -85,6 +87,7 @@ public struct Py {
     case missingMethod(PyBaseException)
   }
 
+  internal func selectKey(object: PyObject, key: PyObject?) -> PyResult<PyObject> { fatalError() }
   public func getKeys(object: PyObject) -> GetKeysResult { fatalError() }
 
   /// Is `type` subtype of `baseException`?
@@ -111,6 +114,7 @@ public struct Py {
   public func not(object: PyObject) -> PyResult<PyBool> { fatalError() }
   public func isTrue(object: PyObject) -> PyResult<PyBool> { fatalError() }
   public func isTrueBool(object: PyBool) -> Bool { fatalError() }
+  public func isTrueBool(object: PyObject) -> PyResult<Bool> { fatalError() }
 
   // MARK: - Collections
 

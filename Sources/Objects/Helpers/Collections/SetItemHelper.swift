@@ -17,11 +17,11 @@ internal protocol SetItemHelper {
     SliceSource.Index == Int
 
   /// When the index is `int` we will call this function to get the value to set.
-  static func getElementToSetAtIntIndex(object: PyObject) -> PyResult<Target.Element>
+  static func getElementToSetAtIntIndex(_ py: Py, object: PyObject) -> PyResult<Target.Element>
 
   /// When the index is `slice` we will call this function to get (multiple)
   /// values to set in collection.
-  static func getElementsToSetAtSliceIndices(object: PyObject) -> PyResult<SliceSource>
+  static func getElementsToSetAtSliceIndices(_ py: Py, object: PyObject) -> PyResult<SliceSource>
 }
 
 extension SetItemHelper {
@@ -70,7 +70,7 @@ extension SetItemHelper {
       return .indexError(py, message: message)
     }
 
-    switch Self.getElementToSetAtIntIndex(object: value) {
+    switch Self.getElementToSetAtIntIndex(py, object: value) {
     case let .value(v):
       target[index] = v
       return .none(py)
@@ -106,7 +106,7 @@ extension SetItemHelper {
     }
 
     let source: SliceSource
-    switch Self.getElementsToSetAtSliceIndices(object: value) {
+    switch Self.getElementsToSetAtSliceIndices(py, object: value) {
     case let .value(s):
       source = s
     case let .error(e):
@@ -140,7 +140,7 @@ extension SetItemHelper {
                                          stop: Int,
                                          value: PyObject) -> PyResult<PyObject> {
     let source: SliceSource
-    switch Self.getElementsToSetAtSliceIndices(object: value) {
+    switch Self.getElementsToSetAtSliceIndices(py, object: value) {
     case let .value(e):
       source = e
     case let .error(e):
