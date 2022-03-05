@@ -1,10 +1,8 @@
-/* MARKER
 // swiftlint:disable yoda_condition
 
 /// Shared code for `__setitem__` method.
 /// Mostly because… well slices are hard.
 internal protocol DelItemHelper {
-
   associatedtype Target where
     Target: MutableCollection,
     Target: RangeReplaceableCollection,
@@ -13,32 +11,36 @@ internal protocol DelItemHelper {
 
 extension DelItemHelper {
 
-  internal static func delItem(target: inout Target,
-                               index: PyObject) -> PyResult<PyNone> {
-    switch IndexHelper.int(index, onOverflow: .indexError) {
+  // MARK: - PyObject index
+
+  internal static func delItem(_ py: Py,
+                               target: inout Target,
+                               index: PyObject) -> PyResult<PyObject> {
+    switch IndexHelper.int(py, object: index, onOverflow: .indexError) {
     case .value(let int):
-      return Self.delItem(target: &target, index: int)
+      return Self.delItem(py, target: &target, index: int)
     case .notIndex:
       break // Try slice
     case .overflow(_, let lazyError):
-      let e = lazyError.create()
+      let e = lazyError.create(py)
       return .error(e)
     case .error(let e):
       return .error(e)
     }
 
-    if let slice = PyCast.asSlice(index) {
-      return Self.delSlice(target: &target, slice: slice)
+    if let slice = py.cast.asSlice(index) {
+      return Self.delSlice(py, target: &target, slice: slice)
     }
 
-    let msg = "indices must be integers or slices, not \(index.typeName)"
-    return .error(Py.newTypeError(msg: msg))
+    let message = "indices must be integers or slices, not \(index.typeName)"
+    return .typeError(py, message: message)
   }
 
   // MARK: - Int index
 
-  internal static func delItem(target: inout Target,
-                               index: Int) -> PyResult<PyNone> {
+  internal static func delItem(_ py: Py,
+                               target: inout Target,
+                               index: Int) -> PyResult<PyObject> {
     var index = index
 
     if index < 0 {
@@ -46,18 +48,19 @@ extension DelItemHelper {
     }
 
     guard 0 <= index && index < target.count else {
-      let msg = "assignment index out of range"
-      return .error(Py.newIndexError(msg: msg))
+      let message = "assignment index out of range"
+      return .indexError(py, message: message)
     }
 
     _ = target.remove(at: index)
-    return .value(Py.none)
+    return .none(py)
   }
 
   // MARK: - Slice
 
-  internal static func delSlice(target: inout Target,
-                                slice: PySlice) -> PyResult<PyNone> {
+  internal static func delSlice(_ py: Py,
+                                target: inout Target,
+                                slice: PySlice) -> PyResult<PyObject> {
     var indices: PySlice.AdjustedIndices
     switch slice.unpack() {
     case let .value(u): indices = u.adjust(toCount: target.count)
@@ -67,7 +70,7 @@ extension DelItemHelper {
     if indices.step == 1 {
       let range = indices.start..<indices.stop
       target.replaceSubrange(range, with: [])
-      return .value(Py.none)
+      return .none(py)
     }
 
     // Make sure s[5:2] = [..] inserts at the right place: before 5, not before 2.
@@ -78,7 +81,7 @@ extension DelItemHelper {
 
     // swiftlint:disable:next empty_count
     if indices.count <= 0 {
-      return .value(Py.none)
+      return .none(py)
     }
 
     // Fix the slice, so we can start from lower indices
@@ -105,8 +108,6 @@ extension DelItemHelper {
     }
 
     target.replaceSubrange(target.startIndex..., with: result)
-    return .value(Py.none)
+    return .none(py)
   }
 }
-
-*/

@@ -1,13 +1,12 @@
-/* MARKER
 /// Mixin with `tuple/list` methods.
 ///
 /// All of the methods/properties should be prefixed with `_`.
 /// DO NOT use them outside of the `tuple/list` objects!
-internal protocol AbstractSequence: PyObject {
+internal protocol AbstractSequence: PyObjectMixin {
 
   /// Name of the type.
   /// Used mainly in error messages.
-  static var _pythonTypeName: String { get }
+  static var abstractPythonTypeName: String { get }
 
   /// Main requirement.
   var elements: Elements { get }
@@ -15,7 +14,7 @@ internal protocol AbstractSequence: PyObject {
   /// Create new Python object with specified elements.
   ///
   /// DO NOT USE! This is a part of `AbstractSequence` implementation.
-  static func _toSelf(elements: Elements) -> Self
+  static func newSelf(_ py: Py, elements: Elements) -> Self
 
   /// Convert `object` to this type.
   ///
@@ -23,7 +22,14 @@ internal protocol AbstractSequence: PyObject {
   /// - For `list` it should return `list`.
   ///
   /// DO NOT USE! This is a part of `AbstractSequence` implementation.
-  static func _asSelf(object: PyObject) -> Self?
+  static func castAsSelf(_ py: Py, _ object: PyObject) -> Self?
+
+  /// Create an error when the `zelf` argument is not valid.
+  ///
+  /// DO NOT USE! This is a part of `AbstractSequence` implementation.
+  static func invalidSelfArgument(_ py: Py,
+                                  _ object: PyObject,
+                                  _ fnName: String) -> PyResult<PyObject>
 }
 
 extension AbstractSequence {
@@ -32,15 +38,11 @@ extension AbstractSequence {
   internal typealias Index = Elements.Index
   internal typealias SubSequence = Elements.SubSequence
 
-  /// DO NOT USE! This is a part of `AbstractSequence` implementation.
-  internal var _isEmpty: Bool {
+  internal var isEmpty: Bool {
     return self.elements.isEmpty
   }
 
-  /// DO NOT USE! This is a part of `AbstractSequence` implementation.
-  internal var _length: Int {
+  internal var count: Int {
     return self.elements.count
   }
 }
-
-*/

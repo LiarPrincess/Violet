@@ -1,4 +1,3 @@
-/* MARKER
 // cSpell:ignore ilow ihigh
 
 /// Shared code for `__setitem__` method.
@@ -27,35 +26,38 @@ internal protocol SetItemHelper {
 
 extension SetItemHelper {
 
-  internal static func setItem(target: inout Target,
+  // MARK: - PyObject index
+
+  internal static func setItem(_ py: Py,
+                               target: inout Target,
                                index: PyObject,
-                               value: PyObject) -> PyResult<PyNone> {
-    switch IndexHelper.int(index, onOverflow: .indexError) {
+                               value: PyObject) -> PyResult<PyObject> {
+    switch IndexHelper.int(py, object: index, onOverflow: .indexError) {
     case .value(let int):
-      return Self.setItem(target: &target, index: int, value: value)
+      return Self.setItem(py, target: &target, index: int, value: value)
     case .notIndex:
       break // Try other
     case let .overflow(_, lazyError):
-      let e = lazyError.create()
+      let e = lazyError.create(py)
       return .error(e)
     case .error(let e):
       return .error(e)
     }
 
-    if let slice = PyCast.asSlice(index) {
-      return Self.setItem(target: &target, slice: slice, value: value)
+    if let slice = py.cast.asSlice(index) {
+      return Self.setItem(py, target: &target, slice: slice, value: value)
     }
 
-    let t = index.typeName
-    let msg = "indices must be integers or slices, not \(t)"
-    return .error(Py.newTypeError(msg: msg))
+    let message = "indices must be integers or slices, not \(index.typeName)"
+    return .typeError(py, message: message)
   }
 
   // MARK: - Int index
 
-  internal static func setItem(target: inout Target,
+  internal static func setItem(_ py: Py,
+                               target: inout Target,
                                index: Int,
-                               value: PyObject) -> PyResult<PyNone> {
+                               value: PyObject) -> PyResult<PyObject> {
     var index = index
 
     if index < 0 {
@@ -64,14 +66,14 @@ extension SetItemHelper {
 
     // swiftlint:disable:next yoda_condition
     guard 0 <= index && index < target.count else {
-      let msg = "assignment index out of range"
-      return .error(Py.newIndexError(msg: msg))
+      let message = "assignment index out of range"
+      return .indexError(py, message: message)
     }
 
     switch Self.getElementToSetAtIntIndex(object: value) {
     case let .value(v):
       target[index] = v
-      return .value(Py.none)
+      return .none(py)
     case let .error(e):
       return .error(e)
     }
@@ -79,9 +81,10 @@ extension SetItemHelper {
 
   // MARK: - Slice
 
-  internal static func setItem(target: inout Target,
+  internal static func setItem(_ py: Py,
+                               target: inout Target,
                                slice: PySlice,
-                               value: PyObject) -> PyResult<PyNone> {
+                               value: PyObject) -> PyResult<PyObject> {
     var indices: PySlice.AdjustedIndices
     switch slice.unpack() {
     case let .value(u): indices = u.adjust(toCount: target.count)
@@ -89,7 +92,8 @@ extension SetItemHelper {
     }
 
     if indices.step == 1 {
-      return Self.setContinuousItems(target: &target,
+      return Self.setContinuousItems(py,
+                                     target: &target,
                                      start: indices.start,
                                      stop: indices.stop,
                                      value: value)
@@ -110,13 +114,13 @@ extension SetItemHelper {
     }
 
     guard source.count == indices.count else {
-      let msg = "attempt to assign sequence of size \(source.count) " +
+      let message = "attempt to assign sequence of size \(source.count) " +
                 "to extended slice of size \(indices.count)"
-      return .valueError(msg)
+      return .valueError(py, message: message)
     }
 
     if indices.isEmpty {
-      return .value(Py.none)
+      return .none(py)
     }
 
     var sourceIndex = 0
@@ -125,15 +129,16 @@ extension SetItemHelper {
       sourceIndex += 1
     }
 
-    return .value(Py.none)
+    return .none(py)
   }
 
   // static int
   // list_ass_slice(PyListObject *a, Py_ssize_t ilow, Py_ssize_t ihigh, PyObject *v)
-  private static func setContinuousItems(target: inout Target,
+  private static func setContinuousItems(_ py: Py,
+                                         target: inout Target,
                                          start: Int,
                                          stop: Int,
-                                         value: PyObject) -> PyResult<PyNone> {
+                                         value: PyObject) -> PyResult<PyObject> {
     let source: SliceSource
     switch Self.getElementsToSetAtSliceIndices(object: value) {
     case let .value(e):
@@ -149,8 +154,6 @@ extension SetItemHelper {
     assert(newElementsCount >= 0)
 
     target.replaceSubrange(low..<high, with: source)
-    return .value(Py.none)
+    return .none(py)
   }
 }
-
-*/

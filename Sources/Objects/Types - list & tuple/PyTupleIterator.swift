@@ -6,90 +6,125 @@ import VioletCore
 // Objects -> tupleobject.c
 
 // sourcery: pytype = tuple_iterator, isDefault, hasGC
- public struct PyTupleIterator: PyObjectMixin {
+public struct PyTupleIterator: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-   // sourcery: includeInLayout
-   internal var tuple: PyTuple { self.tuplePtr.pointee }
-   // sourcery: includeInLayout
-   internal var index: Int { self.indexPtr.pointee }
+  // sourcery: includeInLayout
+  internal var tuple: PyTuple { self.tuplePtr.pointee }
 
-   public let ptr: RawPtr
+  // sourcery: includeInLayout
+  internal var index: Int {
+    get { self.indexPtr.pointee }
+    nonmutating set { self.indexPtr.pointee = newValue }
+  }
 
-   public init(ptr: RawPtr) {
-     self.ptr = ptr
-   }
+  public let ptr: RawPtr
 
-   internal func initialize(_ py: Py, type: PyType, tuple: PyTuple) {
-     self.header.initialize(py, type: type)
-     self.tuplePtr.initialize(to: tuple)
-     self.indexPtr.initialize(to: 0)
-   }
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
+  }
 
-   // Nothing to do here.
-   internal func beforeDeinitialize() { }
+  internal func initialize(_ py: Py, type: PyType, tuple: PyTuple) {
+    self.header.initialize(py, type: type)
+    self.tuplePtr.initialize(to: tuple)
+    self.indexPtr.initialize(to: 0)
+  }
 
-   internal static func createDebugString(ptr: RawPtr) -> String {
-     let zelf = PyTupleIterator(ptr: ptr)
-     return "PyTupleIterator(type: \(zelf.typeName), flags: \(zelf.flags))"
-   }
- }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
- /* MARKER
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyTupleIterator(ptr: ptr)
+    return "PyTupleIterator(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__getattribute__")
+    }
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal func iter() -> PyObject {
-    return self
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__iter__")
+    }
+
+    return .value(zelf.asObject)
   }
 
   // MARK: - Next
 
   // sourcery: pymethod = __next__
-  internal func next() -> PyResult<PyObject> {
-    if self.index < self.tuple.elements.count {
-      let item = self.tuple.elements[self.index]
-      self.index += 1
+  internal static func __next__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__next__")
+    }
+
+    let elements = zelf.tuple.elements
+    if zelf.index < elements.count {
+      let item = elements[zelf.index]
+      zelf.index += 1
       return .value(item)
     }
 
-    return .stopIteration()
+    return .stopIteration(py)
   }
 
   // MARK: - Length hint
 
   // sourcery: pymethod = __length_hint__
-  internal func lengthHint() -> PyInt {
-    let tupleCount = self.tuple.count
-    let result = tupleCount - self.index
-    return Py.newInt(result)
+  internal static func __length_hint__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__length_hint__")
+    }
+
+    let tupleCount = zelf.tuple.count
+    let result = tupleCount - zelf.index
+    return result.toResult(py)
   }
 
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyTupleIterator> {
-    return .typeError("cannot create 'tuple_iterator' instances")
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    return .typeError(py, message: "cannot create 'tuple_iterator' instances")
+  }
+
+  // MARK: - Helpers
+
+  private static func castZelf(_ py: Py, _ object: PyObject) -> PyTupleIterator? {
+    return py.cast.asTupleIterator(object)
+  }
+
+  private static func invalidSelfArgument(_ py: Py,
+                                          _ object: PyObject,
+                                          _ fnName: String) -> PyResult<PyObject> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: "tuple_iterator",
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
-
-*/

@@ -1,143 +1,168 @@
-/* MARKER
-extension AbstractSequence {
-
-  // MARK: - Equal
-
-  /// DO NOT USE! This is a part of `AbstractSequence` implementation.
-  internal func _isEqual(other: PyObject) -> CompareResult {
-    if self === other {
-      return .value(true)
-    }
-
-    guard let otherAsSelf = Self._asSelf(object: other) else {
-      return .notImplemented
-    }
-
-    let result = self._isEqual(other: otherAsSelf)
-    return CompareResult(result)
-  }
-
-  /// DO NOT USE! This is a part of `AbstractSequence` implementation.
-  internal func _isEqual(other: Self) -> PyResult<Bool> {
-    guard self._length == other.elements.count else {
-      return .value(false)
-    }
-
-    for (l, r) in zip(self.elements, other.elements) {
-      switch Py.isEqualBool(left: l, right: r) {
-      case .value(true): break // go to next element
-      case .value(false): return .value(false)
-      case .error(let e): return .error(e)
-      }
-    }
-
-    return .value(true)
-  }
-
-  /// DO NOT USE! This is a part of `AbstractSequence` implementation.
-  internal func _isNotEqual(other: PyObject) -> CompareResult {
-    return self._isEqual(other: other).not
-  }
-
-  // MARK: - Compare
-
-  /// DO NOT USE! This is a part of `AbstractSequence` implementation.
-  internal func _isLess(other: PyObject) -> CompareResult {
-    guard let otherAsSelf = Self._asSelf(object: other) else {
-      return .notImplemented
-    }
-
-    let otherElements = otherAsSelf.elements
-
-    switch self._getFirstNotEqualElement(with: otherElements) {
-    case let .elements(selfElement: l, otherElement: r):
-      let result = Py.isLessBool(left: l, right: r)
-      return CompareResult(result)
-    case .allEqualUpToShorterCount:
-      return .value(self._length < otherElements.count)
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  /// DO NOT USE! This is a part of `AbstractSequence` implementation.
-  internal func _isLessEqual(other: PyObject) -> CompareResult {
-    guard let otherAsSelf = Self._asSelf(object: other) else {
-      return .notImplemented
-    }
-
-    let otherElements = otherAsSelf.elements
-
-    switch self._getFirstNotEqualElement(with: otherElements) {
-    case let .elements(selfElement: l, otherElement: r):
-      let result = Py.isLessEqualBool(left: l, right: r)
-      return CompareResult(result)
-    case .allEqualUpToShorterCount:
-      return .value(self._length <= otherElements.count)
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  /// DO NOT USE! This is a part of `AbstractSequence` implementation.
-  internal func _isGreater(other: PyObject) -> CompareResult {
-    guard let otherAsSelf = Self._asSelf(object: other) else {
-      return .notImplemented
-    }
-
-    let otherElements = otherAsSelf.elements
-
-    switch self._getFirstNotEqualElement(with: otherElements) {
-    case let .elements(selfElement: l, otherElement: r):
-      let result = Py.isGreaterBool(left: l, right: r)
-      return CompareResult(result)
-    case .allEqualUpToShorterCount:
-      return .value(self._length > otherElements.count)
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  /// DO NOT USE! This is a part of `AbstractSequence` implementation.
-  internal func _isGreaterEqual(other: PyObject) -> CompareResult {
-    guard let otherAsSelf = Self._asSelf(object: other) else {
-      return .notImplemented
-    }
-
-    let otherElements = otherAsSelf.elements
-
-    switch self._getFirstNotEqualElement(with: otherElements) {
-    case let .elements(selfElement: l, otherElement: r):
-      let result = Py.isGreaterEqualBool(left: l, right: r)
-      return CompareResult(result)
-    case .allEqualUpToShorterCount:
-      return .value(self._length >= otherElements.count)
-    case let .error(e):
-      return .error(e)
-    }
-  }
-}
-
-// MARK: - FirstNotEqualElements
-
 private enum FirstNonEqualElements {
-  case elements(selfElement: PyObject, otherElement: PyObject)
+  case elements(zelfElement: PyObject, otherElement: PyObject)
   case allEqualUpToShorterCount
   case error(PyBaseException)
 }
 
 extension AbstractSequence {
 
-  /// DO NOT USE! This is a part of `AbstractSequence` implementation.
-  private func _getFirstNotEqualElement(
-    with elements: Elements
-  ) -> FirstNonEqualElements {
-    for (l, r) in zip(self.elements, elements) {
-      switch Py.isEqualBool(left: l, right: r) {
+  // MARK: - Equality
+
+  internal static func abstract__eq__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__eq__")
+    }
+
+    let result = Self.isEqual(py, zelf: zelf, other: other)
+    return result.toResult(py)
+  }
+
+  internal static func abstract__ne__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__ne__")
+    }
+
+    let isEqual = Self.isEqual(py, zelf: zelf, other: other)
+    let result = isEqual.not
+    return result.toResult(py)
+  }
+
+  private static func isEqual(_ py: Py, zelf: Self, other: PyObject) -> CompareResult {
+    guard let other = Self.castAsSelf(py, other) else {
+      return .notImplemented
+    }
+
+    guard zelf.count == other.count else {
+      return .value(false)
+    }
+
+    switch Self.getFirstNotEqualElement(py, zelf: zelf, other: other) {
+    case .elements:
+      return .value(false)
+    case .allEqualUpToShorterCount:
+      return .value(true)
+    case .error(let e):
+      return .error(e)
+    }
+  }
+
+  // MARK: - Compare
+
+  internal static func abstract__lt__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__lt__")
+    }
+
+    guard let other = Self.castAsSelf(py, other) else {
+      return .notImplemented(py)
+    }
+
+    switch Self.getFirstNotEqualElement(py, zelf: zelf, other: other) {
+    case let .elements(zelfElement: l, otherElement: r):
+      let result = py.isLessBool(left: l, right: r)
+      return result.asObject(py)
+
+    case .allEqualUpToShorterCount:
+      let result = zelf.count < other.count
+      return result.toResult(py)
+
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  internal static func abstract__le__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__le__")
+    }
+
+    guard let other = Self.castAsSelf(py, other) else {
+      return .notImplemented(py)
+    }
+
+    switch Self.getFirstNotEqualElement(py, zelf: zelf, other: other) {
+    case let .elements(zelfElement: l, otherElement: r):
+      let result = py.isLessEqualBool(left: l, right: r)
+      return result.asObject(py)
+
+    case .allEqualUpToShorterCount:
+      let result = zelf.count <= other.count
+      return result.toResult(py)
+
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  internal static func abstract__gt__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__gt__")
+    }
+
+    guard let other = Self.castAsSelf(py, other) else {
+      return .notImplemented(py)
+    }
+
+    switch Self.getFirstNotEqualElement(py, zelf: zelf, other: other) {
+    case let .elements(zelfElement: l, otherElement: r):
+      let result = py.isGreaterBool(left: l, right: r)
+      return result.asObject(py)
+
+    case .allEqualUpToShorterCount:
+      let result = zelf.count > other.count
+      return result.toResult(py)
+
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  internal static func abstract__ge__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__ge__")
+    }
+
+    guard let other = Self.castAsSelf(py, other) else {
+      return .notImplemented(py)
+    }
+
+    switch Self.getFirstNotEqualElement(py, zelf: zelf, other: other) {
+    case let .elements(zelfElement: l, otherElement: r):
+      let result = py.isGreaterEqualBool(left: l, right: r)
+      return result.asObject(py)
+
+    case .allEqualUpToShorterCount:
+      let result = zelf.count >= other.count
+      return result.toResult(py)
+
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  // MARK: - First not equal
+
+  private static func getFirstNotEqualElement(_ py: Py,
+                                              zelf: Self,
+                                              other: Self) -> FirstNonEqualElements {
+    for (l, r) in zip(zelf.elements, other.elements) {
+      switch py.isEqualBool(left: l, right: r) {
       case .value(true):
         break // go to next element
       case .value(false):
-        return .elements(selfElement: l, otherElement: r)
+        return .elements(zelfElement: l, otherElement: r)
       case .error(let e):
         return .error(e)
       }
@@ -146,5 +171,3 @@ extension AbstractSequence {
     return .allEqualUpToShorterCount
   }
 }
-
-*/

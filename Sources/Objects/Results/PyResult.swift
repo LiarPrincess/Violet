@@ -66,6 +66,18 @@ extension PyResult where Wrapped: PyObjectMixin {
   }
 }
 
+extension PyResult where Wrapped == Bool {
+  public func asObject(_ py: Py) -> PyResult<PyObject> {
+    switch self {
+    case let .value(bool):
+      let pyBool = py.newBool(bool)
+      return .value(pyBool.asObject)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+}
+
 extension PyResult where Wrapped == Int {
   public func asObject(_ py: Py) -> PyResult<PyObject> {
     switch self {

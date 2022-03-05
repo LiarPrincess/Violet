@@ -1,4 +1,3 @@
-/* MARKER
 private enum GetItemImpl: GetItemHelper {
   fileprivate typealias Source = [PyObject]
   fileprivate typealias SliceBuilder = GetItemSliceBuilder
@@ -30,23 +29,21 @@ private struct GetItemSliceBuilder: GetItemSliceBuilderType {
 
 extension AbstractSequence {
 
-  /// DO NOT USE! This is a part of `AbstractSequence` implementation.
-  internal func _getItem(index: PyObject) -> PyResult<PyObject> {
-    switch GetItemImpl.getItem(source: self.elements, index: index) {
+  internal static func abstract__getitem__(_ py: Py,
+                                           zelf: PyObject,
+                                           index: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__getitem__")
+    }
+
+    switch GetItemImpl.getItem(py, source: zelf.elements, index: index) {
     case let .single(object):
       return .value(object)
     case let .slice(elements):
-      let result = Self._toSelf(elements: elements)
-      return .value(result)
+      let result = Self.newSelf(py, elements: elements)
+      return .value(result.asObject)
     case let .error(e):
       return .error(e)
     }
   }
-
-  /// DO NOT USE! This is a part of `AbstractSequence` implementation.
-  internal func _getItem(index: Int) -> PyResult<PyObject> {
-    return GetItemImpl.getItem(source: self.elements, index: index)
-  }
 }
-
-*/
