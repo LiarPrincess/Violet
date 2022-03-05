@@ -13,8 +13,12 @@ public struct PyListReverseIterator: PyObjectMixin {
 
   // sourcery: includeInLayout
   internal var list: PyList { self.listPtr.pointee }
+
   // sourcery: includeInLayout
-  internal var index: Int { self.indexPtr.pointee }
+  internal var index: Int {
+    get { self.indexPtr.pointee }
+    nonmutating set { self.indexPtr.pointee = newValue }
+  }
 
   public let ptr: RawPtr
 
@@ -36,61 +40,92 @@ public struct PyListReverseIterator: PyObjectMixin {
     let zelf = PyListReverseIterator(ptr: ptr)
     return "PyListReverseIterator(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
-}
-
-/* MARKER
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__getattribute__")
+    }
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal func iter() -> PyObject {
-    return self
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__iter__")
+    }
+
+    return .value(zelf.asObject)
   }
 
   // MARK: - Next
 
   // sourcery: pymethod = __next__
-  internal func next() -> PyResult<PyObject> {
-    if self.index >= 0 {
-      let item = self.list.elements[self.index]
-      self.index -= 1
+  internal static func __next__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__next__")
+    }
+
+    if zelf.index >= 0 {
+      let item = zelf.list.elements[zelf.index]
+      zelf.index -= 1
       return .value(item)
     }
 
-    self.index = -1
-    return .stopIteration()
+    zelf.index = -1
+    return .stopIteration(py)
   }
 
   // MARK: - Length hint
 
   // sourcery: pymethod = __length_hint__
-  internal func lengthHint() -> PyInt {
+  internal static func __length_hint__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__length_hint__")
+    }
+
     // '+1' because users start counting from 1, not from 0
-    return Py.newInt(self.index + 1)
+    let result = zelf.index + 1
+    return result.toResult(py)
   }
 
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyListReverseIterator> {
-    return .typeError("cannot create 'list_reverseiterator' instances")
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    return .typeError(py, message: "cannot create 'list_reverseiterator' instances")
+  }
+
+  // MARK: - Helpers
+
+  private static func castZelf(_ py: Py, _ object: PyObject) -> PyListReverseIterator? {
+    return py.cast.asListReverseIterator(object)
+  }
+
+  private static func invalidSelfArgument(_ py: Py,
+                                          _ object: PyObject,
+                                          _ fnName: String) -> PyResult<PyObject> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: "list_reverseiterator",
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
-
-*/

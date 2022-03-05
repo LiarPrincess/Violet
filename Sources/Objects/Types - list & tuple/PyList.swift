@@ -24,14 +24,9 @@ public struct PyList: PyObjectMixin, AbstractSequence {
     """
 
   // sourcery: includeInLayout
-  internal var elements: [PyObject] { self.elementsPtr.pointee }
-
-  internal var isEmpty: Bool {
-    return self.elements.isEmpty
-  }
-
-  internal var count: Int {
-    return self.elements.count
+  internal var elements: [PyObject] {
+    get { self.elementsPtr.pointee }
+    nonmutating _modify { yield &self.elementsPtr.pointee }
   }
 
   public let ptr: RawPtr
@@ -53,84 +48,102 @@ public struct PyList: PyObjectMixin, AbstractSequence {
     let count = zelf.count
     return "PyList(type: \(zelf.typeName), flags: \(zelf.flags), count: \(count))"
   }
-}
-
-/* MARKER
 
   // MARK: - AbstractSequence
 
-  internal static let _pythonTypeName = "list"
+  internal static let typeName = "list"
 
-  internal static func _toSelf(elements: [PyObject]) -> PyList {
-    return Py.newList(elements: elements)
+  internal static func newSelf(_ py: Py, elements: [PyObject]) -> PyList {
+    return py.newList(elements: elements)
   }
 
-  internal static func _asSelf(object: PyObject) -> PyList? {
-    return PyCast.asList(object)
+  internal static func castAsSelf(_ py: Py, _ object: PyObject) -> PyList? {
+    return py.cast.asList(object)
   }
 
-  // MARK: - Equatable
+  internal static func castZelf(_ py: Py, _ object: PyObject) -> PyList? {
+    return castAsSelf(py, object)
+  }
+
+  internal static func invalidSelfArgument(_ py: Py,
+                                           _ object: PyObject,
+                                           _ fnName: String) -> PyResult<PyObject> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.typeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
+  }
+
+  // MARK: - Equatable, comparable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> CompareResult {
-    return self._isEqual(other: other)
+  internal static func __eq__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.abstract__eq__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> CompareResult {
-    return self._isNotEqual(other: other)
+  internal static func __ne__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.abstract__ne__(py, zelf: zelf, other: other)
   }
 
-  // MARK: - Comparable
-
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> CompareResult {
-    return self._isLess(other: other)
+  internal static func __lt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.abstract__lt__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    return self._isLessEqual(other: other)
+  internal static func __le__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.abstract__le__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> CompareResult {
-    return self._isGreater(other: other)
+  internal static func __gt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.abstract__gt__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
-    return self._isGreaterEqual(other: other)
+  internal static func __ge__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.abstract__ge__(py, zelf: zelf, other: other)
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> HashResult {
-    return .unhashable(self)
+  internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.typeName)
+    }
+
+    return .unhashable(zelf.asObject)
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
-    if self._isEmpty {
-      return .value("[]")
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__repr__")
     }
 
-    if self.hasReprLock {
-      return .value("[...]")
+    if zelf.isEmpty {
+      let result = py.intern(string: "[]")
+      return .value(result.asObject)
     }
 
-    return self.withReprLock {
-      return self.withReprLock {
-        switch self._joinElementsForRepr() {
-        case let .value(elements):
-          let result = "[" + elements + "]"
-          return .value(result)
-        case let .error(e):
-          return .error(e)
-        }
+    if zelf.hasReprLock {
+      let result = py.intern(string: "[...]")
+      return .value(result.asObject)
+    }
+
+    return zelf.withReprLock {
+      switch Self.abstractJoinElementsForRepr(py, zelf: zelf) {
+      case let .value(elements):
+        let result = "[" + elements + "]"
+        return result.toResult(py)
+
+      case let .error(e):
+        return .error(e)
       }
     }
   }
@@ -138,34 +151,96 @@ public struct PyList: PyObjectMixin, AbstractSequence {
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__getattribute__")
+    }
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
+
+  // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal func getLength() -> BigInt {
-    return BigInt(self._length)
+  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__len__")
+    }
+
+    let result = zelf.count
+    return result.toResult(py)
   }
 
-  // MARK: - Contains
+  // MARK: - Contains, count, index of
 
   // sourcery: pymethod = __contains__
-  internal func contains(object: PyObject) -> PyResult<Bool> {
-    return self._contains(object: object)
+  internal static func __contains__(_ py: Py,
+                                    zelf: PyObject,
+                                    object: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__contains__(py, zelf: zelf, object: object)
+  }
+
+  // sourcery: pymethod = count
+  internal static func count(_ py: Py,
+                             zelf: PyObject,
+                             object: PyObject) -> PyResult<PyObject> {
+    return Self.abstractCount(py, zelf: zelf, object: object)
+  }
+
+  // Special overload for `index` static method
+  internal static func index(_ py: Py,
+                             zelf: PyObject,
+                             object: PyObject) -> PyResult<PyObject> {
+    return Self.index(py, zelf: zelf, object: object, start: nil, end: nil)
+  }
+
+  // sourcery: pymethod = index
+  internal static func index(_ py: Py,
+                             zelf: PyObject,
+                             object: PyObject,
+                             start: PyObject?,
+                             end: PyObject?) -> PyResult<PyObject> {
+    return Self.abstractIndex(py, zelf: zelf, object: object, start: start, end: end)
+  }
+
+  // MARK: - Iter
+
+  // sourcery: pymethod = __iter__
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__iter__")
+    }
+
+    let result = py.newListIterator(list: zelf)
+    return .value(result.asObject)
+  }
+
+  // sourcery: pymethod = __reversed__
+  internal static func __reversed__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__reversed__")
+    }
+
+    let result = py.newListReverseIterator(list: zelf)
+    return .value(result.asObject)
   }
 
   // MARK: - Get item
 
   // sourcery: pymethod = __getitem__
-  internal func getItem(index: PyObject) -> PyResult<PyObject> {
-    return self._getItem(index: index)
+  internal static func __getitem__(_ py: Py,
+                                   zelf: PyObject,
+                                   index: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__getitem__(py, zelf: zelf, index: index)
   }
 
   // MARK: - Set item
@@ -177,34 +252,38 @@ public struct PyList: PyObjectMixin, AbstractSequence {
     // swiftlint:enable nesting
 
     fileprivate static func getElementToSetAtIntIndex(
+      _ py: Py,
       object: PyObject
     ) -> PyResult<PyObject> {
       return .value(object)
     }
 
     fileprivate static func getElementsToSetAtSliceIndices(
+      _ py: Py,
       object: PyObject
     ) -> PyResult<[PyObject]> {
-      switch Py.toArray(iterable: object) {
+      switch py.toArray(iterable: object) {
       case let .value(elements):
         return .value(elements)
       case .error:
-        return .typeError("can only assign an iterable")
+        return .typeError(py, message: "can only assign an iterable")
       }
     }
   }
 
   // sourcery: pymethod = __setitem__
-  internal func setItem(index: PyObject, object: PyObject) -> PyResult<PyNone> {
-    return SetItemImpl.setItem(target: &self.elements,
-                               index: index,
-                               value: object)
-  }
+  internal static func __setitem__(_ py: Py,
+                                   zelf: PyObject,
+                                   index: PyObject,
+                                   value: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__setitem__")
+    }
 
-  internal func setItem(index: Int, object: PyObject) -> PyResult<PyNone> {
-    return SetItemImpl.setItem(target: &self.elements,
+    return SetItemImpl.setItem(py,
+                               target: &zelf.elements,
                                index: index,
-                               value: object)
+                               value: value)
   }
 
   // MARK: - Del item
@@ -215,58 +294,34 @@ public struct PyList: PyObjectMixin, AbstractSequence {
   }
 
   // sourcery: pymethod = __delitem__
-  internal func delItem(index: PyObject) -> PyResult<PyNone> {
-    return DelItemImpl.delItem(target: &self.elements, index: index)
+  internal static func __delitem__(_ py: Py,
+                                   zelf: PyObject,
+                                   index: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__delitem__")
+    }
+
+    return DelItemImpl.delItem(py, target: &zelf.elements, index: index)
   }
 
-  // MARK: - Count
-
-  // sourcery: pymethod = count
-  internal func count(object: PyObject) -> PyResult<BigInt> {
-    return self._count(object: object)
-  }
-
-  // MARK: - Index
-
-  // Special overload for `index` static method
-  internal func indexOf(object: PyObject) -> PyResult<BigInt> {
-    return self.indexOf(object: object, start: nil, end: nil)
-  }
-
-  // sourcery: pymethod = index
-  internal func indexOf(object: PyObject,
-                        start: PyObject?,
-                        end: PyObject?) -> PyResult<BigInt> {
-    return self._indexOf(object: object, start: start, end: end)
-  }
-
-  // MARK: - Iter
-
-  // sourcery: pymethod = __iter__
-  internal func iter() -> PyObject {
-    return PyMemory.newListIterator(list: self)
-  }
-
-  // sourcery: pymethod = __reversed__
-  internal func reversed() -> PyObject {
-    return PyMemory.newListReverseIterator(list: self)
-  }
-
-  // MARK: - Append
+  // MARK: - Append, prepend, insert
 
   // sourcery: pymethod = append
-  internal func append(object: PyObject) {
-    self.elements.append(object)
-  }
+  internal static func append(_ py: Py,
+                              zelf: PyObject,
+                              object: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "append")
+    }
 
-  // MARK: - Prepend
+    zelf.elements.append(object)
+    return .none(py)
+  }
 
   // This is not a Python method, but it is used by other types
   internal func prepend(object: PyObject) {
     self.elements.insert(object, at: 0)
   }
-
-  // MARK: - Insert
 
   internal static let insertDoc = """
     insert($self, index, object, /)
@@ -276,54 +331,74 @@ public struct PyList: PyObjectMixin, AbstractSequence {
     """
 
   // sourcery: pymethod = insert, doc = insertDoc
-  internal func insert(index: PyObject, object: PyObject) -> PyResult<PyNone> {
+  internal static func insert(_ py: Py,
+                              zelf: PyObject,
+                              index: PyObject,
+                              object: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "insert")
+    }
+
     let unwrappedIndex = IndexHelper.int(
-      index,
-      onOverflow: .overflowError(msg: "cannot add more objects to list")
+      py,
+      object: index,
+      onOverflow: .overflowError(message: "cannot add more objects to list")
     )
 
     switch unwrappedIndex {
     case let .value(int):
-      self.insert(index: int, object: object)
-      return .value(Py.none)
+      Self.insert(zelf: zelf, index: int, object: object)
+      return .none(py)
     case let .notIndex(lazyError):
-      let e = lazyError.create()
+      let e = lazyError.create(py)
       return .error(e)
     case let .overflow(_, lazyError):
-      let e = lazyError.create()
+      let e = lazyError.create(py)
       return .error(e)
     case let .error(e):
       return .error(e)
     }
   }
 
-  private func insert(index: Int, object: PyObject) {
+  private static func insert(zelf: PyList, index: Int, object: PyObject) {
     var index = index
 
     if index < 0 {
-      index += self.count
+      index += zelf.count
       if index < 0 {
         index = 0
       }
     }
 
-    if index > self.count {
-      index = self.count
+    if index > zelf.count {
+      index = zelf.count
     }
 
-    self.elements.insert(object, at: index)
+    zelf.elements.insert(object, at: index)
   }
 
   // MARK: - Extend
 
   // sourcery: pymethod = extend
-  internal func extend(iterable: PyObject) -> PyResult<PyNone> {
+  internal static func extend(_ py: Py,
+                              zelf: PyObject,
+                              iterable: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "extend")
+    }
+
+    return Self.extend(py, zelf: zelf, iterable: iterable)
+  }
+
+  internal static func extend(_ py: Py,
+                              zelf: PyList,
+                              iterable: PyObject) -> PyResult<PyObject> {
     // Do not modify 'self.elements' until we finished iteration!
     // We do not want to end with half-baked product!
-    switch Py.toArray(iterable: iterable) {
+    switch py.toArray(iterable: iterable) {
     case let .value(elements):
-      self.elements.append(contentsOf: elements)
-      return .value(Py.none)
+      zelf.elements.append(contentsOf: elements)
+      return .none(py)
     case let .error(e):
       return .error(e)
     }
@@ -341,15 +416,19 @@ public struct PyList: PyObjectMixin, AbstractSequence {
     """
 
   // sourcery: pymethod = remove, doc = removeDoc
-  internal func remove(object: PyObject) -> PyResult<PyNone> {
-    switch self.findIndex(object: object) {
+  internal static func remove(_ py: Py,
+                              zelf: PyObject,
+                              object: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "remove")
+    }
+
+    switch Self.findIndex(py, zelf: zelf, object: object) {
     case .index(let index):
-      self.elements.remove(at: index)
-      return .value(Py.none)
-
+      zelf.elements.remove(at: index)
+      return .none(py)
     case .notFound:
-      return .valueError("list.remove(x): x not in list")
-
+      return .valueError(py, message: "list.remove(x): x not in list")
     case .error(let e):
       return .error(e)
     }
@@ -361,12 +440,17 @@ public struct PyList: PyObjectMixin, AbstractSequence {
     case error(PyBaseException)
   }
 
-  private func findIndex(object: PyObject) -> FindIndexResult {
-    for (index, element) in self.elements.enumerated() {
-      switch Py.isEqualBool(left: element, right: object) {
-      case .value(true): return .index(index)
-      case .value(false): break // go to next element
-      case .error(let e): return .error(e)
+  private static func findIndex(_ py: Py,
+                                zelf: PyList,
+                                object: PyObject) -> FindIndexResult {
+    for (index, element) in zelf.elements.enumerated() {
+      switch py.isEqualBool(left: element, right: object) {
+      case .value(true):
+        return .index(index)
+      case .value(false):
+        break // go to next element
+      case .error(let e):
+        return .error(e)
       }
     }
 
@@ -376,55 +460,62 @@ public struct PyList: PyObjectMixin, AbstractSequence {
   // MARK: - Pop
 
   // sourcery: pymethod = pop
-  internal func pop(index: PyObject?) -> PyResult<PyObject> {
-    switch self.parsePopIndex(from: index) {
+  internal static func pop(_ py: Py,
+                           zelf: PyObject,
+                           index: PyObject?) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "pop")
+    }
+
+    switch Self.parsePopIndex(py, from: index) {
     case let .value(int):
-      return self.pop(index: int)
+      return Self.pop(py, zelf: zelf, index: int)
     case let .error(e):
       return .error(e)
     }
   }
 
-  private func parsePopIndex(from index: PyObject?) -> PyResult<Int> {
+  private static func parsePopIndex(_ py: Py, from index: PyObject?) -> PyResult<Int> {
     guard let index = index else {
       return .value(-1)
     }
 
     let unwrappedIndex = IndexHelper.int(
-      index,
-      onOverflow: .indexError(msg: "pop index out of range")
+      py,
+      object: index,
+      onOverflow: .indexError(message: "pop index out of range")
     )
 
     switch unwrappedIndex {
     case let .value(int):
       return .value(int)
     case let .notIndex(lazyError):
-      let e = lazyError.create()
+      let e = lazyError.create(py)
       return .error(e)
     case let .overflow(_, lazyError):
-      let e = lazyError.create()
+      let e = lazyError.create(py)
       return .error(e)
     case let .error(e):
       return .error(e)
     }
   }
 
-  private func pop(index: Int) -> PyResult<PyObject> {
-    if self.isEmpty {
-      return .indexError("pop from empty list")
+  private static func pop(_ py: Py, zelf: PyList, index: Int) -> PyResult<PyObject> {
+    if zelf.isEmpty {
+      return .indexError(py, message: "pop from empty list")
     }
 
     var index = index
     if index < 0 {
-      index += self.count
+      index += zelf.count
     }
 
     // swiftlint:disable:next yoda_condition
-    guard 0 <= index && index < self.count else {
-      return .indexError("pop index out of range")
+    guard 0 <= index && index < zelf.count else {
+      return .indexError(py, message: "pop index out of range")
     }
 
-    let result = self.elements.remove(at: index)
+    let result = zelf.elements.remove(at: index)
     return .value(result)
   }
 
@@ -437,28 +528,36 @@ public struct PyList: PyObjectMixin, AbstractSequence {
     Stable sort *IN PLACE*.
     """
 
-  private static let sortArguments = ArgumentParser.createOrTrap(
+  private static let sortArguments = ArgumentParser(
     arguments: ["key", "reverse"],
     format: "|$OO:sort"
   )
 
   // sourcery: pymethod = sort, doc = sortDoc
-  internal func sort(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "sort",
+  internal static func sort(_ py: Py,
+                            zelf: PyObject,
+                            args: [PyObject],
+                            kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "sort")
+    }
+
+    if let e = ArgumentParser.guaranteeArgsCountOrError(py,
+                                                        fnName: "sort",
                                                         args: args,
                                                         min: 0,
                                                         max: 0) {
-      return .error(e)
+      return .error(e.asBaseException)
     }
 
-    switch PyList.sortArguments.bind(args: [], kwargs: kwargs) {
+    switch Self.sortArguments.bind(py, args: [], kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
       assert(binding.optionalCount == 2, "Invalid optional argument count.")
 
       let key = binding.optional(at: 0)
       let isReverse = binding.optional(at: 1)
-      return self.sort(key: key, isReverse: isReverse)
+      return zelf.sort(py, key: key, isReverse: isReverse)
     case let .error(e):
       return .error(e)
     }
@@ -474,125 +573,144 @@ public struct PyList: PyObjectMixin, AbstractSequence {
     """
 
   // sourcery: pymethod = reverse, doc = reverseDoc
-  internal func reverse() -> PyResult<PyNone> {
-    self.elements.reverse()
-    return .value(Py.none)
+  internal static func reverse(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "reverse")
+    }
+
+    zelf.elements.reverse()
+    return .none(py)
   }
 
   // MARK: - Clear
 
   // sourcery: pymethod = clear
-  internal func clear() -> PyNone {
-    self.elements.removeAll()
-    return Py.none
+  internal static func clear(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "clear")
+    }
+
+    zelf.elements.removeAll()
+    return .none(py)
   }
 
   // MARK: - Copy
 
   // sourcery: pymethod = copy
-  internal func copy() -> PyObject {
-    return Py.newList(elements: self.elements)
+  internal static func copy(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "copy")
+    }
+
+    let result = py.newList(elements: zelf.elements)
+    return .value(result.asObject)
   }
 
-  // MARK: - Add
+  // MARK: - Add, mul
 
   // sourcery: pymethod = __add__
-  internal func add(_ other: PyObject) -> PyResult<PyObject> {
-    switch self._handleAddArgument(object: other) {
-    case let .value(list):
-      let result = self._add(other: list)
-      return .value(result)
-    case let .error(e):
-      return .error(e)
-    }
+  internal static func __add__(_ py: Py,
+                               zelf: PyObject,
+                               other: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__add__(py, zelf: zelf, other: other, isTuple: false)
   }
 
   // sourcery: pymethod = __iadd__
-  internal func iadd(_ other: PyObject) -> PyResult<PyObject> {
-    switch self.extend(iterable: other) {
-    case .value:
-      return .value(self)
-    case .error(let e):
-      return .error(e)
+  internal static func __iadd__(_ py: Py,
+                                zelf: PyObject,
+                                other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__iadd__")
     }
+
+    return Self.extend(py, zelf: zelf, iterable: other)
   }
 
-  // MARK: - Mul
-
   // sourcery: pymethod = __mul__
-  internal func mul(_ other: PyObject) -> PyResult<PyObject> {
-    switch self._handleMulArgument(object: other) {
-    case .value(let int):
-      var copy = self.elements
-      self._mul(elements: &copy, count: int)
-      let result = Py.newList(elements: copy)
-      return .value(result)
-    case .notImplemented:
-      return .value(Py.notImplemented)
-    }
+  internal static func __mul__(_ py: Py,
+                               zelf: PyObject,
+                               other: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__mul__(py, zelf: zelf, other: other, isTuple: false)
   }
 
   // sourcery: pymethod = __rmul__
-  internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
-    return self.mul(other)
+  internal static func __rmul__(_ py: Py,
+                                zelf: PyObject,
+                                other: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__rmul__(py, zelf: zelf, other: other, isTuple: false)
   }
 
   // sourcery: pymethod = __imul__
-  internal func imul(_ other: PyObject) -> PyResult<PyObject> {
-    switch self._handleMulArgument(object: other) {
+  internal func imul(_ py: Py,
+                     zelf: PyObject,
+                     other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__iadd__")
+    }
+
+    switch Self.abstractParseMulCount(py, object: other) {
     case .value(let int):
-      self._mul(elements: &self.elements, count: int)
-      return .value(self)
+      Self.abstractMul(elements: &zelf.elements, count: int)
+      return .value(zelf.asObject)
     case .notImplemented:
-      return .value(Py.notImplemented)
+      return .notImplemented(py)
     }
   }
 
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyList> {
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
     let elements = [PyObject]()
-    let isBuiltin = type === Py.types.list
+    let isBuiltin = type === py.types.list
 
     // If this is a builtin then try to re-use interned values
     // (if we even have interned 'list').
     let result: PyList = isBuiltin ?
-      Py.newList(elements: elements) :
-      PyMemory.newList(type: type, elements: elements)
+    py.newList(elements: elements) :
+    py.memory.newList(py, type: type, elements: elements)
 
-    return .value(result)
+    return .value(result.asObject)
   }
 
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    if self.type === Py.types.list {
-      if let e = ArgumentParser.noKwargsOrError(fnName: self.typeName,
+  internal static  func __init__(_ py: Py,
+                                 zelf: PyObject,
+                                 args: [PyObject],
+                                 kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__init__")
+    }
+
+    let isBuiltin = zelf.type === py.types.list
+    if isBuiltin {
+      if let e = ArgumentParser.noKwargsOrError(py,
+                                                fnName: self.typeName,
                                                 kwargs: kwargs) {
-        return .error(e)
+        return .error(e.asBaseException)
       }
     }
 
-    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: self.typeName,
+    if let e = ArgumentParser.guaranteeArgsCountOrError(py,
+                                                        fnName: self.typeName,
                                                         args: args,
                                                         min: 0,
                                                         max: 1) {
-      return .error(e)
+      return .error(e.asBaseException)
     }
 
     if let iterable = args.first {
-      switch self.extend(iterable: iterable) {
+      switch Self.extend(py, zelf: zelf, iterable: iterable) {
       case .value: break
       case .error(let e): return .error(e)
       }
     }
 
-    return .value(Py.none)
+    return .none(py)
   }
 }
-
-*/

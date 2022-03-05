@@ -22,23 +22,23 @@ internal enum IndexHelper {
     }
 
     fileprivate let errorKind: ErrorKind
-    fileprivate let msg: String?
+    fileprivate let message: String?
 
-    private init(errorKind: ErrorKind, msg: String?) {
+    private init(errorKind: ErrorKind, message: String?) {
       self.errorKind = errorKind
-      self.msg = msg
+      self.message = message
     }
 
-    internal static var overflowError = Self.overflowError(msg: nil)
+    internal static var overflowError = Self.overflowError(message: nil)
 
-    internal static func overflowError(msg: String?) -> OnIntOverflow {
-      return OnIntOverflow(errorKind: .overflow, msg: msg)
+    internal static func overflowError(message: String?) -> OnIntOverflow {
+      return OnIntOverflow(errorKind: .overflow, message: message)
     }
 
-    internal static var indexError = Self.indexError(msg: nil)
+    internal static var indexError = Self.indexError(message: nil)
 
-    internal static func indexError(msg: String?) -> OnIntOverflow {
-      return OnIntOverflow(errorKind: .index, msg: msg)
+    internal static func indexError(message: String?) -> OnIntOverflow {
+      return OnIntOverflow(errorKind: .index, message: message)
     }
   }
 
@@ -51,13 +51,13 @@ internal enum IndexHelper {
     }
 
     private let errorKind: OnIntOverflow.ErrorKind
-    private let msg: Message
+    private let message: Message
 
     fileprivate init(convertedObject: PyObject, onOverflow: OnIntOverflow) {
-      if let msg = onOverflow.msg {
-        self.msg = .string(value: msg)
+      if let message = onOverflow.message {
+        self.message = .string(value: message)
       } else {
-        self.msg = .generic(typeName: convertedObject.typeName)
+        self.message = .generic(typeName: convertedObject.typeName)
       }
 
       self.errorKind = onOverflow.errorKind
@@ -65,7 +65,7 @@ internal enum IndexHelper {
 
     internal func create(_ py: Py) -> PyBaseException {
       let message: String = {
-        switch self.msg {
+        switch self.message {
         case let .generic(typeName: typeName):
           return "cannot fit '\(typeName)' into an index-sized integer"
         case let .string(value: s):

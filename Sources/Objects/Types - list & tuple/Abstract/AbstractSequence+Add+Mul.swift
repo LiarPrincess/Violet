@@ -1,6 +1,6 @@
 import BigInt
 
-private enum MulCount {
+internal enum AbstractSequenceMulCount {
   case value(BigInt)
   case notImplemented
 }
@@ -54,7 +54,7 @@ extension AbstractSequence {
       return Self.invalidSelfArgument(py, zelf, "__mul__")
     }
 
-    return Self.mul(py, zelf: zelf, other: other, isTuple: isTuple)
+    return Self.common__mul__(py, zelf: zelf, other: other, isTuple: isTuple)
   }
 
   internal static func abstract__rmul__(_ py: Py,
@@ -65,57 +65,70 @@ extension AbstractSequence {
       return Self.invalidSelfArgument(py, zelf, "__rmul__")
     }
 
-    return Self.mul(py, zelf: zelf, other: other, isTuple: isTuple)
+    return Self.common__mul__(py, zelf: zelf, other: other, isTuple: isTuple)
   }
 
-  private static func mul(_ py: Py,
-                          zelf: Self,
-                          other: PyObject,
-                          isTuple: Bool) -> PyResult<PyObject> {
+  private static func common__mul__(_ py: Py,
+                                    zelf: Self,
+                                    other: PyObject,
+                                    isTuple: Bool) -> PyResult<PyObject> {
     let count: BigInt
-    switch Self.parseMulCount(py, object: other) {
+    switch Self.abstractParseMulCount(py, object: other) {
     case .value(let int): count = int
     case .notImplemented: return .notImplemented(py)
     }
 
-    if count <= 0 {
-      // For tuple: it will return interned 'py.emptyTuple'.
-      let empty = Self.newSelf(py, elements: [])
-      return .value(empty.asObject)
+    // Tuples are immutable, so we can just return 'zelf'.
+    if isTuple && count == 1 {
+      return .value(zelf.asObject)
     }
 
-    let elements = zelf.elements
-    var result = elements
+    var copy = zelf.elements
+    Self.abstractMul(elements: &copy, count: count)
 
-    if count == 1 {
-      // Tuples are immutable, so we can just return 'zelf'.
-      let result = isTuple ? zelf : Self.newSelf(py, elements: result)
-      return .value(result.asObject)
-    }
-
-    let capacityBig = BigInt(elements.count) * count
-    if let capacity = Int(exactly: capacityBig) {
-      result.reserveCapacity(capacity)
-    }
-    // else: we are in deep trouble, but we will let it crash
-
-    // We already have '1' copy in the result (the initial one)
-    let remainingCount = count - 1
-
-    for _ in 0..<remainingCount {
-      result.append(contentsOf: elements)
-    }
-
-    let resultSelf = Self.newSelf(py, elements: result)
-    return .value(resultSelf.asObject)
+    let result = Self.newSelf(py, elements: copy)
+    return .value(result.asObject)
   }
 
-  private static func parseMulCount(_ py: Py, object: PyObject) -> MulCount {
+  internal static func abstractParseMulCount(
+    _ py: Py,
+    object: PyObject
+  ) -> AbstractSequenceMulCount {
     guard let int = py.cast.asInt(object) else {
       return .notImplemented
     }
 
     let result = Swift.max(int.value, 0)
     return .value(result)
+  }
+
+  internal static func abstractMul(elements: inout Elements, count: BigInt) {
+    if count <= 0 {
+      elements = []
+      return
+    }
+
+    let alreadyHave = BigInt(1)
+    if count == alreadyHave {
+      return
+    }
+
+    let capacityBig = BigInt(elements.count) * count
+    if let capacity = Int(exactly: capacityBig) {
+      elements.reserveCapacity(capacity)
+    }
+    // else: we are in deep trouble, but we will let it crash
+
+    let remainingCount = count - alreadyHave
+    let initialElementCount = elements.count
+
+    for _ in 0..<remainingCount {
+      // We have to do it manually, otherwise we would need to create a copy of
+      // original 'elements'.
+      for i in 0..<initialElementCount {
+        let e = elements[i]
+        elements.append(e)
+      }
+    }
   }
 }
