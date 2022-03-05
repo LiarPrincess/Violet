@@ -10,10 +10,7 @@ import VioletCore
 
 // sourcery: pytype = set, isDefault, hasGC, isBaseType
 // sourcery: subclassInstancesHave__dict__
- public struct PySet: PyObjectMixin, AbstractSet {
-
-  public typealias Element = AbstractSet_Element
-  public typealias OrderedSet = VioletObjects.OrderedSet<Element>
+public struct PySet: PyObjectMixin, AbstractSet {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -23,29 +20,31 @@ import VioletCore
     Build an unordered collection of unique elements.
     """
 
-   // sourcery: includeInLayout
-   internal var elements: OrderedSet { self.elementsPtr.pointee }
+  internal typealias Element = OrderedSet.Element
 
-   public let ptr: RawPtr
+  // sourcery: includeInLayout
+  internal var elements: OrderedSet { self.elementsPtr.pointee }
 
-   public init(ptr: RawPtr) {
-     self.ptr = ptr
-   }
+  public let ptr: RawPtr
 
-   internal func initialize(_ py: Py, type: PyType, elements: PySet.OrderedSet) {
-     self.header.initialize(py, type: type)
-     self.elementsPtr.initialize(to: elements)
-   }
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
+  }
 
-   // Nothing to do here.
-   internal func beforeDeinitialize() { }
+  internal func initialize(_ py: Py, type: PyType, elements: OrderedSet) {
+    self.header.initialize(py, type: type)
+    self.elementsPtr.initialize(to: elements)
+  }
 
-   internal static func createDebugString(ptr: RawPtr) -> String {
-     let zelf = PySet(ptr: ptr)
-     let count = zelf.elements.count
-     return "PySet(type: \(zelf.typeName), flags: \(zelf.flags), count: \(count))"
-   }
- }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PySet(ptr: ptr)
+    let count = zelf.elements.count
+    return "PySet(type: \(zelf.typeName), flags: \(zelf.flags), count: \(count))"
+  }
+}
 
 /* MARKER
 

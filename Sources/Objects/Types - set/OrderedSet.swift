@@ -2,7 +2,7 @@ import VioletCore
 
 /// A generic collection to store unique values in exactly the same order
 /// as they were inserted.
-public struct OrderedSet<Element: PyHashable> {
+public struct OrderedSet {
 
   // Small trick: when we use `Void` (which is the same as `()`) as value
   // then it does not take any space in a dictionary!
@@ -10,7 +10,8 @@ public struct OrderedSet<Element: PyHashable> {
   // (Though you will still pay the cost for generics.)
   //
   // This trick is sponsored by 'go lang': `map[T]struct{}`.
-  public typealias Dict = OrderedDictionary<Element, Void>
+  public typealias Dict = OrderedDictionary<Void>
+  public typealias Element = Dict.Key
 
   internal private(set) var dict: Dict
 
@@ -30,22 +31,22 @@ public struct OrderedSet<Element: PyHashable> {
     self.dict = Dict(count: count)
   }
 
-  public init(copy: OrderedSet<Element>) {
+  public init(copy: OrderedSet) {
     self.dict = copy.dict
   }
 
   // MARK: - Contains
 
-  public func contains(element: Element) -> PyResult<Bool> {
-    return self.dict.contains(key: element)
+  public func contains(_ py: Py, element: Element) -> PyResult<Bool> {
+    return self.dict.contains(py, key: element)
   }
 
   // MARK: - Insert
 
   public typealias InsertResult = Dict.InsertResult
 
-  public mutating func insert(element: Element) -> InsertResult {
-    return self.dict.insert(key: element, value: ())
+  public mutating func insert(_ py: Py, element: Element) -> InsertResult {
+    return self.dict.insert(py, key: element, value: ())
   }
 
   // MARK: - Remove
@@ -56,8 +57,8 @@ public struct OrderedSet<Element: PyHashable> {
     case error(PyBaseException)
   }
 
-  public mutating func remove(element: Element) -> RemoveResult {
-    let result = self.dict.remove(key: element)
+  public mutating func remove(_ py: Py, element: Element) -> RemoveResult {
+    let result = self.dict.remove(py, key: element)
     switch result {
     case .value:
       return .ok
@@ -70,7 +71,7 @@ public struct OrderedSet<Element: PyHashable> {
 
   // MARK: - Copy
 
-  public func copy() -> OrderedSet<Element> {
+  public func copy() -> OrderedSet {
     return OrderedSet(copy: self)
   }
 
@@ -112,7 +113,7 @@ extension OrderedSet: Sequence {
 
     private var inner: Dict.Iterator
 
-    public init(_ set: OrderedSet<Element>) {
+    public init(_ set: OrderedSet) {
       self.inner = set.dict.makeIterator()
     }
 

@@ -12,9 +12,6 @@ import VioletCore
 // sourcery: subclassInstancesHave__dict__
 public struct PyFrozenSet: PyObjectMixin, AbstractSet {
 
-  public typealias Element = AbstractSet_Element
-  public typealias OrderedSet = VioletObjects.OrderedSet<Element>
-
   // sourcery: pytypedoc
   internal static let doc = """
     frozenset() -> empty frozenset object
@@ -22,6 +19,8 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
 
     Build an immutable unordered collection of unique elements.
     """
+
+  internal typealias Element = OrderedSet.Element
 
   // sourcery: includeInLayout
   internal var elements: OrderedSet { self.elementsPtr.pointee }
@@ -32,7 +31,7 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py, type: PyType, elements: PyFrozenSet.OrderedSet) {
+  internal func initialize(_ py: Py, type: PyType, elements: OrderedSet) {
     self.header.initialize(py, type: type)
     self.elementsPtr.initialize(to: elements)
   }

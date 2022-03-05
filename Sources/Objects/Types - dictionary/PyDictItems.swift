@@ -9,9 +9,6 @@ import VioletCore
 // sourcery: pytype = dict_items, isDefault, hasGC
 public struct PyDictItems: PyObjectMixin, AbstractDictView {
 
-  internal typealias OrderedDictionary = PyDict.OrderedDictionary
-  internal typealias Element = OrderedDictionary.Element
-
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 

@@ -1,36 +1,6 @@
 
 // TODO: All of the set methods should allow tuple as an arg
 
-// MARK: - Element
-
-// swiftlint:disable:next type_name
-public struct AbstractSet_Element: PyHashable, CustomStringConvertible {
-
-  public let hash: PyHash
-  public let object: PyObject
-
-  public var description: String {
-    return "PySetElement(hash: \(self.hash), object: \(self.object))"
-  }
-
-  internal init(hash: PyHash, object: PyObject) {
-    self.hash = hash
-    self.object = object
-  }
-
-  public func isEqual(to other: AbstractSet_Element) -> PyResult<Bool> {
-/* MARKER
-
-    guard self.hash == other.hash else {
-      return .value(false)
-    }
-
-    return Py.isEqualBool(left: self.object, right: other.object)
-*/
-    fatalError()
-  }
-}
-
 /* MARKER
 // MARK: - AbstractSet
 
