@@ -21,9 +21,33 @@ private let perturbShift = 5
 
 /// A generic collection to store key-value pairs in exactly the same order
 /// as they were inserted.
-public struct OrderedDictionary<Key: PyHashable, Value> {
+public struct OrderedDictionary<Value> {
 
   // MARK: - Helper data types
+
+  public struct Key: CustomStringConvertible {
+
+    /// The hash value.
+    ///
+    /// - Warning:
+    /// Value should be either immutable or mutation should not change hash.
+    public let hash: PyHash
+    public let object: PyObject
+
+    public var description: String {
+      return "OrderedDictionary.Key(hash: \(self.hash), object: \(self.object))"
+    }
+
+    internal init(id: IdString) {
+      self.hash = id.hash
+      self.object = id.value.asObject
+    }
+
+    internal init(hash: PyHash, object: PyObject) {
+      self.hash = hash
+      self.object = object
+    }
+  }
 
   public struct Entry {
     public let key: Key
@@ -58,14 +82,9 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
   fileprivate struct EntryIndex: Equatable {
 
     /// Slot is free to use.
-    fileprivate static var notAssigned: EntryIndex {
-      return EntryIndex(unchecked: -1)
-    }
-
+    fileprivate static var notAssigned: EntryIndex { EntryIndex(unchecked: -1) }
     /// There was an index here, but it was deleted.
-    fileprivate static var deleted: EntryIndex {
-      return EntryIndex(unchecked: -2)
-    }
+    fileprivate static var deleted: EntryIndex { EntryIndex(unchecked: -2) }
 
     private let value: Int
 
@@ -217,7 +236,7 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
     self.checkConsistency()
   }
 
-  public init(copy: OrderedDictionary<Key, Value>) {
+  public init(copy: OrderedDictionary<Value>) {
     self.entries = copy.entries
     self.indices = copy.indices
     self.used = copy.used
@@ -238,8 +257,8 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
   ///
   /// This *key-based* function returns the value for the given key if the key
   /// is found in the dictionary, or `nil` if the key is not found.
-  public func get(key: Key) -> GetResult {
-    switch self.lookup(key: key) {
+  public func get(_ py: Py, key: Key) -> GetResult {
+    switch self.lookup(py, key: key) {
     case let .entry(indicesIndex: _, entriesIndex: _, entry: entry):
       return .value(entry.value)
     case .notFound:
@@ -251,8 +270,8 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
 
   // MARK: - Contains
 
-  public func contains(key: Key) -> PyResult<Bool> {
-    switch self.get(key: key) {
+  public func contains(_ py: Py, key: Key) -> PyResult<Bool> {
+    switch self.get(py, key: key) {
     case .value:
       return .value(true)
     case .notFound:
@@ -274,8 +293,8 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
   /// new key-value pair if the key does not exist.
   ///
   /// insertdict(PyDictObject *mp, PyObject *key, Py_hash_t hash, PyObject *value)
-  public mutating func insert(key: Key, value: Value) -> InsertResult {
-    switch self.lookup(key: key) {
+  public mutating func insert(_ py: Py, key: Key, value: Value) -> InsertResult {
+    switch self.lookup(py, key: key) {
     case let .entry(indicesIndex: _, entriesIndex: entryIndex, entry: oldEntry):
       // Update existing entry.
       // We have to use old 'key':
@@ -338,8 +357,8 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
   /// associated value.
   /// int
   /// _PyDict_DelItem_KnownHash(PyObject *op, PyObject *key, Py_hash_t hash)
-  public mutating func remove(key: Key) -> RemoveResult {
-    switch self.lookup(key: key) {
+  public mutating func remove(_ py: Py, key: Key) -> RemoveResult {
+    switch self.lookup(py, key: key) {
     case .notFound:
       return .notFound
 
@@ -368,7 +387,7 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
   ///
   /// static Py_ssize_t _Py_HOT_FUNCTION
   /// lookdict(PyDictObject *mp, PyObject *key, Py_hash_t hash, PyObject ...)
-  private func lookup(key: Key) -> LookupResult {
+  private func lookup(_ py: Py, key: Key) -> LookupResult {
     let hash = key.hash
     var index = IndexCalculation(hash: hash, dictionarySize: self.size)
 
@@ -390,7 +409,7 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
         }
 
         if hash == old.key.hash {
-          switch key.isEqual(to: old.key) {
+          switch self.areEqual(py, lhs: key, rhs: old.key) {
           case .value(true):
             return .entry(indicesIndex: index.value, entriesIndex: entryIndex, entry: old)
           case .value(false):
@@ -407,6 +426,24 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
     }
   }
 
+  private func areEqual(_ py: Py, lhs: Key, rhs: Key) -> PyResult<Bool> {
+    // >>> class HashCollisionWith1:
+    // ...     def __hash__(self): return 1
+    // ...     def __eq__(self, other): raise NotImplementedError('Ooo!')
+    //
+    // >>> d = {}
+    // >>> d[1] = 'a'
+    // >>> c = HashCollisionWith1()
+    // >>> d[c] = 'b'
+    // NotImplementedError: Ooo!
+
+    guard lhs.hash == rhs.hash else {
+      return .value(false)
+    }
+
+    return py.isEqualBool(left: lhs.object, right: rhs.object)
+  }
+
   // MARK: - Indices
 
   /// Lookup indices.
@@ -419,7 +456,7 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
 
   // MARK: - Copy
 
-  public func copy() -> OrderedDictionary<Key, Value> {
+  public func copy() -> OrderedDictionary<Value> {
     return OrderedDictionary(copy: self)
   }
 
@@ -591,7 +628,7 @@ extension OrderedDictionary: Sequence {
   public struct Iterator: IteratorProtocol {
 
     // swiftlint:disable nesting
-    public typealias OrderedDictionaryType = OrderedDictionary<Key, Value>
+    public typealias OrderedDictionaryType = OrderedDictionary<Value>
     public typealias Element = OrderedDictionaryType.Entry
     // swiftlint:enable nesting
 

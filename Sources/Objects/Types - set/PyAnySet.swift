@@ -4,9 +4,6 @@
 /// You just need `PySetData`.
 internal struct PyAnySet: CustomStringConvertible {
 
-  internal typealias Element = AbstractSet_Element
-  internal typealias OrderedSet = VioletObjects.OrderedSet<Element>
-
   fileprivate enum Storage {
     case set(PySet)
     case frozenSet(PyFrozenSet)

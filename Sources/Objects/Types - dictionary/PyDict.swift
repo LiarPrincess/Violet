@@ -26,56 +26,8 @@ public struct PyDict: PyObjectMixin {
     in the keyword argument list.  For example:  dict(one=1, two=2)
     """
 
-  // MARK: - OrderedDictionary
-
-  public typealias OrderedDictionary = VioletObjects.OrderedDictionary<Key, PyObject>
-
-  // MARK: - Key
-
-  public struct Key: PyHashable, CustomStringConvertible {
-
-    public var hash: PyHash
-    public var object: PyObject
-
-    public var description: String {
-      return "PyDict.Key(hash: \(self.hash), object: \(self.object))"
-    }
-
-    internal init(id: IdString) {
-      self.hash = id.hash
-      self.object = id.value.asObject
-    }
-
-    internal init(hash: PyHash, object: PyObject) {
-      self.hash = hash
-      self.object = object
-    }
-
-    public func isEqual(to other: Key) -> PyResult<Bool> {
-      // >>> class HashCollisionWith1:
-      // ...     def __hash__(self): return 1
-      // ...     def __eq__(self, other): raise NotImplementedError('Ooo!')
-      //
-      // >>> d = {}
-      // >>> d[1] = 'a'
-      // >>> c = HashCollisionWith1()
-      // >>> d[c] = 'b'
-      // NotImplementedError: Ooo!
-/* MARKER
-      guard self.hash == other.hash else {
-        return .value(false)
-      }
-
-      return Py.isEqualBool(left: self.object, right: other.object)
-*/
-      fatalError()
-    }
-  }
-
-  // MARK: - Standard stuff...
-
   // sourcery: includeInLayout
-  internal var elements: OrderedDictionary { self.elementsPtr.pointee }
+  internal var elements: OrderedDictionary<PyObject> { self.elementsPtr.pointee }
 
   public let ptr: RawPtr
 
@@ -83,7 +35,7 @@ public struct PyDict: PyObjectMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py, type: PyType, elements: PyDict.OrderedDictionary) {
+  internal func initialize(_ py: Py, type: PyType, elements: OrderedDictionary<PyObject>) {
     self.header.initialize(py, type: type)
     self.elementsPtr.initialize(to: elements)
   }
