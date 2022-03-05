@@ -38,22 +38,17 @@ public struct PyObject: PyObjectMixin {
     return "PyObject(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-  // MARK: - Equatable
+  // MARK: - Equatable, Comparable
 
   // sourcery: pymethod = __eq__
-  internal static func __eq__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
-    let result = Self.isEqual(zelf: zelf, other: other)
-    return result.toResult(py)
+  internal static func __eq__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.isEqual(zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __ne__
-  internal static func __ne__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
-    let result = Self.isEqual(zelf: zelf, other: other)
-    return result.not.toResult(py)
+  internal static func __ne__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    let isEqual = Self.isEqual(zelf: zelf, other: other)
+    return isEqual.not
   }
 
   private static func isEqual(zelf: PyObject, other: PyObject) -> CompareResult {
@@ -64,42 +59,33 @@ public struct PyObject: PyObjectMixin {
     return .notImplemented
   }
 
-  // MARK: - Comparable
-
   // sourcery: pymethod = __lt__
-  internal static func __lt__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
-    return .notImplemented(py)
+  internal static func __lt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return .notImplemented
   }
 
   // sourcery: pymethod = __le__
-  internal static func __le__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
-    return .notImplemented(py)
+  internal static func __le__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return .notImplemented
   }
 
   // sourcery: pymethod = __gt__
-  internal static func __gt__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
-    return .notImplemented(py)
+  internal static func __gt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return .notImplemented
   }
 
   // sourcery: pymethod = __ge__
-  internal static func __ge__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
-    return .notImplemented(py)
+  internal static func __ge__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return .notImplemented
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal static func __hash__(_ py: Py, zelf: PyObject) -> PyHash {
+  internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
     let int = Int(bitPattern: zelf.ptr)
-    return py.hasher.hash(int)
+    let result = py.hasher.hash(int)
+    return .value(result)
   }
 
   // MARK: - String
@@ -150,8 +136,8 @@ public struct PyObject: PyObjectMixin {
   // MARK: - Dir
 
   // sourcery: pymethod = __dir__
-  internal static func __dir__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    var dir = DirResult()
+  internal static func __dir__(_ py: Py, zelf: PyObject) -> PyResult<DirResult> {
+    var result = DirResult()
 
     // If we have dict then use it to fill 'dir'
     var error: PyBaseException?
@@ -159,14 +145,14 @@ public struct PyObject: PyObjectMixin {
       if let dirFn = dict.get(id: .__dir__) {
         switch py.call(callable: dirFn) {
         case .value(let o):
-          error = dir.append(py, elementsFrom: o)
+          error = result.append(py, elementsFrom: o)
         case let .notCallable(e),
           let .error(e):
           error = e
         }
       } else {
         // Otherwise just fill it with keys
-        error = dir.append(py, keysFrom: dict)
+        error = result.append(py, keysFrom: dict)
       }
     }
 
@@ -176,14 +162,13 @@ public struct PyObject: PyObjectMixin {
 
     // 'Dir' from our type
     switch zelf.type.dir(py) {
-    case let .value(typeDir):
-      dir.append(contentsOf: typeDir)
+    case let .value(dir):
+      result.append(contentsOf: dir)
     case let .error(e):
       return .error(e)
     }
 
-    let result = dir.toResult(py)
-    return result
+    return .value(result)
   }
 
   // MARK: - Attributes
