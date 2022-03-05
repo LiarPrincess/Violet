@@ -53,19 +53,19 @@ public struct PyList: PyObjectMixin, AbstractSequence {
 
   internal static let typeName = "list"
 
-  internal static func newSelf(_ py: Py, elements: [PyObject]) -> PyList {
+  internal static func newObject(_ py: Py, elements: [PyObject]) -> PyList {
     return py.newList(elements: elements)
   }
 
-  internal static func castAsSelf(_ py: Py, _ object: PyObject) -> PyList? {
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyList? {
     return py.cast.asList(object)
   }
 
   internal static func castZelf(_ py: Py, _ object: PyObject) -> PyList? {
-    return castAsSelf(py, object)
+    return downcast(py, object)
   }
 
-  internal static func invalidSelfArgument(_ py: Py,
+  internal static func invalidZelfArgument(_ py: Py,
                                            _ object: PyObject,
                                            _ fnName: String) -> PyResult<PyObject> {
     let error = py.newInvalidSelfArgumentError(object: object,
@@ -111,7 +111,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
 
   // sourcery: pymethod = __hash__
   internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
+    guard let zelf = Self.castZelf(py, zelf) else {
       return .invalidSelfArgument(zelf, Self.typeName)
     }
 
@@ -123,7 +123,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
   // sourcery: pymethod = __repr__
   internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__repr__")
+      return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
     if zelf.isEmpty {
@@ -155,7 +155,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
                                         zelf: PyObject,
                                         name: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__getattribute__")
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
 
     return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
@@ -172,8 +172,8 @@ public struct PyList: PyObjectMixin, AbstractSequence {
 
   // sourcery: pymethod = __len__
   internal static func __len__(_ py: Py, zelf: PyObject)-> PyResult<PyObject> {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__len__")
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__len__")
     }
 
     let result = zelf.count
@@ -216,8 +216,8 @@ public struct PyList: PyObjectMixin, AbstractSequence {
 
   // sourcery: pymethod = __iter__
   internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__iter__")
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
     let result = py.newListIterator(list: zelf)
@@ -226,8 +226,8 @@ public struct PyList: PyObjectMixin, AbstractSequence {
 
   // sourcery: pymethod = __reversed__
   internal static func __reversed__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__reversed__")
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__reversed__")
     }
 
     let result = py.newListReverseIterator(list: zelf)
@@ -276,8 +276,8 @@ public struct PyList: PyObjectMixin, AbstractSequence {
                                    zelf: PyObject,
                                    index: PyObject,
                                    value: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__setitem__")
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__setitem__")
     }
 
     return SetItemImpl.setItem(py,
@@ -297,8 +297,8 @@ public struct PyList: PyObjectMixin, AbstractSequence {
   internal static func __delitem__(_ py: Py,
                                    zelf: PyObject,
                                    index: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__delitem__")
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__delitem__")
     }
 
     return DelItemImpl.delItem(py, target: &zelf.elements, index: index)
@@ -310,8 +310,8 @@ public struct PyList: PyObjectMixin, AbstractSequence {
   internal static func append(_ py: Py,
                               zelf: PyObject,
                               object: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "append")
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "append")
     }
 
     zelf.elements.append(object)
@@ -335,8 +335,8 @@ public struct PyList: PyObjectMixin, AbstractSequence {
                               zelf: PyObject,
                               index: PyObject,
                               object: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "insert")
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "insert")
     }
 
     let unwrappedIndex = IndexHelper.int(
@@ -383,8 +383,8 @@ public struct PyList: PyObjectMixin, AbstractSequence {
   internal static func extend(_ py: Py,
                               zelf: PyObject,
                               iterable: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "extend")
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "extend")
     }
 
     return Self.extend(py, zelf: zelf, iterable: iterable)
@@ -419,8 +419,8 @@ public struct PyList: PyObjectMixin, AbstractSequence {
   internal static func remove(_ py: Py,
                               zelf: PyObject,
                               object: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "remove")
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "remove")
     }
 
     switch Self.findIndex(py, zelf: zelf, object: object) {
@@ -463,8 +463,8 @@ public struct PyList: PyObjectMixin, AbstractSequence {
   internal static func pop(_ py: Py,
                            zelf: PyObject,
                            index: PyObject?) -> PyResult<PyObject> {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "pop")
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "pop")
     }
 
     switch Self.parsePopIndex(py, from: index) {
@@ -538,8 +538,8 @@ public struct PyList: PyObjectMixin, AbstractSequence {
                             zelf: PyObject,
                             args: [PyObject],
                             kwargs: PyDict?) -> PyResult<PyObject> {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "sort")
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "sort")
     }
 
     if let e = ArgumentParser.guaranteeArgsCountOrError(py,
@@ -574,8 +574,8 @@ public struct PyList: PyObjectMixin, AbstractSequence {
 
   // sourcery: pymethod = reverse, doc = reverseDoc
   internal static func reverse(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "reverse")
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "reverse")
     }
 
     zelf.elements.reverse()
@@ -586,8 +586,8 @@ public struct PyList: PyObjectMixin, AbstractSequence {
 
   // sourcery: pymethod = clear
   internal static func clear(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "clear")
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "clear")
     }
 
     zelf.elements.removeAll()
@@ -598,8 +598,8 @@ public struct PyList: PyObjectMixin, AbstractSequence {
 
   // sourcery: pymethod = copy
   internal static func copy(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "copy")
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "copy")
     }
 
     let result = py.newList(elements: zelf.elements)
@@ -619,8 +619,8 @@ public struct PyList: PyObjectMixin, AbstractSequence {
   internal static func __iadd__(_ py: Py,
                                 zelf: PyObject,
                                 other: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__iadd__")
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__iadd__")
     }
 
     return Self.extend(py, zelf: zelf, iterable: other)
@@ -644,8 +644,8 @@ public struct PyList: PyObjectMixin, AbstractSequence {
   internal func imul(_ py: Py,
                      zelf: PyObject,
                      other: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__iadd__")
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__iadd__")
     }
 
     switch Self.abstractParseMulCount(py, object: other) {
@@ -683,8 +683,8 @@ public struct PyList: PyObjectMixin, AbstractSequence {
                                  zelf: PyObject,
                                  args: [PyObject],
                                  kwargs: PyDict?) -> PyResult<PyObject> {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__init__")
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
     }
 
     let isBuiltin = zelf.type === py.types.list

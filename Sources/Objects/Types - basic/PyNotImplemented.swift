@@ -34,7 +34,7 @@ public struct PyNotImplemented: PyObjectMixin {
   // sourcery: pymethod = __repr__
   internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard py.cast.isNotImplemented(zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__repr__")
+      return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
     let result = py.intern(string: "NotImplemented")
@@ -67,7 +67,7 @@ public struct PyNotImplemented: PyObjectMixin {
 
   // MARK: - Helpers
 
-  internal static func invalidSelfArgument(_ py: Py,
+  internal static func invalidZelfArgument(_ py: Py,
                                            _ object: PyObject,
                                            _ fnName: String) -> PyResult<PyObject> {
     let error = py.newInvalidSelfArgumentError(object: object,

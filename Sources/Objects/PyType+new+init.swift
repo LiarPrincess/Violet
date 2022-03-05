@@ -473,7 +473,7 @@ extension PyType {
   private static func getHeapType__dict__(_ py: Py,
                                           zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgumentFor__dict__(py, object: zelf)
+      return Self.invalidZelfArgumentFor__dict__(py, object: zelf)
     }
 
     let result = zelf.__dict__
@@ -484,7 +484,7 @@ extension PyType {
                                           zelf: PyObject,
                                           value: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgumentFor__dict__(py, object: zelf)
+      return Self.invalidZelfArgumentFor__dict__(py, object: zelf)
     }
 
     guard let dict = py.cast.asDict(value) else {
@@ -499,7 +499,7 @@ extension PyType {
   private static func delHeapType__dict__(_ py: Py,
                                           zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidSelfArgumentFor__dict__(py, object: zelf)
+      return Self.invalidZelfArgumentFor__dict__(py, object: zelf)
     }
 
     // There always has to be an dict:
@@ -513,7 +513,7 @@ extension PyType {
     return .none(py)
   }
 
-  private static func invalidSelfArgumentFor__dict__(
+  private static func invalidZelfArgumentFor__dict__(
     _ py: Py,
     object: PyObject
   ) -> PyResult<PyObject> {
@@ -664,7 +664,7 @@ extension PyType {
                                  args: [PyObject],
                                  kwargs: PyDict?) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf)
+      return Self.invalidZelfArgument(py, zelf)
     }
 
     if let kwargs = kwargs {

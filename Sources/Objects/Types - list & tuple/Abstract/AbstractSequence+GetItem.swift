@@ -32,15 +32,15 @@ extension AbstractSequence {
   internal static func abstract__getitem__(_ py: Py,
                                            zelf: PyObject,
                                            index: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__getitem__")
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__getitem__")
     }
 
     switch GetItemImpl.getItem(py, source: zelf.elements, index: index) {
     case let .single(object):
       return .value(object)
     case let .slice(elements):
-      let result = Self.newSelf(py, elements: elements)
+      let result = Self.newObject(py, elements: elements)
       return .value(result.asObject)
     case let .error(e):
       return .error(e)

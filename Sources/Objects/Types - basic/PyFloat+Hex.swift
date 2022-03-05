@@ -42,7 +42,7 @@ extension PyFloat {
   // sourcery: pymethod = hex, doc = hexDoc
   internal static func hex(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "hex")
+      return Self.invalidZelfArgument(py, zelf, "hex")
     }
 
     let value = zelf.value

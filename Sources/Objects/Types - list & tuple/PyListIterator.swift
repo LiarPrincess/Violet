@@ -54,7 +54,7 @@ public struct PyListIterator: PyObjectMixin {
                                         zelf: PyObject,
                                         name: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__getattribute__")
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
 
     return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
@@ -65,7 +65,7 @@ public struct PyListIterator: PyObjectMixin {
   // sourcery: pymethod = __iter__
   internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__iter__")
+      return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
     return .value(zelf.asObject)
@@ -76,7 +76,7 @@ public struct PyListIterator: PyObjectMixin {
   // sourcery: pymethod = __next__
   internal static func __next__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__next__")
+      return Self.invalidZelfArgument(py, zelf, "__next__")
     }
 
     let elements = zelf.list.elements
@@ -94,7 +94,7 @@ public struct PyListIterator: PyObjectMixin {
   // sourcery: pymethod = __length_hint__
   internal static func __length_hint__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__length_hint__")
+      return Self.invalidZelfArgument(py, zelf, "__length_hint__")
     }
 
     let count = zelf.list.count
@@ -118,7 +118,7 @@ public struct PyListIterator: PyObjectMixin {
     return py.cast.asListIterator(object)
   }
 
-  private static func invalidSelfArgument(_ py: Py,
+  private static func invalidZelfArgument(_ py: Py,
                                           _ object: PyObject,
                                           _ fnName: String) -> PyResult<PyObject> {
     let error = py.newInvalidSelfArgumentError(object: object,

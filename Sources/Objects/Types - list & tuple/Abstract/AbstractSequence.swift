@@ -12,16 +12,16 @@ internal protocol AbstractSequence: PyObjectMixin {
   var elements: Elements { get }
 
   /// Create new Python object with specified elements.
-  static func newSelf(_ py: Py, elements: Elements) -> Self
+  static func newObject(_ py: Py, elements: Elements) -> Self
 
   /// Convert `object` to this type.
   ///
   /// - For `tuple` it should return `tuple`.
   /// - For `list` it should return `list`.
-  static func castAsSelf(_ py: Py, _ object: PyObject) -> Self?
+  static func downcast(_ py: Py, _ object: PyObject) -> Self?
 
   /// Create an error when the `zelf` argument is not valid.
-  static func invalidSelfArgument(_ py: Py,
+  static func invalidZelfArgument(_ py: Py,
                                   _ object: PyObject,
                                   _ fnName: String) -> PyResult<PyObject>
 }
