@@ -741,19 +741,15 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   ///
   /// We deliberately don't suck up its __class__, as methods belonging to the
   /// metaclass would probably be more confusing than helpful.
-  internal func __dir__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __dir__(_ py: Py, zelf: PyObject) -> PyResult<DirResult> {
     guard let zelf = Self.castZelf(py, zelf) else {
       return Self.invalidSelfArgument(py, zelf)
     }
 
-    switch zelf.dir(py) {
-    case let .value(dir):
-      return dir.toResult(py)
-    case let .error(e):
-      return .error(e)
-    }
+    return zelf.dir(py)
   }
 
+  // Function used in other places in this module.
   internal func dir(_ py: Py) -> PyResult<DirResult> {
     var result = DirResult()
 
@@ -937,11 +933,11 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     return py.cast.asType(object)
   }
 
-  internal static func invalidSelfArgument(
+  internal static func invalidSelfArgument<T>(
     _ py: Py,
     _ object: PyObject,
     swiftFnName: StaticString = #function
-  ) -> PyResult<PyObject> {
+  ) -> PyResult<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: "type",
                                                swiftFnName: swiftFnName)

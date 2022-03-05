@@ -34,6 +34,8 @@ public struct PyInt: PyObjectMixin {
     4
     """
 
+  private static let typeName = "int"
+
   // sourcery: includeInLayout
   // Do not add 'set' to 'self.value' - we cache most used ints!
   internal var value: BigInt { self.valuePtr.pointee }
@@ -61,17 +63,13 @@ public struct PyInt: PyObjectMixin {
   // MARK: - Equatable, comparable
 
   // sourcery: pymethod = __eq__
-  internal static func __eq__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
-    return Self.compareOperation(py, zelf: zelf, other: other, fnName: "__eq__") { $0 == $1 }
+  internal static func __eq__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compareOperation(py, zelf: zelf, other: other, op: .__eq__) { $0 == $1 }
   }
 
   // sourcery: pymethod = __ne__
-  internal static func __ne__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
-    return Self.compareOperation(py, zelf: zelf, other: other, fnName: "__ne__") { $0 != $1 }
+  internal static func __ne__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compareOperation(py, zelf: zelf, other: other, op: .__ne__) { $0 != $1 }
   }
 
   // This is used in some other parts of this module.
@@ -80,55 +78,52 @@ public struct PyInt: PyObjectMixin {
   }
 
   // sourcery: pymethod = __lt__
-  internal static func __lt__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
-    return Self.compareOperation(py, zelf: zelf, other: other, fnName: "__lt__") { $0 < $1 }
+  internal static func __lt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compareOperation(py, zelf: zelf, other: other, op: .__lt__) { $0 < $1 }
   }
 
   // sourcery: pymethod = __le__
-  internal static func __le__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
-    return Self.compareOperation(py, zelf: zelf, other: other, fnName: "__le__") { $0 <= $1 }
+  internal static func __le__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compareOperation(py, zelf: zelf, other: other, op: .__le__) { $0 <= $1 }
   }
 
   // sourcery: pymethod = __gt__
-  internal static func __gt__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
-    return Self.compareOperation(py, zelf: zelf, other: other, fnName: "__gt__") { $0 > $1 }
+  internal static func __gt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compareOperation(py, zelf: zelf, other: other, op: .__gt__) { $0 > $1 }
   }
 
   // sourcery: pymethod = __ge__
-  internal static func __ge__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
-    return Self.compareOperation(py, zelf: zelf, other: other, fnName: "__ge__") { $0 >= $1 }
+  internal static func __ge__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compareOperation(py, zelf: zelf, other: other, op: .__ge__) { $0 >= $1 }
   }
 
   private static func compareOperation(_ py: Py,
                                        zelf: PyObject,
                                        other: PyObject,
-                                       fnName: String,
-                                       fn: (BigInt, BigInt) -> Bool) -> PyResult<PyObject> {
+                                       op: CompareResult.Operation,
+                                       fn: (BigInt, BigInt) -> Bool) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName)
+      return .invalidSelfArgument(zelf, Self.typeName, op)
     }
 
     guard let other = py.cast.asInt(other) else {
-      return .notImplemented(py)
+      return .notImplemented
     }
 
     let result = fn(zelf.value, other.value)
-    return result.toResult(py)
+    return .value(result)
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal static func __hash__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    return Self.intOperation(py, zelf: zelf, fnName: "__hash__") { py.hasher.hash($0) }
+  internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.typeName)
+    }
+
+    let result = py.hasher.hash(zelf.value)
+    return .value(result)
   }
 
   // MARK: - String
@@ -1394,7 +1389,7 @@ public struct PyInt: PyObjectMixin {
                                           _ object: PyObject,
                                           _ fnName: String) -> PyResult<PyObject> {
     let error = py.newInvalidSelfArgumentError(object: object,
-                                               expectedType: "int",
+                                               expectedType: Self.typeName,
                                                fnName: fnName)
 
     return .error(error.asBaseException)

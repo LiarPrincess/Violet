@@ -45,7 +45,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
 
   // MARK: - AbstractSequence
 
-  internal static let abstractPythonTypeName = "tuple"
+  internal static let typeName = "tuple"
 
   internal static func newSelf(_ py: Py, elements: [PyObject]) -> PyTuple {
     return py.newTuple(elements: elements)
@@ -72,61 +72,47 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
   // MARK: - Equatable, comparable
 
   // sourcery: pymethod = __eq__
-  internal static func __eq__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
+  internal static func __eq__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     return Self.abstract__eq__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __ne__
-  internal static func __ne__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
+  internal static func __ne__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     return Self.abstract__ne__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __lt__
-  internal static func __lt__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
+  internal static func __lt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     return Self.abstract__lt__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __le__
-  internal static func __le__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
+  internal static func __le__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     return Self.abstract__le__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __gt__
-  internal static func __gt__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
+  internal static func __gt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     return Self.abstract__gt__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __ge__
-  internal static func __ge__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
+  internal static func __ge__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     return Self.abstract__ge__(py, zelf: zelf, other: other)
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal static func __hash__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__hash__")
+      return .invalidSelfArgument(zelf, Self.typeName)
     }
 
-    let result = Self.calculateHash(py, elements: zelf.elements)
-    return result.asObject(py)
+    return Self.calculateHash(py, elements: zelf.elements)
   }
 
-  internal static func calculateHash(_ py: Py,
-                                     elements: [PyObject]) -> PyResult<PyHash> {
+  internal static func calculateHash(_ py: Py, elements: [PyObject]) -> HashResult {
     var x: PyHash = 0x34_5678
     var multiplier = Hasher.multiplier
 

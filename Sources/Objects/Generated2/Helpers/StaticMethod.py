@@ -41,9 +41,9 @@ class StaticMethodKind:
 
 
 _stringConversion = StaticMethodKind('StringConversion', '(_ py: Py, object: PyObject) -> PyResult<PyObject>')
-_hash = StaticMethodKind('Hash', '(_ py: Py, object: PyObject) -> PyResult<PyObject>')
-_dir = StaticMethodKind('Dir', '(_ py: Py, object: PyObject) -> PyResult<PyObject>')
-_comparison = StaticMethodKind('Comparison', '(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>')
+_hash = StaticMethodKind('Hash', '(_ py: Py, object: PyObject) -> HashResult')
+_dir = StaticMethodKind('Dir', '(_ py: Py, object: PyObject) -> PyResult<DirResult>')
+_comparison = StaticMethodKind('Comparison', '(_ py: Py, left: PyObject, right: PyObject) -> CompareResult')
 _asBool = StaticMethodKind('AsBool', '(_ py: Py, object: PyObject) -> PyBool')
 _asInt = StaticMethodKind('AsInt', '(_ py: Py, object: PyObject) -> PyResult<PyInt>')
 _asFloat = StaticMethodKind('AsFloat', '(_ py: Py, object: PyObject) -> PyResult<PyFloat>')

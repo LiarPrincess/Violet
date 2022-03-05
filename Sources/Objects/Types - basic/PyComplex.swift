@@ -22,6 +22,8 @@ public struct PyComplex: PyObjectMixin {
     This is equivalent to (real + imag*1j) where imag defaults to 0.
     """
 
+  private static let typeName = "complex"
+
   // sourcery: includeInLayout
   internal var real: Double { self.realPtr.pointee }
   // sourcery: includeInLayout
@@ -54,32 +56,25 @@ public struct PyComplex: PyObjectMixin {
   // MARK: - Equatable, comparable
 
   // sourcery: pymethod = __eq__
-  internal static func __eq__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
+  internal static func __eq__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__eq__")
+      return .invalidSelfArgument(zelf, Self.typeName, .__eq__)
     }
 
-    let isEqual = Self.isEqual(py, zelf: zelf, other: other)
-    return isEqual.toResult(py)
+    return Self.isEqual(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __ne__
-  internal static func __ne__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
+  internal static func __ne__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__ne__")
+      return .invalidSelfArgument(zelf, Self.typeName, .__ne__)
     }
 
     let isEqual = Self.isEqual(py, zelf: zelf, other: other)
-    return isEqual.not.toResult(py)
+    return isEqual.not
   }
 
-  private static func isEqual(_ py: Py,
-                              zelf: PyComplex,
-                              other: PyObject) -> CompareResult {
+  private static func isEqual(_ py: Py, zelf: PyComplex, other: PyObject) -> CompareResult {
     let real = zelf.real
     let imag = zelf.imag
 
@@ -108,49 +103,41 @@ public struct PyComplex: PyObjectMixin {
   }
 
   // sourcery: pymethod = __lt__
-  internal static func __lt__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
-    return Self.compareOperation(py, zelf: zelf, fnName: "__lt__")
+  internal static func __lt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compareOperation(py, zelf: zelf, op: .__lt__)
   }
 
   // sourcery: pymethod = __le__
-  internal static func __le__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
-    return Self.compareOperation(py, zelf: zelf, fnName: "__le__")
+  internal static func __le__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compareOperation(py, zelf: zelf, op: .__le__)
   }
 
   // sourcery: pymethod = __gt__
-  internal static func __gt__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
-    return Self.compareOperation(py, zelf: zelf, fnName: "__gt__")
+  internal static func __gt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compareOperation(py, zelf: zelf, op: .__gt__)
   }
 
   // sourcery: pymethod = __ge__
-  internal static func __ge__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
-    return Self.compareOperation(py, zelf: zelf, fnName: "__ge__")
+  internal static func __ge__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compareOperation(py, zelf: zelf, op: .__ge__)
   }
 
   private static func compareOperation(_ py: Py,
                                        zelf: PyObject,
-                                       fnName: String) -> PyResult<PyObject> {
+                                       op: CompareResult.Operation) -> CompareResult {
     guard py.cast.isComplex(zelf.asObject) else {
-      return Self.invalidSelfArgument(py, zelf, fnName)
+      return .invalidSelfArgument(zelf, Self.typeName, op)
     }
 
-    return .notImplemented(py)
+    return .notImplemented
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal static func __hash__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__hash__")
+      return .invalidSelfArgument(zelf, Self.typeName)
     }
 
     let realHash = py.hasher.hash(zelf.real)
@@ -165,7 +152,7 @@ public struct PyComplex: PyObjectMixin {
     // Overflows are acceptable (and surprisingly common).
     let imagHashNeg = Hasher.imag &* imagHash
     let result = realHash &+ imagHashNeg
-    return result.toResult(py)
+    return .value(result)
   }
 
   // MARK: - String
@@ -1027,7 +1014,7 @@ public struct PyComplex: PyObjectMixin {
                                           _ object: PyObject,
                                           _ fnName: String) -> PyResult<PyObject> {
     let error = py.newInvalidSelfArgumentError(object: object,
-                                               expectedType: "complex",
+                                               expectedType: Self.typeName,
                                                fnName: fnName)
 
     return .error(error.asBaseException)

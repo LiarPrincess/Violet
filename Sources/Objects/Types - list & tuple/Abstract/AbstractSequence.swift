@@ -6,27 +6,21 @@ internal protocol AbstractSequence: PyObjectMixin {
 
   /// Name of the type.
   /// Used mainly in error messages.
-  static var abstractPythonTypeName: String { get }
+  static var typeName: String { get }
 
   /// Main requirement.
   var elements: Elements { get }
 
   /// Create new Python object with specified elements.
-  ///
-  /// DO NOT USE! This is a part of `AbstractSequence` implementation.
   static func newSelf(_ py: Py, elements: Elements) -> Self
 
   /// Convert `object` to this type.
   ///
   /// - For `tuple` it should return `tuple`.
   /// - For `list` it should return `list`.
-  ///
-  /// DO NOT USE! This is a part of `AbstractSequence` implementation.
   static func castAsSelf(_ py: Py, _ object: PyObject) -> Self?
 
   /// Create an error when the `zelf` argument is not valid.
-  ///
-  /// DO NOT USE! This is a part of `AbstractSequence` implementation.
   static func invalidSelfArgument(_ py: Py,
                                   _ object: PyObject,
                                   _ fnName: String) -> PyResult<PyObject>

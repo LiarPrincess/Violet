@@ -16,6 +16,8 @@ public struct PyNamespace: PyObjectMixin {
     SimpleNamespace(**kwargs)
     """
 
+  private static let typeName = "SimpleNamespace"
+
   public let ptr: RawPtr
 
   public init(ptr: RawPtr) {
@@ -34,75 +36,53 @@ public struct PyNamespace: PyObjectMixin {
     return "PyNamespace(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-  // MARK: - Equatable
+  // MARK: - Equatable, comparable
 
   // sourcery: pymethod = __eq__
-  internal static func __eq__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
-    return Self.isEqual(py, zelf: zelf, other: other, fnName: "__eq__", not: false)
+  internal static func __eq__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.typeName, .__eq__)
+    }
+
+    return Self.isEqual(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __ne__
-  internal static func __ne__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
-    return Self.isEqual(py, zelf: zelf, other: other, fnName: "__ne__", not: true)
-  }
-
-  private static func isEqual(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject,
-                              fnName: String,
-                              not: Bool) -> PyResult<PyObject> {
+  internal static func __ne__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName)
+      return .invalidSelfArgument(zelf, Self.typeName, .__ne__)
     }
 
-    guard let other = py.cast.asNamespace(other) else {
-      return .notImplemented(py)
-    }
-
-    let result = zelf.__dict__.isEqual(other.__dict__)
-    switch result {
-    case .value(let isEqual):
-      let result = not ? !isEqual : isEqual
-      return result.toResult(py)
-    case .notImplemented:
-      return .notImplemented(py)
-    case .error(let e):
-      return .error(e)
-    }
+    let isEqual = Self.isEqual(py, zelf: zelf, other: other)
+    return isEqual.not
   }
 
-  // MARK: - Comparable
+  private static func isEqual(_ py: Py, zelf: PyNamespace, other: PyObject) -> CompareResult {
+    guard let other = py.cast.asNamespace(other) else {
+      return .notImplemented
+    }
+
+    return zelf.__dict__.isEqual(other.__dict__)
+  }
 
   // sourcery: pymethod = __lt__
-  internal static func __lt__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
-    return .notImplemented(py)
+  internal static func __lt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return .notImplemented
   }
 
   // sourcery: pymethod = __le__
-  internal static func __le__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
-    return .notImplemented(py)
+  internal static func __le__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return .notImplemented
   }
 
   // sourcery: pymethod = __gt__
-  internal static func __gt__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
-    return .notImplemented(py)
+  internal static func __gt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return .notImplemented
   }
 
   // sourcery: pymethod = __ge__
-  internal static func __ge__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
-    return .notImplemented(py)
+  internal static func __ge__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return .notImplemented
   }
 
   // MARK: - Class
@@ -258,7 +238,7 @@ public struct PyNamespace: PyObjectMixin {
                                            _ object: PyObject,
                                            _ fnName: String) -> PyResult<PyObject> {
     let error = py.newInvalidSelfArgumentError(object: object,
-                                               expectedType: "SimpleNamespace",
+                                               expectedType: Self.typeName,
                                                fnName: fnName)
 
     return .error(error.asBaseException)

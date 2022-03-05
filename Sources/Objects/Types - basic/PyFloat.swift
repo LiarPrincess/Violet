@@ -25,6 +25,8 @@ public struct PyFloat: PyObjectMixin {
     Convert a string or number to a floating point number, if possible.
     """
 
+  private static let typeName = "float"
+
   // sourcery: includeInLayout
   internal var value: Double { self.valuePtr.pointee }
 
@@ -51,86 +53,70 @@ public struct PyFloat: PyObjectMixin {
   // MARK: - Equatable, comparable
 
   // sourcery: pymethod = __eq__
-  internal static func __eq__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
+  internal static func __eq__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__eq__")
+      return .invalidSelfArgument(zelf, Self.typeName, .__eq__)
     }
 
-    let result = FloatCompareHelper.isEqual(py, left:zelf.value, right: other)
-    return result.toResult(py)
+    return FloatCompareHelper.isEqual(py, left: zelf.value, right: other)
   }
+
   // sourcery: pymethod = __ne__
-  internal static func __ne__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
+  internal static func __ne__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__ne__")
+      return .invalidSelfArgument(zelf, Self.typeName, .__ne__)
     }
 
-    let result = FloatCompareHelper.isNotEqual(py, left:zelf.value, right: other)
-    return result.toResult(py)
+    let isEqual = FloatCompareHelper.isEqual(py, left: zelf.value, right: other)
+    return isEqual.not
   }
 
   // sourcery: pymethod = __lt__
-  internal static func __lt__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
+  internal static func __lt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__lt__")
+      return .invalidSelfArgument(zelf, Self.typeName, .__lt__)
     }
 
-    let result = FloatCompareHelper.isLess(py, left:zelf.value, right: other)
-    return result.toResult(py)
+    return FloatCompareHelper.isLess(py, left:zelf.value, right: other)
   }
 
   // sourcery: pymethod = __le__
-  internal static func __le__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
+  internal static func __le__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__le__")
+      return .invalidSelfArgument(zelf, Self.typeName, .__le__)
     }
 
-    let result = FloatCompareHelper.isLessEqual(py, left:zelf.value, right: other)
-    return result.toResult(py)
+    return FloatCompareHelper.isLessEqual(py, left:zelf.value, right: other)
   }
 
   // sourcery: pymethod = __gt__
-  internal static func __gt__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
+  internal static func __gt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__gt__")
+      return .invalidSelfArgument(zelf, Self.typeName, .__gt__)
     }
 
-    let result = FloatCompareHelper.isGreater(py, left:zelf.value, right: other)
-    return result.toResult(py)
+    return FloatCompareHelper.isGreater(py, left:zelf.value, right: other)
   }
 
   // sourcery: pymethod = __ge__
-  internal static func __ge__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
+  internal static func __ge__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__ge__")
+      return .invalidSelfArgument(zelf, Self.typeName, .__ge__)
     }
 
-    let result = FloatCompareHelper.isGreaterEqual(py, left:zelf.value, right: other)
-    return result.toResult(py)
+    return FloatCompareHelper.isGreaterEqual(py, left:zelf.value, right: other)
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal static func __hash__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__hash__")
+      return .invalidSelfArgument(zelf, Self.typeName)
     }
 
     let result = py.hasher.hash(zelf.value)
-    return result.toResult(py)
+    return .value(result)
   }
 
   // MARK: - String
@@ -901,13 +887,15 @@ public struct PyFloat: PyObjectMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     if Self.isBuiltinFloatType(py, type: type) {
-      if let e = ArgumentParser.noKwargsOrError(py, fnName: "float", kwargs: kwargs) {
+      if let e = ArgumentParser.noKwargsOrError(py,
+                                                fnName: Self.typeName,
+                                                kwargs: kwargs) {
         return .error(e.asBaseException)
       }
     }
 
     if let e = ArgumentParser.guaranteeArgsCountOrError(py,
-                                                        fnName: "float",
+                                                        fnName: Self.typeName,
                                                         args: args,
                                                         min: 0,
                                                         max: 1) {
@@ -1175,7 +1163,7 @@ public struct PyFloat: PyObjectMixin {
                                            _ object: PyObject,
                                            _ fnName: String) -> PyResult<PyObject> {
     let error = py.newInvalidSelfArgumentError(object: object,
-                                               expectedType: "float",
+                                               expectedType: Self.typeName,
                                                fnName: fnName)
 
     return .error(error.asBaseException)

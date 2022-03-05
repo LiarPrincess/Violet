@@ -91,9 +91,9 @@ public enum PyStaticCall {
     // MARK: - Aliases
 
     public typealias StringConversion = (Py, PyObject) -> PyResult<PyObject>
-    public typealias Hash = (Py, PyObject) -> PyResult<PyObject>
-    public typealias Dir = (Py, PyObject) -> PyResult<PyObject>
-    public typealias Comparison = (Py, PyObject, PyObject) -> PyResult<PyObject>
+    public typealias Hash = (Py, PyObject) -> HashResult
+    public typealias Dir = (Py, PyObject) -> PyResult<DirResult>
+    public typealias Comparison = (Py, PyObject, PyObject) -> CompareResult
     public typealias AsBool = (Py, PyObject) -> PyBool
     public typealias AsInt = (Py, PyObject) -> PyResult<PyInt>
     public typealias AsFloat = (Py, PyObject) -> PyResult<PyFloat>
@@ -584,7 +584,7 @@ public enum PyStaticCall {
 
   // MARK: - __hash__
 
-  internal static func __hash__(_ py: Py, object: PyObject) -> PyResult<PyObject>? {
+  internal static func __hash__(_ py: Py, object: PyObject) -> HashResult? {
     if let method = object.type.staticMethods.__hash__ {
       return method(py, object)
     }
@@ -594,7 +594,7 @@ public enum PyStaticCall {
 
   // MARK: - __dir__
 
-  internal static func __dir__(_ py: Py, object: PyObject) -> PyResult<PyObject>? {
+  internal static func __dir__(_ py: Py, object: PyObject) -> PyResult<DirResult>? {
     if let method = object.type.staticMethods.__dir__ {
       return method(py, object)
     }
@@ -604,7 +604,7 @@ public enum PyStaticCall {
 
   // MARK: - __eq__
 
-  internal static func __eq__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __eq__(_ py: Py, left: PyObject, right: PyObject) -> CompareResult? {
     if let method = left.type.staticMethods.__eq__ {
       return method(py, left, right)
     }
@@ -614,7 +614,7 @@ public enum PyStaticCall {
 
   // MARK: - __ne__
 
-  internal static func __ne__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __ne__(_ py: Py, left: PyObject, right: PyObject) -> CompareResult? {
     if let method = left.type.staticMethods.__ne__ {
       return method(py, left, right)
     }
@@ -624,7 +624,7 @@ public enum PyStaticCall {
 
   // MARK: - __lt__
 
-  internal static func __lt__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __lt__(_ py: Py, left: PyObject, right: PyObject) -> CompareResult? {
     if let method = left.type.staticMethods.__lt__ {
       return method(py, left, right)
     }
@@ -634,7 +634,7 @@ public enum PyStaticCall {
 
   // MARK: - __le__
 
-  internal static func __le__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __le__(_ py: Py, left: PyObject, right: PyObject) -> CompareResult? {
     if let method = left.type.staticMethods.__le__ {
       return method(py, left, right)
     }
@@ -644,7 +644,7 @@ public enum PyStaticCall {
 
   // MARK: - __gt__
 
-  internal static func __gt__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __gt__(_ py: Py, left: PyObject, right: PyObject) -> CompareResult? {
     if let method = left.type.staticMethods.__gt__ {
       return method(py, left, right)
     }
@@ -654,7 +654,7 @@ public enum PyStaticCall {
 
   // MARK: - __ge__
 
-  internal static func __ge__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __ge__(_ py: Py, left: PyObject, right: PyObject) -> CompareResult? {
     if let method = left.type.staticMethods.__ge__ {
       return method(py, left, right)
     }

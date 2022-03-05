@@ -178,13 +178,6 @@ internal enum FloatCompareHelper {
     return EqualCompare.compare(py, left: left, right: right)
   }
 
-  internal static func isNotEqual(_ py: Py,
-                                  left: Double,
-                                  right: PyObject) -> CompareResult {
-    let isEqual = Self.isEqual(py, left: left, right: right)
-    return isEqual.not
-  }
-
   // MARK: - Less
 
   private enum LessCompare: Abstract {

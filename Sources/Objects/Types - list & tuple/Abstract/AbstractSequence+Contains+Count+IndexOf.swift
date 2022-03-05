@@ -87,9 +87,8 @@ extension AbstractSequence {
       }
     }
 
-    let typeName = Self.abstractPythonTypeName
-    let message = "\(typeName).index(x): x not in \(typeName)"
-    return .valueError(py, message: message)
+    let typeName = Self.typeName
+    return .valueError(py, message: "\(typeName).index(x): x not in \(typeName)")
   }
 
   private func getSubsequence(_ py: Py,
