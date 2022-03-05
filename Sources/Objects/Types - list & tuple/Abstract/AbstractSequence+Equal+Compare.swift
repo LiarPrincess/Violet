@@ -11,7 +11,7 @@ extension AbstractSequence {
   internal static func abstract__eq__(_ py: Py,
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return .invalidSelfArgument(zelf, Self.typeName, .__eq__)
     }
 
@@ -21,7 +21,7 @@ extension AbstractSequence {
   internal static func abstract__ne__(_ py: Py,
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return .invalidSelfArgument(zelf, Self.typeName, .__ne__)
     }
 
@@ -30,7 +30,7 @@ extension AbstractSequence {
   }
 
   private static func isEqual(_ py: Py, zelf: Self, other: PyObject) -> CompareResult {
-    guard let other = Self.castAsSelf(py, other) else {
+    guard let other = Self.downcast(py, other) else {
       return .notImplemented
     }
 
@@ -53,11 +53,11 @@ extension AbstractSequence {
   internal static func abstract__lt__(_ py: Py,
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return .invalidSelfArgument(zelf, Self.typeName, .__lt__)
     }
 
-    guard let other = Self.castAsSelf(py, other) else {
+    guard let other = Self.downcast(py, other) else {
       return .notImplemented
     }
 
@@ -78,11 +78,11 @@ extension AbstractSequence {
   internal static func abstract__le__(_ py: Py,
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return .invalidSelfArgument(zelf, Self.typeName, .__le__)
     }
 
-    guard let other = Self.castAsSelf(py, other) else {
+    guard let other = Self.downcast(py, other) else {
       return .notImplemented
     }
 
@@ -103,11 +103,11 @@ extension AbstractSequence {
   internal static func abstract__gt__(_ py: Py,
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return .invalidSelfArgument(zelf, Self.typeName, .__gt__)
     }
 
-    guard let other = Self.castAsSelf(py, other) else {
+    guard let other = Self.downcast(py, other) else {
       return .notImplemented
     }
 
@@ -128,11 +128,11 @@ extension AbstractSequence {
   internal static func abstract__ge__(_ py: Py,
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return .invalidSelfArgument(zelf, Self.typeName, .__ge__)
     }
 
-    guard let other = Self.castAsSelf(py, other) else {
+    guard let other = Self.downcast(py, other) else {
       return .notImplemented
     }
 

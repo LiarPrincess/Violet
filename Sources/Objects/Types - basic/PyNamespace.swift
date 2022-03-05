@@ -97,7 +97,7 @@ public struct PyNamespace: PyObjectMixin {
   // sourcery: pyproperty = __dict__
   internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__dict__")
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.__dict__
@@ -109,7 +109,7 @@ public struct PyNamespace: PyObjectMixin {
   // sourcery: pymethod = __repr__
   internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__repr__")
+      return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
     let isBuiltin = zelf.type === py.types.simpleNamespace
@@ -155,7 +155,7 @@ public struct PyNamespace: PyObjectMixin {
                                         zelf: PyObject,
                                         name: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__getattribute__")
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
 
     return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
@@ -167,7 +167,7 @@ public struct PyNamespace: PyObjectMixin {
                                    name: PyObject,
                                    value: PyObject?) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__setattr__")
+      return Self.invalidZelfArgument(py, zelf, "__setattr__")
     }
 
     return AttributeHelper.setAttribute(py, object: zelf.asObject, name: name, value: value)
@@ -178,7 +178,7 @@ public struct PyNamespace: PyObjectMixin {
                                    zelf: PyObject,
                                    name: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__delattr__")
+      return Self.invalidZelfArgument(py, zelf, "__delattr__")
     }
 
     return AttributeHelper.delAttribute(py, object: zelf.asObject, name: name)
@@ -204,7 +204,7 @@ public struct PyNamespace: PyObjectMixin {
                                 args: [PyObject],
                                 kwargs: PyDict?) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__init__")
+      return Self.invalidZelfArgument(py, zelf, "__init__")
     }
 
     guard args.isEmpty else {
@@ -234,7 +234,7 @@ public struct PyNamespace: PyObjectMixin {
     return py.cast.asNamespace(object)
   }
 
-  internal static func invalidSelfArgument(_ py: Py,
+  internal static func invalidZelfArgument(_ py: Py,
                                            _ object: PyObject,
                                            _ fnName: String) -> PyResult<PyObject> {
     let error = py.newInvalidSelfArgumentError(object: object,

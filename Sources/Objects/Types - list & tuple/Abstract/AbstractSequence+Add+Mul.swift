@@ -13,11 +13,11 @@ extension AbstractSequence {
                                        zelf: PyObject,
                                        other: PyObject,
                                        isTuple: Bool) -> PyResult<PyObject> {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__add__")
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__add__")
     }
 
-    guard let other = Self.castAsSelf(py, other) else {
+    guard let other = Self.downcast(py, other) else {
       let selfType = Self.typeName
       let otherType = other.typeName
       let message = "can only concatenate \(selfType) (not '\(otherType)') to \(selfType)"
@@ -40,7 +40,7 @@ extension AbstractSequence {
     elements.append(contentsOf: zelf.elements)
     elements.append(contentsOf: other.elements)
 
-    let result = Self.newSelf(py, elements: elements)
+    let result = Self.newObject(py, elements: elements)
     return .value(result.asObject)
   }
 
@@ -50,8 +50,8 @@ extension AbstractSequence {
                                        zelf: PyObject,
                                        other: PyObject,
                                        isTuple: Bool) -> PyResult<PyObject> {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__mul__")
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__mul__")
     }
 
     return Self.common__mul__(py, zelf: zelf, other: other, isTuple: isTuple)
@@ -61,8 +61,8 @@ extension AbstractSequence {
                                         zelf: PyObject,
                                         other: PyObject,
                                         isTuple: Bool) -> PyResult<PyObject> {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__rmul__")
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__rmul__")
     }
 
     return Self.common__mul__(py, zelf: zelf, other: other, isTuple: isTuple)
@@ -86,7 +86,7 @@ extension AbstractSequence {
     var copy = zelf.elements
     Self.abstractMul(elements: &copy, count: count)
 
-    let result = Self.newSelf(py, elements: copy)
+    let result = Self.newObject(py, elements: copy)
     return .value(result.asObject)
   }
 

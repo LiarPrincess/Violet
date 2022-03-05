@@ -171,7 +171,7 @@ public struct PyComplex: PyObjectMixin {
                                zelf: PyObject,
                                fnName: String) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName)
+      return Self.invalidZelfArgument(py, zelf, fnName)
     }
 
     let real = zelf.real
@@ -208,7 +208,7 @@ public struct PyComplex: PyObjectMixin {
   // sourcery: pymethod = __bool__
   internal static func __bool__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__bool__")
+      return Self.invalidZelfArgument(py, zelf, "__bool__")
     }
 
     let bothZero = zelf.real.isZero && zelf.imag.isZero
@@ -219,7 +219,7 @@ public struct PyComplex: PyObjectMixin {
   // sourcery: pymethod = __int__
   internal static func __int__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard py.cast.isComplex(zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__int__")
+      return Self.invalidZelfArgument(py, zelf, "__int__")
     }
 
     return .typeError(py, message: "can't convert complex to int")
@@ -228,7 +228,7 @@ public struct PyComplex: PyObjectMixin {
   // sourcery: pymethod = __float__
   internal static func __float__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard py.cast.isComplex(zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__float__")
+      return Self.invalidZelfArgument(py, zelf, "__float__")
     }
 
     return .typeError(py, message: "can't convert complex to float")
@@ -239,7 +239,7 @@ public struct PyComplex: PyObjectMixin {
   // sourcery: pyproperty = real
   internal static func real(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "real")
+      return Self.invalidZelfArgument(py, zelf, "real")
     }
 
     let result = zelf.real
@@ -249,7 +249,7 @@ public struct PyComplex: PyObjectMixin {
   // sourcery: pyproperty = imag
   internal static func imag(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "real")
+      return Self.invalidZelfArgument(py, zelf, "real")
     }
 
     let result = zelf.imag
@@ -281,7 +281,7 @@ public struct PyComplex: PyObjectMixin {
                                         zelf: PyObject,
                                         name: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__getattribute__")
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
 
     return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
@@ -318,7 +318,7 @@ public struct PyComplex: PyObjectMixin {
   // sourcery: pymethod = __abs__
   internal static func __abs__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__abs__")
+      return Self.invalidZelfArgument(py, zelf, "__abs__")
     }
 
     let real = zelf.real
@@ -471,7 +471,7 @@ public struct PyComplex: PyObjectMixin {
                                    fnName: String,
                                    isZelfBase: Bool) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName)
+      return Self.invalidZelfArgument(py, zelf, fnName)
     }
 
     guard py.cast.isNilOrNone(mod) else {
@@ -552,7 +552,7 @@ public struct PyComplex: PyObjectMixin {
                                        fnName: String,
                                        isZelfLeft: Bool) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName)
+      return Self.invalidZelfArgument(py, zelf, fnName)
     }
 
     switch Self.asComplex(py, object: other) {
@@ -589,7 +589,7 @@ public struct PyComplex: PyObjectMixin {
                                     zelf: PyObject,
                                     other: PyObject) -> PyResult<PyObject> {
     guard py.cast.isComplex(zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__floordiv__")
+      return Self.invalidZelfArgument(py, zelf, "__floordiv__")
     }
 
     return .typeError(py, message: Self.floordivError)
@@ -600,7 +600,7 @@ public struct PyComplex: PyObjectMixin {
                                      zelf: PyObject,
                                      other: PyObject) -> PyResult<PyObject> {
     guard py.cast.isComplex(zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__rfloordiv__")
+      return Self.invalidZelfArgument(py, zelf, "__rfloordiv__")
     }
 
     return .typeError(py, message: Self.floordivError)
@@ -615,7 +615,7 @@ public struct PyComplex: PyObjectMixin {
                                zelf: PyObject,
                                other: PyObject) -> PyResult<PyObject> {
     guard py.cast.isComplex(zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__mod__")
+      return Self.invalidZelfArgument(py, zelf, "__mod__")
     }
 
     return .typeError(py, message: Self.modError)
@@ -626,7 +626,7 @@ public struct PyComplex: PyObjectMixin {
                                 zelf: PyObject,
                                 other: PyObject) -> PyResult<PyObject> {
     guard py.cast.isComplex(zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__rmod__")
+      return Self.invalidZelfArgument(py, zelf, "__rmod__")
     }
 
     return .typeError(py, message: Self.modError)
@@ -641,7 +641,7 @@ public struct PyComplex: PyObjectMixin {
                                   zelf: PyObject,
                                   other: PyObject) -> PyResult<PyObject> {
     guard py.cast.isComplex(zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__divmod__")
+      return Self.invalidZelfArgument(py, zelf, "__divmod__")
     }
 
     return .typeError(py, message: Self.divmodError)
@@ -652,7 +652,7 @@ public struct PyComplex: PyObjectMixin {
                                    zelf: PyObject,
                                    other: PyObject) -> PyResult<PyObject> {
     guard py.cast.isComplex(zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__rdivmod__")
+      return Self.invalidZelfArgument(py, zelf, "__rdivmod__")
     }
 
     return .typeError(py, message: Self.divmodError)
@@ -663,7 +663,7 @@ public struct PyComplex: PyObjectMixin {
   // sourcery: pymethod = __getnewargs__
   internal static func __getnewargs__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__getnewargs__")
+      return Self.invalidZelfArgument(py, zelf, "__getnewargs__")
     }
 
     let real = py.newFloat(zelf.real)
@@ -926,7 +926,7 @@ public struct PyComplex: PyObjectMixin {
                                      fnName: String,
                                      fn: (Raw) -> Raw) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName)
+      return Self.invalidZelfArgument(py, zelf, fnName)
     }
 
     let zelfRaw = Raw(zelf)
@@ -940,7 +940,7 @@ public struct PyComplex: PyObjectMixin {
                                       fnName: String,
                                       fn: (Raw, Raw) -> Raw) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, fnName)
+      return Self.invalidZelfArgument(py, zelf, fnName)
     }
 
     switch Self.asComplex(py, object: other) {
@@ -1010,7 +1010,7 @@ public struct PyComplex: PyObjectMixin {
     return py.cast.asComplex(object)
   }
 
-  private static func invalidSelfArgument(_ py: Py,
+  private static func invalidZelfArgument(_ py: Py,
                                           _ object: PyObject,
                                           _ fnName: String) -> PyResult<PyObject> {
     let error = py.newInvalidSelfArgumentError(object: object,

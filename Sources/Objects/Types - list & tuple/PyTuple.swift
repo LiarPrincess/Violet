@@ -47,19 +47,19 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
 
   internal static let typeName = "tuple"
 
-  internal static func newSelf(_ py: Py, elements: [PyObject]) -> PyTuple {
+  internal static func newObject(_ py: Py, elements: [PyObject]) -> PyTuple {
     return py.newTuple(elements: elements)
   }
 
-  internal static func castAsSelf(_ py: Py, _ object: PyObject) -> PyTuple? {
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyTuple? {
     return py.cast.asTuple(object)
   }
 
   internal static func castZelf(_ py: Py, _ object: PyObject) -> PyTuple? {
-    return castAsSelf(py, object)
+    return downcast(py, object)
   }
 
-  internal static func invalidSelfArgument(_ py: Py,
+  internal static func invalidZelfArgument(_ py: Py,
                                            _ object: PyObject,
                                            _ fnName: String) -> PyResult<PyObject> {
     let error = py.newInvalidSelfArgumentError(object: object,
@@ -135,7 +135,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
   // sourcery: pymethod = __repr__
   internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__repr__")
+      return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
     if zelf.isEmpty {
@@ -171,7 +171,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
                                         zelf: PyObject,
                                         name: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__getattribute__")
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
 
     return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
@@ -188,8 +188,8 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
 
   // sourcery: pymethod = __len__
   internal static func __len__(_ py: Py, zelf: PyObject)-> PyResult<PyObject> {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__len__")
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__len__")
     }
 
     let result = zelf.count
@@ -232,8 +232,8 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
 
   // sourcery: pymethod = __iter__
   internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castAsSelf(py, zelf) else {
-      return Self.invalidSelfArgument(py, zelf, "__iter__")
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
     let result = py.newTupleIterator(tuple: zelf)
