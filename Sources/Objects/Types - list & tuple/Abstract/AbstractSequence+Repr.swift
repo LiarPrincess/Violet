@@ -1,15 +1,13 @@
-/* MARKER
 extension AbstractSequence {
 
-  /// DO NOT USE! This is a part of `AbstractSequence` implementation.
-  internal func _joinElementsForRepr() -> PyResult<String> {
+  internal static func abstractJoinElementsForRepr(_ py: Py, zelf: Self) -> PyResult<String> {
     var result = ""
-    for element in self.elements {
+    for element in zelf.elements {
       if !result.isEmpty {
         result += ", "
       }
 
-      switch Py.reprString(object: element) {
+      switch py.reprString(object: element) {
       case let .value(s): result.append(s)
       case let .error(e): return .error(e)
       }
@@ -18,5 +16,3 @@ extension AbstractSequence {
     return .value(result)
   }
 }
-
-*/

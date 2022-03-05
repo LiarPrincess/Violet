@@ -1,95 +1,4 @@
-/* MARKER
 import BigInt
-
-extension AbstractSequence {
-
-  // MARK: - Contains
-
-  /// DO NOT USE! This is a part of `AbstractSequence` implementation.
-  internal func _contains(object: PyObject) -> PyResult<Bool> {
-    for element in self.elements {
-      switch Py.isEqualBool(left: element, right: object) {
-      case .value(true):
-        return .value(true)
-      case .value(false):
-        break // go to next element
-      case .error(let e):
-        return .error(e)
-      }
-    }
-
-    return .value(false)
-  }
-
-  // MARK: - Count
-
-  /// DO NOT USE! This is a part of `AbstractSequence` implementation.
-  internal func _count(object: PyObject) -> PyResult<BigInt> {
-    var result = BigInt()
-
-    for e in self.elements {
-      switch Py.isEqualBool(left: e, right: object) {
-      case .value(true): result += 1
-      case .value(false): break // go to next element
-      case .error(let e): return .error(e)
-      }
-    }
-
-    return .value(result)
-  }
-
-  // MARK: - Index of
-
-  /// DO NOT USE! This is a part of `AbstractSequence` implementation.
-  internal func _indexOf(object: PyObject,
-                         start: PyObject?,
-                         end: PyObject?) -> PyResult<BigInt> {
-    let subsequence: SubSequence
-    switch self._getSubsequence(start: start, end: end) {
-    case let .value(s): subsequence = s
-    case let .error(e): return .error(e)
-    }
-
-    for (index, e) in subsequence.enumerated() {
-      switch Py.isEqualBool(left: e, right: object) {
-      case .value(true):
-        return .value(BigInt(index))
-      case .value(false):
-        break // go to next element
-      case .error(let e):
-        return .error(e)
-      }
-    }
-
-    let typeName = Self._pythonTypeName
-    return .valueError("\(typeName).index(x): x not in \(typeName)")
-  }
-
-  // MARK: - Subsequence
-
-  /// DO NOT USE! This is a part of `AbstractSequence` implementation.
-  private func _getSubsequence(start: PyObject?,
-                               end: PyObject?) -> PyResult<SubSequence> {
-
-    let startIndex: Index
-    switch self._extractIndex(start) {
-    case .none: startIndex = self.elements.startIndex
-    case .index(let index): startIndex = index
-    case .error(let e): return .error(e)
-    }
-
-    var endIndex: Index
-    switch self._extractIndex(end) {
-    case .none: endIndex = self.elements.endIndex
-    case .index(let index): endIndex = index
-    case .error(let e): return .error(e)
-    }
-
-    return .value(self.elements[startIndex..<endIndex])
-  }
-}
-
-// MARK: - Index
 
 private enum ExtractIndexResult<Elements: Collection> {
   case none
@@ -99,36 +8,143 @@ private enum ExtractIndexResult<Elements: Collection> {
 
 extension AbstractSequence {
 
-  /// DO NOT USE! This is a part of `AbstractSequence` implementation.
-  private func _extractIndex(_ value: PyObject?) -> ExtractIndexResult<Elements> {
-    guard let value = value else {
+  // MARK: - Contains
+
+  internal static func abstract__contains__(_ py: Py,
+                                            zelf: PyObject,
+                                            object: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__contains__")
+    }
+
+    for element in zelf.elements {
+      switch py.isEqualBool(left: element, right: object) {
+      case .value(true):
+        let result = true
+        return result.toResult(py)
+      case .value(false):
+        break // go to next element
+      case .error(let e):
+        return .error(e)
+      }
+    }
+
+    let result = false
+    return result.toResult(py)
+  }
+
+  // MARK: - Count
+
+  internal static func abstractCount(_ py: Py,
+                                     zelf: PyObject,
+                                     object: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "count")
+    }
+
+    var result = BigInt()
+
+    for element in zelf.elements {
+      switch py.isEqualBool(left: element, right: object) {
+      case .value(true):
+        result += 1
+      case .value(false):
+        break // go to next element
+      case .error(let e):
+        return .error(e)
+      }
+    }
+
+    return result.toResult(py)
+  }
+
+  // MARK: - Index of
+
+  internal static func abstractIndex(_ py: Py,
+                                     zelf: PyObject,
+                                     object: PyObject,
+                                     start: PyObject?,
+                                     end: PyObject?) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "index")
+    }
+
+    let subsequence: SubSequence
+    switch zelf.getSubsequence(py, start: start, end: end) {
+    case let .value(s): subsequence = s
+    case let .error(e): return .error(e)
+    }
+
+    for (index, element) in subsequence.enumerated() {
+      switch py.isEqualBool(left: element, right: object) {
+      case .value(true):
+        let result = BigInt(index)
+        return result.toResult(py)
+      case .value(false):
+        break // go to next element
+      case .error(let e):
+        return .error(e)
+      }
+    }
+
+    let typeName = Self.abstractPythonTypeName
+    let message = "\(typeName).index(x): x not in \(typeName)"
+    return .valueError(py, message: message)
+  }
+
+  private func getSubsequence(_ py: Py,
+                              start: PyObject?,
+                              end: PyObject?) -> PyResult<SubSequence> {
+    let startIndex: Index
+    switch self.extractIndex(py, object: start) {
+    case .none: startIndex = self.elements.startIndex
+    case .index(let index): startIndex = index
+    case .error(let e): return .error(e)
+    }
+
+    var endIndex: Index
+    switch self.extractIndex(py, object: end) {
+    case .none: endIndex = self.elements.endIndex
+    case .index(let index): endIndex = index
+    case .error(let e): return .error(e)
+    }
+
+    let result = self.elements[startIndex..<endIndex]
+    return .value(result)
+  }
+
+  private func extractIndex(_ py: Py,
+                            object: PyObject?) -> ExtractIndexResult<Elements> {
+    guard let object = object else {
       return .none
     }
 
-    if PyCast.isNone(value) {
+    if py.cast.isNone(object) {
       return .none
     }
 
-    switch IndexHelper.int(value, onOverflow: .overflowError) {
+    let elements = self.elements
+
+    switch IndexHelper.int(py, object: object, onOverflow: .overflowError) {
     case var .value(index):
       if index < 0 {
-        index += self.elements.count
+        index += elements.count
         if index < 0 {
           index = 0
         }
       }
 
-      let start = self.elements.startIndex
-      let end = self.elements.endIndex
-      let result = self.elements.index(start, offsetBy: index, limitedBy: end)
+      let start = elements.startIndex
+      let end = elements.endIndex
+      let result = elements.index(start, offsetBy: index, limitedBy: end)
       return .index(result ?? end)
 
     case let .notIndex(lazyError):
-      let e = lazyError.create()
+      let e = lazyError.create(py)
       return .error(e)
 
     case let .overflow(_, lazyError):
-      let e = lazyError.create()
+      let e = lazyError.create(py)
       return .error(e)
 
     case let .error(e):
@@ -136,5 +152,3 @@ extension AbstractSequence {
     }
   }
 }
-
-*/

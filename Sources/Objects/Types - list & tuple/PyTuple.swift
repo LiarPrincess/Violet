@@ -23,14 +23,6 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
   // sourcery: includeInLayout
   internal var elements: [PyObject] { self.elementsPtr.pointee }
 
-  internal var isEmpty: Bool {
-    return self.elements.isEmpty
-  }
-
-  internal var count: Int {
-    return self.elements.count
-  }
-
   public let ptr: RawPtr
 
   public init(ptr: RawPtr) {
@@ -50,68 +42,96 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
     let count = zelf.count
     return "PyTuple(type: \(zelf.typeName), flags: \(zelf.flags), count: \(count))"
   }
-}
 
-/* MARKER
   // MARK: - AbstractSequence
 
-  internal static let _pythonTypeName = "tuple"
+  internal static let abstractPythonTypeName = "tuple"
 
-  internal static func _toSelf(elements: [PyObject]) -> PyTuple {
-    return Py.newTuple(elements: elements)
+  internal static func newSelf(_ py: Py, elements: [PyObject]) -> PyTuple {
+    return py.newTuple(elements: elements)
   }
 
-  internal static func _asSelf(object: PyObject) -> PyTuple? {
-    return PyCast.asTuple(object)
+  internal static func castAsSelf(_ py: Py, _ object: PyObject) -> PyTuple? {
+    return py.cast.asTuple(object)
   }
 
-  // MARK: - Equatable
+  internal static func castZelf(_ py: Py, _ object: PyObject) -> PyTuple? {
+    return castAsSelf(py, object)
+  }
+
+  internal static func invalidSelfArgument(_ py: Py,
+                                           _ object: PyObject,
+                                           _ fnName: String) -> PyResult<PyObject> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: "tuple",
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
+  }
+
+  // MARK: - Equatable, comparable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> CompareResult {
-    return self._isEqual(other: other)
+  internal static func __eq__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__eq__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> CompareResult {
-    return self._isNotEqual(other: other)
+  internal static func __ne__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__ne__(py, zelf: zelf, other: other)
   }
 
-  // MARK: - Comparable
-
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> CompareResult {
-    return self._isLess(other: other)
+  internal static func __lt__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__lt__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    return self._isLessEqual(other: other)
+  internal static func __le__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__le__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> CompareResult {
-    return self._isGreater(other: other)
+  internal static func __gt__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__gt__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
-    return self._isGreaterEqual(other: other)
+  internal static func __ge__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__ge__(py, zelf: zelf, other: other)
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> HashResult {
-    return PyTuple.calculateHash(elements: self.elements)
+  internal static func __hash__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__hash__")
+    }
+
+    let result = Self.calculateHash(py, elements: zelf.elements)
+    return result.asObject(py)
   }
 
-  internal static func calculateHash(elements: [PyObject]) -> HashResult {
+  internal static func calculateHash(_ py: Py,
+                                     elements: [PyObject]) -> PyResult<PyHash> {
     var x: PyHash = 0x34_5678
     var multiplier = Hasher.multiplier
 
     for e in elements {
-      switch Py.hash(object: e) {
+      switch py.hash(object: e) {
       case let .value(y):
         x = (x ^ y) &* multiplier
         multiplier &+= 82_520 + PyHash(2 * elements.count)
@@ -123,27 +143,35 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
     return .value(x &+ 97_531)
   }
 
+
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
-    if self._isEmpty {
-      return .value("()")
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__repr__")
+    }
+
+    if zelf.isEmpty {
+      let result = py.intern(string: "()")
+      return .value(result.asObject)
     }
 
     // While not mutable, it is still possible to end up with a cycle in a tuple
     // through an object that stores itself within a tuple (and thus infinitely
     // asks for the repr of itself).
-    if self.hasReprLock {
-      return .value("(...)")
+    if zelf.hasReprLock {
+      let result = py.intern(string: "(...)")
+      return .value(result.asObject)
     }
 
-    return self.withReprLock {
-      switch self._joinElementsForRepr() {
+    return zelf.withReprLock {
+      switch Self.abstractJoinElementsForRepr(py, zelf: zelf) {
       case let .value(elements):
-        let commaIfNeeded = self._length == 1 ? "," : ""
-        let result = "(" + elements + commaIfNeeded + ")"
-        return .value(result)
+        let commaIfSingleElement = zelf.count == 1 ? "," : ""
+        let result = "(" + elements + commaIfSingleElement + ")"
+        return result.toResult(py)
+
       case let .error(e):
         return .error(e)
       }
@@ -153,142 +181,129 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__getattribute__")
+    }
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal func getLength() -> BigInt {
-    return BigInt(self._length)
+  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__len__")
+    }
+
+    let result = zelf.count
+    return result.toResult(py)
   }
 
-  // MARK: - Contains
+  // MARK: - Contains, count, index of
 
   // sourcery: pymethod = __contains__
-  internal func contains(object: PyObject) -> PyResult<Bool> {
-    return self._contains(object: object)
+  internal static func __contains__(_ py: Py,
+                                    zelf: PyObject,
+                                    object: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__contains__(py, zelf: zelf, object: object)
   }
 
-  // MARK: - Get item
-
-  // sourcery: pymethod = __getitem__
-  internal func getItem(index: PyObject) -> PyResult<PyObject> {
-    return self._getItem(index: index)
-  }
-
-  // MARK: - Count
 
   // sourcery: pymethod = count
-  internal func count(object: PyObject) -> PyResult<BigInt> {
-    return self._count(object: object)
+  internal static func count(_ py: Py,
+                             zelf: PyObject,
+                             object: PyObject) -> PyResult<PyObject> {
+    return Self.abstractCount(py, zelf: zelf, object: object)
   }
 
-  // MARK: - Index of
-
   // Special overload for `index` static method
-  internal func indexOf(object: PyObject) -> PyResult<BigInt> {
-    return self.indexOf(object: object, start: nil, end: nil)
+  internal static func index(_ py: Py,
+                             zelf: PyObject,
+                             object: PyObject) -> PyResult<PyObject> {
+    return Self.index(py, zelf: zelf, object: object, start: nil, end: nil)
   }
 
   // sourcery: pymethod = index
-  internal func indexOf(object: PyObject,
-                        start: PyObject?,
-                        end: PyObject?) -> PyResult<BigInt> {
-    return self._indexOf(object: object, start: start, end: end)
+  internal static func index(_ py: Py,
+                             zelf: PyObject,
+                             object: PyObject,
+                             start: PyObject?,
+                             end: PyObject?) -> PyResult<PyObject> {
+    return Self.abstractIndex(py, zelf: zelf, object: object, start: start, end: end)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal func iter() -> PyObject {
-    return PyMemory.newTupleIterator(tuple: self)
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castAsSelf(py, zelf) else {
+      return Self.invalidSelfArgument(py, zelf, "__iter__")
+    }
+
+    let result = py.newTupleIterator(tuple: zelf)
+    return .value(result.asObject)
   }
 
-  // MARK: - Add
+  // MARK: - Get item
+
+  // sourcery: pymethod = __getitem__
+  internal static func __getitem__(_ py: Py,
+                                   zelf: PyObject,
+                                   index: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__getitem__(py, zelf: zelf, index: index)
+  }
+
+  // MARK: - Add, mul
 
   // sourcery: pymethod = __add__
-  internal func add(_ other: PyObject) -> PyResult<PyObject> {
-    switch self._handleAddArgument(object: other) {
-    case let .value(tuple):
-      let result = self.add(tuple)
-      return .value(result)
-    case let .error(e):
-      return .error(e)
-    }
+  internal static func __add__(_ py: Py,
+                               zelf: PyObject,
+                               other: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__add__(py, zelf: zelf, other: other, isTuple: true)
   }
-
-  private func add(_ other: PyTuple) -> PyTuple {
-    // Tuples are immutable, so we can do some minor performance improvements
-    if self._isEmpty {
-      return other
-    }
-
-    if other._isEmpty {
-      return self
-    }
-
-    return self._add(other: other)
-  }
-
-  // MARK: - Mul
 
   // sourcery: pymethod = __mul__
-  internal func mul(_ other: PyObject) -> PyResult<PyObject> {
-    switch self._handleMulArgument(object: other) {
-    case .value(let int):
-      let result = self.mul(int)
-      return .value(result)
-    case .notImplemented:
-      return .value(Py.notImplemented)
-    }
-  }
-
-  private func mul(_ count: BigInt) -> PyTuple {
-    // Tuples are immutable, so we can do some minor performance improvements
-
-    // swiftlint:disable:next empty_count
-    if count == 0 {
-      return Py.emptyTuple
-    }
-
-    if count == 1 {
-      return self
-    }
-
-    var copy = self.elements
-    self._mul(elements: &copy, count: count)
-    return Py.newTuple(elements: copy)
+  internal static func __mul__(_ py: Py,
+                               zelf: PyObject,
+                               other: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__mul__(py, zelf: zelf, other: other, isTuple: true)
   }
 
   // sourcery: pymethod = __rmul__
-  internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
-    return self.mul(other)
+  internal static func __rmul__(_ py: Py,
+                                zelf: PyObject,
+                                other: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__rmul__(py, zelf: zelf, other: other, isTuple: true)
   }
 
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyTuple> {
-    if let e = ArgumentParser.noKwargsOrError(fnName: "tuple", kwargs: kwargs) {
-      return .error(e)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    if let e = ArgumentParser.noKwargsOrError(py, fnName: "tuple", kwargs: kwargs) {
+      return .error(e.asBaseException)
     }
 
-    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "tuple",
+    if let e = ArgumentParser.guaranteeArgsCountOrError(py,
+                                                        fnName: "tuple",
                                                         args: args,
                                                         min: 0,
                                                         max: 1) {
-      return .error(e)
+      return .error(e.asBaseException)
     }
 
     let elements: [PyObject]
@@ -297,7 +312,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
       elements = []
     case 1:
       let iterable = args[0]
-      switch Py.toArray(iterable: iterable) {
+      switch py.toArray(iterable: iterable) {
       case let .value(e): elements = e
       case let .error(e): return .error(e)
       }
@@ -306,13 +321,11 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
     }
 
     // If this is a builtin then try to re-use interned values
-    let isBuiltin = type === Py.types.tuple
+    let isBuiltin = type === py.types.tuple
     let result: PyTuple = isBuiltin ?
-      Py.newTuple(elements: elements) :
-      PyMemory.newTuple(type: type, elements: elements)
+      py.newTuple(elements: elements) :
+      py.memory.newTuple(py, type: type, elements: elements)
 
-    return .value(result)
+    return .value(result.asObject)
   }
 }
-
-*/

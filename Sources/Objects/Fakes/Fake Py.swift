@@ -36,6 +36,7 @@ public struct Py {
   public func newCode(code: CodeObject) -> PyString { fatalError() }
   public func newTuple(elements: [PyObject]) -> PyTuple { fatalError() }
   public func newTuple(elements: PyObject...) -> PyTuple { fatalError() }
+  public func newTupleIterator(tuple: PyTuple) -> PyTupleIterator { fatalError() }
   public func newList(elements: [PyObject]) -> PyList { fatalError() }
   public func newDict() -> PyDict { fatalError() }
 
@@ -94,10 +95,13 @@ public struct Py {
     return type.isSubtype(of: baseException)
   }
 
-  public func isEqualBool(left: PyObject, right: PyObject) -> PyResult<Bool> {
-    return .value(false)
-  }
+  public func isEqualBool(left: PyObject, right: PyObject) -> PyResult<Bool> { fatalError() }
+  public func isLessBool(left: PyObject, right: PyObject) -> PyResult<Bool> { fatalError() }
+  public func isLessEqualBool(left: PyObject, right: PyObject) -> PyResult<Bool> { fatalError() }
+  public func isGreaterBool(left: PyObject, right: PyObject) -> PyResult<Bool> { fatalError() }
+  public func isGreaterEqualBool(left: PyObject, right: PyObject) -> PyResult<Bool> { fatalError() }
 
+  public func hash(object: PyObject) -> PyResult<PyHash> { fatalError() }
   public func intern(string: String) -> PyString { fatalError() }
   public func hashNotAvailable(_ o: PyObject) -> PyBaseException { fatalError() }
   public func get__dict__(object: PyObject) -> PyDict? { fatalError() }

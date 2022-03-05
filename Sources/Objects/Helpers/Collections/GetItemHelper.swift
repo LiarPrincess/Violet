@@ -1,4 +1,3 @@
-/* MARKER
 // swiftlint:disable yoda_condition
 
 internal enum GetItemResult<Element, SliceBuilderResult> {
@@ -41,13 +40,16 @@ internal protocol GetItemHelper {
 
 extension GetItemHelper {
 
+  // MARK: - PyObject index
+
   internal static func getItem(
+    _ py: Py,
     source: Source,
     index: PyObject
   ) -> GetItemResult<Source.Element, SliceBuilder.Result> {
-    switch IndexHelper.int(index, onOverflow: .indexError) {
+    switch IndexHelper.int(py, object: index, onOverflow: .indexError) {
     case .value(let index):
-      switch Self.getItem(source: source, index: index) {
+      switch Self.getItem(py, source: source, index: index) {
       case let .value(v): return .single(v)
       case let .error(e): return .error(e)
       }
@@ -56,15 +58,15 @@ extension GetItemHelper {
       break // Try slice
 
     case let .overflow(_, lazyError):
-      let e = lazyError.create()
+      let e = lazyError.create(py)
       return .error(e)
 
     case .error(let e):
       return .error(e)
     }
 
-    if let slice = PyCast.asSlice(index) {
-      switch Self.getSlice(source: source, slice: slice) {
+    if let slice = py.cast.asSlice(index) {
+      switch Self.getSlice(py, source: source, slice: slice) {
       case let .value(result):
         return .slice(result)
       case let .error(e):
@@ -72,13 +74,15 @@ extension GetItemHelper {
       }
     }
 
-    let msg = "indices must be integers or slices, not \(index.typeName)"
-    return .error(Py.newTypeError(msg: msg))
+    let message = "indices must be integers or slices, not \(index.typeName)"
+    let error = py.newTypeError(message: message)
+    return .error(error.asBaseException)
   }
 
   // MARK: - Int index
 
-  internal static func getItem(source: Source,
+  internal static func getItem(_ py: Py,
+                               source: Source,
                                index: Int) -> PyResult<Source.Element> {
     var index = index
     if index < 0 {
@@ -86,7 +90,7 @@ extension GetItemHelper {
     }
 
     guard 0 <= index && index < source.count else {
-      return .indexError("index out of range")
+      return .indexError(py, message: "index out of range")
     }
 
     let result = source[index]
@@ -95,7 +99,8 @@ extension GetItemHelper {
 
   // MARK: - Slice
 
-  internal static func getSlice(source: Source,
+  internal static func getSlice(_ py: Py,
+                                source: Source,
                                 slice: PySlice) -> PyResult<SliceBuilder.Result> {
     let indices: PySlice.AdjustedIndices
     switch slice.unpack() {
@@ -111,7 +116,7 @@ extension GetItemHelper {
     }
 
     if indices.step == 0 {
-      return .valueError("slice step cannot be zero")
+      return .valueError(py, message: "slice step cannot be zero")
     }
 
     if indices.step == 1 {
@@ -136,5 +141,3 @@ extension GetItemHelper {
     return .value(result)
   }
 }
-
-*/
