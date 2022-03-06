@@ -158,13 +158,11 @@ public struct PyDict: PyObjectMixin {
     }
 
     if zelf.elements.isEmpty {
-      let result = py.intern(string: "{}")
-      return .value(result.asObject)
+      return PyResult(py, interned:  "{}")
     }
 
     if zelf.hasReprLock {
-      let result = py.intern(string: "{...}")
-      return .value(result.asObject)
+      return PyResult(py, interned:  "{...}")
     }
 
     return zelf.withReprLock {
@@ -188,7 +186,7 @@ public struct PyDict: PyObjectMixin {
       }
 
       result += "}"
-      return result.toResult(py)
+      return PyResult(py, result)
     }
   }
 
@@ -221,7 +219,7 @@ public struct PyDict: PyObjectMixin {
     }
 
     let result = zelf.elements.count
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 
   // MARK: - Get
@@ -622,7 +620,7 @@ public struct PyDict: PyObjectMixin {
     }
 
     let result = zelf.elements.contains(py, key: key)
-    return result.asObject(py)
+    return PyResult(py, result)
   }
 
   // MARK: - Iter
@@ -634,7 +632,7 @@ public struct PyDict: PyObjectMixin {
     }
 
     let result = py.newDictKeyIterator(dict: zelf)
-    return .value(result.asObject)
+    return PyResult(result)
   }
 
   // MARK: - Clear
@@ -702,7 +700,7 @@ public struct PyDict: PyObjectMixin {
     }
 
     let result = py.newDict(elements: zelf.elements)
-    return .value(result.asObject)
+    return PyResult(result)
   }
 
   // MARK: - Pop
@@ -760,8 +758,7 @@ public struct PyDict: PyObjectMixin {
 
     let key = last.key.object
     let value = last.value
-    let result = py.newTuple(elements: key, value)
-    return .value(result.asObject)
+    return PyResult(py, tuple: key, value)
   }
 
   // MARK: - From keys
@@ -859,7 +856,7 @@ public struct PyDict: PyObjectMixin {
     }
 
     let result = py.newDictKeys(dict: zelf)
-    return .value(result.asObject)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = items
@@ -869,7 +866,7 @@ public struct PyDict: PyObjectMixin {
     }
 
     let result = py.newDictItems(dict: zelf)
-    return .value(result.asObject)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = values
@@ -879,7 +876,7 @@ public struct PyDict: PyObjectMixin {
     }
 
     let result = py.newDictValues(dict: zelf)
-    return .value(result.asObject)
+    return PyResult(result)
   }
 
   // MARK: - Python new

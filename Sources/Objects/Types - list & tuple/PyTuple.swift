@@ -139,16 +139,14 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
     }
 
     if zelf.isEmpty {
-      let result = py.intern(string: "()")
-      return .value(result.asObject)
+      return PyResult(py, interned: "()")
     }
 
     // While not mutable, it is still possible to end up with a cycle in a tuple
     // through an object that stores itself within a tuple (and thus infinitely
     // asks for the repr of itself).
     if zelf.hasReprLock {
-      let result = py.intern(string: "(...)")
-      return .value(result.asObject)
+      return PyResult(py, interned: "(...)")
     }
 
     return zelf.withReprLock {
@@ -156,7 +154,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
       case let .value(elements):
         let commaIfSingleElement = zelf.count == 1 ? "," : ""
         let result = "(" + elements + commaIfSingleElement + ")"
-        return result.toResult(py)
+        return PyResult(py, result)
 
       case let .error(e):
         return .error(e)
@@ -193,7 +191,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
     }
 
     let result = zelf.count
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 
   // MARK: - Contains, count, index of
@@ -237,7 +235,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
     }
 
     let result = py.newTupleIterator(tuple: zelf)
-    return .value(result.asObject)
+    return PyResult(result)
   }
 
   // MARK: - Get item
@@ -311,6 +309,6 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
       py.newTuple(elements: elements) :
       py.memory.newTuple(py, type: type, elements: elements)
 
-    return .value(result.asObject)
+    return PyResult(result)
   }
 }

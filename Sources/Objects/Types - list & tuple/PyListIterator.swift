@@ -68,7 +68,7 @@ public struct PyListIterator: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
-    return .value(zelf.asObject)
+    return PyResult(zelf)
   }
 
   // MARK: - Next
@@ -99,7 +99,7 @@ public struct PyListIterator: PyObjectMixin {
 
     let count = zelf.list.count
     let result = count - zelf.index
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 
   // MARK: - Python new

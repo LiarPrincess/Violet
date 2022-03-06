@@ -164,8 +164,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     }
 
     let name = zelf.getNameString()
-    let result = py.intern(string: name)
-    return .value(result.asObject)
+    return PyResult(py, interned: name)
   }
 
   // TODO: Rename: func getNameWithoutModule (has to be func for symmetry w. module)
@@ -213,8 +212,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     }
 
     let qualname = zelf.getQualnameString()
-    let result = py.intern(string: qualname)
-    return .value(result.asObject)
+    return PyResult(py, interned: qualname)
   }
 
   internal func getQualnameString() -> String {
@@ -432,8 +430,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
       return Self.invalidZelfArgument(py, zelf)
     }
 
-    let result = zelf.__dict__
-    return .value(result.asObject)
+    return PyResult(zelf.__dict__)
   }
 
   // MARK: - Class
@@ -454,10 +451,10 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     switch zelf.getModuleName(py) {
     case .builtins:
       let result = "<class '\(zelf.name)'>"
-      return result.toResult(py)
+      return PyResult(py, result)
     case .string(let module):
       let result = "<class '\(module).\(zelf.name)'>"
-      return result.toResult(py)
+      return PyResult(py, result)
     case .error(let e):
       return .error(e)
     }
@@ -487,8 +484,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     }
 
     let bases = zelf.bases.map { $0.asObject }
-    let result = py.newTuple(elements: bases)
-    return .value(result.asObject)
+    return PyResult(py, tuple: bases)
   }
 
   internal static func __bases__(_ py: Py,
@@ -511,8 +507,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     }
 
     let mro = zelf.mro.map { $0.asObject }
-    let result = py.newTuple(elements: mro)
-    return .value(result.asObject)
+    return PyResult(py, tuple: mro)
   }
 
   internal static let mroDoc = """
@@ -529,8 +524,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     }
 
     let mro = zelf.mro.map { $0.asObject }
-    let result = py.newList(elements: mro)
-    return .value(result.asObject)
+    return PyResult(py, tuple: mro)
   }
 
   // MARK: - Subtypes
@@ -547,9 +541,8 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
       return .typeError(py, message: "issubclass() arg 1 must be a class")
     }
 
-    let bool = zelf.isSubtype(of: otherType)
-    let result = py.newBool(bool)
-    return .value(result.asObject)
+    let result = zelf.isSubtype(of: otherType)
+    return PyResult(py, result)
   }
 
   internal func isSubtype(of type: PyType) -> Bool {
@@ -564,9 +557,8 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
       return Self.invalidZelfArgument(py, zelf)
     }
 
-    let bool = object.type.isSubtype(of: zelf)
-    let result = py.newBool(bool)
-    return .value(result.asObject)
+    let result = object.type.isSubtype(of: zelf)
+    return PyResult(py, result)
   }
 
   // sourcery: pymethod = __subclasses__
@@ -577,7 +569,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
 
     let subclasses = zelf.subclasses.map { $0.asObject }
     let result = py.newList(elements: subclasses)
-    return .value(result.asObject)
+    return PyResult(result)
   }
 
   // MARK: - Attributes

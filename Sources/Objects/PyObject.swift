@@ -93,7 +93,7 @@ public struct PyObject: PyObjectMixin {
   // sourcery: pymethod = __repr__
   internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     let result = Self.reprString(py, zelf: zelf)
-    return result.asObject(py)
+    return PyResult(py, result)
   }
 
   private static func reprString(_ py: Py, zelf: PyObject) -> PyResult<String> {
@@ -111,7 +111,7 @@ public struct PyObject: PyObjectMixin {
   internal static func __str__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     // If '__str__' is not implemented then we will use '__repr__'.
     let result = py.repr(object: zelf)
-    return result.asObject
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __format__

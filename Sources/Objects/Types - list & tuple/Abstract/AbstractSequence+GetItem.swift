@@ -41,7 +41,7 @@ extension AbstractSequence {
       return .value(object)
     case let .slice(elements):
       let result = Self.newObject(py, elements: elements)
-      return .value(result.asObject)
+      return PyResult(result)
     case let .error(e):
       return .error(e)
     }

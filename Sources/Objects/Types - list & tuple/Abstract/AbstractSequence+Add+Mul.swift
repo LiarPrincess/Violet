@@ -27,11 +27,11 @@ extension AbstractSequence {
     // Tuples are immutable, so we can do some minor performance improvements.
     if isTuple {
       if zelf.isEmpty {
-        return .value(other.asObject)
+        return PyResult(other)
       }
 
       if other.isEmpty {
-        return .value(zelf.asObject)
+        return PyResult(zelf)
       }
     }
 
@@ -41,7 +41,7 @@ extension AbstractSequence {
     elements.append(contentsOf: other.elements)
 
     let result = Self.newObject(py, elements: elements)
-    return .value(result.asObject)
+    return PyResult(result)
   }
 
   // MARK: - Mul
@@ -80,14 +80,14 @@ extension AbstractSequence {
 
     // Tuples are immutable, so we can just return 'zelf'.
     if isTuple && count == 1 {
-      return .value(zelf.asObject)
+      return PyResult(zelf)
     }
 
     var copy = zelf.elements
     Self.abstractMul(elements: &copy, count: count)
 
     let result = Self.newObject(py, elements: copy)
-    return .value(result.asObject)
+    return PyResult(result)
   }
 
   internal static func abstractParseMulCount(

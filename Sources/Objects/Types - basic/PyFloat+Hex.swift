@@ -90,7 +90,7 @@ extension PyFloat {
     result.append(exponent < 0 ? "-" : "+")
     result.append(String(exponentAbs, radix: 10, uppercase: false))
 
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 }
 

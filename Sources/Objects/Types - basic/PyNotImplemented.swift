@@ -37,8 +37,7 @@ public struct PyNotImplemented: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
-    let result = py.intern(string: "NotImplemented")
-    return .value(result.asObject)
+    return PyResult(py, interned: "NotImplemented")
   }
 
   // MARK: - Class
@@ -61,8 +60,7 @@ public struct PyNotImplemented: PyObjectMixin {
       return .typeError(py, message: "NotImplementedType takes no arguments")
     }
 
-    let result = py.notImplemented
-    return .value(result.asObject)
+    return .notImplemented(py)
   }
 
   // MARK: - Helpers

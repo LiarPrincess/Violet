@@ -21,7 +21,7 @@ extension AbstractSequence {
       switch py.isEqualBool(left: element, right: object) {
       case .value(true):
         let result = true
-        return result.toResult(py)
+        return PyResult(py, result)
       case .value(false):
         break // go to next element
       case .error(let e):
@@ -30,7 +30,7 @@ extension AbstractSequence {
     }
 
     let result = false
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 
   // MARK: - Count
@@ -55,7 +55,7 @@ extension AbstractSequence {
       }
     }
 
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 
   // MARK: - Index of
@@ -79,7 +79,7 @@ extension AbstractSequence {
       switch py.isEqualBool(left: element, right: object) {
       case .value(true):
         let result = BigInt(index)
-        return result.toResult(py)
+        return PyResult(py, result)
       case .value(false):
         break // go to next element
       case .error(let e):
