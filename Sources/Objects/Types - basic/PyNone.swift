@@ -37,8 +37,7 @@ public struct PyNone: PyObjectMixin, HasCustomGetMethod {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
-    let result = py.intern(string: "None")
-    return .value(result.asObject)
+    return PyResult(py, interned: "None")
   }
 
   // MARK: - As bool
@@ -49,8 +48,7 @@ public struct PyNone: PyObjectMixin, HasCustomGetMethod {
       return Self.invalidZelfArgument(py, zelf, "__bool__")
     }
 
-    let result = py.false
-    return .value(result.asObject)
+    return PyResult(py, false)
   }
 
   // MARK: - Class
@@ -175,8 +173,7 @@ public struct PyNone: PyObjectMixin, HasCustomGetMethod {
       return .typeError(py, message: "NoneType takes no arguments")
     }
 
-    let result = py.none
-    return .value(result.asObject)
+    return .none(py)
   }
 
   // MARK: - Helpers

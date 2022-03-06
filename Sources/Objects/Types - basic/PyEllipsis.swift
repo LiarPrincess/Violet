@@ -40,8 +40,7 @@ public struct PyEllipsis: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
-    let result = py.intern(string: "Ellipsis")
-    return .value(result.asObject)
+    return PyResult(py, interned: "Ellipsis")
   }
 
   // MARK: - Class
@@ -59,8 +58,7 @@ public struct PyEllipsis: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "__reduce__")
     }
 
-    let result = py.intern(string: "Ellipsis")
-    return .value(result.asObject)
+    return PyResult(py, interned: "Ellipsis")
   }
 
   // MARK: - Attributes
@@ -89,8 +87,7 @@ public struct PyEllipsis: PyObjectMixin {
       return .typeError(py, message: "EllipsisType takes no arguments")
     }
 
-    let result = py.ellipsis
-    return .value(result.asObject)
+    return PyResult(py.ellipsis)
   }
 
   // MARK: - Helpers

@@ -56,86 +56,78 @@ extension PyResult where Wrapped == PyObject {
   public static func notImplemented(_ py: Py) -> PyResult {
     return .value(py.notImplemented.asObject)
   }
-}
 
-// MARK: - PyResult + asObject
-
-extension PyResult where Wrapped: PyObjectMixin {
-  public var asObject: PyResult<PyObject> {
-    return self.map { $0.asObject }
+  public init(_ py: Py, _ value: Bool) {
+    let object = py.newBool(value)
+    self = .value(object.asObject)
   }
-}
 
-extension PyResult where Wrapped == Bool {
-  public func asObject(_ py: Py) -> PyResult<PyObject> {
-    switch self {
-    case let .value(bool):
-      let pyBool = py.newBool(bool)
-      return .value(pyBool.asObject)
-    case let .error(e):
-      return .error(e)
-    }
+  public init(_ py: Py, _ value: PyResult<Bool>) {
+    self = value.map { py.newBool($0).asObject }
   }
-}
 
-extension PyResult where Wrapped == Int {
-  public func asObject(_ py: Py) -> PyResult<PyObject> {
-    switch self {
-    case let .value(int):
-      let pyInt = py.newInt(int)
-      return .value(pyInt.asObject)
-    case let .error(e):
-      return .error(e)
-    }
+  public init(_ py: Py, _ value: Int) {
+    let object = py.newInt(value)
+    self = .value(object.asObject)
   }
-}
 
-extension PyResult where Wrapped == String {
-  public func asObject(_ py: Py) -> PyResult<PyObject> {
-    switch self {
-    case let .value(string):
-      let pyString = py.newString(string)
-      return .value(pyString.asObject)
-    case let .error(e):
-      return .error(e)
-    }
+  public init(_ py: Py, _ value: PyResult<Int>) {
+    self = value.map { py.newInt($0).asObject }
   }
-}
 
-// MARK: - To result
-
-extension Bool {
-  public func toResult(_ py: Py) -> PyResult<PyObject> {
-    let bool = py.newBool(self)
-    return .value(bool.asObject)
+  public init(_ py: Py, _ value: BigInt) {
+    let object = py.newInt(value)
+    self = .value(object.asObject)
   }
-}
 
-extension Int {
-  public func toResult(_ py: Py) -> PyResult<PyObject> {
-    let int = py.newInt(self)
-    return .value(int.asObject)
+  public init(_ py: Py, _ value: PyResult<BigInt>) {
+    self = value.map { py.newInt($0).asObject }
   }
-}
 
-extension BigInt {
-  public func toResult(_ py: Py) -> PyResult<PyObject> {
-    let int = py.newInt(self)
-    return .value(int.asObject)
+  public init(_ py: Py, _ value: Double) {
+    let object = py.newFloat(value)
+    self = .value(object.asObject)
   }
-}
 
-extension Double {
-  public func toResult(_ py: Py) -> PyResult<PyObject> {
-    let double = py.newFloat(self)
-    return .value(double.asObject)
+  public init(_ py: Py, _ value: PyResult<Double>) {
+    self = value.map { py.newFloat($0).asObject }
   }
-}
 
-extension String {
-  public func toResult(_ py: Py) -> PyResult<PyObject> {
-    let string = py.newString(self)
-    return .value(string.asObject)
+  public init(_ py: Py, real: Double, imag: Double) {
+    let object = py.newComplex(real: real, imag: imag)
+    self = .value(object.asObject)
+  }
+
+  public init(_ py: Py, _ value: String) {
+    let object = py.newString(value)
+    self = .value(object.asObject)
+  }
+
+  public init(_ py: Py, interned value: String) {
+    let object = py.intern(string: value)
+    self = .value(object.asObject)
+  }
+
+  public init(_ py: Py, _ value: PyResult<String>) {
+    self = value.map { py.newString($0).asObject }
+  }
+
+  public init<T: PyObjectMixin>(_ value: T) {
+    self = .value(value.asObject)
+  }
+
+  public init<T: PyObjectMixin>(_ value: PyResult<T>) {
+    self = value.map { $0.asObject }
+  }
+
+  public init(_ py: Py, tuple elements: PyObject...) {
+    let object = py.newTuple(elements: elements)
+    self = .value(object.asObject)
+  }
+
+  public init(_ py: Py, tuple elements: [PyObject]) {
+    let object = py.newTuple(elements: elements)
+    self = .value(object.asObject)
   }
 }
 

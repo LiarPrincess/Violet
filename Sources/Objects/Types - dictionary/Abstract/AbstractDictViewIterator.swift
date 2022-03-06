@@ -38,7 +38,7 @@ extension AbstractDictViewIterator {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
-    return .value(zelf.asObject)
+    return PyResult(zelf)
   }
 
   // MARK: - __next__
@@ -88,6 +88,6 @@ extension AbstractDictViewIterator {
 
     let count = zelf.dict.elements.count
     let result = count - zelf.index
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 }

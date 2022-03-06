@@ -140,7 +140,7 @@ public struct PyFloat: PyObjectMixin {
 
     let value = zelf.value
     let result = Self.toString(py, value: value)
-    return .value(result.asObject)
+    return PyResult(result)
   }
 
   private static func toString(_ py: Py, value: Double) -> PyString {
@@ -173,7 +173,7 @@ public struct PyFloat: PyObjectMixin {
     }
 
     let result = !zelf.value.isZero
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 
   // sourcery: pymethod = __int__
@@ -183,7 +183,7 @@ public struct PyFloat: PyObjectMixin {
     }
 
     let result = BigInt(zelf.value)
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 
   // sourcery: pymethod = __float__
@@ -204,8 +204,7 @@ public struct PyFloat: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "imag")
     }
 
-    let result = py.newFloat(0.0)
-    return .value(result.asObject)
+    return PyResult(py, 0.0)
   }
 
   internal static let conjugateDoc = """
@@ -289,12 +288,11 @@ public struct PyFloat: PyObjectMixin {
 
     let value = zelf.value
     guard value.isFinite else {
-      let result = py.false
-      return .value(result.asObject)
+      return PyResult(py, false)
     }
 
     let result = floor(value) == value
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 
   // MARK: - Integer ratio
@@ -364,8 +362,7 @@ public struct PyFloat: PyObjectMixin {
       denominator = py.newInt(BigInt(1) << -exponent) // notice '-'!
     }
 
-    let result = py.newTuple(elements: numerator.asObject, denominator.asObject)
-    return .value(result.asObject)
+    return PyResult(py, tuple: numerator.asObject, denominator.asObject)
   }
 
   // MARK: - Add, sub, mul
@@ -467,7 +464,7 @@ public struct PyFloat: PyObjectMixin {
       }
 
       let result = Foundation.pow(base, exp)
-      return result.toResult(py)
+      return PyResult(py, result)
 
     case let .intOverflow(_, e):
       return .error(e)
@@ -519,7 +516,7 @@ public struct PyFloat: PyObjectMixin {
       }
 
       let result = left / right
-      return result.toResult(py)
+      return PyResult(py, result)
 
     case let .intOverflow(_, e):
       return .error(e)
@@ -571,7 +568,7 @@ public struct PyFloat: PyObjectMixin {
       }
 
       let result = self.floordivUncheckedZero(left: left, right: right)
-      return result.toResult(py)
+      return PyResult(py, result)
 
     case let .intOverflow(_, e):
       return .error(e)
@@ -627,7 +624,7 @@ public struct PyFloat: PyObjectMixin {
       }
 
       let result = Self.modUncheckedZero(left: left, right: right)
-      return result.toResult(py)
+      return PyResult(py, result)
 
     case let .intOverflow(_, e):
       return .error(e)
@@ -687,8 +684,7 @@ public struct PyFloat: PyObjectMixin {
 
       let element0 = py.newFloat(div)
       let element1 = py.newFloat(mod)
-      let result = py.newTuple(elements: element0.asObject, element1.asObject)
-      return .value(result.asObject)
+      return PyResult(py, tuple: element0.asObject, element1.asObject)
 
     case let .intOverflow(_, e):
       return .error(e)
@@ -737,7 +733,7 @@ public struct PyFloat: PyObjectMixin {
     case .int(let nDigits):
       // nans and infinities round to themselves
       guard zelf.value.isFinite else {
-        return .value(zelf.asObject)
+        return PyResult(zelf)
       }
 
       // Dark magic incoming (well above our $0 pay grade):
@@ -747,16 +743,16 @@ public struct PyFloat: PyObjectMixin {
       // Here 0.30103 is an upper bound for log10(2).
 
       if nDigits > Self.roundDigitCountMax {
-        return .value(zelf.asObject)
+        return PyResult(zelf)
       }
 
       if nDigits < Self.roundDigitCountMin {
         let zero = Double(signOf: zelf.value, magnitudeOf: 0.0)
-        return zero.toResult(py)
+        return PyResult(py, zero)
       }
 
       let result = Self.round(py, zelf: zelf, nDigit: nDigits)
-      return result.asObject
+      return PyResult(result)
 
     case .error(let e):
       return .error(e)
@@ -869,7 +865,7 @@ public struct PyFloat: PyObjectMixin {
     _ = Foundation.modf(zelf.value, &intPart)
 
     let result = py.newInt(double: intPart)
-    return result.asObject
+    return PyResult(result)
   }
 
   // MARK: - Python new
@@ -937,7 +933,7 @@ public struct PyFloat: PyObjectMixin {
     let isNotSubclass = py.cast.isExactlyFloat(value.asObject)
 
     if isBuiltin && isNotSubclass {
-      return .value(value.asObject)
+      return PyResult(value)
     }
 
     return Self.allocate(py, type: type, value: value.value)
@@ -953,7 +949,7 @@ public struct PyFloat: PyObjectMixin {
       py.newFloat(value) :
       py.memory.newFloat(py, type: type, value: value)
 
-    return .value(result.asObject)
+    return PyResult(result)
   }
 
   private enum DoubleFromString {
@@ -1058,11 +1054,10 @@ public struct PyFloat: PyObjectMixin {
     // >>> type(x.__float__())
     // <class 'float'>
     if py.cast.isExactlyFloat(zelf.asObject) {
-      return .value(zelf.asObject)
+      return PyResult(zelf)
     }
 
-    let value = zelf.value
-    return value.toResult(py)
+    return PyResult(py, zelf.value)
   }
 
   private static func unaryOperation(_ py: Py,
@@ -1074,7 +1069,7 @@ public struct PyFloat: PyObjectMixin {
     }
 
     let result = fn(zelf.value)
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 
   private static func binaryOperation(_ py: Py,
@@ -1089,7 +1084,7 @@ public struct PyFloat: PyObjectMixin {
     switch Self.asDouble(py, object: other) {
     case let .value(d):
       let result = fn(zelf.value, d)
-      return result.toResult(py)
+      return PyResult(py, result)
 
     case let .intOverflow(_, e):
       return .error(e)

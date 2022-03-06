@@ -166,7 +166,7 @@ public struct PyInt: PyObjectMixin {
     }
 
     let result = zelf.value.isTrue
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 
   // sourcery: pymethod = __int__
@@ -182,8 +182,7 @@ public struct PyInt: PyObjectMixin {
 
     switch Self.asDouble(py, int: zelf.value) {
     case let .value(d):
-      let result = py.newFloat(d)
-      return .value(result.asObject)
+      return PyResult(py, d)
     case let .overflow(e):
       return .error(e)
     }
@@ -396,13 +395,13 @@ public struct PyInt: PyObjectMixin {
       switch zelf.pow(py, base: zelf.value, exp: exp.value) {
       case let .int(powInt):
         let divMod = Self.divmodWithUncheckedZero(left: powInt, right: modulo)
-        return divMod.mod.toResult(py)
+        return PyResult(py, divMod.mod)
 
       case let .fraction(powDouble):
         switch Self.asDouble(py, int: modulo) {
         case let .value(d):
           let result = powDouble.truncatingRemainder(dividingBy: d)
-          return result.toResult(py)
+          return PyResult(py, result)
         case let .overflow(e):
           return .error(e)
         }
@@ -471,9 +470,9 @@ public struct PyInt: PyObjectMixin {
     fileprivate func toResult(_ py: Py) -> PyResult<PyObject> {
       switch self {
       case let .int(i):
-        return i.toResult(py)
+        return PyResult(py, i)
       case let .fraction(f):
-        return f.toResult(py)
+        return PyResult(py, f)
       case let .error(e):
         return .error(e)
       }
@@ -572,7 +571,7 @@ public struct PyInt: PyObjectMixin {
     }
 
     let result = left / right
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 
   // MARK: - Floor div
@@ -620,7 +619,7 @@ public struct PyInt: PyObjectMixin {
     }
 
     let divMod = Self.divmodWithUncheckedZero(left: left, right: right)
-    return divMod.div.toResult(py)
+    return PyResult(py, divMod.div)
   }
 
   // MARK: - Mod
@@ -668,7 +667,7 @@ public struct PyInt: PyObjectMixin {
     }
 
     let divMod = Self.divmodWithUncheckedZero(left: left, right: right)
-    return divMod.mod.toResult(py)
+    return PyResult(py, divMod.mod)
   }
 
   // MARK: - Div mod
@@ -720,8 +719,7 @@ public struct PyInt: PyObjectMixin {
     case let .value(divMod):
       let d = py.newInt(divMod.div)
       let m = py.newInt(divMod.mod)
-      let result = py.newTuple(elements: d.asObject, m.asObject)
-      return .value(result.asObject)
+      return PyResult(py, tuple: d.asObject, m.asObject)
     case let .error(e):
       return .error(e)
     }
@@ -829,8 +827,7 @@ public struct PyInt: PyObjectMixin {
     }
 
     if value.isZero {
-      let result = py.newInt(0)
-      return .value(result.asObject)
+      return PyResult(py, 0)
     }
 
     guard let count = Int(exactly: countBig) else {
@@ -838,7 +835,7 @@ public struct PyInt: PyObjectMixin {
     }
 
     let result = value << count
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 
   // MARK: - RShift
@@ -886,7 +883,7 @@ public struct PyInt: PyObjectMixin {
     }
 
     let result = value >> count
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 
   // MARK: - And, or, xor
@@ -964,11 +961,10 @@ public struct PyInt: PyObjectMixin {
     // 1
     if nDigits.isPositiveOrZero {
       if py.cast.isExactlyInt(zelf.asObject) {
-        return .value(zelf.asObject)
+        return PyResult(zelf)
       }
 
-      let value = zelf.value
-      return value.toResult(py)
+      return PyResult(py, zelf.value)
     }
 
     // result = self - divmod_near(self, 10 ** -ndigits)[1]
@@ -977,7 +973,7 @@ public struct PyInt: PyObjectMixin {
     switch self.divmodNear(py, left: zelf.value, right: pow10) {
     case let .value(divMod):
       let result = zelf.value - divMod.mod
-      return result.toResult(py)
+      return PyResult(py, result)
     case let .error(e):
       return .error(e)
     }
@@ -1152,7 +1148,7 @@ public struct PyInt: PyObjectMixin {
     let isNotSubclass = py.cast.isExactlyInt(value.asObject)
 
     if isBuiltin && isNotSubclass {
-      return .value(value.asObject)
+      return PyResult(value)
     }
 
     return Self.allocate(py, type: type, value: value.value)
@@ -1167,7 +1163,7 @@ public struct PyInt: PyObjectMixin {
       py.newInt(value) :
       py.memory.newInt(py, type: type, value: value)
 
-    return .value(result.asObject)
+    return PyResult(result)
   }
 
   private enum NewWithoutBaseResult {
@@ -1322,11 +1318,10 @@ public struct PyInt: PyObjectMixin {
     // >>> True.__index__()
     // 1
     if py.cast.isExactlyInt(zelf.asObject) {
-      return .value(zelf.asObject)
+      return PyResult(zelf)
     }
 
-    let value = zelf.value
-    return value.toResult(py)
+    return PyResult(py, zelf.value)
   }
 
   /// Operation that returns an `int`
@@ -1339,7 +1334,7 @@ public struct PyInt: PyObjectMixin {
     }
 
     let result = fn(zelf.value)
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 
   private static func unaryOperation(_ py: Py,
@@ -1351,7 +1346,7 @@ public struct PyInt: PyObjectMixin {
     }
 
     let result = fn(zelf.value)
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 
   private static func binaryOperation(_ py: Py,
@@ -1368,7 +1363,7 @@ public struct PyInt: PyObjectMixin {
     }
 
     let result = fn(zelf.value, other.value)
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 
   // MARK: - Helpers

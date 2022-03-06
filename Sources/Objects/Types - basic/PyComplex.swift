@@ -181,14 +181,14 @@ public struct PyComplex: PyObjectMixin {
     if real.isZero {
       let imagDim = Self.dimensionRepr(imag)
       let result = imagDim + "j"
-      return result.toResult(py)
+      return PyResult(py, result)
     }
 
     let sign = imag >= 0 ? "+" : ""
     let realDim = Self.dimensionRepr(real)
     let imagDim = Self.dimensionRepr(imag)
     let result = "(\(realDim)\(sign)\(imagDim)j)"
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 
   private static func dimensionRepr(_ value: Double) -> String {
@@ -213,7 +213,7 @@ public struct PyComplex: PyObjectMixin {
 
     let bothZero = zelf.real.isZero && zelf.imag.isZero
     let result = !bothZero
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 
   // sourcery: pymethod = __int__
@@ -243,7 +243,7 @@ public struct PyComplex: PyObjectMixin {
     }
 
     let result = zelf.real
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 
   // sourcery: pyproperty = imag
@@ -253,7 +253,7 @@ public struct PyComplex: PyObjectMixin {
     }
 
     let result = zelf.imag
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 
   // sourcery: pymethod = conjugate
@@ -294,7 +294,7 @@ public struct PyComplex: PyObjectMixin {
     // 'complex' is immutable, so if we are exactly 'complex' (not an subclass),
     // then we can return ourself. (This saves an allocation).
     if py.cast.isExactlyComplex(zelf.asObject) {
-      return .value(zelf.asObject)
+      return PyResult(zelf)
     }
 
     return Self.unaryOperation(py, zelf: zelf, fnName: "__pos__", fn: Self.pos(_:))
@@ -332,7 +332,7 @@ public struct PyComplex: PyObjectMixin {
     case (_, _): result = .nan
     }
 
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 
   // MARK: - Add
@@ -493,8 +493,7 @@ public struct PyComplex: PyObjectMixin {
 
   private static func pow(_ py: Py, base: Raw, exp: Raw) -> PyResult<PyObject> {
     if exp.real.isZero && exp.real.isZero {
-      let result = py.newComplex(real: 1.0, imag: 0.0)
-      return .value(result.asObject)
+      return PyResult(py, real: 1.0, imag: 0.0)
     }
 
     if base.real.isZero && base.imag.isZero {
@@ -502,8 +501,7 @@ public struct PyComplex: PyObjectMixin {
         return .valueError(py, message: "complex zero to negative or complex power")
       }
 
-      let result = py.newComplex(real: 0.0, imag: 0.0)
-      return .value(result.asObject)
+      return PyResult(py, real: 0.0, imag: 0.0)
     }
 
     let vabs = Foundation.hypot(base.real, base.imag)
@@ -518,8 +516,7 @@ public struct PyComplex: PyObjectMixin {
 
     let real = len * cos(phase)
     let imag = len * sin(phase)
-    let result = py.newComplex(real: real, imag: imag)
-    return .value(result.asObject)
+    return PyResult(py, real: real, imag: imag)
   }
 
   // MARK: - True div
@@ -570,8 +567,7 @@ public struct PyComplex: PyObjectMixin {
 
       let real = (left.real * right.real + left.imag * right.imag) / d
       let imag = (left.imag * right.real - left.real * right.imag) / d
-      let result = py.newComplex(real: real, imag: imag)
-      return .value(result.asObject)
+      return PyResult(py, real: real, imag: imag)
 
     case .intOverflow(_, let e):
       return .error(e)
@@ -668,8 +664,7 @@ public struct PyComplex: PyObjectMixin {
 
     let real = py.newFloat(zelf.real)
     let imag = py.newFloat(zelf.imag)
-    let result = py.newTuple(elements: real.asObject, imag.asObject)
-    return .value(result.asObject)
+    return PyResult(py, tuple: real.asObject, imag.asObject)
   }
 
   // MARK: - Python new
@@ -765,7 +760,7 @@ public struct PyComplex: PyObjectMixin {
       py.newComplex(real: value.real, imag: value.imag) :
       py.memory.newComplex(py, type: type, real: value.real, imag: value.imag)
 
-    return .value(result.asObject)
+    return PyResult(result)
   }
 
   /// A valid complex string usually takes one of the three forms:
@@ -914,11 +909,6 @@ public struct PyComplex: PyObjectMixin {
       self.real = complex.real
       self.imag = complex.imag
     }
-
-    fileprivate func toResult(_ py: Py) -> PyResult<PyObject> {
-      let result = py.newComplex(real: self.real, imag: self.imag)
-      return .value(result.asObject)
-    }
   }
 
   private static func unaryOperation(_ py: Py,
@@ -931,7 +921,7 @@ public struct PyComplex: PyObjectMixin {
 
     let zelfRaw = Raw(zelf)
     let result = fn(zelfRaw)
-    return result.toResult(py)
+    return PyResult(py, real: result.real, imag: result.imag)
   }
 
   private static func binaryOperation(_ py: Py,
@@ -947,7 +937,7 @@ public struct PyComplex: PyObjectMixin {
     case .value(let other):
       let zelfRaw = Raw(zelf)
       let result = fn(zelfRaw, other)
-      return result.toResult(py)
+      return PyResult(py, real: result.real, imag: result.imag)
     case .intOverflow(_, let e):
       return .error(e)
     case .notComplex:

@@ -74,11 +74,8 @@ public struct PyBool: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
 
-    let result = zelf.isTrue ?
-    py.intern(string: "True") :
-    py.intern(string: "False")
-
-    return .value(result.asObject)
+    let result = zelf.isTrue ? "True" : "False"
+    return PyResult(py, interned: result)
   }
 
   // MARK: - Class
@@ -186,12 +183,11 @@ public struct PyBool: PyObjectMixin {
     }
 
     if args.isEmpty {
-      let result = py.false
-      return .value(result.asObject)
+      return PyResult(py, false)
     }
 
     let result = py.isTrue(object: args[0])
-    return result.asObject
+    return PyResult(result)
   }
 
   // MARK: - Helpers
@@ -213,7 +209,7 @@ public struct PyBool: PyObjectMixin {
     }
 
     let result = fn(zelf.isTrue, other.isTrue)
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 
   private static func castZelf(_ py: Py, _ object: PyObject) -> PyBool? {

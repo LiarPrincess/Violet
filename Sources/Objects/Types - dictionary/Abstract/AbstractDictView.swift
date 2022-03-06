@@ -185,8 +185,7 @@ extension AbstractDictView {
     }
 
     if zelf.hasReprLock {
-      let result = py.intern(string: "...")
-      return .value(result.asObject)
+      return PyResult(py, interned:  "...")
     }
 
     return zelf.withReprLock {
@@ -203,7 +202,7 @@ extension AbstractDictView {
       }
 
       result += ")"
-      return result.toResult(py)
+      return PyResult(py, result)
     }
   }
 
@@ -229,6 +228,6 @@ extension AbstractDictView {
     }
 
     let result = zelf.elements.count
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 }

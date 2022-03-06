@@ -127,20 +127,18 @@ public struct PyList: PyObjectMixin, AbstractSequence {
     }
 
     if zelf.isEmpty {
-      let result = py.intern(string: "[]")
-      return .value(result.asObject)
+      return PyResult(py, interned: "[]")
     }
 
     if zelf.hasReprLock {
-      let result = py.intern(string: "[...]")
-      return .value(result.asObject)
+      return PyResult(py, interned: "[...]")
     }
 
     return zelf.withReprLock {
       switch Self.abstractJoinElementsForRepr(py, zelf: zelf) {
       case let .value(elements):
         let result = "[" + elements + "]"
-        return result.toResult(py)
+        return PyResult(py, result)
 
       case let .error(e):
         return .error(e)
@@ -177,7 +175,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
     }
 
     let result = zelf.count
-    return result.toResult(py)
+    return PyResult(py, result)
   }
 
   // MARK: - Contains, count, index of
@@ -221,7 +219,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
     }
 
     let result = py.newListIterator(list: zelf)
-    return .value(result.asObject)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __reversed__
@@ -231,7 +229,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
     }
 
     let result = py.newListReverseIterator(list: zelf)
-    return .value(result.asObject)
+    return PyResult(result)
   }
 
   // MARK: - Get item
@@ -603,7 +601,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
     }
 
     let result = py.newList(elements: zelf.elements)
-    return .value(result.asObject)
+    return PyResult(result)
   }
 
   // MARK: - Add, mul
@@ -651,7 +649,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
     switch Self.abstractParseMulCount(py, object: other) {
     case .value(let int):
       Self.abstractMul(elements: &zelf.elements, count: int)
-      return .value(zelf.asObject)
+      return PyResult(zelf)
     case .notImplemented:
       return .notImplemented(py)
     }
@@ -673,7 +671,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
     py.newList(elements: elements) :
     py.memory.newList(py, type: type, elements: elements)
 
-    return .value(result.asObject)
+    return PyResult(result)
   }
 
   // MARK: - Python init

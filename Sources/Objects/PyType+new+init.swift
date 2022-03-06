@@ -46,7 +46,7 @@ extension PyType {
 
       if hasSingleArg && noKwargs {
         let result = args[0].type
-        return .value(result.asObject)
+        return PyResult(result)
       }
 
       if args.count != 3 {
@@ -476,8 +476,7 @@ extension PyType {
       return Self.invalidZelfArgumentFor__dict__(py, object: zelf)
     }
 
-    let result = zelf.__dict__
-    return .value(result.asObject)
+    return PyResult(zelf.__dict__)
   }
 
   private static func setHeapType__dict__(_ py: Py,

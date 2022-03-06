@@ -94,8 +94,7 @@ public struct PyDictItemIterator: PyObjectMixin, AbstractDictViewIterator {
     case let .value(entry):
       let key = entry.key.object
       let value = entry.value
-      let tuple = py.newTuple(elements: key, value)
-      return .value(tuple.asObject)
+      return PyResult(py, tuple: key, value)
     case let .error(e):
       return .error(e)
     }

@@ -82,8 +82,7 @@ public struct PyZip: PyObjectMixin {
     }
 
     // Multiple iterators -> tuple
-    let tuple = Py.newTuple(elements: result)
-    return .value(tuple)
+    return PyResult(tuple: result)
   }
 
   // MARK: - Python new

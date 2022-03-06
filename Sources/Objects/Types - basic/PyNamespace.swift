@@ -110,8 +110,7 @@ public struct PyNamespace: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    let result = zelf.__dict__
-    return .value(result.asObject)
+    return PyResult(zelf.__dict__)
   }
 
   // MARK: - String
@@ -126,8 +125,8 @@ public struct PyNamespace: PyObjectMixin {
     let name = isBuiltin ? "namespace" : zelf.typeName
 
     if zelf.hasReprLock {
-      let result = py.intern(string: name + "(...)")
-      return .value(result.asObject)
+      let result = name + "(...)"
+      return PyResult(py, interned: result)
     }
 
     return zelf.withReprLock {
@@ -153,8 +152,8 @@ public struct PyNamespace: PyObjectMixin {
         values.append("\(keyRepr)=\(valueRepr)")
       }
 
-      let result = py.newString("\(name)(\(values))")
-      return .value(result.asObject)
+      let result = "\(name)(\(values))"
+      return PyResult(py, result)
     }
   }
 
@@ -203,7 +202,7 @@ public struct PyNamespace: PyObjectMixin {
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let dict = py.newDict()
     let result = py.memory.newNamespace(py, type: type, __dict__: dict)
-    return .value(result.asObject)
+    return PyResult(result)
   }
 
   // MARK: - Python init
