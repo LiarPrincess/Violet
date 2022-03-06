@@ -1,13 +1,19 @@
-/* MARKER
 import BigInt
 import VioletCore
 
 /// Mixin with methods for various `PyDict` views.
 ///
-/// All of the methods/properties should be prefixed with `_`.
-/// DO NOT use them outside of the dict view objects!
-internal protocol AbstractDictView: PyObject {
+/// DO NOT use them outside of the `dict` view objects!
+internal protocol AbstractDictView: PyObjectMixin {
+
+  /// Name of the type.
+  /// Used mainly in error messages.
+  static var typeName: String { get }
+
   var dict: PyDict { get }
+
+  /// Cast `PyObject` -> Self``.
+  static func castZelf(_ py: Py, _ object: PyObject) -> Self?
 }
 
 extension AbstractDictView {
@@ -15,145 +21,214 @@ extension AbstractDictView {
   internal typealias OrderedDictionary = PyDict.OrderedDictionary
   internal typealias Element = OrderedDictionary.Element
 
-  /// DO NOT USE! This is a part of `AbstractDictView` implementation.
-  internal var _elements: OrderedDictionary {
+  private var elements: OrderedDictionary {
     return self.dict.elements
+  }
+
+  // MARK: - Zelf
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.typeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 
   // MARK: - Equatable
 
-  /// DO NOT USE! This is a part of `AbstractDictView` implementation.
-  internal func _isEqual(_ other: PyObject) -> CompareResult {
-    guard let size = self._getDictOrSetSize(other) else {
+  internal static func abstract__eq__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> CompareResult {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.typeName, .__eq__)
+    }
+
+    return Self.isEqual(py, zelf: zelf, other: other)
+  }
+
+  internal static func abstract__ne__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> CompareResult {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.typeName, .__ne__)
+    }
+
+    let isEqual = Self.isEqual(py, zelf: zelf, other: other)
+    return isEqual.not
+  }
+
+  private static func isEqual(_ py: Py, zelf: Self, other: PyObject) -> CompareResult {
+    guard let size = Self.getDictOrSetSize(py, object: other) else {
       return .notImplemented
     }
 
-    guard self._elements.count == size else {
+    guard zelf.elements.count == size else {
       return .value(false)
     }
 
-    let result = Py.contains(iterable: self, allFrom: other)
+    let result = py.contains(iterable: zelf.asObject, allFrom: other)
     return CompareResult(result)
-  }
-
-  /// DO NOT USE! This is a part of `AbstractDictView` implementation.
-  internal func _isNotEqual(_ other: PyObject) -> CompareResult {
-    return self._isEqual(other).not
   }
 
   // MARK: - Comparable
 
-  /// DO NOT USE! This is a part of `AbstractDictView` implementation.
-  internal func _isLess(_ other: PyObject) -> CompareResult {
-    guard let size = self._getDictOrSetSize(other) else {
+  internal static func abstract__lt__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> CompareResult {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.typeName, .__lt__)
+    }
+
+    guard let size = Self.getDictOrSetSize(py, object: other) else {
       return .notImplemented
     }
 
-    guard self._elements.count < size else {
+    guard zelf.elements.count < size else {
       return .value(false)
     }
 
-    let result = Py.contains(iterable: other, allFrom: self)
+    let result = py.contains(iterable: other, allFrom: zelf.asObject)
     return CompareResult(result)
   }
 
-  /// DO NOT USE! This is a part of `AbstractDictView` implementation.
-  internal func _isLessEqual(_ other: PyObject) -> CompareResult {
-    guard let size = self._getDictOrSetSize(other) else {
+  internal static func abstract__le__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> CompareResult {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.typeName, .__le__)
+    }
+
+    guard let size = Self.getDictOrSetSize(py, object: other) else {
       return .notImplemented
     }
 
-    guard self._elements.count <= size else {
+    guard zelf.elements.count <= size else {
       return .value(false)
     }
 
-    let result = Py.contains(iterable: other, allFrom: self)
+    let result = py.contains(iterable: other, allFrom: zelf.asObject)
     return CompareResult(result)
   }
 
-  /// DO NOT USE! This is a part of `AbstractDictView` implementation.
-  internal func _isGreater(_ other: PyObject) -> CompareResult {
-    guard let size = self._getDictOrSetSize(other) else {
+  internal static func abstract__gt__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> CompareResult {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.typeName, .__gt__)
+    }
+
+    guard let size = Self.getDictOrSetSize(py, object: other) else {
       return .notImplemented
     }
 
-    guard self._elements.count > size else {
+    guard zelf.elements.count > size else {
       return .value(false)
     }
 
-    let result = Py.contains(iterable: self, allFrom: other)
+    let result = py.contains(iterable: zelf.asObject, allFrom: other)
     return CompareResult(result)
   }
 
-  /// DO NOT USE! This is a part of `AbstractDictView` implementation.
-  internal func _isGreaterEqual(_ other: PyObject) -> CompareResult {
-    guard let size = self._getDictOrSetSize(other) else {
+  internal static func abstract__ge__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> CompareResult {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.typeName, .__ge__)
+    }
+
+    guard let size = Self.getDictOrSetSize(py, object: other) else {
       return .notImplemented
     }
 
-    guard self._elements.count >= size else {
+    guard zelf.elements.count >= size else {
       return .value(false)
     }
 
-    let result = Py.contains(iterable: self, allFrom: other)
+    let result = py.contains(iterable: zelf.asObject, allFrom: other)
     return CompareResult(result)
   }
 
-  /// DO NOT USE! This is a part of `AbstractDictView` implementation.
-  private func _getDictOrSetSize(_ other: PyObject) -> Int? {
-    if let set = PyCast.asAnySet(other) {
+  private static func getDictOrSetSize(_ py: Py, object: PyObject) -> Int? {
+    if let set = py.cast.asAnySet(object) {
       return set.elements.count
     }
 
-    if let dict = PyCast.asDict(other) {
+    if let dict = py.cast.asDict(object) {
       return dict.elements.count
     }
 
     return nil
   }
 
-  // MARK: - Hashable
+  // MARK: - __hash__
 
-  /// DO NOT USE! This is a part of `AbstractDictView` implementation.
-  internal func _hash() -> HashResult {
-    return .unhashable(self)
-  }
-
-  // MARK: - String
-
-  /// DO NOT USE! This is a part of `AbstractDictView` implementation.
-  internal func _repr(
-    typeName: String,
-    elementRepr: (Element) -> PyResult<String>
-  ) -> PyResult<String> {
-    if self.hasReprLock {
-      return .value("...")
+  internal static func abstract__hash__(_ py: Py, zelf: PyObject) -> HashResult {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.typeName)
     }
 
-    return self.withReprLock {
-      var result = typeName + "("
-      for (index, element) in self.dict.elements.enumerated() {
+    return .unhashable(zelf.asObject)
+  }
+
+  // MARK: - __repr__
+
+  internal static func abstract__repr__(
+    _ py: Py,
+    zelf: PyObject,
+    elementRepr: (Py, Element) -> PyResult<String>
+  ) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__repr__")
+    }
+
+    if zelf.hasReprLock {
+      let result = py.intern(string: "...")
+      return .value(result.asObject)
+    }
+
+    return zelf.withReprLock {
+      var result = Self.typeName + "("
+      for (index, element) in zelf.dict.elements.enumerated() {
         if index > 0 {
           result += ", " // so that we don't have ', )'.
         }
 
-        switch elementRepr(element) {
+        switch elementRepr(py, element) {
         case let .value(s): result += s
         case let .error(e): return .error(e)
         }
       }
 
       result += ")"
-      return .value(result)
+      return result.toResult(py)
     }
   }
 
-  // MARK: - Length
+  // MARK: - __getattribute__
 
-  /// DO NOT USE! This is a part of `AbstractDictView` implementation.
-  internal func _getLength() -> BigInt {
-    return BigInt(self._elements.count)
+  // sourcery: pymethod = __getattribute__
+  internal static func abstract__getattribute__(_ py: Py,
+                                                zelf: PyObject,
+                                                name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    }
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
+  }
+
+  // MARK: - __len__
+
+  internal static func abstract__len__(_ py: Py,
+                                       zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__len__")
+    }
+
+    let result = zelf.elements.count
+    return result.toResult(py)
   }
 }
-
-*/

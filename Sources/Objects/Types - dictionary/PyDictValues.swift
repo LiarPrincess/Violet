@@ -33,18 +33,23 @@ public struct PyDictValues: PyObjectMixin, AbstractDictView {
     let zelf = PyDictValues(ptr: ptr)
     return "PyDictValues(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
-}
 
-/* MARKER
+  // MARK: - AbstravtView
+
+  internal static let typeName: String = "dict_values"
+
+  internal static func castZelf(_ py: Py, _ object: PyObject) -> PyDictValues? {
+    return py.cast.asDictValues(object)
+  }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
-    return self._repr(typeName: "dict_values", elementRepr: Self.repr(element:))
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__repr__(py, zelf: zelf, elementRepr: Self.repr(_:element:))
   }
 
-  private static func repr(element: Element) -> PyResult<String> {
+  private static func repr(_ py: Py, element: Element) -> PyResult<String> {
     // >>> d = {'a': 1, 'b': 2, 'c': 3}
     //
     // >>> v = d.values()
@@ -52,36 +57,41 @@ public struct PyDictValues: PyObjectMixin, AbstractDictView {
     // 'dict_values([1, 2, 3])'
 
     let value = element.value
-    return Py.reprString(object: value)
+    return py.reprString(object: value)
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__getattribute__(py, zelf: zelf, name: name)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal func getLength() -> BigInt {
-    return self._getLength()
+  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResult<PyObject> {
+    return Self.abstract__len__(py, zelf: zelf)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal func iter() -> PyObject {
-    return PyMemory.newDictValueIterator(dict: self.dict)
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__iter__")
+    }
+
+    let result = py.newDictValuesIterator(dict: zelf.dict)
+    return PyResult(result)
   }
 }
-
-*/

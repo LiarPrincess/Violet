@@ -33,66 +33,71 @@ public struct PyDictItems: PyObjectMixin, AbstractDictView {
     let zelf = PyDictItems(ptr: ptr)
     return "PyDictItems(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
-}
 
-/* MARKER
+  // MARK: - AbstravtView
+
+  internal static let typeName: String = "dict_items"
+
+  internal static func castZelf(_ py: Py, _ object: PyObject) -> PyDictItems? {
+    return py.cast.asDictItems(object)
+  }
 
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> CompareResult {
-    return self._isEqual(other)
+  internal static func __eq__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.abstract__eq__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> CompareResult {
-    return self._isNotEqual(other)
+  internal static func __ne__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.abstract__ne__(py, zelf: zelf, other: other)
   }
 
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> CompareResult {
-    return self._isLess(other)
+  internal static func __lt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.abstract__lt__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    return self._isLessEqual(other)
+  internal static func __le__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.abstract__le__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> CompareResult {
-    return self._isGreater(other)
+  internal static func __gt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.abstract__gt__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
-    return self._isGreaterEqual(other)
+  internal static func __ge__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.abstract__ge__(py, zelf: zelf, other: other)
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> HashResult {
-    return self._hash()
+  internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
+    return Self.abstract__hash__(py, zelf: zelf)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
-    return self._repr(typeName: "dict_items", elementRepr: Self.repr(element:))
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__repr__(py, zelf: zelf, elementRepr: Self.repr(_:element:))
   }
 
-  private static func repr(element: Element) -> PyResult<String> {
+  private static func repr(_ py: Py, element: Element) -> PyResult<String> {
     // >>> d = {'a': 1, 'b': 2, 'c': 3}
     //
     // >>> i = d.items()
@@ -101,14 +106,14 @@ public struct PyDictItems: PyObjectMixin, AbstractDictView {
 
     let key = element.key.object
     let keyRepr: String
-    switch Py.reprString(object: key) {
+    switch py.reprString(object: key) {
     case let .value(s): keyRepr = s
     case let .error(e): return .error(e)
     }
 
     let value = element.value
     let valueRepr: String
-    switch Py.reprString(object: value) {
+    switch py.reprString(object: value) {
     case let .value(s): valueRepr = s
     case let .error(e): return .error(e)
     }
@@ -120,33 +125,41 @@ public struct PyDictItems: PyObjectMixin, AbstractDictView {
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__getattribute__(py, zelf: zelf, name: name)
   }
 
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal func getLength() -> BigInt {
-    return self._getLength()
+  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResult<PyObject> {
+    return Self.abstract__len__(py, zelf: zelf)
   }
 
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  internal func contains(object: PyObject) -> PyResult<Bool> {
-    guard let tuple = PyCast.asTuple(object), tuple.count == 2 else {
-      return .value(false)
+  internal static func __contains__(_ py: Py,
+                                    zelf: PyObject,
+                                    object: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__contains__")
+    }
+
+    guard let tuple = py.cast.asTuple(object), tuple.count == 2 else {
+      return PyResult(py, false)
     }
 
     let key = tuple.elements[0]
     let value = tuple.elements[1]
 
-    switch self.dict.get(key: key) {
+    switch zelf.dict.get(py, key: key) {
     case let .value(o):
-      return Py.isEqualBool(left: value, right: o)
+      return py.isEqual(left: value, right: o)
     case .notFound:
-      return .value(false)
+      return PyResult(py, false)
     case let .error(e):
       return .error(e)
     }
@@ -155,18 +168,22 @@ public struct PyDictItems: PyObjectMixin, AbstractDictView {
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal func iter() -> PyObject {
-    return PyMemory.newDictItemIterator(dict: self.dict)
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__iter__")
+    }
+
+    let result = py.newDictItemIterator(dict: zelf.dict)
+    return PyResult(result)
   }
 
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyDictItems> {
-    return .typeError("cannot create 'dict_items' instances")
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    return .typeError(py, message: "cannot create 'dict_items' instances")
   }
 }
-
-*/
