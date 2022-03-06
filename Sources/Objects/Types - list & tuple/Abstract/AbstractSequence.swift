@@ -1,6 +1,5 @@
 /// Mixin with `tuple/list` methods.
 ///
-/// All of the methods/properties should be prefixed with `_`.
 /// DO NOT use them outside of the `tuple/list` objects!
 internal protocol AbstractSequence: PyObjectMixin {
 
