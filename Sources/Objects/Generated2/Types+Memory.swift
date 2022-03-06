@@ -1044,7 +1044,7 @@ extension PyDict {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: OrderedDictionary<PyObject>.self) // elements
+          PyMemory.FieldLayout(from: PyDict.OrderedDictionary.self) // elements
         ]
       )
 
@@ -1057,7 +1057,7 @@ extension PyDict {
 
   internal static let layout = Layout()
 
-  internal var elementsPtr: Ptr<OrderedDictionary<PyObject>> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
+  internal var elementsPtr: Ptr<PyDict.OrderedDictionary> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyDict(ptr: ptr)
@@ -1074,7 +1074,7 @@ extension PyMemory {
   public func newDict(
     _ py: Py,
     type: PyType,
-    elements: OrderedDictionary<PyObject>
+    elements: PyDict.OrderedDictionary
   ) -> PyDict {
     let typeLayout = PyDict.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)

@@ -90,7 +90,7 @@ public struct PyNone: PyObjectMixin, HasCustomGetMethod {
     let staticProperty: PyObject?
     let descriptor: GetDescriptor?
 
-    switch self.type.mroLookup(name: name) {
+    switch self.type.mroLookup(py, name: name) {
     case .value(let l):
       staticProperty = l.object
       descriptor = GetDescriptor(py, object: self.asObject, attribute: l.object)

@@ -106,7 +106,7 @@ class PyTypeDefinition:
       let __dict__ = type.header.__dict__
       let interned = py.intern(string: name)
 
-      switch __dict__.set(key: interned, to: value.asObject) {
+      switch __dict__.set(py, key: interned, value: value.asObject) {
       case .ok:
         break
       case .error(let e):

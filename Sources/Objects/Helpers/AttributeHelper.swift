@@ -26,7 +26,7 @@ internal enum AttributeHelper {
     let staticProperty: PyObject?
     let descriptor: GetDescriptor?
 
-    switch object.type.mroLookup(name: name) {
+    switch object.type.mroLookup(py, name: name) {
     case .value(let l):
       staticProperty = l.object
       descriptor = GetDescriptor(py, object: object, attribute: l.object)
@@ -42,7 +42,7 @@ internal enum AttributeHelper {
     }
 
     if let dict = py.get__dict__(object: object) {
-      switch dict.get(key: name.asObject) {
+      switch dict.get(py, key: name) {
       case .value(let o):
         return .value(o)
       case .notFound:
@@ -98,12 +98,12 @@ internal enum AttributeHelper {
 
     if let dict = py.get__dict__(object: object) {
       if let value = value {
-        switch dict.set(key: name, to: value) {
+        switch dict.set(py, key: name, value: value) {
         case .ok: return .none(py)
         case .error(let e): return .error(e)
         }
       } else {
-        switch dict.del(key: name.asObject) {
+        switch dict.del(py, key: name.asObject) {
         case .value: return .none(py)
         case .notFound: break // try other
         case .error(let e): return .error(e)

@@ -62,7 +62,10 @@ internal class GetDescriptor {
   /// `__get__` method on `self.descriptor`.
   private let get: PyObject
   /// `__set__` method on `self.descriptor`.
-  private lazy var set = self.descriptor.type.mroLookup(name: .__set__)?.object
+  private lazy var set: PyObject? = {
+    let setter = self.descriptor.type.mroLookup(self.py, name: .__set__)
+    return setter?.object
+  }()
 
   /// define PyDescr_IsData(d) (Py_TYPE(d)->tp_descr_set != NULL)
   internal var isData: Bool {
@@ -93,7 +96,7 @@ internal class GetDescriptor {
   /// You probably want `init?(object:attribute:)`.
   internal init?(_ py: Py, object: PyObject, type: PyType, attribute: PyObject) {
     // No getter -> no descriptor
-    guard let getLookup = attribute.type.mroLookup(name: .__get__) else {
+    guard let getLookup = attribute.type.mroLookup(py, name: .__get__) else {
       return nil
     }
 
@@ -135,7 +138,7 @@ internal class SetDescriptor {
   internal init?(_ py: Py, object: PyObject, attributeName: PyString) {
     // Do we even have such attribute?
     let attribute: PyObject
-    switch object.type.mroLookup(name: attributeName) {
+    switch object.type.mroLookup(py, name: attributeName) {
     case .value(let l):
       attribute = l.object
     case .notFound,
@@ -144,7 +147,7 @@ internal class SetDescriptor {
     }
 
     // No setter -> no descriptor
-    guard let setLookup = attribute.type.mroLookup(name: .__set__) else {
+    guard let setLookup = attribute.type.mroLookup(py, name: .__set__) else {
       return nil
     }
 

@@ -26,8 +26,16 @@ public struct PyDict: PyObjectMixin {
     in the keyword argument list.  For example:  dict(one=1, two=2)
     """
 
+  public typealias OrderedDictionary = VioletObjects.OrderedDictionary<PyObject>
+  public typealias Key = OrderedDictionary.Key
+
+  internal static let typeName = "dict"
+
   // sourcery: includeInLayout
-  internal var elements: OrderedDictionary<PyObject> { self.elementsPtr.pointee }
+  internal var elements: PyDict.OrderedDictionary {
+    get { self.elementsPtr.pointee }
+    nonmutating _modify { yield &self.elementsPtr.pointee }
+  }
 
   public let ptr: RawPtr
 
@@ -35,7 +43,9 @@ public struct PyDict: PyObjectMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py, type: PyType, elements: OrderedDictionary<PyObject>) {
+  internal func initialize(_ py: Py,
+                           type: PyType,
+                           elements: PyDict.OrderedDictionary) {
     self.header.initialize(py, type: type)
     self.elementsPtr.initialize(to: elements)
   }
@@ -48,31 +58,47 @@ public struct PyDict: PyObjectMixin {
     let count = zelf.elements.count
     return "PyDict(type: \(zelf.typeName), flags: \(zelf.flags), count: \(count)"
   }
-}
 
-/* MARKER
 
-  // MARK: - Equatable
+  // MARK: - Equatable, comparable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> CompareResult {
-    guard let other = PyCast.asDict(other) else {
+  internal static func __eq__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.typeName, .__eq__)
+    }
+
+    return Self.isEqual(py, zelf: zelf, other: other)
+  }
+
+  // sourcery: pymethod = __ne__
+  internal static func __ne__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.typeName, .__ne__)
+    }
+
+    let isEqual = Self.isEqual(py, zelf: zelf, other: other)
+    return isEqual.not
+  }
+
+  private static func isEqual(_ py: Py, zelf: PyDict, other: PyObject) -> CompareResult {
+    guard let other = py.cast.asDict(other) else {
       return .notImplemented
     }
 
-    guard self.elements.count == other.elements.count else {
+    guard zelf.elements.count == other.elements.count else {
       return .value(false)
     }
 
-    for entry in self.elements {
+    for entry in zelf.elements {
       let otherValue: PyObject
-      switch other.elements.get(key: entry.key) {
+      switch other.elements.get(py, key: entry.key) {
       case .value(let o): otherValue = o
       case .notFound: return .value(false)
       case .error(let e): return .error(e)
       }
 
-      switch Py.isEqualBool(left: entry.value, right: otherValue) {
+      switch py.isEqualBool(left: entry.value, right: otherValue) {
       case .value(true): break // Go to next element
       case .value(false): return .value(false)
       case .error(let e): return .error(e)
@@ -82,96 +108,120 @@ public struct PyDict: PyObjectMixin {
     return .value(true)
   }
 
-  // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> CompareResult {
-    return self.isEqual(other).not
-  }
-
-  // MARK: - Comparable
-
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> CompareResult {
-    return .notImplemented
+  internal static func __lt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compare(py, zelf: zelf, operation: .__lt__)
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    return .notImplemented
+  internal static func __le__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compare(py, zelf: zelf, operation: .__le__)
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> CompareResult {
-    return .notImplemented
+  internal static func __gt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compare(py, zelf: zelf, operation: .__gt__)
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
+  internal static func __ge__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compare(py, zelf: zelf, operation: .__ge__)
+  }
+
+  private static func compare(_ py: Py,
+                              zelf: PyObject,
+                              operation: CompareResult.Operation) -> CompareResult {
+    guard py.cast.isDict(zelf) else {
+      return .invalidSelfArgument(zelf, Self.typeName, operation)
+    }
+
     return .notImplemented
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> HashResult {
-    return .unhashable(self)
+  internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.typeName)
+    }
+
+    return .unhashable(zelf.asObject)
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
-    if self.elements.isEmpty {
-      return .value("{}")
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
-    if self.hasReprLock {
-      return .value("{...}")
+    if zelf.elements.isEmpty {
+      let result = py.intern(string: "{}")
+      return .value(result.asObject)
     }
 
-    return self.withReprLock {
+    if zelf.hasReprLock {
+      let result = py.intern(string: "{...}")
+      return .value(result.asObject)
+    }
+
+    return zelf.withReprLock {
       var result = "{"
-      for (index, element) in self.elements.enumerated() {
+      for (index, element) in zelf.elements.enumerated() {
         if index > 0 {
           result += ", " // so that we don't have ugly ', }'.
         }
 
-        switch Py.reprString(object: element.key.object) {
+        switch py.reprString(object: element.key.object) {
         case let .value(s): result += s
         case let .error(e): return .error(e)
         }
 
         result += ": "
 
-        switch Py.reprString(object: element.value) {
+        switch py.reprString(object: element.value) {
         case let .value(s): result += s
         case let .error(e): return .error(e)
         }
       }
 
       result += "}"
-      return .value(result)
+      return result.toResult(py)
     }
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    }
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal func getLength() -> BigInt {
-    return BigInt(self.elements.count)
+  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__len__")
+    }
+
+    let result = zelf.elements.count
+    return result.toResult(py)
   }
 
   // MARK: - Get
@@ -182,117 +232,35 @@ public struct PyDict: PyObjectMixin {
     case error(PyBaseException)
   }
 
-  /// Get value from a dictionary.
-  ///
-  /// It will trap on fail.
-  public func get(id: IdString) -> PyObject? {
+  /// Get value from a dictionary. Will trap on fail.
+  public func get(_ py: Py, id: IdString) -> PyObject? {
     let key = Key(id: id)
 
-    switch self.get(key: key) {
+    switch self.get(py, key: key) {
     case .value(let o):
       return o
     case .notFound:
       return nil
     case .error(let e):
-      self.idErrorNotHandled(operation: "get", error: e)
+      self.idErrorNotHandled(py, operation: "get", error: e)
     }
   }
 
-  /// Get value from a dictionary.
-  ///
-  /// It may fail if hashing or actual storage access fails.
-  public func get(key: PyObject) -> GetResult {
-    switch Self.createKey(from: key) {
+  public func get(_ py: Py, key: PyString) -> GetResult {
+    return self.get(py, key: key.asObject)
+  }
+
+  public func get(_ py: Py, key: PyObject) -> GetResult {
+    switch Self.createKey(py, object: key) {
     case let .value(key):
-      return self.get(key: key)
+      return self.get(py, key: key)
     case let .error(e):
       return .error(e)
     }
   }
 
-  /// Get value from a dictionary.
-  ///
-  /// It may fail.
-  internal func get(key: Key) -> GetResult {
-    switch self.elements.get(key: key) {
-    case .value(let o):
-      return .value(o)
-    case .notFound:
-      return .notFound
-    case .error(let e):
-      return .error(e)
-    }
-  }
-
-  // MARK: - Set
-
-  public enum SetResult {
-    case ok
-    case error(PyBaseException)
-  }
-
-  public func set(id: IdString, to value: PyObject) {
-    let key = Key(id: id)
-
-    switch self.set(key: key, to: value) {
-    case .ok:
-      break
-    case .error(let e):
-      self.idErrorNotHandled(operation: "set", error: e)
-    }
-  }
-
-  public func set(key: PyObject, to value: PyObject) -> SetResult {
-    switch Self.createKey(from: key) {
-    case let .value(key):
-      return self.set(key: key, to: value)
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  internal func set(key: Key, to value: PyObject) -> SetResult {
-    switch self.elements.insert(key: key, value: value) {
-    case .inserted,
-         .updated:
-      return .ok
-    case .error(let e):
-      return .error(e)
-    }
-  }
-
-  // MARK: - Del
-
-  public enum DelResult {
-    case value(PyObject)
-    case notFound
-    case error(PyBaseException)
-  }
-
-  public func del(id: IdString) -> PyObject? {
-    let key = Key(id: id)
-
-    switch self.del(key: key) {
-    case .value(let o):
-      return o
-    case .notFound:
-      return nil
-    case .error(let e):
-      self.idErrorNotHandled(operation: "del", error: e)
-    }
-  }
-
-  public func del(key: PyObject) -> DelResult {
-    switch Self.createKey(from: key) {
-    case let .value(key):
-      return self.del(key: key)
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  internal func del(key: Key) -> DelResult {
-    switch self.elements.remove(key: key) {
+  internal func get(_ py: Py, key: Key) -> GetResult {
+    switch self.elements.get(py, key: key) {
     case .value(let o):
       return .value(o)
     case .notFound:
@@ -309,77 +277,162 @@ public struct PyDict: PyObjectMixin {
   /// 1. insert to `__dict__` value that will always throw on compare
   /// 2. have hash collision with that value
   /// We will ignore this for now.
-  private func idErrorNotHandled(operation: String,
+  private func idErrorNotHandled(_ py: Py,
+                                 operation: String,
                                  error: PyBaseException) -> Never {
     // TODO: PyDict.idErrorNotHandled
-    let repr = Py.reprOrGenericString(object: error)
+    let repr = py.reprOrGenericString(object: error.asObject)
     trap("Dict operation '\(operation)' returned an error: '\(repr)'")
+  }
+
+  // MARK: - Set
+
+  public enum SetResult {
+    case ok
+    case error(PyBaseException)
+  }
+
+  /// Set value in a dictionary. Will trap on fail.
+  public func set(_ py: Py, id: IdString, value: PyObject) {
+    let key = Key(id: id)
+
+    switch self.set(py, key: key, value: value) {
+    case .ok:
+      break
+    case .error(let e):
+      self.idErrorNotHandled(py, operation: "set", error: e)
+    }
+  }
+
+  public func set(_ py: Py, key: PyString, value: PyObject) -> SetResult {
+    return self.set(py, key: key.asObject, value: value)
+  }
+
+  public func set(_ py: Py, key: PyObject, value: PyObject) -> SetResult {
+    switch Self.createKey(py, object: key) {
+    case let .value(key):
+      return self.set(py, key: key, value: value)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  internal func set(_ py: Py, key: Key, value: PyObject) -> SetResult {
+    switch self.elements.insert(py, key: key, value: value) {
+    case .inserted,
+         .updated:
+      return .ok
+    case .error(let e):
+      return .error(e)
+    }
+  }
+
+  // MARK: - Del
+
+  public enum DelResult {
+    case value(PyObject)
+    case notFound
+    case error(PyBaseException)
+  }
+
+  /// Delete value from a dictionary. Will trap on fail.
+  public func del(_ py: Py, id: IdString) -> PyObject? {
+    let key = Key(id: id)
+
+    switch self.del(py, key: key) {
+    case .value(let o):
+      return o
+    case .notFound:
+      return nil
+    case .error(let e):
+      self.idErrorNotHandled(py, operation: "del", error: e)
+    }
+  }
+
+  public func del(_ py: Py, key: PyObject) -> DelResult {
+    switch Self.createKey(py, object: key) {
+    case let .value(key):
+      return self.del(py, key: key)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  internal func del(_ py: Py, key: Key) -> DelResult {
+    switch self.elements.remove(py, key: key) {
+    case .value(let o):
+      return .value(o)
+    case .notFound:
+      return .notFound
+    case .error(let e):
+      return .error(e)
+    }
   }
 
   // MARK: - Get - subscript
 
   // sourcery: pymethod = __getitem__
   /// Implementation of `Python` subscript.
-  internal func getItem(index: PyObject) -> PyResult<PyObject> {
-    switch Py.hash(object: index) {
-    case let .value(hash):
-      return self.getItem(index: index, hash: hash)
-    case let .error(e):
-      return .error(e)
+  internal static func __getitem__(_ py: Py,
+                                   zelf: PyObject,
+                                   index: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__getitem__")
     }
-  }
 
-  /// Implementation of `Python` subscript.
-  internal func getItem(index: PyObject, hash: PyHash) -> PyResult<PyObject> {
-    let key = Key(hash: hash, object: index)
+    let key: Key
+    switch Self.createKey(py, object: index) {
+    case let .value(k): key = k
+    case let .error(e): return .error(e)
+    }
 
-    switch self.elements.get(key: key) {
+    switch zelf.elements.get(py, key: key) {
     case .value(let o): return .value(o)
     case .notFound: break // Try other
     case .error(let e): return .error(e)
     }
 
     // Call '__missing__' method if we're a subclass.
-    let isExactlyDictNotSubclass = PyCast.isExactlyDict(self)
-    let isSubclass = !isExactlyDictNotSubclass
+    let isSubclass = !py.cast.isExactlyDict(zelf.asObject)
     if isSubclass {
-      switch Py.callMethod(object: self, selector: .__missing__, arg: index) {
+      switch py.callMethod(object: zelf.asObject,
+                           selector: .__missing__,
+                           arg: index) {
       case .value(let o):
         return .value(o)
       case .missingMethod:
-        return .keyError(key: index)
+        break
       case .error(let e),
            .notCallable(let e):
         return .error(e)
       }
     }
 
-    return .keyError(key: index)
+    return .keyError(py, key: index)
   }
 
   // MARK: - Set - subscript
 
   // sourcery: pymethod = __setitem__
   /// Implementation of `Python` subscript.
-  internal func setItem(index: PyObject, value: PyObject) -> PyResult<PyNone> {
-    switch Py.hash(object: index) {
-    case let .value(hash):
-      return self.setItem(index: index, hash: hash, value: value)
-    case let .error(e):
-      return .error(e)
+  internal static func __setitem__(_ py: Py,
+                                   zelf: PyObject,
+                                   index: PyObject,
+                                   value: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__setitem__")
     }
-  }
 
-  /// Implementation of `Python` subscript.
-  internal func setItem(index: PyObject,
-                        hash: PyHash,
-                        value: PyObject) -> PyResult<PyNone> {
-    let key = Key(hash: hash, object: index)
+    let key: Key
+    switch Self.createKey(py, object: index) {
+    case let .value(k): key = k
+    case let .error(e): return .error(e)
+    }
 
-    switch self.elements.insert(key: key, value: value) {
+    switch zelf.elements.insert(py, key: key, value: value) {
     case .inserted,
          .updated:
-      return .value(Py.none)
+      return .none(py)
     case .error(let e):
       return .error(e)
     }
@@ -389,24 +442,24 @@ public struct PyDict: PyObjectMixin {
 
   // sourcery: pymethod = __delitem__
   /// Implementation of `Python` subscript.
-  internal func delItem(index: PyObject) -> PyResult<PyNone> {
-    switch Py.hash(object: index) {
-    case let .value(hash):
-      return self.delItem(index: index, hash: hash)
-    case let .error(e):
-      return .error(e)
+  internal static func __delitem__(_ py: Py,
+                                   zelf: PyObject,
+                                   index: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__delitem__")
     }
-  }
 
-  /// Implementation of `Python` subscript.
-  internal func delItem(index: PyObject, hash: PyHash) -> PyResult<PyNone> {
-    let key = Key(hash: hash, object: index)
+    let key: Key
+    switch Self.createKey(py, object: index) {
+    case let .value(k): key = k
+    case let .error(e): return .error(e)
+    }
 
-    switch self.elements.remove(key: key) {
+    switch zelf.elements.remove(py, key: key) {
     case .value:
-      return .value(Py.none)
+      return .none(py)
     case .notFound:
-      return .keyError(key: index)
+      return .keyError(py, key: index)
     case .error(let e):
       return .error(e)
     }
@@ -421,42 +474,51 @@ public struct PyDict: PyObjectMixin {
     Return the value for key if key is in the dictionary, else default.
     """
 
-  private static let getWithDefaultArguments = ArgumentParser.createOrTrap(
+  private static let getWithDefaultArguments = ArgumentParser(
     arguments: ["", "default"],
     format: "O|O:get"
   )
 
   // sourcery: pymethod = get, doc = getWithDefaultDoc
   /// Implementation of Python `get($self, key, default=None, /)` method.
-  internal func getWithDefault(args: [PyObject],
-                               kwargs: PyDict?) -> PyResult<PyObject> {
-    switch PyDict.getWithDefaultArguments.bind(args: args, kwargs: kwargs) {
+  internal static func get(_ py: Py,
+                           zelf: PyObject,
+                           args: [PyObject],
+                           kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "get")
+    }
+
+    switch Self.getWithDefaultArguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")
       assert(binding.optionalCount == 1, "Invalid optional argument count.")
 
       let arg0 = binding.required(at: 0)
       let arg1 = binding.optional(at: 1)
-      return self.getWithDefault(index: arg0, default: arg1)
+      return self.get(py, zelf: zelf, index: arg0, default: arg1)
     case let .error(e):
       return .error(e)
     }
   }
 
   /// Implementation of Python `get($self, key, default=None, /)` method.
-  internal func getWithDefault(index: PyObject,
-                               default: PyObject?) -> PyResult<PyObject> {
+  internal static func get(_ py: Py,
+                           zelf: PyDict,
+                           index: PyObject,
+                           default: PyObject?) -> PyResult<PyObject> {
     let key: Key
-    switch Self.createKey(from: index) {
+    switch Self.createKey(py, object: index) {
     case let .value(v): key = v
     case let .error(e): return .error(e)
     }
 
-    switch self.elements.get(key: key) {
+    switch zelf.elements.get(py, key: key) {
     case .value(let o):
       return .value(o)
     case .notFound:
-      return .value(`default` ?? Py.none)
+      let result = `default` ?? py.none.asObject
+      return .value(result)
     case .error(let e):
       return .error(e)
     }
@@ -473,7 +535,7 @@ public struct PyDict: PyObjectMixin {
     Return the value for key if key is in the dictionary, else default.
     """
 
-  private static let setWithDefaultArguments = ArgumentParser.createOrTrap(
+  private static let setWithDefaultArguments = ArgumentParser(
     arguments: ["", "default"],
     format: "O|O:get"
   )
@@ -484,16 +546,22 @@ public struct PyDict: PyObjectMixin {
   /// If `key` is in the dictionary, return its value.
   /// If not, insert key with a value of `default` and return `default`.
   /// `default` defaults to None.
-  internal func setWithDefault(args: [PyObject],
-                               kwargs: PyDict?) -> PyResult<PyObject> {
-    switch PyDict.setWithDefaultArguments.bind(args: args, kwargs: kwargs) {
+  internal func set(_ py: Py,
+                    zelf: PyObject,
+                    args: [PyObject],
+                    kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "set")
+    }
+
+    switch Self.setWithDefaultArguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")
       assert(binding.optionalCount == 1, "Invalid optional argument count.")
 
       let arg0 = binding.required(at: 0)
       let arg1 = binding.optional(at: 1)
-      return self.setWithDefault(index: arg0, default: arg1)
+      return Self.setWithDefault(py, zelf: zelf, index: arg0, default: arg1)
     case let .error(e):
       return .error(e)
     }
@@ -504,20 +572,22 @@ public struct PyDict: PyObjectMixin {
   /// If `key` is in the dictionary, return its value.
   /// If not, insert key with a value of `default` and return `default`.
   /// `default` defaults to `None`.
-  internal func setWithDefault(index: PyObject,
-                               default: PyObject?) -> PyResult<PyObject> {
+  internal static func setWithDefault(_ py: Py,
+                                      zelf: PyDict,
+                                      index: PyObject,
+                                      default: PyObject?) -> PyResult<PyObject> {
     let key: Key
-    switch Self.createKey(from: index) {
+    switch Self.createKey(py, object: index) {
     case let .value(v): key = v
     case let .error(e): return .error(e)
     }
 
-    switch self.elements.get(key: key) {
+    switch zelf.elements.get(py, key: key) {
     case .value(let o):
       return .value(o)
     case .notFound:
-      let value = `default` ?? Py.none
-      switch self.elements.insert(key: key, value: value) {
+      let value = `default` ?? py.none.asObject
+      switch zelf.elements.insert(py, key: key, value: value) {
       case .inserted,
            .updated:
         return .value(value)
@@ -532,24 +602,33 @@ public struct PyDict: PyObjectMixin {
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  internal func contains(object: PyObject) -> PyResult<Bool> {
-    switch Self.createKey(from: object) {
-    case let .value(key):
-      return self.contains(key: key)
-    case let .error(e):
-      return .error(e)
+  internal static func __contains__(_ py: Py,
+                                    zelf: PyObject,
+                                    object: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__contains__")
     }
-  }
 
-  internal func contains(key: Key) -> PyResult<Bool> {
-    return self.elements.contains(key: key)
+    let key: Key
+    switch Self.createKey(py, object: object) {
+    case let .value(v): key = v
+    case let .error(e): return .error(e)
+    }
+
+    let result = zelf.elements.contains(py, key: key)
+    return result.asObject(py)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal func iter() -> PyObject {
-    return PyMemory.newDictKeyIterator(dict: self)
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__iter__")
+    }
+
+    let result = py.newDictKeyIterator(dict: zelf)
+    return .value(result.asObject)
   }
 
   // MARK: - Clear
@@ -559,39 +638,51 @@ public struct PyDict: PyObjectMixin {
     """
 
   // sourcery: pymethod = clear, doc = clearDoc
-  internal func clear() -> PyNone {
-    self.elements.clear()
-    return Py.none
+  internal static func clear(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "clear")
+    }
+
+    zelf.elements.clear()
+    return .none(py)
   }
 
   // MARK: - Update
 
   // sourcery: pymethod = update
-  internal func update(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  internal static func update(_ py: Py,
+                              zelf: PyObject,
+                              args: [PyObject],
+                              kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "update")
+    }
+
     // Guarantee 0 or 1 args
-    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "update",
+    if let e = ArgumentParser.guaranteeArgsCountOrError(py,
+                                                        fnName: "update",
                                                         args: args,
                                                         min: 0,
                                                         max: 1) {
-      return .error(e)
+      return .error(e.asBaseException)
     }
 
     // Specific 'update' methods are in different file
     if let arg = args.first {
-      switch self.update(from: arg, onKeyDuplicate: .continue) {
+      switch Self.update(py, zelf: zelf, from: arg, onKeyDuplicate: .continue) {
       case .value: break
       case .error(let e): return .error(e)
       }
     }
 
     if let kwargs = kwargs {
-      switch self.update(from: kwargs, onKeyDuplicate: .continue) {
+      switch Self.update(py, zelf: zelf, from: kwargs.asObject, onKeyDuplicate: .continue) {
       case .value: break
       case .error(let e): return .error(e)
       }
     }
 
-    return .value(Py.none)
+    return .none(py)
   }
 
   // MARK: - Copy
@@ -599,8 +690,13 @@ public struct PyDict: PyObjectMixin {
   internal static let copyDoc = "D.copy() -> a shallow copy of D"
 
   // sourcery: pymethod = copy, doc = copyDoc
-  internal func copy() -> PyDict {
-    return Py.newDict(elements: self.elements)
+  internal static func copy(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "copy")
+    }
+
+    let result = py.newDict(elements: zelf.elements)
+    return .value(result.asObject)
   }
 
   // MARK: - Pop
@@ -611,14 +707,21 @@ public struct PyDict: PyObjectMixin {
     """
 
   // sourcery: pymethod = pop, doc = popDoc
-  internal func pop(_ index: PyObject, default: PyObject?) -> PyResult<PyObject> {
+  internal static func pop(_ py: Py,
+                           zelf: PyObject,
+                           index: PyObject,
+                           default: PyObject?) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "pop")
+    }
+
     let key: Key
-    switch Self.createKey(from: index) {
+    switch Self.createKey(py, object: index) {
     case let .value(v): key = v
     case let .error(e): return .error(e)
     }
 
-    switch self.elements.remove(key: key) {
+    switch zelf.elements.remove(py, key: key) {
     case .value(let o):
       return .value(o)
     case .notFound:
@@ -626,7 +729,7 @@ public struct PyDict: PyObjectMixin {
         return .value(def)
       }
 
-      return .keyError(key: index)
+      return .keyError(py, key: index)
     case .error(let e):
       return .error(e)
     }
@@ -638,49 +741,54 @@ public struct PyDict: PyObjectMixin {
     """
 
   // sourcery: pymethod = popitem, doc = popitemDoc
-  internal func popItem() -> PyResult<PyObject> {
-    guard let last = self.elements.last else {
-      return .keyError("popitem(): dictionary is empty")
+  internal static func popitem(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "popitem")
     }
 
-    _ = self.elements.remove(key: last.key)
+    guard let last = zelf.elements.last else {
+      return .keyError(py, message: "popitem(): dictionary is empty")
+    }
+
+    _ = zelf.elements.remove(py, key: last.key)
 
     let key = last.key.object
     let value = last.value
-    let result = Py.newTuple(key, value)
-    return .value(result)
+    let result = py.newTuple(elements: key, value)
+    return .value(result.asObject)
   }
 
   // MARK: - From keys
 
   // sourcery: pyclassmethod = fromkeys
-  internal static func fromKeys(type: PyType,
+  internal static func fromkeys(_ py: Py,
+                                type: PyType,
                                 iterable: PyObject,
                                 value: PyObject?) -> PyResult<PyObject> {
-    let value = value ?? Py.none
+    let value = value ?? py.none.asObject
 
     let dictObject: PyObject
-    switch Py.call(callable: type) {
+    switch py.call(callable: type.asObject) {
     case let .value(d):
       dictObject = d
     case let .notCallable(e),
-         let .error(e):
+      let .error(e):
       return .error(e)
     }
 
     // Fast path for empty 'dict'
-    if let dict = PyCast.asExactlyDict(dictObject), dict.elements.isEmpty {
-      if let iterDict = PyCast.asExactlyDict(iterable) {
-        return self.fillFromKeys(target: dict, dict: iterDict, value: value)
+    if let dict = py.cast.asExactlyDict(dictObject), dict.elements.isEmpty {
+      if let iterDict = py.cast.asExactlyDict(iterable) {
+        return Self.fillFromKeys(py, target: dict, dict: iterDict, value: value)
       }
 
-      if let iterSet = PyCast.asExactlyAnySet(iterable) {
-        return self.fillFromKeys(target: dict, set: iterSet, value: value)
+      if let iterSet = py.cast.asExactlyAnySet(iterable) {
+        return Self.fillFromKeys(py, target: dict, set: iterSet, value: value)
       }
     }
 
-    let e = Py.forEach(iterable: iterable) { object in
-      switch Py.setItem(object: dictObject, index: object, value: value) {
+    let e = py.forEach(iterable: iterable) { object in
+      switch py.setItem(object: dictObject, index: object, value: value) {
       case .value: return .goToNextElement
       case .error(let e): return .error(e)
       }
@@ -695,101 +803,133 @@ public struct PyDict: PyObjectMixin {
 
   private static let onFillFromKeysDuplicate = OnUpdateKeyDuplicate.continue
 
-  private static func fillFromKeys(target: PyDict,
+  private static func fillFromKeys(_ py: Py,
+                                   target: PyDict,
                                    dict: PyDict,
                                    value: PyObject) -> PyResult<PyObject> {
-    assert(PyCast.isExactlyDict(target))
-    assert(PyCast.isExactlyDict(dict))
+    assert(py.cast.isExactlyDict(target.asObject))
+    assert(py.cast.isExactlyDict(dict.asObject))
 
     for entry in dict.elements {
-      if let e = target.updateSingleEntry(key: entry.key,
-                                          value: value,
-                                          onKeyDuplicate: Self.onFillFromKeysDuplicate) {
+      if let e = Self.updateSingleEntry(py,
+                                        zelf: target,
+                                        key: entry.key,
+                                        value: value,
+                                        onKeyDuplicate: Self.onFillFromKeysDuplicate) {
         return .error(e)
       }
     }
 
-    return .value(target)
+    return .value(target.asObject)
   }
 
-  private static func fillFromKeys(target: PyDict,
+  private static func fillFromKeys(_ py: Py,
+                                   target: PyDict,
                                    set: PyAnySet,
                                    value: PyObject) -> PyResult<PyObject> {
-    assert(PyCast.isExactlyDict(target))
-    assert(PyCast.isExactlyAnySet(set))
+    assert(py.cast.isExactlyDict(target.asObject))
+    assert(py.cast.isExactlyAnySet(set))
 
     for element in set.elements {
       let key = Key(hash: element.hash, object: element.object)
-      if let e = target.updateSingleEntry(
-          key: key,
-          value: value,
-          onKeyDuplicate: Self.onFillFromKeysDuplicate
-      ) {
+      if let e = Self.updateSingleEntry(py,
+                                        zelf: target,
+                                        key: key,
+                                        value: value,
+                                        onKeyDuplicate: Self.onFillFromKeysDuplicate) {
         return .error(e)
       }
     }
 
-    return .value(target)
+    return .value(target.asObject)
   }
 
   // MARK: - Views
 
   // sourcery: pymethod = keys
-  internal func keys() -> PyObject {
-    return PyMemory.newDictKeys(dict: self)
+  internal static func keys(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "keys")
+    }
+
+    let result = py.newDictKeys(dict: zelf)
+    return .value(result.asObject)
   }
 
   // sourcery: pymethod = items
-  internal func items() -> PyObject {
-    return PyMemory.newDictItems(dict: self)
+  internal static func items(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "items")
+    }
+
+    let result = py.newDictItems(dict: zelf)
+    return .value(result.asObject)
   }
 
   // sourcery: pymethod = values
-  internal func values() -> PyObject {
-    return PyMemory.newDictValues(dict: self)
+  internal static func values(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "values")
+    }
+
+    let result = py.newDictValues(dict: zelf)
+    return .value(result.asObject)
   }
 
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyDict> {
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
     let elements = OrderedDictionary()
 
-    let isBuiltin = type === Py.types.dict
+    let isBuiltin = type === py.types.dict
     let dict = isBuiltin ?
-      Py.newDict(elements: elements) :
-      PyMemory.newDict(type: type, elements: elements)
+      py.newDict(elements: elements) :
+      py.memory.newDict(py, type: type, elements: elements)
 
-    return .value(dict)
+    return .value(dict.asObject)
   }
 
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.update(args: args, kwargs: kwargs)
-  }
+  internal static  func __init__(_ py: Py,
+                                 zelf: PyObject,
+                                 args: [PyObject],
+                                 kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
 
-  // MARK: - GC
-
-  /// Remove all of the references to other Python objects.
-  override internal func gcClean() {
-    self.elements.clear()
-    super.gcClean()
+    return Self.update(py, zelf: zelf.asObject, args: args, kwargs: kwargs)
   }
 
   // MARK: - Helpers
 
-  internal static func createKey(from object: PyObject) -> PyResult<Key> {
-    switch Py.hash(object: object) {
+  internal static func createKey(_ py: Py, object: PyObject) -> PyResult<Key> {
+    switch py.hash(object: object) {
     case let .value(hash):
-      return .value(Key(hash: hash, object: object))
+      let result = Key(hash: hash, object: object)
+      return .value(result)
     case let .error(e):
       return .error(e)
     }
   }
-}
 
-*/
+  private static func castZelf(_ py: Py, _ object: PyObject) -> PyDict? {
+    return py.cast.asDict(object)
+  }
+
+  private static func invalidZelfArgument(_ py: Py,
+                                          _ object: PyObject,
+                                          _ fnName: String) -> PyResult<PyObject> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.typeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
+  }
+}
