@@ -43,6 +43,8 @@ public struct Py {
   public func newDict() -> PyDict { fatalError() }
   public func newDict(elements: PyDict.OrderedDictionary) -> PyDict { fatalError() }
   public func newDictKeyIterator(dict: PyDict) -> PyDictKeyIterator { fatalError() }
+  public func newDictItemIterator(dict: PyDict) -> PyDictItemIterator { fatalError() }
+  public func newDictValuesIterator(dict: PyDict) -> PyDictValueIterator { fatalError() }
   public func newDictKeys(dict: PyDict) -> PyDictKeys { fatalError() }
   public func newDictItems(dict: PyDict) -> PyDictItems { fatalError() }
   public func newDictValues(dict: PyDict) -> PyDictValues { fatalError() }
@@ -104,6 +106,7 @@ public struct Py {
     return type.isSubtype(of: baseException)
   }
 
+  public func isEqual(left: PyObject, right: PyObject) -> PyResult<PyObject> { fatalError() }
   public func isEqualBool(left: PyObject, right: PyObject) -> PyResult<Bool> { fatalError() }
   public func isLessBool(left: PyObject, right: PyObject) -> PyResult<Bool> { fatalError() }
   public func isLessEqualBool(left: PyObject, right: PyObject) -> PyResult<Bool> { fatalError() }
@@ -154,6 +157,9 @@ public struct Py {
                           fn: ReduceIntoFn<Acc>) -> PyBaseException? { fatalError() }
 
   public func toArray(iterable: PyObject) -> PyResult<[PyObject]> { fatalError() }
+
+  public func contains(iterable: PyObject, element: PyObject) -> PyResult<Bool> { fatalError() }
+  public func contains(iterable: PyObject, allFrom subset: PyObject) -> PyResult<Bool> { fatalError() }
 
   // MARK: - Attributes
 

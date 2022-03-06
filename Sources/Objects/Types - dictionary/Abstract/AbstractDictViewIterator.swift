@@ -31,8 +31,9 @@ extension AbstractDictViewIterator {
   }
 
   // MARK: - __iter__
-  
-  internal static func abstract__iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+
+  internal static func abstract__iter__(_ py: Py,
+                                        zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
@@ -42,7 +43,10 @@ extension AbstractDictViewIterator {
 
   // MARK: - __next__
 
-  internal static func abstract__next__(_ py: Py, zelf: PyObject) -> PyResult<PyDict.OrderedDictionary.Entry> {
+  internal typealias Entry = PyDict.OrderedDictionary.Entry
+
+  internal static func abstract__next__(_ py: Py,
+                                        zelf: PyObject) -> PyResult<Entry> {
     guard let zelf = Self.castZelf(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__next__")
     }
@@ -76,7 +80,8 @@ extension AbstractDictViewIterator {
 
   // MARK: - __length_hint__
 
-  internal static func abstract__length_hint__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func abstract__length_hint__(_ py: Py,
+                                               zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__length_hint__")
     }

@@ -609,6 +609,12 @@ public struct PyDict: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "__contains__")
     }
 
+    return Self.contains(py, zelf: zelf, object: object)
+  }
+
+  internal static func contains(_ py: Py,
+                                zelf: PyDict,
+                                object: PyObject) -> PyResult<PyObject> {
     let key: Key
     switch Self.createKey(py, object: object) {
     case let .value(v): key = v
