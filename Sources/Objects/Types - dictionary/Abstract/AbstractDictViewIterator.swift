@@ -1,36 +1,67 @@
-/* MARKER
 /// Mixin with methods for various `PyDict` iterators.
 ///
-/// All of the methods/properties should be prefixed with `_`.
-/// DO NOT use them outside of the dict iterator objects!
-internal protocol AbstractDictViewIterator: PyObject {
+/// DO NOT use them outside of the `dict` iterator objects!
+internal protocol AbstractDictViewIterator: PyObjectMixin {
   var dict: PyDict { get }
-  var index: Int { get set }
+  var index: Int { get nonmutating set }
   var initialCount: Int { get }
+
+  /// Cast `PyObject` -> Self``.
+  static func castZelf(_ py: Py, _ object: PyObject) -> Self?
+
+  /// Create an error when the `zelf` argument is not valid.
+  static func invalidZelfArgument<T>(_ py: Py,
+                                     _ object: PyObject,
+                                     _ fnName: String) -> PyResult<T>
 }
 
 extension AbstractDictViewIterator {
 
-  /// DO NOT USE! This is a part of `AbstractDictViewIterator` implementation.
-  internal func _iter() -> PyObject {
-    return self
-  }
+  // MARK: - __getattribute__
 
-  /// DO NOT USE! This is a part of `AbstractDictViewIterator` implementation.
-  internal func _next() -> PyResult<PyDict.OrderedDictionary.Entry> {
-    let currentCount = self.dict.elements.count
-    guard currentCount == self.initialCount else {
-      self.index = -1 // Make this state sticky
-      return .runtimeError("dictionary changed size during iteration")
+  // sourcery: pymethod = __getattribute__
+  internal static func abstract__getattribute__(_ py: Py,
+                                                zelf: PyObject,
+                                                name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
 
-    let entries = self.dict.elements.entries
-    while self.index < entries.count {
-      let entry = entries[self.index]
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
+  }
+
+  // MARK: - __iter__
+  
+  internal static func abstract__iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__iter__")
+    }
+
+    return .value(zelf.asObject)
+  }
+
+  // MARK: - __next__
+
+  internal static func abstract__next__(_ py: Py, zelf: PyObject) -> PyResult<PyDict.OrderedDictionary.Entry> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__next__")
+    }
+
+    let elements = zelf.dict.elements
+
+    let currentCount = elements.count
+    guard currentCount == zelf.initialCount else {
+      zelf.index = -1 // Make this state sticky
+      return .runtimeError(py, message: "dictionary changed size during iteration")
+    }
+
+    let entries = elements.entries
+    while zelf.index < entries.count {
+      let entry = entries[zelf.index]
 
       // Increment index NOW, so that the regardless of whether we return 'entry'
       // or iterate more we move to next element.
-      self.index += 1
+      zelf.index += 1
 
       switch entry {
       case .entry(let e):
@@ -40,15 +71,18 @@ extension AbstractDictViewIterator {
       }
     }
 
-    return .error(Py.newStopIteration())
+    return .stopIteration(py, value: nil)
   }
 
-  /// DO NOT USE! This is a part of `AbstractDictViewIterator` implementation.
-  internal func _lengthHint() -> PyInt {
-    let count = self.dict.elements.count
-    let result = count - self.index
-    return Py.newInt(result)
+  // MARK: - __length_hint__
+
+  internal static func abstract__length_hint__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__length_hint__")
+    }
+
+    let count = zelf.dict.elements.count
+    let result = count - zelf.index
+    return result.toResult(py)
   }
 }
-
-*/

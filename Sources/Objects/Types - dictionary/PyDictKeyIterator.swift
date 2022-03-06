@@ -6,69 +6,91 @@ import VioletCore
 // Objects -> dictobject.c
 
 // sourcery: pytype = dict_keyiterator, isDefault, hasGC
- public struct PyDictKeyIterator: PyObjectMixin, AbstractDictViewIterator {
+public struct PyDictKeyIterator: PyObjectMixin, AbstractDictViewIterator {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-   // sourcery: includeInLayout
-   internal var dict: PyDict { self.dictPtr.pointee }
-   // sourcery: includeInLayout
-   internal var index: Int { self.indexPtr.pointee }
-   // sourcery: includeInLayout
-   internal var initialCount: Int { self.initialCountPtr.pointee }
+  // sourcery: includeInLayout
+  internal var dict: PyDict { self.dictPtr.pointee }
 
-   public let ptr: RawPtr
+  // sourcery: includeInLayout
+  internal var index: Int {
+    get { self.indexPtr.pointee }
+    nonmutating set { self.indexPtr.pointee = newValue }
+  }
 
-   public init(ptr: RawPtr) {
-     self.ptr = ptr
-   }
+  // sourcery: includeInLayout
+  internal var initialCount: Int { self.initialCountPtr.pointee }
 
-   internal func initialize(_ py: Py, type: PyType, dict: PyDict) {
-     let initialCount = dict.elements.count
-     self.header.initialize(py, type: type)
-     self.dictPtr.initialize(to: dict)
-     self.indexPtr.initialize(to: 0)
-     self.initialCountPtr.initialize(to: initialCount)
-   }
+  public let ptr: RawPtr
 
-   // Nothing to do here.
-   internal func beforeDeinitialize() { }
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
+  }
 
-   internal static func createDebugString(ptr: RawPtr) -> String {
-     let zelf = PyDictKeyIterator(ptr: ptr)
-     return "PyDictKeyIterator(type: \(zelf.typeName), flags: \(zelf.flags))"
-   }
- }
+  internal func initialize(_ py: Py, type: PyType, dict: PyDict) {
+    let initialCount = dict.elements.count
+    self.header.initialize(py, type: type)
+    self.dictPtr.initialize(to: dict)
+    self.indexPtr.initialize(to: 0)
+    self.initialCountPtr.initialize(to: initialCount)
+  }
 
-/* MARKER
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyDictKeyIterator(ptr: ptr)
+    return "PyDictKeyIterator(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
+  // MARK: - AbstractIterator
+
+  /// Cast `PyObject` -> Self``.
+  internal static func castZelf(_ py: Py, _ object: PyObject) -> PyDictKeyIterator? {
+    return py.cast.asDictKeyIterator(object)
+  }
+
+  /// Create an error when the `zelf` argument is not valid.
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: "dict_keyiterator",
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
+  }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__getattribute__(py, zelf: zelf, name: name)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal func iter() -> PyObject {
-    return self._iter()
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__iter__(py, zelf: zelf)
   }
 
   // MARK: - Next
 
   // sourcery: pymethod = __next__
-  internal func next() -> PyResult<PyObject> {
-    switch self._next() {
+  internal static func __next__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    switch Self.abstract__next__(py, zelf: zelf) {
     case let .value(entry):
       let key = entry.key.object
       return .value(key)
@@ -80,18 +102,17 @@ import VioletCore
   // MARK: - Length hint
 
   // sourcery: pymethod = __length_hint__
-  internal func lengthHint() -> PyInt {
-    return self._lengthHint()
+  internal static func __length_hint__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__length_hint__(py, zelf: zelf)
   }
 
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyNew(type: PyType,
-                            args: [PyObject],
-                            kwargs: PyDict?) -> PyResult<PyDictKeyIterator> {
-    return .typeError("cannot create 'dict_keyiterator' instances")
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    return .typeError(py, message: "cannot create 'dict_keyiterator' instances")
   }
 }
-
-*/
