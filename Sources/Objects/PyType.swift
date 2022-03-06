@@ -264,7 +264,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
       return Self.invalidZelfArgument(py, zelf)
     }
 
-    guard let doc = zelf.__dict__.get(id: .__doc__) else {
+    guard let doc = zelf.__dict__.get(py, id: .__doc__) else {
       return .none(py)
     }
 
@@ -288,7 +288,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     case let .error(e): return .error(e)
     }
 
-    zelf.__dict__.set(id: .__doc__, to: object)
+    zelf.__dict__.set(py, id: .__doc__, value: object)
     return .none(py)
   }
 
@@ -306,7 +306,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
       object = py.none.asObject
     }
 
-    self.__dict__.set(id: .__doc__, to: object)
+    self.__dict__.set(py, id: .__doc__, value: object)
   }
 
   // MARK: - Module
@@ -368,7 +368,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   // This whole thing to try to avoid conversion for 'objectNotYetConvertedToString'.
   private func getModuleNameRaw(_ py: Py) -> GetModuleNameRawResult {
     if self.typeFlags.isHeapType {
-      guard let object = self.__dict__.get(id: .__module__) else {
+      guard let object = self.__dict__.get(py, id: .__module__) else {
         let e = py.newAttributeError(message: "__module__")
         return .error(e.asBaseException)
       }
@@ -420,7 +420,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     case let .error(e): return .error(e)
     }
 
-    self.__dict__.set(id: .__module__, to: object)
+    self.__dict__.set(py, id: .__module__, value: object)
     return .value()
   }
 
@@ -609,7 +609,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     let metaDescriptor: GetDescriptor?
 
     // Look for the attribute in the metatype
-    switch self.type.mroLookup(name: name) {
+    switch self.type.mroLookup(py, name: name) {
     case .value(let r):
       metaAttribute = r.object
       metaDescriptor = GetDescriptor(py, object: self.asObject, attribute: r.object)
@@ -627,7 +627,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     // No data descriptor found on metatype.
     // Look in '__dict__' of this type and its bases.
     if searchDict {
-      switch self.mroLookup(name: name) {
+      switch self.mroLookup(py, name: name) {
       case .value(let r):
         if let descr = GetDescriptor(py, type: self, attribute: r.object) {
           return descr.call()
@@ -775,9 +775,9 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   ///
   /// PyObject *
   /// _PyType_Lookup(PyTypeObject *type, PyObject *name)
-  internal func mroLookup(name: IdString) -> MroLookupResult? {
+  internal func mroLookup(_ py: Py, name: IdString) -> MroLookupResult? {
     for type in self.mro {
-      if let object = type.__dict__.get(id: name) {
+      if let object = type.__dict__.get(py, id: name) {
         return MroLookupResult(object: object, type: type)
       }
     }
@@ -795,9 +795,9 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   ///
   /// PyObject *
   /// _PyType_Lookup(PyTypeObject *type, PyObject *name)
-  internal func mroLookup(name: PyString) -> MroLookupByStringResult {
+  internal func mroLookup(_ py: Py, name: PyString) -> MroLookupByStringResult {
     for type in self.mro {
-      switch type.__dict__.get(key: name.asObject) {
+      switch type.__dict__.get(py, key: name.asObject) {
       case .value(let o):
         return .value(MroLookupResult(object: o, type: type))
       case .notFound:
@@ -864,7 +864,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     }
 
     // '__new__' is a static method, so we can't just use 'callMethod'
-    guard let newLookup = self.mroLookup(name: .__new__) else {
+    guard let newLookup = self.mroLookup(py, name: .__new__) else {
       let message = "cannot create '\(self.name)' instances"
       return .typeError(py, message: message)
     }

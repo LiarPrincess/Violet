@@ -67,21 +67,31 @@ public struct PyNamespace: PyObjectMixin {
 
   // sourcery: pymethod = __lt__
   internal static func __lt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
-    return .notImplemented
+    return Self.compare(py, zelf: zelf, operation: .__lt__)
   }
 
   // sourcery: pymethod = __le__
   internal static func __le__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
-    return .notImplemented
+    return Self.compare(py, zelf: zelf, operation: .__le__)
   }
 
   // sourcery: pymethod = __gt__
   internal static func __gt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
-    return .notImplemented
+    return Self.compare(py, zelf: zelf, operation: .__gt__)
   }
 
   // sourcery: pymethod = __ge__
   internal static func __ge__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compare(py, zelf: zelf, operation: .__ge__)
+  }
+
+  private static func compare(_ py: Py,
+                              zelf: PyObject,
+                              operation: CompareResult.Operation) -> CompareResult {
+    guard py.cast.isNamespace(zelf) else {
+      return .invalidSelfArgument(zelf, Self.typeName, operation)
+    }
+
     return .notImplemented
   }
 

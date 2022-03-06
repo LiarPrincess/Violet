@@ -34,35 +34,33 @@ internal struct PyAnySet: CustomStringConvertible {
   }
 }
 
-/* MARKER
+// MARK: - Cast
 
-// MARK: - PyCast
-
-extension PyCast {
+extension Py.Cast {
 
   /// Is this object a `set` or `frozenset` (or their subclass)?
-  internal static func isAnySet(_ object: PyObject) -> Bool {
+  internal func isAnySet(_ object: PyObject) -> Bool {
     return self.isSet(object) || self.isFrozenSet(object)
   }
 
   /// Is this object a `set` or `frozenset` (but not their subclass)?
-  internal static func isExactlyAnySet(_ object: PyObject) -> Bool {
+  internal func isExactlyAnySet(_ object: PyObject) -> Bool {
     return self.isExactlySet(object) || self.isExactlyFrozenSet(object)
   }
 
   /// Is this object a `set` or `frozenset` (but not their subclass)?
-  internal static func isExactlyAnySet(_ set: PyAnySet) -> Bool {
+  internal func isExactlyAnySet(_ set: PyAnySet) -> Bool {
     switch set.storage {
     case let .set(s):
-      return self.isExactlySet(s)
+      return self.isExactlySet(s.asObject)
     case let .frozenSet(s):
-      return self.isExactlyFrozenSet(s)
+      return self.isExactlyFrozenSet(s.asObject)
     }
   }
 
   /// Cast this object to `PyAnySet` if it is a `set` or `frozenset`
   /// (or their subclass).
-  internal static func asAnySet(_ object: PyObject) -> PyAnySet? {
+  internal func asAnySet(_ object: PyObject) -> PyAnySet? {
     if let set = self.asSet(object) {
       return PyAnySet(set: set)
     }
@@ -76,7 +74,7 @@ extension PyCast {
 
   /// Cast this object to `PyAnySet` if it is a `set` or `frozenset`
   /// (but not their subclass).
-   internal static func asExactlyAnySet(_ object: PyObject) -> PyAnySet? {
+   internal func asExactlyAnySet(_ object: PyObject) -> PyAnySet? {
     if let set = self.asExactlySet(object) {
       return PyAnySet(set: set)
     }
@@ -88,5 +86,3 @@ extension PyCast {
     return nil
   }
 }
-
-*/

@@ -23,40 +23,7 @@ extension PyDict {
 
   internal func isEqual(_ other: PyDict) -> CompareResult { fatalError() }
 
-  public enum GetResult {
-    case value(PyObject)
-    case notFound
-    case error(PyBaseException)
-  }
-
-  public func get(id: IdString) -> PyObject? { fatalError() }
-  public func get(key: PyObject) -> GetResult { fatalError() }
-
-  public enum SetResult {
-    case ok
-    case error(PyBaseException)
-  }
-
-  public func set(id: IdString, to value: PyObject) { fatalError() }
-  public func set(key: PyString, to value: PyObject) -> SetResult { fatalError() }
-
-  public enum DelResult {
-    case value(PyObject)
-    case notFound
-    case error(PyBaseException)
-  }
-
-  public func del(id: IdString) -> PyObject? { fatalError() }
-  public func del(key: PyObject) -> DelResult { fatalError() }
-
   public func copy() -> PyDict { fatalError() }
-
-  public enum OnUpdateKeyDuplicate {
-    /// This is probably what you want.
-    case `continue`
-    /// Do not allow duplicates.
-    case error
-  }
 
   public func update(from object: PyDict, onKeyDuplicate: OnUpdateKeyDuplicate) -> PyResult<PyNone> { fatalError() }
   public func update(from object: PyObject, onKeyDuplicate: OnUpdateKeyDuplicate) -> PyResult<PyNone> { fatalError() }

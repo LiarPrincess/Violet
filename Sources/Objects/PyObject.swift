@@ -142,7 +142,7 @@ public struct PyObject: PyObjectMixin {
     // If we have dict then use it to fill 'dir'
     var error: PyBaseException?
     if let dict = py.get__dict__(object: zelf) {
-      if let dirFn = dict.get(id: .__dir__) {
+      if let dirFn = dict.get(py, id: .__dir__) {
         switch py.call(callable: dirFn) {
         case .value(let o):
           error = result.append(py, elementsFrom: o)
@@ -295,7 +295,7 @@ public struct PyObject: PyObjectMixin {
   }
 
   private static func hasOverridden(_ py: Py, type: PyType, name: IdString) -> Bool {
-    guard let lookup = type.mroLookup(name: name) else {
+    guard let lookup = type.mroLookup(py, name: name) else {
       let t = type.getNameString()
       let fn = name.value.value
       trap("Uh… oh… So '\(fn)' lookup on \(t) failed to find anything. " +

@@ -343,7 +343,7 @@ extension PyType {
     type: PyType
   ) -> PyBaseException? {
     let dict = type.__dict__
-    let isAlreadyPresent = dict.get(id: .__module__) != nil
+    let isAlreadyPresent = dict.get(py, id: .__module__) != nil
     if isAlreadyPresent {
       return nil
     }
@@ -354,7 +354,7 @@ extension PyType {
     case let .error(e): return e
     }
 
-    if let module = globals.get(id: .__name__) {
+    if let module = globals.get(py, id: .__name__) {
       switch type.setModule(py, value: module) {
       case .value: break
       case .error(let e): return e
@@ -373,7 +373,7 @@ extension PyType {
     let dict = type.__dict__
 
     // Otherwise it will stay the same as during 'init'
-    if let qualname = dict.get(id: .__qualname__) {
+    if let qualname = dict.get(py, id: .__qualname__) {
       switch type.setQualname(py, value: qualname) {
       case .value: break
       case .error(let e): return e
@@ -392,7 +392,7 @@ extension PyType {
   ) {
     let dict = type.__dict__
 
-    guard let object = dict.get(id: fnName) else {
+    guard let object = dict.get(py, id: fnName) else {
       return
     }
 
@@ -401,7 +401,7 @@ extension PyType {
     }
 
     let method = py.newStaticMethod(callable: function)
-    dict.set(id: fnName, to: method.asObject)
+    dict.set(py, id: fnName, value: method.asObject)
   }
 
   private static func convertFunctionToClassMethodIfNeeded(
@@ -411,7 +411,7 @@ extension PyType {
   ) {
     let dict = type.__dict__
 
-    guard let object = dict.get(id: fnName) else {
+    guard let object = dict.get(py, id: fnName) else {
       return
     }
 
@@ -420,7 +420,7 @@ extension PyType {
     }
 
     let method = py.newClassMethod(callable: function)
-    dict.set(id: fnName, to: method.asObject)
+    dict.set(py, id: fnName, value: method.asObject)
   }
 
   // MARK: - __dict__ property
@@ -443,7 +443,7 @@ extension PyType {
     )
 
     let dict = type.__dict__
-    dict.set(id: .__dict__, to: property.asObject)
+    dict.set(py, id: .__dict__, value: property.asObject)
   }
 
   private static func isInMroExcludingObject(_ py: Py,
@@ -459,7 +459,7 @@ extension PyType {
         break
       }
 
-      let lookup = base.mroLookup(name: name)
+      let lookup = base.mroLookup(py, name: name)
       if lookup != nil {
         return true
       }
@@ -538,7 +538,7 @@ extension PyType {
     )
 
     let dict = type.__dict__
-    dict.set(id: .__getattribute__, to: getattribute.asObject)
+    dict.set(py, id: .__getattribute__, value: getattribute.asObject)
   }
 
   // MARK: - __setattr__ method
@@ -556,7 +556,7 @@ extension PyType {
     )
 
     let dict = type.__dict__
-    dict.set(id: .__setattr__, to: setattr.asObject)
+    dict.set(py, id: .__setattr__, value: setattr.asObject)
   }
 
   // MARK: - __classcell__
@@ -565,7 +565,7 @@ extension PyType {
                                         type: PyType) -> PyTypeError? {
     let dict = type.__dict__
 
-    guard let __classcell__ = dict.get(id: .__classcell__) else {
+    guard let __classcell__ = dict.get(py, id: .__classcell__) else {
       return nil
     }
 
@@ -576,7 +576,7 @@ extension PyType {
     }
 
     cell.content = type.asObject
-    _ = dict.del(id: .__classcell__)
+    _ = dict.del(py, id: .__classcell__)
     return nil
   }
 
@@ -595,7 +595,7 @@ extension PyType {
       let value = entry.value
 
       // Do we even have such thingie?
-      guard let lookup = value.type.mroLookup(name: .__set_name__) else {
+      guard let lookup = value.type.mroLookup(py, name: .__set_name__) else {
         continue
       }
 

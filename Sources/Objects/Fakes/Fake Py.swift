@@ -41,6 +41,11 @@ public struct Py {
   public func newListIterator(list: PyList) -> PyListIterator { fatalError() }
   public func newListReverseIterator(list: PyList) -> PyListReverseIterator { fatalError() }
   public func newDict() -> PyDict { fatalError() }
+  public func newDict(elements: PyDict.OrderedDictionary) -> PyDict { fatalError() }
+  public func newDictKeyIterator(dict: PyDict) -> PyDictKeyIterator { fatalError() }
+  public func newDictKeys(dict: PyDict) -> PyDictKeys { fatalError() }
+  public func newDictItems(dict: PyDict) -> PyDictItems { fatalError() }
+  public func newDictValues(dict: PyDict) -> PyDictValues { fatalError() }
 
   public func newStaticMethod(callable: PyFunction) -> PyStaticMethod { fatalError() }
   public func newClassMethod(callable: PyFunction) -> PyClassMethod { fatalError() }
@@ -76,6 +81,7 @@ public struct Py {
 
   public func repr(object: PyObject) -> PyResult<PyString> { fatalError() }
   public func reprString(object: PyObject) -> PyResult<String> { fatalError() }
+  public func reprOrGenericString(object: PyObject) -> String { fatalError() }
   public func str(object: PyObject) -> PyResult<PyString> { fatalError() }
   public func strString(object: PyObject) -> PyResult<String> { fatalError() }
 
@@ -130,6 +136,23 @@ public struct Py {
   public typealias ForEachFn = (PyObject) -> ForEachStep
 
   public func forEach(iterable: PyObject, fn: ForEachFn) -> PyBaseException? { fatalError() }
+
+  public enum ReduceIntoStep<Acc> {
+    /// Go to the next item.
+    case goToNextElement
+    /// Finish reduction.
+    /// Use this if you already have the result and don't need to iterate anymore.
+    case finish
+    /// Finish reduction with given error.
+    case error(PyBaseException)
+  }
+
+  public typealias ReduceIntoFn<Acc> = (inout Acc, PyObject) -> ReduceIntoStep<Acc>
+
+  public func reduce<Acc>(iterable: PyObject,
+                          into acc: inout Acc,
+                          fn: ReduceIntoFn<Acc>) -> PyBaseException? { fatalError() }
+
   public func toArray(iterable: PyObject) -> PyResult<[PyObject]> { fatalError() }
 
   // MARK: - Attributes
@@ -148,15 +171,15 @@ public struct Py {
   public func hasAttribute(object: PyObject, name: IdString) -> PyResult<Bool> { fatalError() }
   public func hasAttribute(object: PyObject, name: PyObject) -> PyResult<Bool> { fatalError() }
 
-  public func setAttribute(object: PyObject,
-                           name: String,
-                           value: PyObject) -> PyResult<PyNone> { fatalError() }
-  public func setAttribute(object: PyObject,
-                           name: IdString,
-                           value: PyObject) -> PyResult<PyNone> { fatalError() }
-  public func setAttribute(object: PyObject,
-                           name: PyObject,
-                           value: PyObject) -> PyResult<PyNone> { fatalError() }
+  public func setAttribute(object: PyObject, name: String, value: PyObject) -> PyResult<PyNone> { fatalError() }
+  public func setAttribute(object: PyObject, name: IdString, value: PyObject) -> PyResult<PyNone> { fatalError() }
+  public func setAttribute(object: PyObject, name: PyObject, value: PyObject) -> PyResult<PyNone> { fatalError() }
+
+  // MARK: - Item
+
+  public func getItem(object: PyObject, index: Int) -> PyResult<PyObject> { fatalError() }
+  public func getItem(object: PyObject, index: PyObject) -> PyResult<PyObject> { fatalError() }
+  public func setItem(object: PyObject, index: PyObject, value: PyObject) -> PyResult<PyNone> { fatalError() }
 
   // MARK: - Errors
 
@@ -258,6 +281,11 @@ public struct Py {
     }
   }
 
+  public func callMethod(object: PyObject,
+                         selector: IdString,
+                         arg: PyObject) -> CallMethodResult {
+    fatalError()
+  }
 
   public func callMethod(object: PyObject,
                          selector: IdString,
@@ -270,7 +298,6 @@ public struct Py {
   // MARK: - Warn
 
   public enum PyWarningEnum {
-
     /// Base class for warning categories.
     case warning
     /// Base class for warnings about deprecated features.
