@@ -58,6 +58,14 @@ public struct Py {
   public func newSetIterator(set: PySet) -> PySetIterator { fatalError() }
   public func newSetIterator(set: PyFrozenSet) -> PySetIterator { fatalError() }
 
+  public func newRange(stop: PyObject) -> PyRange { fatalError() }
+  public func newRange(start: BigInt, stop: BigInt, step: BigInt?) -> PyResult<PyRange> { fatalError() }
+  public func newRange(start: PyObject, stop: PyObject, step: PyObject?) -> PyResult<PyRange> { fatalError() }
+  public func newRangeIterator(start: BigInt, step: BigInt, length: BigInt) -> PyResult<PyRangeIterator> { fatalError() }
+
+  public func newSlice(stop: PyObject) -> PyResult<PySlice> { fatalError() }
+  public func newSlice(start: PyObject, stop: PyObject, step: PyObject?) -> PyResult<PySlice> { fatalError() }
+
   public func newCode(code: CodeObject) -> PyString { fatalError() }
   public func newStaticMethod(callable: PyFunction) -> PyStaticMethod { fatalError() }
   public func newClassMethod(callable: PyFunction) -> PyClassMethod { fatalError() }

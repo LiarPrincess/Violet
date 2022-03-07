@@ -57,15 +57,30 @@ public struct PySlice: PyObjectMixin {
     let zelf = PySlice(ptr: ptr)
     return "PySlice(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
-}
 
-/* MARKER
-
-  // MARK: - Equatable
+  // MARK: - Equatable, comparable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> CompareResult {
-    switch self.getFirstNonEqualValues(other: other) {
+  internal static func __eq__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__eq__)
+    }
+
+    return Self.isEqual(py, zelf: zelf, other: other)
+  }
+  
+  // sourcery: pymethod = __ne__
+  internal static func __ne__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ne__)
+    }
+
+    let isEqual = Self.isEqual(py, zelf: zelf, other: other)
+    return isEqual.not
+  }
+
+  internal static func isEqual(_ py: Py, zelf: PySlice, other: PyObject) -> CompareResult {
+    switch Self.getFirstNonEqualValues(py, zelf: zelf, other: other) {
     case .values: return .value(false)
     case .allValuesEqual: return .value(true)
     case .notImplemented: return .notImplemented
@@ -73,79 +88,93 @@ public struct PySlice: PyObjectMixin {
     }
   }
 
-  // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> CompareResult {
-    return self.isEqual(other).not
-  }
-
-  // MARK: - Comparable
-
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> CompareResult {
-    return self.compare(other: other,
-                        compareFn: Py.isLessBool(left:right:),
+  internal static func __lt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compare(py,
+                        zelf: zelf,
+                        other: other,
+                        operation: .__lt__,
+                        compareFn: py.isLessBool(left:right:),
                         onEqual: false)
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    return self.compare(other: other,
-                        compareFn: Py.isLessEqualBool(left:right:),
+  internal static func __le__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compare(py,
+                        zelf: zelf,
+                        other: other,
+                        operation: .__le__,
+                        compareFn: py.isLessEqualBool(left:right:),
                         onEqual: true)
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> CompareResult {
-    return self.compare(other: other,
-                        compareFn: Py.isGreaterBool(left:right:),
+  internal static func __gt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compare(py,
+                        zelf: zelf,
+                        other: other,
+                        operation: .__gt__,
+                        compareFn: py.isGreaterBool(left:right:),
                         onEqual: false)
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
-    return self.compare(other: other,
-                        compareFn: Py.isGreaterEqualBool(left:right:),
+  internal static func __ge__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compare(py,
+                        zelf: zelf,
+                        other: other,
+                        operation: .__ge__,
+                        compareFn: py.isGreaterEqualBool(left:right:),
                         onEqual: true)
   }
 
   private enum FirstNonEqualValues {
-    case values(selfValue: PyObject, otherValue: PyObject)
+    case values(zelfValue: PyObject, otherValue: PyObject)
     case allValuesEqual
     case notImplemented
     case error(PyBaseException)
   }
 
-  private func getFirstNonEqualValues(other: PyObject) -> FirstNonEqualValues {
-    guard let o = PyCast.asSlice(other) else {
+  private static func getFirstNonEqualValues(_ py: Py,
+                                             zelf: PySlice,
+                                             other: PyObject) -> FirstNonEqualValues {
+    guard let o = py.cast.asSlice(other) else {
       return .notImplemented
     }
 
-    switch Py.isEqualBool(left: self.start, right: o.start) {
+    switch py.isEqualBool(left: zelf.start, right: o.start) {
     case .value(true): break
-    case .value(false): return .values(selfValue: self.start, otherValue: o.start)
+    case .value(false): return .values(zelfValue: zelf.start, otherValue: o.start)
     case .error(let e): return .error(e)
     }
 
-    switch Py.isEqualBool(left: self.stop, right: o.stop) {
+    switch py.isEqualBool(left: zelf.stop, right: o.stop) {
     case .value(true): break
-    case .value(false): return .values(selfValue: self.stop, otherValue: o.stop)
+    case .value(false): return .values(zelfValue: zelf.stop, otherValue: o.stop)
     case .error(let e): return .error(e)
     }
 
-    switch Py.isEqualBool(left: self.step, right: o.step) {
+    switch py.isEqualBool(left: zelf.step, right: o.step) {
     case .value(true): break
-    case .value(false): return .values(selfValue: self.step, otherValue: o.step)
+    case .value(false): return .values(zelfValue: zelf.step, otherValue: o.step)
     case .error(let e): return .error(e)
     }
 
     return .allValuesEqual
   }
 
-  private func compare(other: PyObject,
-                       compareFn: (PyObject, PyObject) -> PyResult<Bool>,
-                       onEqual: Bool) -> CompareResult {
-    switch self.getFirstNonEqualValues(other: other) {
-    case let .values(selfValue: s, otherValue: o):
+  private static func compare(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject,
+                              operation: CompareResult.Operation,
+                              compareFn: (PyObject, PyObject) -> PyResult<Bool>,
+                              onEqual: Bool) -> CompareResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, operation)
+    }
+
+    switch Self.getFirstNonEqualValues(py, zelf: zelf, other: other) {
+    case let .values(zelfValue: s, otherValue: o):
       let result = compareFn(s, o)
       return CompareResult(result)
 
@@ -161,64 +190,91 @@ public struct PySlice: PyObjectMixin {
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> HashResult {
-    return .unhashable(self)
+  internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName)
+    }
+
+    return .unhashable(zelf.asObject)
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__repr__")
+    }
+
     let start: String
-    switch Py.reprString(object: self.start) {
+    switch py.reprString(object: zelf.start) {
     case let .value(s): start = s
     case let .error(e): return .error(e)
     }
 
     let stop: String
-    switch Py.reprString(object: self.stop) {
+    switch py.reprString(object: zelf.stop) {
     case let .value(s): stop = s
     case let .error(e): return .error(e)
     }
 
     let step: String
-    switch Py.reprString(object: self.step) {
+    switch py.reprString(object: zelf.step) {
     case let .value(s): step = s
     case let .error(e): return .error(e)
     }
 
-    return .value("slice(\(start), \(stop), \(step))")
+    let result = "slice(\(start), \(stop), \(step))"
+    return PyResult(py, result)
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    }
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
-  // MARK: - Properties
+  // MARK: - Start, stop, step
 
   // sourcery: pyproperty = start
-  internal func getStart() -> PyObject {
-    return self.start
+  internal static func start(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "start")
+    }
+
+    return PyResult(zelf.start)
   }
 
   // sourcery: pyproperty = stop
-  internal func getStop() -> PyObject {
-    return self.stop
+  internal static func stop(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "stop")
+    }
+
+    return PyResult(zelf.stop)
   }
 
   // sourcery: pyproperty = step
-  internal func getStep() -> PyObject {
-    return self.step
+  internal static func step(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "step")
+    }
+
+    return PyResult(zelf.step)
   }
 
   // MARK: - Indices
@@ -226,33 +282,38 @@ public struct PySlice: PyObjectMixin {
   // sourcery: pymethod = indices
   /// static PyObject*
   /// slice_indices(PySliceObject* self, PyObject* len)
-  internal func indicesInSequence(length: PyObject) -> PyResult<PyTuple> {
+  internal static func indices(_ py: Py,
+                               zelf: PyObject,
+                               length: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "indices")
+    }
+
     let lengthInt: BigInt
-    switch IndexHelper.bigInt(length) {
-    case let .value(v):
-      lengthInt = v
+    switch IndexHelper.pyInt(py, object: length) {
+    case let .value(i):
+      lengthInt = i.value
     case let .notIndex(lazyError):
-      let e = lazyError.create()
+      let e = lazyError.create(py)
       return .error(e)
     case let .error(e):
       return .error(e)
     }
 
     if lengthInt < 0 {
-      return .valueError("length should not be negative")
+      return .valueError(py, message: "length should not be negative")
     }
 
     let indices: GetLongIndicesResult
-    switch self.getLongIndices(length: lengthInt) {
+    switch Self.getLongIndices(py, zelf: zelf, length: lengthInt) {
     case let .value(l): indices = l
     case let .error(e): return .error(e)
     }
 
-    let start = Py.newInt(indices.start)
-    let stop = Py.newInt(indices.stop)
-    let step = Py.newInt(indices.step)
-    let result = Py.newTuple(start, stop, step)
-    return .value(result)
+    let start = py.newInt(indices.start)
+    let stop = py.newInt(indices.stop)
+    let step = py.newInt(indices.step)
+    return PyResult(py, tuple: start.asObject, stop.asObject, step.asObject)
   }
 
   internal struct GetLongIndicesResult {
@@ -266,19 +327,21 @@ public struct PySlice: PyObjectMixin {
   /// Compute slice indices given a slice and length.
   /// Used by slice.indices and range object slicing.
   /// Assumes that `len` is a nonnegative.
-  internal func getLongIndices(length: BigInt) -> PyResult<GetLongIndicesResult> {
+  internal static func getLongIndices(_ py: Py,
+                                      zelf: PySlice,
+                                      length: BigInt) -> PyResult<GetLongIndicesResult> {
     // swiftlint:disable:previous function_body_length
     assert(length.isPositiveOrZero)
 
     // Convert step to an integer; raise for zero step.
     var step: BigInt = 1
-    switch self.getLongIndex(self.step) {
+    switch zelf.evaluateIndex(py, zelf: zelf, index: zelf.step) {
     case .none: break
-    case .index(let value):
-      if value == 0 {
-        return .valueError("slice step cannot be zero")
+    case .index(let int):
+      if int == 0 {
+        return .valueError(py, message: "slice step cannot be zero")
       }
-      step = value
+      step = int.value
     case .error(let e):
       return .error(e)
     }
@@ -292,10 +355,10 @@ public struct PySlice: PyObjectMixin {
 
     // Compute start.
     var start = isStepNegative ? upper : lower
-    switch self.getLongIndex(self.start) {
+    switch zelf.evaluateIndex(py, zelf: zelf, index: zelf.start) {
     case .none: break
-    case .index(let value):
-      start = value
+    case .index(let int):
+      start = int.value
 
       if start < 0 {
         start += length
@@ -309,10 +372,10 @@ public struct PySlice: PyObjectMixin {
 
     // Compute stop.
     var stop = isStepNegative ? lower : upper
-    switch self.getLongIndex(self.stop) {
+    switch zelf.evaluateIndex(py, zelf: zelf, index: zelf.stop) {
     case .none: break
-    case .index(let value):
-      stop = value
+    case .index(let int):
+      stop = int.value
 
       if stop < 0 {
         stop += length
@@ -329,23 +392,26 @@ public struct PySlice: PyObjectMixin {
 
   internal enum GetLongIndexResult {
     case none
-    case index(BigInt)
+    case index(PyInt)
     case error(PyBaseException)
   }
 
   /// CPython: evaluate_slice_index
-  private func getLongIndex(_ value: PyObject) -> GetLongIndexResult {
-    if PyCast.isNone(value) {
+  private func evaluateIndex(_ py: Py,
+                             zelf: PySlice,
+                             index: PyObject) -> GetLongIndexResult {
+    if py.cast.isNone(index) {
       return .none
     }
 
-    switch IndexHelper.bigInt(value) {
-    case .value(let value):
-      return .index(value)
+    switch IndexHelper.pyInt(py, object: index) {
+    case .value(let int):
+      return .index(int)
     case .notIndex:
-      let t = self.typeName
-      let msg = "\(t) indices must be integers or None or have an __index__ method"
-      return .error(Py.newTypeError(msg: msg))
+      let t = zelf.typeName
+      let message = "\(t) indices must be integers or None or have an __index__ method"
+      let error = py.newTypeError(message: message)
+      return .error(error.asBaseException)
     case .error(let e):
       return .error(e)
     }
@@ -430,19 +496,19 @@ public struct PySlice: PyObjectMixin {
   /// int
   /// PySlice_Unpack(PyObject *_r,
   ///                Py_ssize_t *start, Py_ssize_t *stop, Py_ssize_t *step)
-  internal func unpack() -> PyResult<UnpackedIndices> {
+  internal func unpack(_ py: Py) -> PyResult<UnpackedIndices> {
     let min = Int.min
     let max = Int.max
     assert(min + 1 <= -max)
 
     let step: Int
-    switch self.unpackIndex(self.step) {
+    switch self.unpackIndex(py, value: self.step) {
     case .none:
       step = 1
 
     case .index(let value):
       if value == 0 {
-        return .valueError("slice step cannot be zero")
+        return .valueError(py, message: "slice step cannot be zero")
       }
       // Prevent trap on 'step = -step'
       step = Swift.max(value, -max)
@@ -452,14 +518,14 @@ public struct PySlice: PyObjectMixin {
     }
 
     let start: Int
-    switch self.unpackIndex(self.start) {
+    switch self.unpackIndex(py, value: self.start) {
     case .none: start = step < 0 ? max : 0
     case .index(let value): start = value
     case .error(let e): return .error(e)
     }
 
     let stop: Int
-    switch self.unpackIndex(self.stop) {
+    switch self.unpackIndex(py, value: self.stop) {
     case .none: stop = step < 0 ? min : max
     case .index(let value): stop = value
     case .error(let e): return .error(e)
@@ -481,13 +547,15 @@ public struct PySlice: PyObjectMixin {
   ///
   /// int
   /// _PyEval_SliceIndex(PyObject *v, Py_ssize_t *pi)
-  private func unpackIndex(_ value: PyObject) -> UnpackIndexResult {
-    if PyCast.isNone(value) {
+  private func unpackIndex(_ py: Py, value: PyObject) -> UnpackIndexResult {
+    if py.cast.isNone(value) {
       return .none
     }
 
-    switch IndexHelper.bigInt(value) {
-    case .value(let bigInt):
+    switch IndexHelper.pyInt(py, object: value) {
+    case .value(let pyInt):
+      let bigInt = pyInt.value
+
       if let int = Int(exactly: bigInt) {
         return .index(int)
       }
@@ -498,7 +566,8 @@ public struct PySlice: PyObjectMixin {
     case .notIndex:
       let t = self.typeName
       let msg = "\(t) indices must be integers or None or have an __index__ method"
-      return .error(Py.newTypeError(msg: msg))
+      let error = py.newTypeError(message: msg)
+      return .error(error.asBaseException)
 
     case .error(let e):
       return .error(e)
@@ -508,25 +577,29 @@ public struct PySlice: PyObjectMixin {
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PySlice> {
-    if let e = ArgumentParser.noKwargsOrError(fnName: "slice", kwargs: kwargs) {
-      return .error(e)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    if let e = ArgumentParser.noKwargsOrError(py,
+                                              fnName: Self.pythonTypeName,
+                                              kwargs: kwargs) {
+      return .error(e.asBaseException)
     }
 
     // Guarantee that we have 1, 2 or 3 arguments
-    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "slice",
+    if let e = ArgumentParser.guaranteeArgsCountOrError(py,
+                                                        fnName: Self.pythonTypeName,
                                                         args: args,
                                                         min: 1,
                                                         max: 3) {
-      return .error(e)
+      return .error(e.asBaseException)
     }
 
     // Handle 1 argument
     if args.count == 1 {
-      let result = Py.newSlice(stop: args[0])
-      return .value(result)
+      let result = py.newSlice(stop: args[0])
+      return PyResult(result)
     }
 
     // Handle 2 or 3 arguments
@@ -534,9 +607,7 @@ public struct PySlice: PyObjectMixin {
     let stop = args[1]
     let step = args.count == 3 ? args[2] : nil
 
-    let result = Py.newSlice(start: start, stop: stop, step: step)
-    return .value(result)
+    let result = py.newSlice(start: start, stop: stop, step: step)
+    return PyResult(result)
   }
 }
-
-*/

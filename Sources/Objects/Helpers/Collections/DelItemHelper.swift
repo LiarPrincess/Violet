@@ -62,7 +62,7 @@ extension DelItemHelper {
                                 target: inout Target,
                                 slice: PySlice) -> PyResult<PyObject> {
     var indices: PySlice.AdjustedIndices
-    switch slice.unpack() {
+    switch slice.unpack(py) {
     case let .value(u): indices = u.adjust(toCount: target.count)
     case let .error(e): return .error(e)
     }

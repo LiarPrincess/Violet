@@ -103,7 +103,7 @@ extension GetItemHelper {
                                 source: Source,
                                 slice: PySlice) -> PyResult<SliceBuilder.Result> {
     let indices: PySlice.AdjustedIndices
-    switch slice.unpack() {
+    switch slice.unpack(py) {
     case let .value(u): indices = u.adjust(toCount: source.count)
     case let .error(e): return .error(e)
     }
