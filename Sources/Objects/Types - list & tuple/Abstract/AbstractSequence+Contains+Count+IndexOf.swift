@@ -87,7 +87,7 @@ extension AbstractSequence {
       }
     }
 
-    let typeName = Self.typeName
+    let typeName = Self.pythonTypeName
     return .valueError(py, message: "\(typeName).index(x): x not in \(typeName)")
   }
 

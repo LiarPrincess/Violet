@@ -34,8 +34,6 @@ public struct PyInt: PyObjectMixin {
     4
     """
 
-  private static let typeName = "int"
-
   // sourcery: includeInLayout
   // Do not add 'set' to 'self.value' - we cache most used ints!
   internal var value: BigInt { self.valuePtr.pointee }
@@ -103,7 +101,7 @@ public struct PyInt: PyObjectMixin {
                                        op: CompareResult.Operation,
                                        fn: (BigInt, BigInt) -> Bool) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, op)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, op)
     }
 
     guard let other = py.cast.asInt(other) else {
@@ -119,7 +117,7 @@ public struct PyInt: PyObjectMixin {
   // sourcery: pymethod = __hash__
   internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName)
     }
 
     let result = py.hasher.hash(zelf.value)
@@ -1378,15 +1376,5 @@ public struct PyInt: PyObjectMixin {
 
   private static func castZelf(_ py: Py, _ object: PyObject) -> PyInt? {
     return py.cast.asInt(object)
-  }
-
-  private static func invalidZelfArgument(_ py: Py,
-                                          _ object: PyObject,
-                                          _ fnName: String) -> PyResult<PyObject> {
-    let error = py.newInvalidSelfArgumentError(object: object,
-                                               expectedType: Self.typeName,
-                                               fnName: fnName)
-
-    return .error(error.asBaseException)
   }
 }

@@ -18,7 +18,7 @@ extension AbstractSequence {
     }
 
     guard let other = Self.downcast(py, other) else {
-      let selfType = Self.typeName
+      let selfType = Self.pythonTypeName
       let otherType = other.typeName
       let message = "can only concatenate \(selfType) (not '\(otherType)') to \(selfType)"
       return .typeError(py, message: message)

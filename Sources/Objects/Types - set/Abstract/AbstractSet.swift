@@ -5,10 +5,6 @@
 /// DO NOT use them outside of the `set/frozenset` objects!
 internal protocol AbstractSet: PyObjectMixin {
 
-  /// Name of the type.
-  /// Used mainly in error messages.
-  static var typeName: String { get }
-
   /// Main requirement.
   var elements: OrderedSet { get }
 
@@ -97,17 +93,5 @@ extension AbstractSet {
     case let .error(e):
       return .error(e)
     }
-  }
-
-  // MARK: - Zelf argument
-
-  internal static func invalidZelfArgument(_ py: Py,
-                                           _ object: PyObject,
-                                           _ fnName: String) -> PyResult<PyObject> {
-    let error = py.newInvalidSelfArgumentError(object: object,
-                                               expectedType: Self.typeName,
-                                               fnName: fnName)
-
-    return .error(error.asBaseException)
   }
 }

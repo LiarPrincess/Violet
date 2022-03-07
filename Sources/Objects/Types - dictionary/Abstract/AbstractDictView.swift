@@ -6,10 +6,6 @@ import VioletCore
 /// DO NOT use them outside of the `dict` view objects!
 internal protocol AbstractDictView: PyObjectMixin {
 
-  /// Name of the type.
-  /// Used mainly in error messages.
-  static var typeName: String { get }
-
   var dict: PyDict { get }
 
   /// Cast `PyObject` -> Self``.
@@ -25,25 +21,13 @@ extension AbstractDictView {
     return self.dict.elements
   }
 
-  // MARK: - Zelf
-
-  internal static func invalidZelfArgument<T>(_ py: Py,
-                                              _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
-    let error = py.newInvalidSelfArgumentError(object: object,
-                                               expectedType: Self.typeName,
-                                               fnName: fnName)
-
-    return .error(error.asBaseException)
-  }
-
   // MARK: - Equatable
 
   internal static func abstract__eq__(_ py: Py,
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__eq__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__eq__)
     }
 
     return Self.isEqual(py, zelf: zelf, other: other)
@@ -53,7 +37,7 @@ extension AbstractDictView {
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__ne__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ne__)
     }
 
     let isEqual = Self.isEqual(py, zelf: zelf, other: other)
@@ -79,7 +63,7 @@ extension AbstractDictView {
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__lt__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__lt__)
     }
 
     guard let size = Self.getDictOrSetSize(py, object: other) else {
@@ -98,7 +82,7 @@ extension AbstractDictView {
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__le__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__le__)
     }
 
     guard let size = Self.getDictOrSetSize(py, object: other) else {
@@ -117,7 +101,7 @@ extension AbstractDictView {
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__gt__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__gt__)
     }
 
     guard let size = Self.getDictOrSetSize(py, object: other) else {
@@ -136,7 +120,7 @@ extension AbstractDictView {
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__ge__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ge__)
     }
 
     guard let size = Self.getDictOrSetSize(py, object: other) else {
@@ -167,7 +151,7 @@ extension AbstractDictView {
 
   internal static func abstract__hash__(_ py: Py, zelf: PyObject) -> HashResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName)
     }
 
     return .unhashable(zelf.asObject)
@@ -189,7 +173,7 @@ extension AbstractDictView {
     }
 
     return zelf.withReprLock {
-      var result = Self.typeName + "("
+      var result = Self.pythonTypeName + "("
       for (index, element) in zelf.dict.elements.enumerated() {
         if index > 0 {
           result += ", " // so that we don't have ', )'.

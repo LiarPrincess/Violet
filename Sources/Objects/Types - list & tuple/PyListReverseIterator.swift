@@ -118,14 +118,4 @@ public struct PyListReverseIterator: PyObjectMixin {
   private static func castZelf(_ py: Py, _ object: PyObject) -> PyListReverseIterator? {
     return py.cast.asListReverseIterator(object)
   }
-
-  private static func invalidZelfArgument(_ py: Py,
-                                          _ object: PyObject,
-                                          _ fnName: String) -> PyResult<PyObject> {
-    let error = py.newInvalidSelfArgumentError(object: object,
-                                               expectedType: "list_reverseiterator",
-                                               fnName: fnName)
-
-    return .error(error.asBaseException)
-  }
 }

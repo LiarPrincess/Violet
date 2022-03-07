@@ -45,8 +45,6 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
 
   // MARK: - AbstractSequence
 
-  internal static let typeName = "tuple"
-
   internal static func newObject(_ py: Py, elements: [PyObject]) -> PyTuple {
     return py.newTuple(elements: elements)
   }
@@ -96,7 +94,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
   // sourcery: pymethod = __hash__
   internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName)
     }
 
     return Self.calculateHash(py, elements: zelf.elements)

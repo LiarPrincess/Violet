@@ -47,20 +47,8 @@ public struct PyDictKeyIterator: PyObjectMixin, AbstractDictViewIterator {
 
   // MARK: - AbstractIterator
 
-  /// Cast `PyObject` -> Self``.
   internal static func castZelf(_ py: Py, _ object: PyObject) -> PyDictKeyIterator? {
     return py.cast.asDictKeyIterator(object)
-  }
-
-  /// Create an error when the `zelf` argument is not valid.
-  internal static func invalidZelfArgument<T>(_ py: Py,
-                                              _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
-    let error = py.newInvalidSelfArgumentError(object: object,
-                                               expectedType: "dict_keyiterator",
-                                               fnName: fnName)
-
-    return .error(error.asBaseException)
   }
 
   // MARK: - Class

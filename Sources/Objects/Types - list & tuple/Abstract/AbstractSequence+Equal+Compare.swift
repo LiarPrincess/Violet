@@ -12,7 +12,7 @@ extension AbstractSequence {
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
     guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__eq__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__eq__)
     }
 
     return Self.isEqual(py, zelf: zelf, other: other)
@@ -22,7 +22,7 @@ extension AbstractSequence {
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
     guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__ne__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ne__)
     }
 
     let isEqual = Self.isEqual(py, zelf: zelf, other: other)
@@ -54,7 +54,7 @@ extension AbstractSequence {
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
     guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__lt__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__lt__)
     }
 
     guard let other = Self.downcast(py, other) else {
@@ -79,7 +79,7 @@ extension AbstractSequence {
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
     guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__le__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__le__)
     }
 
     guard let other = Self.downcast(py, other) else {
@@ -104,7 +104,7 @@ extension AbstractSequence {
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
     guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__gt__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__gt__)
     }
 
     guard let other = Self.downcast(py, other) else {
@@ -129,7 +129,7 @@ extension AbstractSequence {
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
     guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__ge__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ge__)
     }
 
     guard let other = Self.downcast(py, other) else {

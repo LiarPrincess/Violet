@@ -175,16 +175,4 @@ public struct PyNone: PyObjectMixin, HasCustomGetMethod {
 
     return .none(py)
   }
-
-  // MARK: - Helpers
-
-  internal static func invalidZelfArgument(_ py: Py,
-                                           _ object: PyObject,
-                                           _ fnName: String) -> PyResult<PyObject> {
-    let error = py.newInvalidSelfArgumentError(object: object,
-                                               expectedType: "NoneType",
-                                               fnName: fnName)
-
-    return .error(error.asBaseException)
-  }
 }

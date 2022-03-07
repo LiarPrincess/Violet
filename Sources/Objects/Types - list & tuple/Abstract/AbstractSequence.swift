@@ -3,10 +3,6 @@
 /// DO NOT use them outside of the `tuple/list` objects!
 internal protocol AbstractSequence: PyObjectMixin {
 
-  /// Name of the type.
-  /// Used mainly in error messages.
-  static var typeName: String { get }
-
   /// Main requirement.
   var elements: Elements { get }
 
@@ -32,15 +28,5 @@ extension AbstractSequence {
 
   internal var count: Int {
     return self.elements.count
-  }
-
-  internal static func invalidZelfArgument(_ py: Py,
-                                           _ object: PyObject,
-                                           _ fnName: String) -> PyResult<PyObject> {
-    let error = py.newInvalidSelfArgumentError(object: object,
-                                               expectedType: Self.typeName,
-                                               fnName: fnName)
-
-    return .error(error.asBaseException)
   }
 }

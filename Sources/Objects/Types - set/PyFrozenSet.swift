@@ -47,8 +47,6 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
 
   // MARK: - AbstractSet
 
-  internal static var typeName = "frozenset"
-
   internal static func newObject(_ py: Py, elements: OrderedSet) -> PyFrozenSet {
     return py.newFrozenSet(elements: elements)
   }
@@ -98,7 +96,7 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
   // sourcery: pymethod = __hash__
   internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName)
     }
 
     // This is hash function from 'tuple', which means that 'frozenset'
@@ -370,7 +368,7 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
     let isBuiltin = type === py.types.frozenset
     if isBuiltin {
       if let e = ArgumentParser.noKwargsOrError(py,
-                                                fnName: Self.typeName,
+                                                fnName: Self.pythonTypeName,
                                                 kwargs: kwargs) {
         return .error(e.asBaseException)
       }
@@ -378,7 +376,7 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
 
     // Guarantee 0 or 1 args
     if let e = ArgumentParser.guaranteeArgsCountOrError(py,
-                                                        fnName: Self.typeName,
+                                                        fnName: Self.pythonTypeName,
                                                         args: args,
                                                         min: 0,
                                                         max: 1) {

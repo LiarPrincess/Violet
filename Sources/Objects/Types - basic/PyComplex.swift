@@ -22,8 +22,6 @@ public struct PyComplex: PyObjectMixin {
     This is equivalent to (real + imag*1j) where imag defaults to 0.
     """
 
-  private static let typeName = "complex"
-
   // sourcery: includeInLayout
   internal var real: Double { self.realPtr.pointee }
   // sourcery: includeInLayout
@@ -58,7 +56,7 @@ public struct PyComplex: PyObjectMixin {
   // sourcery: pymethod = __eq__
   internal static func __eq__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__eq__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__eq__)
     }
 
     return Self.isEqual(py, zelf: zelf, other: other)
@@ -67,7 +65,7 @@ public struct PyComplex: PyObjectMixin {
   // sourcery: pymethod = __ne__
   internal static func __ne__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__ne__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ne__)
     }
 
     let isEqual = Self.isEqual(py, zelf: zelf, other: other)
@@ -126,7 +124,7 @@ public struct PyComplex: PyObjectMixin {
                                        zelf: PyObject,
                                        op: CompareResult.Operation) -> CompareResult {
     guard py.cast.isComplex(zelf.asObject) else {
-      return .invalidSelfArgument(zelf, Self.typeName, op)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, op)
     }
 
     return .notImplemented
@@ -137,7 +135,7 @@ public struct PyComplex: PyObjectMixin {
   // sourcery: pymethod = __hash__
   internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName)
     }
 
     let realHash = py.hasher.hash(zelf.real)
@@ -998,15 +996,5 @@ public struct PyComplex: PyObjectMixin {
 
   private static func castZelf(_ py: Py, _ object: PyObject) -> PyComplex? {
     return py.cast.asComplex(object)
-  }
-
-  private static func invalidZelfArgument(_ py: Py,
-                                          _ object: PyObject,
-                                          _ fnName: String) -> PyResult<PyObject> {
-    let error = py.newInvalidSelfArgumentError(object: object,
-                                               expectedType: Self.typeName,
-                                               fnName: fnName)
-
-    return .error(error.asBaseException)
   }
 }

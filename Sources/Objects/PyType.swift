@@ -931,7 +931,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     swiftFnName: StaticString = #function
   ) -> PyResult<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
-                                               expectedType: "type",
+                                               expectedType: Self.pythonTypeName,
                                                swiftFnName: swiftFnName)
     return .error(error.asBaseException)
   }

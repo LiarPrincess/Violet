@@ -62,16 +62,4 @@ public struct PyNotImplemented: PyObjectMixin {
 
     return .notImplemented(py)
   }
-
-  // MARK: - Helpers
-
-  internal static func invalidZelfArgument(_ py: Py,
-                                           _ object: PyObject,
-                                           _ fnName: String) -> PyResult<PyObject> {
-    let error = py.newInvalidSelfArgumentError(object: object,
-                                               expectedType: "NotImplementedType",
-                                               fnName: fnName)
-
-    return .error(error.asBaseException)
-  }
 }

@@ -154,25 +154,33 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
   internal func getClass() -> PyType {
     return self.type
   }
-
+*/
   // MARK: - Get method
 
-  internal func getMethod(
-    selector: PyString,
-    allowsCallableFromDict: Bool
-  ) -> PyInstance.GetMethodResult {
-    switch self.getAttribute(name: selector) {
-    case let .value(o):
-      return .value(o)
-    case let .error(e):
-      if PyCast.isAttributeError(e) {
-        return .notFound(e)
-      }
-
-      return .error(e)
-    }
+extension PySuper {
+  internal func getMethod(_ py: Py,
+                          selector: PyString,
+                          allowsCallableFromDict: Bool) -> Py.GetMethodResult {
+    fatalError()
   }
+}
 
+//  internal func getMethod(
+//    selector: PyString,
+//    allowsCallableFromDict: Bool
+//  ) -> PyInstance.GetMethodResult {
+//    switch self.getAttribute(name: selector) {
+//    case let .value(o):
+//      return .value(o)
+//    case let .error(e):
+//      if PyCast.isAttributeError(e) {
+//        return .notFound(e)
+//      }
+//
+//      return .error(e)
+//    }
+//  }
+/*
   // MARK: - Getters
 
   internal static let thisClassDoc = "the class invoking super()"
