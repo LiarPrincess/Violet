@@ -75,30 +75,3 @@ extension PyBuiltinFunction {
 extension PyFunction {
   public func bind(to object: PyObject) -> PyMethod { fatalError() }
 }
-
-extension PySlice {
-  internal struct AdjustedIndices {
-    internal var start: Int
-    internal var stop: Int
-    internal var step: Int
-    /// Number of entries between `self.start` and `self.stop` using `self.step`.
-    internal let count: Int
-
-    internal var isEmpty: Bool {
-      // Both 'SwiftLint' and 'SwiftFormat' will fail on the following line
-
-      // swiftformat:disable:next isEmpty
-      return self.count == 0 // swiftlint:disable:this empty_count
-    }
-  }
-
-  internal struct UnpackedIndices {
-    internal var start: Int
-    internal var stop: Int
-    internal var step: Int
-
-    internal func adjust(toCount count: Int) -> AdjustedIndices { fatalError() }
-  }
-
-  internal func unpack() -> PyResult<UnpackedIndices> { fatalError() }
-}

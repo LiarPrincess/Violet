@@ -389,7 +389,7 @@ public struct PyRange: PyObjectMixin {
     let length = zelf.length.value
 
     let indices: PySlice.GetLongIndicesResult
-    switch slice.getLongIndices(length: length) {
+    switch PySlice.getLongIndices(py, zelf: slice, length: length) {
     case let .value(i): indices = i
     case let .error(e): return .error(e)
     }
