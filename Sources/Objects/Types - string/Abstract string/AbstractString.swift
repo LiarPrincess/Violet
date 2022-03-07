@@ -9,7 +9,7 @@ import BigInt
 
 /// Given a `PyObject` we try to extract a valid collection to use in
 /// one of the functions mentioned in type name.
-  internal enum AbstractString_ElementsForFindCountContainsIndexOf<T> {
+  internal enum AbstractStringElementsForFindCountContainsIndexOf<T> {
     case value(T)
     case invalidObjectType
     case error(PyBaseException)
@@ -20,7 +20,7 @@ import BigInt
 ///
 /// All of the methods/properties should be prefixed with `_`.
 /// DO NOT use them outside of the `str/bytes/bytearray` objects!
-internal protocol AbstractString: PyObject {
+internal protocol AbstractString: PyObjectMixin {
 
   // MARK: - Types
 
@@ -160,7 +160,7 @@ internal protocol AbstractString: PyObject {
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   static func _getElementsForFindCountContainsIndexOf(
     object: PyObject
-  ) -> AbstractString_ElementsForFindCountContainsIndexOf<Elements>
+  ) -> AbstractStringElementsForFindCountContainsIndexOf<Elements>
 }
 
 // MARK: - Common things
@@ -195,5 +195,4 @@ extension AbstractString {
   /// are trivially scalar-aligned, which makes them a bit faster.
   internal func _wouldBeBetterWithRandomAccessCollection() {}
 }
-
-*/
+ */

@@ -56,7 +56,7 @@ extension AbstractBytes {
 
   internal static func _getElementsForFindCountContainsIndexOf(
     object: PyObject
-  ) -> AbstractString_ElementsForFindCountContainsIndexOf<Data> {
+  ) -> AbstractStringElementsForFindCountContainsIndexOf<Data> {
     if let bytes = PyCast.asAnyBytes(object) {
       return .value(bytes.elements)
     }
