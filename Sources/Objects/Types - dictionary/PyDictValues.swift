@@ -34,12 +34,6 @@ public struct PyDictValues: PyObjectMixin, AbstractDictView {
     return "PyDictValues(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-  // MARK: - AbstravtView
-
-  internal static func castZelf(_ py: Py, _ object: PyObject) -> PyDictValues? {
-    return py.cast.asDictValues(object)
-  }
-
   // MARK: - String
 
   // sourcery: pymethod = __repr__
@@ -85,7 +79,7 @@ public struct PyDictValues: PyObjectMixin, AbstractDictView {
 
   // sourcery: pymethod = __iter__
   internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 

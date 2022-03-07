@@ -66,7 +66,7 @@ public struct PySetIterator: PyObjectMixin {
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
                                         name: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
 
@@ -77,7 +77,7 @@ public struct PySetIterator: PyObjectMixin {
 
   // sourcery: pymethod = __iter__
   internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
@@ -88,7 +88,7 @@ public struct PySetIterator: PyObjectMixin {
 
   // sourcery: pymethod = __next__
   internal static func __next__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__next__")
     }
 
@@ -123,7 +123,7 @@ public struct PySetIterator: PyObjectMixin {
 
   // sourcery: pymethod = __length_hint__
   internal static func __length_hint__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__length_hint__")
     }
 
@@ -140,11 +140,5 @@ public struct PySetIterator: PyObjectMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     return .typeError(py, message: "cannot create 'set_iterator' instances")
-  }
-
-  // MARK: - Helpers
-
-  private static func castZelf(_ py: Py, _ object: PyObject) -> PySetIterator? {
-    return py.cast.asSetIterator(object)
   }
 }

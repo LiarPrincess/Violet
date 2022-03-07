@@ -2,12 +2,23 @@
 ///
 /// DO NOT use them outside of the `dict` iterator objects!
 internal protocol AbstractDictViewIterator: PyObjectMixin {
+
+  /// Name of the type in Python.
+  ///
+  /// Used mainly in error messages.
+  static var pythonTypeName: String { get }
+
   var dict: PyDict { get }
   var index: Int { get nonmutating set }
   var initialCount: Int { get }
 
   /// Cast `PyObject` -> Self``.
-  static func castZelf(_ py: Py, _ object: PyObject) -> Self?
+  static func downcast(_ py: Py, _ object: PyObject) -> Self?
+
+  /// Create error when the `zelf` argument cast failed.
+  static func invalidZelfArgument<T>(_ py: Py,
+                                     _ object: PyObject,
+                                     _ fnName: String) -> PyResult<T>
 }
 
 extension AbstractDictViewIterator {
@@ -18,7 +29,7 @@ extension AbstractDictViewIterator {
   internal static func abstract__getattribute__(_ py: Py,
                                                 zelf: PyObject,
                                                 name: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
 
@@ -29,7 +40,7 @@ extension AbstractDictViewIterator {
 
   internal static func abstract__iter__(_ py: Py,
                                         zelf: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
@@ -42,7 +53,7 @@ extension AbstractDictViewIterator {
 
   internal static func abstract__next__(_ py: Py,
                                         zelf: PyObject) -> PyResult<Entry> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__next__")
     }
 
@@ -77,7 +88,7 @@ extension AbstractDictViewIterator {
 
   internal static func abstract__length_hint__(_ py: Py,
                                                zelf: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__length_hint__")
     }
 

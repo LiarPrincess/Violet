@@ -1,11 +1,5 @@
 /// Common things for all of the Python objects.
 public protocol PyObjectMixin: CustomStringConvertible {
-
-  /// Name of the type.
-  ///
-  /// Used mainly in error messages.
-  static var pythonTypeName: String { get }
-
   /// Pointer to and object.
   ///
   /// Each object starts with `PyObjectHeader`.
@@ -89,16 +83,4 @@ extension PyObjectMixin {
 //    result.append(")")
 //    return result
 //  }
-
-  // MARK: - Invalid Zelf
-
-  internal static func invalidZelfArgument<T>(_ py: Py,
-                                              _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
-    let error = py.newInvalidSelfArgumentError(object: object,
-                                               expectedType: Self.pythonTypeName,
-                                               fnName: fnName)
-
-    return .error(error.asBaseException)
-  }
 }

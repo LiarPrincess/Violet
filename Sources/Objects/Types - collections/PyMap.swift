@@ -39,7 +39,6 @@ public struct PyMap: PyObjectMixin {
     let zelf = PyMap(ptr: ptr)
     return "PyMap(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
-}
 
 /* MARKER
 
@@ -116,6 +115,5 @@ public struct PyMap: PyObjectMixin {
     let result = PyMemory.newMap(type: type, fn: fn, iterators: iters)
     return .value(result)
   }
+ */
 }
-
-*/

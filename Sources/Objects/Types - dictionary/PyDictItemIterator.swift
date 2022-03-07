@@ -45,12 +45,6 @@ public struct PyDictItemIterator: PyObjectMixin, AbstractDictViewIterator {
     return "PyDictItemIterator(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-  // MARK: - AbstractIterator
-
-  internal static func castZelf(_ py: Py, _ object: PyObject) -> PyDictItemIterator? {
-    return py.cast.asDictItemIterator(object)
-  }
-
   // MARK: - Class
 
   // sourcery: pyproperty = __class__

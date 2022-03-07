@@ -6,10 +6,20 @@ import VioletCore
 /// DO NOT use them outside of the `dict` view objects!
 internal protocol AbstractDictView: PyObjectMixin {
 
+  /// Name of the type in Python.
+  ///
+  /// Used mainly in error messages.
+  static var pythonTypeName: String { get }
+
   var dict: PyDict { get }
 
   /// Cast `PyObject` -> Self``.
-  static func castZelf(_ py: Py, _ object: PyObject) -> Self?
+  static func downcast(_ py: Py, _ object: PyObject) -> Self?
+
+  /// Create error when the `zelf` argument cast failed.
+  static func invalidZelfArgument<T>(_ py: Py,
+                                     _ object: PyObject,
+                                     _ fnName: String) -> PyResult<T>
 }
 
 extension AbstractDictView {
@@ -26,7 +36,7 @@ extension AbstractDictView {
   internal static func abstract__eq__(_ py: Py,
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, .__eq__)
     }
 
@@ -36,7 +46,7 @@ extension AbstractDictView {
   internal static func abstract__ne__(_ py: Py,
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ne__)
     }
 
@@ -62,7 +72,7 @@ extension AbstractDictView {
   internal static func abstract__lt__(_ py: Py,
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, .__lt__)
     }
 
@@ -81,7 +91,7 @@ extension AbstractDictView {
   internal static func abstract__le__(_ py: Py,
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, .__le__)
     }
 
@@ -100,7 +110,7 @@ extension AbstractDictView {
   internal static func abstract__gt__(_ py: Py,
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, .__gt__)
     }
 
@@ -119,7 +129,7 @@ extension AbstractDictView {
   internal static func abstract__ge__(_ py: Py,
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ge__)
     }
 
@@ -150,7 +160,7 @@ extension AbstractDictView {
   // MARK: - __hash__
 
   internal static func abstract__hash__(_ py: Py, zelf: PyObject) -> HashResult {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return .invalidSelfArgument(zelf, Self.pythonTypeName)
     }
 
@@ -164,7 +174,7 @@ extension AbstractDictView {
     zelf: PyObject,
     elementRepr: (Py, Element) -> PyResult<String>
   ) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
@@ -196,7 +206,7 @@ extension AbstractDictView {
   internal static func abstract__getattribute__(_ py: Py,
                                                 zelf: PyObject,
                                                 name: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
 
@@ -207,7 +217,7 @@ extension AbstractDictView {
 
   internal static func abstract__len__(_ py: Py,
                                        zelf: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__len__")
     }
 

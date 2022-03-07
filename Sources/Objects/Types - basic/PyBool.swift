@@ -70,7 +70,7 @@ public struct PyBool: PyObjectMixin {
   private static func toString(_ py: Py,
                                zelf: PyObject,
                                fnName: String) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
 
@@ -190,7 +190,7 @@ public struct PyBool: PyObjectMixin {
     return PyResult(result)
   }
 
-  // MARK: - Helpers
+  // MARK: - Operations
 
   private static func binaryOperation(
     _ py: Py,
@@ -200,7 +200,7 @@ public struct PyBool: PyObjectMixin {
     fn: (Bool, Bool) -> Bool,
     intFn: (Py, PyObject, PyObject) -> PyResult<PyObject>
   ) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
 
@@ -210,9 +210,5 @@ public struct PyBool: PyObjectMixin {
 
     let result = fn(zelf.isTrue, other.isTrue)
     return PyResult(py, result)
-  }
-
-  private static func castZelf(_ py: Py, _ object: PyObject) -> PyBool? {
-    return py.cast.asBool(object)
   }
 }
