@@ -25,14 +25,19 @@ import VioletCompiler
 //   - PyErrorHeader.xxxPtr - pointer properties to fields
 // - PyMemory.newTypeAndObjectTypes - because they have recursive dependency
 // - Then for each type:
-//   - [TYPE_NAME].Layout - mainly field offsets
-//   - [TYPE_NAME].deinitialize(ptr:) - to deinitialize this object before deletion
+//   - static let pythonTypeName - name of the type in Python
+//   - static let layout - mainly field offsets
+//   - static func deinitialize(ptr: RawPtr) - to deinitialize this object before deletion
+//   - static func downcast(py: Py, object: PyObject) -> [TYPE_NAME]?
+//   - static func invalidZelfArgument<T>(py: Py, object: PyObject, fnName: String) -> PyResult<T>
 //   - PyMemory.new[TYPE_NAME] - to create new object of this type
 
 // MARK: - PyObjectHeader
 
 extension PyObjectHeader {
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyObjectHeader` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -62,6 +67,7 @@ extension PyObjectHeader {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: Self.layout.typeOffset) }
@@ -73,6 +79,8 @@ extension PyObjectHeader {
 
 extension PyErrorHeader {
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyErrorHeader` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -105,6 +113,7 @@ extension PyErrorHeader {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: Self.layout.argsOffset) }
@@ -164,8 +173,11 @@ extension PyMemory {
 
 extension PyBool {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "bool"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyBool` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -189,6 +201,7 @@ extension PyBool {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var valuePtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
@@ -199,6 +212,20 @@ extension PyBool {
 
     zelf.header.deinitialize()
     zelf.valuePtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyBool? {
+    return py.cast.asBool(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -228,8 +255,11 @@ extension PyMemory {
 
 extension PyBuiltinFunction {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "builtinFunction"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyBuiltinFunction` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -259,6 +289,7 @@ extension PyBuiltinFunction {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var functionPtr: Ptr<FunctionWrapper> { Ptr(self.ptr, offset: Self.layout.functionOffset) }
@@ -273,6 +304,20 @@ extension PyBuiltinFunction {
     zelf.functionPtr.deinitialize()
     zelf.modulePtr.deinitialize()
     zelf.docPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyBuiltinFunction? {
+    return py.cast.asBuiltinFunction(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -306,8 +351,11 @@ extension PyMemory {
 
 extension PyBuiltinMethod {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "builtinMethod"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyBuiltinMethod` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -340,6 +388,7 @@ extension PyBuiltinMethod {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var functionPtr: Ptr<FunctionWrapper> { Ptr(self.ptr, offset: Self.layout.functionOffset) }
@@ -356,6 +405,20 @@ extension PyBuiltinMethod {
     zelf.objectPtr.deinitialize()
     zelf.modulePtr.deinitialize()
     zelf.docPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyBuiltinMethod? {
+    return py.cast.asBuiltinMethod(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -391,8 +454,11 @@ extension PyMemory {
 
 extension PyByteArray {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "bytearray"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyByteArray` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -416,6 +482,7 @@ extension PyByteArray {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var elementsPtr: Ptr<Data> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
@@ -426,6 +493,20 @@ extension PyByteArray {
 
     zelf.header.deinitialize()
     zelf.elementsPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyByteArray? {
+    return py.cast.asByteArray(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -455,8 +536,11 @@ extension PyMemory {
 
 extension PyByteArrayIterator {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "bytearray_iterator"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyByteArrayIterator` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -483,6 +567,7 @@ extension PyByteArrayIterator {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var bytesPtr: Ptr<PyByteArray> { Ptr(self.ptr, offset: Self.layout.bytesOffset) }
@@ -495,6 +580,20 @@ extension PyByteArrayIterator {
     zelf.header.deinitialize()
     zelf.bytesPtr.deinitialize()
     zelf.indexPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyByteArrayIterator? {
+    return py.cast.asByteArrayIterator(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -524,8 +623,11 @@ extension PyMemory {
 
 extension PyBytes {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "bytes"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyBytes` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -549,6 +651,7 @@ extension PyBytes {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var elementsPtr: Ptr<Data> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
@@ -559,6 +662,20 @@ extension PyBytes {
 
     zelf.header.deinitialize()
     zelf.elementsPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyBytes? {
+    return py.cast.asBytes(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -588,8 +705,11 @@ extension PyMemory {
 
 extension PyBytesIterator {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "bytes_iterator"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyBytesIterator` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -616,6 +736,7 @@ extension PyBytesIterator {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var bytesPtr: Ptr<PyBytes> { Ptr(self.ptr, offset: Self.layout.bytesOffset) }
@@ -628,6 +749,20 @@ extension PyBytesIterator {
     zelf.header.deinitialize()
     zelf.bytesPtr.deinitialize()
     zelf.indexPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyBytesIterator? {
+    return py.cast.asBytesIterator(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -657,8 +792,11 @@ extension PyMemory {
 
 extension PyCallableIterator {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "callable_iterator"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyCallableIterator` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -685,6 +823,7 @@ extension PyCallableIterator {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var callablePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.callableOffset) }
@@ -697,6 +836,20 @@ extension PyCallableIterator {
     zelf.header.deinitialize()
     zelf.callablePtr.deinitialize()
     zelf.sentinelPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyCallableIterator? {
+    return py.cast.asCallableIterator(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -728,8 +881,11 @@ extension PyMemory {
 
 extension PyCell {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "cell"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyCell` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -753,6 +909,7 @@ extension PyCell {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var contentPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.contentOffset) }
@@ -763,6 +920,20 @@ extension PyCell {
 
     zelf.header.deinitialize()
     zelf.contentPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyCell? {
+    return py.cast.asCell(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -792,8 +963,11 @@ extension PyMemory {
 
 extension PyClassMethod {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "classmethod"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyClassMethod` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -817,6 +991,7 @@ extension PyClassMethod {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var callablePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.callableOffset) }
@@ -827,6 +1002,20 @@ extension PyClassMethod {
 
     zelf.header.deinitialize()
     zelf.callablePtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyClassMethod? {
+    return py.cast.asClassMethod(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -856,8 +1045,11 @@ extension PyMemory {
 
 extension PyCode {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "code"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyCode` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -920,6 +1112,7 @@ extension PyCode {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var namePtr: Ptr<PyString> { Ptr(self.ptr, offset: Self.layout.nameOffset) }
@@ -957,6 +1150,20 @@ extension PyCode {
     zelf.argCountPtr.deinitialize()
     zelf.kwOnlyArgCountPtr.deinitialize()
   }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyCode? {
+    return py.cast.asCode(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
+  }
 }
 
 extension PyMemory {
@@ -985,8 +1192,11 @@ extension PyMemory {
 
 extension PyComplex {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "complex"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyComplex` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -1013,6 +1223,7 @@ extension PyComplex {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var realPtr: Ptr<Double> { Ptr(self.ptr, offset: Self.layout.realOffset) }
@@ -1025,6 +1236,20 @@ extension PyComplex {
     zelf.header.deinitialize()
     zelf.realPtr.deinitialize()
     zelf.imagPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyComplex? {
+    return py.cast.asComplex(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -1056,8 +1281,11 @@ extension PyMemory {
 
 extension PyDict {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "dict"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyDict` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -1081,6 +1309,7 @@ extension PyDict {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var elementsPtr: Ptr<PyDict.OrderedDictionary> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
@@ -1091,6 +1320,20 @@ extension PyDict {
 
     zelf.header.deinitialize()
     zelf.elementsPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyDict? {
+    return py.cast.asDict(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -1120,8 +1363,11 @@ extension PyMemory {
 
 extension PyDictItemIterator {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "dict_itemiterator"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyDictItemIterator` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -1151,6 +1397,7 @@ extension PyDictItemIterator {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
@@ -1165,6 +1412,20 @@ extension PyDictItemIterator {
     zelf.dictPtr.deinitialize()
     zelf.indexPtr.deinitialize()
     zelf.initialCountPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyDictItemIterator? {
+    return py.cast.asDictItemIterator(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -1194,8 +1455,11 @@ extension PyMemory {
 
 extension PyDictItems {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "dict_items"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyDictItems` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -1219,6 +1483,7 @@ extension PyDictItems {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
@@ -1229,6 +1494,20 @@ extension PyDictItems {
 
     zelf.header.deinitialize()
     zelf.dictPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyDictItems? {
+    return py.cast.asDictItems(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -1258,8 +1537,11 @@ extension PyMemory {
 
 extension PyDictKeyIterator {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "dict_keyiterator"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyDictKeyIterator` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -1289,6 +1571,7 @@ extension PyDictKeyIterator {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
@@ -1303,6 +1586,20 @@ extension PyDictKeyIterator {
     zelf.dictPtr.deinitialize()
     zelf.indexPtr.deinitialize()
     zelf.initialCountPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyDictKeyIterator? {
+    return py.cast.asDictKeyIterator(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -1332,8 +1629,11 @@ extension PyMemory {
 
 extension PyDictKeys {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "dict_keys"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyDictKeys` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -1357,6 +1657,7 @@ extension PyDictKeys {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
@@ -1367,6 +1668,20 @@ extension PyDictKeys {
 
     zelf.header.deinitialize()
     zelf.dictPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyDictKeys? {
+    return py.cast.asDictKeys(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -1396,8 +1711,11 @@ extension PyMemory {
 
 extension PyDictValueIterator {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "dict_valueiterator"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyDictValueIterator` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -1427,6 +1745,7 @@ extension PyDictValueIterator {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
@@ -1441,6 +1760,20 @@ extension PyDictValueIterator {
     zelf.dictPtr.deinitialize()
     zelf.indexPtr.deinitialize()
     zelf.initialCountPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyDictValueIterator? {
+    return py.cast.asDictValueIterator(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -1470,8 +1803,11 @@ extension PyMemory {
 
 extension PyDictValues {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "dict_values"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyDictValues` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -1495,6 +1831,7 @@ extension PyDictValues {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
@@ -1505,6 +1842,20 @@ extension PyDictValues {
 
     zelf.header.deinitialize()
     zelf.dictPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyDictValues? {
+    return py.cast.asDictValues(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -1534,8 +1885,11 @@ extension PyMemory {
 
 extension PyEllipsis {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "ellipsis"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyEllipsis` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -1555,12 +1909,27 @@ extension PyEllipsis {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyEllipsis(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.header.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyEllipsis? {
+    return py.cast.asEllipsis(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -1588,8 +1957,11 @@ extension PyMemory {
 
 extension PyEnumerate {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "enumerate"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyEnumerate` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -1616,6 +1988,7 @@ extension PyEnumerate {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var iteratorPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.iteratorOffset) }
@@ -1628,6 +2001,20 @@ extension PyEnumerate {
     zelf.header.deinitialize()
     zelf.iteratorPtr.deinitialize()
     zelf.nextIndexPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyEnumerate? {
+    return py.cast.asEnumerate(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -1659,8 +2046,11 @@ extension PyMemory {
 
 extension PyFilter {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "filter"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyFilter` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -1687,6 +2077,7 @@ extension PyFilter {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var fnPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.fnOffset) }
@@ -1699,6 +2090,20 @@ extension PyFilter {
     zelf.header.deinitialize()
     zelf.fnPtr.deinitialize()
     zelf.iteratorPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyFilter? {
+    return py.cast.asFilter(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -1730,8 +2135,11 @@ extension PyMemory {
 
 extension PyFloat {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "float"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyFloat` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -1755,6 +2163,7 @@ extension PyFloat {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var valuePtr: Ptr<Double> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
@@ -1765,6 +2174,20 @@ extension PyFloat {
 
     zelf.header.deinitialize()
     zelf.valuePtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyFloat? {
+    return py.cast.asFloat(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -1794,8 +2217,11 @@ extension PyMemory {
 
 extension PyFrame {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "frame"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyFrame` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -1852,6 +2278,7 @@ extension PyFrame {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var codePtr: Ptr<PyCode> { Ptr(self.ptr, offset: Self.layout.codeOffset) }
@@ -1884,6 +2311,20 @@ extension PyFrame {
     zelf.freeVariablesPtr.deinitialize()
     zelf.currentInstructionIndexPtr.deinitialize()
     zelf.nextInstructionIndexPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyFrame? {
+    return py.cast.asFrame(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -1919,8 +2360,11 @@ extension PyMemory {
 
 extension PyFrozenSet {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "frozenset"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyFrozenSet` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -1944,6 +2388,7 @@ extension PyFrozenSet {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var elementsPtr: Ptr<OrderedSet> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
@@ -1954,6 +2399,20 @@ extension PyFrozenSet {
 
     zelf.header.deinitialize()
     zelf.elementsPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyFrozenSet? {
+    return py.cast.asFrozenSet(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -1983,8 +2442,11 @@ extension PyMemory {
 
 extension PyFunction {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "function"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyFunction` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -2035,6 +2497,7 @@ extension PyFunction {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var namePtr: Ptr<PyString> { Ptr(self.ptr, offset: Self.layout.nameOffset) }
@@ -2063,6 +2526,20 @@ extension PyFunction {
     zelf.kwDefaultsPtr.deinitialize()
     zelf.closurePtr.deinitialize()
     zelf.annotationsPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyFunction? {
+    return py.cast.asFunction(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -2098,8 +2575,11 @@ extension PyMemory {
 
 extension PyInt {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "int"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyInt` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -2123,6 +2603,7 @@ extension PyInt {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var valuePtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
@@ -2133,6 +2614,20 @@ extension PyInt {
 
     zelf.header.deinitialize()
     zelf.valuePtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyInt? {
+    return py.cast.asInt(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -2162,8 +2657,11 @@ extension PyMemory {
 
 extension PyIterator {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "iterator"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyIterator` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -2190,6 +2688,7 @@ extension PyIterator {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var sequencePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.sequenceOffset) }
@@ -2202,6 +2701,20 @@ extension PyIterator {
     zelf.header.deinitialize()
     zelf.sequencePtr.deinitialize()
     zelf.indexPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyIterator? {
+    return py.cast.asIterator(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -2231,8 +2744,11 @@ extension PyMemory {
 
 extension PyList {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "list"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyList` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -2256,6 +2772,7 @@ extension PyList {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var elementsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
@@ -2266,6 +2783,20 @@ extension PyList {
 
     zelf.header.deinitialize()
     zelf.elementsPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyList? {
+    return py.cast.asList(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -2295,8 +2826,11 @@ extension PyMemory {
 
 extension PyListIterator {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "list_iterator"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyListIterator` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -2323,6 +2857,7 @@ extension PyListIterator {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var listPtr: Ptr<PyList> { Ptr(self.ptr, offset: Self.layout.listOffset) }
@@ -2335,6 +2870,20 @@ extension PyListIterator {
     zelf.header.deinitialize()
     zelf.listPtr.deinitialize()
     zelf.indexPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyListIterator? {
+    return py.cast.asListIterator(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -2364,8 +2913,11 @@ extension PyMemory {
 
 extension PyListReverseIterator {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "list_reverseiterator"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyListReverseIterator` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -2392,6 +2944,7 @@ extension PyListReverseIterator {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var listPtr: Ptr<PyList> { Ptr(self.ptr, offset: Self.layout.listOffset) }
@@ -2404,6 +2957,20 @@ extension PyListReverseIterator {
     zelf.header.deinitialize()
     zelf.listPtr.deinitialize()
     zelf.indexPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyListReverseIterator? {
+    return py.cast.asListReverseIterator(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -2433,8 +3000,11 @@ extension PyMemory {
 
 extension PyMap {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "map"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyMap` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -2461,6 +3031,7 @@ extension PyMap {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var fnPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.fnOffset) }
@@ -2473,6 +3044,20 @@ extension PyMap {
     zelf.header.deinitialize()
     zelf.fnPtr.deinitialize()
     zelf.iteratorsPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyMap? {
+    return py.cast.asMap(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -2504,8 +3089,11 @@ extension PyMemory {
 
 extension PyMethod {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "method"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyMethod` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -2532,6 +3120,7 @@ extension PyMethod {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var functionPtr: Ptr<PyFunction> { Ptr(self.ptr, offset: Self.layout.functionOffset) }
@@ -2544,6 +3133,20 @@ extension PyMethod {
     zelf.header.deinitialize()
     zelf.functionPtr.deinitialize()
     zelf.objectPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyMethod? {
+    return py.cast.asMethod(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -2575,8 +3178,11 @@ extension PyMemory {
 
 extension PyModule {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "module"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyModule` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -2596,12 +3202,27 @@ extension PyModule {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyModule(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.header.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyModule? {
+    return py.cast.asModule(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -2635,8 +3256,11 @@ extension PyMemory {
 
 extension PyNamespace {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "SimpleNamespace"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyNamespace` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -2656,12 +3280,27 @@ extension PyNamespace {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyNamespace(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.header.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyNamespace? {
+    return py.cast.asNamespace(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -2691,8 +3330,11 @@ extension PyMemory {
 
 extension PyNone {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "NoneType"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyNone` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -2712,12 +3354,27 @@ extension PyNone {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyNone(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.header.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyNone? {
+    return py.cast.asNone(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -2745,8 +3402,11 @@ extension PyMemory {
 
 extension PyNotImplemented {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "NotImplementedType"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyNotImplemented` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -2766,12 +3426,27 @@ extension PyNotImplemented {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyNotImplemented(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.header.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyNotImplemented? {
+    return py.cast.asNotImplemented(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -2799,8 +3474,11 @@ extension PyMemory {
 
 extension PyObject {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "object"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyObject` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -2820,6 +3498,7 @@ extension PyObject {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -2853,8 +3532,11 @@ extension PyMemory {
 
 extension PyProperty {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "property"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyProperty` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -2887,6 +3569,7 @@ extension PyProperty {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var _getPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout._getOffset) }
@@ -2903,6 +3586,20 @@ extension PyProperty {
     zelf._setPtr.deinitialize()
     zelf._delPtr.deinitialize()
     zelf.docPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyProperty? {
+    return py.cast.asProperty(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -2938,8 +3635,11 @@ extension PyMemory {
 
 extension PyRange {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "range"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyRange` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -2972,6 +3672,7 @@ extension PyRange {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var startPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Self.layout.startOffset) }
@@ -2988,6 +3689,20 @@ extension PyRange {
     zelf.stopPtr.deinitialize()
     zelf.stepPtr.deinitialize()
     zelf.lengthPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyRange? {
+    return py.cast.asRange(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -3021,8 +3736,11 @@ extension PyMemory {
 
 extension PyRangeIterator {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "range_iterator"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyRangeIterator` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -3055,6 +3773,7 @@ extension PyRangeIterator {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var startPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.startOffset) }
@@ -3071,6 +3790,20 @@ extension PyRangeIterator {
     zelf.stepPtr.deinitialize()
     zelf.lengthPtr.deinitialize()
     zelf.indexPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyRangeIterator? {
+    return py.cast.asRangeIterator(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -3104,8 +3837,11 @@ extension PyMemory {
 
 extension PyReversed {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "reversed"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyReversed` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -3132,6 +3868,7 @@ extension PyReversed {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var sequencePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.sequenceOffset) }
@@ -3144,6 +3881,20 @@ extension PyReversed {
     zelf.header.deinitialize()
     zelf.sequencePtr.deinitialize()
     zelf.indexPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyReversed? {
+    return py.cast.asReversed(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -3175,8 +3926,11 @@ extension PyMemory {
 
 extension PySet {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "set"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PySet` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -3200,6 +3954,7 @@ extension PySet {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var elementsPtr: Ptr<OrderedSet> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
@@ -3210,6 +3965,20 @@ extension PySet {
 
     zelf.header.deinitialize()
     zelf.elementsPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PySet? {
+    return py.cast.asSet(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -3239,8 +4008,11 @@ extension PyMemory {
 
 extension PySetIterator {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "set_iterator"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PySetIterator` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -3270,6 +4042,7 @@ extension PySetIterator {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var setPtr: Ptr<PyAnySet> { Ptr(self.ptr, offset: Self.layout.setOffset) }
@@ -3284,6 +4057,20 @@ extension PySetIterator {
     zelf.setPtr.deinitialize()
     zelf.indexPtr.deinitialize()
     zelf.initialCountPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PySetIterator? {
+    return py.cast.asSetIterator(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -3332,8 +4119,11 @@ extension PyMemory {
 
 extension PySlice {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "slice"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PySlice` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -3363,6 +4153,7 @@ extension PySlice {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var startPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.startOffset) }
@@ -3377,6 +4168,20 @@ extension PySlice {
     zelf.startPtr.deinitialize()
     zelf.stopPtr.deinitialize()
     zelf.stepPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PySlice? {
+    return py.cast.asSlice(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -3410,8 +4215,11 @@ extension PyMemory {
 
 extension PyStaticMethod {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "staticmethod"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyStaticMethod` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -3435,6 +4243,7 @@ extension PyStaticMethod {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var callablePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.callableOffset) }
@@ -3445,6 +4254,20 @@ extension PyStaticMethod {
 
     zelf.header.deinitialize()
     zelf.callablePtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyStaticMethod? {
+    return py.cast.asStaticMethod(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -3474,8 +4297,11 @@ extension PyMemory {
 
 extension PyString {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "str"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyString` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -3505,6 +4331,7 @@ extension PyString {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var valuePtr: Ptr<String> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
@@ -3519,6 +4346,20 @@ extension PyString {
     zelf.valuePtr.deinitialize()
     zelf.cachedCountPtr.deinitialize()
     zelf.cachedHashPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyString? {
+    return py.cast.asString(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -3548,8 +4389,11 @@ extension PyMemory {
 
 extension PyStringIterator {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "str_iterator"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyStringIterator` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -3576,6 +4420,7 @@ extension PyStringIterator {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var stringPtr: Ptr<PyString> { Ptr(self.ptr, offset: Self.layout.stringOffset) }
@@ -3588,6 +4433,20 @@ extension PyStringIterator {
     zelf.header.deinitialize()
     zelf.stringPtr.deinitialize()
     zelf.indexPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyStringIterator? {
+    return py.cast.asStringIterator(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -3617,8 +4476,11 @@ extension PyMemory {
 
 extension PySuper {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "super"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PySuper` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -3648,6 +4510,7 @@ extension PySuper {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var thisClassPtr: Ptr<PyType?> { Ptr(self.ptr, offset: Self.layout.thisClassOffset) }
@@ -3662,6 +4525,20 @@ extension PySuper {
     zelf.thisClassPtr.deinitialize()
     zelf.objectPtr.deinitialize()
     zelf.objectTypePtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PySuper? {
+    return py.cast.asSuper(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -3695,8 +4572,11 @@ extension PyMemory {
 
 extension PyTextFile {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "TextFile"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyTextFile` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -3732,6 +4612,7 @@ extension PyTextFile {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var namePtr: Ptr<String?> { Ptr(self.ptr, offset: Self.layout.nameOffset) }
@@ -3750,6 +4631,20 @@ extension PyTextFile {
     zelf.modePtr.deinitialize()
     zelf.encodingPtr.deinitialize()
     zelf.errorHandlingPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyTextFile? {
+    return py.cast.asTextFile(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -3789,8 +4684,11 @@ extension PyMemory {
 
 extension PyTraceback {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "traceback"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyTraceback` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -3823,6 +4721,7 @@ extension PyTraceback {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var nextPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: Self.layout.nextOffset) }
@@ -3839,6 +4738,20 @@ extension PyTraceback {
     zelf.framePtr.deinitialize()
     zelf.lastInstructionPtr.deinitialize()
     zelf.lineNoPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyTraceback? {
+    return py.cast.asTraceback(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -3872,8 +4785,11 @@ extension PyMemory {
 
 extension PyTuple {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "tuple"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyTuple` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -3897,6 +4813,7 @@ extension PyTuple {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var elementsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
@@ -3907,6 +4824,20 @@ extension PyTuple {
 
     zelf.header.deinitialize()
     zelf.elementsPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyTuple? {
+    return py.cast.asTuple(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -3936,8 +4867,11 @@ extension PyMemory {
 
 extension PyTupleIterator {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "tuple_iterator"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyTupleIterator` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -3964,6 +4898,7 @@ extension PyTupleIterator {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var tuplePtr: Ptr<PyTuple> { Ptr(self.ptr, offset: Self.layout.tupleOffset) }
@@ -3976,6 +4911,20 @@ extension PyTupleIterator {
     zelf.header.deinitialize()
     zelf.tuplePtr.deinitialize()
     zelf.indexPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyTupleIterator? {
+    return py.cast.asTupleIterator(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -4005,8 +4954,11 @@ extension PyMemory {
 
 extension PyType {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "type"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyType` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -4057,6 +5009,7 @@ extension PyType {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var namePtr: Ptr<String> { Ptr(self.ptr, offset: Self.layout.nameOffset) }
@@ -4085,6 +5038,20 @@ extension PyType {
     zelf.staticMethodsPtr.deinitialize()
     zelf.debugFnPtr.deinitialize()
     zelf.deinitializePtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyType? {
+    return py.cast.asType(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -4134,8 +5101,11 @@ extension PyMemory {
 
 extension PyZip {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "zip"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyZip` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -4159,6 +5129,7 @@ extension PyZip {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var iteratorsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Self.layout.iteratorsOffset) }
@@ -4169,6 +5140,20 @@ extension PyZip {
 
     zelf.header.deinitialize()
     zelf.iteratorsPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyZip? {
+    return py.cast.asZip(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -4198,8 +5183,11 @@ extension PyMemory {
 
 extension PyArithmeticError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "ArithmeticError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyArithmeticError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -4219,12 +5207,27 @@ extension PyArithmeticError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyArithmeticError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyArithmeticError? {
+    return py.cast.asArithmeticError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -4262,8 +5265,11 @@ extension PyMemory {
 
 extension PyAssertionError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "AssertionError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyAssertionError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -4283,12 +5289,27 @@ extension PyAssertionError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyAssertionError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyAssertionError? {
+    return py.cast.asAssertionError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -4326,8 +5347,11 @@ extension PyMemory {
 
 extension PyAttributeError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "AttributeError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyAttributeError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -4347,12 +5371,27 @@ extension PyAttributeError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyAttributeError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyAttributeError? {
+    return py.cast.asAttributeError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -4390,8 +5429,11 @@ extension PyMemory {
 
 extension PyBaseException {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "BaseException"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyBaseException` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -4411,12 +5453,27 @@ extension PyBaseException {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBaseException(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyBaseException? {
+    return py.cast.asBaseException(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -4454,8 +5511,11 @@ extension PyMemory {
 
 extension PyBlockingIOError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "BlockingIOError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyBlockingIOError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -4475,12 +5535,27 @@ extension PyBlockingIOError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBlockingIOError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyBlockingIOError? {
+    return py.cast.asBlockingIOError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -4518,8 +5593,11 @@ extension PyMemory {
 
 extension PyBrokenPipeError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "BrokenPipeError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyBrokenPipeError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -4539,12 +5617,27 @@ extension PyBrokenPipeError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBrokenPipeError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyBrokenPipeError? {
+    return py.cast.asBrokenPipeError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -4582,8 +5675,11 @@ extension PyMemory {
 
 extension PyBufferError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "BufferError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyBufferError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -4603,12 +5699,27 @@ extension PyBufferError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBufferError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyBufferError? {
+    return py.cast.asBufferError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -4646,8 +5757,11 @@ extension PyMemory {
 
 extension PyBytesWarning {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "BytesWarning"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyBytesWarning` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -4667,12 +5781,27 @@ extension PyBytesWarning {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBytesWarning(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyBytesWarning? {
+    return py.cast.asBytesWarning(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -4710,8 +5839,11 @@ extension PyMemory {
 
 extension PyChildProcessError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "ChildProcessError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyChildProcessError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -4731,12 +5863,27 @@ extension PyChildProcessError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyChildProcessError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyChildProcessError? {
+    return py.cast.asChildProcessError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -4774,8 +5921,11 @@ extension PyMemory {
 
 extension PyConnectionAbortedError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "ConnectionAbortedError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyConnectionAbortedError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -4795,12 +5945,27 @@ extension PyConnectionAbortedError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyConnectionAbortedError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyConnectionAbortedError? {
+    return py.cast.asConnectionAbortedError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -4838,8 +6003,11 @@ extension PyMemory {
 
 extension PyConnectionError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "ConnectionError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyConnectionError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -4859,12 +6027,27 @@ extension PyConnectionError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyConnectionError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyConnectionError? {
+    return py.cast.asConnectionError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -4902,8 +6085,11 @@ extension PyMemory {
 
 extension PyConnectionRefusedError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "ConnectionRefusedError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyConnectionRefusedError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -4923,12 +6109,27 @@ extension PyConnectionRefusedError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyConnectionRefusedError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyConnectionRefusedError? {
+    return py.cast.asConnectionRefusedError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -4966,8 +6167,11 @@ extension PyMemory {
 
 extension PyConnectionResetError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "ConnectionResetError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyConnectionResetError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -4987,12 +6191,27 @@ extension PyConnectionResetError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyConnectionResetError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyConnectionResetError? {
+    return py.cast.asConnectionResetError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -5030,8 +6249,11 @@ extension PyMemory {
 
 extension PyDeprecationWarning {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "DeprecationWarning"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyDeprecationWarning` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -5051,12 +6273,27 @@ extension PyDeprecationWarning {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyDeprecationWarning(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyDeprecationWarning? {
+    return py.cast.asDeprecationWarning(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -5094,8 +6331,11 @@ extension PyMemory {
 
 extension PyEOFError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "EOFError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyEOFError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -5115,12 +6355,27 @@ extension PyEOFError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyEOFError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyEOFError? {
+    return py.cast.asEOFError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -5158,8 +6413,11 @@ extension PyMemory {
 
 extension PyException {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "Exception"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyException` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -5179,12 +6437,27 @@ extension PyException {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyException(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyException? {
+    return py.cast.asException(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -5222,8 +6495,11 @@ extension PyMemory {
 
 extension PyFileExistsError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "FileExistsError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyFileExistsError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -5243,12 +6519,27 @@ extension PyFileExistsError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFileExistsError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyFileExistsError? {
+    return py.cast.asFileExistsError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -5286,8 +6577,11 @@ extension PyMemory {
 
 extension PyFileNotFoundError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "FileNotFoundError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyFileNotFoundError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -5307,12 +6601,27 @@ extension PyFileNotFoundError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFileNotFoundError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyFileNotFoundError? {
+    return py.cast.asFileNotFoundError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -5350,8 +6659,11 @@ extension PyMemory {
 
 extension PyFloatingPointError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "FloatingPointError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyFloatingPointError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -5371,12 +6683,27 @@ extension PyFloatingPointError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFloatingPointError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyFloatingPointError? {
+    return py.cast.asFloatingPointError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -5414,8 +6741,11 @@ extension PyMemory {
 
 extension PyFutureWarning {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "FutureWarning"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyFutureWarning` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -5435,12 +6765,27 @@ extension PyFutureWarning {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFutureWarning(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyFutureWarning? {
+    return py.cast.asFutureWarning(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -5478,8 +6823,11 @@ extension PyMemory {
 
 extension PyGeneratorExit {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "GeneratorExit"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyGeneratorExit` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -5499,12 +6847,27 @@ extension PyGeneratorExit {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyGeneratorExit(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyGeneratorExit? {
+    return py.cast.asGeneratorExit(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -5542,8 +6905,11 @@ extension PyMemory {
 
 extension PyImportError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "ImportError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyImportError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -5573,6 +6939,7 @@ extension PyImportError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var msgPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.msgOffset) }
@@ -5587,6 +6954,20 @@ extension PyImportError {
     zelf.msgPtr.deinitialize()
     zelf.moduleNamePtr.deinitialize()
     zelf.modulePathPtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyImportError? {
+    return py.cast.asImportError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -5630,8 +7011,11 @@ extension PyMemory {
 
 extension PyImportWarning {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "ImportWarning"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyImportWarning` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -5651,12 +7035,27 @@ extension PyImportWarning {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyImportWarning(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyImportWarning? {
+    return py.cast.asImportWarning(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -5694,8 +7093,11 @@ extension PyMemory {
 
 extension PyIndentationError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "IndentationError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyIndentationError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -5715,12 +7117,27 @@ extension PyIndentationError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyIndentationError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyIndentationError? {
+    return py.cast.asIndentationError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -5758,8 +7175,11 @@ extension PyMemory {
 
 extension PyIndexError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "IndexError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyIndexError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -5779,12 +7199,27 @@ extension PyIndexError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyIndexError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyIndexError? {
+    return py.cast.asIndexError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -5822,8 +7257,11 @@ extension PyMemory {
 
 extension PyInterruptedError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "InterruptedError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyInterruptedError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -5843,12 +7281,27 @@ extension PyInterruptedError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyInterruptedError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyInterruptedError? {
+    return py.cast.asInterruptedError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -5886,8 +7339,11 @@ extension PyMemory {
 
 extension PyIsADirectoryError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "IsADirectoryError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyIsADirectoryError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -5907,12 +7363,27 @@ extension PyIsADirectoryError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyIsADirectoryError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyIsADirectoryError? {
+    return py.cast.asIsADirectoryError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -5950,8 +7421,11 @@ extension PyMemory {
 
 extension PyKeyError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "KeyError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyKeyError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -5971,12 +7445,27 @@ extension PyKeyError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyKeyError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyKeyError? {
+    return py.cast.asKeyError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -6014,8 +7503,11 @@ extension PyMemory {
 
 extension PyKeyboardInterrupt {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "KeyboardInterrupt"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyKeyboardInterrupt` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6035,12 +7527,27 @@ extension PyKeyboardInterrupt {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyKeyboardInterrupt(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyKeyboardInterrupt? {
+    return py.cast.asKeyboardInterrupt(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -6078,8 +7585,11 @@ extension PyMemory {
 
 extension PyLookupError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "LookupError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyLookupError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6099,12 +7609,27 @@ extension PyLookupError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyLookupError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyLookupError? {
+    return py.cast.asLookupError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -6142,8 +7667,11 @@ extension PyMemory {
 
 extension PyMemoryError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "MemoryError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyMemoryError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6163,12 +7691,27 @@ extension PyMemoryError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyMemoryError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyMemoryError? {
+    return py.cast.asMemoryError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -6206,8 +7749,11 @@ extension PyMemory {
 
 extension PyModuleNotFoundError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "ModuleNotFoundError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyModuleNotFoundError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6227,12 +7773,27 @@ extension PyModuleNotFoundError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyModuleNotFoundError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyModuleNotFoundError? {
+    return py.cast.asModuleNotFoundError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -6270,8 +7831,11 @@ extension PyMemory {
 
 extension PyNameError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "NameError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyNameError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6291,12 +7855,27 @@ extension PyNameError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyNameError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyNameError? {
+    return py.cast.asNameError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -6334,8 +7913,11 @@ extension PyMemory {
 
 extension PyNotADirectoryError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "NotADirectoryError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyNotADirectoryError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6355,12 +7937,27 @@ extension PyNotADirectoryError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyNotADirectoryError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyNotADirectoryError? {
+    return py.cast.asNotADirectoryError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -6398,8 +7995,11 @@ extension PyMemory {
 
 extension PyNotImplementedError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "NotImplementedError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyNotImplementedError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6419,12 +8019,27 @@ extension PyNotImplementedError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyNotImplementedError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyNotImplementedError? {
+    return py.cast.asNotImplementedError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -6462,8 +8077,11 @@ extension PyMemory {
 
 extension PyOSError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "OSError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyOSError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6483,12 +8101,27 @@ extension PyOSError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyOSError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyOSError? {
+    return py.cast.asOSError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -6526,8 +8159,11 @@ extension PyMemory {
 
 extension PyOverflowError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "OverflowError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyOverflowError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6547,12 +8183,27 @@ extension PyOverflowError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyOverflowError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyOverflowError? {
+    return py.cast.asOverflowError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -6590,8 +8241,11 @@ extension PyMemory {
 
 extension PyPendingDeprecationWarning {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "PendingDeprecationWarning"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyPendingDeprecationWarning` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6611,12 +8265,27 @@ extension PyPendingDeprecationWarning {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyPendingDeprecationWarning(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyPendingDeprecationWarning? {
+    return py.cast.asPendingDeprecationWarning(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -6654,8 +8323,11 @@ extension PyMemory {
 
 extension PyPermissionError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "PermissionError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyPermissionError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6675,12 +8347,27 @@ extension PyPermissionError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyPermissionError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyPermissionError? {
+    return py.cast.asPermissionError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -6718,8 +8405,11 @@ extension PyMemory {
 
 extension PyProcessLookupError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "ProcessLookupError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyProcessLookupError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6739,12 +8429,27 @@ extension PyProcessLookupError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyProcessLookupError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyProcessLookupError? {
+    return py.cast.asProcessLookupError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -6782,8 +8487,11 @@ extension PyMemory {
 
 extension PyRecursionError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "RecursionError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyRecursionError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6803,12 +8511,27 @@ extension PyRecursionError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyRecursionError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyRecursionError? {
+    return py.cast.asRecursionError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -6846,8 +8569,11 @@ extension PyMemory {
 
 extension PyReferenceError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "ReferenceError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyReferenceError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6867,12 +8593,27 @@ extension PyReferenceError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyReferenceError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyReferenceError? {
+    return py.cast.asReferenceError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -6910,8 +8651,11 @@ extension PyMemory {
 
 extension PyResourceWarning {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "ResourceWarning"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyResourceWarning` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6931,12 +8675,27 @@ extension PyResourceWarning {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyResourceWarning(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyResourceWarning? {
+    return py.cast.asResourceWarning(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -6974,8 +8733,11 @@ extension PyMemory {
 
 extension PyRuntimeError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "RuntimeError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyRuntimeError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6995,12 +8757,27 @@ extension PyRuntimeError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyRuntimeError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyRuntimeError? {
+    return py.cast.asRuntimeError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -7038,8 +8815,11 @@ extension PyMemory {
 
 extension PyRuntimeWarning {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "RuntimeWarning"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyRuntimeWarning` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -7059,12 +8839,27 @@ extension PyRuntimeWarning {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyRuntimeWarning(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyRuntimeWarning? {
+    return py.cast.asRuntimeWarning(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -7102,8 +8897,11 @@ extension PyMemory {
 
 extension PyStopAsyncIteration {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "StopAsyncIteration"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyStopAsyncIteration` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -7123,12 +8921,27 @@ extension PyStopAsyncIteration {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyStopAsyncIteration(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyStopAsyncIteration? {
+    return py.cast.asStopAsyncIteration(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -7166,8 +8979,11 @@ extension PyMemory {
 
 extension PyStopIteration {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "StopIteration"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyStopIteration` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -7191,6 +9007,7 @@ extension PyStopIteration {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var valuePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
@@ -7201,6 +9018,20 @@ extension PyStopIteration {
 
     zelf.errorHeader.deinitialize()
     zelf.valuePtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyStopIteration? {
+    return py.cast.asStopIteration(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -7240,8 +9071,11 @@ extension PyMemory {
 
 extension PySyntaxError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "SyntaxError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PySyntaxError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -7280,6 +9114,7 @@ extension PySyntaxError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var msgPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.msgOffset) }
@@ -7300,6 +9135,20 @@ extension PySyntaxError {
     zelf.offsetPtr.deinitialize()
     zelf.textPtr.deinitialize()
     zelf.printFileAndLinePtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PySyntaxError? {
+    return py.cast.asSyntaxError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -7349,8 +9198,11 @@ extension PyMemory {
 
 extension PySyntaxWarning {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "SyntaxWarning"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PySyntaxWarning` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -7370,12 +9222,27 @@ extension PySyntaxWarning {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PySyntaxWarning(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PySyntaxWarning? {
+    return py.cast.asSyntaxWarning(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -7413,8 +9280,11 @@ extension PyMemory {
 
 extension PySystemError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "SystemError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PySystemError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -7434,12 +9304,27 @@ extension PySystemError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PySystemError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PySystemError? {
+    return py.cast.asSystemError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -7477,8 +9362,11 @@ extension PyMemory {
 
 extension PySystemExit {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "SystemExit"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PySystemExit` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -7502,6 +9390,7 @@ extension PySystemExit {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal var codePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.codeOffset) }
@@ -7512,6 +9401,20 @@ extension PySystemExit {
 
     zelf.errorHeader.deinitialize()
     zelf.codePtr.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PySystemExit? {
+    return py.cast.asSystemExit(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -7551,8 +9454,11 @@ extension PyMemory {
 
 extension PyTabError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "TabError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyTabError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -7572,12 +9478,27 @@ extension PyTabError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyTabError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyTabError? {
+    return py.cast.asTabError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -7615,8 +9536,11 @@ extension PyMemory {
 
 extension PyTimeoutError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "TimeoutError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyTimeoutError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -7636,12 +9560,27 @@ extension PyTimeoutError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyTimeoutError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyTimeoutError? {
+    return py.cast.asTimeoutError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -7679,8 +9618,11 @@ extension PyMemory {
 
 extension PyTypeError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "TypeError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyTypeError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -7700,12 +9642,27 @@ extension PyTypeError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyTypeError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyTypeError? {
+    return py.cast.asTypeError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -7743,8 +9700,11 @@ extension PyMemory {
 
 extension PyUnboundLocalError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "UnboundLocalError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyUnboundLocalError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -7764,12 +9724,27 @@ extension PyUnboundLocalError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUnboundLocalError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyUnboundLocalError? {
+    return py.cast.asUnboundLocalError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -7807,8 +9782,11 @@ extension PyMemory {
 
 extension PyUnicodeDecodeError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "UnicodeDecodeError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyUnicodeDecodeError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -7828,12 +9806,27 @@ extension PyUnicodeDecodeError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUnicodeDecodeError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyUnicodeDecodeError? {
+    return py.cast.asUnicodeDecodeError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -7871,8 +9864,11 @@ extension PyMemory {
 
 extension PyUnicodeEncodeError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "UnicodeEncodeError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyUnicodeEncodeError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -7892,12 +9888,27 @@ extension PyUnicodeEncodeError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUnicodeEncodeError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyUnicodeEncodeError? {
+    return py.cast.asUnicodeEncodeError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -7935,8 +9946,11 @@ extension PyMemory {
 
 extension PyUnicodeError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "UnicodeError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyUnicodeError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -7956,12 +9970,27 @@ extension PyUnicodeError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUnicodeError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyUnicodeError? {
+    return py.cast.asUnicodeError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -7999,8 +10028,11 @@ extension PyMemory {
 
 extension PyUnicodeTranslateError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "UnicodeTranslateError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyUnicodeTranslateError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -8020,12 +10052,27 @@ extension PyUnicodeTranslateError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUnicodeTranslateError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyUnicodeTranslateError? {
+    return py.cast.asUnicodeTranslateError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -8063,8 +10110,11 @@ extension PyMemory {
 
 extension PyUnicodeWarning {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "UnicodeWarning"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyUnicodeWarning` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -8084,12 +10134,27 @@ extension PyUnicodeWarning {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUnicodeWarning(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyUnicodeWarning? {
+    return py.cast.asUnicodeWarning(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -8127,8 +10192,11 @@ extension PyMemory {
 
 extension PyUserWarning {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "UserWarning"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyUserWarning` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -8148,12 +10216,27 @@ extension PyUserWarning {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUserWarning(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyUserWarning? {
+    return py.cast.asUserWarning(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -8191,8 +10274,11 @@ extension PyMemory {
 
 extension PyValueError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "ValueError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyValueError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -8212,12 +10298,27 @@ extension PyValueError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyValueError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyValueError? {
+    return py.cast.asValueError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -8255,8 +10356,11 @@ extension PyMemory {
 
 extension PyWarning {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "Warning"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyWarning` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -8276,12 +10380,27 @@ extension PyWarning {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyWarning(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyWarning? {
+    return py.cast.asWarning(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 
@@ -8319,8 +10438,11 @@ extension PyMemory {
 
 extension PyZeroDivisionError {
 
+  /// Name of the type in Python.
   public static let pythonTypeName = "ZeroDivisionError"
 
+  /// Arrangement of fields in memory.
+  ///
   /// This type was automatically generated based on `PyZeroDivisionError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -8340,12 +10462,27 @@ extension PyZeroDivisionError {
     }
   }
 
+  /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyZeroDivisionError(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.errorHeader.deinitialize()
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyZeroDivisionError? {
+    return py.cast.asZeroDivisionError(object)
+  }
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
 

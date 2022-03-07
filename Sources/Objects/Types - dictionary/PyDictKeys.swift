@@ -34,12 +34,6 @@ public struct PyDictKeys: PyObjectMixin, AbstractDictView {
     return "PyDictKeys(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-  // MARK: - AbstravtView
-
-  internal static func castZelf(_ py: Py, _ object: PyObject) -> PyDictKeys? {
-    return py.cast.asDictKeys(object)
-  }
-
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
@@ -126,7 +120,7 @@ public struct PyDictKeys: PyObjectMixin, AbstractDictView {
   internal static func __contains__(_ py: Py,
                                     zelf: PyObject,
                                     object: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__contains__")
     }
 
@@ -137,7 +131,7 @@ public struct PyDictKeys: PyObjectMixin, AbstractDictView {
 
   // sourcery: pymethod = __iter__
   internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 

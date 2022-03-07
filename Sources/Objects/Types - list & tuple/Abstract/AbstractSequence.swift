@@ -3,6 +3,11 @@
 /// DO NOT use them outside of the `tuple/list` objects!
 internal protocol AbstractSequence: PyObjectMixin {
 
+  /// Name of the type in Python.
+  ///
+  /// Used mainly in error messages.
+  static var pythonTypeName: String { get }
+
   /// Main requirement.
   var elements: Elements { get }
 
@@ -14,6 +19,11 @@ internal protocol AbstractSequence: PyObjectMixin {
   /// - For `tuple` it should return `tuple`.
   /// - For `list` it should return `list`.
   static func downcast(_ py: Py, _ object: PyObject) -> Self?
+
+  /// Create error when the `zelf` argument cast failed.
+  static func invalidZelfArgument<T>(_ py: Py,
+                                     _ object: PyObject,
+                                     _ fnName: String) -> PyResult<T>
 }
 
 extension AbstractSequence {

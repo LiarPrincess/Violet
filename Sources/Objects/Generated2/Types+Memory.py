@@ -47,6 +47,8 @@ def print_layout(swift_type_name: str,
                  initial_alignment: str,
                  fields: List[PointerField]):
 
+    print(f'  /// Arrangement of fields in memory.')
+    print(f'  ///')
     print(f'  /// This type was automatically generated based on `{swift_type_name}` fields')
     print(f'  /// with `sourcery: includeInLayout` annotation.')
     print(f'  internal struct Layout {{')
@@ -87,6 +89,7 @@ def print_layout(swift_type_name: str,
     print('    }')
     print('  }')
     print()
+    print(f'  /// Arrangement of fields in memory.')
     print('  internal static let layout = Layout()')
 
 def print_pointer_properties(fields: List[PointerField]):
@@ -185,7 +188,9 @@ extension PyMemory {{
 # ===================
 
 def print_type_things(t: TypeInfo):
+    python_type_name = t.python_type_name
     swift_type_name = t.swift_type_name
+    swift_type_name_without_py = swift_type_name[2:]
 
     pointer_fields: List[PointerField] = []
     for f in t.swift_fields:
@@ -196,6 +201,7 @@ def print_type_things(t: TypeInfo):
 
     print(f'extension {swift_type_name} {{')
     print()
+    print(f'  /// Name of the type in Python.')
     print(f'  public static let pythonTypeName = "{t.python_type_name}"')
     print()
 
@@ -226,6 +232,24 @@ def print_type_things(t: TypeInfo):
         print(f'    zelf.{p.pointer_name}.deinitialize()')
 
     print('  }')
+
+    if python_type_name != 'object':
+        print()
+        print(f'  internal static func downcast(_ py: Py, _ object: PyObject) -> {swift_type_name}? {{')
+        print(f'    return py.cast.as{swift_type_name_without_py}(object)')
+        print(f'  }}')
+        print()
+        print(f'  internal static func invalidZelfArgument<T>(_ py: Py,')
+        print(f'                                              _ object: PyObject,')
+        print(f'                                              _ fnName: String) -> PyResult<T> {{')
+        print(f'    let error = py.newInvalidSelfArgumentError(object: object,')
+        print(f'                                               expectedType: Self.pythonTypeName,')
+        print(f'                                               fnName: fnName)')
+        print(f'')
+        print(f'    return .error(error.asBaseException)')
+        print(f'  }}')
+
+
     print('}') # type extension
     print()
 
@@ -233,8 +257,6 @@ def print_type_things(t: TypeInfo):
     # === PyMemory + new ===
     # ======================
 
-    python_type = t.python_type_name
-    swift_type_name_without_py = swift_type_name[2:]
 
     print('extension PyMemory {')
 
@@ -242,7 +264,7 @@ def print_type_things(t: TypeInfo):
         init_arguments = init.arguments
 
         print()
-        print(f'  /// Allocate a new instance of `{python_type}` type.')
+        print(f'  /// Allocate a new instance of `{python_type_name}` type.')
         print(f'  public func new{swift_type_name_without_py}(')
 
         for index, arg in enumerate(init_arguments):
@@ -317,8 +339,11 @@ import VioletCompiler
 //   - PyErrorHeader.xxxPtr - pointer properties to fields
 // - PyMemory.newTypeAndObjectTypes - because they have recursive dependency
 // - Then for each type:
-//   - [TYPE_NAME].Layout - mainly field offsets
-//   - [TYPE_NAME].deinitialize(ptr:) - to deinitialize this object before deletion
+//   - static let pythonTypeName - name of the type in Python
+//   - static let layout - mainly field offsets
+//   - static func deinitialize(ptr: RawPtr) - to deinitialize this object before deletion
+//   - static func downcast(py: Py, object: PyObject) -> [TYPE_NAME]?
+//   - static func invalidZelfArgument<T>(py: Py, object: PyObject, fnName: String) -> PyResult<T>
 //   - PyMemory.new[TYPE_NAME] - to create new object of this type
 ''')
 

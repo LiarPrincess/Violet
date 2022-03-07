@@ -49,14 +49,6 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
     return py.newTuple(elements: elements)
   }
 
-  internal static func downcast(_ py: Py, _ object: PyObject) -> PyTuple? {
-    return py.cast.asTuple(object)
-  }
-
-  internal static func castZelf(_ py: Py, _ object: PyObject) -> PyTuple? {
-    return Self.downcast(py, object)
-  }
-
   // MARK: - Equatable, comparable
 
   // sourcery: pymethod = __eq__
@@ -93,7 +85,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
 
   // sourcery: pymethod = __hash__
   internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return .invalidSelfArgument(zelf, Self.pythonTypeName)
     }
 
@@ -122,7 +114,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
 
   // sourcery: pymethod = __repr__
   internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
@@ -156,7 +148,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
                                         name: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
 
@@ -174,7 +166,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
 
   // sourcery: pymethod = __len__
   internal static func __len__(_ py: Py, zelf: PyObject)-> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__len__")
     }
 
@@ -218,7 +210,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
 
   // sourcery: pymethod = __iter__
   internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 

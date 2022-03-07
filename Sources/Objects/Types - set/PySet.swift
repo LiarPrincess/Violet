@@ -54,14 +54,6 @@ public struct PySet: PyObjectMixin, AbstractSet {
     return py.newSet(elements: elements)
   }
 
-  internal static func downcast(_ py: Py, _ object: PyObject) -> PySet? {
-    return py.cast.asSet(object)
-  }
-
-  internal static func castZelf(_ py: Py, _ object: PyObject) -> PySet? {
-    return Self.downcast(py, object)
-  }
-
   // MARK: - Equatable, comparable
 
   // sourcery: pymethod = __eq__
@@ -105,7 +97,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
 
   // sourcery: pymethod = __repr__
   internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
@@ -134,7 +126,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
                                         name: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
 
@@ -152,7 +144,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
 
   // sourcery: pymethod = __len__
   internal static func __len__(_ py: Py, zelf: PyObject)-> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__len__")
     }
 
@@ -336,7 +328,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
   internal static func add(_ py: Py,
                            zelf: PyObject,
                            other: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "add")
     }
 
@@ -365,7 +357,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
   internal static func update(_ py: Py,
                               zelf: PyObject,
                               other: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "update")
     }
 
@@ -410,7 +402,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
   internal static func remove(_ py: Py,
                               zelf: PyObject,
                               object: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "remove")
     }
 
@@ -448,7 +440,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
   internal static func discard(_ py: Py,
                                zelf: PyObject,
                                object: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "discard")
     }
 
@@ -475,7 +467,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
 
   // sourcery: pymethod = clear, doc = clearDoc
   internal static func clear(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "clear")
     }
 
@@ -489,7 +481,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
 
   // sourcery: pymethod = copy, doc = copyDoc
   internal static func copy(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "copy")
     }
 
@@ -506,7 +498,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
 
   // sourcery: pymethod = pop, doc = popDoc
   internal static func pop(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "pop")
     }
 
@@ -526,7 +518,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
 
   // sourcery: pymethod = __iter__
   internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
@@ -558,7 +550,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
                                  zelf: PyObject,
                                  args: [PyObject],
                                  kwargs: PyDict?) -> PyResult<PyObject> {
-    guard let zelf = Self.castZelf(py, zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
 
