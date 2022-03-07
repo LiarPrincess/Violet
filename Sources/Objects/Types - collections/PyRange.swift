@@ -86,9 +86,9 @@ public struct PyRange: PyObjectMixin {
     )
 
     let unwrappedStep = step?.value ?? 1
-    let length = PyRange.calculateLength(start: start.value,
-                                         stop: stop.value,
-                                         step: unwrappedStep)
+    let length = Self.calculateLength(start: start.value,
+                                      stop: stop.value,
+                                      step: unwrappedStep)
 
     self.header.initialize(py, type: type)
     self.startPtr.initialize(to: start)
@@ -124,160 +124,212 @@ public struct PyRange: PyObjectMixin {
     let zelf = PyRange(ptr: ptr)
     return "PyRange(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
-}
 
-/* MARKER
-
-  // MARK: - Equatable
+  // MARK: - Equatable, comparable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> CompareResult {
-    guard let otherRange = PyCast.asRange(other) else {
+  internal static func __eq__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__eq__)
+    }
+
+    return Self.isEqual(py, zelf: zelf, other: other)
+  }
+
+
+  // sourcery: pymethod = __ne__
+  internal static func __ne__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ne__)
+    }
+
+    let isEqual = Self.isEqual(py, zelf: zelf, other: other)
+    return isEqual.not
+  }
+
+  internal static func isEqual(_ py: Py, zelf: PyRange, other: PyObject) -> CompareResult {
+    guard let other = py.cast.asRange(other) else {
       return .notImplemented
     }
 
-    return .value(self.isEqual(otherRange))
+    let length = zelf.length
+    guard length == other.length else {
+      return .value(false)
+    }
+
+    if length == 0 {
+      return .value(true)
+    }
+
+    guard zelf.start == other.start else {
+      return .value(false)
+    }
+
+    if length.value == 1 {
+      return .value(true)
+    }
+
+    let result = zelf.step == other.step
+    return .value(result)
   }
-
-  internal func isEqual(_ other: PyRange) -> Bool {
-    guard self.length.value == other.length.value else {
-      return false
-    }
-
-    if self.length.value == 0 {
-      return true
-    }
-
-    guard self.start.isEqual(other.start) else {
-      return false
-    }
-
-    if self.length.value == 1 {
-      return true
-    }
-
-    return self.step.isEqual(other.step)
-  }
-
-  // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> CompareResult {
-    return self.isEqual(other).not
-  }
-
-  // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> CompareResult {
-    return .notImplemented
+  internal static func __lt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compare(py, zelf: zelf, operation: .__lt__)
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    return .notImplemented
+  internal static func __le__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compare(py, zelf: zelf, operation: .__le__)
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> CompareResult {
-    return .notImplemented
+  internal static func __gt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compare(py, zelf: zelf, operation: .__gt__)
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
+  internal static func __ge__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compare(py, zelf: zelf, operation: .__ge__)
+  }
+
+  private static func compare(_ py: Py,
+                              zelf: PyObject,
+                              operation: CompareResult.Operation) -> CompareResult {
+    guard py.cast.isDict(zelf) else {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, operation)
+    }
+
     return .notImplemented
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> HashResult {
-    var tuple = [self.length, Py.none, Py.none]
-
-    if self.length.value == 0 {
-      return PyTuple.calculateHash(elements: tuple)
+  internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName)
     }
 
-    tuple[1] = self.start
-    if self.length.value != 1 {
-      tuple[2] = self.step
+    let length = zelf.length
+    let none = py.none.asObject
+    var tuple = [length.asObject, none, none]
+
+    if length == 0 {
+      return PyTuple.calculateHash(py, elements: tuple)
     }
 
-    return PyTuple.calculateHash(elements: tuple)
+    tuple[1] = zelf.start.asObject
+    if length != 1 {
+      tuple[2] = zelf.step.asObject
+    }
+
+    return PyTuple.calculateHash(py, elements: tuple)
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
-    let start = self.start.repr()
-    let stop = self.stop.repr()
-
-    switch self.stepType {
-    case .implicit:
-      return "range(\(start), \(stop))"
-    case .explicit:
-      let step = self.step.repr()
-      return "range(\(start), \(stop), \(step))"
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
+
+    let start = String(describing: zelf.start.value)
+    let stop = String(describing: zelf.stop.value)
+
+    let result: String
+    switch zelf.stepType {
+    case .implicit:
+      result = "range(\(start), \(stop))"
+    case .explicit:
+      let step = String(describing: zelf.step.value)
+      result = "range(\(start), \(stop), \(step))"
+    }
+
+    return PyResult(py, result)
   }
 
   // MARK: - Convertible
 
   // sourcery: pymethod = __bool__
-  internal func asBool() -> Bool {
-    return self.length.value.isTrue
+  internal static func __bool__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__bool__")
+    }
+
+    let result = zelf.length.value.isTrue
+    return PyResult(py, result)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal func getLength() -> BigInt {
-    return self.length.value
+  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__len__")
+    }
+
+    let result = zelf.length
+    return PyResult(result)
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    }
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
 
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  internal func contains(object: PyObject) -> PyResult<Bool> {
-    guard let int = PyCast.asInt(object) else {
-      return .value(false)
+  internal static func __contains__(_ py: Py,
+                                    zelf: PyObject,
+                                    object: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__contains__")
     }
 
-    let result = self.contains(int: int)
-    return .value(result)
+    guard let int = py.cast.asInt(object) else {
+      return PyResult(py, false)
+    }
+
+    let result = Self.contains(zelf: zelf, int: int)
+    return PyResult(py, result)
   }
 
-  internal func contains(int: PyInt) -> Bool {
+  private static func contains(zelf: PyRange, int: PyInt) -> Bool {
     let value = int.value
 
     // Check if the value can possibly be in the range.
-    if self.isGoingUp {
+    if zelf.isGoingUp {
       // positive steps: start <= el < stop
-      guard self.start.value <= value && value < self.stop.value else {
+      guard zelf.start <= value && value < zelf.stop else {
         return false
       }
     } else {
       // negative steps: start >= el > stop
-      guard self.start.value >= value && value > self.stop.value else {
+      guard zelf.start >= value && value > zelf.stop else {
         return false
       }
     }
 
-    let tmp1 = value - self.start.value
-    let tmp2 = tmp1 % self.step.value
+    let tmp1 = value - zelf.start.value
+    let tmp2 = tmp1 % zelf.step.value
     return tmp2 == 0
   }
 
@@ -286,53 +338,55 @@ public struct PyRange: PyObjectMixin {
   // sourcery: pymethod = __getitem__
   /// static PyObject *
   /// range_subscript(rangeobject* self, PyObject* item)
-  internal func getItem(index: PyObject) -> PyResult<PyObject> {
-    switch IndexHelper.bigInt(index) {
+  internal static func __getitem__(_ py: Py,
+                                   zelf: PyObject,
+                                   index: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__getitem__")
+    }
+
+    switch IndexHelper.pyInt(py, object: index) {
     case .value(let int):
-      // swiftlint:disable:next array_init
-      return self.getItem(index: int).map { $0 }
+      let result = Self.getItem(py, zelf: zelf, index: int)
+      return PyResult(py, result)
     case .notIndex:
       break // Try slice
     case .error(let e):
       return .error(e)
     }
 
-    if let slice = PyCast.asSlice(index) {
-      let result = self.getItem(slice: slice)
-      return result.flatMap { PyResult<PyObject>.value($0) }
+    if let slice = py.cast.asSlice(index) {
+      let result = Self.getItem(py, zelf: zelf, slice: slice)
+      return PyResult(result)
     }
 
-    let msg = "range indices must be integers or slices, not \(index.typeName)"
-    return .typeError(msg)
+    let message = "range indices must be integers or slices, not \(index.typeName)"
+    return .typeError(py, message: message)
   }
 
-  internal func getItem(index: PyInt) -> PyResult<PyInt> {
-    return self.getItem(index: index.value)
-  }
-
-  internal func getItem(index: Int) -> PyResult<PyInt> {
-    return self.getItem(index: BigInt(index))
-  }
-
-  internal func getItem(index: BigInt) -> PyResult<PyInt> {
-    var index = index
+  private static func getItem(_ py: Py,
+                              zelf: PyRange,
+                              index: PyInt) -> PyResult<BigInt> {
+    var index = index.value
 
     if index < 0 {
-      index += self.length.value
+      index += zelf.length.value
     }
 
-    guard 0 <= index && index < self.length.value else {
-      return .indexError("range object index out of range")
+    guard 0 <= index && index < zelf.length else {
+      return .indexError(py, message: "range object index out of range")
     }
 
-    let result = self.start.value + self.step.value * index
-    return .value(Py.newInt(result))
+    let result = zelf.start.value + zelf.step.value * index
+    return .value(result)
   }
 
   /// static PyObject *
   /// compute_slice(rangeobject *r, PyObject *_slice)
-  internal func getItem(slice: PySlice) -> PyResult<PyRange> {
-    let length = self.length.value
+  private static func getItem(_ py: Py,
+                              zelf: PyRange,
+                              slice: PySlice) -> PyResult<PyRange> {
+    let length = zelf.length.value
 
     let indices: PySlice.GetLongIndicesResult
     switch slice.getLongIndices(length: length) {
@@ -340,53 +394,63 @@ public struct PyRange: PyObjectMixin {
     case let .error(e): return .error(e)
     }
 
-    let subStep = self.step.value * indices.step
-    let subStart = self.computeItem(at: indices.start)
-    let subStop = self.computeItem(at: indices.stop)
+    let subStep = zelf.step.value * indices.step
+    let subStart = Self.computeItem(zelf: zelf, index: indices.start)
+    let subStop = Self.computeItem(zelf: zelf, index: indices.stop)
 
-    return Py.newRange(start: subStart,
-                       stop: subStop,
-                       step: subStep)
+    return py.newRange(start: subStart, stop: subStop, step: subStep)
   }
 
   /// static PyObject *
   /// compute_item(rangeobject *r, PyObject *i)
-  private func computeItem(at index: BigInt) -> BigInt {
-    return self.start.value + index * self.step.value
+  private static func computeItem(zelf: PyRange, index: BigInt) -> BigInt {
+    return zelf.start.value + index * zelf.step.value
   }
 
-  // MARK: - Start
+  // MARK: - Start, stop, step
 
   // sourcery: pyproperty = start
-  internal func getStart() -> PyObject {
-    return self.start
-  }
+  internal static func start(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "start")
+    }
 
-  // MARK: - Stop
+    return PyResult(zelf.start)
+  }
 
   // sourcery: pyproperty = stop
-  internal func getStop() -> PyObject {
-    return self.stop
+  internal static func stop(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "stop")
+    }
+
+    return PyResult(zelf.stop)
   }
 
-  // MARK: - Step
-
   // sourcery: pyproperty = step
-  internal func getStep() -> PyObject {
-    return self.step
+  internal static func step(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "step")
+    }
+
+    return PyResult(zelf.step)
   }
 
   // MARK: - Reversed
 
   // sourcery: pymethod = __reversed__
-  internal func reversed() -> PyObject {
+  internal static func __reversed__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__reversed__")
+    }
+
     // `reversed(range(start, stop, step))` can be expressed as
     // `range(start + (n-1) * step, start-step, -step)`,
     // where n is the number of integers in the range (length).
 
-    let start = self.start.value
-    let step = self.step.value
-    let length = self.length.value
+    let start = zelf.start.value
+    let step = zelf.step.value
+    let length = zelf.length.value
 
     // Example: start: 3, stop: 17, step: 2
     // range(3, 17, 2):  3,  5,  7, 9, 11, 13, 15
@@ -399,87 +463,129 @@ public struct PyRange: PyObjectMixin {
                                             stop: newStop,
                                             step: newStep)
 
-    return PyMemory.newRangeIterator(start: newStart,
+    // >>> r = range(1, 2)
+    // >>> reversed(r)
+    // <range_iterator object at 0x10f2fbd20>
+    let result = py.newRangeIterator(start: newStart,
                                      step: newStep,
                                      length: newLength)
+
+    return PyResult(result)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal func iter() -> PyObject {
-    return PyMemory.newRangeIterator(start: self.start.value,
-                                     step: self.step.value,
-                                     length: self.length.value)
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__iter__")
+    }
+
+    let start = zelf.start.value
+    let step = zelf.step.value
+    let length = zelf.length.value
+    let result = py.newRangeIterator(start: start, step: step, length: length)
+    return PyResult(result)
   }
 
   // MARK: - Count
 
   // sourcery: pymethod = count
-  internal func count(object: PyObject) -> PyResult<BigInt> {
-    if let int = PyCast.asInt(object) {
-      let contains = self.contains(int: int)
-      return .value(contains ? 1 : 0)
+  internal static func count(_ py: Py,
+                             zelf: PyObject,
+                             object: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "count")
     }
 
-    return .value(0)
+    if let int = py.cast.asInt(object) {
+      let contains = Self.contains(zelf: zelf, int: int)
+      let result = contains ? 1 : 0
+      return PyResult(py, result)
+    }
+
+    return PyResult(py, 0)
   }
 
   // MARK: - Index
 
   // sourcery: pymethod = index
-  internal func indexOf(object: PyObject) -> PyResult<BigInt> {
-    guard let int = PyCast.asInt(object), self.contains(int: int) else {
-      switch Py.strString(object: object) {
+  internal static func index(_ py: Py,
+                             zelf: PyObject,
+                             object: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "index")
+    }
+
+    guard let int = py.cast.asInt(object), Self.contains(zelf: zelf, int: int) else {
+      switch py.strString(object: object) {
       case .value(let str):
-        return .valueError("\(str) is not in range")
+        return .valueError(py, message: "\(str) is not in range")
       case .error:
-        return .valueError("element is not in range")
+        return .valueError(py, message: "element is not in range")
       }
     }
 
-    let tmp0 = int.value - self.start.value
-    let tmp1 = tmp0 / self.step.value
-    return .value(tmp1)
+    let tmp0 = int.value - zelf.start.value
+    let tmp1 = tmp0 / zelf.step.value
+    return PyResult(py, tmp1)
   }
 
-  // MARK: - Range
+  // MARK: - Reduce
 
   // sourcery: pymethod = __reduce__
-  internal func reduce(args: [PyObject], kwargs: PyDict?) -> PyTuple {
-    let props = Py.newTuple(self.start, self.stop, self.step)
-    return Py.newTuple(self.type, props)
+  internal static func reduce(_ py: Py,
+                              zelf: PyObject,
+                              args: [PyObject],
+                              kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__reduce__")
+    }
+
+    let start = zelf.start.asObject
+    let stop = zelf.stop.asObject
+    let step = zelf.step.asObject
+    let props = py.newTuple(elements: start, stop, step)
+
+    let type = zelf.type.asObject
+    let result = py.newTuple(elements: type, props.asObject)
+
+    return PyResult(result)
   }
 
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyRange> {
-    if let e = ArgumentParser.noKwargsOrError(fnName: "range", kwargs: kwargs) {
-      return .error(e)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    if let e = ArgumentParser.noKwargsOrError(py,
+                                              fnName: Self.pythonTypeName,
+                                              kwargs: kwargs) {
+      return .error(e.asBaseException)
     }
 
     // Guarantee that we have 1, 2 or 3 arguments
-    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "range",
+    if let e = ArgumentParser.guaranteeArgsCountOrError(py,
+                                                        fnName: Self.pythonTypeName,
                                                         args: args,
                                                         min: 1,
                                                         max: 3) {
-      return .error(e)
+      return .error(e.asBaseException)
     }
 
     // Handle 1 argument
     if args.count == 1 {
-      return Py.newRange(stop: args[0])
+      let result = py.newRange(stop: args[0])
+      return PyResult(result)
     }
 
     // Handle 2 or 3 arguments
     let start = args[0]
     let stop = args[1]
     let step = args.count == 3 ? args[2] : nil
-    return Py.newRange(start: start, stop: stop, step: step)
+    let result = py.newRange(start: start, stop: stop, step: step)
+    return PyResult(result)
   }
 }
-
-*/

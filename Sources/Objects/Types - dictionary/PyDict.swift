@@ -57,7 +57,6 @@ public struct PyDict: PyObjectMixin {
     return "PyDict(type: \(zelf.typeName), flags: \(zelf.flags), count: \(count)"
   }
 
-
   // MARK: - Equatable, comparable
 
   // sourcery: pymethod = __eq__
