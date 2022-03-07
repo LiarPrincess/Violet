@@ -74,7 +74,7 @@ extension Py.Cast {
 
   /// Cast this object to `PyAnySet` if it is a `set` or `frozenset`
   /// (but not their subclass).
-   internal func asExactlyAnySet(_ object: PyObject) -> PyAnySet? {
+  internal func asExactlyAnySet(_ object: PyObject) -> PyAnySet? {
     if let set = self.asExactlySet(object) {
       return PyAnySet(set: set)
     }

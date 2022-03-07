@@ -1,50 +1,50 @@
-
 // TODO: All of the set methods should allow tuple as an arg
-
-/* MARKER
-// MARK: - AbstractSet
 
 /// Mixin with `set/frozenset` methods.
 ///
-/// All of the methods/properties should be prefixed with `_`.
 /// DO NOT use them outside of the `set/frozenset` objects!
-internal protocol AbstractSet: PyObject {
+internal protocol AbstractSet: PyObjectMixin {
+
+  /// Name of the type.
+  /// Used mainly in error messages.
+  static var typeName: String { get }
 
   /// Main requirement.
   var elements: OrderedSet { get }
 
   /// Create new Python object with specified elements.
+  static func newObject(_ py: Py, elements: OrderedSet) -> Self
+
+  /// Convert `object` to this type.
   ///
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  static func _toSelf(elements: OrderedSet) -> Self
+  /// - For `set` it should return `set`.
+  /// - For `frozenset` it should return `frozenset`.
+  static func downcast(_ py: Py, _ object: PyObject) -> Self?
 }
 
 extension AbstractSet {
 
-  internal typealias Element = AbstractSet_Element
-  internal typealias OrderedSet = VioletObjects.OrderedSet<AbstractSet_Element>
+  internal typealias OrderedSet = VioletObjects.OrderedSet
+  internal typealias Element = OrderedSet.Element
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal var _isEmpty: Bool {
+  internal var isEmpty: Bool {
     return self.elements.isEmpty
   }
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal var _count: Int {
+  internal var count: Int {
     return self.elements.count
   }
 
   // MARK: - Get elements
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal static func _getElements(iterable: PyObject) -> PyResult<OrderedSet> {
+  internal static func getElements(_ py: Py, iterable: PyObject) -> PyResult<OrderedSet> {
     // Fast path for sets (since they already have hashed elements)
-    if let set = PyCast.asExactlyAnySet(iterable) {
+    if let set = py.cast.asExactlyAnySet(iterable) {
       return .value(set.elements)
     }
 
     // Fast path for dictionaries (same reason as above)
-    if let dict = PyCast.asExactlyDict(iterable) {
+    if let dict = py.cast.asExactlyDict(iterable) {
       // Init with 'count', so that we don't have to resize later
       var result = OrderedSet(count: dict.elements.count)
 
@@ -52,7 +52,7 @@ extension AbstractSet {
         let key = entry.key
         let element = Element(hash: key.hash, object: key.object)
 
-        switch result.insert(element: element) {
+        switch result.insert(py, element: element) {
         case .inserted,
              .updated:
           break // go to next element
@@ -65,10 +65,10 @@ extension AbstractSet {
     }
 
     var result = OrderedSet()
-    let reduceError = Py.reduce(iterable: iterable, into: &result) { acc, object in
-      switch self._createElement(from: object) {
+    let reduceError = py.reduce(iterable: iterable, into: &result) { acc, object in
+      switch self.createElement(py, object: object) {
       case let .value(e):
-        switch acc.insert(element: e) {
+        switch acc.insert(py, element: e) {
         case .inserted,
              .updated:
           return .goToNextElement
@@ -89,15 +89,25 @@ extension AbstractSet {
 
   // MARK: - Create element
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal static func _createElement(from object: PyObject) -> PyResult<Element> {
-    switch Py.hash(object: object) {
+  internal static func createElement(_ py: Py, object: PyObject) -> PyResult<Element> {
+    switch py.hash(object: object) {
     case let .value(hash):
-      return .value(Element(hash: hash, object: object))
+      let element = Element(hash: hash, object: object)
+      return .value(element)
     case let .error(e):
       return .error(e)
     }
   }
-}
 
-*/
+  // MARK: - Zelf argument
+
+  internal static func invalidZelfArgument(_ py: Py,
+                                           _ object: PyObject,
+                                           _ fnName: String) -> PyResult<PyObject> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.typeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
+  }
+}

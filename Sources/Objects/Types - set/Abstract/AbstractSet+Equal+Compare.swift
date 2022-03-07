@@ -1,95 +1,127 @@
-/* MARKER
 extension AbstractSet {
 
   // MARK: - Equal
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _isEqual(other: PyObject) -> CompareResult {
-    guard let other = PyCast.asAnySet(other) else {
+  internal static func abstract__eq__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> CompareResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.typeName, .__eq__)
+    }
+
+    return Self.isEqual(py, zelf: zelf, other: other)
+  }
+
+  internal static func abstract__ne__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> CompareResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.typeName, .__ne__)
+    }
+
+    // CPython has different implementation here,
+    // but in the end it all comes down to:
+    let isEqual = Self.isEqual(py, zelf: zelf, other: other)
+    return isEqual.not
+  }
+
+  private static func isEqual(_ py: Py, zelf: Self, other: PyObject) -> CompareResult {
+    guard let other = py.cast.asAnySet(other) else {
       return .notImplemented
     }
 
     let otherElements = other.elements
 
     // Equal count + isSubset -> equal
-    guard self._count == otherElements.count else {
+    guard zelf.count == otherElements.count else {
       return .value(false)
     }
 
-    switch self._isSubset(of: otherElements) {
+    switch Self.abstractIsSubset(py, zelf: zelf, other: otherElements) {
     case let .value(b): return .value(b)
     case let .error(e): return .error(e)
     }
-  }
-
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _isNotEqual(other: PyObject) -> CompareResult {
-    // CPython has different implementation here,
-    // but in the end it all comes down to:
-    return self._isEqual(other: other).not
   }
 
   // MARK: - Compare
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _isLess(other: PyObject) -> CompareResult {
-    guard let other = PyCast.asAnySet(other) else {
+  internal static func abstract__lt__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> CompareResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.typeName, .__lt__)
+    }
+
+    guard let other = py.cast.asAnySet(other) else {
       return .notImplemented
     }
 
     let otherElements = other.elements
 
-    guard self._count < otherElements.count else {
+    guard zelf.count < otherElements.count else {
       return .value(false)
     }
 
-    switch self._isSubset(of: otherElements) {
+    switch Self.abstractIsSubset(py, zelf: zelf, other: otherElements) {
     case let .value(b): return .value(b)
     case let .error(e): return .error(e)
     }
   }
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _isLessEqual(other: PyObject) -> CompareResult {
-    guard let other = PyCast.asAnySet(other) else {
+  internal static func abstract__le__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> CompareResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.typeName, .__le__)
+    }
+
+    guard let other = py.cast.asAnySet(other) else {
       return .notImplemented
     }
 
-    switch self._isSubset(of: other.elements) {
+    switch Self.abstractIsSubset(py, zelf: zelf, other: other.elements) {
     case let .value(b): return .value(b)
     case let .error(e): return .error(e)
     }
   }
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _isGreater(other: PyObject) -> CompareResult {
-    guard let other = PyCast.asAnySet(other) else {
+  internal static func abstract__gt__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> CompareResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.typeName, .__gt__)
+    }
+
+    guard let other = py.cast.asAnySet(other) else {
       return .notImplemented
     }
 
     let otherElements = other.elements
 
-    guard self._count > otherElements.count else {
+    guard zelf.count > otherElements.count else {
       return .value(false)
     }
 
-    switch self._isSuperset(of: otherElements) {
+    switch Self.abstractIsSuperset(py, zelf: zelf, other: otherElements) {
     case let .value(b): return .value(b)
     case let .error(e): return .error(e)
     }
   }
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _isGreaterEqual(other: PyObject) -> CompareResult {
-    guard let other = PyCast.asAnySet(other) else {
+  internal static func abstract__ge__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> CompareResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.typeName, .__ge__)
+    }
+
+    guard let other = py.cast.asAnySet(other) else {
       return .notImplemented
     }
 
-    switch self._isSuperset(of: other.elements) {
+    switch Self.abstractIsSuperset(py, zelf: zelf, other: other.elements) {
     case let .value(b): return .value(b)
     case let .error(e): return .error(e)
     }
   }
 }
-
-*/

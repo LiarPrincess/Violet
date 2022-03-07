@@ -23,7 +23,10 @@ public struct PySet: PyObjectMixin, AbstractSet {
   internal typealias Element = OrderedSet.Element
 
   // sourcery: includeInLayout
-  internal var elements: OrderedSet { self.elementsPtr.pointee }
+  internal var elements: OrderedSet {
+    get { self.elementsPtr.pointee }
+    nonmutating _modify { yield &self.elementsPtr.pointee }
+  }
 
   public let ptr: RawPtr
 
@@ -44,185 +47,226 @@ public struct PySet: PyObjectMixin, AbstractSet {
     let count = zelf.elements.count
     return "PySet(type: \(zelf.typeName), flags: \(zelf.flags), count: \(count))"
   }
-}
-
-/* MARKER
 
   // MARK: - AbstractSet
 
-  internal static func _toSelf(elements: OrderedSet) -> PySet {
-    return Py.newSet(elements: elements)
+  internal static var typeName = "set"
+
+  internal static func newObject(_ py: Py, elements: OrderedSet) -> PySet {
+    return py.newSet(elements: elements)
   }
 
-  // MARK: - Equatable
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PySet? {
+    return py.cast.asSet(object)
+  }
+
+  internal static func castZelf(_ py: Py, _ object: PyObject) -> PySet? {
+    return Self.downcast(py, object)
+  }
+
+  // MARK: - Equatable, comparable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> CompareResult {
-    return self._isEqual(other: other)
+  internal static func __eq__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.abstract__eq__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> CompareResult {
-    return self._isNotEqual(other: other)
+  internal static func __ne__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.abstract__ne__(py, zelf: zelf, other: other)
   }
 
-  // MARK: - Comparable
-
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> CompareResult {
-    return self._isLess(other: other)
+  internal static func __lt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.abstract__lt__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    return self._isLessEqual(other: other)
+  internal static func __le__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.abstract__le__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> CompareResult {
-    return self._isGreater(other: other)
+  internal static func __gt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.abstract__gt__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
-    return self._isGreaterEqual(other: other)
+  internal static func __ge__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.abstract__ge__(py, zelf: zelf, other: other)
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> HashResult {
-    return .unhashable(self)
+  internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
+    return .unhashable(zelf)
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
-    if self.elements.isEmpty {
-      return .value(self.typeName + "()")
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
-    if self.hasReprLock {
-      return .value(self.typeName + "(...)")
+    if zelf.elements.isEmpty {
+      return PyResult(py, interned: "set()")
     }
 
-    return self.withReprLock {
-      let elements = self._joinElementsForRepr()
-      return elements.map { "{" + $0 + "}" } // no 'self.typeName'!
+    if zelf.hasReprLock {
+      return PyResult(py, interned: "set(...)")
+    }
+
+    return zelf.withReprLock {
+      switch Self.abstractJoinElementsForRepr(py, zelf: zelf) {
+      case let .value(elements):
+        let result = "{" + elements + "}"  // no 'set'!
+        return PyResult(py, result)
+      case let .error(e):
+        return .error(e)
+      }
     }
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    }
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal func getLength() -> BigInt {
-    return BigInt(self._count)
+  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__len__")
+    }
+
+    let result = zelf.count
+    return PyResult(py, result)
   }
 
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  internal func contains(object: PyObject) -> PyResult<Bool> {
-    return self._contains(object: object)
+  internal static func __contains__(_ py: Py,
+                                    zelf: PyObject,
+                                    object: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__contains__(py, zelf: zelf, object: object)
   }
 
-  // MARK: - And
+  // MARK: - And, or, xor
 
   // sourcery: pymethod = __and__
-  internal func and(_ other: PyObject) -> PyResult<PyObject> {
-    return self._and(other: other)
+  internal static func __and__(_ py: Py,
+                               zelf: PyObject,
+                               other: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__and__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __rand__
-  internal func rand(_ other: PyObject) -> PyResult<PyObject> {
-    return self._rand(other: other)
+  internal static func __rand__(_ py: Py,
+                                zelf: PyObject,
+                                other: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__rand__(py, zelf: zelf, other: other)
   }
 
-  // MARK: - Or
-
   // sourcery: pymethod = __or__
-  internal func or(_ other: PyObject) -> PyResult<PyObject> {
-    return self._or(other: other)
+  internal static func __or__(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__or__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __ror__
-  internal func ror(_ other: PyObject) -> PyResult<PyObject> {
-    return self._ror(other: other)
+  internal static func __ror__(_ py: Py,
+                               zelf: PyObject,
+                               other: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__ror__(py, zelf: zelf, other: other)
   }
 
-  // MARK: - Xor
-
   // sourcery: pymethod = __xor__
-  internal func xor(_ other: PyObject) -> PyResult<PyObject> {
-    return self._xor(other: other)
+  internal static func __xor__(_ py: Py,
+                               zelf: PyObject,
+                               other: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__xor__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __rxor__
-  internal func rxor(_ other: PyObject) -> PyResult<PyObject> {
-    return self._rxor(other: other)
+  internal static func __rxor__(_ py: Py,
+                                zelf: PyObject,
+                                other: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__rxor__(py, zelf: zelf, other: other)
   }
 
   // MARK: - Sub
 
   // sourcery: pymethod = __sub__
-  internal func sub(_ other: PyObject) -> PyResult<PyObject> {
-    return self._sub(other: other)
+  internal static func __sub__(_ py: Py,
+                               zelf: PyObject,
+                               other: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__sub__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __rsub__
-  internal func rsub(_ other: PyObject) -> PyResult<PyObject> {
-    return self._rsub(other: other)
+  internal static func __rsub__(_ py: Py,
+                                zelf: PyObject,
+                                other: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__rsub__(py, zelf: zelf, other: other)
   }
 
-  // MARK: - Is subset
+  // MARK: - Is subset, superset, disjoint
 
   internal static let isSubsetDoc = """
     Report whether another set contains this set.
     """
 
   // sourcery: pymethod = issubset, doc = isSubsetDoc
-  internal func isSubset(of other: PyObject) -> PyResult<Bool> {
-    return self._isSubset(of: other)
+  internal static func issubset(_ py: Py,
+                                zelf: PyObject,
+                                other: PyObject) -> PyResult<PyObject> {
+    return self.abstractIsSubset(py, zelf: zelf, other: other)
   }
-
-  // MARK: - Is superset
 
   internal static let isSupersetDoc = """
     Report whether this set contains another set.
     """
 
   // sourcery: pymethod = issuperset, doc = isSupersetDoc
-  internal func isSuperset(of other: PyObject) -> PyResult<Bool> {
-    return self._isSuperset(of: other)
+  internal static func issuperset(_ py: Py,
+                                  zelf: PyObject,
+                                  other: PyObject) -> PyResult<PyObject> {
+    return self.abstractIsSuperset(py, zelf: zelf, other: other)
   }
-
-  // MARK: - Is disjoint
 
   internal static let isDisjointDoc = """
     Return True if two sets have a null intersection.
     """
 
   // sourcery: pymethod = isdisjoint, doc = isDisjointDoc
-  internal func isDisjoint(with other: PyObject) -> PyResult<Bool> {
-    return self._isDisjoint(with: other)
+  internal static func isdisjoint(_ py: Py,
+                                  zelf: PyObject,
+                                  other: PyObject) -> PyResult<PyObject> {
+    return self.abstractIsDisjoint(py, zelf: zelf, other: other)
   }
 
-  // MARK: - Intersection
+  // MARK: - Intersection, union, difference
 
   internal static let intersectionDoc = """
     Return the intersection of two sets as a new set.
@@ -231,8 +275,10 @@ public struct PySet: PyObjectMixin, AbstractSet {
     """
 
   // sourcery: pymethod = intersection, doc = intersectionDoc
-  internal func intersection(with other: PyObject) -> PyResult<PyObject> {
-    return self._intersection(with: other)
+  internal static func intersection(_ py: Py,
+                                    zelf: PyObject,
+                                    other: PyObject) -> PyResult<PyObject> {
+    return self.abstractIntersection(py, zelf: zelf, other: other)
   }
 
   // MARK: - Union
@@ -244,8 +290,10 @@ public struct PySet: PyObjectMixin, AbstractSet {
     """
 
   // sourcery: pymethod = union, doc = unionDoc
-  internal func union(with other: PyObject) -> PyResult<PyObject> {
-    return self._union(with: other)
+  internal static func union(_ py: Py,
+                             zelf: PyObject,
+                             other: PyObject) -> PyResult<PyObject> {
+    return self.abstractUnion(py, zelf: zelf, other: other)
   }
 
   // MARK: - Difference
@@ -257,8 +305,10 @@ public struct PySet: PyObjectMixin, AbstractSet {
     """
 
   // sourcery: pymethod = difference, doc = differenceDoc
-  internal func difference(with other: PyObject) -> PyResult<PyObject> {
-    return self._difference(with: other)
+  internal static func difference(_ py: Py,
+                                  zelf: PyObject,
+                                  other: PyObject) -> PyResult<PyObject> {
+    return self.abstractDifference(py, zelf: zelf, other: other)
   }
 
   // MARK: - Symmetric difference
@@ -270,8 +320,10 @@ public struct PySet: PyObjectMixin, AbstractSet {
     """
 
   // sourcery: pymethod = symmetric_difference, doc = symmetricDifferenceDoc
-  internal func symmetricDifference(with other: PyObject) -> PyResult<PyObject> {
-    return self._symmetricDifference(with: other)
+  internal static func symmetric_difference(_ py: Py,
+                                            zelf: PyObject,
+                                            other: PyObject) -> PyResult<PyObject> {
+    return self.abstractSymmetricDifference(py, zelf: zelf, other: other)
   }
 
   // MARK: - Add
@@ -283,13 +335,19 @@ public struct PySet: PyObjectMixin, AbstractSet {
     """
 
   // sourcery: pymethod = add, doc = addDoc
-  internal func add(object: PyObject) -> PyResult<PyNone> {
-    switch Self._createElement(from: object) {
+  internal static func add(_ py: Py,
+                           zelf: PyObject,
+                           other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "add")
+    }
+
+    switch Self.createElement(py, object: other) {
     case let .value(element):
-      switch self.elements.insert(element: element) {
+      switch zelf.elements.insert(py, element: element) {
       case .inserted,
-           .updated:
-        return .value(Py.none)
+          .updated:
+        return .none(py)
       case .error(let e):
         return .error(e)
       }
@@ -306,27 +364,40 @@ public struct PySet: PyObjectMixin, AbstractSet {
     """
 
   // sourcery: pymethod = update, doc = updateDoc
-  internal func update(from other: PyObject) -> PyResult<PyNone> {
-    switch Self._getElements(iterable: other) {
-    case let .value(set):
-      return self.update(from: set)
-    case let .error(e):
+  internal static func update(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "update")
+    }
+
+    if let e = Self.update(py, zelf: zelf, iterable: other) {
       return .error(e)
     }
+
+    return .none(py)
   }
 
-  private func update(from other: OrderedSet) -> PyResult<PyNone> {
-    for element in other {
-      switch self.elements.insert(element: element) {
-      case .inserted,
-           .updated:
-        break
-      case .error(let e):
-        return .error(e)
+  private static func update(_ py: Py,
+                             zelf: PySet,
+                             iterable: PyObject) -> PyBaseException? {
+    switch Self.getElements(py, iterable: iterable) {
+    case let .value(set):
+      for element in set {
+        switch zelf.elements.insert(py, element: element) {
+        case .inserted,
+             .updated:
+          break
+        case .error(let e):
+          return e
+        }
       }
+
+    case let .error(e):
+      return e
     }
 
-    return .value(Py.none)
+    return nil
   }
 
   // MARK: - Remove
@@ -338,22 +409,30 @@ public struct PySet: PyObjectMixin, AbstractSet {
     """
 
   // sourcery: pymethod = remove, doc = removeDoc
-  internal func remove(object: PyObject) -> PyResult<PyNone> {
-    switch Self._createElement(from: object) {
+  internal static func remove(_ py: Py,
+                              zelf: PyObject,
+                              object: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "remove")
+    }
+
+    switch Self.createElement(py, object: object) {
     case let .value(element):
-      return self.remove(element: element)
+      return self.remove(py, zelf:zelf, element: element)
     case let .error(e):
       return .error(e)
     }
   }
 
-  private func remove(element: Element) -> PyResult<PyNone> {
-    switch self.elements.remove(element: element) {
+  private static func remove(_ py: Py,
+                             zelf: PySet,
+                             element: Element) -> PyResult<PyObject> {
+    switch zelf.elements.remove(py, element: element) {
     case .ok:
-      return .value(Py.none)
+      return .none(py)
     case .notFound:
-      let e = Py.newKeyError(key: element.object)
-      return .error(e)
+      let e = py.newKeyError(key: element.object)
+      return .error(e.asBaseException)
     case .error(let e):
       return .error(e)
     }
@@ -368,21 +447,24 @@ public struct PySet: PyObjectMixin, AbstractSet {
     """
 
   // sourcery: pymethod = discard, doc = discardDoc
-  internal func discard(object: PyObject) -> PyResult<PyNone> {
-    switch Self._createElement(from: object) {
-    case let .value(element):
-      return self.discard(element: element)
-    case let .error(e):
-      return .error(e)
+  internal static func discard(_ py: Py,
+                               zelf: PyObject,
+                               object: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "discard")
     }
-  }
 
-  private func discard(element: Element) -> PyResult<PyNone> {
-    switch self.elements.remove(element: element) {
-    case .ok,
-         .notFound:
-      return .value(Py.none)
-    case .error(let e):
+    switch Self.createElement(py, object: object) {
+    case let .value(element):
+      switch zelf.elements.remove(py, element: element) {
+      case .ok,
+           .notFound:
+        return .none(py)
+      case .error(let e):
+        return .error(e)
+      }
+
+    case let .error(e):
       return .error(e)
     }
   }
@@ -394,9 +476,13 @@ public struct PySet: PyObjectMixin, AbstractSet {
     """
 
   // sourcery: pymethod = clear, doc = clearDoc
-  internal func clear() -> PyNone {
-    self.elements.clear()
-    return Py.none
+  internal static func clear(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "clear")
+    }
+
+    zelf.elements.clear()
+    return .none(py)
   }
 
   // MARK: - Copy
@@ -404,8 +490,13 @@ public struct PySet: PyObjectMixin, AbstractSet {
   internal static let copyDoc = "Return a shallow copy of a set."
 
   // sourcery: pymethod = copy, doc = copyDoc
-  internal func copy() -> PyObject {
-    return Py.newSet(elements: self.elements)
+  internal static func copy(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "copy")
+    }
+
+    let result = py.newSet(elements: zelf.elements)
+    return PyResult(result)
   }
 
   // MARK: - Pop
@@ -416,63 +507,83 @@ public struct PySet: PyObjectMixin, AbstractSet {
     """
 
   // sourcery: pymethod = pop, doc = popDoc
-  internal func pop() -> PyResult<PyObject> {
-    guard let lastElement = self.elements.last else {
-      return .keyError("pop from an empty set")
+  internal static func pop(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "pop")
     }
 
-    _ = self.remove(element: lastElement)
-    return .value(lastElement.object)
+    guard let lastElement = zelf.elements.last else {
+      return .keyError(py, message: "pop from an empty set")
+    }
+
+    switch Self.remove(py, zelf: zelf, element: lastElement) {
+    case .value:
+      return PyResult(lastElement.object)
+    case .error(let e):
+      return .error(e)
+    }
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal func iter() -> PyObject {
-    return PyMemory.newSetIterator(set: self)
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__iter__")
+    }
+
+    let result = py.newSetIterator(set: zelf)
+    return PyResult(result)
   }
 
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PySet> {
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
     let elements = OrderedSet()
-    let isBuiltin = type === Py.types.set
+    let isBuiltin = type === py.types.set
 
     let result: PySet = isBuiltin ?
-      Py.newSet(elements: elements) :
-      PyMemory.newSet(type: type, elements: elements)
+      py.newSet(elements: elements) :
+      py.memory.newSet(py, type: type, elements: elements)
 
-    return .value(result)
+    return PyResult(result)
   }
 
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    if let e = ArgumentParser.noKwargsOrError(fnName: self.typeName,
-                                              kwargs: kwargs) {
-      return .error(e)
+  internal static  func __init__(_ py: Py,
+                                 zelf: PyObject,
+                                 args: [PyObject],
+                                 kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
     }
 
-    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: self.typeName,
+    if let e = ArgumentParser.noKwargsOrError(py,
+                                              fnName: self.typeName,
+                                              kwargs: kwargs) {
+      return .error(e.asBaseException)
+    }
+
+    if let e = ArgumentParser.guaranteeArgsCountOrError(py,
+                                                        fnName: self.typeName,
                                                         args: args,
                                                         min: 0,
                                                         max: 1) {
-      return .error(e)
+      return .error(e.asBaseException)
     }
 
     if let iterable = args.first {
-      switch self.update(from: iterable) {
-      case .value: break
-      case .error(let e): return .error(e)
+      if let e = Self.update(py, zelf: zelf, iterable: iterable) {
+        return .error(e)
       }
     }
 
-    return .value(Py.none)
+    return .none(py)
   }
 }
-
-*/

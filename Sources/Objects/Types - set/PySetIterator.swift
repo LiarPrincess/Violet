@@ -13,8 +13,13 @@ public struct PySetIterator: PyObjectMixin {
 
   // sourcery: includeInLayout
   internal var set: PyAnySet { self.setPtr.pointee }
+
   // sourcery: includeInLayout
-  internal var index: Int { self.indexPtr.pointee }
+  internal var index: Int {
+    get { self.indexPtr.pointee }
+    nonmutating set { self.indexPtr.pointee = newValue }
+  }
+
   // sourcery: includeInLayout
   internal var initialCount: Int { self.initialCountPtr.pointee }
 
@@ -47,48 +52,59 @@ public struct PySetIterator: PyObjectMixin {
     let zelf = PySetIterator(ptr: ptr)
     return "PySetIterator(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
-}
-
-/* MARKER
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    }
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal func iter() -> PyObject {
-    return self
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__iter__")
+    }
+
+    return PyResult(zelf)
   }
 
   // MARK: - Next
 
   // sourcery: pymethod = __next__
-  internal func next() -> PyResult<PyObject> {
-    let currentCount = self.set.elements.count
-    guard currentCount == self.initialCount else {
-      self.index = -1 // Make this state sticky
-      return .runtimeError("Set changed size during iteration")
+  internal static func __next__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__next__")
     }
 
-    let entries = self.set.elements.dict.entries
-    while self.index < entries.count {
-      let entry = entries[self.index]
+    let currentCount = zelf.set.elements.count
+    guard currentCount == zelf.initialCount else {
+      zelf.index = -1 // Make this state sticky
+      return .runtimeError(py, message: "Set changed size during iteration")
+    }
+
+    let entries = zelf.set.elements.dict.entries
+    while zelf.index < entries.count {
+      let entry = entries[zelf.index]
 
       // Increment index NOW, so that the regardless of whether we return 'entry'
       // or iterate more we move to next element.
-      self.index += 1
+      zelf.index += 1
 
       switch entry {
       case .entry(let e):
@@ -99,26 +115,46 @@ public struct PySetIterator: PyObjectMixin {
       }
     }
 
-    return .error(Py.newStopIteration())
+    let error = py.newStopIteration(value: nil)
+    return .error(error.asBaseException)
   }
 
   // MARK: - Length hint
 
   // sourcery: pymethod = __length_hint__
-  internal func lengthHint() -> PyInt {
-    let count = self.set.elements.count
-    let result = count - self.index
-    return Py.newInt(result)
+  internal static func __length_hint__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.castZelf(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__length_hint__")
+    }
+
+    let count = zelf.set.elements.count
+    let result = count - zelf.index
+    return PyResult(py, result)
   }
 
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyNew(type: PyType,
-                            args: [PyObject],
-                            kwargs: PyDict?) -> PyResult<PySetIterator> {
-    return .typeError("cannot create 'set_iterator' instances")
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    return .typeError(py, message: "cannot create 'set_iterator' instances")
+  }
+
+  // MARK: - Helpers
+
+  private static func castZelf(_ py: Py, _ object: PyObject) -> PySetIterator? {
+    return py.cast.asSetIterator(object)
+  }
+
+  private static func invalidZelfArgument(_ py: Py,
+                                          _ object: PyObject,
+                                          _ fnName: String) -> PyResult<PyObject> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: "set_iterator",
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }
-
-*/

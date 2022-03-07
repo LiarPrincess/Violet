@@ -1,16 +1,15 @@
-/* MARKER
 extension AbstractSet {
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _joinElementsForRepr() -> PyResult<String> {
+  internal static func abstractJoinElementsForRepr(_ py: Py,
+                                                   zelf: Self) -> PyResult<String> {
     var result = ""
 
-    for element in self.elements {
+    for element in zelf.elements {
       if !result.isEmpty {
         result.append(", ")
       }
 
-      switch Py.reprString(object: element.object) {
+      switch py.reprString(object: element.object) {
       case let .value(s): result.append(s)
       case let .error(e): return .error(e)
       }
@@ -19,5 +18,3 @@ extension AbstractSet {
     return .value(result)
   }
 }
-
-*/

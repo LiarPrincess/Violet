@@ -56,17 +56,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
   }
 
   internal static func castZelf(_ py: Py, _ object: PyObject) -> PyTuple? {
-    return downcast(py, object)
-  }
-
-  internal static func invalidZelfArgument(_ py: Py,
-                                           _ object: PyObject,
-                                           _ fnName: String) -> PyResult<PyObject> {
-    let error = py.newInvalidSelfArgumentError(object: object,
-                                               expectedType: "tuple",
-                                               fnName: fnName)
-
-    return .error(error.asBaseException)
+    return Self.downcast(py, object)
   }
 
   // MARK: - Equatable, comparable

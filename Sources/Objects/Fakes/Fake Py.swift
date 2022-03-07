@@ -24,6 +24,7 @@ public struct Py {
   // MARK: - New
 
   public func newObject(type: PyType? = nil) -> PyObject { fatalError() } // default type
+
   public func newBool(_ value: Bool) -> PyBool { fatalError() }
   public func newInt(_ value: Int) -> PyInt { fatalError() }
   public func newInt(_ value: UInt8) -> PyInt { fatalError() }
@@ -31,15 +32,18 @@ public struct Py {
   public func newInt(double value: Double) -> PyResult<PyInt> { fatalError() }
   public func newFloat(_ value: Double) -> PyFloat { fatalError() }
   public func newComplex(real: Double, imag: Double) -> PyComplex { fatalError() }
+
   public func newString(_ s: String) -> PyString { fatalError() }
   public func newBytes(_ d: Data) -> PyBytes { fatalError() }
-  public func newCode(code: CodeObject) -> PyString { fatalError() }
+
   public func newTuple(elements: [PyObject]) -> PyTuple { fatalError() }
   public func newTuple(elements: PyObject...) -> PyTuple { fatalError() }
   public func newTupleIterator(tuple: PyTuple) -> PyTupleIterator { fatalError() }
+
   public func newList(elements: [PyObject]) -> PyList { fatalError() }
   public func newListIterator(list: PyList) -> PyListIterator { fatalError() }
   public func newListReverseIterator(list: PyList) -> PyListReverseIterator { fatalError() }
+
   public func newDict() -> PyDict { fatalError() }
   public func newDict(elements: PyDict.OrderedDictionary) -> PyDict { fatalError() }
   public func newDictKeyIterator(dict: PyDict) -> PyDictKeyIterator { fatalError() }
@@ -49,6 +53,12 @@ public struct Py {
   public func newDictItems(dict: PyDict) -> PyDictItems { fatalError() }
   public func newDictValues(dict: PyDict) -> PyDictValues { fatalError() }
 
+  public func newSet(elements: OrderedSet) -> PySet { fatalError() }
+  public func newFrozenSet(elements: OrderedSet) -> PyFrozenSet { fatalError() }
+  public func newSetIterator(set: PySet) -> PySetIterator { fatalError() }
+  public func newSetIterator(set: PyFrozenSet) -> PySetIterator { fatalError() }
+
+  public func newCode(code: CodeObject) -> PyString { fatalError() }
   public func newStaticMethod(callable: PyFunction) -> PyStaticMethod { fatalError() }
   public func newClassMethod(callable: PyFunction) -> PyClassMethod { fatalError() }
 
