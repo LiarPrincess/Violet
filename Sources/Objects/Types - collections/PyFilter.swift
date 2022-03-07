@@ -39,50 +39,62 @@ public struct PyFilter: PyObjectMixin {
     let zelf = PyFilter(ptr: ptr)
     return "PyFilter(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
-}
 
-/* MARKER
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    }
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal func iter() -> PyObject {
-    return self
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__iter__")
+    }
+
+    return PyResult(zelf)
   }
 
   // MARK: - Next
 
   // sourcery: pymethod = __next__
-  internal func next() -> PyResult<PyObject> {
-    let useTrivialBoolCheck = PyCast.isNone(self.fn) || PyCast.isBool(self.fn)
+  internal static func __next__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__next__")
+    }
+
+    let useTrivialBoolCheck = py.cast.isNone(zelf.fn) || py.cast.isBool(zelf.fn)
 
     loop: while true {
-      switch Py.next(iterator: self.iterator) {
+      switch py.next(iterator: zelf.iterator) {
       case let .value(item):
         if useTrivialBoolCheck {
-          switch Py.isTrueBool(object: item) {
+          switch py.isTrueBool(object: item) {
           case .value(true): return .value(item)
           case .value(false): continue loop // try next item
           case .error(let e): return .error(e)
           }
         }
 
-        switch Py.call(callable: self.fn, args: [item]) {
+        switch py.call(callable: zelf.fn, args: [item]) {
         case .value(let r):
-          switch Py.isTrueBool(object: r) {
+          switch py.isTrueBool(object: r) {
           case .value(true): return .value(item)
           case .value(false): continue loop // try next item
           case .error(let e): return .error(e)
@@ -101,34 +113,36 @@ public struct PyFilter: PyObjectMixin {
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyFilter> {
-    if type === Py.types.filter {
-      if let e = ArgumentParser.noKwargsOrError(fnName: "filter", kwargs: kwargs) {
-        return .error(e)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    if type === py.types.filter {
+      if let e = ArgumentParser.noKwargsOrError(py,
+                                                fnName: Self.pythonTypeName,
+                                                kwargs: kwargs) {
+        return .error(e.asBaseException)
       }
     }
 
-    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "filter",
+    if let e = ArgumentParser.guaranteeArgsCountOrError(py,
+                                                        fnName: Self.pythonTypeName,
                                                         args: args,
                                                         min: 2,
                                                         max: 2) {
-      return .error(e)
+      return .error(e.asBaseException)
     }
 
     let fn = args[0]
     let seq = args[1]
 
     let iter: PyObject
-    switch Py.iter(object: seq) {
+    switch py.iter(object: seq) {
     case let .value(i): iter = i
     case let .error(e): return .error(e)
     }
 
-    let result = PyMemory.newFilter(type: type, fn: fn, iterator: iter)
-    return .value(result)
+    let result = py.memory.newFilter(py, type: type, fn: fn, iterator: iter)
+    return PyResult(result)
   }
 }
-
-*/

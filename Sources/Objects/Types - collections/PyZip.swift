@@ -38,42 +38,53 @@ public struct PyZip: PyObjectMixin {
     let zelf = PyZip(ptr: ptr)
     return "PyZip(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
-}
-
-/* MARKER
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    }
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal func iter() -> PyObject {
-    return self
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__iter__")
+    }
+
+    return PyResult(zelf)
   }
 
   // MARK: - Next
 
   // sourcery: pymethod = __next__
-  internal func next() -> PyResult<PyObject> {
-    if self.iterators.isEmpty {
-      return .stopIteration()
+  internal static func __next__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__next__")
+    }
+
+    if zelf.iterators.isEmpty {
+      return .stopIteration(py)
     }
 
     var result = [PyObject]()
-    for iter in self.iterators {
-      switch Py.next(iterator: iter) {
+    for iter in zelf.iterators {
+      switch py.next(iterator: iter) {
       case let .value(o):
         result.append(o)
       case let .error(e): // that includes 'stopIteration'
@@ -82,40 +93,42 @@ public struct PyZip: PyObjectMixin {
     }
 
     // Multiple iterators -> tuple
-    return PyResult(tuple: result)
+    return PyResult(py, tuple: result)
   }
 
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyZip> {
-    if type === Py.types.zip {
-      if let e = ArgumentParser.noKwargsOrError(fnName: "zip", kwargs: kwargs) {
-        return .error(e)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    if type === py.types.zip {
+      if let e = ArgumentParser.noKwargsOrError(py,
+                                                fnName: Self.pythonTypeName,
+                                                kwargs: kwargs) {
+        return .error(e.asBaseException)
       }
     }
 
     var iters = [PyObject]()
 
     for (index, object) in args.enumerated() {
-      switch Py.iter(object: object) {
+      switch py.iter(object: object) {
       case .value(let i):
         iters.append(i)
 
       case .error(let e):
-        if PyCast.isTypeError(e) {
-          return .typeError("zip argument \(index + 1) must support iteration")
+        if py.cast.isTypeError(e.asObject) {
+          let message = "zip argument \(index + 1) must support iteration"
+          return .typeError(py, message: message)
         }
 
-        return .error(e)
+        return .error(e.asBaseException)
       }
     }
 
-    let result = PyMemory.newZip(type: type, iterators: iters)
-    return .value(result)
+    let result = py.memory.newZip(py, type: type, iterators: iters)
+    return PyResult(result)
   }
 }
-
-*/

@@ -40,36 +40,48 @@ public struct PyMap: PyObjectMixin {
     return "PyMap(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
-
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    }
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal func iter() -> PyObject {
-    return self
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__iter__")
+    }
+
+    return PyResult(zelf)
   }
 
   // MARK: - Next
 
   // sourcery: pymethod = __next__
-  internal func next() -> PyResult<PyObject> {
+  internal static func __next__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__next__")
+    }
+
     var args = [PyObject]()
-    for iter in self.iterators {
-      switch Py.next(iterator: iter) {
+    for iter in zelf.iterators {
+      switch py.next(iterator: iter) {
       case let .value(o):
         args.append(o)
       case let .error(e): // that includes 'stopIteration'
@@ -77,7 +89,7 @@ public struct PyMap: PyObjectMixin {
       }
     }
 
-    switch Py.call(callable: self.fn, args: args) {
+    switch py.call(callable: zelf.fn, args: args) {
     case .value(let r):
       return .value(r)
     case .error(let e),
@@ -89,31 +101,33 @@ public struct PyMap: PyObjectMixin {
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyMap> {
-    if type === Py.types.map {
-      if let e = ArgumentParser.noKwargsOrError(fnName: "map", kwargs: kwargs) {
-        return .error(e)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    if type === py.types.map {
+      if let e = ArgumentParser.noKwargsOrError(py,
+                                                fnName: Self.pythonTypeName,
+                                                kwargs: kwargs) {
+        return .error(e.asBaseException)
       }
     }
 
     if args.count < 2 {
-      return .typeError("map() must have at least two arguments.")
+      return .typeError(py, message: "map() must have at least two arguments.")
     }
 
     let fn = args[0]
     var iters = [PyObject]()
 
     for object in args[1...] {
-      switch Py.iter(object: object) {
+      switch py.iter(object: object) {
       case let .value(i): iters.append(i)
       case let .error(e): return .error(e)
       }
     }
 
-    let result = PyMemory.newMap(type: type, fn: fn, iterators: iters)
-    return .value(result)
+    let result = py.memory.newMap(py, type: type, fn: fn, iterators: iters)
+    return PyResult(result)
   }
- */
 }
