@@ -136,6 +136,8 @@ public struct Py {
   public func hashNotAvailable(_ o: PyObject) -> PyBaseException { fatalError() }
   public func get__dict__(object: PyObject) -> PyDict? { fatalError() }
   public func globals() -> PyResult<PyDict> { fatalError() }
+  public func lengthInt(iterable: PyObject) -> PyResult<Int> { fatalError() }
+  public func lengthBigInt(iterable: PyObject) -> PyResult<BigInt> { fatalError() }
 
   // MARK: - Bool
   public func not(object: PyObject) -> PyResult<PyBool> { fatalError() }
@@ -321,6 +323,9 @@ public struct Py {
                          allowsCallableFromDict: Bool = false) -> CallMethodResult {
     fatalError()
   }
+
+  public func hasMethod(object: PyObject, selector: IdString) -> PyResult<Bool> { fatalError() }
+  public func hasMethod(object: PyObject, selector: PyObject) -> PyResult<Bool> { fatalError() }
 
   // MARK: - Warn
 

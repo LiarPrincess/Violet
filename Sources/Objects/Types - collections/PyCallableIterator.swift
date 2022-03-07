@@ -35,52 +35,61 @@ public struct PyCallableIterator: PyObjectMixin {
     let zelf = PyCallableIterator(ptr: ptr)
     return "PyCallableIterator(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
-}
-
-/* MARKER
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    }
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal func iter() -> PyObject {
-    return self
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__iter__")
+    }
+
+    return PyResult(zelf)
   }
 
   // MARK: - Next
 
   // sourcery: pymethod = __next__
-  internal func next() -> PyResult<PyObject> {
-    switch Py.call(callable: self.callable) {
+  internal static func __next__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__next__")
+    }
+
+    switch py.call(callable: zelf.callable) {
     case let .value(o):
       // If we are equal to 'self.sentinel' then we have to stop
-      switch Py.isEqualBool(left: o, right: self.sentinel) {
+      switch py.isEqualBool(left: o, right: zelf.sentinel) {
       case .value(true):
-        return .stopIteration()
+        return .stopIteration(py)
       case .value(false):
         return .value(o)
       case .error(let e):
         return .error(e)
       }
     case .error(let e),
-         .notCallable(let e):
+        .notCallable(let e):
       // This also handles 'StopIteration'
       return .error(e)
     }
   }
 }
-
-*/
