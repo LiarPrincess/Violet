@@ -32,9 +32,13 @@ public struct PyEnumerate: PyObjectMixin {
   // sourcery: includeInLayout
   /// Secondary iterator of enumeration
   internal var iterator: PyObject { self.iteratorPtr.pointee }
+
   // sourcery: includeInLayout
   /// Next used index of enumeration
-  internal var nextIndex: BigInt { self.nextIndexPtr.pointee }
+  internal var nextIndex: BigInt {
+    get { self.nextIndexPtr.pointee }
+    nonmutating set { self.nextIndexPtr.pointee = newValue }
+  }
 
   public let ptr: RawPtr
 
@@ -55,37 +59,49 @@ public struct PyEnumerate: PyObjectMixin {
     let zelf = PyEnumerate(ptr: ptr)
     return "PyEnumerate(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
-}
 
-/* MARKER
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    }
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal func iter() -> PyObject {
-    return self
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__iter__")
+    }
+
+    return PyResult(zelf)
   }
 
   // MARK: - Next
 
   // sourcery: pymethod = __next__
-  internal func next() -> PyResult<PyObject> {
+  internal static func __next__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__next__")
+    }
+
     let item: PyObject
-    switch Py.next(iterator: self.iterator) {
+    switch py.next(iterator: zelf.iterator) {
     case .value(let n):
       item = n
     case .error(let e):
@@ -93,11 +109,10 @@ public struct PyEnumerate: PyObjectMixin {
       return .error(e)
     }
 
-    let index = Py.newInt(self.nextIndex)
-    let result = Py.newTuple(index, item)
+    let index = py.newInt(zelf.nextIndex)
+    zelf.nextIndex += 1
 
-    self.nextIndex += 1
-    return .value(result)
+    return PyResult(py, tuple: index.asObject, item)
   }
 
   // MARK: - Python new
@@ -118,39 +133,41 @@ public struct PyEnumerate: PyObjectMixin {
         (0, seq[0]), (1, seq[1]), (2, seq[2]), ...
     """
 
-  private static let newArguments = ArgumentParser.createOrTrap(
+  private static let newArguments = ArgumentParser(
     arguments: ["iterable", "start"],
     format: "O|O:enumerate"
   )
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyEnumerate> {
-    switch PyEnumerate.newArguments.bind(args: args, kwargs: kwargs) {
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    switch PyEnumerate.newArguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")
       assert(binding.optionalCount == 1, "Invalid optional argument count.")
 
       let iterable = binding.required(at: 0)
       let start = binding.optional(at: 1)
-      return PyEnumerate.pyNew(type: type, iterable: iterable, startFrom: start)
+      return PyEnumerate.__new__(py, type: type, iterable: iterable, startFrom: start)
 
     case let .error(e):
       return .error(e)
     }
   }
 
-  internal static func pyNew(type: PyType,
-                             iterable: PyObject,
-                             startFrom index: PyObject?) -> PyResult<PyEnumerate> {
-    var startIndex = BigInt(0)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               iterable: PyObject,
+                               startFrom index: PyObject?) -> PyResult<PyObject> {
+    var initialIndex = BigInt(0)
     if let index = index {
-      switch IndexHelper.bigInt(index) {
+      switch IndexHelper.pyInt(py, object: index) {
       case let .value(i):
-        startIndex = i
+        initialIndex = i.value
       case let .notIndex(lazyError):
-        let e = lazyError.create()
+        let e = lazyError.create(py)
         return .error(e)
       case let .error(e):
         return .error(e)
@@ -158,16 +175,16 @@ public struct PyEnumerate: PyObjectMixin {
     }
 
     let iter: PyObject
-    switch Py.iter(object: iterable) {
+    switch py.iter(object: iterable) {
     case let .value(i): iter = i
     case let .error(e): return .error(e)
     }
 
-    let result = PyMemory.newEnumerate(type: type,
-                                       iterator: iter,
-                                       startFrom: startIndex)
-    return .value(result)
+    let result = py.memory.newEnumerate(py,
+                                        type: type,
+                                        iterator: iter,
+                                        initialIndex: initialIndex)
+
+    return PyResult(result)
   }
 }
-
-*/

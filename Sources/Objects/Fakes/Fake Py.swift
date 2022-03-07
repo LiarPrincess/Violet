@@ -137,6 +137,9 @@ public struct Py {
 
   // MARK: - Collections
 
+  func next(iterator: PyObject) -> PyResult<PyObject> { fatalError() }
+  func iter(object: PyObject) -> PyResult<PyObject> { fatalError() }
+
   public enum ForEachStep {
     /// Go to the next item.
     case goToNextElement
