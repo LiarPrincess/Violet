@@ -117,14 +117,4 @@ public struct PyTupleIterator: PyObjectMixin {
   private static func castZelf(_ py: Py, _ object: PyObject) -> PyTupleIterator? {
     return py.cast.asTupleIterator(object)
   }
-
-  private static func invalidZelfArgument(_ py: Py,
-                                          _ object: PyObject,
-                                          _ fnName: String) -> PyResult<PyObject> {
-    let error = py.newInvalidSelfArgumentError(object: object,
-                                               expectedType: "tuple_iterator",
-                                               fnName: fnName)
-
-    return .error(error.asBaseException)
-  }
 }

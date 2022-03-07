@@ -16,8 +16,6 @@ public struct PyNamespace: PyObjectMixin {
     SimpleNamespace(**kwargs)
     """
 
-  private static let typeName = "SimpleNamespace"
-
   public let ptr: RawPtr
 
   public init(ptr: RawPtr) {
@@ -41,7 +39,7 @@ public struct PyNamespace: PyObjectMixin {
   // sourcery: pymethod = __eq__
   internal static func __eq__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__eq__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__eq__)
     }
 
     return Self.isEqual(py, zelf: zelf, other: other)
@@ -50,7 +48,7 @@ public struct PyNamespace: PyObjectMixin {
   // sourcery: pymethod = __ne__
   internal static func __ne__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__ne__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ne__)
     }
 
     let isEqual = Self.isEqual(py, zelf: zelf, other: other)
@@ -89,7 +87,7 @@ public struct PyNamespace: PyObjectMixin {
                               zelf: PyObject,
                               operation: CompareResult.Operation) -> CompareResult {
     guard py.cast.isNamespace(zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, operation)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, operation)
     }
 
     return .notImplemented
@@ -241,15 +239,5 @@ public struct PyNamespace: PyObjectMixin {
 
   internal static func castZelf(_ py: Py, _ object: PyObject) -> PyNamespace? {
     return py.cast.asNamespace(object)
-  }
-
-  internal static func invalidZelfArgument(_ py: Py,
-                                           _ object: PyObject,
-                                           _ fnName: String) -> PyResult<PyObject> {
-    let error = py.newInvalidSelfArgumentError(object: object,
-                                               expectedType: Self.typeName,
-                                               fnName: fnName)
-
-    return .error(error.asBaseException)
   }
 }

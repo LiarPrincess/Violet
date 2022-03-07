@@ -473,7 +473,7 @@ extension PyType {
   private static func getHeapType__dict__(_ py: Py,
                                           zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidZelfArgumentFor__dict__(py, object: zelf)
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     return PyResult(zelf.__dict__)
@@ -483,7 +483,7 @@ extension PyType {
                                           zelf: PyObject,
                                           value: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidZelfArgumentFor__dict__(py, object: zelf)
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     guard let dict = py.cast.asDict(value) else {
@@ -498,7 +498,7 @@ extension PyType {
   private static func delHeapType__dict__(_ py: Py,
                                           zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidZelfArgumentFor__dict__(py, object: zelf)
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     // There always has to be an dict:
@@ -510,16 +510,6 @@ extension PyType {
     // {}
     zelf.__dict__ = py.newDict()
     return .none(py)
-  }
-
-  private static func invalidZelfArgumentFor__dict__(
-    _ py: Py,
-    object: PyObject
-  ) -> PyResult<PyObject> {
-    let error = py.newInvalidSelfArgumentError(object: object,
-                                               expectedType: "type",
-                                               fnName: "__dict__")
-    return .error(error.asBaseException)
   }
 
   // MARK: - __getattribute__ method

@@ -89,16 +89,4 @@ public struct PyEllipsis: PyObjectMixin {
 
     return PyResult(py.ellipsis)
   }
-
-  // MARK: - Helpers
-
-  internal static func invalidZelfArgument(_ py: Py,
-                                           _ object: PyObject,
-                                           _ fnName: String) -> PyResult<PyObject> {
-    let error = py.newInvalidSelfArgumentError(object: object,
-                                               expectedType: "ellipsis",
-                                               fnName: fnName)
-
-    return .error(error.asBaseException)
-  }
 }

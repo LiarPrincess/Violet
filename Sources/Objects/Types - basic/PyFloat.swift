@@ -25,8 +25,6 @@ public struct PyFloat: PyObjectMixin {
     Convert a string or number to a floating point number, if possible.
     """
 
-  private static let typeName = "float"
-
   // sourcery: includeInLayout
   internal var value: Double { self.valuePtr.pointee }
 
@@ -55,7 +53,7 @@ public struct PyFloat: PyObjectMixin {
   // sourcery: pymethod = __eq__
   internal static func __eq__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__eq__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__eq__)
     }
 
     return FloatCompareHelper.isEqual(py, left: zelf.value, right: other)
@@ -64,7 +62,7 @@ public struct PyFloat: PyObjectMixin {
   // sourcery: pymethod = __ne__
   internal static func __ne__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__ne__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ne__)
     }
 
     let isEqual = FloatCompareHelper.isEqual(py, left: zelf.value, right: other)
@@ -74,7 +72,7 @@ public struct PyFloat: PyObjectMixin {
   // sourcery: pymethod = __lt__
   internal static func __lt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__lt__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__lt__)
     }
 
     return FloatCompareHelper.isLess(py, left:zelf.value, right: other)
@@ -83,7 +81,7 @@ public struct PyFloat: PyObjectMixin {
   // sourcery: pymethod = __le__
   internal static func __le__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__le__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__le__)
     }
 
     return FloatCompareHelper.isLessEqual(py, left:zelf.value, right: other)
@@ -92,7 +90,7 @@ public struct PyFloat: PyObjectMixin {
   // sourcery: pymethod = __gt__
   internal static func __gt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__gt__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__gt__)
     }
 
     return FloatCompareHelper.isGreater(py, left:zelf.value, right: other)
@@ -101,7 +99,7 @@ public struct PyFloat: PyObjectMixin {
   // sourcery: pymethod = __ge__
   internal static func __ge__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__ge__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ge__)
     }
 
     return FloatCompareHelper.isGreaterEqual(py, left:zelf.value, right: other)
@@ -112,7 +110,7 @@ public struct PyFloat: PyObjectMixin {
   // sourcery: pymethod = __hash__
   internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName)
     }
 
     let result = py.hasher.hash(zelf.value)
@@ -884,14 +882,14 @@ public struct PyFloat: PyObjectMixin {
                                kwargs: PyDict?) -> PyResult<PyObject> {
     if Self.isBuiltinFloatType(py, type: type) {
       if let e = ArgumentParser.noKwargsOrError(py,
-                                                fnName: Self.typeName,
+                                                fnName: Self.pythonTypeName,
                                                 kwargs: kwargs) {
         return .error(e.asBaseException)
       }
     }
 
     if let e = ArgumentParser.guaranteeArgsCountOrError(py,
-                                                        fnName: Self.typeName,
+                                                        fnName: Self.pythonTypeName,
                                                         args: args,
                                                         min: 0,
                                                         max: 1) {
@@ -1152,15 +1150,5 @@ public struct PyFloat: PyObjectMixin {
 
   internal static func castZelf(_ py: Py, _ object: PyObject) -> PyFloat? {
     return py.cast.asFloat(object)
-  }
-
-  internal static func invalidZelfArgument(_ py: Py,
-                                           _ object: PyObject,
-                                           _ fnName: String) -> PyResult<PyObject> {
-    let error = py.newInvalidSelfArgumentError(object: object,
-                                               expectedType: Self.typeName,
-                                               fnName: fnName)
-
-    return .error(error.asBaseException)
   }
 }

@@ -51,8 +51,6 @@ public struct PyList: PyObjectMixin, AbstractSequence {
 
   // MARK: - AbstractSequence
 
-  internal static let typeName = "list"
-
   internal static func newObject(_ py: Py, elements: [PyObject]) -> PyList {
     return py.newList(elements: elements)
   }
@@ -102,7 +100,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
   // sourcery: pymethod = __hash__
   internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
     guard let zelf = Self.castZelf(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName)
     }
 
     return .unhashable(zelf.asObject)
@@ -678,14 +676,14 @@ public struct PyList: PyObjectMixin, AbstractSequence {
     let isBuiltin = zelf.type === py.types.list
     if isBuiltin {
       if let e = ArgumentParser.noKwargsOrError(py,
-                                                fnName: self.typeName,
+                                                fnName: Self.pythonTypeName,
                                                 kwargs: kwargs) {
         return .error(e.asBaseException)
       }
     }
 
     if let e = ArgumentParser.guaranteeArgsCountOrError(py,
-                                                        fnName: self.typeName,
+                                                        fnName: Self.pythonTypeName,
                                                         args: args,
                                                         min: 0,
                                                         max: 1) {

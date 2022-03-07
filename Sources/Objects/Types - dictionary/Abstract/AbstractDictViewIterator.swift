@@ -8,11 +8,6 @@ internal protocol AbstractDictViewIterator: PyObjectMixin {
 
   /// Cast `PyObject` -> Self``.
   static func castZelf(_ py: Py, _ object: PyObject) -> Self?
-
-  /// Create an error when the `zelf` argument is not valid.
-  static func invalidZelfArgument<T>(_ py: Py,
-                                     _ object: PyObject,
-                                     _ fnName: String) -> PyResult<T>
 }
 
 extension AbstractDictViewIterator {

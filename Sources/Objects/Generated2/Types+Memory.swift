@@ -164,6 +164,8 @@ extension PyMemory {
 
 extension PyBool {
 
+  public static let pythonTypeName = "bool"
+
   /// This type was automatically generated based on `PyBool` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -225,6 +227,8 @@ extension PyMemory {
 // MARK: - PyBuiltinFunction
 
 extension PyBuiltinFunction {
+
+  public static let pythonTypeName = "builtinFunction"
 
   /// This type was automatically generated based on `PyBuiltinFunction` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -301,6 +305,8 @@ extension PyMemory {
 // MARK: - PyBuiltinMethod
 
 extension PyBuiltinMethod {
+
+  public static let pythonTypeName = "builtinMethod"
 
   /// This type was automatically generated based on `PyBuiltinMethod` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -385,6 +391,8 @@ extension PyMemory {
 
 extension PyByteArray {
 
+  public static let pythonTypeName = "bytearray"
+
   /// This type was automatically generated based on `PyByteArray` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -446,6 +454,8 @@ extension PyMemory {
 // MARK: - PyByteArrayIterator
 
 extension PyByteArrayIterator {
+
+  public static let pythonTypeName = "bytearray_iterator"
 
   /// This type was automatically generated based on `PyByteArrayIterator` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -514,6 +524,8 @@ extension PyMemory {
 
 extension PyBytes {
 
+  public static let pythonTypeName = "bytes"
+
   /// This type was automatically generated based on `PyBytes` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -575,6 +587,8 @@ extension PyMemory {
 // MARK: - PyBytesIterator
 
 extension PyBytesIterator {
+
+  public static let pythonTypeName = "bytes_iterator"
 
   /// This type was automatically generated based on `PyBytesIterator` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -642,6 +656,8 @@ extension PyMemory {
 // MARK: - PyCallableIterator
 
 extension PyCallableIterator {
+
+  public static let pythonTypeName = "callable_iterator"
 
   /// This type was automatically generated based on `PyCallableIterator` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -712,6 +728,8 @@ extension PyMemory {
 
 extension PyCell {
 
+  public static let pythonTypeName = "cell"
+
   /// This type was automatically generated based on `PyCell` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -774,6 +792,8 @@ extension PyMemory {
 
 extension PyClassMethod {
 
+  public static let pythonTypeName = "classmethod"
+
   /// This type was automatically generated based on `PyClassMethod` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -835,6 +855,8 @@ extension PyMemory {
 // MARK: - PyCode
 
 extension PyCode {
+
+  public static let pythonTypeName = "code"
 
   /// This type was automatically generated based on `PyCode` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -963,6 +985,8 @@ extension PyMemory {
 
 extension PyComplex {
 
+  public static let pythonTypeName = "complex"
+
   /// This type was automatically generated based on `PyComplex` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -1032,6 +1056,8 @@ extension PyMemory {
 
 extension PyDict {
 
+  public static let pythonTypeName = "dict"
+
   /// This type was automatically generated based on `PyDict` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -1093,6 +1119,8 @@ extension PyMemory {
 // MARK: - PyDictItemIterator
 
 extension PyDictItemIterator {
+
+  public static let pythonTypeName = "dict_itemiterator"
 
   /// This type was automatically generated based on `PyDictItemIterator` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -1166,6 +1194,8 @@ extension PyMemory {
 
 extension PyDictItems {
 
+  public static let pythonTypeName = "dict_items"
+
   /// This type was automatically generated based on `PyDictItems` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -1227,6 +1257,8 @@ extension PyMemory {
 // MARK: - PyDictKeyIterator
 
 extension PyDictKeyIterator {
+
+  public static let pythonTypeName = "dict_keyiterator"
 
   /// This type was automatically generated based on `PyDictKeyIterator` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -1300,6 +1332,8 @@ extension PyMemory {
 
 extension PyDictKeys {
 
+  public static let pythonTypeName = "dict_keys"
+
   /// This type was automatically generated based on `PyDictKeys` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -1361,6 +1395,8 @@ extension PyMemory {
 // MARK: - PyDictValueIterator
 
 extension PyDictValueIterator {
+
+  public static let pythonTypeName = "dict_valueiterator"
 
   /// This type was automatically generated based on `PyDictValueIterator` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -1434,6 +1470,8 @@ extension PyMemory {
 
 extension PyDictValues {
 
+  public static let pythonTypeName = "dict_values"
+
   /// This type was automatically generated based on `PyDictValues` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -1496,6 +1534,8 @@ extension PyMemory {
 
 extension PyEllipsis {
 
+  public static let pythonTypeName = "ellipsis"
+
   /// This type was automatically generated based on `PyEllipsis` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -1547,6 +1587,8 @@ extension PyMemory {
 // MARK: - PyEnumerate
 
 extension PyEnumerate {
+
+  public static let pythonTypeName = "enumerate"
 
   /// This type was automatically generated based on `PyEnumerate` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -1617,6 +1659,8 @@ extension PyMemory {
 
 extension PyFilter {
 
+  public static let pythonTypeName = "filter"
+
   /// This type was automatically generated based on `PyFilter` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -1686,6 +1730,8 @@ extension PyMemory {
 
 extension PyFloat {
 
+  public static let pythonTypeName = "float"
+
   /// This type was automatically generated based on `PyFloat` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -1747,6 +1793,8 @@ extension PyMemory {
 // MARK: - PyFrame
 
 extension PyFrame {
+
+  public static let pythonTypeName = "frame"
 
   /// This type was automatically generated based on `PyFrame` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -1871,6 +1919,8 @@ extension PyMemory {
 
 extension PyFrozenSet {
 
+  public static let pythonTypeName = "frozenset"
+
   /// This type was automatically generated based on `PyFrozenSet` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -1932,6 +1982,8 @@ extension PyMemory {
 // MARK: - PyFunction
 
 extension PyFunction {
+
+  public static let pythonTypeName = "function"
 
   /// This type was automatically generated based on `PyFunction` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -2046,6 +2098,8 @@ extension PyMemory {
 
 extension PyInt {
 
+  public static let pythonTypeName = "int"
+
   /// This type was automatically generated based on `PyInt` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -2107,6 +2161,8 @@ extension PyMemory {
 // MARK: - PyIterator
 
 extension PyIterator {
+
+  public static let pythonTypeName = "iterator"
 
   /// This type was automatically generated based on `PyIterator` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -2175,6 +2231,8 @@ extension PyMemory {
 
 extension PyList {
 
+  public static let pythonTypeName = "list"
+
   /// This type was automatically generated based on `PyList` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -2236,6 +2294,8 @@ extension PyMemory {
 // MARK: - PyListIterator
 
 extension PyListIterator {
+
+  public static let pythonTypeName = "list_iterator"
 
   /// This type was automatically generated based on `PyListIterator` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -2304,6 +2364,8 @@ extension PyMemory {
 
 extension PyListReverseIterator {
 
+  public static let pythonTypeName = "list_reverseiterator"
+
   /// This type was automatically generated based on `PyListReverseIterator` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -2370,6 +2432,8 @@ extension PyMemory {
 // MARK: - PyMap
 
 extension PyMap {
+
+  public static let pythonTypeName = "map"
 
   /// This type was automatically generated based on `PyMap` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -2440,6 +2504,8 @@ extension PyMemory {
 
 extension PyMethod {
 
+  public static let pythonTypeName = "method"
+
   /// This type was automatically generated based on `PyMethod` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -2509,6 +2575,8 @@ extension PyMemory {
 
 extension PyModule {
 
+  public static let pythonTypeName = "module"
+
   /// This type was automatically generated based on `PyModule` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -2567,6 +2635,8 @@ extension PyMemory {
 
 extension PyNamespace {
 
+  public static let pythonTypeName = "SimpleNamespace"
+
   /// This type was automatically generated based on `PyNamespace` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -2621,6 +2691,8 @@ extension PyMemory {
 
 extension PyNone {
 
+  public static let pythonTypeName = "NoneType"
+
   /// This type was automatically generated based on `PyNone` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -2672,6 +2744,8 @@ extension PyMemory {
 // MARK: - PyNotImplemented
 
 extension PyNotImplemented {
+
+  public static let pythonTypeName = "NotImplementedType"
 
   /// This type was automatically generated based on `PyNotImplemented` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -2725,6 +2799,8 @@ extension PyMemory {
 
 extension PyObject {
 
+  public static let pythonTypeName = "object"
+
   /// This type was automatically generated based on `PyObject` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -2776,6 +2852,8 @@ extension PyMemory {
 // MARK: - PyProperty
 
 extension PyProperty {
+
+  public static let pythonTypeName = "property"
 
   /// This type was automatically generated based on `PyProperty` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -2860,6 +2938,8 @@ extension PyMemory {
 
 extension PyRange {
 
+  public static let pythonTypeName = "range"
+
   /// This type was automatically generated based on `PyRange` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -2940,6 +3020,8 @@ extension PyMemory {
 // MARK: - PyRangeIterator
 
 extension PyRangeIterator {
+
+  public static let pythonTypeName = "range_iterator"
 
   /// This type was automatically generated based on `PyRangeIterator` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -3022,6 +3104,8 @@ extension PyMemory {
 
 extension PyReversed {
 
+  public static let pythonTypeName = "reversed"
+
   /// This type was automatically generated based on `PyReversed` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -3091,6 +3175,8 @@ extension PyMemory {
 
 extension PySet {
 
+  public static let pythonTypeName = "set"
+
   /// This type was automatically generated based on `PySet` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -3152,6 +3238,8 @@ extension PyMemory {
 // MARK: - PySetIterator
 
 extension PySetIterator {
+
+  public static let pythonTypeName = "set_iterator"
 
   /// This type was automatically generated based on `PySetIterator` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -3244,6 +3332,8 @@ extension PyMemory {
 
 extension PySlice {
 
+  public static let pythonTypeName = "slice"
+
   /// This type was automatically generated based on `PySlice` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -3320,6 +3410,8 @@ extension PyMemory {
 
 extension PyStaticMethod {
 
+  public static let pythonTypeName = "staticmethod"
+
   /// This type was automatically generated based on `PyStaticMethod` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -3381,6 +3473,8 @@ extension PyMemory {
 // MARK: - PyString
 
 extension PyString {
+
+  public static let pythonTypeName = "str"
 
   /// This type was automatically generated based on `PyString` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -3454,6 +3548,8 @@ extension PyMemory {
 
 extension PyStringIterator {
 
+  public static let pythonTypeName = "str_iterator"
+
   /// This type was automatically generated based on `PyStringIterator` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -3520,6 +3616,8 @@ extension PyMemory {
 // MARK: - PySuper
 
 extension PySuper {
+
+  public static let pythonTypeName = "super"
 
   /// This type was automatically generated based on `PySuper` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -3596,6 +3694,8 @@ extension PyMemory {
 // MARK: - PyTextFile
 
 extension PyTextFile {
+
+  public static let pythonTypeName = "TextFile"
 
   /// This type was automatically generated based on `PyTextFile` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -3689,6 +3789,8 @@ extension PyMemory {
 
 extension PyTraceback {
 
+  public static let pythonTypeName = "traceback"
+
   /// This type was automatically generated based on `PyTraceback` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -3770,6 +3872,8 @@ extension PyMemory {
 
 extension PyTuple {
 
+  public static let pythonTypeName = "tuple"
+
   /// This type was automatically generated based on `PyTuple` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -3831,6 +3935,8 @@ extension PyMemory {
 // MARK: - PyTupleIterator
 
 extension PyTupleIterator {
+
+  public static let pythonTypeName = "tuple_iterator"
 
   /// This type was automatically generated based on `PyTupleIterator` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -3898,6 +4004,8 @@ extension PyMemory {
 // MARK: - PyType
 
 extension PyType {
+
+  public static let pythonTypeName = "type"
 
   /// This type was automatically generated based on `PyType` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -4026,6 +4134,8 @@ extension PyMemory {
 
 extension PyZip {
 
+  public static let pythonTypeName = "zip"
+
   /// This type was automatically generated based on `PyZip` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -4087,6 +4197,8 @@ extension PyMemory {
 // MARK: - PyArithmeticError
 
 extension PyArithmeticError {
+
+  public static let pythonTypeName = "ArithmeticError"
 
   /// This type was automatically generated based on `PyArithmeticError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -4150,6 +4262,8 @@ extension PyMemory {
 
 extension PyAssertionError {
 
+  public static let pythonTypeName = "AssertionError"
+
   /// This type was automatically generated based on `PyAssertionError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -4211,6 +4325,8 @@ extension PyMemory {
 // MARK: - PyAttributeError
 
 extension PyAttributeError {
+
+  public static let pythonTypeName = "AttributeError"
 
   /// This type was automatically generated based on `PyAttributeError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -4274,6 +4390,8 @@ extension PyMemory {
 
 extension PyBaseException {
 
+  public static let pythonTypeName = "BaseException"
+
   /// This type was automatically generated based on `PyBaseException` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -4335,6 +4453,8 @@ extension PyMemory {
 // MARK: - PyBlockingIOError
 
 extension PyBlockingIOError {
+
+  public static let pythonTypeName = "BlockingIOError"
 
   /// This type was automatically generated based on `PyBlockingIOError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -4398,6 +4518,8 @@ extension PyMemory {
 
 extension PyBrokenPipeError {
 
+  public static let pythonTypeName = "BrokenPipeError"
+
   /// This type was automatically generated based on `PyBrokenPipeError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -4459,6 +4581,8 @@ extension PyMemory {
 // MARK: - PyBufferError
 
 extension PyBufferError {
+
+  public static let pythonTypeName = "BufferError"
 
   /// This type was automatically generated based on `PyBufferError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -4522,6 +4646,8 @@ extension PyMemory {
 
 extension PyBytesWarning {
 
+  public static let pythonTypeName = "BytesWarning"
+
   /// This type was automatically generated based on `PyBytesWarning` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -4583,6 +4709,8 @@ extension PyMemory {
 // MARK: - PyChildProcessError
 
 extension PyChildProcessError {
+
+  public static let pythonTypeName = "ChildProcessError"
 
   /// This type was automatically generated based on `PyChildProcessError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -4646,6 +4774,8 @@ extension PyMemory {
 
 extension PyConnectionAbortedError {
 
+  public static let pythonTypeName = "ConnectionAbortedError"
+
   /// This type was automatically generated based on `PyConnectionAbortedError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -4707,6 +4837,8 @@ extension PyMemory {
 // MARK: - PyConnectionError
 
 extension PyConnectionError {
+
+  public static let pythonTypeName = "ConnectionError"
 
   /// This type was automatically generated based on `PyConnectionError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -4770,6 +4902,8 @@ extension PyMemory {
 
 extension PyConnectionRefusedError {
 
+  public static let pythonTypeName = "ConnectionRefusedError"
+
   /// This type was automatically generated based on `PyConnectionRefusedError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -4831,6 +4965,8 @@ extension PyMemory {
 // MARK: - PyConnectionResetError
 
 extension PyConnectionResetError {
+
+  public static let pythonTypeName = "ConnectionResetError"
 
   /// This type was automatically generated based on `PyConnectionResetError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -4894,6 +5030,8 @@ extension PyMemory {
 
 extension PyDeprecationWarning {
 
+  public static let pythonTypeName = "DeprecationWarning"
+
   /// This type was automatically generated based on `PyDeprecationWarning` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -4955,6 +5093,8 @@ extension PyMemory {
 // MARK: - PyEOFError
 
 extension PyEOFError {
+
+  public static let pythonTypeName = "EOFError"
 
   /// This type was automatically generated based on `PyEOFError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -5018,6 +5158,8 @@ extension PyMemory {
 
 extension PyException {
 
+  public static let pythonTypeName = "Exception"
+
   /// This type was automatically generated based on `PyException` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -5079,6 +5221,8 @@ extension PyMemory {
 // MARK: - PyFileExistsError
 
 extension PyFileExistsError {
+
+  public static let pythonTypeName = "FileExistsError"
 
   /// This type was automatically generated based on `PyFileExistsError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -5142,6 +5286,8 @@ extension PyMemory {
 
 extension PyFileNotFoundError {
 
+  public static let pythonTypeName = "FileNotFoundError"
+
   /// This type was automatically generated based on `PyFileNotFoundError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -5203,6 +5349,8 @@ extension PyMemory {
 // MARK: - PyFloatingPointError
 
 extension PyFloatingPointError {
+
+  public static let pythonTypeName = "FloatingPointError"
 
   /// This type was automatically generated based on `PyFloatingPointError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -5266,6 +5414,8 @@ extension PyMemory {
 
 extension PyFutureWarning {
 
+  public static let pythonTypeName = "FutureWarning"
+
   /// This type was automatically generated based on `PyFutureWarning` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -5328,6 +5478,8 @@ extension PyMemory {
 
 extension PyGeneratorExit {
 
+  public static let pythonTypeName = "GeneratorExit"
+
   /// This type was automatically generated based on `PyGeneratorExit` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -5389,6 +5541,8 @@ extension PyMemory {
 // MARK: - PyImportError
 
 extension PyImportError {
+
+  public static let pythonTypeName = "ImportError"
 
   /// This type was automatically generated based on `PyImportError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -5476,6 +5630,8 @@ extension PyMemory {
 
 extension PyImportWarning {
 
+  public static let pythonTypeName = "ImportWarning"
+
   /// This type was automatically generated based on `PyImportWarning` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -5537,6 +5693,8 @@ extension PyMemory {
 // MARK: - PyIndentationError
 
 extension PyIndentationError {
+
+  public static let pythonTypeName = "IndentationError"
 
   /// This type was automatically generated based on `PyIndentationError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -5600,6 +5758,8 @@ extension PyMemory {
 
 extension PyIndexError {
 
+  public static let pythonTypeName = "IndexError"
+
   /// This type was automatically generated based on `PyIndexError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -5661,6 +5821,8 @@ extension PyMemory {
 // MARK: - PyInterruptedError
 
 extension PyInterruptedError {
+
+  public static let pythonTypeName = "InterruptedError"
 
   /// This type was automatically generated based on `PyInterruptedError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -5724,6 +5886,8 @@ extension PyMemory {
 
 extension PyIsADirectoryError {
 
+  public static let pythonTypeName = "IsADirectoryError"
+
   /// This type was automatically generated based on `PyIsADirectoryError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -5785,6 +5949,8 @@ extension PyMemory {
 // MARK: - PyKeyError
 
 extension PyKeyError {
+
+  public static let pythonTypeName = "KeyError"
 
   /// This type was automatically generated based on `PyKeyError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -5848,6 +6014,8 @@ extension PyMemory {
 
 extension PyKeyboardInterrupt {
 
+  public static let pythonTypeName = "KeyboardInterrupt"
+
   /// This type was automatically generated based on `PyKeyboardInterrupt` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -5909,6 +6077,8 @@ extension PyMemory {
 // MARK: - PyLookupError
 
 extension PyLookupError {
+
+  public static let pythonTypeName = "LookupError"
 
   /// This type was automatically generated based on `PyLookupError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -5972,6 +6142,8 @@ extension PyMemory {
 
 extension PyMemoryError {
 
+  public static let pythonTypeName = "MemoryError"
+
   /// This type was automatically generated based on `PyMemoryError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6033,6 +6205,8 @@ extension PyMemory {
 // MARK: - PyModuleNotFoundError
 
 extension PyModuleNotFoundError {
+
+  public static let pythonTypeName = "ModuleNotFoundError"
 
   /// This type was automatically generated based on `PyModuleNotFoundError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -6096,6 +6270,8 @@ extension PyMemory {
 
 extension PyNameError {
 
+  public static let pythonTypeName = "NameError"
+
   /// This type was automatically generated based on `PyNameError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6157,6 +6333,8 @@ extension PyMemory {
 // MARK: - PyNotADirectoryError
 
 extension PyNotADirectoryError {
+
+  public static let pythonTypeName = "NotADirectoryError"
 
   /// This type was automatically generated based on `PyNotADirectoryError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -6220,6 +6398,8 @@ extension PyMemory {
 
 extension PyNotImplementedError {
 
+  public static let pythonTypeName = "NotImplementedError"
+
   /// This type was automatically generated based on `PyNotImplementedError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6281,6 +6461,8 @@ extension PyMemory {
 // MARK: - PyOSError
 
 extension PyOSError {
+
+  public static let pythonTypeName = "OSError"
 
   /// This type was automatically generated based on `PyOSError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -6344,6 +6526,8 @@ extension PyMemory {
 
 extension PyOverflowError {
 
+  public static let pythonTypeName = "OverflowError"
+
   /// This type was automatically generated based on `PyOverflowError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6405,6 +6589,8 @@ extension PyMemory {
 // MARK: - PyPendingDeprecationWarning
 
 extension PyPendingDeprecationWarning {
+
+  public static let pythonTypeName = "PendingDeprecationWarning"
 
   /// This type was automatically generated based on `PyPendingDeprecationWarning` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -6468,6 +6654,8 @@ extension PyMemory {
 
 extension PyPermissionError {
 
+  public static let pythonTypeName = "PermissionError"
+
   /// This type was automatically generated based on `PyPermissionError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6529,6 +6717,8 @@ extension PyMemory {
 // MARK: - PyProcessLookupError
 
 extension PyProcessLookupError {
+
+  public static let pythonTypeName = "ProcessLookupError"
 
   /// This type was automatically generated based on `PyProcessLookupError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -6592,6 +6782,8 @@ extension PyMemory {
 
 extension PyRecursionError {
 
+  public static let pythonTypeName = "RecursionError"
+
   /// This type was automatically generated based on `PyRecursionError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6653,6 +6845,8 @@ extension PyMemory {
 // MARK: - PyReferenceError
 
 extension PyReferenceError {
+
+  public static let pythonTypeName = "ReferenceError"
 
   /// This type was automatically generated based on `PyReferenceError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -6716,6 +6910,8 @@ extension PyMemory {
 
 extension PyResourceWarning {
 
+  public static let pythonTypeName = "ResourceWarning"
+
   /// This type was automatically generated based on `PyResourceWarning` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6777,6 +6973,8 @@ extension PyMemory {
 // MARK: - PyRuntimeError
 
 extension PyRuntimeError {
+
+  public static let pythonTypeName = "RuntimeError"
 
   /// This type was automatically generated based on `PyRuntimeError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -6840,6 +7038,8 @@ extension PyMemory {
 
 extension PyRuntimeWarning {
 
+  public static let pythonTypeName = "RuntimeWarning"
+
   /// This type was automatically generated based on `PyRuntimeWarning` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6902,6 +7102,8 @@ extension PyMemory {
 
 extension PyStopAsyncIteration {
 
+  public static let pythonTypeName = "StopAsyncIteration"
+
   /// This type was automatically generated based on `PyStopAsyncIteration` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -6963,6 +7165,8 @@ extension PyMemory {
 // MARK: - PyStopIteration
 
 extension PyStopIteration {
+
+  public static let pythonTypeName = "StopIteration"
 
   /// This type was automatically generated based on `PyStopIteration` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -7035,6 +7239,8 @@ extension PyMemory {
 // MARK: - PySyntaxError
 
 extension PySyntaxError {
+
+  public static let pythonTypeName = "SyntaxError"
 
   /// This type was automatically generated based on `PySyntaxError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -7143,6 +7349,8 @@ extension PyMemory {
 
 extension PySyntaxWarning {
 
+  public static let pythonTypeName = "SyntaxWarning"
+
   /// This type was automatically generated based on `PySyntaxWarning` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -7205,6 +7413,8 @@ extension PyMemory {
 
 extension PySystemError {
 
+  public static let pythonTypeName = "SystemError"
+
   /// This type was automatically generated based on `PySystemError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -7266,6 +7476,8 @@ extension PyMemory {
 // MARK: - PySystemExit
 
 extension PySystemExit {
+
+  public static let pythonTypeName = "SystemExit"
 
   /// This type was automatically generated based on `PySystemExit` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -7339,6 +7551,8 @@ extension PyMemory {
 
 extension PyTabError {
 
+  public static let pythonTypeName = "TabError"
+
   /// This type was automatically generated based on `PyTabError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -7400,6 +7614,8 @@ extension PyMemory {
 // MARK: - PyTimeoutError
 
 extension PyTimeoutError {
+
+  public static let pythonTypeName = "TimeoutError"
 
   /// This type was automatically generated based on `PyTimeoutError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -7463,6 +7679,8 @@ extension PyMemory {
 
 extension PyTypeError {
 
+  public static let pythonTypeName = "TypeError"
+
   /// This type was automatically generated based on `PyTypeError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -7524,6 +7742,8 @@ extension PyMemory {
 // MARK: - PyUnboundLocalError
 
 extension PyUnboundLocalError {
+
+  public static let pythonTypeName = "UnboundLocalError"
 
   /// This type was automatically generated based on `PyUnboundLocalError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -7587,6 +7807,8 @@ extension PyMemory {
 
 extension PyUnicodeDecodeError {
 
+  public static let pythonTypeName = "UnicodeDecodeError"
+
   /// This type was automatically generated based on `PyUnicodeDecodeError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -7648,6 +7870,8 @@ extension PyMemory {
 // MARK: - PyUnicodeEncodeError
 
 extension PyUnicodeEncodeError {
+
+  public static let pythonTypeName = "UnicodeEncodeError"
 
   /// This type was automatically generated based on `PyUnicodeEncodeError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -7711,6 +7935,8 @@ extension PyMemory {
 
 extension PyUnicodeError {
 
+  public static let pythonTypeName = "UnicodeError"
+
   /// This type was automatically generated based on `PyUnicodeError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -7772,6 +7998,8 @@ extension PyMemory {
 // MARK: - PyUnicodeTranslateError
 
 extension PyUnicodeTranslateError {
+
+  public static let pythonTypeName = "UnicodeTranslateError"
 
   /// This type was automatically generated based on `PyUnicodeTranslateError` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -7835,6 +8063,8 @@ extension PyMemory {
 
 extension PyUnicodeWarning {
 
+  public static let pythonTypeName = "UnicodeWarning"
+
   /// This type was automatically generated based on `PyUnicodeWarning` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -7896,6 +8126,8 @@ extension PyMemory {
 // MARK: - PyUserWarning
 
 extension PyUserWarning {
+
+  public static let pythonTypeName = "UserWarning"
 
   /// This type was automatically generated based on `PyUserWarning` fields
   /// with `sourcery: includeInLayout` annotation.
@@ -7959,6 +8191,8 @@ extension PyMemory {
 
 extension PyValueError {
 
+  public static let pythonTypeName = "ValueError"
+
   /// This type was automatically generated based on `PyValueError` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -8021,6 +8255,8 @@ extension PyMemory {
 
 extension PyWarning {
 
+  public static let pythonTypeName = "Warning"
+
   /// This type was automatically generated based on `PyWarning` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
@@ -8082,6 +8318,8 @@ extension PyMemory {
 // MARK: - PyZeroDivisionError
 
 extension PyZeroDivisionError {
+
+  public static let pythonTypeName = "ZeroDivisionError"
 
   /// This type was automatically generated based on `PyZeroDivisionError` fields
   /// with `sourcery: includeInLayout` annotation.

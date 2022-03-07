@@ -1,5 +1,14 @@
 /// Common things for all of the Python objects.
 public protocol PyObjectMixin: CustomStringConvertible {
+
+  /// Name of the type.
+  ///
+  /// Used mainly in error messages.
+  static var pythonTypeName: String { get }
+
+  /// Pointer to and object.
+  ///
+  /// Each object starts with `PyObjectHeader`.
   var ptr: RawPtr { get }
 }
 
@@ -7,14 +16,12 @@ extension PyObjectMixin {
 
   // MARK: - Header
 
-  public var header: PyObjectHeader {
-    // Assumption: headerOffset = 0, but this should be valid for all of our types.
-    return PyObjectHeader(ptr: self.ptr)
-  }
+  // Assumption: headerOffset = 0, but this should be valid for all of our types.
+  public var header: PyObjectHeader { PyObjectHeader(ptr: self.ptr) }
 
   /// Also known as `klass`, but we are using CPython naming convention.
   public var type: PyType { self.header.type }
-  /// [Convenience] Name of the type of this Python object.
+  /// [Convenience] Name of the runtime type of this Python object.
   public var typeName: String { self.type.name }
 
   /// Read the docs in `PyObjectHeader` first!
@@ -82,4 +89,16 @@ extension PyObjectMixin {
 //    result.append(")")
 //    return result
 //  }
+
+  // MARK: - Invalid Zelf
+
+  internal static func invalidZelfArgument<T>(_ py: Py,
+                                              _ object: PyObject,
+                                              _ fnName: String) -> PyResult<T> {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
+  }
 }

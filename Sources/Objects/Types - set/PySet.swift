@@ -50,8 +50,6 @@ public struct PySet: PyObjectMixin, AbstractSet {
 
   // MARK: - AbstractSet
 
-  internal static var typeName = "set"
-
   internal static func newObject(_ py: Py, elements: OrderedSet) -> PySet {
     return py.newSet(elements: elements)
   }
@@ -565,13 +563,13 @@ public struct PySet: PyObjectMixin, AbstractSet {
     }
 
     if let e = ArgumentParser.noKwargsOrError(py,
-                                              fnName: self.typeName,
+                                              fnName: Self.pythonTypeName,
                                               kwargs: kwargs) {
       return .error(e.asBaseException)
     }
 
     if let e = ArgumentParser.guaranteeArgsCountOrError(py,
-                                                        fnName: self.typeName,
+                                                        fnName: Self.pythonTypeName,
                                                         args: args,
                                                         min: 0,
                                                         max: 1) {

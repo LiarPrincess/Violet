@@ -215,14 +215,4 @@ public struct PyBool: PyObjectMixin {
   private static func castZelf(_ py: Py, _ object: PyObject) -> PyBool? {
     return py.cast.asBool(object)
   }
-
-  private static func invalidZelfArgument(_ py: Py,
-                                          _ object: PyObject,
-                                          _ fnName: String) -> PyResult<PyObject> {
-    let error = py.newInvalidSelfArgumentError(object: object,
-                                               expectedType: "bool",
-                                               fnName: fnName)
-
-    return .error(error.asBaseException)
-  }
 }

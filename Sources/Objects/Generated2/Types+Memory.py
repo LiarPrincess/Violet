@@ -196,6 +196,8 @@ def print_type_things(t: TypeInfo):
 
     print(f'extension {swift_type_name} {{')
     print()
+    print(f'  public static let pythonTypeName = "{t.python_type_name}"')
+    print()
 
     (initial_offset, initial_alignment) = (ERROR_HEADER_OFFSET, ERROR_HEADER_ALIGNMENT) \
         if t.is_error else (HEADER_OFFSET, HEADER_ALIGNMENT)

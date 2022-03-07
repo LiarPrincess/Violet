@@ -36,8 +36,6 @@ public struct PyDictItems: PyObjectMixin, AbstractDictView {
 
   // MARK: - AbstravtView
 
-  internal static let typeName: String = "dict_items"
-
   internal static func castZelf(_ py: Py, _ object: PyObject) -> PyDictItems? {
     return py.cast.asDictItems(object)
   }

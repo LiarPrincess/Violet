@@ -6,7 +6,7 @@ extension AbstractSet {
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
     guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__eq__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__eq__)
     }
 
     return Self.isEqual(py, zelf: zelf, other: other)
@@ -16,7 +16,7 @@ extension AbstractSet {
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
     guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__ne__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ne__)
     }
 
     // CPython has different implementation here,
@@ -49,7 +49,7 @@ extension AbstractSet {
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
     guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__lt__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__lt__)
     }
 
     guard let other = py.cast.asAnySet(other) else {
@@ -72,7 +72,7 @@ extension AbstractSet {
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
     guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__le__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__le__)
     }
 
     guard let other = py.cast.asAnySet(other) else {
@@ -89,7 +89,7 @@ extension AbstractSet {
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
     guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__gt__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__gt__)
     }
 
     guard let other = py.cast.asAnySet(other) else {
@@ -112,7 +112,7 @@ extension AbstractSet {
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
     guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.typeName, .__ge__)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ge__)
     }
 
     guard let other = py.cast.asAnySet(other) else {
