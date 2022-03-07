@@ -70,11 +70,6 @@ public struct PyInt: PyObjectMixin {
     return Self.compareOperation(py, zelf: zelf, other: other, op: .__ne__) { $0 != $1 }
   }
 
-  // This is used in some other parts of this module.
-  internal func isEqual(_ other: PyInt) -> Bool {
-    return self.value == other.value
-  }
-
   // sourcery: pymethod = __lt__
   internal static func __lt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     return Self.compareOperation(py, zelf: zelf, other: other, op: .__lt__) { $0 < $1 }
@@ -99,7 +94,7 @@ public struct PyInt: PyObjectMixin {
                                        zelf: PyObject,
                                        other: PyObject,
                                        op: CompareResult.Operation,
-                                       fn: (BigInt, BigInt) -> Bool) -> CompareResult {
+                                       fn: (PyInt, PyInt) -> Bool) -> CompareResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, op)
     }
@@ -108,7 +103,7 @@ public struct PyInt: PyObjectMixin {
       return .notImplemented
     }
 
-    let result = fn(zelf.value, other.value)
+    let result = fn(zelf, other)
     return .value(result)
   }
 
@@ -149,10 +144,10 @@ public struct PyInt: PyObjectMixin {
     let string = String(describing: value)
 
     let pyString = Self.stringInternRange.contains(value) ?
-    py.intern(string: string) :
-    py.newString(string)
+      py.intern(string: string) :
+      py.newString(string)
 
-    return .value(pyString.asObject)
+    return PyResult(pyString)
   }
 
   // MARK: - As bool/int/float/index
@@ -1363,6 +1358,28 @@ public struct PyInt: PyObjectMixin {
     let result = fn(zelf.value, other.value)
     return PyResult(py, result)
   }
+
+  // MARK: - Operators
+
+  // Ints are very common, so we will define those:
+  internal static func == (lhs: PyInt, rhs: PyInt) -> Bool { lhs.value == rhs.value }
+  internal static func == (lhs: PyInt, rhs: BigInt) -> Bool { lhs.value == rhs }
+  internal static func == (lhs: BigInt, rhs: PyInt) -> Bool { lhs == rhs.value }
+  internal static func != (lhs: PyInt, rhs: PyInt) -> Bool { lhs.value != rhs.value }
+  internal static func != (lhs: PyInt, rhs: BigInt) -> Bool { lhs.value != rhs }
+  internal static func != (lhs: BigInt, rhs: PyInt) -> Bool { lhs != rhs.value }
+  internal static func < (lhs: PyInt, rhs: PyInt) -> Bool { lhs.value < rhs.value }
+  internal static func < (lhs: PyInt, rhs: BigInt) -> Bool { lhs.value < rhs }
+  internal static func < (lhs: BigInt, rhs: PyInt) -> Bool { lhs < rhs.value }
+  internal static func <= (lhs: PyInt, rhs: PyInt) -> Bool { lhs.value <= rhs.value }
+  internal static func <= (lhs: PyInt, rhs: BigInt) -> Bool { lhs.value <= rhs }
+  internal static func <= (lhs: BigInt, rhs: PyInt) -> Bool { lhs <= rhs.value }
+  internal static func > (lhs: PyInt, rhs: PyInt) -> Bool { lhs.value > rhs.value }
+  internal static func > (lhs: PyInt, rhs: BigInt) -> Bool { lhs.value > rhs }
+  internal static func > (lhs: BigInt, rhs: PyInt) -> Bool { lhs > rhs.value }
+  internal static func >= (lhs: PyInt, rhs: PyInt) -> Bool { lhs.value >= rhs.value }
+  internal static func >= (lhs: PyInt, rhs: BigInt) -> Bool { lhs.value >= rhs }
+  internal static func >= (lhs: BigInt, rhs: PyInt) -> Bool { lhs >= rhs.value }
 
   // MARK: - Helpers
 
