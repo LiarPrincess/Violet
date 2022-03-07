@@ -62,17 +62,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
   }
 
   internal static func castZelf(_ py: Py, _ object: PyObject) -> PyList? {
-    return downcast(py, object)
-  }
-
-  internal static func invalidZelfArgument(_ py: Py,
-                                           _ object: PyObject,
-                                           _ fnName: String) -> PyResult<PyObject> {
-    let error = py.newInvalidSelfArgumentError(object: object,
-                                               expectedType: Self.typeName,
-                                               fnName: fnName)
-
-    return .error(error.asBaseException)
+    return Self.downcast(py, object)
   }
 
   // MARK: - Equatable, comparable
@@ -677,10 +667,10 @@ public struct PyList: PyObjectMixin, AbstractSequence {
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  internal static  func __init__(_ py: Py,
-                                 zelf: PyObject,
-                                 args: [PyObject],
-                                 kwargs: PyDict?) -> PyResult<PyObject> {
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
     guard let zelf = Self.castZelf(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }

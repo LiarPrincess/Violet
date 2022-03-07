@@ -1,20 +1,24 @@
-/* MARKER
 extension AbstractSet {
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _contains(object: PyObject) -> PyResult<Bool> {
-    switch Self._createElement(from: object) {
+  internal static func abstract__contains__(_ py: Py,
+                                            zelf: PyObject,
+                                            object: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__contains__")
+    }
+
+    switch Self.createElement(py, object: object) {
     case let .value(element):
-      return self._contains(element: element)
+      let result = Self.contains(py, zelf: zelf, element: element)
+      return PyResult(py, result)
     case let .error(e):
       return .error(e)
     }
   }
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _contains(element: Element) -> PyResult<Bool> {
-    return self.elements.contains(element: element)
+  private static func contains(_ py: Py,
+                               zelf: Self,
+                               element: Element) -> PyResult<Bool> {
+    return zelf.elements.contains(py, element: element)
   }
 }
-
-*/

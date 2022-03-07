@@ -1,102 +1,146 @@
-/* MARKER
 extension AbstractSet {
 
   // MARK: - And
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _and(other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyCast.asAnySet(other) else {
-      return .value(Py.notImplemented)
+  internal static func abstract__and__(_ py: Py,
+                                       zelf: PyObject,
+                                       other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__and__")
     }
 
-    switch self._intersection(lhs: self.elements, rhs: other.elements) {
+    return Self.and(py, zelf: zelf, other: other)
+  }
+
+  internal static func abstract__rand__(_ py: Py,
+                                        zelf: PyObject,
+                                        other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__rand__")
+    }
+
+    return Self.and(py, zelf: zelf, other: other)
+  }
+
+  private static func and(_ py: Py, zelf: Self, other: PyObject) -> PyResult<PyObject> {
+    guard let other = py.cast.asAnySet(other) else {
+      return .notImplemented(py)
+    }
+
+    switch Self.abstractIntersection(py, lhs: zelf.elements, rhs: other.elements) {
     case let .value(set):
-      let result = Self._toSelf(elements: set)
-      return .value(result)
+      let result = Self.newObject(py, elements: set)
+      return PyResult(result)
     case let .error(e):
       return .error(e)
     }
-  }
-
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _rand(other: PyObject) -> PyResult<PyObject> {
-    return self._and(other: other)
   }
 
   // MARK: - Or
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _or(other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyCast.asAnySet(other) else {
-      return .value(Py.notImplemented)
+  internal static func abstract__or__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__or__")
     }
 
-    switch self._union(lhs: self.elements, rhs: other.elements) {
+    return Self.or(py, zelf: zelf, other: other)
+  }
+
+  internal static func abstract__ror__(_ py: Py,
+                                       zelf: PyObject,
+                                       other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__ror__")
+    }
+
+    return Self.or(py, zelf: zelf, other: other)
+  }
+
+  private static func or(_ py: Py, zelf: Self, other: PyObject) -> PyResult<PyObject> {
+    guard let other = py.cast.asAnySet(other) else {
+      return .notImplemented(py)
+    }
+
+    switch Self.abstractUnion(py, lhs: zelf.elements, rhs: other.elements) {
     case let .value(set):
-      let result = Self._toSelf(elements: set)
-      return .value(result)
+      let result = Self.newObject(py, elements: set)
+      return PyResult(result)
     case let .error(e):
       return .error(e)
     }
-  }
-
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _ror(other: PyObject) -> PyResult<PyObject> {
-    return self._or(other: other)
   }
 
   // MARK: - Xor
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _xor(other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyCast.asAnySet(other) else {
-      return .value(Py.notImplemented)
+  internal static func abstract__xor__(_ py: Py,
+                                       zelf: PyObject,
+                                       other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__xor__")
     }
 
-    switch self._symmetricDifference(lhs: self.elements, rhs: other.elements) {
+    return Self.xor(py, zelf: zelf, other: other)
+  }
+
+  internal static func abstract__rxor__(_ py: Py,
+                                        zelf: PyObject,
+                                        other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__rxor__")
+    }
+
+    return Self.xor(py, zelf: zelf, other: other)
+  }
+
+  private static func xor(_ py: Py, zelf: Self, other: PyObject) -> PyResult<PyObject> {
+    guard let other = py.cast.asAnySet(other) else {
+      return .notImplemented(py)
+    }
+
+    switch self.abstractSymmetricDifference(py, lhs: zelf.elements, rhs: other.elements) {
     case let .value(set):
-      let result = Self._toSelf(elements: set)
-      return .value(result)
+      let result = Self.newObject(py, elements: set)
+      return PyResult(result)
     case let .error(e):
       return .error(e)
     }
   }
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _rxor(other: PyObject) -> PyResult<PyObject> {
-    return self._xor(other: other)
-  }
-
   // MARK: - Sub
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _sub(other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyCast.asAnySet(other) else {
-      return .value(Py.notImplemented)
+  internal static func abstract__sub__(_ py: Py,
+                                       zelf: PyObject,
+                                       other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__sub__")
     }
 
-    return self._sub(lhs: self.elements, rhs: other.elements)
+    return Self.sub(py, zelf: zelf, other: other)
   }
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _rsub(other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyCast.asAnySet(other) else {
-      return .value(Py.notImplemented)
+  internal static func abstract__rsub__(_ py: Py,
+                                        zelf: PyObject,
+                                        other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__rsub__")
     }
 
-    return self._sub(lhs: other.elements, rhs: self.elements)
+    return Self.sub(py, zelf: zelf, other: other)
   }
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  private func _sub(lhs: OrderedSet, rhs: OrderedSet) -> PyResult<PyObject> {
-    switch self._difference(lhs: lhs, rhs: rhs) {
+  private static func sub(_ py: Py, zelf: Self, other: PyObject) -> PyResult<PyObject> {
+    guard let other = py.cast.asAnySet(other) else {
+      return .notImplemented(py)
+    }
+
+    switch Self.abstractDifference(py, lhs: zelf.elements, rhs: other.elements) {
     case let .value(set):
-      let result = Self._toSelf(elements: set)
-      return .value(result)
+      let result = Self.newObject(py, elements: set)
+      return PyResult(result)
     case let .error(e):
       return .error(e)
     }
   }
 }
-
-*/

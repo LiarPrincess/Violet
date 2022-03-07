@@ -1,16 +1,20 @@
-/* MARKER
 extension AbstractSet {
 
   // MARK: - Intersection
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _intersection(with other: PyObject) -> PyResult<PyObject> {
-    switch Self._getElements(iterable: other) {
+  internal static func abstractIntersection(_ py: Py,
+                                            zelf: PyObject,
+                                            other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "intersection")
+    }
+
+    switch Self.getElements(py, iterable: other) {
     case let .value(elements):
-      switch self._intersection(lhs: self.elements, rhs: elements) {
+      switch Self.abstractIntersection(py, lhs: zelf.elements, rhs: elements) {
       case let .value(set):
-        let result = Self._toSelf(elements: set)
-        return .value(result)
+        let result = Self.newObject(py, elements: set)
+        return PyResult(result)
       case let .error(e):
         return .error(e)
       }
@@ -20,20 +24,20 @@ extension AbstractSet {
     }
   }
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _intersection(lhs: OrderedSet,
-                              rhs: OrderedSet) -> PyResult<OrderedSet> {
+  internal static func abstractIntersection(_ py: Py,
+                                            lhs: OrderedSet,
+                                            rhs: OrderedSet) -> PyResult<OrderedSet> {
     let isLhsSmaller = lhs.count < rhs.count
     let smaller = isLhsSmaller ? lhs : rhs
     let bigger = isLhsSmaller ? rhs : lhs
 
     var result = OrderedSet()
     for element in smaller {
-      switch bigger.contains(element: element) {
+      switch bigger.contains(py, element: element) {
       case .value(true):
-        switch result.insert(element: element) {
+        switch result.insert(py, element: element) {
         case .inserted,
-             .updated:
+            .updated:
           break
         case .error(let e):
           return .error(e)
@@ -51,14 +55,19 @@ extension AbstractSet {
 
   // MARK: - Union
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _union(with other: PyObject) -> PyResult<PyObject> {
-    switch Self._getElements(iterable: other) {
+  internal static func abstractUnion(_ py: Py,
+                                     zelf: PyObject,
+                                     other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "union")
+    }
+
+    switch Self.getElements(py, iterable: other) {
     case let .value(elements):
-      switch self._union(lhs: self.elements, rhs: elements) {
+      switch Self.abstractUnion(py, lhs: zelf.elements, rhs: elements) {
       case let .value(set):
-        let result = Self._toSelf(elements: set)
-        return .value(result)
+        let result = Self.newObject(py, elements: set)
+        return PyResult(result)
       case let .error(e):
         return .error(e)
       }
@@ -68,18 +77,18 @@ extension AbstractSet {
     }
   }
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _union(lhs: OrderedSet,
-                       rhs: OrderedSet) -> PyResult<OrderedSet> {
+  internal static func abstractUnion(_ py: Py,
+                                     lhs: OrderedSet,
+                                     rhs: OrderedSet) -> PyResult<OrderedSet> {
     let isLhsSmaller = lhs.count < rhs.count
     let smaller = isLhsSmaller ? lhs : rhs
     let bigger = isLhsSmaller ? rhs : lhs
 
     var result = bigger
     for element in smaller {
-      switch result.insert(element: element) {
+      switch result.insert(py, element: element) {
       case .inserted,
-           .updated:
+          .updated:
         break
       case .error(let e):
         return .error(e)
@@ -91,14 +100,19 @@ extension AbstractSet {
 
   // MARK: - Difference
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _difference(with other: PyObject) -> PyResult<PyObject> {
-    switch Self._getElements(iterable: other) {
+  internal static func abstractDifference(_ py: Py,
+                                          zelf: PyObject,
+                                          other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "difference")
+    }
+
+    switch Self.getElements(py, iterable: other) {
     case let .value(elements):
-      switch self._difference(lhs: self.elements, rhs: elements) {
+      switch Self.abstractDifference(py, lhs: zelf.elements, rhs: elements) {
       case let .value(set):
-        let result = Self._toSelf(elements: set)
-        return .value(result)
+        let result = Self.newObject(py, elements: set)
+        return PyResult(result)
 
       case let .error(e):
         return .error(e)
@@ -108,20 +122,20 @@ extension AbstractSet {
     }
   }
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _difference(lhs: OrderedSet,
-                            rhs: OrderedSet) -> PyResult<OrderedSet> {
+  internal static func abstractDifference(_ py: Py,
+                                          lhs: OrderedSet,
+                                          rhs: OrderedSet) -> PyResult<OrderedSet> {
     var result = OrderedSet()
 
     for element in lhs {
-      switch rhs.contains(element: element) {
+      switch rhs.contains(py, element: element) {
       case .value(true):
         break
 
       case .value(false):
-        switch result.insert(element: element) {
+        switch result.insert(py, element: element) {
         case .inserted,
-             .updated:
+            .updated:
           break
         case .error(let e):
           return .error(e)
@@ -137,14 +151,19 @@ extension AbstractSet {
 
   // MARK: - Symmetric difference
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _symmetricDifference(with other: PyObject) -> PyResult<PyObject> {
-    switch Self._getElements(iterable: other) {
+  internal static func abstractSymmetricDifference(_ py: Py,
+                                                   zelf: PyObject,
+                                                   other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "symmetric_difference")
+    }
+
+    switch Self.getElements(py, iterable: other) {
     case let .value(elements):
-      switch self._symmetricDifference(lhs: self.elements, rhs: elements) {
+      switch Self.abstractSymmetricDifference(py, lhs: zelf.elements, rhs: elements) {
       case let .value(set):
-        let result = Self._toSelf(elements: set)
-        return .value(result)
+        let result = Self.newObject(py, elements: set)
+        return PyResult(result)
       case let .error(e):
         return .error(e)
       }
@@ -154,19 +173,19 @@ extension AbstractSet {
     }
   }
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _symmetricDifference(lhs: OrderedSet,
-                                     rhs: OrderedSet) -> PyResult<OrderedSet> {
+  internal static func abstractSymmetricDifference(_ py: Py,
+                                                   lhs: OrderedSet,
+                                                   rhs: OrderedSet) -> PyResult<OrderedSet> {
     var result = OrderedSet()
 
     for element in lhs {
-      switch rhs.contains(element: element) {
+      switch rhs.contains(py, element: element) {
       case .value(true):
         break
       case .value(false):
-        switch result.insert(element: element) {
+        switch result.insert(py, element: element) {
         case .inserted,
-             .updated:
+            .updated:
           break
         case .error(let e):
           return .error(e)
@@ -177,13 +196,13 @@ extension AbstractSet {
     }
 
     for element in rhs {
-      switch lhs.contains(element: element) {
+      switch lhs.contains(py, element: element) {
       case .value(true):
         break
       case .value(false):
-        switch result.insert(element: element) {
+        switch result.insert(py, element: element) {
         case .inserted,
-             .updated:
+            .updated:
           break
         case .error(let e):
           return .error(e)
@@ -196,5 +215,3 @@ extension AbstractSet {
     return .value(result)
   }
 }
-
-*/

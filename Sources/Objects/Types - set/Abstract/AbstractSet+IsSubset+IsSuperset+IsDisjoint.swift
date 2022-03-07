@@ -1,26 +1,32 @@
-/* MARKER
 extension AbstractSet {
 
   // MARK: - Subset
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _isSubset(of other: PyObject) -> PyResult<Bool> {
-    switch Self._getElements(iterable: other) {
+  internal static func abstractIsSubset(_ py: Py,
+                                        zelf: PyObject,
+                                        other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "issubset")
+    }
+
+    switch Self.getElements(py, iterable: other) {
     case let .value(elements):
-      return self._isSubset(of: elements)
+      let result = Self.abstractIsSubset(py, zelf: zelf, other: elements)
+      return PyResult(py, result)
     case let .error(e):
       return .error(e)
     }
   }
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _isSubset(of other: OrderedSet) -> PyResult<Bool> {
-    guard self._count <= other.count else {
+  internal static func abstractIsSubset(_ py: Py,
+                                        zelf: Self,
+                                        other: OrderedSet) -> PyResult<Bool> {
+    guard zelf.count <= other.count else {
       return .value(false)
     }
 
-    for element in self.elements {
-      switch other.contains(element: element) {
+    for element in zelf.elements {
+      switch other.contains(py, element: element) {
       case .value(true): break // try next
       case .value(false): return .value(false)
       case .error(let e): return .error(e)
@@ -32,24 +38,31 @@ extension AbstractSet {
 
   // MARK: - Superset
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _isSuperset(of other: PyObject) -> PyResult<Bool> {
-    switch Self._getElements(iterable: other) {
+  internal static func abstractIsSuperset(_ py: Py,
+                                          zelf: PyObject,
+                                          other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "issuperset")
+    }
+
+    switch Self.getElements(py, iterable: other) {
     case let .value(elements):
-      return self._isSuperset(of: elements)
+      let result = Self.abstractIsSuperset(py, zelf: zelf, other: elements)
+      return PyResult(py, result)
     case let .error(e):
       return .error(e)
     }
   }
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _isSuperset(of other: OrderedSet) -> PyResult<Bool> {
-    guard self._count >= other.count else {
+  internal static func abstractIsSuperset(_ py: Py,
+                                          zelf: Self,
+                                          other: OrderedSet) -> PyResult<Bool> {
+    guard zelf.count >= other.count else {
       return .value(false)
     }
 
     for element in other {
-      switch self.elements.contains(element: element) {
+      switch zelf.elements.contains(py, element: element) {
       case .value(true): break // try next
       case .value(false): return .value(false)
       case .error(let e): return .error(e)
@@ -61,24 +74,31 @@ extension AbstractSet {
 
   // MARK: - Is disjoint
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  internal func _isDisjoint(with other: PyObject) -> PyResult<Bool> {
-    switch Self._getElements(iterable: other) {
+  internal static func abstractIsDisjoint(_ py: Py,
+                                          zelf: PyObject,
+                                          other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "isdisjoint")
+    }
+
+    switch Self.getElements(py, iterable: other) {
     case let .value(elements):
-      return self._isDisjoint(with: elements)
+      let result = Self.abstractIsDisjoint(py, zelf: zelf, other: elements)
+      return PyResult(py, result)
     case let .error(e):
       return .error(e)
     }
   }
 
-  /// DO NOT USE! This is a part of `AbstractSet` implementation.
-  private func _isDisjoint(with other: OrderedSet) -> PyResult<Bool> {
-    let isSelfSmaller = self._count < other.count
-    let smaller = isSelfSmaller ? self.elements : other
-    let bigger = isSelfSmaller ? other : self.elements
+  private static func abstractIsDisjoint(_ py: Py,
+                                         zelf: Self,
+                                         other: OrderedSet) -> PyResult<Bool> {
+    let isSelfSmaller = zelf.count < other.count
+    let smaller = isSelfSmaller ? zelf.elements : other
+    let bigger = isSelfSmaller ? other : zelf.elements
 
     for element in smaller {
-      switch bigger.contains(element: element) {
+      switch bigger.contains(py, element: element) {
       case .value(true): return .value(false)
       case .value(false): break
       case .error(let e): return .error(e)
@@ -88,5 +108,3 @@ extension AbstractSet {
     return .value(true)
   }
 }
-
-*/
