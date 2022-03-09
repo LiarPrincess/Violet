@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import BigInt
 
@@ -18,10 +17,9 @@ private let ascii_space: UInt8 = 32
 private let ascii_zero: UInt8 = 48
 private let ascii_endIndex: UInt8 = 127
 
-// MARK: - AbstractBytes_ElementsFromIterable
+// MARK: - AbstractBytesElementsFromIterable
 
-// swiftlint:disable:next type_name
-internal enum AbstractBytes_ElementsFromIterable {
+internal enum AbstractBytesElementsFromIterable {
   case bytes(Data)
   case notIterable
   case error(PyBaseException)
@@ -46,30 +44,49 @@ extension AbstractBytes {
 
   /// static PyObject*
   /// bytes_richcompare(PyBytesObject *a, PyBytesObject *b, int op)
-  ///
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal func _isEqualBytes(other: PyObject) -> CompareResult {
-    if self === other {
+  internal static func abstract__eq__bytes(_ py: Py,
+                                           zelf: PyObject,
+                                           other: PyObject) -> CompareResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__eq__)
+    }
+
+    return Self.isEqualBytes(py, zelf: zelf, other: other)
+  }
+
+  internal static func abstract__ne__bytes(_ py: Py,
+                                           zelf: PyObject,
+                                           other: PyObject) -> CompareResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ne__)
+    }
+
+    let isEqual = Self.isEqualBytes(py, zelf: zelf, other: other)
+    return isEqual.not
+  }
+
+  private static func isEqualBytes(_ py: Py, zelf: Self, other: PyObject) -> CompareResult {
+    if zelf.ptr === other.ptr {
       return .value(true)
     }
 
     // Homo - both bytes/bytearray
-    if let bytes = PyCast.asAnyBytes(other) {
-      let result = self._isEqual(other: bytes.elements)
+    if let bytes = py.cast.asAnyBytes(other) {
+      let result = Self.abstractIsEqual(zelf: zelf, other: bytes.elements)
       return CompareResult(result)
     }
 
     // Hetero - bytes and something
-    if PyCast.isInt(other) {
-      let msg = "Comparison between bytes and int"
-      if let e = Py.warnBytesIfEnabled(msg: msg) {
+    if py.cast.isInt(other) {
+      let message = "Comparison between bytes and int"
+      if let e = py.warnBytesIfEnabled(message: message) {
         return .error(e)
       }
     }
 
-    if PyCast.isString(other) {
-      let msg = "Comparison between bytes and string"
-      if let e = Py.warnBytesIfEnabled(msg: msg) {
+    if py.cast.isString(other) {
+      let message = "Comparison between bytes and string"
+      if let e = py.warnBytesIfEnabled(message: message) {
         return .error(e)
       }
     }
@@ -77,19 +94,37 @@ extension AbstractBytes {
     return .notImplemented
   }
 
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal func _isNotEqualBytes(other: PyObject) -> CompareResult {
-    return self._isEqualBytes(other: other).not
+  // MARK: - Repr, str
+
+  internal static func abstract__repr__(_ py: Py,
+                                        zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__repr__")
+    }
+
+    return Self.toString(py, zelf: zelf)
   }
 
-  // MARK: - Repr
+  /// static PyObject *
+  /// bytes_str(PyObject *op)
+  internal static func abstract__str__(_ py: Py,
+                                       zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__str__")
+    }
 
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal func _repr() -> String {
+    if let e = py.warnBytesIfEnabled(message: "str() on a bytes instance") {
+      return .error(e)
+    }
+
+    return Self.toString(py, zelf: zelf)
+  }
+
+  private static func toString(_ py: Py, zelf: Self) -> PyResult<PyObject> {
     var result = String("'")
-    result.reserveCapacity(self.count)
+    result.reserveCapacity(zelf.count)
 
-    for element in self.elements {
+    for element in zelf.elements {
       switch element {
       case ascii_apostrophe,
            ascii_slash:
@@ -108,46 +143,31 @@ extension AbstractBytes {
           result.append(UnicodeScalar(element))
         } else {
           result.append("\\x")
-          result.append(self._hex((element >> 4) & 0xf))
-          result.append(self._hex((element >> 0) & 0xf))
+          result.append(Self.hex((element >> 4) & 0xf))
+          result.append(Self.hex((element >> 0) & 0xf))
         }
       }
     }
+
     result.append("'")
-
-    return result
+    return PyResult(py, result)
   }
 
-  private func _hex(_ value: UInt8) -> String {
+  private static func hex(_ value: UInt8) -> String {
     return String(value, radix: 16, uppercase: false)
-  }
-
-  // MARK: - Str
-
-  /// static PyObject *
-  /// bytes_str(PyObject *op)
-  ///
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal func _str() -> PyResult<String> {
-    if let e = Py.warnBytesIfEnabled(msg: "str() on a bytes instance") {
-      return .error(e)
-    }
-
-    let repr = self._repr()
-    return .value(repr)
   }
 
   // MARK: - Elements from iterable
 
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal static func _getElementsFromIterable(
+  internal static func getElementsFromIterable(
+    _ py: Py,
     iterable: PyObject
-  ) -> AbstractBytes_ElementsFromIterable {
-    if let bytes = PyCast.asExactlyAnyBytes(iterable) {
+  ) -> AbstractBytesElementsFromIterable {
+    if let bytes = py.cast.asExactlyAnyBytes(iterable) {
       return .bytes(bytes.elements)
     }
 
-    guard Py.hasIter(object: iterable) else {
+    guard py.hasIter(object: iterable) else {
       return .notIterable
     }
 
@@ -155,12 +175,13 @@ extension AbstractBytes {
 
     // If we can easily get the '__len__' then use it.
     // If not, then we can't call python method, because it may side-effect.
-    if let bigInt = PyStaticCall.__len__(iterable), let int = Int(exactly: bigInt) {
+    if let pyInt = PyStaticCall.__len__(py, object: iterable),
+       let int = Int(exactly: pyInt.value) {
       result.reserveCapacity(int)
     }
 
-    let reduceError = Py.reduce(iterable: iterable, into: &result) { acc, object in
-      switch Self._asByte(object: object) {
+    let reduceError = py.reduce(iterable: iterable, into: &result) { acc, object in
+      switch Self.asByte(py, object: object) {
       case let .value(byte):
         acc.append(byte)
         return .goToNextElement
@@ -179,27 +200,23 @@ extension AbstractBytes {
   // MARK: - As byte
 
   /// Helper for extracting a single byte.
-  ///
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal static func _asByte(object: PyObject) -> PyResult<UInt8> {
-    let bigInt: BigInt
+  internal static func asByte(_ py: Py, object: PyObject) -> PyResult<UInt8> {
+    let pyInt: PyInt
 
-    switch IndexHelper.bigInt(object) {
-    case let .value(b):
-      bigInt = b
+    switch IndexHelper.pyInt(py, object: object) {
+    case let .value(i):
+      pyInt = i
     case let .notIndex(lazyError):
-      let e = lazyError.create()
+      let e = lazyError.create(py)
       return .error(e)
     case let .error(e):
       return .error(e)
     }
 
-    guard let byte = UInt8(exactly: bigInt) else {
-      return .valueError("byte must be in range(0, 256)")
+    guard let byte = UInt8(exactly: pyInt.value) else {
+      return .valueError(py, message: "byte must be in range(0, 256)")
     }
 
     return .value(byte)
   }
 }
-
-*/

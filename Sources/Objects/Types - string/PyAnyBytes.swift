@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 
 // MARK: - PyAnyBytes
@@ -28,10 +27,10 @@ internal struct PyAnyBytes: CustomStringConvertible {
     }
   }
 
-  internal var object: PyObject {
+  internal var asObject: PyObject {
     switch self.storage {
-    case let .bytes(s): return s
-    case let .bytearray(s): return s
+    case let .bytes(s): return s.asObject
+    case let .bytearray(s): return s.asObject
     }
   }
 
@@ -46,31 +45,31 @@ internal struct PyAnyBytes: CustomStringConvertible {
 
 // MARK: - PyCast
 
-extension PyCast {
+extension Py.Cast {
 
   /// Is this object a `bytes` or `bytearray` (or their subclass)?
-  internal static func isAnyBytes(_ object: PyObject) -> Bool {
+  internal func isAnyBytes(_ object: PyObject) -> Bool {
     return self.isBytes(object) || self.isByteArray(object)
   }
 
   /// Is this object a `bytes` or `bytearray` (but not their subclass)?
-  internal static func isExactlyAnyBytes(_ object: PyObject) -> Bool {
+  internal func isExactlyAnyBytes(_ object: PyObject) -> Bool {
     return self.isExactlyBytes(object) || self.isExactlyByteArray(object)
   }
 
   /// Is this object a `bytes` or `bytearray` (but not their subclass)?
-  internal static func isExactlyAnyBytes(_ bytes: PyAnyBytes) -> Bool {
+  internal func isExactlyAnyBytes(_ bytes: PyAnyBytes) -> Bool {
     switch bytes.storage {
     case let .bytes(s):
-      return self.isExactlyBytes(s)
+      return self.isExactlyBytes(s.asObject)
     case let .bytearray(s):
-      return self.isExactlyByteArray(s)
+      return self.isExactlyByteArray(s.asObject)
     }
   }
 
   /// Cast this object to `PyAnyBytes` if it is a `bytes` or `bytearray`
   /// (or their subclass).
-  internal static func asAnyBytes(_ object: PyObject) -> PyAnyBytes? {
+  internal func asAnyBytes(_ object: PyObject) -> PyAnyBytes? {
     if let bytes = self.asBytes(object) {
       return PyAnyBytes(bytes: bytes)
     }
@@ -84,7 +83,7 @@ extension PyCast {
 
   /// Cast this object to `PyAnyBytes` if it is a `bytes` or `bytearray`
   /// (but not their subclass).
-   internal static func asExactlyAnyBytes(_ object: PyObject) -> PyAnyBytes? {
+   internal func asExactlyAnyBytes(_ object: PyObject) -> PyAnyBytes? {
     if let bytes = self.asExactlyBytes(object) {
       return PyAnyBytes(bytes: bytes)
     }
@@ -96,5 +95,3 @@ extension PyCast {
     return nil
   }
 }
-
-*/

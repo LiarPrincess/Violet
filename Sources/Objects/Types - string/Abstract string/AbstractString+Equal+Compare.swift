@@ -23,7 +23,7 @@ extension AbstractString {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, .__eq__)
     }
 
-    return Self.isEqual(py, zelf: zelf, other: other)
+    return Self.abstractIsEqual(py, zelf: zelf, other: other)
   }
 
   internal static func abstract__ne__(_ py: Py,
@@ -33,11 +33,13 @@ extension AbstractString {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ne__)
     }
 
-    let isEqual = Self.isEqual(py, zelf: zelf, other: other)
+    let isEqual = Self.abstractIsEqual(py, zelf: zelf, other: other)
     return isEqual.not
   }
-
-  private static func isEqual(_ py: Py, zelf: Self, other: PyObject) -> CompareResult {
+  
+  private static func abstractIsEqual(_ py: Py,
+                                      zelf: Self,
+                                      other: PyObject) -> CompareResult {
     if zelf.ptr === other.ptr {
       return .value(true)
     }
@@ -46,13 +48,17 @@ extension AbstractString {
       return .notImplemented
     }
 
-    guard zelf.count == otherElements.count else {
-      return .value(false)
+    let isEqual = Self.abstractIsEqual(zelf: zelf, other: otherElements)
+    return CompareResult(isEqual)
+  }
+
+  internal static func abstractIsEqual(zelf: Self, other: Elements) -> Bool {
+    guard zelf.count == other.count else {
+      return false
     }
 
-    let result = Self.compare(zelf: zelf, other: otherElements)
-    let isEqual = result.isEqual
-    return CompareResult(isEqual)
+    let result = Self.compare(zelf: zelf, other: other)
+    return result.isEqual
   }
 
   // MARK: - Compare
