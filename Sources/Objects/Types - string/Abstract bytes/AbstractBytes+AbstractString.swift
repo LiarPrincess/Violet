@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import UnicodeData
 import VioletCore
@@ -46,26 +45,27 @@ extension AbstractBytes {
 
   // MARK: - Get elements
 
-  internal static func _getElements(object: PyObject) -> Data? {
-    if let bytes = PyCast.asAnyBytes(object) {
+  internal static func getElements(_ py: Py, object: PyObject) -> Data? {
+    if let bytes = py.cast.asAnyBytes(object) {
       return bytes.elements
     }
 
     return nil
   }
 
-  internal static func _getElementsForFindCountContainsIndexOf(
+  internal static func getElementsForFindCountContainsIndexOf(
+    _ py: Py,
     object: PyObject
   ) -> AbstractStringElementsForFindCountContainsIndexOf<Data> {
-    if let bytes = PyCast.asAnyBytes(object) {
+    if let bytes = py.cast.asAnyBytes(object) {
       return .value(bytes.elements)
     }
 
     // For example: `49 in b'123'`.
-    if let pyInt = PyCast.asInt(object) {
+    if let pyInt = py.cast.asInt(object) {
       guard let byte = UInt8(exactly: pyInt.value) else {
-        let msg = "byte must be in range(0, 256)"
-        return .error(Py.newValueError(msg: msg))
+        let error = py.newValueError(message: "byte must be in range(0, 256)")
+        return .error(error.asBaseException)
       }
 
       let data = Data(byte: byte)
@@ -77,85 +77,73 @@ extension AbstractBytes {
 
   // MARK: - Whitespace
 
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal static func _isWhitespace(element: UInt8) -> Bool {
+  internal static func isWhitespace(element: UInt8) -> Bool {
     return ASCIIData.isWhitespace(element)
   }
 
   // MARK: - Line break
 
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal static func _isLineBreak(element: UInt8) -> Bool {
+  internal static func isLineBreak(element: UInt8) -> Bool {
     return ASCIIData.isLineBreak(element)
   }
 
   // MARK: - AlphaNumeric
 
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal static func _isAlphaNumeric(element: UInt8) -> Bool {
+  internal static func isAlphaNumeric(element: UInt8) -> Bool {
     return ASCIIData.isAlphaNumeric(element)
   }
 
   // MARK: - Alpha
 
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal static func _isAlpha(element: UInt8) -> Bool {
+  internal static func isAlpha(element: UInt8) -> Bool {
     return ASCIIData.isAlpha(element)
   }
 
   // MARK: - ASCII
 
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal static func _isAscii(element: UInt8) -> Bool {
+  internal static func isAscii(element: UInt8) -> Bool {
     return ASCIIData.isASCII(element)
   }
 
   // MARK: - Digit
 
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal static func _isDigit(element: UInt8) -> Bool {
+  internal static func isDigit(element: UInt8) -> Bool {
     return ASCIIData.isDigit(element)
   }
 
   // MARK: - Lower
 
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal static func _isLower(element: UInt8) -> Bool {
+  internal static func isLower(element: UInt8) -> Bool {
     return ASCIIData.isLowercase(element)
   }
 
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal static func _lowercaseMapping(element: UInt8) -> UInt8 {
+  internal static func lowercaseMapping(element: UInt8) -> UInt8 {
     return ASCIIData.toLowercase(element)
   }
 
   // MARK: - Upper
 
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal static func _isUpper(element: UInt8) -> Bool {
+  internal static func isUpper(element: UInt8) -> Bool {
     return ASCIIData.isUppercase(element)
   }
 
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal static func _uppercaseMapping(element: UInt8) -> UInt8 {
+  internal static func uppercaseMapping(element: UInt8) -> UInt8 {
     return ASCIIData.toUppercase(element)
   }
 
   // MARK: - Title
 
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal static func _isTitle(element: UInt8) -> Bool {
+  internal static func isTitle(element: UInt8) -> Bool {
     return ASCIIData.isTitlecase(element)
   }
 
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal static func _titlecaseMapping(element: UInt8) -> UInt8 {
+  internal static func titlecaseMapping(element: UInt8) -> UInt8 {
     return ASCIIData.toTitlecase(element)
   }
 
   // MARK: - Is cased
 
-  internal static func _isCased(element: UInt8) -> Bool {
+  internal static func isCased(element: UInt8) -> Bool {
     return ASCIIData.isCased(element)
   }
 
@@ -164,7 +152,6 @@ extension AbstractBytes {
   /// Is this `+` or `-` (`0x2B` and `0x2D` in ASCII respectively).
   /// Used inside `zfill`.
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func isPlusOrMinus(element: UInt8) -> Bool {
     return element == 0x2b || element == 0x2d
   }
@@ -172,7 +159,6 @@ extension AbstractBytes {
   /// Is this `HT` (`0x09` in ASCII)?
   /// Used inside `expandTabs`.
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func isHorizontalTab(element: UInt8) -> Bool {
     return element == 0x09
   }
@@ -180,7 +166,6 @@ extension AbstractBytes {
   /// Is this `CR` (`0x0D` in ASCII)?
   /// Used inside `splitLines`.
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func isCarriageReturn(element: UInt8) -> Bool {
     return element == 0x0d
   }
@@ -188,10 +173,7 @@ extension AbstractBytes {
   /// Is this `LF` (`0x0A` in ASCII)?
   /// Used inside `splitLines`.
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func isLineFeed(element: UInt8) -> Bool {
     return element == 0x0a
   }
 }
-
-*/

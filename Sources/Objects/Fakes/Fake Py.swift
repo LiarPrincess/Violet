@@ -147,6 +147,7 @@ public struct Py {
 
   // MARK: - Collections
 
+  public func hasIter(object: PyObject) -> Bool { fatalError() }
   func next(iterator: PyObject) -> PyResult<PyObject> { fatalError() }
   func iter(object: PyObject) -> PyResult<PyObject> { fatalError() }
 
@@ -366,6 +367,8 @@ public struct Py {
     fatalError()
   }
 
+  public func warnBytesIfEnabled(message: String) -> PyBaseException? { fatalError() }
+
   // MARK: - Get string
 
   internal enum GetStringResult {
@@ -389,8 +392,4 @@ public struct Py {
                           encoding: PyString.Encoding?) -> String? {
     fatalError()
   }
-}
-
-struct PyAnyBytes {
-  var object: PyBytes { fatalError() }
 }

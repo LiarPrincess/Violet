@@ -1277,7 +1277,7 @@ public struct PyInt: PyObjectMixin {
          .bytes(_, let s):
       string = s
     case .byteDecodingError(let bytes):
-      let message = "int() bytes at '\(bytes.object.ptr)' cannot be interpreted as str"
+      let message = "int() bytes at '\(bytes.asObject.ptr)' cannot be interpreted as str"
       let error = py.newValueError(message: message)
       return .error(error.asBaseException)
     case .notStringOrBytes:

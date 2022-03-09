@@ -969,7 +969,7 @@ public struct PyFloat: PyObjectMixin {
       return .value(value)
 
     case .byteDecodingError(let bytes):
-      let ptr = bytes.object.ptr
+      let ptr = bytes.asObject.ptr
       let message = "float() bytes at '\(ptr)' cannot be interpreted as str"
       let error = py.newValueError(message: message)
       return .error(error)
