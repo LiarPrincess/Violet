@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 
 internal struct BytesBuilder: StringBuilderType, GetItemSliceBuilderType {
@@ -8,6 +7,8 @@ internal struct BytesBuilder: StringBuilderType, GetItemSliceBuilderType {
   internal typealias Result = Data
 
   private var data: Data
+
+  // MARK: - StringBuilderType
 
   internal init(capacity: Int) {
     self.data = Data(capacity: capacity)
@@ -55,5 +56,3 @@ internal struct BytesBuilder: StringBuilderType, GetItemSliceBuilderType {
     return subsequence
   }
 }
-
-*/

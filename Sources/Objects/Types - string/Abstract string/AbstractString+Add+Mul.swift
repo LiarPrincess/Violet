@@ -1,82 +1,88 @@
-/* MARKER
 extension AbstractString {
 
   // MARK: - Add
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _add(other: PyObject) -> PyResult<SwiftType> {
-    guard let otherElements = Self._getElements(object: other) else {
-      let e = self._createAddTypeError(other: other)
-      return .error(e)
+  internal static func abstract__add__(_ py: Py,
+                                       zelf: PyObject,
+                                       other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__add__")
     }
 
-    let result = self._add(other: otherElements)
-    let resultObject = Self._toObject(result: result)
-    return .value(resultObject)
+    guard let otherElements = Self.getElements(py, object: other) else {
+      let e = Self.createAddTypeError(py, other: other)
+      return .error(e.asBaseException)
+    }
+
+    var builder = Builder(elements: zelf.elements)
+    builder.append(contentsOf: otherElements)
+    let result = builder.finalize()
+
+    let resultObject = Self.newObject(py, result: result)
+    return PyResult(resultObject)
   }
 
-  private func _add(other: Elements) -> Builder.Result {
-    var builder = Builder(elements: self.elements)
-    builder.append(contentsOf: other)
-    return builder.finalize()
-  }
-
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _createAddTypeError(other: PyObject) -> PyTypeError {
-    let t = Self._pythonTypeName
+  private static func createAddTypeError(_ py: Py, other: PyObject) -> PyTypeError {
+    let t = Self.pythonTypeName
     let otherType = other.typeName
-    let msg = "can only concatenate \(t) (not '\(otherType)') to \(t)"
-    return Py.newTypeError(msg: msg)
+    let message = "can only concatenate \(t) (not '\(otherType)') to \(t)"
+    return py.newTypeError(message: message)
   }
 
   // MARK: - Mul
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _mul(count countObject: PyObject) -> PyResult<SwiftType> {
-    switch self._parseMulCount(object: countObject) {
-    case let .value(count):
-      let result = self._mul(count: count)
-      let resultObject = Self._toObject(result: result)
-      return .value(resultObject)
-    case let .error(e):
-      return .error(e)
+  internal static func abstract__mul__(_ py: Py,
+                                       zelf: PyObject,
+                                       other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__mul__")
     }
+
+    return Self.mul(py, zelf: zelf, count: other)
   }
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _parseMulCount(object: PyObject) -> PyResult<Int> {
-    guard let pyInt = PyCast.asInt(object) else {
-      let t = Self._pythonTypeName
-      let msg = "can only multiply \(t) and int (not '\(object.typeName)')"
-      return .typeError(msg)
+  internal static func abstract__rmul__(_ py: Py,
+                                        zelf: PyObject,
+                                        other: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__rmul__")
+    }
+
+    return Self.mul(py, zelf: zelf, count: other)
+  }
+
+  private static func mul(_ py: Py,
+                          zelf: Self,
+                          count countObject: PyObject) -> PyResult<PyObject> {
+    let count: Int
+    switch Self.parseMulCount(py, object: countObject) {
+    case let .value(c): count = c
+    case let .error(e): return .error(e)
+    }
+
+    let capacity = zelf.count * count
+    var builder = Builder(capacity: capacity)
+
+    for _ in 0..<max(count, 0) {
+      builder.append(contentsOf: zelf.elements)
+    }
+
+    let result = builder.finalize()
+    let resultObject = Self.newObject(py, result: result)
+    return PyResult(resultObject)
+  }
+
+  private static func parseMulCount(_ py: Py, object: PyObject) -> PyResult<Int> {
+    guard let pyInt = py.cast.asInt(object) else {
+      let t = Self.pythonTypeName
+      let message = "can only multiply \(t) and int (not '\(object.typeName)')"
+      return .typeError(py, message: message)
     }
 
     guard let int = Int(exactly: pyInt.value) else {
-      return .overflowError("repeated string is too long")
+      return .overflowError(py, message: "repeated string is too long")
     }
 
     return .value(int)
   }
-
-  private func _mul(count: Int) -> Builder.Result {
-    let capacity = self.count * count
-    var builder = Builder(capacity: capacity)
-
-    if self.elements.isEmpty {
-      return builder.finalize()
-    }
-
-    for _ in 0..<max(count, 0) {
-      builder.append(contentsOf: self.elements)
-    }
-
-    return builder.finalize()
-  }
-
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _rmul(count: PyObject) -> PyResult<SwiftType> {
-    return self._mul(count: count)
-  }
 }
-
-*/

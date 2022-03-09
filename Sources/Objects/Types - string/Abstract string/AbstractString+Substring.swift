@@ -1,8 +1,7 @@
-/* MARKER
 // swiftlint:disable type_name
 
 /// Substring that remembers it's `start` and `end` index.
-internal struct AbstractString_Substring<C: Collection> {
+internal struct AbstractStringSubstring<C: Collection> {
 
   internal struct Index {
     internal let value: C.Index
@@ -23,97 +22,78 @@ internal struct AbstractString_Substring<C: Collection> {
 
 extension AbstractString {
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _substring(start: PyObject?,
-                           end: PyObject?) -> PyResult<SwiftType> {
-    let substringResult = self._substringImpl(start: start, end: end)
+  // MARK: - Substring
 
-    switch substringResult {
-    case let .value(substring):
-      let value = substring.value
-      let object = Self._toObject(elements: value)
-      return .value(object)
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  // MARK: - Implementation
-
-  /// Use this method to extract substring.
-  ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _substringImpl(
+  internal static func abstractSubstring(
+    _ py: Py,
+    zelf: Self,
     start: PyObject?,
     end: PyObject?
-  ) -> PyResult<AbstractString_Substring<Elements>> {
-    let startIndex: AbstractString_Substring<Elements>.Index?
-    switch self._extractIndex(index: start) {
+  ) -> PyResult<AbstractStringSubstring<Elements>> {
+    let startIndex: AbstractStringSubstring<Elements>.Index?
+    switch Self.extractIndex(py, zelf: zelf, index: start) {
     case let .value(i): startIndex = i
     case let .error(e): return .error(e)
     }
 
-    let endIndex: AbstractString_Substring<Elements>.Index?
-    switch self._extractIndex(index: end) {
+    let endIndex: AbstractStringSubstring<Elements>.Index?
+    switch Self.extractIndex(py, zelf: zelf, index: end) {
     case let .value(i): endIndex = i
     case let .error(e): return .error(e)
     }
 
-    let startInt = startIndex?.adjustedInt ?? Int.min
-    let endInt = endIndex?.adjustedInt ?? Int.max
+    let value = Self.abstractSubstring(zelf: zelf,
+                                       start: startIndex,
+                                       end: endIndex)
 
-    // Something like 'elsa'[1000:5] -> empty
-    if startInt >= endInt {
-      let start = self.elements.startIndex
-      let empty = self.elements[start..<start]
-      let result = AbstractString_Substring(value: empty,
-                                            start: startIndex,
-                                            end: endIndex)
-
-      return .value(result)
-    }
-
-    let value = self._substringImpl(start: startIndex, end: endIndex)
-    let result = AbstractString_Substring(value: value,
-                                          start: startIndex,
-                                          end: endIndex)
+    let result = AbstractStringSubstring(value: value,
+                                         start: startIndex,
+                                         end: endIndex)
 
     return .value(result)
   }
 
-  /// Use this method to extract substring.
-  ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _substringImpl(
-    start: AbstractString_Substring<Elements>.Index? = nil,
-    end: AbstractString_Substring<Elements>.Index? = nil
+  internal static func abstractSubstring(
+    zelf: Self,
+    start: AbstractStringSubstring<Elements>.Index?,
+    end: AbstractStringSubstring<Elements>.Index?
   ) -> Elements.SubSequence {
-    let s = start?.value ?? self.elements.startIndex
-    let e = end?.value ?? self.elements.endIndex
+    let startIndex = start?.value ?? zelf.elements.startIndex
+    let endIndex = end?.value ?? zelf.elements.endIndex
+
+    // Something like 'elsa'[1000:5] -> empty
+    if startIndex >= endIndex {
+      let emptyIndex = zelf.elements.startIndex
+      let empty = zelf.elements[emptyIndex..<emptyIndex]
+      return empty
+    }
+
     // This is `O(1)` even without `RandomAccessCollection`,
     // but we will mark it anyway.
-    self._wouldBeBetterWithRandomAccessCollection()
-    return self.elements[s..<e]
+    Self.wouldBeBetterWithRandomAccessCollection()
+    return zelf.elements[startIndex..<endIndex]
   }
 
   // MARK: - Extract index
 
-  private func _extractIndex(
+  private static func extractIndex(
+    _ py: Py,
+    zelf: Self,
     index indexObject: PyObject?
-  ) -> PyResult<AbstractString_Substring<Elements>.Index?> {
+  ) -> PyResult<AbstractStringSubstring<Elements>.Index?> {
     guard let indexObject = indexObject else {
       return .value(nil)
     }
 
-    if PyCast.isNone(indexObject) {
+    if py.cast.isNone(indexObject) {
       return .value(nil)
     }
 
-    switch IndexHelper.int(indexObject, onOverflow: .indexError) {
+    switch IndexHelper.int(py, object: indexObject, onOverflow: .indexError) {
     case let .value(int):
       var adjustedInt = int
       if adjustedInt < 0 {
-        adjustedInt += self.count
+        adjustedInt += zelf.count
 
         // >>> 'elsa'[-1234:2]
         // 'el'
@@ -123,13 +103,13 @@ extension AbstractString {
       }
 
       // This requires 'RandomAccessCollection' to be 'O(1)'
-      self._wouldBeBetterWithRandomAccessCollection()
-      let index = self.elements.index(self.elements.startIndex,
+      Self.wouldBeBetterWithRandomAccessCollection()
+      let index = zelf.elements.index(zelf.elements.startIndex,
                                       offsetBy: adjustedInt,
-                                      limitedBy: self.elements.endIndex)
+                                      limitedBy: zelf.elements.endIndex)
 
-      let result = AbstractString_Substring<Elements>.Index(
-        value: index ?? self.elements.endIndex,
+      let result = AbstractStringSubstring<Elements>.Index(
+        value: index ?? zelf.elements.endIndex,
         int: int,
         adjustedInt: adjustedInt
       )
@@ -137,11 +117,11 @@ extension AbstractString {
       return .value(result)
 
     case let .notIndex(lazyError):
-      let e = lazyError.create()
+      let e = lazyError.create(py)
       return .error(e)
 
     case let .overflow(_, lazyError):
-      let e = lazyError.create()
+      let e = lazyError.create(py)
       return .error(e)
 
     case let .error(e):
@@ -149,5 +129,3 @@ extension AbstractString {
     }
   }
 }
-
-*/

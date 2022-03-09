@@ -1,4 +1,3 @@
-/* MARKER
 import UnicodeData
 
 internal struct UnicodeScalarBuilder: StringBuilderType {
@@ -9,6 +8,8 @@ internal struct UnicodeScalarBuilder: StringBuilderType {
   internal typealias Result = String
 
   private var scalars: String.UnicodeScalarView
+
+  // MARK: - StringBuilderType
 
   internal init(capacity: Int) {
     self.scalars = Elements()
@@ -52,5 +53,3 @@ internal struct UnicodeScalarBuilder: StringBuilderType {
     return String(self.scalars)
   }
 }
-
-*/

@@ -1,4 +1,3 @@
-/* MARKER
 import BigInt
 
 // cSpell:ignore STRINGLIB
@@ -7,31 +6,31 @@ extension AbstractString {
 
   // MARK: - Contains
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _contains(object: PyObject) -> PyResult<Bool> {
-    switch Self._getElementsForFindCountContainsIndexOf(object: object) {
+  internal static func abstract__contains__(_ py: Py,
+                                            zelf: PyObject,
+                                            object: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__contains__")
+    }
+
+    switch Self.getElementsForFindCountContainsIndexOf(py, object: object) {
     case .value(let value):
-      let result = self._contains(value: value)
-      return .value(result)
+      // In Python: "\u00E9" in "Cafe\u0301" -> False
+      // In Swift:  "Cafe\u{0301}".contains("\u{00E9}") -> True
+      // which is 'e with acute (as a single char)' in 'Cafe{accent}'
+      switch Self.findHelper(zelf: zelf, value: value) {
+      case .index: return PyResult(py, true)
+      case .notFound: return PyResult(py, false)
+      }
+
     case .invalidObjectType:
-      let t = Self._pythonTypeName
+      let t = Self.pythonTypeName
       let objectType = object.typeName
-      let msg = "'in <\(t)>' requires \(t) as left operand, not \(objectType)"
-      return .typeError(msg)
+      let message = "'in <\(t)>' requires \(t) as left operand, not \(objectType)"
+      return .typeError(py, message: message)
+
     case .error(let e):
       return .error(e)
-    }
-  }
-
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _contains(value: Elements) -> Bool {
-    // In Python: "\u00E9" in "Cafe\u0301" -> False
-    // In Swift:  "Cafe\u{0301}".contains("\u{00E9}") -> True
-    // which is 'e with acute (as a single char)' in 'Cafe{accent}'
-    let findResult = self._findImpl(value: value)
-    switch findResult {
-    case .index: return true
-    case .notFound: return false
     }
   }
 
@@ -40,34 +39,38 @@ extension AbstractString {
   /// STRINGLIB(count)(const STRINGLIB_CHAR* str, Py_ssize_t str_len,
   ///                  const STRINGLIB_CHAR* sub, Py_ssize_t sub_len,
   ///                  Py_ssize_t maxcount)
-  ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _count(object: PyObject,
-                       start: PyObject?,
-                       end: PyObject?) -> PyResult<BigInt> {
+  internal static func abstractCount(_ py: Py,
+                                     zelf: PyObject,
+                                     object: PyObject,
+                                     start: PyObject?,
+                                     end: PyObject?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "count")
+    }
+
     let value: Elements
-    switch Self._getElementsForFindCountContainsIndexOf(object: object) {
+    switch Self.getElementsForFindCountContainsIndexOf(py, object: object) {
     case .value(let v):
       value = v
     case .invalidObjectType:
-      let t = Self._pythonTypeName
-      return .typeError("count arg must be \(t), not \(object.typeName)")
+      let t = Self.pythonTypeName
+      let message = "count arg must be \(t), not \(object.typeName)"
+      return .typeError(py, message: message)
     case .error(let e):
       return .error(e)
     }
 
-    let substring: AbstractString_Substring<Elements>
-    switch self._substringImpl(start: start, end: end) {
+    let substring: AbstractStringSubstring<Elements>
+    switch Self.abstractSubstring(py, zelf: zelf, start: start, end: end) {
     case let .value(s): substring = s
     case let .error(e): return .error(e)
     }
 
-    let result = self._count(in: substring.value, value: value)
-    return .value(result)
+    let result = Self.count(string: substring.value, value: value)
+    return PyResult(py, result)
   }
 
-  private func _count(in string: Elements.SubSequence,
-                      value: Elements) -> BigInt {
+  private static func count(string: Elements.SubSequence, value: Elements) -> BigInt {
     if string.isEmpty {
       return 0
     }
@@ -79,7 +82,7 @@ extension AbstractString {
     var result = BigInt(0)
     var index = string.startIndex
 
-    self._wouldBeBetterWithRandomAccessCollection()
+    Self.wouldBeBetterWithRandomAccessCollection()
     while index != string.endIndex {
       let fromIndex = string[index...]
       if fromIndex.starts(with: value) {
@@ -97,48 +100,61 @@ extension AbstractString {
 
   // MARK: - Index of
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _indexOf(object: PyObject,
-                         start: PyObject?,
-                         end: PyObject?) -> PyResult<BigInt> {
-    return self._indexOfTemplate(fnName: "index",
-                                 object: object,
-                                 start: start,
-                                 end: end,
-                                 findFn: self._findImpl(in:value:))
+  internal static func abstractIndex(_ py: Py,
+                                     zelf: PyObject,
+                                     object: PyObject,
+                                     start: PyObject?,
+                                     end: PyObject?) -> PyResult<PyObject> {
+    return Self.indexOfTemplate(py,
+                                zelf: zelf,
+                                object: object,
+                                start: start,
+                                end: end,
+                                fnName: "index",
+                                findFn: Self.findHelper(string:value:))
   }
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _rindexOf(object: PyObject,
-                          start: PyObject?,
-                          end: PyObject?) -> PyResult<BigInt> {
-    return self._indexOfTemplate(fnName: "rindex",
-                                 object: object,
-                                 start: start,
-                                 end: end,
-                                 findFn: self._rfindImpl(in:value:))
+  internal static func abstractRIndex(_ py: Py,
+                                      zelf: PyObject,
+                                      object: PyObject,
+                                      start: PyObject?,
+                                      end: PyObject?) -> PyResult<PyObject> {
+    return Self.indexOfTemplate(py,
+                                zelf: zelf,
+                                object: object,
+                                start: start,
+                                end: end,
+                                fnName: "rindex",
+                                findFn: Self.rfindHelper(string:value:))
   }
 
-  private func _indexOfTemplate(
-    fnName: String,
+  private static func indexOfTemplate(
+    _ py: Py,
+    zelf: PyObject,
     object: PyObject,
     start: PyObject?,
     end: PyObject?,
-    findFn: (Elements.SubSequence, Elements) -> AbstractString_FindResult<Elements>
-  ) -> PyResult<BigInt> {
+    fnName: String,
+    findFn: (Elements.SubSequence, Elements) -> AbstractStringFindResult<Elements>
+  ) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, fnName)
+    }
+
     let value: Elements
-    switch Self._getElementsForFindCountContainsIndexOf(object: object) {
+    switch Self.getElementsForFindCountContainsIndexOf(py, object: object) {
     case .value(let v):
       value = v
     case .invalidObjectType:
-      let t = Self._pythonTypeName
-      return .typeError("\(fnName) arg must be \(t), not \(object.typeName)")
+      let t = Self.pythonTypeName
+      let message = "\(fnName) arg must be \(t), not \(object.typeName)"
+      return .typeError(py, message: message)
     case .error(let e):
       return .error(e)
     }
 
-    let substring: AbstractString_Substring<Elements>
-    switch self._substringImpl(start: start, end: end) {
+    let substring: AbstractStringSubstring<Elements>
+    switch Self.abstractSubstring(py, zelf: zelf, start: start, end: end) {
     case let .value(s): substring = s
     case let .error(e): return .error(e)
     }
@@ -149,11 +165,11 @@ extension AbstractString {
       // If we found the value, then we have return an index
       // from the start of the string!
       let start = substring.start?.adjustedInt ?? 0
-      return .value(BigInt(start) + position)
+      let result = BigInt(start) + position
+      return PyResult(py, result)
+
     case .notFound:
-      return .valueError("substring not found")
+      return .valueError(py, message: "substring not found")
     }
   }
 }
-
-*/

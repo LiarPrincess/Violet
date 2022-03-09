@@ -1,103 +1,106 @@
-/* MARKER
-private let splitLinesArguments = ArgumentParser.createOrTrap(
+private let splitLinesArguments = ArgumentParser(
   arguments: ["keepends"],
   format: "|O:splitlines"
 )
 
 extension AbstractString {
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _splitLines(args: [PyObject], kwargs: PyDict?) -> PyResult<PyList> {
-    switch splitLinesArguments.bind(args: args, kwargs: kwargs) {
+  internal static func abstractSplitLines(_ py: Py,
+                                          zelf: PyObject,
+                                          args: [PyObject],
+                                          kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "splitlines")
+    }
+
+    switch splitLinesArguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
       assert(binding.optionalCount == 1, "Invalid optional argument count.")
 
       let keepEnds = binding.optional(at: 0)
-      return self._splitLines(keepEnds: keepEnds)
+      return Self.splitLines(py, zelf: zelf, keepEnds: keepEnds)
     case let .error(e):
       return .error(e)
     }
   }
 
-  private func _splitLines(keepEnds: PyObject?) -> PyResult<PyList> {
+  private static func splitLines(_ py: Py, zelf: Self, keepEnds: PyObject?) -> PyResult<PyObject> {
     guard let keepEnds = keepEnds else {
-      let result = self._splitLines(keepEnds: false)
-      return .value(result)
+      let result = Self.splitLines(py, zelf: zelf, keepEnds: false)
+      return PyResult(result)
     }
 
     // `bool` is also `int`
-    if let int = PyCast.asInt(keepEnds) {
+    if let int = py.cast.asInt(keepEnds) {
       let keepEnds = int.value.isTrue
-      let result = self._splitLines(keepEnds: keepEnds)
-      return .value(result)
+      let result = Self.splitLines(py, zelf: zelf, keepEnds: keepEnds)
+      return PyResult(result)
     }
 
-    return .typeError("keepends must be integer or bool, not \(keepEnds.typeName)")
+    let message = "keepends must be integer or bool, not \(keepEnds.typeName)"
+    return .typeError(py, message: message)
   }
 
-  private func _splitLines(keepEnds: Bool) -> PyList {
-    var result = [SwiftType]()
-    var index = self.elements.startIndex
+  private static func splitLines(_ py: Py, zelf: Self, keepEnds: Bool) -> PyList {
+    var result = [PyObject]()
+    var index = zelf.elements.startIndex
 
-    self._wouldBeBetterWithRandomAccessCollection()
-    while index != self.elements.endIndex {
+    Self.wouldBeBetterWithRandomAccessCollection()
+    while index != zelf.elements.endIndex {
       let groupStart = index
 
-      self._advanceUntilNewLineOrEnd(index: &index)
+      Self.advanceUntilNewLineOrEnd(zelf: zelf, index: &index)
 
       // 'index' is either 'new line' or 'endIndex'
       let rangeExcludingNewLine = groupStart..<index
 
-      self._consumeNewLineHandlingCRLFAsOne(index: &index)
+      Self.consumeNewLineHandlingCRLFAsOne(zelf: zelf, index: &index)
 
       // 'index' is either 1st character of the next group or 'endIndex'
       let rangeIncludingNewLine = groupStart..<index
 
       let range = keepEnds ? rangeIncludingNewLine : rangeExcludingNewLine
-      let line = self.elements[range]
-      let lineObject = Self._toObject(elements: line)
-      result.append(lineObject)
+      let line = zelf.elements[range]
+      let lineObject = Self.newObject(py, elements: line)
+      result.append(lineObject.asObject)
     }
 
-    return Py.newList(elements: result)
+    return py.newList(elements: result)
   }
 
-  private func _advanceUntilNewLineOrEnd(index: inout Elements.Index) {
-    while index != self.elements.endIndex {
-      if Self._isLineBreak(element: self.elements[index]) {
+  private static func advanceUntilNewLineOrEnd(zelf: Self,
+                                               index: inout Elements.Index) {
+    while index != zelf.elements.endIndex {
+      if Self.isLineBreak(element: zelf.elements[index]) {
         return
       }
 
-      self.elements.formIndex(after: &index)
+      zelf.elements.formIndex(after: &index)
     }
   }
 
-  private func _consumeNewLineHandlingCRLFAsOne(index: inout Elements.Index) {
+  private static func consumeNewLineHandlingCRLFAsOne(zelf: Self,
+                                                      index: inout Elements.Index) {
     // 'index' is either 'new line' or 'endIndex'
-    if index == self.elements.endIndex {
+    if index == zelf.elements.endIndex {
       return
     }
 
     // Now only the 'new line' is possible,
     // but we still have to deal with possible 'CRLF'
-    let newLine = self.elements[index]
-    self.elements.formIndex(after: &index)
+    let newLine = zelf.elements[index]
+    zelf.elements.formIndex(after: &index)
 
     // If we are at the end -> 'CRLF' is not possible
-    if index == self.elements.endIndex {
+    if index == zelf.elements.endIndex {
       return
     }
 
-    let afterNewLine = self.elements[index]
+    let afterNewLine = zelf.elements[index]
 
-    let isCRLF = Self.isCarriageReturn(element: newLine)
-      && Self.isLineFeed(element: afterNewLine)
-
-    if isCRLF {
-      self.elements.formIndex(after: &index)
+    if Self.isCarriageReturn(element: newLine) && Self.isLineFeed(element: afterNewLine) {
+      zelf.elements.formIndex(after: &index)
     }
   }
 }
-
-*/

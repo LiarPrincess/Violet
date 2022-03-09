@@ -8,6 +8,5 @@ internal protocol HasCustomGetMethod {
                  allowsCallableFromDict: Bool) -> Py.GetMethodResult
 }
 
-internal protocol AbstractString {}
 internal protocol AbstractBytes {}
 internal protocol AbstractBuiltinFunction {}

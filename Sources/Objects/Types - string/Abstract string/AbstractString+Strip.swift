@@ -1,89 +1,101 @@
-/* MARKER
 extension AbstractString {
 
   // MARK: - Strip
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _strip(chars: PyObject?) -> PyResult<SwiftType> {
-    return self._template(fnName: "strip",
-                          chars: chars,
-                          onStripWhitespace: self._stripWhitespace,
-                          onStripChars: self._strip(chars:))
+  internal static func abstractStrip(_ py: Py,
+                                     zelf: PyObject,
+                                     chars: PyObject?) -> PyResult<PyObject> {
+    return Self.template(py,
+                         zelf: zelf,
+                         chars: chars,
+                         fnName: "strip",
+                         onStripWhitespace: Self.stripWhitespace(zelf:),
+                         onStripChars: Self.strip(zelf:chars:))
   }
 
-  private func _stripWhitespace() -> Elements.SubSequence {
-    let tmp = self.elements.drop(while: Self._isWhitespace(element:))
-    return tmp.dropLast(while: Self._isWhitespace(element:))
+  private static func stripWhitespace(zelf: Self) -> Elements.SubSequence {
+    let tmp = zelf.elements.drop(while: Self.isWhitespace(element:))
+    return tmp.dropLast(while: Self.isWhitespace(element:))
   }
 
-  private func _strip(chars: Set<Element>) -> Elements.SubSequence {
-    let tmp = self.elements.drop { chars.contains($0) }
+  private static func strip(zelf: Self, chars: Set<Element>) -> Elements.SubSequence {
+    let tmp = zelf.elements.drop { chars.contains($0) }
     return tmp.dropLast { chars.contains($0) }
   }
 
   // MARK: - Left strip
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _lstrip(chars: PyObject?) -> PyResult<SwiftType> {
-    return self._template(fnName: "lstrip",
-                          chars: chars,
-                          onStripWhitespace: self._lstripWhitespace,
-                          onStripChars: self._lstrip(chars:))
+  internal static func abstractLStrip(_ py: Py,
+                                      zelf: PyObject,
+                                      chars: PyObject?) -> PyResult<PyObject> {
+    return Self.template(py,
+                         zelf: zelf,
+                         chars: chars,
+                         fnName: "lstrip",
+                         onStripWhitespace: Self.lstripWhitespace(zelf:),
+                         onStripChars: Self.lstrip(zelf:chars:))
   }
 
-  private func _lstripWhitespace() -> Elements.SubSequence {
-    return self.elements.drop(while: Self._isWhitespace(element:))
+  private static func lstripWhitespace(zelf: Self) -> Elements.SubSequence {
+    return zelf.elements.drop(while: Self.isWhitespace(element:))
   }
 
-  private func _lstrip(chars: Set<Element>) -> Elements.SubSequence {
-    return self.elements.drop { chars.contains($0) }
+  private static func lstrip(zelf: Self, chars: Set<Element>) -> Elements.SubSequence {
+    return zelf.elements.drop { chars.contains($0) }
   }
 
   // MARK: - Right strip
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _rstrip(chars: PyObject?) -> PyResult<SwiftType> {
-    return self._template(fnName: "rstrip",
-                          chars: chars,
-                          onStripWhitespace: self._rstripWhitespace,
-                          onStripChars: self._rstrip(chars:))
+  internal static func abstractRStrip(_ py: Py,
+                                      zelf: PyObject,
+                                      chars: PyObject?) -> PyResult<PyObject> {
+    return Self.template(py,
+                         zelf: zelf,
+                         chars: chars,
+                         fnName: "rstrip",
+                         onStripWhitespace: Self.rstripWhitespace(zelf:),
+                         onStripChars: Self.rstrip(zelf:chars:))
   }
 
-  private func _rstripWhitespace() -> Elements.SubSequence {
-    return self.elements.dropLast(while: Self._isWhitespace(element:))
+  private static func rstripWhitespace(zelf: Self) -> Elements.SubSequence {
+    return zelf.elements.dropLast(while: Self.isWhitespace(element:))
   }
 
-  private func _rstrip(chars: Set<Element>) -> Elements.SubSequence {
-    return self.elements.dropLast { chars.contains($0) }
+  private static func rstrip(zelf: Self, chars: Set<Element>) -> Elements.SubSequence {
+    return zelf.elements.dropLast { chars.contains($0) }
   }
 
   // MARK: - Template
 
-  private func _template(
-    fnName: String,
+  private static func template(
+    _ py: Py,
+    zelf: PyObject,
     chars: PyObject?,
-    onStripWhitespace: () -> Elements.SubSequence,
-    onStripChars: (Set<Element>) -> Elements.SubSequence
-  ) -> PyResult<SwiftType> {
+    fnName: String,
+    onStripWhitespace: (Self) -> Elements.SubSequence,
+    onStripChars: (Self, Set<Element>) -> Elements.SubSequence
+  ) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, fnName)
+    }
+
     // No chars (or 'None') -> whitespace mode
-    guard let chars = chars, !PyCast.isNone(chars) else {
-      let result = onStripWhitespace()
-      let resultObject = Self._toObject(elements: result)
-      return .value(resultObject)
+    guard let chars = chars, !py.cast.isNone(chars) else {
+      let result = onStripWhitespace(zelf)
+      let resultObject = Self.newObject(py, elements: result)
+      return PyResult(resultObject)
     }
 
-    if let charsElements = Self._getElements(object: chars) {
+    if let charsElements = Self.getElements(py, object: chars) {
       let charsSet = Set(charsElements)
-      let result = onStripChars(charsSet)
-      let resultObject = Self._toObject(elements: result)
-      return .value(resultObject)
+      let result = onStripChars(zelf, charsSet)
+      let resultObject = Self.newObject(py, elements: result)
+      return PyResult(resultObject)
     }
 
-    let selfType = Self._pythonTypeName
+    let selfType = Self.pythonTypeName
     let charsType = chars.typeName
-    let msg = "\(fnName) arg must be \(selfType) or None, not \(charsType)"
-    return .error(Py.newTypeError(msg: msg))
+    let message = "\(fnName) arg must be \(selfType) or None, not \(charsType)"
+    return .typeError(py, message: message)
   }
 }
-
-*/
