@@ -1,29 +1,32 @@
-/* MARKER
 // swiftlint:disable empty_count
 
 private enum FillChar<T> {
   case `default`
   case value(T)
-  case error(PyBaseException)
+  case error(PyTypeError)
 }
 
 extension AbstractString {
 
   // MARK: - Center
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _center(width: PyObject, fillChar: PyObject?) -> PyResult<SwiftType> {
-    return self._justTemplate(fnName: "center",
-                              width: width,
-                              fillChar: fillChar,
-                              justFn: self._center(width:fillChar:))
+  internal static func abstractCenter(_ py: Py,
+                                      zelf: PyObject,
+                                      width: PyObject,
+                                      fillChar: PyObject?) -> PyResult<PyObject> {
+    return Self.justTemplate(py,
+                             zelf: zelf,
+                             width: width,
+                             fillChar: fillChar,
+                             fnName: "center",
+                             justFn: Self.center(zelf:width:fillChar:))
   }
 
-  private func _center(width: Int, fillChar: Element) -> Builder {
-    let count = width - self.count
+  private static func center(zelf: Self, width: Int, fillChar: Element) -> Builder {
+    let count = width - zelf.count
 
     guard count > 0 else {
-      return Builder(elements: self.elements)
+      return Builder(elements: zelf.elements)
     }
 
     let leftCount = count / 2 + (count & width & 1)
@@ -31,146 +34,167 @@ extension AbstractString {
 
     var builder = Builder(capacity: width)
     builder.append(element: fillChar, repeated: leftCount)
-    builder.append(contentsOf: self.elements)
+    builder.append(contentsOf: zelf.elements)
     builder.append(element: fillChar, repeated: rightCount)
     return builder
   }
 
   // MARK: - LJust
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _ljust(width: PyObject, fillChar: PyObject?) -> PyResult<SwiftType> {
-    return self._justTemplate(fnName: "ljust",
-                              width: width,
-                              fillChar: fillChar,
-                              justFn: self._ljust(width:fillChar:))
+  internal static func abstractLJust(_ py: Py,
+                                     zelf: PyObject,
+                                     width: PyObject,
+                                     fillChar: PyObject?) -> PyResult<PyObject> {
+    return Self.justTemplate(py,
+                             zelf: zelf,
+                             width: width,
+                             fillChar: fillChar,
+                             fnName: "ljust",
+                             justFn: Self.ljust(zelf:width:fillChar:))
   }
 
-  private func _ljust(width: Int, fillChar: Element) -> Builder {
-    let count = width - self.count
+  private static func ljust(zelf: Self, width: Int, fillChar: Element) -> Builder {
+    let count = width - zelf.count
 
     guard count > 0 else {
-      return Builder(elements: self.elements)
+      return Builder(elements: zelf.elements)
     }
 
     var builder = Builder(capacity: width)
-    builder.append(contentsOf: self.elements)
+    builder.append(contentsOf: zelf.elements)
     builder.append(element: fillChar, repeated: count)
     return builder
   }
 
   // MARK: - RJust
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _rjust(width: PyObject, fillChar: PyObject?) -> PyResult<SwiftType> {
-    return self._justTemplate(fnName: "rjust",
-                              width: width,
-                              fillChar: fillChar,
-                              justFn: self._rjust(width:fillChar:))
+  internal static func abstractRJust(_ py: Py,
+                                     zelf: PyObject,
+                                     width: PyObject,
+                                     fillChar: PyObject?) -> PyResult<PyObject> {
+    return Self.justTemplate(py,
+                             zelf: zelf,
+                             width: width,
+                             fillChar: fillChar,
+                             fnName: "rjust",
+                             justFn: Self.rjust(zelf:width:fillChar:))
   }
 
-  private func _rjust(width: Int, fillChar: Element) -> Builder {
-    let count = width - self.count
+  private static func rjust(zelf: Self, width: Int, fillChar: Element) -> Builder {
+    let count = width - zelf.count
 
     guard count > 0 else {
-      return Builder(elements: self.elements)
+      return Builder(elements: zelf.elements)
     }
 
     var builder = Builder(capacity: width)
     builder.append(element: fillChar, repeated: count)
-    builder.append(contentsOf: self.elements)
+    builder.append(contentsOf: zelf.elements)
     return builder
   }
 
   // MARK: - Just template
 
-  private func _justTemplate(
-    fnName: String,
-    width widthObject: PyObject,
-    fillChar fillCharObject: PyObject?,
-    justFn: (Int, Element) -> Builder
-  ) -> PyResult<SwiftType> {
+  private static func justTemplate(_ py: Py,
+                                   zelf: PyObject,
+                                   width widthObject: PyObject,
+                                   fillChar fillCharObject: PyObject?,
+                                   fnName: String,
+                                   justFn: (Self, Int, Element) -> Builder) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, fnName)
+    }
+
     let width: Int
-    switch self._parseWidth(fnName: fnName, width: widthObject) {
+    switch Self.parseWidth(py, object: widthObject, fnName: fnName) {
     case let .value(w): width = w
     case let .error(e): return .error(e)
     }
 
     let fillChar: Element
-    switch self._parseFillChar(fnName: fnName, fillChar: fillCharObject) {
-    case .default: fillChar = Self._defaultFill
+    switch Self.parseFillChar(py, object: fillCharObject, fnName: fnName) {
+    case .default: fillChar = Self.defaultFill
     case .value(let s): fillChar = s
-    case .error(let e): return .error(e)
+    case .error(let e): return .error(e.asBaseException)
     }
 
-    let builder = justFn(width, fillChar)
+    let builder = justFn(zelf, width, fillChar)
     let result = builder.finalize()
-    let resultObject = Self._toObject(result: result)
-    return .value(resultObject)
+    let resultObject = Self.newObject(py, result: result)
+    return PyResult(resultObject)
   }
 
-  private func _parseWidth(fnName: String, width: PyObject) -> PyResult<Int> {
-    guard let pyInt = PyCast.asInt(width) else {
-      return .typeError("\(fnName) width arg must be int, not \(width.typeName)")
+  private static func parseWidth(_ py: Py,
+                                 object: PyObject,
+                                 fnName: String) -> PyResult<Int> {
+    guard let pyInt = py.cast.asInt(object) else {
+      let message = "\(fnName) width arg must be int, not \(object.typeName)"
+      return .typeError(py, message: message)
     }
 
     guard let int = Int(exactly: pyInt.value) else {
-      return .overflowError("\(fnName) width is too large")
+      let message = "\(fnName) width is too large"
+      return .overflowError(py, message: message)
     }
 
     return .value(int)
   }
 
-  private func _parseFillChar(
-    fnName: String,
-    fillChar object: PyObject?
-  ) -> FillChar<Element> {
+  private static func parseFillChar(_ py: Py,
+                                    object: PyObject?,
+                                    fnName: String) -> FillChar<Element> {
     guard let object = object else {
       return .default
     }
 
-    if let char = Self._getElements(object: object) {
+    if let char = Self.getElements(py, object: object) {
       if let first = char.first, char.count == 1 {
         return .value(first)
       }
     }
 
-    let t = Self._pythonTypeName
+    let t = Self.pythonTypeName
     let charType = object.typeName
-    let msg = "\(fnName) fillchar arg must be \(t) of length 1, not \(charType)"
-    return .error(Py.newTypeError(msg: msg))
+    let message = "\(fnName) fillchar arg must be \(t) of length 1, not \(charType)"
+    let error = py.newTypeError(message: message)
+    return .error(error)
   }
 
   // MARK: - ZFill
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _zFill(width widthObject: PyObject) -> PyResult<SwiftType> {
-    guard let widthPyInt = PyCast.asInt(widthObject) else {
-      return .typeError("width must be int, not \(widthObject.typeName)")
+  internal static func abstractZFill(_ py: Py,
+                                     zelf: PyObject,
+                                     width widthObject: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "zfill")
+    }
+
+    guard let widthPyInt = py.cast.asInt(widthObject) else {
+      return .typeError(py, message: "width must be int, not \(widthObject.typeName)")
     }
 
     guard let width = Int(exactly: widthPyInt.value) else {
-      return .overflowError("width is too big")
+      return .overflowError(py, message: "width is too big")
     }
 
-    let builder = self._zfill(width: width)
+    let builder = Self.zfill(zelf: zelf, width: width)
     let result = builder.finalize()
-    let resultObject = Self._toObject(result: result)
-    return .value(resultObject)
+    let resultObject = Self.newObject(py, result: result)
+    return PyResult(resultObject)
   }
 
-  private func _zfill(width: Int) -> Builder {
-    let fillCount = width - self.count
+  private static func zfill(zelf: Self, width: Int) -> Builder {
+    let fillCount = width - zelf.count
 
     guard fillCount > 0 else {
-      return Builder(elements: self.elements)
+      return Builder(elements: zelf.elements)
     }
 
     var builder = Builder(capacity: width)
 
-    guard let first = self.elements.first else {
+    guard let first = zelf.elements.first else {
       // string is empty
-      builder.append(element: Self._zFill, repeated: width)
+      builder.append(element: Self.zFill, repeated: width)
       return builder
     }
 
@@ -179,16 +203,14 @@ extension AbstractString {
       builder.append(element: first)
     }
 
-    builder.append(element: Self._zFill, repeated: fillCount)
+    builder.append(element: Self.zFill, repeated: fillCount)
 
     if hasSign {
-      builder.append(contentsOf: self.elements.dropFirst())
+      builder.append(contentsOf: zelf.elements.dropFirst())
     } else {
-      builder.append(contentsOf: self.elements)
+      builder.append(contentsOf: zelf.elements)
     }
 
     return builder
   }
 }
-
-*/

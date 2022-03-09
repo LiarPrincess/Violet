@@ -1,23 +1,24 @@
-/* MARKER
 extension AbstractString {
 
   // MARK: - Starts with
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _startsWith(prefix: PyObject,
-                            start: PyObject?,
-                            end: PyObject?) -> PyResult<Bool> {
-    return self._template(fnName: "startswith",
-                          element: prefix,
-                          start: start,
-                          end: end,
-                          checkSubstring: self._startsWith(substring:prefix:))
+  internal static func abstractStartsWith(_ py: Py,
+                                          zelf: PyObject,
+                                          prefix: PyObject,
+                                          start: PyObject?,
+                                          end: PyObject?) -> PyResult<PyObject> {
+    return Self.template(py,
+                         zelf: zelf,
+                         element: prefix,
+                         start: start,
+                         end: end,
+                         fnName: "startswith",
+                         checkSubstring: Self.startsWith(substring:prefix:))
   }
 
-  private func _startsWith(substring: AbstractString_Substring<Elements>,
-                           prefix: Elements) -> Bool {
-    let substringIsLonger = self._isLonger(substring: substring, than: prefix)
-    if substringIsLonger {
+  private static func startsWith(substring: AbstractStringSubstring<Elements>,
+                                 prefix: Elements) -> Bool {
+    if Self.isLonger(substring: substring, than: prefix) {
       return false
     }
 
@@ -30,8 +31,8 @@ extension AbstractString {
     return result
   }
 
-  private func _isLonger(substring: AbstractString_Substring<Elements>,
-                         than element: Elements) -> Bool {
+  private static func isLonger(substring: AbstractStringSubstring<Elements>,
+                               than element: Elements) -> Bool {
     let start = substring.start?.adjustedInt ?? Int.min
     var end = substring.end?.adjustedInt ?? Int.max
     // We have to do it this way to prevent overflows
@@ -41,21 +42,23 @@ extension AbstractString {
 
   // MARK: - Ends with
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _endsWith(suffix: PyObject,
-                          start: PyObject?,
-                          end: PyObject?) -> PyResult<Bool> {
-    return self._template(fnName: "endswith",
-                          element: suffix,
-                          start: start,
-                          end: end,
-                          checkSubstring: self._endsWith(substring:suffix:))
+  internal static func abstractEndsWith(_ py: Py,
+                                        zelf: PyObject,
+                                        suffix: PyObject,
+                                        start: PyObject?,
+                                        end: PyObject?) -> PyResult<PyObject> {
+    return Self.template(py,
+                         zelf: zelf,
+                         element: suffix,
+                         start: start,
+                         end: end,
+                         fnName: "endswith",
+                         checkSubstring: Self.endsWith(substring:suffix:))
   }
 
-  private func _endsWith(substring: AbstractString_Substring<Elements>,
-                         suffix: Elements) -> Bool {
-    let substringIsLonger = self._isLonger(substring: substring, than: suffix)
-    if substringIsLonger {
+  private static func endsWith(substring: AbstractStringSubstring<Elements>,
+                               suffix: Elements) -> Bool {
+    if Self.isLonger(substring: substring, than: suffix) {
       return false
     }
 
@@ -70,48 +73,52 @@ extension AbstractString {
 
   // MARK: - Template
 
-  private func _template(
-    fnName: String,
+  private static func template(
+    _ py: Py,
+    zelf: PyObject,
     element: PyObject,
     start: PyObject?,
     end: PyObject?,
-    checkSubstring: (AbstractString_Substring<Elements>, Elements) -> Bool
-  ) -> PyResult<Bool> {
-    let substring: AbstractString_Substring<Elements>
-    switch self._substringImpl(start: start, end: end) {
+    fnName: String,
+    checkSubstring: (AbstractStringSubstring<Elements>, Elements) -> Bool
+  ) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, fnName)
+    }
+
+    let substring: AbstractStringSubstring<Elements>
+    switch Self.abstractSubstring(py, zelf: zelf, start: start, end: end) {
     case let .value(s): substring = s
     case let .error(e): return .error(e)
     }
 
-    if let elts = Self._getElements(object: element) {
+    if let elts = Self.getElements(py, object: element) {
       let result = checkSubstring(substring, elts)
-      return .value(result)
+      return PyResult(py, result)
     }
 
-    if let tuple = PyCast.asTuple(element) {
+    if let tuple = py.cast.asTuple(element) {
       for element in tuple.elements {
-        switch Self._getElements(object: element) {
+        switch Self.getElements(py, object: element) {
         case .some(let elts):
           let elementResult = checkSubstring(substring, elts)
           if elementResult {
-            return .value(true)
+            return PyResult(py, true)
           }
         case .none:
-          let t = Self._pythonTypeName
+          let t = Self.pythonTypeName
           let elementType = element.typeName
-          let msg = "tuple for \(fnName) must only contain \(t), not \(elementType)"
-          return .typeError(msg)
+          let message = "tuple for \(fnName) must only contain \(t), not \(elementType)"
+          return .typeError(py, message: message)
         }
       }
 
-      return .value(false)
+      return PyResult(py, false)
     }
 
-    let t = Self._pythonTypeName
+    let t = Self.pythonTypeName
     let elementType = element.typeName
-    let msg = "\(fnName) first arg must be \(t) or a tuple of \(t), not \(elementType)"
-    return .typeError(msg)
+    let message = "\(fnName) first arg must be \(t) or a tuple of \(t), not \(elementType)"
+    return .typeError(py, message: message)
   }
 }
-
-*/

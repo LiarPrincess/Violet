@@ -1,101 +1,93 @@
-/* MARKER
 extension AbstractString {
 
-  // MARK: - AlphaNumeric
+  // MARK: - Alpha numeric
 
   /// Return true if all characters in the string are alphanumeric
   /// and there is at least one character.
-  ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _isAlphaNumeric() -> Bool {
-    if self.elements.isEmpty {
-      return false
+  internal static func abstractIsAlphaNumeric(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "isalnum")
     }
 
-    return self.elements.allSatisfy(Self._isAlphaNumeric(element:))
+    let result = !zelf.isEmpty && zelf.elements.allSatisfy(Self.isAlphaNumeric(element:))
+    return PyResult(py, result)
   }
 
   // MARK: - Alpha
 
   /// Return true if all characters in the string are alphabetic
   /// and there is at least one character.
-  ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _isAlpha() -> Bool {
-    if self.elements.isEmpty {
-      return false
+  internal static func abstractIsAlpha(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "isalpha")
     }
 
-    return self.elements.allSatisfy(Self._isAlpha(element:))
+    let result = !zelf.isEmpty && zelf.elements.allSatisfy(Self.isAlpha(element:))
+    return PyResult(py, result)
   }
 
   // MARK: - ASCII
 
   /// Return true if the string is empty or all characters in the string are ASCII.
-  ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _isAscii() -> Bool {
-    if self.elements.isEmpty {
-      return false
+  internal static func abstractIsAscii(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "isascii")
     }
 
-    return self.elements.allSatisfy(Self._isAscii(element:))
+    let result = !zelf.isEmpty && zelf.elements.allSatisfy(Self.isAscii(element:))
+    return PyResult(py, result)
   }
 
   // MARK: - Digit
 
   /// Return true if all characters in the string are digits
   /// and there is at least one character.
-  ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _isDigit() -> Bool {
-    if self.elements.isEmpty {
-      return false
+  internal static func abstractIsDigit(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "isdigit")
     }
 
-    return self.elements.allSatisfy(Self._isDigit(element:))
+    let result = !zelf.isEmpty && zelf.elements.allSatisfy(Self.isDigit(element:))
+    return PyResult(py, result)
   }
 
   // MARK: - Lower
 
   /// Return true if all cased characters 4 in the string are lowercase
   /// and there is at least one cased character.
-  ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _isLower() -> Bool {
-    if self.elements.isEmpty {
-      return false
+  internal static func abstractIsLower(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "islower")
     }
 
-    return self.elements.allSatisfy(Self._isLower(element:))
+    let result = !zelf.isEmpty && zelf.elements.allSatisfy(Self.isLower(element:))
+    return PyResult(py, result)
   }
 
   // MARK: - Upper
 
   /// Return true if all cased characters 4 in the string are uppercase
   /// and there is at least one cased character.
-  ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _isUpper() -> Bool {
-    if self.elements.isEmpty {
-      return false
+  internal static func abstractIsUpper(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "isupper")
     }
 
-    return self.elements.allSatisfy(Self._isUpper(element:))
+    let result = !zelf.isEmpty && zelf.elements.allSatisfy(Self.isUpper(element:))
+    return PyResult(py, result)
   }
 
   // MARK: - Space
 
   /// Return true if there are only whitespace characters in the string
   /// and there is at least one character.
-  ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _isSpace() -> Bool {
-    if self.elements.isEmpty {
-      return false
+  internal static func abstractIsSpace(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "isspace")
     }
 
-    return self.elements.allSatisfy(Self._isWhitespace(element:))
+    let result = !zelf.isEmpty && zelf.elements.allSatisfy(Self.isWhitespace(element:))
+    return PyResult(py, result)
   }
 
   // MARK: - Title
@@ -106,27 +98,26 @@ extension AbstractString {
   /// In a title-cased string, upper- and title-case characters may only
   /// follow uncased characters and lowercase characters only cased ones.
   /// https://docs.python.org/3/library/stdtypes.html#str.istitle
-  ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _isTitle() -> Bool {
-    func isUpperOrTitle(element: Element) -> Bool {
-      return Self._isUpper(element: element) || Self._isTitle(element: element)
+  internal static func abstractIsTitle(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "istitle")
     }
 
     // Shortcut for single character strings
-    if let first = self.elements.first, self.count == 1 {
-      return isUpperOrTitle(element: first)
+    if let first = zelf.elements.first, zelf.count == 1 {
+      let result = Self.isUpperOrTitle(element: first)
+      return PyResult(py, result)
     }
 
     var cased = false
     var isPreviousCased = false
 
-    for element in self.elements {
-      let isElementCased = Self._isCased(element: element)
+    for element in zelf.elements {
+      let isElementCased = Self.isCased(element: element)
 
-      if isElementCased && Self._isLower(element: element) {
+      if isElementCased && Self.isLower(element: element) {
         if !isPreviousCased {
-          return false
+          return PyResult(py, false)
         }
 
         cased = true
@@ -134,9 +125,9 @@ extension AbstractString {
         continue
       }
 
-      if isElementCased && isUpperOrTitle(element: element) {
+      if isElementCased && Self.isUpperOrTitle(element: element) {
         if isPreviousCased {
-          return false
+          return PyResult(py, false)
         }
 
         isPreviousCased = true
@@ -147,8 +138,10 @@ extension AbstractString {
       isPreviousCased = false
     }
 
-    return cased
+    return PyResult(py, cased)
+  }
+
+  private static func isUpperOrTitle(element: Element) -> Bool {
+    return Self.isUpper(element: element) || Self.isTitle(element: element)
   }
 }
-
-*/

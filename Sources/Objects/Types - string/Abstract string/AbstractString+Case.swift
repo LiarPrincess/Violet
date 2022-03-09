@@ -1,73 +1,87 @@
-/* MARKER
 extension AbstractString {
 
   // MARK: - Lower case
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _lowerCase() -> SwiftType {
-    var builder = Builder(capacity: self.count)
+  internal static func abstractLower(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "lower")
+    }
 
-    for element in self.elements {
-      let mapping = Self._lowercaseMapping(element: element)
+    var builder = Builder(capacity: zelf.count)
+
+    for element in zelf.elements {
+      let mapping = Self.lowercaseMapping(element: element)
       builder.append(mapping: mapping)
     }
 
     let result = builder.finalize()
-    return Self._toObject(result: result)
+    let resultObject = Self.newObject(py, result: result)
+    return PyResult(resultObject)
   }
 
   // MARK: - Upper case
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _upperCase() -> SwiftType {
-    var builder = Builder(capacity: self.count)
+  internal static func abstractUpper(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "upper")
+    }
 
-    for element in self.elements {
-      let mapping = Self._uppercaseMapping(element: element)
+    var builder = Builder(capacity: zelf.count)
+
+    for element in zelf.elements {
+      let mapping = Self.uppercaseMapping(element: element)
       builder.append(mapping: mapping)
     }
 
     let result = builder.finalize()
-    return Self._toObject(result: result)
+    let resultObject = Self.newObject(py, result: result)
+    return PyResult(resultObject)
   }
 
   // MARK: - Title case
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _titleCase() -> SwiftType {
-    var builder = Builder(capacity: self.count)
+  internal static func abstractTitle(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "title")
+    }
+
+    var builder = Builder(capacity: zelf.count)
     var isPreviousCased = false
 
-    for element in self.elements {
+    for element in zelf.elements {
       if isPreviousCased {
-        let mapping = Self._lowercaseMapping(element: element)
+        let mapping = Self.lowercaseMapping(element: element)
         builder.append(mapping: mapping)
       } else {
-        let mapping = Self._titlecaseMapping(element: element)
+        let mapping = Self.titlecaseMapping(element: element)
         builder.append(mapping: mapping)
       }
 
-      isPreviousCased = Self._isCased(element: element)
+      isPreviousCased = Self.isCased(element: element)
     }
 
     let result = builder.finalize()
-    return Self._toObject(result: result)
+    let resultObject = Self.newObject(py, result: result)
+    return PyResult(resultObject)
   }
 
   // MARK: - Swap case
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _swapCase() -> SwiftType {
-    var builder = Builder(capacity: self.count)
+  internal static func abstractSwapcase(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "swapcase")
+    }
 
-    for element in self.elements {
-      let isCased = Self._isCased(element: element)
+    var builder = Builder(capacity: zelf.count)
 
-      if isCased && Self._isLower(element: element) {
-        let mapping = Self._uppercaseMapping(element: element)
+    for element in zelf.elements {
+      let isCased = Self.isCased(element: element)
+
+      if isCased && Self.isLower(element: element) {
+        let mapping = Self.uppercaseMapping(element: element)
         builder.append(mapping: mapping)
-      } else if isCased && Self._isUpper(element: element) {
-        let mapping = Self._lowercaseMapping(element: element)
+      } else if isCased && Self.isUpper(element: element) {
+        let mapping = Self.lowercaseMapping(element: element)
         builder.append(mapping: mapping)
       } else {
         // (is not cased OR is cased but not lower or upper)
@@ -76,34 +90,38 @@ extension AbstractString {
     }
 
     let result = builder.finalize()
-    return Self._toObject(result: result)
+    let resultObject = Self.newObject(py, result: result)
+    return PyResult(resultObject)
   }
 
   // MARK: - Capitalize
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _capitalize() -> SwiftType {
+  internal static func abstractCapitalize(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "capitalize")
+    }
+
     // Capitalize only the first scalar:
     // list("e\u0301".capitalize()) -> ['E', '́']
 
-    var builder = Builder(capacity: self.count)
+    var builder = Builder(capacity: zelf.count)
 
-    guard let first = self.elements.first else {
+    guard let first = zelf.elements.first else {
       let result = builder.finalize()
-      return Self._toObject(result: result)
+      let resultObject = Self.newObject(py, result: result)
+      return PyResult(resultObject)
     }
 
-    let firstUpper = Self._uppercaseMapping(element: first)
+    let firstUpper = Self.uppercaseMapping(element: first)
     builder.append(mapping: firstUpper)
 
-    for element in self.elements.dropFirst() {
-      let mapping = Self._lowercaseMapping(element: element)
+    for element in zelf.elements.dropFirst() {
+      let mapping = Self.lowercaseMapping(element: element)
       builder.append(mapping: mapping)
     }
 
     let result = builder.finalize()
-    return Self._toObject(result: result)
+    let resultObject = Self.newObject(py, result: result)
+    return PyResult(resultObject)
   }
 }
-
-*/

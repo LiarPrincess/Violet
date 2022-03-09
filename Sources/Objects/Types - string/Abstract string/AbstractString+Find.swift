@@ -1,9 +1,8 @@
-/* MARKER
 import BigInt
 
 // swiftlint:disable type_name
 
-internal enum AbstractString_FindResult<C: Collection> {
+internal enum AbstractStringFindResult<C: Collection> {
   case index(index: C.Index, position: BigInt)
   case notFound
 }
@@ -12,31 +11,37 @@ extension AbstractString {
 
   // MARK: - Find
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _find(object: PyObject,
-                      start: PyObject?,
-                      end: PyObject?) -> PyResult<BigInt> {
-    return self._template(object: object,
-                          start: start,
-                          end: end,
-                          findFn: self._findImpl(in:value:))
+  internal static func abstractFind(_ py: Py,
+                                    zelf: PyObject,
+                                    object: PyObject,
+                                    start: PyObject?,
+                                    end: PyObject?) -> PyResult<BigInt> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "find")
+    }
+
+    return Self.template(py,
+                         zelf: zelf,
+                         object: object,
+                         start: start,
+                         end: end,
+                         findFn: Self.findHelper(string:value:))
   }
 
-  /// Use this method to find a `value` in `self`.
-  ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _findImpl(value: Elements) -> AbstractString_FindResult<Elements> {
-    let elementsAsSubstring = self.elements[...] // O(1)
-    return self._findImpl(in: elementsAsSubstring, value: value)
-  }
-
-  /// Use this method to find a `value` in a given `substring`.
-  ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _findImpl(
-    in string: Elements.SubSequence,
+  /// Helper for other functions in 'AbstractString'.
+  internal static func findHelper(
+    zelf: Self,
     value: Elements
-  ) -> AbstractString_FindResult<Elements> {
+  ) -> AbstractStringFindResult<Elements> {
+    let zelfElementsAsSubstring = zelf.elements[...] // O(1)
+    return Self.findHelper(string: zelfElementsAsSubstring, value: value)
+  }
+
+  /// Helper for other functions in 'AbstractString'.
+  internal static func findHelper(
+    string: Elements.SubSequence,
+    value: Elements
+  ) -> AbstractStringFindResult<Elements> {
     if string.isEmpty {
       return .notFound
     }
@@ -46,7 +51,7 @@ extension AbstractString {
     var position = BigInt(0)
     var index = string.startIndex
 
-    self._wouldBeBetterWithRandomAccessCollection()
+    Self.wouldBeBetterWithRandomAccessCollection()
     while index != string.endIndex {
       // Subscript is 'O(1)', but the usage is 'O(n)'
       let fromIndex = string[index...]
@@ -63,31 +68,37 @@ extension AbstractString {
 
   // MARK: - RFind
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _rfind(object: PyObject,
-                       start: PyObject?,
-                       end: PyObject?) -> PyResult<BigInt> {
-    return self._template(object: object,
-                          start: start,
-                          end: end,
-                          findFn: self._rfindImpl(in:value:))
+  internal static func abstractRfind(_ py: Py,
+                                     zelf: PyObject,
+                                     object: PyObject,
+                                     start: PyObject?,
+                                     end: PyObject?) -> PyResult<BigInt> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "rfind")
+    }
+
+    return Self.template(py,
+                         zelf: zelf,
+                         object: object,
+                         start: start,
+                         end: end,
+                         findFn: Self.rfindHelper(string:value:))
   }
 
-  /// Use this method to rfind a `value` in `self`.
-  ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _rfindImpl(value: Elements) -> AbstractString_FindResult<Elements> {
-    let elementsAsSubstring = self.elements[...] // O(1)
-    return self._rfindImpl(in: elementsAsSubstring, value: value)
-  }
-
-  /// Use this method to find a `value` in a given `substring`.
-  ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _rfindImpl(
-    in string: Elements.SubSequence,
+  /// Helper for other functions in 'AbstractString'.
+  internal static func rfindHelper(
+    zelf: Self,
     value: Elements
-  ) -> AbstractString_FindResult<Elements> {
+  ) -> AbstractStringFindResult<Elements> {
+    let zelfElementsAsSubstring = zelf.elements[...] // O(1)
+    return Self.rfindHelper(string: zelfElementsAsSubstring, value: value)
+  }
+
+  /// Helper for other functions in 'AbstractString'.
+  internal static func rfindHelper(
+    string: Elements.SubSequence,
+    value: Elements
+  ) -> AbstractStringFindResult<Elements> {
     if string.isEmpty {
       return .notFound
     }
@@ -100,7 +111,7 @@ extension AbstractString {
     // `endIndex` is AFTER the collection
     string.formIndex(before: &index)
 
-    self._wouldBeBetterWithRandomAccessCollection()
+    Self.wouldBeBetterWithRandomAccessCollection()
     while index != string.startIndex {
       // Subscript is 'O(1)', but the usage is 'O(n)'
       let fromIndex = string[index...]
@@ -122,25 +133,28 @@ extension AbstractString {
 
   // MARK: - Template
 
-  private func _template(
+  private static func template(
+    _ py: Py,
+    zelf: Self,
     object: PyObject,
     start: PyObject?,
     end: PyObject?,
-    findFn: (Elements.SubSequence, Elements) -> AbstractString_FindResult<Elements>
+    findFn: (Elements.SubSequence, Elements) -> AbstractStringFindResult<Elements>
   ) -> PyResult<BigInt> {
     let valueToFind: Elements
-    switch Self._getElementsForFindCountContainsIndexOf(object: object) {
+    switch Self.getElementsForFindCountContainsIndexOf(py, object: object) {
     case .value(let s):
       valueToFind = s
     case .invalidObjectType:
       let objectType = object.typeName
-      return .typeError("find arg must be \(Self._pythonTypeName), not \(objectType)")
+      let message = "find arg must be \(Self.pythonTypeName), not \(objectType)"
+      return .typeError(py, message: message)
     case .error(let e):
       return .error(e)
     }
 
-    let substring: AbstractString_Substring<Elements>
-    switch self._substringImpl(start: start, end: end) {
+    let substring: AbstractStringSubstring<Elements>
+    switch Self.abstractSubstring(py, zelf: zelf, start: start, end: end) {
     case let .value(s): substring = s
     case let .error(e): return .error(e)
     }
@@ -160,5 +174,3 @@ extension AbstractString {
     }
   }
 }
-
-*/

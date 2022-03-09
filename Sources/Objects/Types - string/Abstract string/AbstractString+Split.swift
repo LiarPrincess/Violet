@@ -1,4 +1,3 @@
-/* MARKER
 // swiftlint:disable file_length
 
 // MARK: - Collection extensions
@@ -61,16 +60,16 @@ extension BidirectionalCollection where Element: Equatable {
 
 private struct SplitResultBuilder<S: AbstractString> {
 
-  fileprivate var elements = [S.SwiftType]()
+  fileprivate var elements = [PyObject]()
 
-  fileprivate mutating func append(group: S.Elements) {
-    let object = S._toObject(elements: group)
-    self.elements.append(object)
+  fileprivate mutating func append(_ py: Py, group: S.Elements) {
+    let object = S.newObject(py, elements: group)
+    self.elements.append(object.asObject)
   }
 
-  fileprivate mutating func append(group: S.Elements.SubSequence) {
-    let object = S._toObject(elements: group)
-    self.elements.append(object)
+  fileprivate mutating func append(_ py: Py, group: S.Elements.SubSequence) {
+    let object = S.newObject(py, elements: group)
+    self.elements.append(object.asObject)
   }
 }
 
@@ -84,7 +83,7 @@ private enum SplitSeparator<T> {
 
 // MARK: - Arguments
 
-private let splitArguments = ArgumentParser.createOrTrap(
+private let splitArguments = ArgumentParser(
   arguments: ["sep", "maxsplit"],
   format: "|OO:split"
 )
@@ -93,164 +92,180 @@ extension AbstractString {
 
   // MARK: - Split
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _split(args: [PyObject],
-                       kwargs: PyDict?) -> PyResult<PyList> {
-    return self._template(args: args,
-                          kwargs: kwargs,
-                          onWhitespaceSplit: self._splitWhitespace(maxCount:),
-                          onSeparatorSplit: self._split(separator:maxCount:))
+  internal static func abstractSplit(_ py: Py,
+                                     zelf: PyObject,
+                                     args: [PyObject],
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
+    return Self.template(py,
+                         zelf: zelf,
+                         args: args,
+                         kwargs: kwargs,
+                         fnName: "split",
+                         onWhitespaceSplit: Self.splitWhitespace(_:zelf:maxCount:),
+                         onSeparatorSplit: Self.split(_:zelf:separator:maxCount:))
   }
 
-  private func _split(separator: Elements, maxCount: Int) -> [SwiftType] {
+  private static func split(_ py: Py,
+                            zelf: Self,
+                            separator: Elements,
+                            maxCount: Int) -> [PyObject] {
     var result = SplitResultBuilder<Self>()
-    var index = self.elements.startIndex
+    var index = zelf.elements.startIndex
 
-    self._wouldBeBetterWithRandomAccessCollection()
+    Self.wouldBeBetterWithRandomAccessCollection()
     var remainingCount = maxCount
     while remainingCount > 0 {
       defer { remainingCount -= 1 }
 
       let groupStart = index
-      self.elements.formIndex(after: &index, untilItStartsWith: separator)
+      zelf.elements.formIndex(after: &index, untilItStartsWith: separator)
 
       // 'index' is either at the start of the 'separator' or 'end index'
-      let group = self.elements[groupStart..<index]
-      result.append(group: group)
+      let group = zelf.elements[groupStart..<index]
+      result.append(py, group: group)
 
-      if index == self.elements.endIndex {
+      if index == zelf.elements.endIndex {
         return result.elements
       }
 
       // Move index after 'separator'
-      index = self.elements.index(index, offsetBy: separator.count)
+      index = zelf.elements.index(index, offsetBy: separator.count)
     }
 
-    let hasSomeStringLeft = index != self.elements.endIndex
+    let hasSomeStringLeft = index != zelf.elements.endIndex
     let consumedAllCounts = remainingCount == 0
     if hasSomeStringLeft && consumedAllCounts {
-      let lastGroup = self.elements[index...]
-      result.append(group: lastGroup)
+      let lastGroup = zelf.elements[index...]
+      result.append(py, group: lastGroup)
     }
 
     return result.elements
   }
 
-  private func _splitWhitespace(maxCount: Int) -> [SwiftType] {
+  private static func splitWhitespace(_ py: Py,
+                                      zelf: Self,
+                                      maxCount: Int) -> [PyObject] {
     var result = SplitResultBuilder<Self>()
-    var index = self.elements.startIndex
+    var index = zelf.elements.startIndex
 
     var remainingCount = maxCount
-    self._wouldBeBetterWithRandomAccessCollection()
+    Self.wouldBeBetterWithRandomAccessCollection()
     while remainingCount > 0 {
       defer { remainingCount -= 1 }
 
-      self.elements.formIndex(after: &index, while: Self._isWhitespace(element:))
+      zelf.elements.formIndex(after: &index, while: Self.isWhitespace(element:))
 
       // 'index' is either at the start of the group or 'end index'
-      if index == self.elements.endIndex {
+      if index == zelf.elements.endIndex {
         return result.elements
       }
 
       let groupStart = index
-      self.elements.formIndex(after: &index, while: Self._isNotWhitespace(element:))
+      zelf.elements.formIndex(after: &index, while: Self.isNotWhitespace(element:))
 
       // 'index' is either 'whitespace' or 'end index'
-      let group = self.elements[groupStart..<index]
-      result.append(group: group)
+      let group = zelf.elements[groupStart..<index]
+      result.append(py, group: group)
     }
 
-    let hasSomeStringLeft = index != self.elements.endIndex
+    let hasSomeStringLeft = index != zelf.elements.endIndex
     let consumedAllCounts = remainingCount == 0
     if hasSomeStringLeft && consumedAllCounts {
-      self.elements.formIndex(after: &index, while: Self._isWhitespace(element:))
+      zelf.elements.formIndex(after: &index, while: Self.isWhitespace(element:))
 
       // 'a b cd     '.split() -> ['a', 'b', 'cd']
-      if index != self.elements.endIndex {
-        let lastGroup = self.elements[index...]
-        result.append(group: lastGroup)
+      if index != zelf.elements.endIndex {
+        let lastGroup = zelf.elements[index...]
+        result.append(py, group: lastGroup)
       }
     }
 
     return result.elements
   }
 
-  private static func _isNotWhitespace(element: Element) -> Bool {
-    return !Self._isWhitespace(element: element)
+  private static func isNotWhitespace(element: Element) -> Bool {
+    return !Self.isWhitespace(element: element)
   }
 
   // MARK: - RSplit
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _rsplit(args: [PyObject],
-                        kwargs: PyDict?) -> PyResult<PyList> {
-    return self._template(args: args,
-                          kwargs: kwargs,
-                          onWhitespaceSplit: self._rsplitWhitespace(maxCount:),
-                          onSeparatorSplit: self._rsplit(separator:maxCount:))
+  internal static func abstractRSplit(_ py: Py,
+                                      zelf: PyObject,
+                                      args: [PyObject],
+                                      kwargs: PyDict?) -> PyResult<PyObject> {
+    return Self.template(py,
+                         zelf: zelf,
+                         args: args,
+                         kwargs: kwargs,
+                         fnName: "rsplit",
+                         onWhitespaceSplit: Self.rsplitWhitespace(_:zelf:maxCount:),
+                         onSeparatorSplit: Self.rsplit(_:zelf:separator:maxCount:))
   }
 
   // swiftlint:disable:next function_body_length
-  private func _rsplit(separator: Elements, maxCount: Int) -> [SwiftType] {
+  private static func rsplit(_ py: Py,
+                             zelf: Self,
+                             separator: Elements,
+                             maxCount: Int) -> [PyObject] {
     var result = SplitResultBuilder<Self>()
-    var index = self.elements.endIndex
+    var index = zelf.elements.endIndex
 
     // `endIndex` is AFTER the collection
-    self.elements.formIndex(before: &index)
+    zelf.elements.formIndex(before: &index)
 
     var remainingCount = maxCount
-    self._wouldBeBetterWithRandomAccessCollection()
+    Self.wouldBeBetterWithRandomAccessCollection()
     while remainingCount > 0 {
       defer { remainingCount -= 1 }
 
       let groupEnd = index // Include character at this index!
-      self.elements.formIndex(before: &index, untilItStartsWith: separator)
+      zelf.elements.formIndex(before: &index, untilItStartsWith: separator)
       // At this point 'index' is 1st character of 'separator' or start of the string
       // (it may be both at the same time!).
 
       // Arrived at the front - add group and break
-      if index == self.elements.startIndex {
-        let startsWithSeparator = self.elements[index...].starts(with: separator)
+      if index == zelf.elements.startIndex {
+        let startsWithSeparator = zelf.elements[index...].starts(with: separator)
 
         if startsWithSeparator {
-          let groupStart = self.elements.index(index, offsetBy: separator.count)
-          let group = self.elements[groupStart...groupEnd]
-          result.append(group: group)
+          let groupStart = zelf.elements.index(index, offsetBy: separator.count)
+          let group = zelf.elements[groupStart...groupEnd]
+          result.append(py, group: group)
 
           // If 'self' starts with separator then we need to append empty
           // >>> 'abca'.split('a') -> ['', 'bc', '']
-          let emptyGroup = self.elements[self.elements.startIndex..<self.elements.startIndex]
-          result.append(group: emptyGroup)
+          let emptyGroup = zelf.elements[zelf.elements.startIndex..<zelf.elements.startIndex]
+          result.append(py, group: emptyGroup)
         } else {
-          let group = self.elements[self.elements.startIndex...groupEnd]
-          result.append(group: group)
+          let group = zelf.elements[zelf.elements.startIndex...groupEnd]
+          result.append(py, group: group)
         }
 
         break
       }
 
       // We are in the middle - index is 1st character of separator
-      let groupStart = self.elements.index(index, offsetBy: separator.count)
+      let groupStart = zelf.elements.index(index, offsetBy: separator.count)
 
       // Group may be empty when:
       // - self has 'separator' as suffix
       // - we have multiple separators in a row
       let isGroupEmpty = groupStart > groupEnd
       let group = isGroupEmpty ?
-        self.elements[groupStart..<groupStart] :
-        self.elements[groupStart...groupEnd]
+        zelf.elements[groupStart..<groupStart] :
+        zelf.elements[groupStart...groupEnd]
 
-      result.append(group: group)
+      result.append(py, group: group)
 
       // Move our index, so that it points to last character of next group
-      self.elements.formIndex(before: &index)
+      zelf.elements.formIndex(before: &index)
     }
 
-    let hasSomeStringLeft = index != self.elements.startIndex
+    let hasSomeStringLeft = index != zelf.elements.startIndex
     let consumedAllCounts = remainingCount == 0
     if hasSomeStringLeft && consumedAllCounts {
-      let lastGroup = self.elements[self.elements.startIndex...index]
-      result.append(group: lastGroup)
+      let lastGroup = zelf.elements[zelf.elements.startIndex...index]
+      result.append(py, group: lastGroup)
     }
 
     // Because we were going from end we appended in a reverse order.
@@ -260,58 +275,60 @@ extension AbstractString {
     return result.elements.reversed()
   }
 
-  private func _rsplitWhitespace(maxCount: Int) -> [SwiftType] {
+  private static func rsplitWhitespace(_ py: Py,
+                                       zelf: Self,
+                                       maxCount: Int) -> [PyObject] {
     var result = SplitResultBuilder<Self>()
-    var index = self.elements.endIndex
+    var index = zelf.elements.endIndex
 
     // `endIndex` is AFTER the collection
-    self.elements.formIndex(before: &index)
+    zelf.elements.formIndex(before: &index)
 
     var remainingCount = maxCount
-    self._wouldBeBetterWithRandomAccessCollection()
+    Self.wouldBeBetterWithRandomAccessCollection()
     while remainingCount > 0 {
       defer { remainingCount -= 1 }
 
-      self.elements.formIndex(before: &index, while: Self._isWhitespace(element:))
+      zelf.elements.formIndex(before: &index, while: Self.isWhitespace(element:))
 
       // If we arrived at the start and we are still whitespace -> no more groups
       // >>> '     a b cd'.rsplit() -> ['a', 'b', 'cd']
-      if index == self.elements.startIndex && Self._isWhitespace(element: self.elements[index]) {
+      if index == zelf.elements.startIndex && Self.isWhitespace(element: zelf.elements[index]) {
         break
       }
 
       // Consume group
       let groupEnd = index // Include character at this index!
-      self.elements.formIndex(before: &index, while: Self._isNotWhitespace(element:))
+      zelf.elements.formIndex(before: &index, while: Self.isNotWhitespace(element:))
       // At this point 'index' is 1st non-whitespace or 'start index'
       // (it may be both at the same time!).
 
       // Arrived at front - add group and break
-      if index == self.elements.startIndex {
-        let isFirstWhitespace = Self._isWhitespace(element: self.elements[index])
+      if index == zelf.elements.startIndex {
+        let isFirstWhitespace = Self.isWhitespace(element: zelf.elements[index])
         let groupStart = isFirstWhitespace ?
-          self.elements.index(after: index) :
+          zelf.elements.index(after: index) :
           index
 
-        let group = self.elements[groupStart...groupEnd]
-        result.append(group: group)
+        let group = zelf.elements[groupStart...groupEnd]
+        result.append(py, group: group)
         break
       }
 
       // We are in the middle - index is 1st whitespace, group starts after it
-      let groupStart = self.elements.index(after: index)
-      let group = self.elements[groupStart...groupEnd]
-      result.append(group: group)
+      let groupStart = zelf.elements.index(after: index)
+      let group = zelf.elements[groupStart...groupEnd]
+      result.append(py, group: group)
     }
 
-    let hasSomeStringLeft = index != self.elements.startIndex
+    let hasSomeStringLeft = index != zelf.elements.startIndex
     let consumedAllCounts = remainingCount == 0
     if hasSomeStringLeft && consumedAllCounts {
       // Only occurs when maxcount was reached
       // Skip any remaining whitespace and copy to end of string
-      self.elements.formIndex(before: &index, while: Self._isWhitespace(element:))
-      let lastGroup = self.elements[...index]
-      result.append(group: lastGroup)
+      zelf.elements.formIndex(before: &index, while: Self.isWhitespace(element:))
+      let lastGroup = zelf.elements[...index]
+      result.append(py, group: lastGroup)
     }
 
     // See comment in 'self._rsplit', why we need to reverse
@@ -320,101 +337,114 @@ extension AbstractString {
 
   // MARK: - Template
 
-  private func _template(
+  private static func template(
+    _ py: Py,
+    zelf: PyObject,
     args: [PyObject],
     kwargs: PyDict?,
-    onWhitespaceSplit: (Int) -> [SwiftType],
-    onSeparatorSplit: (Elements, Int) -> [SwiftType]
-  ) -> PyResult<PyList> {
-    switch splitArguments.bind(args: args, kwargs: kwargs) {
+    fnName: String,
+    onWhitespaceSplit: (Py, Self, Int) -> [PyObject],
+    onSeparatorSplit: (Py, Self, Elements, Int) -> [PyObject]
+  ) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, fnName)
+    }
+
+    switch splitArguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
       assert(binding.optionalCount == 2, "Invalid optional argument count.")
 
       let sep = binding.optional(at: 0)
       let maxCount = binding.optional(at: 1)
-      return self._template(separator: sep,
-                            maxCount: maxCount,
-                            onWhitespaceSplit: onWhitespaceSplit,
-                            onSeparatorSplit: onSeparatorSplit)
+      return Self.template(py,
+                           zelf: zelf,
+                           separator: sep,
+                           maxCount: maxCount,
+                           onWhitespaceSplit: onWhitespaceSplit,
+                           onSeparatorSplit: onSeparatorSplit)
     case let .error(e):
       return .error(e)
     }
   }
 
-  private func _template(
+  private static func template(
+    _ py: Py,
+    zelf: Self,
     separator separatorObject: PyObject?,
     maxCount maxCountObject: PyObject?,
-    onWhitespaceSplit: (Int) -> [SwiftType],
-    onSeparatorSplit: (Elements, Int) -> [SwiftType]
-  ) -> PyResult<PyList> {
+    onWhitespaceSplit: (Py, Self, Int) -> [PyObject],
+    onSeparatorSplit: (Py, Self, Elements, Int) -> [PyObject]
+  ) -> PyResult<PyObject> {
     var count: Int
-    switch self._parseMaxCount(maxCount: maxCountObject) {
+    switch Self.parseMaxCount(py, object: maxCountObject) {
     case let .value(c): count = c
     case let .error(e): return .error(e)
     }
 
-    switch self._parseSeparator(separator: separatorObject) {
+    switch Self.parseSeparator(py, object: separatorObject) {
     case .whitespace:
-      let result = onWhitespaceSplit(count)
-      let list = Py.newList(elements: result)
-      return .value(list)
+      let result = onWhitespaceSplit(py, zelf, count)
+      let list = py.newList(elements: result)
+      return PyResult(list)
+
     case .some(let separator):
       let result: [PyObject]
-      let separatorIsLongerThanUs = self.count < separator.count
+      let separatorIsLongerThanUs = zelf.count < separator.count
 
       // This 'switch' is overkill, but it makes it easier to debug
       // (we can just 'n', without checking the value of 'separatorIsLongerThanUs').
       switch separatorIsLongerThanUs {
-      case true: result = [self]
-      case false: result = onSeparatorSplit(separator, count)
+      case true: result = [zelf.asObject]
+      case false: result = onSeparatorSplit(py, zelf, separator, count)
       }
 
-      let list = Py.newList(elements: result)
-      return .value(list)
+      let list = py.newList(elements: result)
+      return PyResult(list)
+
     case .error(let e):
       return .error(e)
     }
   }
 
-  // MARK: - Separator
+  // MARK: - Parse arguments
 
-  private func _parseMaxCount(maxCount object: PyObject?) -> PyResult<Int> {
+  private static func parseMaxCount(_ py: Py, object: PyObject?) -> PyResult<Int> {
     guard let object = object else {
       return .value(Int.max)
     }
 
-    guard let pyInt = PyCast.asInt(object) else {
-      return .typeError("maxsplit must be int, not \(object.typeName)")
+    guard let pyInt = py.cast.asInt(object) else {
+      return .typeError(py, message: "maxsplit must be int, not \(object.typeName)")
     }
 
     guard let int = Int(exactly: pyInt.value) else {
-      return .overflowError("maxsplit is too big")
+      return .overflowError(py, message: "maxsplit is too big")
     }
 
     return .value(int < 0 ? Int.max : int)
   }
 
-  private func _parseSeparator(separator object: PyObject?) -> SplitSeparator<Elements> {
+  private static func parseSeparator(_ py: Py, object: PyObject?) -> SplitSeparator<Elements> {
     guard let object = object else {
       return .whitespace
     }
 
-    if PyCast.isNone(object) {
+    if py.cast.isNone(object) {
       return .whitespace
     }
 
-    guard let sep = Self._getElements(object: object) else {
-      let msg = "sep must be \(Self._pythonTypeName) or None, not \(object.typeName)"
-      return .error(Py.newTypeError(msg: msg))
+    guard let separator = Self.getElements(py, object: object) else {
+      let message = "sep must be \(Self.pythonTypeName) or None, not \(object.typeName)"
+      let error = py.newTypeError(message: message)
+      return .error(error.asBaseException)
     }
 
-    if sep.isEmpty {
-      return .error(Py.newValueError(msg: "empty separator"))
+    if separator.isEmpty {
+      let error = py.newValueError(message: "empty separator")
+      return .error(error.asBaseException)
     }
 
-    return .some(sep)
+    return .some(separator)
   }
 }
-
-*/

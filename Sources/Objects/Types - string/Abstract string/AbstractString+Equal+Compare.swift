@@ -1,8 +1,6 @@
-/* MARKER
 import VioletCore
 
-// swiftlint:disable:next type_name
-private enum AbstractString_CompareResult: Equatable {
+private enum AbstractStringCompareResult: Equatable {
   case less
   case greater
   case equal
@@ -16,81 +14,112 @@ private enum AbstractString_CompareResult: Equatable {
 
 extension AbstractString {
 
-  // MARK: - Equal
+  // MARK: - Equality
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _isEqual(other: PyObject) -> CompareResult {
-    if self === other {
+  internal static func abstract__eq__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> CompareResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__eq__)
+    }
+
+    return Self.isEqual(py, zelf: zelf, other: other)
+  }
+
+  internal static func abstract__ne__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> CompareResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ne__)
+    }
+
+    let isEqual = Self.isEqual(py, zelf: zelf, other: other)
+    return isEqual.not
+  }
+
+  private static func isEqual(_ py: Py, zelf: Self, other: PyObject) -> CompareResult {
+    if zelf.ptr === other.ptr {
       return .value(true)
     }
 
-    let result = self._compare(other: other)
-    return CompareResult(result?.isEqual)
-  }
-
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _isEqual(other: Self) -> Bool {
-    if self === other {
-      return true
+    guard let otherElements = Self.getElements(py, object: other) else {
+      return .notImplemented
     }
 
-    let result = self._compare(other: other.elements)
-    return result.isEqual
-  }
+    guard zelf.count == otherElements.count else {
+      return .value(false)
+    }
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _isEqual(other: Elements) -> Bool {
-    let result = self._compare(other: other)
-    return result.isEqual
-  }
-
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _isNotEqual(other: PyObject) -> CompareResult {
-    return self._isEqual(other: other).not
+    let result = Self.compare(zelf: zelf, other: otherElements)
+    let isEqual = result.isEqual
+    return CompareResult(isEqual)
   }
 
   // MARK: - Compare
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _isLess(other: PyObject) -> CompareResult {
-    let result = self._compare(other: other)
+  internal static func abstract__lt__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> CompareResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__lt__)
+    }
+
+    let result = Self.compare(py, zelf: zelf, other: other)
     return CompareResult(result?.isLess)
   }
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _isLessEqual(other: PyObject) -> CompareResult {
-    let result = self._compare(other: other)
+  internal static func abstract__le__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> CompareResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__le__)
+    }
+
+    let result = Self.compare(py, zelf: zelf, other: other)
     return CompareResult(result?.isLessEqual)
   }
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _isGreater(other: PyObject) -> CompareResult {
-    let result = self._compare(other: other)
+  internal static func abstract__gt__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> CompareResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__gt__)
+    }
+
+    let result = Self.compare(py, zelf: zelf, other: other)
     return CompareResult(result?.isGreater)
   }
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _isGreaterEqual(other: PyObject) -> CompareResult {
-    let result = self._compare(other: other)
+  internal static func abstract__ge__(_ py: Py,
+                                      zelf: PyObject,
+                                      other: PyObject) -> CompareResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ge__)
+    }
+
+    let result = Self.compare(py, zelf: zelf, other: other)
     return CompareResult(result?.isGreaterEqual)
   }
 
   // MARK: - Helpers
 
-  private func _compare(other: PyObject) -> AbstractString_CompareResult? {
-    guard let otherElements = Self._getElements(object: other) else {
+  private static func compare(_ py: Py,
+                              zelf: Self,
+                              other: PyObject) -> AbstractStringCompareResult? {
+    guard let otherElements = Self.getElements(py, object: other) else {
       return nil
     }
 
-    return self._compare(other: otherElements)
+    return Self.compare(zelf: zelf, other: otherElements)
   }
 
-  private func _compare(other: Elements) -> AbstractString_CompareResult {
+  private static func compare(zelf: Self,
+                              other: Elements) -> AbstractStringCompareResult {
     // We need to compare on scalars
     // "Cafe\u0301" (e + acute accent) == "Café" (e with acute) -> False
     // "Cafe\u0301" (e + acute accent) <  "Café" (e with acute) -> True
 
-    var selfIter = self.elements.makeIterator()
+    var selfIter = zelf.elements.makeIterator()
     var otherIter = other.makeIterator()
 
     var selfValue = selfIter.next()
@@ -116,9 +145,7 @@ extension AbstractString {
     case (_, nil): return .greater // Finished other, self has some remaining
     default:
       // Not possible? See `while` condition.
-      trap("Error when comparing '\(self.elements)' and '\(other)'")
+      trap("Error when comparing '\(zelf.elements)' and '\(other)'")
     }
   }
 }
-
-*/
