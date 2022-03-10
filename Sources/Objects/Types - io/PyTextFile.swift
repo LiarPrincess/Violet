@@ -93,71 +93,81 @@ public struct PyTextFile: PyObjectMixin {
     }
   }
 
-  private func closeIfNotAlreadyClosed() -> Int { return 1 }
-
   // MARK: - Debug
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyTextFile(ptr: ptr)
     return "PyTextFile(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
-}
-
-/* MARKER
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  public func repr() -> String {
-    if self.hasReprLock {
-      return "<TextFile - reentrant call>"
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
-    return self.withReprLock {
-      var result = "<TextFile"
+    if zelf.hasReprLock {
+      return PyResult(py, interned: "<TextFile - reentrant call>")
+    }
 
-      if let name = self.name {
-        result += " name=\(name)"
-      }
-
-      result += " mode=\(self.mode.flag)"
-      result += " encoding=\(self.encoding)"
-      result += ">"
-
-      return result
+    return zelf.withReprLock {
+      let name = zelf.name.map { " name=\($0)" } ?? ""
+      let result = "<TextFile\(name) mode=\(zelf.mode.flag) encoding=\(zelf.encoding)>"
+      return PyResult(py, result)
     }
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  public func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Read
 
-  // sourcery: pymethod = readable
-  public func isReadable() -> Bool {
+  public var isReadable: Bool {
     switch self.mode {
     case .read,
-         .update: return true
+         .update:
+      return true
     case .write,
          .create,
-         .append: return false
+         .append:
+      return false
     }
   }
 
+  // sourcery: pymethod = readable
+  internal static func readable(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "readable")
+    }
+
+    let result = zelf.isReadable
+    return PyResult(py, result)
+  }
+
   // sourcery: pymethod = readline
-  public func readLine() -> PyResult<String> {
-    if let e = self.assertFileIsOpenAndReadable() {
+  internal static func readline(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "readline")
+    }
+
+    if let e = zelf.assertFileIsOpenAndReadable(py) {
       return .error(e)
     }
 
-    let readLineResult = self.fd.readLine()
+    let readLineResult = zelf.fd.readLine()
     switch readLineResult {
     case let .value(data):
-      return self.encoding.decodeOrError(data: data, onError: self.errorHandling)
+      let result = zelf.encoding.decodeOrError(py,
+                                               data: data,
+                                               onError: zelf.errorHandling)
+
+      return PyResult(py, result)
     case let .error(e):
       return .error(e)
     }
@@ -166,30 +176,41 @@ public struct PyTextFile: PyObjectMixin {
   // sourcery: pymethod = read
   /// static PyObject *
   /// _io_TextIOWrapper_read_impl(textio *self, Py_ssize_t n)
-  public func read(size: PyObject? = nil) -> PyResult<PyString> {
+  internal static func read(_ py: Py,
+                            zelf: PyObject,
+                            size: PyObject?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "read")
+    }
+
     guard let size = size else {
-      return self.read(size: -1)
+      let result = zelf.read(py, size: -1)
+      return PyResult(result)
     }
 
-    if PyCast.isNone(size) {
-      return self.read(size: -1)
+    if py.cast.isNone(size) {
+      let result = zelf.read(py, size: -1)
+      return PyResult(result)
     }
 
-    if let pyInt = PyCast.asInt(size) {
+    if let pyInt = py.cast.asInt(size) {
       let int = Int(exactly: pyInt.value) ?? Int.max
-      return self.read(size: int)
+      let result = zelf.read(py, size: int)
+      return PyResult(result)
     }
 
-    return .typeError("read size must be int or none, not \(size.typeName)")
+    let message = "read size must be int or none, not \(size.typeName)"
+    return .typeError(py, message: message)
   }
 
-  public func read(size: Int) -> PyResult<PyString> {
-    if let e = self.assertFileIsOpenAndReadable() {
+  public func read(_ py: Py, size: Int) -> PyResult<PyString> {
+    if let e = self.assertFileIsOpenAndReadable(py) {
       return .error(e)
     }
 
     if size == 0 {
-      return .value(Py.emptyString)
+      let result = py.emptyString
+      return .value(result)
     }
 
     let readResult = size > 0 ?
@@ -203,22 +224,23 @@ public struct PyTextFile: PyObjectMixin {
     }
 
     let string: String
-    switch self.encoding.decodeOrError(data: data, onError: self.errorHandling) {
+    switch self.encoding.decodeOrError(py, data: data, onError: self.errorHandling) {
     case let .value(s): string = s
     case let .error(e): return .error(e)
     }
 
-    let result = Py.newString(string)
+    let result = py.newString(string)
     return .value(result)
   }
 
-  private func assertFileIsOpenAndReadable() -> PyBaseException? {
-    guard !self.isClosed() else {
-      return Py.newValueError(msg: "I/O operation on closed file.")
+  private func assertFileIsOpenAndReadable(_ py: Py) -> PyBaseException? {
+    if self.isClosed {
+      let error = py.newValueError(message: "I/O operation on closed file.")
+      return error.asBaseException
     }
 
-    guard self.isReadable() else {
-      return self.modeError("not readable")
+    if !self.isReadable {
+      return Self.modeError(py, message: "not readable")
     }
 
     return nil
@@ -226,78 +248,139 @@ public struct PyTextFile: PyObjectMixin {
 
   // MARK: - Write
 
-  // sourcery: pymethod = writable
-  public func isWritable() -> Bool {
+  public var isWritable: Bool {
     switch self.mode {
     case .write,
          .create,
          .append,
-         .update: return true
-    case .read: return true
+         .update:
+      return true
+    case .read:
+      return true
     }
   }
+
+  // sourcery: pymethod = writable
+  internal static func writable(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "writable")
+    }
+
+    let result = zelf.isWritable
+    return PyResult(py, result)
+  }
+
 
   // sourcery: pymethod = write
   /// static PyObject *
   /// _io_TextIOWrapper_write_impl(textio *self, Py_ssize_t n)
-  public func write(object: PyObject) -> PyResult<PyNone> {
-    guard let str = PyCast.asString(object) else {
-      return .typeError("write() argument must be str, not \(object.typeName)")
+  internal static func write(_ py: Py,
+                             zelf: PyObject,
+                             object: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "write")
     }
 
-    return self.write(string: str.value)
+    guard let str = py.cast.asString(object) else {
+      let message = "write() argument must be str, not \(object.typeName)"
+      return .typeError(py, message: message)
+    }
+
+    if let error = zelf.write(py, string: str.value) {
+      return .error(error)
+    }
+
+    return .none(py)
   }
 
-  public func write(string: String) -> PyResult<PyNone> {
-    guard !self.isClosed() else {
-      return .valueError("I/O operation on closed file.")
+  public func write(_ py: Py, string: String) -> PyBaseException? {
+    if self.isClosed {
+      let error = py.newValueError(message: "I/O operation on closed file.")
+      return error.asBaseException
     }
 
-    guard self.isWritable() else {
-      return .error(self.modeError("not writable"))
+    if !self.isWritable {
+      return Self.modeError(py, message: "not writable")
     }
 
-    switch self.encoding.encodeOrError(string: string, onError: self.errorHandling) {
+    switch self.encoding.encodeOrError(py, string: string, onError: self.errorHandling) {
     case let .value(data):
       return self.fd.write(contentsOf: data)
     case let .error(e):
-      return .error(e)
+      return e
     }
   }
 
   // MARK: - Flush
 
   // sourcery: pymethod = flush
-  public func flush() -> PyResult<PyNone> {
-    let result = self.fd.flush()
-    return result
+  internal static func flush(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "flush")
+    }
+
+    if let error = zelf.flush() {
+      return .error(error)
+    }
+
+    return .none(py)
+  }
+
+  public func flush() -> PyBaseException? {
+    return self.fd.flush()
   }
 
   // MARK: - Close
 
-  // sourcery: pymethod = closed
-  public func isClosed() -> Bool {
+  public var isClosed: Bool {
     return self.fd.raw < 0
   }
 
+  // sourcery: pymethod = closed
+  internal static func closed(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "closed")
+    }
+
+    let result = zelf.isClosed
+    return PyResult(py, result)
+  }
+
   // sourcery: pymethod = close
+
+  internal static func close(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "close")
+    }
+
+    if let error = zelf.close() {
+      return .error(error)
+    }
+
+    return .none(py)
+  }
+
   /// Idempotent
-  public func close() -> PyResult<PyNone> {
+  public func close() -> PyBaseException? {
     return self.closeIfNotAlreadyClosed()
   }
 
-  private func closeIfNotAlreadyClosed() -> PyResult<PyNone> {
-    guard !self.isClosed() else {
-      return .value(Py.none)
+  private func closeIfNotAlreadyClosed() -> PyBaseException? {
+    if !self.isClosed {
+      return self.fd.close()
     }
 
-    return self.fd.close()
+    return nil
   }
 
   // MARK: - Del
 
   // sourcery: pymethod = __del__
-  public func del() -> PyResult<PyNone> {
+  internal static func __del__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__del__")
+    }
+
     // Example when this matters:
     // 1) stdout - 'closeOnDealloc' should be 'false'
     //    We need to to allow printing after Violet context is destroyed.
@@ -310,43 +393,60 @@ public struct PyTextFile: PyObjectMixin {
     //    use 'Object.finalize' to free resources in Java.
     //    Anyway…
 
-    guard self.closeOnDealloc else {
-      return .value(Py.none)
+    guard zelf.closeOnDealloc else {
+      return .none(py)
     }
 
     // 'self.close' is (or at least should be) idempotent
-    return self.close()
+    if let error = zelf.close() {
+      return .error(error)
+    }
+
+    return .none(py)
   }
 
   // MARK: - Context manager
 
-  // This things are defined in IOBase
+  // Those things are defined in IOBase
 
   // sourcery: pymethod = __enter__
-  public func enter() -> PyResult<PyObject> {
+  internal static func __enter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__enter__")
+    }
+
     // 'FileDescriptorType' is responsible for actually opening file.
     // Also: we need to return self because result of '__enter__' will be bound
     // to 'f' in 'open('elsa') as f'.
-    return .value(self)
+    return PyResult(zelf)
   }
 
   // sourcery: pymethod = __exit__
-  public func exit(exceptionType: PyObject,
-                   exception: PyObject,
-                   traceback: PyObject) -> PyResult<PyNone> {
+  internal static func __exit__(_ py: Py,
+                                zelf: PyObject,
+                                exceptionType: PyObject,
+                                exception: PyObject,
+                                traceback: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__exit__")
+    }
+
     // Remember that if we return 'truthy' value (yes, we JavasScript now)
     // then the exception will be suppressed (and we don't want this).
     // So we return 'None' which is 'falsy'.
-    return self.closeIfNotAlreadyClosed()
+    if let error = zelf.close() {
+      return .error(error)
+    }
+
+    return .none(py)
   }
 
   // MARK: - Helpers
 
-  private func modeError(_ msg: String) -> PyBaseException {
+  private static func modeError(_ py: Py, message: String) -> PyBaseException {
     // It should be 'io.UnsupportedOperation', but we don't have it,
     // so we will use 'OSError' instead.
-    return Py.newOSError(msg: msg)
+    let error = py.newOSError(message: message)
+    return error.asBaseException
   }
 }
-
-*/

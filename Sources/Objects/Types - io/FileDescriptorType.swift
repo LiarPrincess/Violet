@@ -10,14 +10,14 @@ public protocol FileDescriptorType {
   func readToEnd() -> PyResult<Data>
   func read(upToCount count: Int) -> PyResult<Data>
 
-  func write<T: DataProtocol>(contentsOf data: T) -> PyResult<PyNone>
-  func flush() -> PyResult<PyNone>
+  func write<T: DataProtocol>(contentsOf data: T) -> PyBaseException?
+  func flush() -> PyBaseException?
 
   func offset() -> PyResult<UInt64>
 
   @discardableResult
   func seekToEnd() -> PyResult<UInt64>
-  func seek(toOffset offset: UInt64) -> PyResult<PyNone>
+  func seek(toOffset offset: UInt64) -> PyBaseException?
 
-  func close() -> PyResult<PyNone>
+  func close() -> PyBaseException?
 }
