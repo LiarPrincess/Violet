@@ -2,12 +2,12 @@ extension AbstractString {
 
   internal static func abstractExpandTabs(_ py: Py,
                                           zelf: PyObject,
-                                          object: PyObject) -> PyResult<PyObject> {
+                                          tabSize: PyObject?) -> PyResult<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "expandtabs")
     }
 
-    switch Self.parseTabSize(py, tabSize: object) {
+    switch Self.parseTabSize(py, tabSize: tabSize) {
     case let .value(tabSize):
       let builder = Self.expandTabs(zelf: zelf, tabSize: tabSize)
       let result = builder.finalize()

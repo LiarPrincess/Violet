@@ -14,6 +14,7 @@ public struct Py {
   public var none: PyNone { fatalError() }
   public var ellipsis: PyEllipsis { fatalError() }
   public var notImplemented: PyNotImplemented { fatalError() }
+  public var emptyString: PyString { fatalError() }
 
   public let memory = PyMemory()
   public var types: Py.Types { fatalError() }
@@ -34,6 +35,10 @@ public struct Py {
   public func newComplex(real: Double, imag: Double) -> PyComplex { fatalError() }
 
   public func newString(_ s: String) -> PyString { fatalError() }
+  public func newString(_ s: String.UnicodeScalarView) -> PyString { fatalError() }
+  public func newString(_ s: Substring.UnicodeScalarView) -> PyString { fatalError() }
+  public func newString(scalar: UnicodeScalar) -> PyString { fatalError() }
+  public func newStringIterator(string: PyString) -> PyStringIterator { fatalError() }
   public func newBytes(_ d: Data) -> PyBytes { fatalError() }
 
   public func newTuple(elements: [PyObject]) -> PyTuple { fatalError() }
