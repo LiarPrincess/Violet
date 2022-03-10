@@ -1,8 +1,8 @@
-// ================================================================================
-// Automatically generated from: ./Sources/Objects/Generated2/Py+TypeDefinitions.py
+// ===============================================================================
+// Automatically generated from: ./Sources/Objects/Generated/Py+TypeDefinitions.py
 // Use 'make gen' in repository root to regenerate.
 // DO NOT EDIT!
-// ================================================================================
+// ===============================================================================
 
 import BigInt
 import VioletCore

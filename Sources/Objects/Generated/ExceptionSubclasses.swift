@@ -1,8 +1,8 @@
-// =================================================================================
-// Automatically generated from: ./Sources/Objects/Generated2/ExceptionSubclasses.py
+// ================================================================================
+// Automatically generated from: ./Sources/Objects/Generated/ExceptionSubclasses.py
 // Use 'make gen' in repository root to regenerate.
 // DO NOT EDIT!
-// =================================================================================
+// ================================================================================
 
 // swiftlint:disable line_length
 // swiftlint:disable trailing_newline

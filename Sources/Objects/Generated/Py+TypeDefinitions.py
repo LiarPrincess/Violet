@@ -39,7 +39,7 @@ import VioletCore
     types: List[PyTypeDefinition] = []
     for t in all_types:
         if not t.is_error:
-            types.append(PyTypeDefinition(t, all_types))
+            types.append(PyTypeDefinition(t))
 
     # ==================
     # === Properties ===

@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Union, Optional
 
 from Sourcery.signature import SignatureInfo
 
@@ -10,11 +10,11 @@ class TypeInfo:
     def __init__(self,
                  swift_type_name: str,
                  python_type_name: str,
-                 python_base_type_name: str,
+                 base_type_info, # TypeInfo
                  is_error: bool):
         self.swift_type_name = swift_type_name
         self.python_type_name = python_type_name
-        self.python_base_type_name = python_base_type_name
+        self.base_type_info: Optional[TypeInfo] = base_type_info
         self.is_error = is_error
 
         # To be filled later

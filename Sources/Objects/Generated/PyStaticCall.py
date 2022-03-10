@@ -120,7 +120,6 @@ public enum PyStaticCall {{
         if name in already_printed_kinds:
             continue
 
-
         signature = '('
         for index, arg in enumerate(kind.arguments):
             if index != 0:
@@ -262,13 +261,13 @@ public enum PyStaticCall {{
         return_type = m.kind.return_type
         arguments = m.kind.arguments
 
-        assert len(arguments) != 0
+        assert len(arguments) >= 2 # 'Py' and 'zelf'
         self_argument = arguments[1]
 
         func_arguments = ''
         call_arguments = ''
         for index, arg in enumerate(arguments):
-            if len(func_arguments) > 0:
+            if index != 0:
                 func_arguments += ', '
                 call_arguments += ', '
 
