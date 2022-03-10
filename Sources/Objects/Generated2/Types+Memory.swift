@@ -4305,9 +4305,9 @@ extension PyString {
   /// This type was automatically generated based on `PyString` fields
   /// with `sourcery: includeInLayout` annotation.
   internal struct Layout {
-    internal let valueOffset: Int
     internal let cachedCountOffset: Int
     internal let cachedHashOffset: Int
+    internal let valueOffset: Int
     internal let size: Int
     internal let alignment: Int
 
@@ -4316,16 +4316,16 @@ extension PyString {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: String.self), // value
           PyMemory.FieldLayout(from: Int.self), // cachedCount
-          PyMemory.FieldLayout(from: PyHash.self) // cachedHash
+          PyMemory.FieldLayout(from: PyHash.self), // cachedHash
+          PyMemory.FieldLayout(from: String.self) // value
         ]
       )
 
       assert(layout.offsets.count == 3)
-      self.valueOffset = layout.offsets[0]
-      self.cachedCountOffset = layout.offsets[1]
-      self.cachedHashOffset = layout.offsets[2]
+      self.cachedCountOffset = layout.offsets[0]
+      self.cachedHashOffset = layout.offsets[1]
+      self.valueOffset = layout.offsets[2]
       self.size = layout.size
       self.alignment = layout.alignment
     }
@@ -4334,18 +4334,18 @@ extension PyString {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
-  internal var valuePtr: Ptr<String> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
   internal var cachedCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.cachedCountOffset) }
   internal var cachedHashPtr: Ptr<PyHash> { Ptr(self.ptr, offset: Self.layout.cachedHashOffset) }
+  internal var valuePtr: Ptr<String> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyString(ptr: ptr)
     zelf.beforeDeinitialize()
 
     zelf.header.deinitialize()
-    zelf.valuePtr.deinitialize()
     zelf.cachedCountPtr.deinitialize()
     zelf.cachedHashPtr.deinitialize()
+    zelf.valuePtr.deinitialize()
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyString? {

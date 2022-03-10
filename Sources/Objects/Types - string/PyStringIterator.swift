@@ -13,8 +13,12 @@ public struct PyStringIterator: PyObjectMixin {
 
   // sourcery: includeInLayout
   internal var string: PyString { self.stringPtr.pointee }
+
   // sourcery: includeInLayout
-  internal var index: Int { self.indexPtr.pointee }
+  internal var index: Int {
+    get { self.indexPtr.pointee }
+    nonmutating set { self.indexPtr.pointee = newValue }
+  }
 
   public let ptr: RawPtr
 
@@ -35,68 +39,82 @@ public struct PyStringIterator: PyObjectMixin {
     let zelf = PyStringIterator(ptr: ptr)
     return "PyStringIterator(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
-}
-
-/* MARKER
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    }
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal func iter() -> PyObject {
-    return self
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__iter__")
+    }
+
+    return PyResult(zelf)
   }
 
   // MARK: - Next
 
   // sourcery: pymethod = __next__
-  internal func next() -> PyResult<PyObject> {
-    let elements = self.string.elements
+  internal static func __next__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__next__")
+    }
+
+    let elements = zelf.string.elements
 
     let indexOrNil = elements.index(elements.startIndex,
-                                    offsetBy: self.index,
+                                    offsetBy: zelf.index,
                                     limitedBy: elements.endIndex)
 
     if let index = indexOrNil, index != elements.endIndex {
-      self.index += 1
+      zelf.index += 1
       let scalar = elements[index]
-      let string = Py.newString(scalar: scalar)
-      return .value(string)
+      let string = py.newString(scalar: scalar)
+      return PyResult(string)
     }
 
-    return .stopIteration()
+    return .stopIteration(py)
   }
 
   // MARK: - Length hint
 
   // sourcery: pymethod = __length_hint__
-  internal func lengthHint() -> PyInt {
-    let count = self.string.count
-    let result = count - self.index
-    return Py.newInt(result)
+  internal static func __length_hint__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__length_hint__")
+    }
+
+    let count = zelf.string.count
+    let result = count - zelf.index
+    return PyResult(py, result)
   }
 
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyNew(type: PyType,
-                            args: [PyObject],
-                            kwargs: PyDict?) -> PyResult<PyStringIterator> {
-    return .typeError("cannot create 'str_iterator' instances")
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    return .typeError(py, message: "cannot create 'str_iterator' instances")
   }
 }
-
-*/

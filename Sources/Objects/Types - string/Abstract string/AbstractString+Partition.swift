@@ -29,7 +29,7 @@ extension AbstractString {
                          findSeparator: Self.findHelper(zelf:value:))
   }
 
-  internal func _rpartition(
+  internal static func abstractRPartition(
     _ py: Py,
     zelf: PyObject,
     separator: PyObject

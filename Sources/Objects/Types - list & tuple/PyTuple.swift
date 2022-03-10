@@ -257,12 +257,14 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
                                type: PyType,
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
-    if let e = ArgumentParser.noKwargsOrError(py, fnName: "tuple", kwargs: kwargs) {
+    if let e = ArgumentParser.noKwargsOrError(py,
+                                              fnName: Self.pythonTypeName,
+                                              kwargs: kwargs) {
       return .error(e.asBaseException)
     }
 
     if let e = ArgumentParser.guaranteeArgsCountOrError(py,
-                                                        fnName: "tuple",
+                                                        fnName: Self.pythonTypeName,
                                                         args: args,
                                                         min: 0,
                                                         max: 1) {
