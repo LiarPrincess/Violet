@@ -83,8 +83,7 @@ public struct PyObject: PyObjectMixin {
 
   // sourcery: pymethod = __hash__
   internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
-    let int = Int(bitPattern: zelf.ptr)
-    let result = py.hasher.hash(int)
+    let result = py.hasher.hash(zelf.ptr)
     return .value(result)
   }
 

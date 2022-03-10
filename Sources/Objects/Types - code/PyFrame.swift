@@ -78,7 +78,10 @@ public struct PyFrame: PyObjectMixin {
   /// We use array, which is like dictionary, but with lower constants.
   ///
   /// CPython: `f_localsplus`.
-  public var fastLocals: [PyObject?] { self.fastLocalsPtr.pointee }
+  public var fastLocals: [PyObject?] {
+    get { self.fastLocalsPtr.pointee }
+    nonmutating _modify { yield &self.fastLocalsPtr.pointee }
+  }
 
   // sourcery: includeInLayout
   /// Cell variables (variables from upper scopes).
@@ -158,50 +161,48 @@ public struct PyFrame: PyObjectMixin {
     self.stackPtr.initialize(to: ObjectStack())
     self.blocksPtr.initialize(to: BlockStack())
 
-    let builtins = Self.getBuiltins(globals: globals, parent: parent)
+    let builtins = Self.getBuiltins(py, globals: globals, parent: parent)
     self.builtinsPtr.initialize(to: builtins)
 
     let fastLocals = [PyObject?](repeating: nil, count: self.code.variableCount)
     self.fastLocalsPtr.initialize(to: fastLocals)
 
-    let cellVariables = Self.createEmptyCells(count: self.code.cellVariableCount)
+    let cellVariables = Self.createEmptyCells(py, count: self.code.cellVariableCount)
     self.cellVariablesPtr.initialize(to: cellVariables)
 
-    let freeVariables = Self.createEmptyCells(count: self.code.freeVariableCount)
+    let freeVariables = Self.createEmptyCells(py, count: self.code.freeVariableCount)
     self.freeVariablesPtr.initialize(to: freeVariables)
 
     self.currentInstructionIndexPtr.initialize(to: nil)
     self.nextInstructionIndexPtr.initialize(to: 0)
   }
 
-  private static func createEmptyCells(count: Int) -> [PyCell] {
-//    var result = [PyCell]()
-//    result.reserveCapacity(count)
-//
-//    for _ in 0..<count {
-//      let cell = PyMemory.newCell(content: nil)
-//      result.append(cell)
-//    }
-//
-//    return result
-    fatalError()
+  private static func createEmptyCells(_ py: Py, count: Int) -> [PyCell] {
+    var result = [PyCell]()
+    result.reserveCapacity(count)
+
+    for _ in 0..<count {
+      let cell = py.newCell(content: nil)
+      result.append(cell)
+    }
+
+    return result
   }
 
-  private static func getBuiltins(globals: PyDict, parent: PyFrame?) -> PyDict {
+  private static func getBuiltins(_ py: Py, globals: PyDict, parent: PyFrame?) -> PyDict {
     // If we share the globals, we share the builtins.
     // Saves a lookup and a call.
-//    if let p = parent, p.globals === globals {
-//      return p.builtins
-//    }
-//
-//    let globalBuiltins = globals.get(id: .__builtins__)
-//    let globalBuiltinsModule = globalBuiltins.flatMap(PyCast.asModule(_:))
-//    if let module = globalBuiltinsModule {
-//      return module.getDict()
-//    }
-//
-//    return Py.builtinsModule.getDict()
-    fatalError()
+    if let p = parent, p.globals.ptr === globals.ptr {
+      return p.builtins
+    }
+
+    let globalBuiltins = globals.get(py, id: .__builtins__)
+    let globalBuiltinsModule = globalBuiltins.flatMap(py.cast.asModule(_:))
+    if let module = globalBuiltinsModule {
+      return module.__dict__
+    }
+
+    return py.builtinsModule.__dict__
   }
 
   // Nothing to do here.
@@ -226,85 +227,138 @@ public struct PyFrame: PyObjectMixin {
 //      ]
 //    )
 //  }
-}
-
-/* MARKER
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
-    let ptr = self.ptr
-    let file = self.code.filename
-    let line = self.currentInstructionLine
-    let name = self.code.name
-    return "<frame at \(ptr), file \(file), line \(line), code \(name)>"
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__repr__")
+    }
+
+    let ptr = zelf.ptr
+    let file = zelf.code.filename
+    let line = zelf.currentInstructionLine
+    let name = zelf.code.name
+    let result = "<frame at \(ptr), file \(file), line \(line), code \(name)>"
+    return PyResult(py, interned: result)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    }
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
 
   // sourcery: pymethod = __setattr__
-  internal func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
-    return AttributeHelper.setAttribute(on: self, name: name, to: value)
+  internal static func __setattr__(_ py: Py,
+                                   zelf: PyObject,
+                                   name: PyObject,
+                                   value: PyObject?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__setattr__")
+    }
+
+    return AttributeHelper.setAttribute(py, object: zelf.asObject, name: name, value: value)
   }
 
   // sourcery: pymethod = __delattr__
-  internal func delAttribute(name: PyObject) -> PyResult<PyNone> {
-    return AttributeHelper.delAttribute(on: self, name: name)
+  internal static func __delattr__(_ py: Py,
+                                   zelf: PyObject,
+                                   name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__delattr__")
+    }
+
+    return AttributeHelper.delAttribute(py, object: zelf.asObject, name: name)
   }
 
   // MARK: - Properties
 
   // sourcery: pyproperty = f_back
-  internal func getBack() -> PyFrame? {
-    return self.parent
+  internal static func f_back(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "f_back")
+    }
+
+    if let parent = zelf.parent {
+      return PyResult(parent)
+    }
+
+    return .none(py)
   }
 
   // sourcery: pyproperty = f_builtins
-  internal func getBuiltins() -> PyDict {
-    return self.builtins
+  internal static func f_builtins(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "f_builtins")
+    }
+
+    return PyResult(zelf.builtins)
   }
 
-   // sourcery: pyproperty = f_globals
-   internal func getGlobals() -> PyDict {
-    return self.globals
-   }
+  // sourcery: pyproperty = f_globals
+  internal static func f_globals(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "f_globals")
+    }
 
-   // sourcery: pyproperty = f_locals
-   internal func getLocals() -> PyResult<PyDict> {
-    if let e = self.copyFastToLocals() {
+    return PyResult(zelf.globals)
+  }
+
+  // sourcery: pyproperty = f_locals
+  internal static func f_locals(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "f_locals")
+    }
+
+    if let e = zelf.copyFastToLocals(py) {
       return .error(e)
     }
 
-    return .value(self.locals)
-   }
+    return PyResult(zelf.locals)
+  }
 
   // sourcery: pyproperty = f_code
-  internal func getCode() -> PyCode {
-    return self.code
+  internal static func f_code(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "f_code")
+    }
+
+    return PyResult(zelf.code)
   }
 
   // sourcery: pyproperty = f_lasti
-  internal func getLasti() -> Int {
-    return self.currentInstructionIndex ?? 0
+  internal static func f_lasti(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "f_lasti")
+    }
+
+    let result = zelf.currentInstructionIndex ?? 0
+    return PyResult(py, result)
   }
 
   // sourcery: pyproperty = f_lineno
-  internal func getLineno() -> Int {
-    return Int(self.currentInstructionLine)
+  internal static func f_lineno(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "f_lineno")
+    }
+
+    let result = Int(zelf.currentInstructionLine)
+    return PyResult(py, result)
   }
 }
-
-*/

@@ -344,6 +344,10 @@ public struct PyDict: PyObjectMixin {
     }
   }
 
+  public func del(_ py: Py, key: PyString) -> DelResult {
+    return self.del(py, key: key.asObject)
+  }
+
   public func del(_ py: Py, key: PyObject) -> DelResult {
     switch Self.createKey(py, object: key) {
     case let .value(key):

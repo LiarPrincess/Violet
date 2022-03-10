@@ -298,114 +298,174 @@ public struct PyCode: PyObjectMixin {
 //      ]
 //    )
 //  }
-}
 
-/* MARKER
-
-  // MARK: - Equatable
+  // MARK: - Equatable, comparable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> CompareResult {
+  internal static func __eq__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__eq__)
+    }
+
+    return Self.isEqual(py, zelf: zelf, other: other)
+  }
+
+  // sourcery: pymethod = __ne__
+  internal static func __ne__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ne__)
+    }
+
+    let isEqual = Self.isEqual(py, zelf: zelf, other: other)
+    return isEqual.not
+  }
+
+  private static func isEqual(_ py: Py, zelf: PyCode, other: PyObject) -> CompareResult {
+    guard let other = Self.downcast(py, other) else {
+      return .notImplemented
+    }
+
     // We are simplifying things a bit.
     // We should do property based equal instead, but comparing code objects
     // is not that frequent to waste time on this.
     //
     // If you change this then remember to also update '__hash__'.
-    return .value(self === other)
+    return .value(zelf.ptr === other.ptr)
   }
-
-  // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> CompareResult {
-    return self.isEqual(other).not
-  }
-
-  // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> CompareResult {
-    return .notImplemented
+  internal static func __lt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compare(py, zelf: zelf, operation: .__lt__)
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    return .notImplemented
+  internal static func __le__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compare(py, zelf: zelf, operation: .__le__)
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> CompareResult {
-    return .notImplemented
+  internal static func __gt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compare(py, zelf: zelf, operation: .__gt__)
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
+  internal static func __ge__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.compare(py, zelf: zelf, operation: .__ge__)
+  }
+
+  private static func compare(_ py: Py,
+                              zelf: PyObject,
+                              operation: CompareResult.Operation) -> CompareResult {
+    guard py.cast.isNamespace(zelf) else {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, operation)
+    }
+
     return .notImplemented
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> PyHash {
+  internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName)
+    }
+
     // See the comment in '__eq__'.
-    let id = ObjectIdentifier(self)
-    return Py.hasher.hash(id)
+    let result = py.hasher.hash(zelf.ptr)
+    return .value(result)
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
-    let name = self.name.value
-    let ptr = self.ptr
-    let file = self.filename.value
-    let line = self.firstLine
-    return "<code object \(name) at \(ptr), file '\(file)', line \(line)>"
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__repr__")
+    }
+
+    let name = zelf.name.value
+    let ptr = zelf.ptr
+    let file = zelf.filename.value
+    let line = zelf.firstLine
+    let result = "<code object \(name) at \(ptr), file '\(file)', line \(line)>"
+    return PyResult(py, interned: result)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    }
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
 
   // MARK: - Properties
 
   // sourcery: pyproperty = co_name
-  internal func getName() -> PyString {
-    return self.name
+  internal static func co_name(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "co_name")
+    }
+
+    return PyResult(zelf.name)
   }
 
   // sourcery: pyproperty = co_filename
-  internal func getFilename() -> PyString {
-    return self.filename
+  internal static func co_filename(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "co_filename")
+    }
+
+    return PyResult(zelf.filename)
   }
 
   // sourcery: pyproperty = co_firstlineno
-  internal func getFirstLineNo() -> Int {
-    return Int(self.firstLine)
+  internal static func co_firstlineno(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "co_firstlineno")
+    }
+
+    let result = Int(zelf.firstLine)
+    return PyResult(py, result)
   }
 
   // sourcery: pyproperty = co_argcount
-  internal func getArgCount() -> Int {
-    return self.argCount
+  internal static func co_argcount(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "co_argcount")
+    }
+
+    return PyResult(py, zelf.argCount)
   }
 
   // sourcery: pyproperty = co_kwonlyargcount
-  internal func getKwOnlyArgCount() -> Int {
-    return self.kwOnlyArgCount
+  internal static func co_kwonlyargcount(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "co_kwonlyargcount")
+    }
+
+    return PyResult(py, zelf.kwOnlyArgCount)
   }
 
   // sourcery: pyproperty = co_nlocals
-  internal func getNLocals() -> Int {
-    return self.variableCount
+  internal static func co_nlocals(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "co_nlocals")
+    }
+
+    return PyResult(py, zelf.variableCount)
   }
 }
-
-*/
