@@ -66,6 +66,11 @@ extension PyResult where Wrapped == PyObject {
     self = value.map { py.newBool($0).asObject }
   }
 
+  public init(_ py: Py, _ value: UInt8) {
+    let object = py.newInt(value)
+    self = .value(object.asObject)
+  }
+
   public init(_ py: Py, _ value: Int) {
     let object = py.newInt(value)
     self = .value(object.asObject)

@@ -10,7 +10,7 @@ extension AbstractString {
     }
 
     guard let otherElements = Self.getElements(py, object: other) else {
-      let e = Self.createAddTypeError(py, other: other)
+      let e = Self.abstractCreateAddTypeError(py, other: other)
       return .error(e.asBaseException)
     }
 
@@ -22,7 +22,7 @@ extension AbstractString {
     return PyResult(resultObject)
   }
 
-  private static func createAddTypeError(_ py: Py, other: PyObject) -> PyTypeError {
+  internal static func abstractCreateAddTypeError(_ py: Py, other: PyObject) -> PyTypeError {
     let t = Self.pythonTypeName
     let otherType = other.typeName
     let message = "can only concatenate \(t) (not '\(otherType)') to \(t)"
@@ -55,7 +55,7 @@ extension AbstractString {
                           zelf: Self,
                           count countObject: PyObject) -> PyResult<PyObject> {
     let count: Int
-    switch Self.parseMulCount(py, object: countObject) {
+    switch Self.abstractParseMulCount(py, object: countObject) {
     case let .value(c): count = c
     case let .error(e): return .error(e)
     }
@@ -72,7 +72,7 @@ extension AbstractString {
     return PyResult(resultObject)
   }
 
-  private static func parseMulCount(_ py: Py, object: PyObject) -> PyResult<Int> {
+  internal static func abstractParseMulCount(_ py: Py, object: PyObject) -> PyResult<Int> {
     guard let pyInt = py.cast.asInt(object) else {
       let t = Self.pythonTypeName
       let message = "can only multiply \(t) and int (not '\(object.typeName)')"

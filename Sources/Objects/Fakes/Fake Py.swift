@@ -43,6 +43,8 @@ public struct Py {
 
   public func newBytes(_ d: Data) -> PyBytes { fatalError() }
   public func newBytesIterator(bytes: PyBytes) -> PyBytesIterator { fatalError() }
+  public func newByteArray(_ d: Data) -> PyByteArray { fatalError() }
+  public func newByteArrayIterator(bytes: PyByteArray) -> PyByteArrayIterator { fatalError() }
 
   public func newTuple(elements: [PyObject]) -> PyTuple { fatalError() }
   public func newTuple(elements: PyObject...) -> PyTuple { fatalError() }

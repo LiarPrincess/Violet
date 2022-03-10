@@ -60,11 +60,11 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
     return py.newInt(element)
   }
 
-  internal static func newObject(_ py: Py, elements: Data) -> PyBytes {
+  internal static func newObject(_ py: Py, elements: Data) -> Self {
     return py.newBytes(elements)
   }
 
-  internal static func newObject(_ py: Py, result: Data) -> PyBytes {
+  internal static func newObject(_ py: Py, result: Data) -> Self {
     return py.newBytes(result)
   }
 
@@ -99,7 +99,6 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
   internal static func __ge__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     return Self.abstract__ge__(py, zelf: zelf, other: other)
   }
-
 
   // MARK: - Hashable
 
@@ -547,11 +546,11 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
                                  zelf: PyObject,
                                  separator: PyObject) -> PyResult<PyObject> {
     switch Self.abstractPartition(py, zelf: zelf, separator: separator) {
-    case let .separatorFound(before: before, separator: _, after: after):
+    case let .separatorFound(before: b, separator: _, after: a):
       // We can reuse 'separator' because bytes are immutable
-      let beforeObject = Self.newObject(py, elements: before)
-      let afterObject = Self.newObject(py, elements: after)
-      return PyResult(py, tuple: beforeObject.asObject, separator, afterObject.asObject)
+      let before = Self.newObject(py, elements: b)
+      let after = Self.newObject(py, elements: a)
+      return PyResult(py, tuple: before.asObject, separator, after.asObject)
 
     case .separatorNotFound:
       let empty = py.emptyBytes.asObject
@@ -567,11 +566,11 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
                                   zelf: PyObject,
                                   separator: PyObject) -> PyResult<PyObject> {
     switch Self.abstractRPartition(py, zelf: zelf, separator: separator) {
-    case let .separatorFound(before: before, separator: _, after: after):
+    case let .separatorFound(before: b, separator: _, after: a):
       // We can reuse 'separator' because bytes are immutable
-      let beforeObject = Self.newObject(py, elements: before)
-      let afterObject = Self.newObject(py, elements: after)
-      return PyResult(py, tuple: beforeObject.asObject, separator, afterObject.asObject)
+      let before = Self.newObject(py, elements: b)
+      let after = Self.newObject(py, elements: a)
+      return PyResult(py, tuple: before.asObject, separator, after.asObject)
 
     case .separatorNotFound:
       let empty = py.emptyBytes.asObject
