@@ -88,8 +88,8 @@ public struct PyStringIterator: PyObjectMixin {
     if let index = indexOrNil, index != elements.endIndex {
       zelf.index += 1
       let scalar = elements[index]
-      let string = py.newString(scalar: scalar)
-      return PyResult(string)
+      let result = py.newString(scalar: scalar)
+      return PyResult(result)
     }
 
     return .stopIteration(py)

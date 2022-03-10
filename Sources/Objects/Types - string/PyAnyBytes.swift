@@ -83,7 +83,7 @@ extension Py.Cast {
 
   /// Cast this object to `PyAnyBytes` if it is a `bytes` or `bytearray`
   /// (but not their subclass).
-   internal func asExactlyAnyBytes(_ object: PyObject) -> PyAnyBytes? {
+  internal func asExactlyAnyBytes(_ object: PyObject) -> PyAnyBytes? {
     if let bytes = self.asExactlyBytes(object) {
       return PyAnyBytes(bytes: bytes)
     }
