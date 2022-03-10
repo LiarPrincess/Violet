@@ -40,8 +40,8 @@ extension AbstractBytes {
 
   // MARK: - Defaults
 
-  internal static var _defaultFill: UInt8 { return ascii_space }
-  internal static var _zFill: UInt8 { return ascii_zero }
+  internal static var defaultFill: UInt8 { return ascii_space }
+  internal static var zFill: UInt8 { return ascii_zero }
 
   // MARK: - Get elements
 

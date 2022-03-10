@@ -97,12 +97,14 @@ extension AbstractBytes {
   // MARK: - Repr, str
 
   internal static func abstract__repr__(_ py: Py,
-                                        zelf: PyObject) -> PyResult<PyObject> {
+                                        zelf: PyObject,
+                                        prefix: String,
+                                        suffix: String) -> PyResult<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
-    return Self.toString(py, zelf: zelf)
+    return Self.toString(py, zelf: zelf, prefix: prefix, suffix: suffix)
   }
 
   /// static PyObject *
@@ -117,12 +119,15 @@ extension AbstractBytes {
       return .error(e)
     }
 
-    return Self.toString(py, zelf: zelf)
+    return Self.toString(py, zelf: zelf, prefix: "", suffix: "")
   }
 
-  private static func toString(_ py: Py, zelf: Self) -> PyResult<PyObject> {
-    var result = String("'")
-    result.reserveCapacity(zelf.count)
+  private static func toString(_ py: Py,
+                               zelf: Self,
+                               prefix: String,
+                               suffix: String) -> PyResult<PyObject> {
+    var result = prefix + "'"
+    result.reserveCapacity(zelf.count + 1 + suffix.count)
 
     for element in zelf.elements {
       switch element {
@@ -150,6 +155,7 @@ extension AbstractBytes {
     }
 
     result.append("'")
+    result.append(suffix)
     return PyResult(py, result)
   }
 

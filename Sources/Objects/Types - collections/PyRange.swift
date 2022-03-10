@@ -534,10 +534,10 @@ public struct PyRange: PyObjectMixin {
   // MARK: - Reduce
 
   // sourcery: pymethod = __reduce__
-  internal static func reduce(_ py: Py,
-                              zelf: PyObject,
-                              args: [PyObject],
-                              kwargs: PyDict?) -> PyResult<PyObject> {
+  internal static func __reduce__(_ py: Py,
+                                  zelf: PyObject,
+                                  args: [PyObject],
+                                  kwargs: PyDict?) -> PyResult<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__reduce__")
     }
