@@ -1,8 +1,8 @@
-// =====================================================================================
-// Automatically generated from: ./Sources/Objects/Generated2/Py+ErrorTypeDefinitions.py
+// ====================================================================================
+// Automatically generated from: ./Sources/Objects/Generated/Py+ErrorTypeDefinitions.py
 // Use 'make gen' in repository root to regenerate.
 // DO NOT EDIT!
-// =====================================================================================
+// ====================================================================================
 
 import VioletCore
 

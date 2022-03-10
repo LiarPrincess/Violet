@@ -1,11 +1,11 @@
-from typing import Dict, List, Optional
+from typing import List, Optional
 from Sourcery import TypeInfo
 from Helpers.PyTypeDefinition_helpers import get_layout_property_name, get_static_methods_property_name
 
 class NewTypeArguments:
-    'Arguments to PyMemory.newType'
-    def __init__(self, t: TypeInfo, all_types: List[TypeInfo]) -> None:
+    'Arguments to provide when calling py.memory.newType(THIS)'
 
+    def __init__(self, t: TypeInfo) -> None:
         self.name: str = t.python_type_name
         self.qualname: str = t.python_type_name
 
@@ -13,10 +13,10 @@ class NewTypeArguments:
         for flag in t.sourcery_flags:
             self.flags.append('.' + flag + 'Flag')
 
-        self.mro_without_self: List[TypeInfo] = get_mro_without_self(t, all_types)
+        self.mro_without_self: List[TypeInfo] = get_mro_without_self(t)
 
         # 'base' is always 1st in 'mro_without_self'.
-        # Edge case: object type has empty 'mro_without_self'.
+        # Edge case: 'object' type has empty 'mro_without_self'.
         self.base: Optional[TypeInfo] = None
         if len(self.mro_without_self):
             self.base = self.mro_without_self[0]
@@ -33,31 +33,12 @@ class NewTypeArguments:
         self.debugFn: str = f'{swift_name}.createDebugString(ptr:)'
         self.deinitialize: str = f'{swift_name}.deinitialize(ptr:)'
 
-def get_mro_without_self(type: TypeInfo, all_types: List[TypeInfo]) -> List[TypeInfo]:
-    # Object -> empty
-    python_name = type.python_type_name
-    if python_name == 'object':
-        return []
+def get_mro_without_self(type: TypeInfo) -> List[TypeInfo]:
+    result: List[TypeInfo] = []
 
-    python_name_to_type: Dict[str, TypeInfo] = {}
-    for t in all_types:
-        python_name_to_type[t.python_type_name] = t
-
-    object_type = python_name_to_type['object']
-
-    # No base -> only object
-    python_base_name = type.python_base_type_name
-    if not python_base_name:
-        return [object_type]
-
-    result = []
-    while python_base_name:
-        t = python_name_to_type[python_base_name]
-        result.append(t)
-        python_base_name = t.python_base_type_name
-
-    has_object = result[-1] == object_type
-    if not has_object:
-        result.append(object_type)
+    base_info = type.base_type_info
+    while base_info is not None:
+        result.append(base_info)
+        base_info = base_info.base_type_info
 
     return result

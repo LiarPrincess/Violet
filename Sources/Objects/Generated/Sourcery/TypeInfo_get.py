@@ -10,12 +10,15 @@ def get_types() -> List[TypeInfo]:
 
     result: List[TypeInfo] = []
     current_type: Union[TypeInfo, None] = None
+    python_name_to_info = {}
 
     def commit_current_type():
+        nonlocal current_type, result, python_name_to_info
         if current_type:
             assert len(current_type.swift_initializers), 'No initializer?'
             current_type.sourcery_flags.sort()
             result.append(current_type)
+            python_name_to_info[current_type.python_type_name] = current_type
 
     with open(input_file, 'r') as reader:
         for line in reader:
@@ -40,6 +43,8 @@ def get_types() -> List[TypeInfo]:
                 python_base_type = split[3]
                 is_error = line_type == 'ErrorType'
 
+                # For now we will put 'python_base_type' as 'base_type_info',
+                # we will fill the correct type later.
                 current_type = TypeInfo(swift_type,
                                         python_type,
                                         python_base_type,
@@ -104,6 +109,16 @@ def get_types() -> List[TypeInfo]:
 
     # Commit last type
     commit_current_type()
+
+    # Fill 'base_type_info'
+    for t in result:
+        if t.python_type_name == 'object':
+            t.base_type_info = None
+            continue
+
+        # If we don't have specifiec 'base' then 'object'
+        python_base_type_name = t.base_type_info or 'object'
+        t.base_type_info = python_name_to_info[python_base_type_name]
 
     validateSwiftFunctionNames(result)
     return result

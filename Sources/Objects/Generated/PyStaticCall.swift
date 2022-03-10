@@ -1,8 +1,8 @@
-// ==========================================================================
-// Automatically generated from: ./Sources/Objects/Generated2/PyStaticCall.py
+// =========================================================================
+// Automatically generated from: ./Sources/Objects/Generated/PyStaticCall.py
 // Use 'make gen' in repository root to regenerate.
 // DO NOT EDIT!
-// ==========================================================================
+// =========================================================================
 
 import BigInt
 import VioletCore

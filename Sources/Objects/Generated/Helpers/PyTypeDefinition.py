@@ -14,10 +14,10 @@ STATIC_METHOD_NAMES = set(STATIC_METHOD_NAMES)
 
 class PyTypeDefinition:
 
-    def __init__(self, t: TypeInfo, all_types: List[TypeInfo]) -> None:
+    def __init__(self, t: TypeInfo) -> None:
         self.t = t
         self.python_type_name = t.python_type_name
-        self.new_type_args = NewTypeArguments(self.t, all_types)
+        self.new_type_args = NewTypeArguments(self.t)
 
     # ================
     # === Property ===

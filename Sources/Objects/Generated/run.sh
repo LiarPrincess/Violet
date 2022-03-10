@@ -3,7 +3,7 @@
 # This file is used when you type 'make gen' in repository root.
 
 OBJECTS=./Sources/Objects
-GENERATED=./Sources/Objects/Generated2
+GENERATED=./Sources/Objects/Generated
 
 echo "ExceptionSubclasses"
 python3 "$GENERATED/ExceptionSubclasses.py" > "$GENERATED/ExceptionSubclasses.swift"

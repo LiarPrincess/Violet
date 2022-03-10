@@ -1,8 +1,8 @@
-// ==========================================================================
-// Automatically generated from: ./Sources/Objects/Generated2/Types+Memory.py
+// =========================================================================
+// Automatically generated from: ./Sources/Objects/Generated/Types+Memory.py
 // Use 'make gen' in repository root to regenerate.
 // DO NOT EDIT!
-// ==========================================================================
+// =========================================================================
 
 import Foundation
 import BigInt
@@ -209,7 +209,6 @@ extension PyBool {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBool(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.valuePtr.deinitialize()
   }
@@ -490,7 +489,6 @@ extension PyByteArray {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyByteArray(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.elementsPtr.deinitialize()
   }
@@ -576,7 +574,6 @@ extension PyByteArrayIterator {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyByteArrayIterator(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.bytesPtr.deinitialize()
     zelf.indexPtr.deinitialize()
@@ -659,7 +656,6 @@ extension PyBytes {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBytes(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.elementsPtr.deinitialize()
   }
@@ -745,7 +741,6 @@ extension PyBytesIterator {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBytesIterator(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.bytesPtr.deinitialize()
     zelf.indexPtr.deinitialize()
@@ -832,7 +827,6 @@ extension PyCallableIterator {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyCallableIterator(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.callablePtr.deinitialize()
     zelf.sentinelPtr.deinitialize()
@@ -917,7 +911,6 @@ extension PyCell {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyCell(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.contentPtr.deinitialize()
   }
@@ -999,7 +992,6 @@ extension PyClassMethod {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyClassMethod(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.callablePtr.deinitialize()
   }
@@ -1232,7 +1224,6 @@ extension PyComplex {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyComplex(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.realPtr.deinitialize()
     zelf.imagPtr.deinitialize()
@@ -1317,7 +1308,6 @@ extension PyDict {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyDict(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.elementsPtr.deinitialize()
   }
@@ -1491,7 +1481,6 @@ extension PyDictItems {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyDictItems(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.dictPtr.deinitialize()
   }
@@ -1665,7 +1654,6 @@ extension PyDictKeys {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyDictKeys(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.dictPtr.deinitialize()
   }
@@ -1839,7 +1827,6 @@ extension PyDictValues {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyDictValues(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.dictPtr.deinitialize()
   }
@@ -1997,7 +1984,6 @@ extension PyEnumerate {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyEnumerate(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.iteratorPtr.deinitialize()
     zelf.nextIndexPtr.deinitialize()
@@ -2086,7 +2072,6 @@ extension PyFilter {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFilter(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.fnPtr.deinitialize()
     zelf.iteratorPtr.deinitialize()
@@ -2171,7 +2156,6 @@ extension PyFloat {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFloat(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.valuePtr.deinitialize()
   }
@@ -2396,7 +2380,6 @@ extension PyFrozenSet {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFrozenSet(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.elementsPtr.deinitialize()
   }
@@ -2611,7 +2594,6 @@ extension PyInt {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyInt(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.valuePtr.deinitialize()
   }
@@ -2697,7 +2679,6 @@ extension PyIterator {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyIterator(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.sequencePtr.deinitialize()
     zelf.indexPtr.deinitialize()
@@ -2780,7 +2761,6 @@ extension PyList {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyList(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.elementsPtr.deinitialize()
   }
@@ -2866,7 +2846,6 @@ extension PyListIterator {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyListIterator(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.listPtr.deinitialize()
     zelf.indexPtr.deinitialize()
@@ -2953,7 +2932,6 @@ extension PyListReverseIterator {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyListReverseIterator(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.listPtr.deinitialize()
     zelf.indexPtr.deinitialize()
@@ -3040,7 +3018,6 @@ extension PyMap {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyMap(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.fnPtr.deinitialize()
     zelf.iteratorsPtr.deinitialize()
@@ -3129,7 +3106,6 @@ extension PyMethod {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyMethod(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.functionPtr.deinitialize()
     zelf.objectPtr.deinitialize()
@@ -3877,7 +3853,6 @@ extension PyReversed {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyReversed(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.sequencePtr.deinitialize()
     zelf.indexPtr.deinitialize()
@@ -3962,7 +3937,6 @@ extension PySet {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PySet(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.elementsPtr.deinitialize()
   }
@@ -4251,7 +4225,6 @@ extension PyStaticMethod {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyStaticMethod(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.callablePtr.deinitialize()
   }
@@ -4429,7 +4402,6 @@ extension PyStringIterator {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyStringIterator(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.stringPtr.deinitialize()
     zelf.indexPtr.deinitialize()
@@ -4821,7 +4793,6 @@ extension PyTuple {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyTuple(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.elementsPtr.deinitialize()
   }
@@ -4907,7 +4878,6 @@ extension PyTupleIterator {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyTupleIterator(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.tuplePtr.deinitialize()
     zelf.indexPtr.deinitialize()
@@ -5137,7 +5107,6 @@ extension PyZip {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyZip(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.header.deinitialize()
     zelf.iteratorsPtr.deinitialize()
   }
@@ -9015,7 +8984,6 @@ extension PyStopIteration {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyStopIteration(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.errorHeader.deinitialize()
     zelf.valuePtr.deinitialize()
   }
@@ -9398,7 +9366,6 @@ extension PySystemExit {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PySystemExit(ptr: ptr)
     zelf.beforeDeinitialize()
-
     zelf.errorHeader.deinitialize()
     zelf.codePtr.deinitialize()
   }

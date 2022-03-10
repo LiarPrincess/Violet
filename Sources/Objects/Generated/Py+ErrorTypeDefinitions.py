@@ -41,7 +41,7 @@ import VioletCore
         for t in all_types:
             if t.python_type_name == python_type:
                 assert p is None
-                p = PyTypeDefinition(t, all_types)
+                p = PyTypeDefinition(t)
 
         assert p is not None, f"Type not found: '{python_type}'"
         types.append(p)
