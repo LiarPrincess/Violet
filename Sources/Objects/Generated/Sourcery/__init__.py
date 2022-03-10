@@ -1,2 +1,8 @@
-from Sourcery.entities import TypeInfo, SwiftFieldInfo, SwiftFunctionInfo, PyPropertyInfo, PyFunctionInfo
-from Sourcery.get_types import get_types
+from Sourcery.ObjectHeader import ObjectHeader, ObjectHeaderField
+from Sourcery.ObjectHeader_get import get_object_header
+
+from Sourcery.ErrorHeader import ErrorHeader, ErrorHeaderField
+from Sourcery.ErrorHeader_get import get_error_header
+
+from Sourcery.TypeInfo import TypeInfo, SwiftFieldInMemoryInfo, SwiftInitializerInfo
+from Sourcery.TypeInfo_get import get_types
