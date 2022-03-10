@@ -56,7 +56,7 @@ public struct PyNamespace: PyObjectMixin {
   }
 
   private static func isEqual(_ py: Py, zelf: PyNamespace, other: PyObject) -> CompareResult {
-    guard let other = py.cast.asNamespace(other) else {
+    guard let other = Self.downcast(py, other) else {
       return .notImplemented
     }
 

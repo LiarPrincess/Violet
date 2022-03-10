@@ -69,6 +69,13 @@ internal struct Hasher {
     self.key1 = key1
   }
 
+  // MARK: - Ptr
+
+  internal func hash(_ ptr: RawPtr) -> PyHash {
+    let int = Int(bitPattern: ptr)
+    return self.hash(int)
+  }
+
   // MARK: - Int
 
   /// static Py_hash_t

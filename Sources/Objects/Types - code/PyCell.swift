@@ -35,112 +35,189 @@ public struct PyCell: PyObjectMixin {
     let zelf = PyCell(ptr: ptr)
     return "PyCell(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
-}
 
-/* MARKER
-
-  // MARK: - Equatable
+  // MARK: - Equatable, comparable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other,
-                        compareContent: Py.isEqualBool(left:right:),
-                        whenSelfIsNil: false,
-                        whenOtherIsNil: false,
-                        whenBothNil: true)
+  internal static func __eq__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.isEqual(py, zelf: zelf, other: other, operation: .__eq__)
   }
 
   // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> CompareResult {
-    return self.isEqual(other).not
+  internal static func __ne__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    let isEqual = Self.isEqual(py, zelf: zelf, other: other, operation: .__ne__)
+    return isEqual.not
   }
 
-  // MARK: - Comparable
+  private static func isEqual(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject,
+                              operation: CompareResult.Operation) -> CompareResult {
+    switch Self.compare(py, zelf: zelf, other: other) {
+    case .invalidSelfArgument:
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, operation)
+    case .notImplemented:
+      return .notImplemented
+
+    case let .bothWithContent(zelfContent: z, otherContent: o):
+      let result = py.isEqualBool(left: z, right: o)
+      return CompareResult(result)
+
+    case .zelfContentIsNil:
+      return .value(false)
+    case .otherContentIsNil:
+      return .value(false)
+    case .bothContentNil:
+      return .value(true)
+    }
+  }
 
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other,
-                        compareContent: Py.isLessBool(left:right:),
-                        whenSelfIsNil: true,
-                        whenOtherIsNil: false,
-                        whenBothNil: false)
+  internal static func __lt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    switch Self.compare(py, zelf: zelf, other: other) {
+    case .invalidSelfArgument:
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__lt__)
+    case .notImplemented:
+      return .notImplemented
+
+    case let .bothWithContent(zelfContent: z, otherContent: o):
+      let result = py.isLessBool(left: z, right: o)
+      return CompareResult(result)
+
+    case .zelfContentIsNil:
+      return .value(true)
+    case .otherContentIsNil:
+      return .value(false)
+    case .bothContentNil:
+      return .value(false)
+    }
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other,
-                        compareContent: Py.isLessEqualBool(left:right:),
-                        whenSelfIsNil: true,
-                        whenOtherIsNil: false,
-                        whenBothNil: true)
+  internal static func __le__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    switch Self.compare(py, zelf: zelf, other: other) {
+    case .invalidSelfArgument:
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__le__)
+    case .notImplemented:
+      return .notImplemented
+
+    case let .bothWithContent(zelfContent: z, otherContent: o):
+      let result = py.isLessEqualBool(left: z, right: o)
+      return CompareResult(result)
+
+    case .zelfContentIsNil:
+      return .value(true)
+    case .otherContentIsNil:
+      return .value(false)
+    case .bothContentNil:
+      return .value(true)
+    }
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other,
-                        compareContent: Py.isGreaterBool(left:right:),
-                        whenSelfIsNil: false,
-                        whenOtherIsNil: true,
-                        whenBothNil: false)
+  internal static func __gt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    switch Self.compare(py, zelf: zelf, other: other) {
+    case .invalidSelfArgument:
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__gt__)
+    case .notImplemented:
+      return .notImplemented
+
+    case let .bothWithContent(zelfContent: z, otherContent: o):
+      let result = py.isGreaterBool(left: z, right: o)
+      return CompareResult(result)
+
+    case .zelfContentIsNil:
+      return .value(false)
+    case .otherContentIsNil:
+      return .value(true)
+    case .bothContentNil:
+      return .value(false)
+    }
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other,
-                        compareContent: Py.isGreaterEqualBool(left:right:),
-                        whenSelfIsNil: false,
-                        whenOtherIsNil: true,
-                        whenBothNil: true)
+  internal static func __ge__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    switch Self.compare(py, zelf: zelf, other: other) {
+    case .invalidSelfArgument:
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ge__)
+    case .notImplemented:
+      return .notImplemented
+
+    case let .bothWithContent(zelfContent: z, otherContent: o):
+      let result = py.isGreaterEqualBool(left: z, right: o)
+      return CompareResult(result)
+
+    case .zelfContentIsNil:
+      return .value(false)
+    case .otherContentIsNil:
+      return .value(true)
+    case .bothContentNil:
+      return .value(true)
+    }
   }
 
-  /// General rule: `nil` is less.
-  private func compare(with other: PyObject,
-                       compareContent: (PyObject, PyObject) -> PyResult<Bool>,
-                       whenSelfIsNil: Bool,
-                       whenOtherIsNil: Bool,
-                       whenBothNil: Bool) -> CompareResult {
-    guard let other = PyCast.asCell(other) else {
+  private enum CellCompareResult {
+    case invalidSelfArgument
+    case notImplemented
+    case bothWithContent(zelfContent: PyObject, otherContent: PyObject)
+    case zelfContentIsNil
+    case otherContentIsNil
+    case bothContentNil
+  }
+
+  /// Btw. general rule: `nil` is less.
+  private static func compare(_ py: Py,
+                              zelf: PyObject,
+                              other: PyObject) -> CellCompareResult {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return .invalidSelfArgument
+    }
+
+    guard let other = Self.downcast(py, other) else {
       return .notImplemented
     }
 
-    switch (self.content, other.content) {
-    case let (.some(selfContent), .some(otherContent)):
-      let compareResult = compareContent(selfContent, otherContent)
-      switch compareResult {
-      case let .value(v): return .value(v)
-      case let .error(e): return .error(e)
-      }
-
+    switch (zelf.content, other.content) {
+    case let (.some(z), .some(o)):
+      return .bothWithContent(zelfContent: z, otherContent: o)
     case (.some, nil):
-      return .value(whenOtherIsNil)
+      return .otherContentIsNil
     case (nil, .some):
-      return .value(whenSelfIsNil)
+      return .zelfContentIsNil
     case (nil, nil):
-      return .value(whenBothNil)
+      return .bothContentNil
     }
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
-    let ptr = self.ptr
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__repr__")
+    }
 
-    guard let content = self.content else {
-      return "<cell at \(ptr): empty>"
+    let ptr = zelf.ptr
+
+    guard let content = zelf.content else {
+      return PyResult(py, "<cell at \(ptr): empty>")
     }
 
     let type = content.typeName
     let contentPtr = content.ptr
-    return "<cell at \(ptr): \(type) object at \(contentPtr)>"
+    return PyResult(py, "<cell at \(ptr): \(type) object at \(contentPtr)>")
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    }
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
 }
-
-*/

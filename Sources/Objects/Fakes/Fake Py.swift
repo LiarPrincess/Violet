@@ -23,6 +23,8 @@ public struct Py {
   public var cast: Py.Cast { fatalError() }
   internal var hasher: Hasher { fatalError() }
 
+  internal var builtinsModule: PyModule { fatalError() }
+
   // MARK: - New
 
   public func newObject(type: PyType? = nil) -> PyObject { fatalError() } // default type
@@ -76,7 +78,8 @@ public struct Py {
   public func newSlice(stop: PyObject) -> PyResult<PySlice> { fatalError() }
   public func newSlice(start: PyObject, stop: PyObject, step: PyObject?) -> PyResult<PySlice> { fatalError() }
 
-  public func newCode(code: CodeObject) -> PyString { fatalError() }
+  public func newCode(code: CodeObject) -> PyCode { fatalError() }
+  public func newCell(content: PyObject?) -> PyCell { fatalError() }
   public func newStaticMethod(callable: PyFunction) -> PyStaticMethod { fatalError() }
   public func newClassMethod(callable: PyFunction) -> PyClassMethod { fatalError() }
 

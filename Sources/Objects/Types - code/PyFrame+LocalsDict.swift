@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 import VioletBytecode
 
@@ -20,7 +19,7 @@ extension PyFrame {
   /// CPython:
   /// int
   /// PyFrame_FastToLocalsWithError(PyFrameObject *f)
-  public func copyFastToLocals() -> PyBaseException? {
+  public func copyFastToLocals(_ py: Py) -> PyBaseException? {
     let variableNames = self.code.variableNames
     let fastLocals = self.fastLocals
     assert(variableNames.count == fastLocals.count)
@@ -31,7 +30,7 @@ extension PyFrame {
       }
 
       // TODO: 'PyFrame.updateLocals' for fast: 'allowDelete: false'
-      if let e = self.updateLocals(name: name, value: value, allowDelete: false) {
+      if let e = self.updateLocals(py, name: name, value: value, allowDelete: false) {
         return e
       }
     }
@@ -41,7 +40,7 @@ extension PyFrame {
     assert(cellNames.count == cellVariables.count)
 
     for (name, cell) in zip(cellNames, cellVariables) {
-      if let e = self.updateLocals(name: name, value: cell.content) {
+      if let e = self.updateLocals(py, name: name, value: cell.content, allowDelete: false) {
         return e
       }
     }
@@ -51,7 +50,7 @@ extension PyFrame {
     assert(freeNames.count == freeVariables.count)
 
     for (name, cell) in zip(freeNames, freeVariables) {
-      if let e = self.updateLocals(name: name, value: cell.content) {
+      if let e = self.updateLocals(py, name: name, value: cell.content, allowDelete: false) {
         return e
       }
     }
@@ -66,15 +65,16 @@ extension PyFrame {
     return cellNames.contains(name) || freeNames.contains(name)
   }
 
-  private func updateLocals(name: MangledName,
+  private func updateLocals(_ py: Py,
+                            name: MangledName,
                             value: PyObject?,
-                            allowDelete: Bool = false) -> PyBaseException? {
+                            allowDelete: Bool) -> PyBaseException? {
     let locals = self.locals
-    let key = self.createLocalsKey(name: name)
+    let key = self.createLocalsKey(py, name: name)
 
     // If we have value -> add it to locals
     if let value = value {
-      switch locals.set(key: key, to: value) {
+      switch locals.set(py, key: key, value: value) {
       case .ok:
         return nil
       case .error(let e):
@@ -87,7 +87,7 @@ extension PyFrame {
     }
 
     // If we don't have value -> remove name from locals
-    switch locals.del(key: key) {
+    switch locals.del(py, key: key) {
     case .value,
          .notFound:
       return nil
@@ -96,8 +96,8 @@ extension PyFrame {
     }
   }
 
-  private func createLocalsKey(name: MangledName) -> PyString {
-    return Py.intern(string: name.value)
+  private func createLocalsKey(_ py: Py, name: MangledName) -> PyString {
+    return py.intern(string: name.value)
   }
 
   // MARK: - Locals to fast
@@ -112,16 +112,16 @@ extension PyFrame {
   }
 
   /// Reversal of `self.copyFastToLocals` (<-- go there for documentation).
-  public func copyLocalsToFast(
-    onLocalMissing: LocalMissingStrategy
-  ) -> PyBaseException? {
+  public func copyLocalsToFast(_ py: Py,
+                               onLocalMissing: LocalMissingStrategy) -> PyBaseException? {
     let variableNames = self.code.variableNames
     for (index, name) in variableNames.enumerated() {
       if self.isCellOrFree(name: name) {
         continue
       }
 
-      if let e = self.updateFastFromLocal(index: index,
+      if let e = self.updateFastFromLocal(py,
+                                          index: index,
                                           name: name,
                                           onMissing: onLocalMissing) {
         return e
@@ -130,7 +130,8 @@ extension PyFrame {
 
     let cellNames = self.code.cellVariableNames
     for (index, name) in cellNames.enumerated() {
-      if let e = self.updateCellFromLocal(index: index,
+      if let e = self.updateCellFromLocal(py,
+                                          index: index,
                                           name: name,
                                           onMissing: onLocalMissing) {
         return e
@@ -139,7 +140,8 @@ extension PyFrame {
 
     let freeNames = self.code.freeVariableNames
     for (index, name) in freeNames.enumerated() {
-      if let e = self.updateFreeFromLocal(index: index,
+      if let e = self.updateFreeFromLocal(py,
+                                          index: index,
                                           name: name,
                                           onMissing: onLocalMissing) {
         return e
@@ -150,13 +152,14 @@ extension PyFrame {
   }
 
   private func updateFastFromLocal(
+    _ py: Py,
     index: Int,
     name: MangledName,
     onMissing: LocalMissingStrategy
   ) -> PyBaseException? {
     assert(0 <= index && index < self.fastLocals.count)
 
-    switch self.getLocal(name: name, onMissing: onMissing) {
+    switch self.getLocal(py, name: name, onMissing: onMissing) {
     case .value(let value):
       self.fastLocals[index] = value
     case .ignore:
@@ -171,13 +174,14 @@ extension PyFrame {
   }
 
   private func updateCellFromLocal(
+    _ py: Py,
     index: Int,
     name: MangledName,
     onMissing: LocalMissingStrategy
   ) -> PyBaseException? {
     assert(0 <= index && index < self.cellVariables.count)
 
-    switch self.getLocal(name: name, onMissing: onMissing) {
+    switch self.getLocal(py, name: name, onMissing: onMissing) {
     case .value(let value):
       let cell = self.cellVariables[index]
       cell.content = value
@@ -194,13 +198,14 @@ extension PyFrame {
   }
 
   private func updateFreeFromLocal(
+    _ py: Py,
     index: Int,
     name: MangledName,
     onMissing: LocalMissingStrategy
   ) -> PyBaseException? {
     assert(0 <= index && index < self.freeVariables.count)
 
-    switch self.getLocal(name: name, onMissing: onMissing) {
+    switch self.getLocal(py, name: name, onMissing: onMissing) {
     case .value(let value):
       let cell = self.freeVariables[index]
       cell.content = value
@@ -223,10 +228,11 @@ extension PyFrame {
     case error(PyBaseException)
   }
 
-  private func getLocal(name: MangledName,
+  private func getLocal(_ py: Py,
+                        name: MangledName,
                         onMissing: LocalMissingStrategy) -> GetLocalResult {
-    let key = self.createLocalsKey(name: name)
-    switch self.locals.get(key: key) {
+    let key = self.createLocalsKey(py, name: name)
+    switch self.locals.get(py, key: key) {
     case .value(let object):
       return .value(object)
 
@@ -243,5 +249,3 @@ extension PyFrame {
     }
   }
 }
-
-*/
