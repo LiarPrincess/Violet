@@ -2,157 +2,79 @@
 {# === Macros === #}
 {# ============== #}
 
-{# === Start type === #}
+{% macro print_method marker python_name method %}
+{% set swift_selector_with_types %}{{ method.name }}{% endset %}
+{% set swift_return_type %}{{ method.returnTypeName }}{% endset %}
+{% set swift_static_doc_property %}{{ method.annotations.doc }}{% endset %}
+{{marker}}|{{python_name}}|{{swift_selector_with_types}}|{{swift_return_type}}|{{swift_static_doc_property}}
+{% endmacro %}
 
-{% macro start_new_type marker python_name swift_name swift_base_type swift_is_final %}
+{% macro print_type marker python_name type %}
+
+{% set swift_name %}{{ type.name }}{% endset %}
+{% set python_base_name %}{{ type.annotations.pybase }}{% endset %}
+
 ############
 # {{python_name}}
 ############
 
-{{marker}}|{{python_name}}|{{swift_name}}|{{swift_base_type }}|{{swift_is_final}}
-{% endmacro %}
+{{marker}}|{{swift_name}}|{{python_name}}|{{python_base_name}}
 
-{# === Annotations === #}
-
-{% macro print_annotations type %}
 {% for name in type.annotations %}
 Annotation|{{name}}
 {% endfor %}
-{% endmacro %}
 
-{# === Doc === #}
-
-{% macro print_doc type %}
 {% for variable in type.staticVariables|annotated:"pytypedoc" %}
 Doc|{{variable.name}}
 {% endfor %}
-{% endmacro %}
 
-{# === SwiftField === #}
-
-{% macro print_swift_fields type %}
-{% for field in type.storedVariables %}
+{% for field in type.allVariables|annotated:"includeInLayout" %}
 SwiftField|{{field.name}}|{{field.typeName}}
 {% endfor %}
-{% endmacro %}
 
-{# === SwiftMethod === #}
-
-{% macro print_swift_methods type %}
-{% for method in type.methods %}
-{% set swift_access_modifier %}{{ method.accessLevel }}{% endset %}
+{% for method in type.allMethods where method.shortName == "initialize" %}
 {% set swift_selector_with_types %}{{ method.name }}{% endset %}
-{% set swift_return_type %}{{ method.returnTypeName }}{% endset %}
-SwiftMethod|{{swift_access_modifier}}|{{swift_selector_with_types}}|{{swift_return_type}}
+SwiftInit|{{swift_selector_with_types}}
 {% endfor %}
-{% endmacro %}
 
-{# === PyProperty === #}
-
-{% macro print_py_properties type %}
-{% for prop in type.methods|annotated:"pyproperty" %}
-{% set python_name %}{{ prop.annotations.pyproperty }}{% endset %}
-{% set swift_getter_fn %}{{ prop.selectorName }}{% endset %}
-{% set swift_setter_fn %}{{ prop.annotations.setter }}{% endset %}
-{% set swift_type %}{{ prop.returnTypeName }}{% endset %}
-{% set swift_static_doc_property %}{{ prop.annotations.doc }}{% endset %}
-PyProperty|{{python_name}}|{{swift_getter_fn}}|{{swift_setter_fn}}|{{swift_type}}|{{swift_static_doc_property}}
-{% endfor %}
-{% endmacro %}
-
-{# === PyMethod === #}
-
-{% macro print_py_methods type %}
-{% for method in type.methods|annotated:"pymethod" %}
+{% for method in type.staticMethods|annotated:"pymethod" %}
 {% set python_name %}{{ method.annotations.pymethod }}{% endset %}
-{% set swift_selector_with_types %}{{ method.name }}{% endset %}
-{% set swift_return_type %}{{ method.returnTypeName }}{% endset %}
-{% set swift_static_doc_property %}{{ method.annotations.doc }}{% endset %}
-PyMethod|{{python_name}}|{{swift_selector_with_types}}|{{swift_return_type}}|{{swift_static_doc_property}}
+{% call print_method "PyMethod" python_name method %}
 {% endfor %}
-{% endmacro %}
 
-{# === PyStaticMethod === #}
-
-{% macro print_py_static_methods type %}
-{% for method in type.methods|annotated:"pystaticmethod" %}
+{% for method in type.staticMethods|annotated:"pystaticmethod" %}
 {% set python_name %}{{ method.annotations.pystaticmethod }}{% endset %}
-{% set swift_selector_with_types %}{{ method.name }}{% endset %}
-{% set swift_return_type %}{{ method.returnTypeName }}{% endset %}
-{% set swift_static_doc_property %}{{ method.annotations.doc }}{% endset %}
-PyStaticMethod|{{python_name}}|{{swift_selector_with_types}}|{{swift_return_type}}|{{swift_static_doc_property}}
+{% call print_method "PyStaticMethod" python_name method %}
 {% endfor %}
-{% endmacro %}
 
-{# === PyClassMethod === #}
-
-{% macro print_py_class_methods type %}
-{% for method in type.methods|annotated:"pyclassmethod" %}
+{% for method in type.staticMethods|annotated:"pyclassmethod" %}
 {% set python_name %}{{ method.annotations.pyclassmethod }}{% endset %}
-{% set swift_selector_with_types %}{{ method.name }}{% endset %}
-{% set swift_return_type %}{{ method.returnTypeName }}{% endset %}
-{% set swift_static_doc_property %}{{ method.annotations.doc }}{% endset %}
-PyClassMethod|{{python_name}}|{{swift_selector_with_types}}|{{swift_return_type}}|{{swift_static_doc_property}}
+{% call print_method "PyClassMethod" python_name method %}
 {% endfor %}
 {% endmacro %}
 
-{# ============== #}
-{# === Object === #}
-{# ============== #}
+{# ============ #}
+{# === Main === #}
+{# ============ #}
 
-{% call start_new_type "Type" "object" "PyObject" "" "0" %}
-{% for type in types.classes where type.name == "PyObject" %}
-{% call print_swift_fields type %}
-{% call print_swift_methods type %}
+{% for type in types.structs where type.name == "PyObjectHeader" %}
+{% for field in type.allVariables|annotated:"includeInLayout" %}
+ObjectHeaderField|{{field.name}}|{{field.typeName}}
 {% endfor %}
-{% for type in types.enums where type.name == "PyObjectType" %}
-{% call print_annotations type %}
-{% call print_doc type %}
-{% call print_swift_methods type %}
-{% call print_py_properties type %}
-{% call print_py_methods type %}
-{% call print_py_static_methods type %}
-{% call print_py_class_methods type %}
 {% endfor %}
 
-{# ============= #}
-{# === Types === #}
-{# ============= #}
+{% for type in types.structs where type.name == "PyErrorHeader" %}
+{% for field in type.allVariables|annotated:"includeInLayout" %}
+ErrorHeaderField|{{field.name}}|{{field.typeName}}
+{% endfor %}
+{% endfor %}
 
-{% for type in types.classes|annotated:"pytype" %}
+{% for type in types.structs|annotated:"pytype" %}
 {% set python_name %}{{ type.annotations.pytype }}{% endset %}
-{% set swift_name %}{{ type.name }}{% endset %}
-{% set swift_base_type %}{{ type.supertype.name }}{% endset %}
-{% set swift_is_final %}{{ type.isFinal.name }}{% endset %}
-
-{% call start_new_type "Type" python_name swift_name swift_base_type swift_is_final %}
-{% call print_annotations type %}
-{% call print_doc type %}
-{% call print_swift_fields type %}
-{% call print_swift_methods type %}
-{% call print_py_properties type %}
-{% call print_py_methods type %}
-{% call print_py_static_methods type %}
-{% call print_py_class_methods type %}
+{% call print_type "Type" python_name type %}
 {% endfor %}
 
-{# =================== #}
-{# === Error types === #}
-{# =================== #}
-
-{% for type in types.classes|annotated:"pyerrortype" %}
+{% for type in types.structs|annotated:"pyerrortype" %}
 {% set python_name %}{{ type.annotations.pyerrortype }}{% endset %}
-{% set swift_name %}{{ type.name }}{% endset %}
-{% set swift_base_type %}{{ type.supertype.name }}{% endset %}
-{% set swift_is_final %}{{ type.isFinal.name }}{% endset %}
-
-{% call start_new_type "ErrorType" python_name swift_name swift_base_type swift_is_final %}
-{% call print_annotations type %}
-{% call print_doc type %}
-{% call print_swift_fields type %}
-{% call print_swift_methods type %}
-{% call print_py_properties type %}
-{% call print_py_methods type %}
-{% call print_py_static_methods type %}
-{% call print_py_class_methods type %}
+{% call print_type "ErrorType" python_name type %}
 {% endfor %}
