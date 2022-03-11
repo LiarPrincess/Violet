@@ -36,7 +36,7 @@ internal struct PyAnySet: CustomStringConvertible {
 
 // MARK: - Cast
 
-extension Py.Cast {
+extension PyCast {
 
   /// Is this object a `set` or `frozenset` (or their subclass)?
   internal func isAnySet(_ object: PyObject) -> Bool {
