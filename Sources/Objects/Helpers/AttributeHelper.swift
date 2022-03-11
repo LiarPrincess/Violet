@@ -103,7 +103,7 @@ internal enum AttributeHelper {
         case .error(let e): return .error(e)
         }
       } else {
-        switch dict.del(py, key: name.asObject) {
+        switch dict.del(py, key: name) {
         case .value: return .none(py)
         case .notFound: break // try other
         case .error(let e): return .error(e)
