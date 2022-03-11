@@ -11,6 +11,10 @@ internal func ===(lhs: PyType, rhs: PyType) -> Bool {
   return lhs.ptr === rhs.ptr
 }
 
+internal func !==(lhs: PyType, rhs: PyType) -> Bool {
+  return lhs.ptr !== rhs.ptr
+}
+
 // sourcery: pytype = type, isDefault, hasGC, isBaseType, isTypeSubclass
 // sourcery: instancesHave__dict__
 public struct PyType: PyObjectMixin, HasCustomGetMethod {
@@ -167,7 +171,6 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     return PyResult(py, interned: name)
   }
 
-  // TODO: Rename: func getNameWithoutModule (has to be func for symmetry w. module)
   internal func getNameString() -> String {
     if self.typeFlags.isHeapType {
       return self.name
@@ -380,7 +383,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
         }
       }
 
-      switch module.getName() {
+      switch module.getName(py) {
       case let .value(name):
         return .objectNotYetConvertedToString(name)
       case let .error(e):

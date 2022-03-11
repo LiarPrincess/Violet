@@ -87,6 +87,12 @@ public struct RawPtr: CustomStringConvertible {
   public static func === (lhs: RawPtr, rhs: RawPtr) -> Bool {
     return lhs.value == rhs.value
   }
+
+  /// Returns a `Boolean` value indicating whether two `Ptrs` are NOT pointing
+  /// to the same object.
+  public static func !== (lhs: RawPtr, rhs: RawPtr) -> Bool {
+    return lhs.value != rhs.value
+  }
 }
 
 // MARK: - Int + init(bitPattern:)

@@ -32,13 +32,22 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
   ///
   /// For example:
   /// `super(int, True)` -> `requestedType` = `int` (even though value is `bool`).
-  internal var thisClass: PyType? { self.thisClassPtr.pointee }
+  internal var thisClass: PyType? {
+    get { self.thisClassPtr.pointee }
+    nonmutating set { self.thisClassPtr.pointee = newValue }
+  }
 
   // sourcery: includeInLayout
-  internal var object: PyObject? { self.objectPtr.pointee }
+  internal var object: PyObject? {
+    get { self.objectPtr.pointee }
+    nonmutating set { self.objectPtr.pointee = newValue }
+  }
 
   // sourcery: includeInLayout
-  internal var objectType: PyType? { self.objectTypePtr.pointee }
+  internal var objectType: PyType? {
+    get { self.objectTypePtr.pointee }
+    nonmutating set { self.objectTypePtr.pointee = newValue }
+  }
 
   public let ptr: RawPtr
 
@@ -64,62 +73,70 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
     let zelf = PySuper(ptr: ptr)
     return "PySuper(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
-}
-
-/* MARKER
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
-    let typeName = self.thisClass?.getNameString() ?? "NULL"
-
-    if let objectType = self.objectType {
-      let objectTypeName = objectType.getNameString()
-      return "<super: <class '\(typeName)'>, <\(objectTypeName) object>>"
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
-    return "<super: <class '\(typeName)'>, NULL>"
+    let typeName = zelf.thisClass?.getNameString() ?? "NULL"
+
+    if let objectType = zelf.objectType {
+      let objectTypeName = objectType.getNameString()
+      let result = "<super: <class '\(typeName)'>, <\(objectTypeName) object>>"
+      return PyResult(py, result)
+    }
+
+    return PyResult(py, "<super: <class '\(typeName)'>, NULL>")
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    guard let startType = self.objectType else {
-      return self.getAttributeSkip(name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    }
+
+    guard let startType = zelf.objectType else {
+      return Self.standardGetAttribute(py, zelf: zelf, name: name)
     }
 
     // We want __class__ to return the class of the super object
     // (i.e. super, or a subclass), not the class of su->obj.
-    if self.is__class__(name: name) {
-      return self.getAttributeSkip(name: name)
+    if Self.is__class__(py, name: name) {
+      return Self.standardGetAttribute(py, zelf: zelf, name: name)
     }
 
     // CPython: 'su->type' and 'su->obj'
     // It should never be nil (nil is allowed only because it is needed in '__new__')
-    guard let suType = self.thisClass, let suObj = self.object else {
-      return .value(self)
+    guard let superType = zelf.thisClass, let superObject = zelf.object else {
+      return PyResult(zelf)
     }
 
-    // The 'self.objectType' determines the method resolution order to be searched.
-    // The search starts from the class right after the 'self.type'.
+    // The 'zelf.objectType' determines the method resolution order to be searched.
+    // The search starts from the class right after the 'zelf.type'.
     // https://docs.python.org/3/library/functions.html#super
-    let mro = startType.getMRO()
-    let typeIndex = mro.firstIndex { $0 === suType } ?? mro.count
+    let mro = startType.mro
+    let typeIndex = mro.firstIndex { $0 === superType } ?? mro.count
     let indexAfterTypeIndex = typeIndex + 1
 
     if indexAfterTypeIndex >= mro.count {
-      return self.getAttributeSkip(name: name)
+      return Self.standardGetAttribute(py, zelf: zelf, name: name)
     }
 
     for index in indexAfterTypeIndex..<mro.count {
       let base = mro[index]
-      let dict = base.getDict()
+      let dict = base.__dict__
 
-      switch dict.get(key: name) {
+      switch dict.get(py, key: name) {
       case .value(let res):
-        if let descr = GetDescriptor(object: suObj, type: startType, attribute: res) {
+        if let descr = GetDescriptor(py, object: superObject, type: startType, attribute: res) {
           return descr.call()
         }
 
@@ -132,16 +149,19 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
     }
 
     // Just in case
-    return self.getAttributeSkip(name: name)
+    return Self.standardGetAttribute(py, zelf: zelf, name: name)
   }
 
   /// `skip` label in `self.getAttribute`
-  internal func getAttributeSkip(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func standardGetAttribute(_ py: Py,
+                                            zelf: PySuper,
+                                            name: PyObject) -> PyResult<PyObject> {
+    let zelfObject = zelf.asObject
+    return AttributeHelper.getAttribute(py, object: zelfObject, name: name)
   }
 
-  private func is__class__(name: PyObject) -> Bool {
-    guard let string = PyCast.asString(name) else {
+  private static func is__class__(_ py: Py, name: PyObject) -> Bool {
+    guard let string = py.cast.asString(name) else {
       return false
     }
 
@@ -151,137 +171,161 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
-*/
+
   // MARK: - Get method
 
-extension PySuper {
   internal func getMethod(_ py: Py,
                           selector: PyString,
                           allowsCallableFromDict: Bool) -> Py.GetMethodResult {
-    fatalError()
-  }
-}
+    let selfObject = self.asObject
+    let name = selector.asObject
+    switch Self.__getattribute__(py, zelf: selfObject, name: name) {
+    case let .value(o):
+      return .value(o)
+    case let .error(e):
+      if py.cast.isAttributeError(e.asObject) {
+        return .notFound(e)
+      }
 
-//  internal func getMethod(
-//    selector: PyString,
-//    allowsCallableFromDict: Bool
-//  ) -> PyInstance.GetMethodResult {
-//    switch self.getAttribute(name: selector) {
-//    case let .value(o):
-//      return .value(o)
-//    case let .error(e):
-//      if PyCast.isAttributeError(e) {
-//        return .notFound(e)
-//      }
-//
-//      return .error(e)
-//    }
-//  }
-/*
+      return .error(e)
+    }
+  }
+
   // MARK: - Getters
 
   internal static let thisClassDoc = "the class invoking super()"
 
   // sourcery: pyproperty = __thisclass__, doc = thisClassDoc
-  internal func getThisClass() -> PyType? {
-    return self.thisClass
+  internal static func __thisclass__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__thisclass__")
+    }
+
+    let result = zelf.thisClass?.asObject ?? py.none.asObject
+    return PyResult(result)
   }
 
   internal static let selfDoc = "the instance invoking super(); may be None"
 
   // sourcery: pyproperty = __self__, doc = selfDoc
-  internal func getSelf() -> PyObject? {
-    return self.object
+  internal static func __self__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__self__")
+    }
+
+    let result = zelf.object?.asObject ?? py.none.asObject
+    return PyResult(result)
   }
 
   internal static let selfClassDoc = "the type of the instance invoking super(); may be None"
 
   // sourcery: pyproperty = __self_class__, doc = selfClassDoc
-  internal func getSelfClass() -> PyObject? {
-    return self.object
+  internal static func __self_class__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__self_class__")
+    }
+
+    let result = zelf.objectType?.asObject ?? py.none.asObject
+    return PyResult(result)
   }
 
   // MARK: - Get
 
   // sourcery: pymethod = __get__
-  internal func get(object: PyObject, type: PyObject?) -> PyResult<PyObject> {
-    // Basically 'PyCast.isNone(object)'
-    if object.isDescriptorStaticMarker {
-      return .value(self)
+  internal static func __get__(_ py: Py,
+                               zelf: PyObject,
+                               object: PyObject,
+                               type: PyObject?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__get__")
     }
 
-    let isAlreadyBound = self.object != nil
+    // Basically 'py.cast.isNone(object)'
+    if py.isDescriptorStaticMarker(object) {
+      return PyResult(zelf)
+    }
+
+    let isAlreadyBound = zelf.object != nil
     if isAlreadyBound {
-      return .value(self)
+      return PyResult(zelf)
     }
 
     // CPython: 'su->type'
     // It should never be nil (nil is allowed only because it is needed in '__new__')
-    guard let suType = self.thisClass else {
-      return .value(self)
+    guard let superType = zelf.thisClass else {
+      return PyResult(zelf)
     }
 
-    // If su is an instance of a (strict) subclass of super, call its type
-    if self.type !== Py.types.super {
-      return Py.call(callable: self.type, args: [suType, object]).asResult
+    // If super is an instance of a (strict) subclass of super, call its type
+    if zelf.type !== py.types.super {
+      let zelfType = zelf.type.asObject
+      let result = py.call(callable: zelfType, args: [superType.asObject, object])
+      return result.asResult
     }
 
     let objectType: PyType
-    switch self.checkSuper(type: suType, object: object) {
+    switch Self.checkSuper(py, zelf: zelf, type: superType, object: object) {
     case let .value(t): objectType = t
     case let .error(e): return .error(e)
     }
 
-    let result = PyMemory.newSuper(requestedType: suType,
-                                   object: object,
-                                   objectType: objectType)
-
-    return .value(result)
+    let result = py.newSuper(requestedType: superType, object: object, objectType: objectType)
+    return PyResult(result)
   }
 
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PySuper> {
-    let result = PyMemory.newSuper(type: type,
-                                   requestedType: nil,
-                                   object: nil,
-                                   objectType: nil)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let result = py.memory.newSuper(py,
+                                    type: type,
+                                    requestedType: nil,
+                                    object: nil,
+                                    objectType: nil)
 
-    return .value(result)
+    return PyResult(result)
   }
 
   // MARK: - Python init
 
-  private static let initArguments = ArgumentParser.createOrTrap(
+  private static let initArguments = ArgumentParser(
     arguments: ["", ""],
     format: "|OO:super"
   )
 
   // sourcery: pymethod = __init__
-  internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    if let e = ArgumentParser.noKwargsOrError(fnName: "super", kwargs: kwargs) {
-      return .error(e)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
     }
 
-    switch PySuper.initArguments.bind(args: args, kwargs: nil) {
+    if let e = ArgumentParser.noKwargsOrError(py,
+                                              fnName: Self.pythonTypeName,
+                                              kwargs: kwargs) {
+      return .error(e.asBaseException)
+    }
+
+    let noKwargs: PyDict? = nil
+    switch Self.initArguments.bind(py, args: args, kwargs: noKwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
       assert(binding.optionalCount == 2, "Invalid optional argument count.")
 
       let type = binding.optional(at: 0)
       let object = binding.optional(at: 1)
-      return self.pyInit(type: type, object: object) // In separate file
+      return Self.__init__(py, zelf: zelf, type: type, object: object)
 
     case let .error(e):
       return .error(e)
     }
   }
 }
-
-*/
