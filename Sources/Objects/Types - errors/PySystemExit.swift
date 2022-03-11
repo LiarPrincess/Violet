@@ -68,7 +68,7 @@ public struct PySystemExit: PyErrorMixin {
 
   // MARK: - Code
 
-  // sourcery: pyproperty = code, setter = setCode
+  // sourcery: pyproperty = code, setter
   internal func getCode() -> PyObject? {
     return self.code
   }

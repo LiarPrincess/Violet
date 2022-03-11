@@ -119,7 +119,7 @@ public struct PyTraceback: PyObjectMixin {
 
   // MARK: - Next
 
-  // sourcery: pyproperty = tb_next, setter = setNext
+  // sourcery: pyproperty = tb_next, setter
   internal func getNext() -> PyTraceback? {
     return self.next
   }

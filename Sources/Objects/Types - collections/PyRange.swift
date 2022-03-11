@@ -196,7 +196,7 @@ public struct PyRange: PyObjectMixin {
   private static func compare(_ py: Py,
                               zelf: PyObject,
                               operation: CompareResult.Operation) -> CompareResult {
-    guard py.cast.isDict(zelf) else {
+    guard py.cast.isRange(zelf) else {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, operation)
     }
 

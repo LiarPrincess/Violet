@@ -93,7 +93,7 @@ public struct PyImportError: PyErrorMixin {
 
   // MARK: - Msg
 
-  // sourcery: pyproperty = msg, setter = setMsg
+  // sourcery: pyproperty = msg, setter
   internal func getMsg() -> PyObject? {
     return self.msg
   }
@@ -105,7 +105,7 @@ public struct PyImportError: PyErrorMixin {
 
   // MARK: - Name
 
-  // sourcery: pyproperty = name, setter = setName
+  // sourcery: pyproperty = name, setter
   internal func getName() -> PyObject? {
     return self.moduleName
   }
@@ -117,7 +117,7 @@ public struct PyImportError: PyErrorMixin {
 
   // MARK: - Path
 
-  // sourcery: pyproperty = path, setter = setPath
+  // sourcery: pyproperty = path, setter
   internal func getPath() -> PyObject? {
     return self.modulePath
   }

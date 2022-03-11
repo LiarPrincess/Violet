@@ -138,7 +138,7 @@ public struct PySyntaxError: PyErrorMixin {
 
   // MARK: - Msg
 
-  // sourcery: pyproperty = msg, setter = setMsg
+  // sourcery: pyproperty = msg, setter
   internal func getMsg() -> PyObject? {
     return self.msg
   }
@@ -150,7 +150,7 @@ public struct PySyntaxError: PyErrorMixin {
 
   // MARK: - Filename
 
-  // sourcery: pyproperty = filename, setter = setFilename
+  // sourcery: pyproperty = filename, setter
   internal func getFilename() -> PyObject? {
     return self.filename
   }
@@ -162,7 +162,7 @@ public struct PySyntaxError: PyErrorMixin {
 
   // MARK: - Lineno
 
-  // sourcery: pyproperty = lineno, setter = setLineno
+  // sourcery: pyproperty = lineno, setter
   internal func getLineno() -> PyObject? {
     return self.lineno
   }
@@ -174,7 +174,7 @@ public struct PySyntaxError: PyErrorMixin {
 
   // MARK: - Offset
 
-  // sourcery: pyproperty = offset, setter = setOffset
+  // sourcery: pyproperty = offset, setter
   internal func getOffset() -> PyObject? {
     return self.offset
   }
@@ -186,7 +186,7 @@ public struct PySyntaxError: PyErrorMixin {
 
   // MARK: - Text
 
-  // sourcery: pyproperty = text, setter = setText
+  // sourcery: pyproperty = text, setter
   internal func getText() -> PyObject? {
     return self.text
   }
@@ -198,7 +198,7 @@ public struct PySyntaxError: PyErrorMixin {
 
   // MARK: - Print file and line
 
-  // sourcery: pyproperty = print_file_and_line, setter = setPrintFileAndLine
+  // sourcery: pyproperty = print_file_and_line, setter
   internal func getPrintFileAndLine() -> PyObject? {
     return self.printFileAndLine
   }

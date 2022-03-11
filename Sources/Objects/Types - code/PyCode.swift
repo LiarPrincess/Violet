@@ -356,7 +356,7 @@ public struct PyCode: PyObjectMixin {
   private static func compare(_ py: Py,
                               zelf: PyObject,
                               operation: CompareResult.Operation) -> CompareResult {
-    guard py.cast.isNamespace(zelf) else {
+    guard py.cast.isCode(zelf) else {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, operation)
     }
 
