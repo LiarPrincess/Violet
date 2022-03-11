@@ -45,7 +45,7 @@ internal struct PyAnyBytes: CustomStringConvertible {
 
 // MARK: - PyCast
 
-extension Py.Cast {
+extension PyCast {
 
   /// Is this object a `bytes` or `bytearray` (or their subclass)?
   internal func isAnyBytes(_ object: PyObject) -> Bool {

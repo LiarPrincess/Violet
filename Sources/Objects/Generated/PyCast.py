@@ -23,36 +23,34 @@ import VioletCore
 // swiftlint:disable line_length
 // swiftlint:disable file_length
 
-extension Py {{
+/// Helper type used to safely downcast Python objects to specific Swift type.
+///
+/// For example:
+/// On the `VM` stack we hold `PyObject`, at some point we may want to convert
+/// it to `PyInt`:
+///
+/// ```Swift
+/// if let int = py.cast.asInt(object) {{
+///   things…
+/// }}
+/// ```
+public struct PyCast {{
 
-  /// Helper type used to safely downcast Python objects to specific Swift type.
-  ///
-  /// For example:
-  /// On the `VM` stack we hold `PyObject`, at some point we may want to convert
-  /// it to `PyInt`:
-  ///
-  /// ```Swift
-  /// if let int = py.cast.asInt(object) {{
-  ///   things…
-  /// }}
-  /// ```
-  public struct Cast {{
+  private let types: Py.Types
+  private let errorTypes: Py.ErrorTypes
 
-    private let types: Py.Types
-    private let errorTypes: Py.ErrorTypes
+  internal init(types: Py.Types, errorTypes: Py.ErrorTypes) {{
+    self.types = types
+    self.errorTypes = errorTypes
+  }}
 
-    internal init(types: Py.Types, errorTypes: Py.ErrorTypes) {{
-      self.types = types
-      self.errorTypes = errorTypes
-    }}
+  private func isInstance(_ object: PyObject, of type: PyType) -> Bool {{
+    return object.type.isSubtype(of: type)
+  }}
 
-    private func isInstance(_ object: PyObject, of type: PyType) -> Bool {{
-      return object.type.isSubtype(of: type)
-    }}
-
-    private func isExactlyInstance(_ object: PyObject, of type: PyType) -> Bool {{
-      return object.type === type
-    }}\
+  private func isExactlyInstance(_ object: PyObject, of type: PyType) -> Bool {{
+    return object.type === type
+  }}\
 ''')
 
     for t in get_types():
@@ -73,11 +71,11 @@ extension Py {{
         is_base_type = t.sourcery_flags.is_base_type
 
         print()
-        print(f'    // MARK: - {swift_type_without_py}')
+        print(f'  // MARK: - {swift_type_without_py}')
 
         if not is_base_type:
             print()
-            print(f"    // '{python_type}' does not allow subclassing, so we do not need 'exactly' methods.")
+            print(f"  // '{python_type}' does not allow subclassing, so we do not need 'exactly' methods.")
 
         # =============
         # === isInt ===
@@ -85,11 +83,11 @@ extension Py {{
 
         print()
         if is_base_type:
-            print(f'    /// Is this object an instance of `{python_type}` (or its subclass)?')
+            print(f'  /// Is this object an instance of `{python_type}` (or its subclass)?')
         else:
-            print(f'    /// Is this object an instance of `{python_type}`?')
+            print(f'  /// Is this object an instance of `{python_type}`?')
 
-        print(f'    public func is{swift_type_without_py}(_ object: PyObject) -> Bool {{')
+        print(f'  public func is{swift_type_without_py}(_ object: PyObject) -> Bool {{')
 
         # For some types we have a dedicated flag on type
         flag_to_check_on_type: Optional[str] = None
@@ -111,13 +109,13 @@ extension Py {{
             flag_to_check_on_type = 'isTypeSubclass'
 
         if flag_to_check_on_type:
-            print(f"      // '{python_type}' checks are so common that we have a special flag for it.")
-            print(f'      let typeFlags = object.type.typeFlags')
-            print(f'      return typeFlags.{flag_to_check_on_type}')
+            print(f"    // '{python_type}' checks are so common that we have a special flag for it.")
+            print(f'    let typeFlags = object.type.typeFlags')
+            print(f'    return typeFlags.{flag_to_check_on_type}')
         else:
-            print(f'      return self.isInstance(object, of: {py_type_path})')
+            print(f'    return self.isInstance(object, of: {py_type_path})')
 
-        print('    }')
+        print('  }')
 
         # ====================
         # === isExactlyInt ===
@@ -125,10 +123,10 @@ extension Py {{
 
         if is_base_type:
             print(f'''
-    /// Is this object an instance of `{python_type}` (but not its subclass)?
-    public func isExactly{swift_type_without_py}(_ object: PyObject) -> Bool {{
-      return self.isExactlyInstance(object, of: {py_type_path})
-    }}\
+  /// Is this object an instance of `{python_type}` (but not its subclass)?
+  public func isExactly{swift_type_without_py}(_ object: PyObject) -> Bool {{
+    return self.isExactlyInstance(object, of: {py_type_path})
+  }}\
 ''')
 
         # =============
@@ -140,10 +138,10 @@ extension Py {{
             doc = f'/// Cast this object to `{swift_type}` if it is {python_type_article} `{python_type}` (or its subclass).'
 
         print(f'''
-    {doc}
-    public func as{swift_type_without_py}(_ object: PyObject) -> {swift_type}? {{
-      return self.is{swift_type_without_py}(object) ? {swift_type}(ptr: object.ptr) : nil
-    }}\
+  {doc}
+  public func as{swift_type_without_py}(_ object: PyObject) -> {swift_type}? {{
+    return self.is{swift_type_without_py}(object) ? {swift_type}(ptr: object.ptr) : nil
+  }}\
 ''')
 
         # ====================
@@ -152,10 +150,10 @@ extension Py {{
 
         if is_base_type:
             print(f'''
-    /// Cast this object to `{swift_type}` if it is {python_type_article} `{python_type}` (but not its subclass).
-    public func asExactly{swift_type_without_py}(_ object: PyObject) -> {swift_type}? {{
-      return self.isExactly{swift_type_without_py}(object) ? {swift_type}(ptr: object.ptr) : nil
-    }}\
+  /// Cast this object to `{swift_type}` if it is {python_type_article} `{python_type}` (but not its subclass).
+  public func asExactly{swift_type_without_py}(_ object: PyObject) -> {swift_type}? {{
+    return self.isExactly{swift_type_without_py}(object) ? {swift_type}(ptr: object.ptr) : nil
+  }}\
 ''')
 
         # ===============
@@ -165,15 +163,14 @@ extension Py {{
         is_none = t.python_type_name == 'NoneType'
         if is_none:
             print(f'''
-    /// Is this object Swift `nil` or an instance of `NoneType`?
-    public func isNilOrNone(_ object: PyObject?) -> Bool {{
-      guard let object = object else {{
-        return true
-      }}
+  /// Is this object Swift `nil` or an instance of `NoneType`?
+  public func isNilOrNone(_ object: PyObject?) -> Bool {{
+    guard let object = object else {{
+      return true
+    }}
 
-      return self.isNone(object)
-    }}\
+    return self.isNone(object)
+  }}\
 ''')
 
-    print('  }')
     print('}')

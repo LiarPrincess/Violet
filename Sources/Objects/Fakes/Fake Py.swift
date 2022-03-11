@@ -20,7 +20,7 @@ public struct Py {
   public let memory = PyMemory()
   public var types: Py.Types { fatalError() }
   public var errorTypes: Py.ErrorTypes { fatalError() }
-  public var cast: Py.Cast { fatalError() }
+  public var cast: PyCast { fatalError() }
   internal var hasher: Hasher { fatalError() }
 
   internal var builtinsModule: PyModule { fatalError() }
