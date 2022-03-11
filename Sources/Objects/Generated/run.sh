@@ -24,3 +24,5 @@ python3 "$GENERATED/Py+TypeDefinitions.py" > "$GENERATED/Py+TypeDefinitions.swif
 python3 "$GENERATED/Py+ErrorTypeDefinitions.py" > "$GENERATED/Py+ErrorTypeDefinitions.swift"
 echo "Py+Cast"
 python3 "$GENERATED/PyCast.py" > "$GENERATED/PyCast.swift"
+echo "FunctionWrappers"
+python3 "$GENERATED/FunctionWrappers.py" > "$GENERATED/FunctionWrappers.swift"

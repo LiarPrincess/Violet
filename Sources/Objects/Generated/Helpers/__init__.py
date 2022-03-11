@@ -13,3 +13,6 @@ from Helpers.NewTypeArguments import NewTypeArguments
 from Helpers.StaticMethod import StaticMethod, ALL_STATIC_METHODS
 
 from Helpers.PyTypeDefinition_helpers import get_property_name as get_py_types_property_name
+
+from Helpers.FunctionWrappers_positional import PositionalFunctionWrapper, get_positional_function_wrappers
+from Helpers.FunctionWrappers_by_hand import FunctionWrapperByHand, get_hand_written_function_wrappers
