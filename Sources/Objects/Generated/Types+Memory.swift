@@ -190,7 +190,7 @@ extension PyBool {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: BigInt.self) // value
+          PyMemory.FieldLayout(from: BigInt.self) // PyBool.value
         ]
       )
 
@@ -273,9 +273,9 @@ extension PyBuiltinFunction {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: FunctionWrapper.self), // function
-          PyMemory.FieldLayout(from: PyObject?.self), // module
-          PyMemory.FieldLayout(from: String?.self) // doc
+          PyMemory.FieldLayout(from: FunctionWrapper.self), // PyBuiltinFunction.function
+          PyMemory.FieldLayout(from: PyObject?.self), // PyBuiltinFunction.module
+          PyMemory.FieldLayout(from: String?.self) // PyBuiltinFunction.doc
         ]
       )
 
@@ -370,10 +370,10 @@ extension PyBuiltinMethod {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: FunctionWrapper.self), // function
-          PyMemory.FieldLayout(from: PyObject.self), // object
-          PyMemory.FieldLayout(from: PyObject?.self), // module
-          PyMemory.FieldLayout(from: String?.self) // doc
+          PyMemory.FieldLayout(from: FunctionWrapper.self), // PyBuiltinMethod.function
+          PyMemory.FieldLayout(from: PyObject.self), // PyBuiltinMethod.object
+          PyMemory.FieldLayout(from: PyObject?.self), // PyBuiltinMethod.module
+          PyMemory.FieldLayout(from: String?.self) // PyBuiltinMethod.doc
         ]
       )
 
@@ -470,7 +470,7 @@ extension PyByteArray {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: Data.self) // elements
+          PyMemory.FieldLayout(from: Data.self) // PyByteArray.elements
         ]
       )
 
@@ -552,8 +552,8 @@ extension PyByteArrayIterator {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyByteArray.self), // bytes
-          PyMemory.FieldLayout(from: Int.self) // index
+          PyMemory.FieldLayout(from: PyByteArray.self), // PyByteArrayIterator.bytes
+          PyMemory.FieldLayout(from: Int.self) // PyByteArrayIterator.index
         ]
       )
 
@@ -637,7 +637,7 @@ extension PyBytes {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: Data.self) // elements
+          PyMemory.FieldLayout(from: Data.self) // PyBytes.elements
         ]
       )
 
@@ -719,8 +719,8 @@ extension PyBytesIterator {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyBytes.self), // bytes
-          PyMemory.FieldLayout(from: Int.self) // index
+          PyMemory.FieldLayout(from: PyBytes.self), // PyBytesIterator.bytes
+          PyMemory.FieldLayout(from: Int.self) // PyBytesIterator.index
         ]
       )
 
@@ -805,8 +805,8 @@ extension PyCallableIterator {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject.self), // callable
-          PyMemory.FieldLayout(from: PyObject.self) // sentinel
+          PyMemory.FieldLayout(from: PyObject.self), // PyCallableIterator.callable
+          PyMemory.FieldLayout(from: PyObject.self) // PyCallableIterator.sentinel
         ]
       )
 
@@ -892,7 +892,7 @@ extension PyCell {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject?.self) // content
+          PyMemory.FieldLayout(from: PyObject?.self) // PyCell.content
         ]
       )
 
@@ -973,7 +973,7 @@ extension PyClassMethod {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject?.self) // callable
+          PyMemory.FieldLayout(from: PyObject?.self) // PyClassMethod.callable
         ]
       )
 
@@ -1067,20 +1067,20 @@ extension PyCode {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyString.self), // name
-          PyMemory.FieldLayout(from: PyString.self), // qualifiedName
-          PyMemory.FieldLayout(from: PyString.self), // filename
-          PyMemory.FieldLayout(from: [Instruction].self), // instructions
-          PyMemory.FieldLayout(from: SourceLine.self), // firstLine
-          PyMemory.FieldLayout(from: [SourceLine].self), // instructionLines
-          PyMemory.FieldLayout(from: [PyObject].self), // constants
-          PyMemory.FieldLayout(from: [CodeObject.Label].self), // labels
-          PyMemory.FieldLayout(from: [PyString].self), // names
-          PyMemory.FieldLayout(from: [MangledName].self), // variableNames
-          PyMemory.FieldLayout(from: [MangledName].self), // cellVariableNames
-          PyMemory.FieldLayout(from: [MangledName].self), // freeVariableNames
-          PyMemory.FieldLayout(from: Int.self), // argCount
-          PyMemory.FieldLayout(from: Int.self) // kwOnlyArgCount
+          PyMemory.FieldLayout(from: PyString.self), // PyCode.name
+          PyMemory.FieldLayout(from: PyString.self), // PyCode.qualifiedName
+          PyMemory.FieldLayout(from: PyString.self), // PyCode.filename
+          PyMemory.FieldLayout(from: [Instruction].self), // PyCode.instructions
+          PyMemory.FieldLayout(from: SourceLine.self), // PyCode.firstLine
+          PyMemory.FieldLayout(from: [SourceLine].self), // PyCode.instructionLines
+          PyMemory.FieldLayout(from: [PyObject].self), // PyCode.constants
+          PyMemory.FieldLayout(from: [CodeObject.Label].self), // PyCode.labels
+          PyMemory.FieldLayout(from: [PyString].self), // PyCode.names
+          PyMemory.FieldLayout(from: [MangledName].self), // PyCode.variableNames
+          PyMemory.FieldLayout(from: [MangledName].self), // PyCode.cellVariableNames
+          PyMemory.FieldLayout(from: [MangledName].self), // PyCode.freeVariableNames
+          PyMemory.FieldLayout(from: Int.self), // PyCode.argCount
+          PyMemory.FieldLayout(from: Int.self) // PyCode.kwOnlyArgCount
         ]
       )
 
@@ -1202,8 +1202,8 @@ extension PyComplex {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: Double.self), // real
-          PyMemory.FieldLayout(from: Double.self) // imag
+          PyMemory.FieldLayout(from: Double.self), // PyComplex.real
+          PyMemory.FieldLayout(from: Double.self) // PyComplex.imag
         ]
       )
 
@@ -1289,7 +1289,7 @@ extension PyDict {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyDict.OrderedDictionary.self) // elements
+          PyMemory.FieldLayout(from: PyDict.OrderedDictionary.self) // PyDict.elements
         ]
       )
 
@@ -1372,9 +1372,9 @@ extension PyDictItemIterator {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyDict.self), // dict
-          PyMemory.FieldLayout(from: Int.self), // index
-          PyMemory.FieldLayout(from: Int.self) // initialCount
+          PyMemory.FieldLayout(from: PyDict.self), // PyDictItemIterator.dict
+          PyMemory.FieldLayout(from: Int.self), // PyDictItemIterator.index
+          PyMemory.FieldLayout(from: Int.self) // PyDictItemIterator.initialCount
         ]
       )
 
@@ -1462,7 +1462,7 @@ extension PyDictItems {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyDict.self) // dict
+          PyMemory.FieldLayout(from: PyDict.self) // PyDictItems.dict
         ]
       )
 
@@ -1545,9 +1545,9 @@ extension PyDictKeyIterator {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyDict.self), // dict
-          PyMemory.FieldLayout(from: Int.self), // index
-          PyMemory.FieldLayout(from: Int.self) // initialCount
+          PyMemory.FieldLayout(from: PyDict.self), // PyDictKeyIterator.dict
+          PyMemory.FieldLayout(from: Int.self), // PyDictKeyIterator.index
+          PyMemory.FieldLayout(from: Int.self) // PyDictKeyIterator.initialCount
         ]
       )
 
@@ -1635,7 +1635,7 @@ extension PyDictKeys {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyDict.self) // dict
+          PyMemory.FieldLayout(from: PyDict.self) // PyDictKeys.dict
         ]
       )
 
@@ -1718,9 +1718,9 @@ extension PyDictValueIterator {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyDict.self), // dict
-          PyMemory.FieldLayout(from: Int.self), // index
-          PyMemory.FieldLayout(from: Int.self) // initialCount
+          PyMemory.FieldLayout(from: PyDict.self), // PyDictValueIterator.dict
+          PyMemory.FieldLayout(from: Int.self), // PyDictValueIterator.index
+          PyMemory.FieldLayout(from: Int.self) // PyDictValueIterator.initialCount
         ]
       )
 
@@ -1808,7 +1808,7 @@ extension PyDictValues {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyDict.self) // dict
+          PyMemory.FieldLayout(from: PyDict.self) // PyDictValues.dict
         ]
       )
 
@@ -1962,8 +1962,8 @@ extension PyEnumerate {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject.self), // iterator
-          PyMemory.FieldLayout(from: BigInt.self) // nextIndex
+          PyMemory.FieldLayout(from: PyObject.self), // PyEnumerate.iterator
+          PyMemory.FieldLayout(from: BigInt.self) // PyEnumerate.nextIndex
         ]
       )
 
@@ -2050,8 +2050,8 @@ extension PyFilter {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject.self), // fn
-          PyMemory.FieldLayout(from: PyObject.self) // iterator
+          PyMemory.FieldLayout(from: PyObject.self), // PyFilter.fn
+          PyMemory.FieldLayout(from: PyObject.self) // PyFilter.iterator
         ]
       )
 
@@ -2137,7 +2137,7 @@ extension PyFloat {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: Double.self) // value
+          PyMemory.FieldLayout(from: Double.self) // PyFloat.value
         ]
       )
 
@@ -2229,18 +2229,18 @@ extension PyFrame {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyCode.self), // code
-          PyMemory.FieldLayout(from: PyFrame?.self), // parent
-          PyMemory.FieldLayout(from: ObjectStack.self), // stack
-          PyMemory.FieldLayout(from: BlockStack.self), // blocks
-          PyMemory.FieldLayout(from: PyDict.self), // locals
-          PyMemory.FieldLayout(from: PyDict.self), // globals
-          PyMemory.FieldLayout(from: PyDict.self), // builtins
-          PyMemory.FieldLayout(from: [PyObject?].self), // fastLocals
-          PyMemory.FieldLayout(from: [PyCell].self), // cellVariables
-          PyMemory.FieldLayout(from: [PyCell].self), // freeVariables
-          PyMemory.FieldLayout(from: Int?.self), // currentInstructionIndex
-          PyMemory.FieldLayout(from: Int.self) // nextInstructionIndex
+          PyMemory.FieldLayout(from: PyCode.self), // PyFrame.code
+          PyMemory.FieldLayout(from: PyFrame?.self), // PyFrame.parent
+          PyMemory.FieldLayout(from: ObjectStack.self), // PyFrame.stack
+          PyMemory.FieldLayout(from: BlockStack.self), // PyFrame.blocks
+          PyMemory.FieldLayout(from: PyDict.self), // PyFrame.locals
+          PyMemory.FieldLayout(from: PyDict.self), // PyFrame.globals
+          PyMemory.FieldLayout(from: PyDict.self), // PyFrame.builtins
+          PyMemory.FieldLayout(from: [PyObject?].self), // PyFrame.fastLocals
+          PyMemory.FieldLayout(from: [PyCell].self), // PyFrame.cellVariables
+          PyMemory.FieldLayout(from: [PyCell].self), // PyFrame.freeVariables
+          PyMemory.FieldLayout(from: Int?.self), // PyFrame.currentInstructionIndex
+          PyMemory.FieldLayout(from: Int.self) // PyFrame.nextInstructionIndex
         ]
       )
 
@@ -2361,7 +2361,7 @@ extension PyFrozenSet {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: OrderedSet.self) // elements
+          PyMemory.FieldLayout(from: OrderedSet.self) // PyFrozenSet.elements
         ]
       )
 
@@ -2451,16 +2451,16 @@ extension PyFunction {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyString.self), // name
-          PyMemory.FieldLayout(from: PyString.self), // qualname
-          PyMemory.FieldLayout(from: PyString?.self), // doc
-          PyMemory.FieldLayout(from: PyObject.self), // module
-          PyMemory.FieldLayout(from: PyCode.self), // code
-          PyMemory.FieldLayout(from: PyDict.self), // globals
-          PyMemory.FieldLayout(from: PyTuple?.self), // defaults
-          PyMemory.FieldLayout(from: PyDict?.self), // kwDefaults
-          PyMemory.FieldLayout(from: PyTuple?.self), // closure
-          PyMemory.FieldLayout(from: PyDict?.self) // annotations
+          PyMemory.FieldLayout(from: PyString.self), // PyFunction.name
+          PyMemory.FieldLayout(from: PyString.self), // PyFunction.qualname
+          PyMemory.FieldLayout(from: PyString?.self), // PyFunction.doc
+          PyMemory.FieldLayout(from: PyObject.self), // PyFunction.module
+          PyMemory.FieldLayout(from: PyCode.self), // PyFunction.code
+          PyMemory.FieldLayout(from: PyDict.self), // PyFunction.globals
+          PyMemory.FieldLayout(from: PyTuple?.self), // PyFunction.defaults
+          PyMemory.FieldLayout(from: PyDict?.self), // PyFunction.kwDefaults
+          PyMemory.FieldLayout(from: PyTuple?.self), // PyFunction.closure
+          PyMemory.FieldLayout(from: PyDict?.self) // PyFunction.annotations
         ]
       )
 
@@ -2575,7 +2575,7 @@ extension PyInt {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: BigInt.self) // value
+          PyMemory.FieldLayout(from: BigInt.self) // PyInt.value
         ]
       )
 
@@ -2657,8 +2657,8 @@ extension PyIterator {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject.self), // sequence
-          PyMemory.FieldLayout(from: Int.self) // index
+          PyMemory.FieldLayout(from: PyObject.self), // PyIterator.sequence
+          PyMemory.FieldLayout(from: Int.self) // PyIterator.index
         ]
       )
 
@@ -2742,7 +2742,7 @@ extension PyList {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: [PyObject].self) // elements
+          PyMemory.FieldLayout(from: [PyObject].self) // PyList.elements
         ]
       )
 
@@ -2824,8 +2824,8 @@ extension PyListIterator {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyList.self), // list
-          PyMemory.FieldLayout(from: Int.self) // index
+          PyMemory.FieldLayout(from: PyList.self), // PyListIterator.list
+          PyMemory.FieldLayout(from: Int.self) // PyListIterator.index
         ]
       )
 
@@ -2910,8 +2910,8 @@ extension PyListReverseIterator {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyList.self), // list
-          PyMemory.FieldLayout(from: Int.self) // index
+          PyMemory.FieldLayout(from: PyList.self), // PyListReverseIterator.list
+          PyMemory.FieldLayout(from: Int.self) // PyListReverseIterator.index
         ]
       )
 
@@ -2996,8 +2996,8 @@ extension PyMap {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject.self), // fn
-          PyMemory.FieldLayout(from: [PyObject].self) // iterators
+          PyMemory.FieldLayout(from: PyObject.self), // PyMap.fn
+          PyMemory.FieldLayout(from: [PyObject].self) // PyMap.iterators
         ]
       )
 
@@ -3084,8 +3084,8 @@ extension PyMethod {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyFunction.self), // function
-          PyMemory.FieldLayout(from: PyObject.self) // object
+          PyMemory.FieldLayout(from: PyFunction.self), // PyMethod.function
+          PyMemory.FieldLayout(from: PyObject.self) // PyMethod.object
         ]
       )
 
@@ -3528,10 +3528,10 @@ extension PyProperty {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject?.self), // _get
-          PyMemory.FieldLayout(from: PyObject?.self), // _set
-          PyMemory.FieldLayout(from: PyObject?.self), // _del
-          PyMemory.FieldLayout(from: PyObject?.self) // doc
+          PyMemory.FieldLayout(from: PyObject?.self), // PyProperty._get
+          PyMemory.FieldLayout(from: PyObject?.self), // PyProperty._set
+          PyMemory.FieldLayout(from: PyObject?.self), // PyProperty._del
+          PyMemory.FieldLayout(from: PyObject?.self) // PyProperty.doc
         ]
       )
 
@@ -3631,10 +3631,10 @@ extension PyRange {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyInt.self), // start
-          PyMemory.FieldLayout(from: PyInt.self), // stop
-          PyMemory.FieldLayout(from: PyInt.self), // step
-          PyMemory.FieldLayout(from: PyInt.self) // length
+          PyMemory.FieldLayout(from: PyInt.self), // PyRange.start
+          PyMemory.FieldLayout(from: PyInt.self), // PyRange.stop
+          PyMemory.FieldLayout(from: PyInt.self), // PyRange.step
+          PyMemory.FieldLayout(from: PyInt.self) // PyRange.length
         ]
       )
 
@@ -3732,10 +3732,10 @@ extension PyRangeIterator {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: BigInt.self), // start
-          PyMemory.FieldLayout(from: BigInt.self), // step
-          PyMemory.FieldLayout(from: BigInt.self), // length
-          PyMemory.FieldLayout(from: BigInt.self) // index
+          PyMemory.FieldLayout(from: BigInt.self), // PyRangeIterator.start
+          PyMemory.FieldLayout(from: BigInt.self), // PyRangeIterator.step
+          PyMemory.FieldLayout(from: BigInt.self), // PyRangeIterator.length
+          PyMemory.FieldLayout(from: BigInt.self) // PyRangeIterator.index
         ]
       )
 
@@ -3831,8 +3831,8 @@ extension PyReversed {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject.self), // sequence
-          PyMemory.FieldLayout(from: Int.self) // index
+          PyMemory.FieldLayout(from: PyObject.self), // PyReversed.sequence
+          PyMemory.FieldLayout(from: Int.self) // PyReversed.index
         ]
       )
 
@@ -3918,7 +3918,7 @@ extension PySet {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: OrderedSet.self) // elements
+          PyMemory.FieldLayout(from: OrderedSet.self) // PySet.elements
         ]
       )
 
@@ -4001,9 +4001,9 @@ extension PySetIterator {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyAnySet.self), // set
-          PyMemory.FieldLayout(from: Int.self), // index
-          PyMemory.FieldLayout(from: Int.self) // initialCount
+          PyMemory.FieldLayout(from: PyAnySet.self), // PySetIterator.set
+          PyMemory.FieldLayout(from: Int.self), // PySetIterator.index
+          PyMemory.FieldLayout(from: Int.self) // PySetIterator.initialCount
         ]
       )
 
@@ -4112,9 +4112,9 @@ extension PySlice {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject.self), // start
-          PyMemory.FieldLayout(from: PyObject.self), // stop
-          PyMemory.FieldLayout(from: PyObject.self) // step
+          PyMemory.FieldLayout(from: PyObject.self), // PySlice.start
+          PyMemory.FieldLayout(from: PyObject.self), // PySlice.stop
+          PyMemory.FieldLayout(from: PyObject.self) // PySlice.step
         ]
       )
 
@@ -4206,7 +4206,7 @@ extension PyStaticMethod {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject?.self) // callable
+          PyMemory.FieldLayout(from: PyObject?.self) // PyStaticMethod.callable
         ]
       )
 
@@ -4289,9 +4289,9 @@ extension PyString {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: Int.self), // cachedCount
-          PyMemory.FieldLayout(from: PyHash.self), // cachedHash
-          PyMemory.FieldLayout(from: String.self) // value
+          PyMemory.FieldLayout(from: Int.self), // PyString.cachedCount
+          PyMemory.FieldLayout(from: PyHash.self), // PyString.cachedHash
+          PyMemory.FieldLayout(from: String.self) // PyString.value
         ]
       )
 
@@ -4380,8 +4380,8 @@ extension PyStringIterator {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyString.self), // string
-          PyMemory.FieldLayout(from: Int.self) // index
+          PyMemory.FieldLayout(from: PyString.self), // PyStringIterator.string
+          PyMemory.FieldLayout(from: Int.self) // PyStringIterator.index
         ]
       )
 
@@ -4467,9 +4467,9 @@ extension PySuper {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyType?.self), // thisClass
-          PyMemory.FieldLayout(from: PyObject?.self), // object
-          PyMemory.FieldLayout(from: PyType?.self) // objectType
+          PyMemory.FieldLayout(from: PyType?.self), // PySuper.thisClass
+          PyMemory.FieldLayout(from: PyObject?.self), // PySuper.object
+          PyMemory.FieldLayout(from: PyType?.self) // PySuper.objectType
         ]
       )
 
@@ -4565,11 +4565,11 @@ extension PyTextFile {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: String?.self), // name
-          PyMemory.FieldLayout(from: FileDescriptorType.self), // fd
-          PyMemory.FieldLayout(from: FileMode.self), // mode
-          PyMemory.FieldLayout(from: PyString.Encoding.self), // encoding
-          PyMemory.FieldLayout(from: PyString.ErrorHandling.self) // errorHandling
+          PyMemory.FieldLayout(from: String?.self), // PyTextFile.name
+          PyMemory.FieldLayout(from: FileDescriptorType.self), // PyTextFile.fd
+          PyMemory.FieldLayout(from: FileMode.self), // PyTextFile.mode
+          PyMemory.FieldLayout(from: PyString.Encoding.self), // PyTextFile.encoding
+          PyMemory.FieldLayout(from: PyString.ErrorHandling.self) // PyTextFile.errorHandling
         ]
       )
 
@@ -4676,10 +4676,10 @@ extension PyTraceback {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyTraceback?.self), // next
-          PyMemory.FieldLayout(from: PyFrame.self), // frame
-          PyMemory.FieldLayout(from: PyInt.self), // lastInstruction
-          PyMemory.FieldLayout(from: PyInt.self) // lineNo
+          PyMemory.FieldLayout(from: PyTraceback?.self), // PyTraceback.next
+          PyMemory.FieldLayout(from: PyFrame.self), // PyTraceback.frame
+          PyMemory.FieldLayout(from: PyInt.self), // PyTraceback.lastInstruction
+          PyMemory.FieldLayout(from: PyInt.self) // PyTraceback.lineNo
         ]
       )
 
@@ -4774,7 +4774,7 @@ extension PyTuple {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: [PyObject].self) // elements
+          PyMemory.FieldLayout(from: [PyObject].self) // PyTuple.elements
         ]
       )
 
@@ -4856,8 +4856,8 @@ extension PyTupleIterator {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyTuple.self), // tuple
-          PyMemory.FieldLayout(from: Int.self) // index
+          PyMemory.FieldLayout(from: PyTuple.self), // PyTupleIterator.tuple
+          PyMemory.FieldLayout(from: Int.self) // PyTupleIterator.index
         ]
       )
 
@@ -4950,16 +4950,16 @@ extension PyType {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: String.self), // name
-          PyMemory.FieldLayout(from: String.self), // qualname
-          PyMemory.FieldLayout(from: PyType?.self), // base
-          PyMemory.FieldLayout(from: [PyType].self), // bases
-          PyMemory.FieldLayout(from: [PyType].self), // mro
-          PyMemory.FieldLayout(from: [PyType].self), // subclasses
-          PyMemory.FieldLayout(from: MemoryLayout.self), // layout
-          PyMemory.FieldLayout(from: PyStaticCall.KnownNotOverriddenMethods.self), // staticMethods
-          PyMemory.FieldLayout(from: DebugFn.self), // debugFn
-          PyMemory.FieldLayout(from: DeinitializeFn.self) // deinitialize
+          PyMemory.FieldLayout(from: String.self), // PyType.name
+          PyMemory.FieldLayout(from: String.self), // PyType.qualname
+          PyMemory.FieldLayout(from: PyType?.self), // PyType.base
+          PyMemory.FieldLayout(from: [PyType].self), // PyType.bases
+          PyMemory.FieldLayout(from: [PyType].self), // PyType.mro
+          PyMemory.FieldLayout(from: [PyType].self), // PyType.subclasses
+          PyMemory.FieldLayout(from: MemoryLayout.self), // PyType.layout
+          PyMemory.FieldLayout(from: PyStaticCall.KnownNotOverriddenMethods.self), // PyType.staticMethods
+          PyMemory.FieldLayout(from: DebugFn.self), // PyType.debugFn
+          PyMemory.FieldLayout(from: DeinitializeFn.self) // PyType.deinitialize
         ]
       )
 
@@ -5088,7 +5088,7 @@ extension PyZip {
         initialOffset: PyObjectHeader.layout.size,
         initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: [PyObject].self) // iterators
+          PyMemory.FieldLayout(from: [PyObject].self) // PyZip.iterators
         ]
       )
 
@@ -6893,9 +6893,9 @@ extension PyImportError {
         initialOffset: PyErrorHeader.layout.size,
         initialAlignment: PyErrorHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject?.self), // msg
-          PyMemory.FieldLayout(from: PyObject?.self), // moduleName
-          PyMemory.FieldLayout(from: PyObject?.self) // modulePath
+          PyMemory.FieldLayout(from: PyObject?.self), // PyImportError.msg
+          PyMemory.FieldLayout(from: PyObject?.self), // PyImportError.moduleName
+          PyMemory.FieldLayout(from: PyObject?.self) // PyImportError.modulePath
         ]
       )
 
@@ -8965,7 +8965,7 @@ extension PyStopIteration {
         initialOffset: PyErrorHeader.layout.size,
         initialAlignment: PyErrorHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject.self) // value
+          PyMemory.FieldLayout(from: PyObject.self) // PyStopIteration.value
         ]
       )
 
@@ -9061,12 +9061,12 @@ extension PySyntaxError {
         initialOffset: PyErrorHeader.layout.size,
         initialAlignment: PyErrorHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject?.self), // msg
-          PyMemory.FieldLayout(from: PyObject?.self), // filename
-          PyMemory.FieldLayout(from: PyObject?.self), // lineno
-          PyMemory.FieldLayout(from: PyObject?.self), // offset
-          PyMemory.FieldLayout(from: PyObject?.self), // text
-          PyMemory.FieldLayout(from: PyObject?.self) // printFileAndLine
+          PyMemory.FieldLayout(from: PyObject?.self), // PySyntaxError.msg
+          PyMemory.FieldLayout(from: PyObject?.self), // PySyntaxError.filename
+          PyMemory.FieldLayout(from: PyObject?.self), // PySyntaxError.lineno
+          PyMemory.FieldLayout(from: PyObject?.self), // PySyntaxError.offset
+          PyMemory.FieldLayout(from: PyObject?.self), // PySyntaxError.text
+          PyMemory.FieldLayout(from: PyObject?.self) // PySyntaxError.printFileAndLine
         ]
       )
 
@@ -9347,7 +9347,7 @@ extension PySystemExit {
         initialOffset: PyErrorHeader.layout.size,
         initialAlignment: PyErrorHeader.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject?.self) // code
+          PyMemory.FieldLayout(from: PyObject?.self) // PySystemExit.code
         ]
       )
 

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from Sourcery import ObjectHeader, get_object_header, ErrorHeader, get_error_header, TypeInfo, get_types
 from Helpers import NewTypeArguments, generated_warning
 
@@ -12,9 +12,10 @@ ERROR_HEADER_ALIGNMENT = 'PyErrorHeader.layout.alignment'
 # ===============
 
 class FieldIncludedInLayout:
-    def __init__(self, swift_name: str, swift_type: str):
+    def __init__(self, swift_name: str, swift_type: str, declared_in_type: Optional[TypeInfo] = None):
         self.swift_name = swift_name
         self.swift_type = swift_type
+        self.declared_in_type = declared_in_type
         self.pointer_property_name = swift_name + 'Ptr'
         self.layout_offset_property_name = swift_name + 'Offset'
 
@@ -47,7 +48,8 @@ def print_layout(swift_type_name: str,
         for index, p in enumerate(fields):
             is_last = index == len(fields) - 1
             comma = '' if is_last else ','
-            print(f'          PyMemory.FieldLayout(from: {p.swift_type}.self){comma} // {p.swift_name}')
+            declared_in = '' if p.declared_in_type is None else p.declared_in_type.swift_type_name + '.'
+            print(f'          PyMemory.FieldLayout(from: {p.swift_type}.self){comma} // {declared_in}{p.swift_name}')
 
         print('        ]')
 
@@ -186,7 +188,7 @@ def print_type_extension(t: TypeInfo):
 
     fields: List[FieldIncludedInLayout] = []
     for f in t.swift_fields:
-        fields.append(FieldIncludedInLayout(f.swift_name, f.swift_type))
+        fields.append(FieldIncludedInLayout(f.swift_name, f.swift_type, t))
 
     print(f'// MARK: - {swift_type_name}')
     print()
