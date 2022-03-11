@@ -260,7 +260,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   // MARK: - Doc
 
   // sourcery: pyproperty = __doc__, setter
-  internal static func getDoc(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __doc__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf)
     }
