@@ -149,7 +149,7 @@ public struct PyBaseException: PyErrorMixin {
 
   // MARK: - Args
 
-  // sourcery: pyproperty = args, setter = setArgs
+  // sourcery: pyproperty = args, setter
   internal func getArgs() -> PyTuple {
     return self.args
   }
@@ -178,7 +178,7 @@ public struct PyBaseException: PyErrorMixin {
 
   // MARK: - Traceback
 
-  // sourcery: pyproperty = __traceback__, setter = setTraceback
+  // sourcery: pyproperty = __traceback__, setter
   internal func getTraceback() -> PyTraceback? {
     return self.traceback
   }
@@ -222,7 +222,7 @@ public struct PyBaseException: PyErrorMixin {
 
   internal static let getCauseDoc = "exception cause"
 
-  // sourcery: pyproperty = __cause__, setter = setCause, doc = getCauseDoc
+  // sourcery: pyproperty = __cause__, setter, doc = getCauseDoc
   internal func getCause() -> PyBaseException? {
     return self.cause
   }
@@ -260,7 +260,7 @@ public struct PyBaseException: PyErrorMixin {
 
   internal static let getContextDoc = "exception context"
 
-  // sourcery: pyproperty = __context__, setter = setContext, doc = getContextDoc
+  // sourcery: pyproperty = __context__, setter, doc = getContextDoc
   internal func getContext() -> PyBaseException? {
     return self.context
   }
@@ -393,7 +393,7 @@ public struct PyBaseException: PyErrorMixin {
 
   // MARK: - Suppress context
 
-  // sourcery: pyproperty = __suppress_context__, setter = setSuppressContext
+  // sourcery: pyproperty = __suppress_context__, setter
   internal func getSuppressContext() -> Bool {
     return self.suppressContext
   }

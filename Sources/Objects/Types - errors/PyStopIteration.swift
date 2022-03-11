@@ -68,7 +68,7 @@ public struct PyStopIteration: PyErrorMixin {
 
   // MARK: - Value
 
-  // sourcery: pyproperty = value, setter = setValue
+  // sourcery: pyproperty = value, setter
   internal func getValue() -> PyObject {
     return self.value
   }
