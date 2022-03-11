@@ -64,8 +64,6 @@ extension PyBuiltinFunction {
     doc: String?,
     fn: (Py, PyObject, PyObject, PyObject?) -> PyResult<PyObject>
   ) -> PyBuiltinFunction { fatalError() }
-
-  public func bind(to object: PyObject) -> PyBuiltinMethod { fatalError() }
 }
 
 extension PyFunction {

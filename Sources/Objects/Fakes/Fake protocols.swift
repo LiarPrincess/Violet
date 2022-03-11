@@ -5,5 +5,3 @@ internal protocol HasCustomGetMethod {
                  selector: PyString,
                  allowsCallableFromDict: Bool) -> Py.GetMethodResult
 }
-
-internal protocol AbstractBuiltinFunction {}
