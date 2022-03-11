@@ -116,6 +116,12 @@ public struct Py {
                                deinitialize: deinitialize)
   }
 
+  public func newBuiltinMethod(fn: FunctionWrapper,
+                               object: PyObject,
+                               module: PyObject?,
+                               doc: String?) -> PyBuiltinMethod { fatalError() }
+
+
   // MARK: - String
 
   public func repr(object: PyObject) -> PyResult<PyString> { fatalError() }

@@ -44,124 +44,136 @@ public struct PyBuiltinFunction: PyObjectMixin, AbstractBuiltinFunction {
     let zelf = PyBuiltinFunction(ptr: ptr)
     return "PyBuiltinFunction(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
-}
 
-/* MARKER
-
-  // MARK: - Equatable
+  // MARK: - Equatable, comparable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> CompareResult {
-    return self._isEqual(other)
+  internal static func __eq__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.abstract__eq__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> CompareResult {
-    return self._isNotEqual(other)
+  internal static func __ne__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.abstract__ne__(py, zelf: zelf, other: other)
   }
 
-  // MARK: - Comparable
-
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> CompareResult {
-    return self._isLess(other)
+  internal static func __lt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.abstract__lt__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    return self._isLessEqual(other)
+  internal static func __le__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.abstract__le__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> CompareResult {
-    return self._isGreater(other)
+  internal static func __gt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.abstract__gt__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
-    return self._isGreaterEqual(other)
+  internal static func __ge__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
+    return Self.abstract__ge__(py, zelf: zelf, other: other)
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
-    return "<built-in function \(self.name)>"
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__repr__")
+    }
+
+    let result = "<built-in function \(zelf.name)>"
+    return PyResult(py, interned: result)
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return self._getAttribute(name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    }
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
-  // MARK: - Name
+  // MARK: - Properties
 
   // sourcery: pyproperty = __name__
-  internal func getName() -> String {
-    return self.name
+  internal static func __name__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__name__(py, zelf: zelf)
   }
-
-  // MARK: - Qualname
 
   // sourcery: pyproperty = __qualname__
-  internal func getQualname() -> String {
-    return self.name
-  }
+  internal static func __qualname__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__qualname__")
+    }
 
-  // MARK: - Doc
+    let result = zelf.name
+    return PyResult(py, interned: result)
+  }
 
   // sourcery: pyproperty = __doc__
-  internal func getDoc() -> String? {
-    return self._getDoc()
+  internal static func __doc__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__doc__(py, zelf: zelf)
   }
-
-  // MARK: - TextSignature
 
   // sourcery: pyproperty = __text_signature__
-  internal func getTextSignature() -> String? {
-    return self._getTextSignature()
+  internal static func __text_signature__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__text_signature__(py, zelf: zelf)
   }
-
-  // MARK: - Module
 
   // sourcery: pyproperty = __module__
-  internal func getModule() -> PyResult<PyObject> {
-    return self._getModule()
+  internal static func __module__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    return Self.abstract__module__(py, zelf: zelf)
   }
 
-  // MARK: - Self
-
   // sourcery: pyproperty = __self__
-  internal func getSelf() -> PyObject {
-    return Py.none
+  internal static func __self__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard py.cast.isBuiltinFunction(zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__self__")
+    }
+
+    return .none(py)
   }
 
   // MARK: - Get
 
   // sourcery: pymethod = __get__
-  internal func get(object: PyObject, type: PyObject?) -> PyResult<PyObject> {
-    if object.isDescriptorStaticMarker {
-      return .value(self)
+  internal static func __get__(_ py: Py,
+                               zelf: PyObject,
+                               object: PyObject,
+                               type: PyObject?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__get__")
     }
 
-    let bound = self.bind(to: object)
-    return .value(bound)
+    if py.isDescriptorStaticMarker(object) {
+      return PyResult(zelf)
+    }
+
+    let bound = zelf.bind(py, object: object)
+    return PyResult(bound)
   }
 
-  internal func bind(to object: PyObject) -> PyBuiltinMethod {
-    return PyMemory.newBuiltinMethod(fn: self.function,
-                                     object: object,
-                                     module: self.module,
-                                     doc: self.doc)
+  internal func bind(_ py: Py, object: PyObject) -> PyBuiltinMethod {
+    return py.newBuiltinMethod(fn: self.function,
+                               object: object,
+                               module: self.module,
+                               doc: self.doc)
   }
 
   // MARK: - Call
@@ -175,9 +187,14 @@ public struct PyBuiltinFunction: PyObjectMixin, AbstractBuiltinFunction {
   ///                              PyObject *kwargs)
   /// static PyObject *
   /// slot_tp_call(PyObject *self, PyObject *args, PyObject *kwds)
-  internal func call(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
-    return self.function.call(args: args, kwargs: kwargs)
+  internal static func __call__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__call__")
+    }
+
+    return zelf.function.call(py, args: args, kwargs: kwargs)
   }
 }
-
-*/
