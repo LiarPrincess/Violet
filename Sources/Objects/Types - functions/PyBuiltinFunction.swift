@@ -165,8 +165,8 @@ public struct PyBuiltinFunction: PyObjectMixin, AbstractBuiltinFunction {
       return PyResult(zelf)
     }
 
-    let bound = zelf.bind(py, object: object)
-    return PyResult(bound)
+    let result = zelf.bind(py, object: object)
+    return PyResult(result)
   }
 
   internal func bind(_ py: Py, object: PyObject) -> PyBuiltinMethod {

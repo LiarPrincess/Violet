@@ -27,6 +27,19 @@ public struct Py {
 
   public struct Delegate {
     var frame: PyFrame? { fatalError() }
+
+    func eval(name: PyString?,
+              qualname: PyString?,
+              code: PyCode,
+
+              args: [PyObject],
+              kwargs: PyDict?,
+              defaults: [PyObject],
+              kwDefaults: PyDict?,
+
+              globals: PyDict,
+              locals: PyDict,
+              closure: PyTuple?) -> PyResult<PyObject> { fatalError() }
   }
 
   public let delegate = Delegate()
@@ -121,6 +134,7 @@ public struct Py {
                                module: PyObject?,
                                doc: String?) -> PyBuiltinMethod { fatalError() }
 
+  public func newMethod(fn: PyFunction, object: PyObject) -> PyMethod { fatalError() }
 
   // MARK: - String
 

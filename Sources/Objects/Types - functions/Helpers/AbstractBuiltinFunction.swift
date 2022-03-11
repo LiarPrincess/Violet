@@ -33,44 +33,58 @@ extension AbstractBuiltinFunction {
   internal static func abstract__eq__(_ py: Py,
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
-    return Self.compare(py, zelf: zelf, operation: .__eq__)
+    if Self.downcast(py, zelf) == nil {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__eq__)
+    }
+
+    return .notImplemented
   }
 
   internal static func abstract__ne__(_ py: Py,
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
-    return Self.compare(py, zelf: zelf, operation: .__ne__)
+    if Self.downcast(py, zelf) == nil {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ne__)
+    }
+
+    return .notImplemented
   }
 
   internal static func abstract__lt__(_ py: Py,
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
-    return Self.compare(py, zelf: zelf, operation: .__lt__)
+    if Self.downcast(py, zelf) == nil {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__lt__)
+    }
+
+    return .notImplemented
   }
 
   internal static func abstract__le__(_ py: Py,
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
-    return Self.compare(py, zelf: zelf, operation: .__le__)
+    if Self.downcast(py, zelf) == nil {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__le__)
+    }
+    
+    return .notImplemented
   }
 
   internal static func abstract__gt__(_ py: Py,
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
-    return Self.compare(py, zelf: zelf, operation: .__gt__)
+    if Self.downcast(py, zelf) == nil {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__gt__)
+    }
+
+    return .notImplemented
   }
 
   internal static func abstract__ge__(_ py: Py,
                                       zelf: PyObject,
                                       other: PyObject) -> CompareResult {
-    return Self.compare(py, zelf: zelf, operation: .__ge__)
-  }
-
-  private static func compare(_ py: Py,
-                              zelf: PyObject,
-                              operation: CompareResult.Operation) -> CompareResult {
     if Self.downcast(py, zelf) == nil {
-      return .invalidSelfArgument(zelf, Self.pythonTypeName, operation)
+      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ge__)
     }
 
     return .notImplemented

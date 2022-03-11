@@ -124,12 +124,12 @@ public struct PyNone: PyObjectMixin, HasCustomGetMethod {
   private func bindToSelf(_ py: Py, object: PyObject) -> PyResult<PyObject> {
     if let fn = py.cast.asBuiltinFunction(object) {
       let method = fn.bind(py, object: self.asObject)
-      return .value(method.asObject)
+      return PyResult(method)
     }
 
     if let fn = py.cast.asFunction(object) {
-      let method = fn.bind(to: self.asObject)
-      return .value(method.asObject)
+      let method = fn.bind(py, object: self.asObject)
+      return PyResult(method.asObject)
     }
 
     if let prop = py.cast.asProperty(object) {
@@ -139,7 +139,6 @@ public struct PyNone: PyObjectMixin, HasCustomGetMethod {
     // No re-binding needed.
     return .value(object)
   }
-
 
   // MARK: - Get method
 

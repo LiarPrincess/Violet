@@ -125,6 +125,15 @@ extension PyResult where Wrapped == PyObject {
     self = value.map { $0.asObject }
   }
 
+  public init<T: PyObjectMixin>(_ py: Py, _ value: Optional<T>) {
+    switch value {
+    case .some(let o):
+      self = .value(o.asObject)
+    case .none:
+      self = .value(py.none.asObject)
+    }
+  }
+
   public init(_ py: Py, tuple elements: PyObject...) {
     let object = py.newTuple(elements: elements)
     self = .value(object.asObject)
