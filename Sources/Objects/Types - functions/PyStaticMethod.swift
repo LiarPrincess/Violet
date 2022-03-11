@@ -29,7 +29,10 @@ public struct PyStaticMethod: PyObjectMixin {
     """
 
   // sourcery: includeInLayout
-  internal var callable: PyObject? { self.callablePtr.pointee }
+  internal var callable: PyObject? {
+    get { self.callablePtr.pointee }
+    nonmutating set { self.callablePtr.pointee = newValue }
+  }
 
   public let ptr: RawPtr
 
@@ -49,37 +52,49 @@ public struct PyStaticMethod: PyObjectMixin {
     let zelf = PyStaticMethod(ptr: ptr)
     return "PyStaticMethod(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
-}
-
-/* MARKER
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // MARK: - Func
 
   // sourcery: pyproperty = __func__
-  internal func getFunction() -> PyObject? {
-    return self.callable
+  internal static func __func__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__func__")
+    }
+
+    return PyResult(py, zelf.callable)
   }
 
   // MARK: - Get
 
   // sourcery: pymethod = __get__
-  internal func get(object: PyObject, type: PyObject?) -> PyResult<PyObject> {
-    guard let callable = self.callable else {
-      return .runtimeError("uninitialized staticmethod object")
+  internal static func __get__(_ py: Py,
+                               zelf: PyObject,
+                               object: PyObject,
+                               type: PyObject?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__get__")
+    }
+
+    guard let callable = zelf.callable else {
+      return .runtimeError(py, message: "uninitialized staticmethod object")
     }
 
     return .value(callable)
@@ -88,44 +103,57 @@ public struct PyStaticMethod: PyObjectMixin {
   // MARK: - Is abstract method
 
   // sourcery: pymethod = __isabstractmethod__
-  internal func isAbstractMethod() -> PyResult<Bool> {
-    guard let callable = self.callable else {
-      return .value(false)
+  internal static func __isabstractmethod__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__isabstractmethod__")
     }
 
-    return Py.isAbstractMethod(object: callable)
+    guard let callable = zelf.callable else {
+      return PyResult(py, false)
+    }
+
+    let result = py.isAbstractMethod(object: callable)
+    return PyResult(py, result)
   }
 
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyNew(type: PyType,
-                            args: [PyObject],
-                            kwargs: PyDict?) -> PyResult<PyStaticMethod> {
-    let result = PyMemory.newStaticMethod(type: type, callable: nil)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let result = py.memory.newStaticMethod(py, type: type, callable: nil)
+    return PyResult(result)
   }
 
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    if let e = ArgumentParser.noKwargsOrError(fnName: self.typeName,
-                                              kwargs: kwargs) {
-      return .error(e)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
     }
 
-    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: self.typeName,
+    if let e = ArgumentParser.noKwargsOrError(py,
+                                              fnName: Self.pythonTypeName,
+                                              kwargs: kwargs) {
+      return .error(e.asBaseException)
+    }
+
+    if let e = ArgumentParser.guaranteeArgsCountOrError(py,
+                                                        fnName: Self.pythonTypeName,
                                                         args: args,
                                                         min: 1,
                                                         max: 1) {
-      return .error(e)
+      return .error(e.asBaseException)
     }
 
     let callable = args[0]
-    self.callable = callable
-    return .value(Py.none)
+    zelf.callable = callable
+    return .none(py)
   }
 }
-
-*/

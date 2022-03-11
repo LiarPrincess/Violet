@@ -135,6 +135,7 @@ public struct Py {
                                doc: String?) -> PyBuiltinMethod { fatalError() }
 
   public func newMethod(fn: PyFunction, object: PyObject) -> PyMethod { fatalError() }
+  public func newMethod(fn: PyObject, object: PyObject) -> PyResult<PyMethod> { fatalError() }
 
   // MARK: - String
 
@@ -368,6 +369,8 @@ public struct Py {
   public func hasMethod(object: PyObject, selector: PyObject) -> PyResult<Bool> { fatalError() }
 
   public func newSuper(requestedType: PyType?, object: PyObject?, objectType: PyType?) -> PySuper { fatalError() }
+
+  public func isAbstractMethod(object: PyObject) -> PyResult<Bool> { fatalError() }
 
   // MARK: - Warn
 

@@ -494,7 +494,7 @@ public struct PyFunction: PyObjectMixin {
   internal static func __get__(_ py: Py,
                                zelf: PyObject,
                                object: PyObject,
-                               type: PyObject) -> PyResult<PyObject> {
+                               type: PyObject?) -> PyResult<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__get__")
     }
