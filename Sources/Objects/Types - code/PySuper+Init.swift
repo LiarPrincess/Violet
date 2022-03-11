@@ -1,15 +1,16 @@
-/* MARKER
 extension PySuper {
 
-  internal func pyInit(type typeArg: PyObject?,
-                       object objectArg: PyObject?) -> PyResult<PyNone> {
+  internal static func __init__(_ py: Py,
+                                zelf: PySuper,
+                                type typeArg: PyObject?,
+                                object objectArg: PyObject?) -> PyResult<PyObject> {
     let type: PyType
     var object = objectArg
 
     if let typeAsObject = typeArg {
-      guard let typeAsType = PyCast.asType(typeAsObject) else {
+      guard let typeAsType = py.cast.asType(typeAsObject) else {
         let t = typeAsObject.typeName
-        return .typeError("super() argument 1 must be type, not \(t)")
+        return .typeError(py, message: "super() argument 1 must be type, not \(t)")
       }
 
       type = typeAsType
@@ -19,7 +20,7 @@ extension PySuper {
       // - type from its '__class__'
       assert(object == nil)
 
-      switch Self.getObjectAndTypeFromFrame() {
+      switch Self.getObjectAndTypeFromFrame(py) {
       case let .value(objectType):
         type = objectType.type
         object = objectType.object
@@ -28,22 +29,22 @@ extension PySuper {
       }
     }
 
-    if let o = object, PyCast.isNone(o) {
+    if let o = object, py.cast.isNone(o) {
       object = nil
     }
 
     var objectType: PyType?
     if let o = object {
-      switch self.checkSuper(type: type, object: o) {
+      switch self.checkSuper(py, zelf: zelf, type: type, object: o) {
       case let .value(t): objectType = t
       case let .error(e): return .error(e)
       }
     }
 
-    self.thisClass = type
-    self.object = object
-    self.objectType = objectType
-    return .value(Py.none)
+    zelf.thisClass = type
+    zelf.object = object
+    zelf.objectType = objectType
+    return .none(py)
   }
 
   // MARK: - Without args (from frame)
@@ -53,29 +54,29 @@ extension PySuper {
     fileprivate let type: PyType
   }
 
-  private static func getObjectAndTypeFromFrame() -> PyResult<ObjectAndType> {
-    guard let frame = Py.delegate.frame else {
-      return .runtimeError("super(): no current frame")
+  private static func getObjectAndTypeFromFrame(_ py: Py) -> PyResult<ObjectAndType> {
+    guard let frame = py.delegate.frame else {
+      return .runtimeError(py, message: "super(): no current frame")
     }
 
     let code = frame.code
 
     if code.argCount == 0 {
-      return .runtimeError("super(): no arguments")
+      return .runtimeError(py, message: "super(): no arguments")
     }
 
     let object: PyObject
-    switch Self.getSelfObjectFromFirstArgument(frame: frame, code: code) {
+    switch Self.getSelfObjectFromFirstArgument(py, frame: frame, code: code) {
     case let .value(o): object = o
     case let .error(e): return .error(e)
     }
 
-    switch Self.getTypeFrom__class__(frame: frame, code: code) {
+    switch Self.getTypeFrom__class__(py, frame: frame, code: code) {
     case .value(let type):
       let result = ObjectAndType(object: object, type: type)
       return .value(result)
     case .notFound:
-      return .runtimeError("super(): __class__ cell not found")
+      return .runtimeError(py, message: "super(): __class__ cell not found")
     case .error(let e):
       return .error(e)
     }
@@ -87,6 +88,7 @@ extension PySuper {
   /// but users can actually put anything they want there,
   /// so we can't rely that.
   private static func getSelfObjectFromFirstArgument(
+    _ py: Py,
     frame: PyFrame,
     code: PyCode
   ) -> PyResult<PyObject> {
@@ -95,7 +97,7 @@ extension PySuper {
     // - 'Collection.first' returns 'Element?'
     // 'guard' will handle optional from 'Collection.first'
     guard var firstArgOrNil = frame.fastLocals.first else {
-      return .runtimeError("super(): arg[0] deleted")
+      return .runtimeError(py, message: "super(): arg[0] deleted")
     }
 
     // The first argument might be a cell.
@@ -104,7 +106,7 @@ extension PySuper {
     }
 
     guard let firstArg = firstArgOrNil else {
-      return .runtimeError("super(): arg[0] deleted")
+      return .runtimeError(py, message: "super(): arg[0] deleted")
     }
 
     return .value(firstArg)
@@ -136,7 +138,8 @@ extension PySuper {
     case error(PyBaseException)
   }
 
-  private static func getTypeFrom__class__(frame: PyFrame,
+  private static func getTypeFrom__class__(_ py: Py,
+                                           frame: PyFrame,
                                            code: PyCode) -> TypeFromClass {
     for (index, name) in code.freeVariableNames.enumerated() {
       guard name.value == "__class__" else {
@@ -146,13 +149,14 @@ extension PySuper {
       let cell = frame.freeVariables[index]
 
       guard let content = cell.content else {
-        let msg = "super(): empty __class__ cell"
-        return .error(Py.newRuntimeError(msg: msg))
+        let error = py.newRuntimeError(message: "super(): empty __class__ cell")
+        return .error(error.asBaseException)
       }
 
-      guard let type = PyCast.asType(content) else {
-        let msg = "super(): __class__ is not a type (\(content.typeName))"
-        return .error(Py.newRuntimeError(msg: msg))
+      guard let type = py.cast.asType(content) else {
+        let message = "super(): __class__ is not a type (\(content.typeName))"
+        let error = py.newRuntimeError(message: message)
+        return .error(error.asBaseException)
       }
 
       return .value(type)
@@ -176,8 +180,11 @@ extension PySuper {
   /// But… when obj is an instance, we want to allow for the case where
   /// `Py_TYPE(obj)` is not a subclass of type, but `object.__class__` is!
   /// This will allow using `super()` with a proxy for `object`.
-  internal func checkSuper(type: PyType, object: PyObject) -> PyResult<PyType> {
-    if let objectAsType = PyCast.asType(object), objectAsType.isSubtype(of: type) {
+  internal static func checkSuper(_ py: Py,
+                                  zelf: PySuper,
+                                  type: PyType,
+                                  object: PyObject) -> PyResult<PyType> {
+    if let objectAsType = py.cast.asType(object), objectAsType.isSubtype(of: type) {
       return .value(objectAsType)
     }
 
@@ -186,18 +193,16 @@ extension PySuper {
       return .value(objectType)
     }
 
-    switch Py.getAttribute(object: objectType, name: .__class__) {
+    switch py.getAttribute(object: objectType.asObject, name: .__class__) {
     case .value(let classObject):
-      if let classType = PyCast.asType(classObject), classType.isSubtype(of: type) {
+      if let classType = py.cast.asType(classObject), classType.isSubtype(of: type) {
         return .value(classType)
       }
     case .error:
       break // Ignore, we have our own error
     }
 
-    let msg = "super(type, obj): obj must be an instance or subtype of type"
-    return .typeError(msg)
+    let message = "super(type, obj): obj must be an instance or subtype of type"
+    return .typeError(py, message: message)
   }
 }
-
-*/

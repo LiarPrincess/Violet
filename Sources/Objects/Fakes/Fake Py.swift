@@ -25,6 +25,12 @@ public struct Py {
 
   internal var builtinsModule: PyModule { fatalError() }
 
+  public struct Delegate {
+    var frame: PyFrame? { fatalError() }
+  }
+
+  public let delegate = Delegate()
+
   // MARK: - New
 
   public func newObject(type: PyType? = nil) -> PyObject { fatalError() } // default type
@@ -340,6 +346,8 @@ public struct Py {
 
   public func hasMethod(object: PyObject, selector: IdString) -> PyResult<Bool> { fatalError() }
   public func hasMethod(object: PyObject, selector: PyObject) -> PyResult<Bool> { fatalError() }
+
+  public func newSuper(requestedType: PyType?, object: PyObject?, objectType: PyType?) -> PySuper { fatalError() }
 
   // MARK: - Warn
 
