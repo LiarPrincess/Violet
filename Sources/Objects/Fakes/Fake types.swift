@@ -41,10 +41,6 @@ extension PyString {
 
 // MARK: - Functions
 
-extension PyModule {
-  public func getName() -> PyResult<PyObject> { fatalError() }
-}
-
 extension PyProperty {
   public static func wrap(
     doc: String?,

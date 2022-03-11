@@ -28,21 +28,21 @@ public struct PyModule: PyObjectMixin {
                            doc: PyObject?,
                            __dict__: PyDict? = nil) {
     self.header.initialize(py, type: type, __dict__: __dict__)
-    self.initDictContent(name: name, doc: doc)
+    self.init__dict__(py, name: name, doc: doc)
   }
 
-  /// This method is called in Swift `init` and also in Python `__init__`.
-  private func initDictContent(name: PyObject?, doc: PyObject?) {
+  /// This method is called in `initialize` and also in Python `__init__`.
+  private func init__dict__(_ py: Py, name: PyObject?, doc: PyObject?) {
     // Name can be anything, 'str' is not required:
     // >>> builtins.__dict__['__name__'] = 1
     // >>> repr(builtins)
     // "<module 1 (built-in)>"
-//    self.__dict__.set(id: .__name__, to: name ?? Py.none)
-//    self.__dict__.set(id: .__doc__, to: doc ?? Py.none)
-//    self.__dict__.set(id: .__package__, to: Py.none)
-//    self.__dict__.set(id: .__loader__, to: Py.none)
-//    self.__dict__.set(id: .__spec__, to: Py.none)
-    fatalError()
+    let none = py.none.asObject
+    self.__dict__.set(py, id: .__name__, value: name ?? none)
+    self.__dict__.set(py, id: .__doc__, value: doc ?? none)
+    self.__dict__.set(py, id: .__package__, value: none)
+    self.__dict__.set(py, id: .__loader__, value: none)
+    self.__dict__.set(py, id: .__spec__, value: none)
   }
 
   // Nothing to do here.
@@ -71,29 +71,34 @@ public struct PyModule: PyObjectMixin {
 //      ]
 //    )
 //  }
-}
-
- /* MARKER
 
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
-    switch self.getNameString() {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__repr__")
+    }
+
+    switch zelf.getNameString(py) {
     case .string(let s):
-      return .value("<module \(s)>")
+      return PyResult(py, interned: "<module \(s)>")
     case .stringConversionFailed(_, let e):
       return .error(e)
     case .namelessModule:
-      let e = self.createNamelessModuleError()
-      return .error(e)
+      let error = Self.createNamelessModuleError(py)
+      return .error(error)
     }
   }
 
@@ -101,24 +106,24 @@ public struct PyModule: PyObjectMixin {
 
   /// PyObject*
   /// PyModule_GetNameObject(PyObject *m)
-  internal func getName() -> PyResult<PyObject> {
-    if let object = self.getNameObjectOrNil() {
+  internal func getName(_ py: Py) -> PyResult<PyObject> {
+    if let object = self.getNameObjectOrNil(py) {
       return .value(object)
     }
 
-    let e = self.createNamelessModuleError()
-    return .error(e)
+    let error = Self.createNamelessModuleError(py)
+    return .error(error)
   }
 
-  internal enum NameAsString {
+  internal enum ModuleName {
     case string(String)
     case stringConversionFailed(PyObject, PyBaseException)
     case namelessModule
   }
 
-  internal func getNameString() -> NameAsString {
-    if let object = self.getNameObjectOrNil() {
-      switch Py.strString(object: object) {
+  internal func getNameString(_ py: Py) -> ModuleName {
+    if let object = self.getNameObjectOrNil(py) {
+      switch py.strString(object: object) {
       case let .value(s):
         return .string(s)
       case let .error(e):
@@ -129,21 +134,28 @@ public struct PyModule: PyObjectMixin {
     return .namelessModule
   }
 
-  private func getNameObjectOrNil() -> PyObject? {
-    return self.__dict__.get(id: .__name__)
+  private func getNameObjectOrNil(_ py: Py) -> PyObject? {
+    return self.__dict__.get(py, id: .__name__)
   }
 
-  private func createNamelessModuleError() -> PyBaseException {
-    return Py.newSystemError(msg: "nameless module")
+  private static func createNamelessModuleError(_ py: Py) -> PyBaseException {
+    let error = py.newSystemError(message: "nameless module")
+    return error.asBaseException
   }
 
   // MARK: - Get attribute
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    switch AttributeHelper.extractName(from: name) {
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    }
+
+    switch AttributeHelper.extractName(py, name: name) {
     case let .value(n):
-      return self.getAttribute(name: n)
+      return Self.getAttribute(py, zelf: zelf, name: n)
     case let .error(e):
       return .error(e)
     }
@@ -151,22 +163,25 @@ public struct PyModule: PyObjectMixin {
 
   /// static PyObject*
   /// module_getattro(PyModuleObject *m, PyObject *name)
-  private func getAttribute(name: PyString) -> PyResult<PyObject> {
-    let attr = AttributeHelper.getAttribute(from: self, name: name)
+  private static func getAttribute(_ py: Py,
+                                   zelf: PyModule,
+                                   name: PyString) -> PyResult<PyObject> {
+    let zelfObject = zelf.asObject
+    let attribute = AttributeHelper.getAttribute(py, object: zelfObject, name: name)
 
-    switch attr {
+    switch attribute {
     case let .value(v):
       return .value(v)
     case let .error(e):
-      if PyCast.isAttributeError(e) {
+      if py.cast.isAttributeError(e.asObject) {
         break // there is still hope!
       }
 
       return .error(e)
     }
 
-    if let getAttr = self.__dict__.get(id: .__getattr__) {
-      switch Py.call(callable: getAttr, args: [self, name]) {
+    if let getAttr = zelf.__dict__.get(py, id: .__getattr__) {
+      switch py.call(callable: getAttr, args: [zelfObject, name.asObject]) {
       case .value(let r):
         return .value(r)
       case .error(let e),
@@ -179,71 +194,76 @@ public struct PyModule: PyObjectMixin {
     let attributeName = attributeNameRepr.quoted
 
     var moduleName = "<unknown module name>"
-    switch self.getNameString() {
+    switch zelf.getNameString(py) {
     case .string(let s): moduleName = s
     case .stringConversionFailed,
          .namelessModule: break
     }
 
-    let msg = "module \(moduleName) has no attribute \(attributeName)"
-    return .attributeError(msg)
-  }
-
-  private func getAttribute(id: IdString) -> PyResult<PyObject> {
-    return self.getAttribute(name: id.value)
+    let message = "module \(moduleName) has no attribute \(attributeName)"
+    return .attributeError(py, message: message)
   }
 
   // MARK: - Set attribute
 
   // sourcery: pymethod = __setattr__
-  internal func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
-    return AttributeHelper.setAttribute(on: self, name: name, to: value)
-  }
+  internal static func __setattr__(_ py: Py,
+                                   zelf: PyObject,
+                                   name: PyObject,
+                                   value: PyObject?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__setattr__")
+    }
 
-  internal func setAttribute(id: IdString, value: PyObject?) -> PyResult<PyNone> {
-    return AttributeHelper.setAttribute(on: self, name: id.value, to: value)
+    return AttributeHelper.setAttribute(py, object: zelf.asObject, name: name, value: value)
   }
 
   // MARK: - Del attribute
 
   // sourcery: pymethod = __delattr__
-  internal func delAttribute(name: PyObject) -> PyResult<PyNone> {
-    return AttributeHelper.delAttribute(on: self, name: name)
-  }
+  internal static func __delattr__(_ py: Py,
+                                   zelf: PyObject,
+                                   name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__delattr__")
+    }
 
-  internal func delAttribute(id: IdString) -> PyResult<PyNone> {
-    return AttributeHelper.delAttribute(on: self, name: id.value)
+    return AttributeHelper.delAttribute(py, object: zelf.asObject, name: name)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Dir
 
   // sourcery: pymethod = __dir__
-  internal func dir() -> PyResult<DirResult> {
+  internal static func __dir__(_ py: Py, zelf: PyObject) -> PyResult<DirResult> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, Self.pythonTypeName)
+    }
+
     // Do not add 'self.type' dir!
     // We are only interested in functions in this module!
 
-    let result = DirResult()
+    var result = DirResult()
     let error: PyBaseException?
 
     // If we have our own '__dir__' method then call it.
-    if let dirFn = self.__dict__.get(id: .__dir__) {
-      switch Py.call(callable: dirFn) {
+    if let dirFn = zelf.__dict__.get(py, id: .__dir__) {
+      switch py.call(callable: dirFn) {
       case .value(let o):
-        error = result.append(elementsFrom: o)
+        error = result.append(py, elementsFrom: o)
       case let .notCallable(e),
            let .error(e):
         error = e
       }
     } else {
       // Otherwise just fill it with our keys
-      error = result.append(keysFrom: self.__dict__)
+      error = result.append(py, keysFrom: zelf.__dict__)
     }
 
     if let e = error {
@@ -253,48 +273,46 @@ public struct PyModule: PyObjectMixin {
     return .value(result)
   }
 
-  // MARK: - GC
-
-  /// Remove all of the references to other Python objects.
-  override internal func gcClean() {
-    self.__dict__.gcClean()
-    super.gcClean()
-  }
-
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyModule> {
-    let result = PyMemory.newModule(type: type, name: nil, doc: nil, dict: nil)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let result = py.memory.newModule(py, type: type, name: nil, doc: nil, __dict__: nil)
+    return PyResult(result)
   }
 
   // MARK: - Python init
 
-  private static let initArguments = ArgumentParser.createOrTrap(
+  private static let initArguments = ArgumentParser(
     arguments: ["name", "doc"],
     format: "U|O:module"
   )
 
   // sourcery: pymethod = __init__
-  internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    switch PyModule.initArguments.bind(args: args, kwargs: kwargs) {
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    switch PyModule.initArguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")
       assert(binding.optionalCount == 1, "Invalid optional argument count.")
 
       let name = binding.required(at: 0)
-      let doc = binding.optional(at: 1) ?? Py.none
-      self.initDictContent(name: name, doc: doc)
+      let doc = binding.optional(at: 1)
+      zelf.init__dict__(py, name: name, doc: doc)
 
-      return .value(Py.none)
+      return .none(py)
 
     case let .error(e):
       return .error(e)
     }
   }
 }
-
-*/
