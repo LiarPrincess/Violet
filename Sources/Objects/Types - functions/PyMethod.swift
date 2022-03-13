@@ -50,9 +50,7 @@ public struct PyMethod: PyObjectMixin {
   // MARK: - Equatable, comparable
 
   // sourcery: pymethod = __eq__
-  internal static func abstract__eq__(_ py: Py,
-                                      zelf: PyObject,
-                                      other: PyObject) -> CompareResult {
+  internal static func __eq__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, .__eq__)
     }
@@ -61,9 +59,7 @@ public struct PyMethod: PyObjectMixin {
   }
 
   // sourcery: pymethod = __ne__
-  internal static func abstract__ne__(_ py: Py,
-                                      zelf: PyObject,
-                                      other: PyObject) -> CompareResult {
+  internal static func __ne__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ne__)
     }
@@ -72,9 +68,7 @@ public struct PyMethod: PyObjectMixin {
     return isEqual.not
   }
 
-  private static func isEqual(_ py: Py,
-                              zelf: PyMethod,
-                              other: PyObject) -> CompareResult {
+  private static func isEqual(_ py: Py, zelf: PyMethod, other: PyObject) -> CompareResult {
     guard let other = py.cast.asMethod(other) else {
       return .notImplemented
     }

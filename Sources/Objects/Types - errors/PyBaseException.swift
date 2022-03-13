@@ -45,17 +45,14 @@ public struct PyBaseException: PyErrorMixin {
     let zelf = PyObject(ptr: ptr)
     return "PyBaseException(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
-}
 
-/* MARKER
-
-  // MARK: - Msg
+  // MARK: - Message
 
   /// Try to get message from first `self.args`.
   ///
   /// If it fails then…
   /// Well whatever.
-  internal var message: String? {
+  internal func getMessage(_ py: Py) -> PyString? {
     guard let firstArg = self.args.elements.first else {
       return nil
     }
@@ -65,157 +62,242 @@ public struct PyBaseException: PyErrorMixin {
       return nil
     }
 
-    guard let string = PyCast.asString(firstArg) else {
+    guard let string = py.cast.asString(firstArg) else {
       return nil
     }
 
-    return string.value
+    return string
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
-    let name = self.typeName
-    let args = self.args
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__repr__")
+    }
 
-    switch args.getLength() {
-    case 1:
+    let name = zelf.typeName
+    let args = zelf.args
+
+    if args.count == 1 {
       // BaseException('Elsa')
       let first = args.elements[0]
-      switch Py.reprString(object: first) {
-      case let .value(s): return .value(name + "(" + s + ")")
-      case let .error(e): return .error(e)
+      switch py.reprString(object: first) {
+      case let .value(s):
+        let result = name + "(" + s + ")"
+        return PyResult(py, result)
+      case let .error(e):
+        return .error(e)
       }
-    default:
-      // BaseException('Elsa', 'Anna')
-      switch args.repr() {
-      case let .value(s): return .value(name + s)
-      case let .error(e): return .error(e)
-      }
+    }
+
+    // BaseException('Elsa', 'Anna')
+    switch args.repr(py) {
+    case let .empty(s),
+         let .reprLock(s),
+         let .value(s):
+      let result = name + s
+      return PyResult(py, result)
+
+    case let .error(e):
+      return .error(e)
     }
   }
 
   // sourcery: pymethod = __str__
-  internal static func str(baseException: PyBaseException) -> PyResult<String> {
-    // This is a special (and unusual) place where normally we would override
-    // 'pymethod'. But we can't do that because Swift would always call the
-    // overridden function (even if we did 'BaseClass.fn(childInstance)').
-    // So, we have to introduce separate selectors for each override.
+  internal static func __str__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__str__")
+    }
 
-    let args = baseException.args
+    return Self.str(py, zelf: zelf)
+  }
 
-    switch args.getLength() {
+  internal static func str(_ py: Py, zelf: PyBaseException) -> PyResult<PyObject> {
+    let args = zelf.args
+
+    switch args.count {
     case 0:
-      return .value("")
+      return PyResult(py.emptyString)
     case 1:
       let first = args.elements[0]
-      return Py.strString(object: first)
+      let result = py.str(object: first)
+      return PyResult(result)
     default:
-      return Py.strString(object: args)
+      let result = py.str(object: args.asObject)
+      return PyResult(result)
     }
   }
 
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(baseException: PyBaseException) -> PyDict {
-    return baseException.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal static func getClass(baseException: PyBaseException) -> PyType {
-    return baseException.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+  internal static func __getattribute__(_ py: Py,
+                                        zelf: PyObject,
+                                        name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    }
+
+    return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
 
   // sourcery: pymethod = __setattr__
-  internal func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
-    return AttributeHelper.setAttribute(on: self, name: name, to: value)
+  internal static func __setattr__(_ py: Py,
+                                   zelf: PyObject,
+                                   name: PyObject,
+                                   value: PyObject?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__setattr__")
+    }
+
+    return AttributeHelper.setAttribute(py, object: zelf.asObject, name: name, value: value)
   }
 
   // sourcery: pymethod = __delattr__
-  internal func delAttribute(name: PyObject) -> PyResult<PyNone> {
-    return AttributeHelper.delAttribute(on: self, name: name)
+  internal static func __delattr__(_ py: Py,
+                                   zelf: PyObject,
+                                   name: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__delattr__")
+    }
+
+    return AttributeHelper.delAttribute(py, object: zelf.asObject, name: name)
   }
 
   // MARK: - Args
 
   // sourcery: pyproperty = args, setter
-  internal func getArgs() -> PyTuple {
-    return self.args
+  internal static func args(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "args")
+    }
+
+    return PyResult(zelf.args)
   }
 
-  internal func setArgs(_ value: PyObject?) -> PyResult<Void> {
+  internal static func args(_ py: Py,
+                            zelf: PyObject,
+                            value: PyObject?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "args")
+    }
+
+    if let error = zelf.setArgs(py, value: value) {
+      return .error(error)
+    }
+
+    return .none(py)
+  }
+
+  private func setArgs(_ py: Py, value: PyObject?) -> PyBaseException? {
     guard let value = value else {
-      return .typeError("args may not be deleted")
+      let error = py.newTypeError(message: "args may not be deleted")
+      return error.asBaseException
     }
 
-    if let tuple = PyCast.asTuple(value) {
-      return self.setArgs(tuple)
-    }
-
-    switch Py.newTuple(iterable: value) {
-    case let .value(tuple):
+    if let tuple = py.cast.asTuple(value) {
       self.setArgs(tuple)
-      return .value()
+      return nil
+    }
+
+    switch py.newTuple(iterable: value) {
+    case let .value(tuple):
+      self.args = tuple
+      return nil
     case let .error(e):
-      return .error(e)
+      return e
     }
   }
 
-  internal func setArgs(_ value: PyTuple) {
+  private func setArgs(_ value: PyTuple) {
     self.args = value
   }
 
   // MARK: - Traceback
 
   // sourcery: pyproperty = __traceback__, setter
-  internal func getTraceback() -> PyTraceback? {
-    return self.traceback
+  internal static func __traceback__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__traceback__")
+    }
+
+    return PyResult(py, zelf.traceback)
   }
 
-  internal func setTraceback(_ value: PyObject?) -> PyResult<Void> {
+  internal static func __traceback__(_ py: Py,
+                                     zelf: PyObject,
+                                     value: PyObject?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__traceback__")
+    }
+
+    if let error = zelf.setTraceback(py, value: value) {
+      return .error(error)
+    }
+
+    return .none(py)
+  }
+
+  private func setTraceback(_ py: Py, value: PyObject?) -> PyBaseException? {
     guard let value = value else {
-      return .typeError("__traceback__ may not be deleted")
+      let error = py.newTypeError(message: "__traceback__ may not be deleted")
+      return error.asBaseException
     }
 
-    if PyCast.isNone(value) {
+    if py.cast.isNone(value) {
       self.traceback = nil
-      return .value()
+      return nil
     }
 
-    if let tb = PyCast.asTraceback(value) {
-      self.setTraceback(traceback: tb)
-      return .value()
+    if let traceback = py.cast.asTraceback(value) {
+      self.traceback = traceback
+      return nil
     }
 
-    return .typeError("__traceback__ must be a traceback or None")
-  }
-
-  internal func setTraceback(traceback: PyTraceback) {
-    self.traceback = traceback
+    let error = py.newTypeError(message: "__traceback__ must be a traceback or None")
+    return error.asBaseException
   }
 
   // MARK: - With traceback
 
   internal static let withTracebackDoc = """
     Exception.with_traceback(tb) --
-    set self.__traceback__ to tb and return self.
+    set zelf.__traceback__ to tb and return zelf.
     """
 
   // sourcery: pymethod = with_traceback, doc = withTracebackDoc
-  internal func withTraceback(traceback: PyObject) -> PyResult<PyBaseException> {
-    let result = self.setTraceback(traceback)
-    return result.map { _ in self }
+  internal static func with_traceback(_ py: Py,
+                                      zelf: PyObject,
+                                      traceback: PyObject?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "with_traceback")
+    }
+
+    if let error = zelf.setTraceback(py, value: traceback) {
+      return .error(error)
+    }
+
+    return PyResult(zelf)
   }
 
   // MARK: - Cause
@@ -223,36 +305,47 @@ public struct PyBaseException: PyErrorMixin {
   internal static let getCauseDoc = "exception cause"
 
   // sourcery: pyproperty = __cause__, setter, doc = getCauseDoc
-  internal func getCause() -> PyBaseException? {
-    return self.cause
+  internal static func __cause__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__cause__")
+    }
+
+    return PyResult(py, zelf.cause)
   }
 
-  internal func setCause(_ value: PyObject?) -> PyResult<Void> {
+  internal static func __cause__(_ py: Py,
+                                 zelf: PyObject,
+                                 value: PyObject?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__cause__")
+    }
+
     guard let value = value else {
-      return .typeError("__cause__ may not be deleted") // set to 'None' instead
+      // set to 'None' instead
+      return .typeError(py, message: "__cause__ may not be deleted")
     }
 
-    if PyCast.isNone(value) {
-      self.delCause()
-      return .value()
+    if py.cast.isNone(value) {
+      zelf.delCause()
+      return .none(py)
     }
 
-    if let e = PyCast.asBaseException(value) {
-      self.setCause(e)
-      return .value()
+    if let e = py.cast.asBaseException(value) {
+      zelf.setCause(e)
+      return .none(py)
     }
 
-    let msg = "exception cause must be None or derive from BaseException"
-    return .typeError(msg)
+    let message = "exception cause must be None or derive from BaseException"
+    return .typeError(py, message: message)
   }
 
-  internal func setCause(_ value: PyBaseException) {
+  private func setCause(_ value: PyBaseException) {
     // https://www.python.org/dev/peps/pep-0415/#proposal
     self.suppressContext = true
     self.cause = value
   }
 
-  internal func delCause() {
+  private func delCause() {
     self.cause = nil
   }
 
@@ -261,27 +354,37 @@ public struct PyBaseException: PyErrorMixin {
   internal static let getContextDoc = "exception context"
 
   // sourcery: pyproperty = __context__, setter, doc = getContextDoc
-  internal func getContext() -> PyBaseException? {
-    return self.context
+  internal static func __context__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__context__")
+    }
+
+    return PyResult(py, zelf.context)
   }
 
-  internal func setContext(_ value: PyObject?) -> PyResult<Void> {
+  internal static func __context__(_ py: Py,
+                                   zelf: PyObject,
+                                   value: PyObject?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__context__")
+    }
+
     guard let value = value else {
-      return .typeError("__context__ may not be deleted") // use 'None'
+      return .typeError(py, message: "__context__ may not be deleted") // use 'None'
     }
 
-    if PyCast.isNone(value) {
-      self.delContext()
-      return .value()
+    if py.cast.isNone(value) {
+      zelf.delContext()
+      return .none(py)
     }
 
-    if let context = PyCast.asBaseException(value) {
-      self.setContext(context)
-      return .value()
+    if let context = py.cast.asBaseException(value) {
+      zelf.setContext(context)
+      return .none(py)
     }
 
-    let msg = "exception context must be None or derive from BaseException"
-    return .typeError(msg)
+    let message = "exception context must be None or derive from BaseException"
+    return .typeError(py, message: message)
   }
 
   internal func setContext(_ value: PyBaseException) {
@@ -343,12 +446,9 @@ public struct PyBaseException: PyErrorMixin {
   /// except:
   ///   assert elsa.__context__ == None
   /// ```
-  internal func setContext(
-    _ value: PyBaseException,
-    checkAndPossiblyBreakCycle: Bool
-  ) {
+  private func setContext(_ value: PyBaseException, checkAndPossiblyBreakCycle: Bool) {
     if checkAndPossiblyBreakCycle {
-      if value === self {
+      if value.ptr === self.ptr {
         // Setting itself as a '__context__' should not change existing context.
         // try:
         //   try:
@@ -366,15 +466,16 @@ public struct PyBaseException: PyErrorMixin {
       self.avoidCycleInContexts(with: value)
     }
 
-    self.context = value // quite boring, compared to all of the fanciness above
+    // quite boring, compared to all of the fanciness above
+    self.context = value
   }
 
   private func avoidCycleInContexts(with other: PyBaseException) {
     var current = other
 
     // Traverse contexts down/up (however you want to call it) looking for 'self'.
-    while let context = current.getContext() {
-      if context === self {
+    while let context = current.context {
+      if context.ptr === self.ptr {
         // Clear context
         // We can return, because when setting 'context' exception
         // we also ran 'avoidCycleInContext'
@@ -387,27 +488,37 @@ public struct PyBaseException: PyErrorMixin {
     }
   }
 
-  internal func delContext() {
+  private func delContext() {
     self.context = nil
   }
 
   // MARK: - Suppress context
 
   // sourcery: pyproperty = __suppress_context__, setter
-  internal func getSuppressContext() -> Bool {
-    return self.suppressContext
-  }
-
-  internal func setSuppressContext(_ value: PyObject?) -> PyResult<Void> {
-    guard let value = value else {
-      self.suppressContext = false
-      return .value()
+  internal static func __suppress_context__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__suppress_context__")
     }
 
-    switch Py.isTrueBool(object: value) {
+    return PyResult(py, zelf.suppressContext)
+  }
+
+  internal static func __suppress_context__(_ py: Py,
+                                            zelf: PyObject,
+                                            value: PyObject?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__suppress_context__")
+    }
+
+    guard let value = value else {
+      zelf.suppressContext = false
+      return .none(py)
+    }
+
+    switch py.isTrueBool(object: value) {
     case let .value(b):
-      self.suppressContext = b
-      return .value()
+      zelf.suppressContext = b
+      return .none(py)
     case let .error(e):
       return .error(e)
     }
@@ -416,43 +527,58 @@ public struct PyBaseException: PyErrorMixin {
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyBaseExceptionNew(
-    type: PyType,
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyBaseException> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newBaseException(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newBaseException(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  internal func pyBaseExceptionInit(args: [PyObject],
-                                    kwargs: PyDict?) -> PyResult<PyNone> {
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
     // Copy args if needed
-    if !self.areArgsEqual(to: args) {
-      let argsTuple = Py.newTuple(elements: args)
-      self.setArgs(argsTuple)
+    if !zelf.areArgsEqual(to: args) {
+      let argsTuple = py.newTuple(elements: args)
+      zelf.setArgs(argsTuple)
     }
 
     // Copy kwargs
     if let kwargs = kwargs {
-      switch self.__dict__.update(from: kwargs.elements, onKeyDuplicate: .continue) {
+      switch PyDict.update(py,
+                           zelf: zelf.__dict__,
+                           from: kwargs.elements,
+                           onKeyDuplicate: .continue) {
       case .value: break
       case .error(let e): return .error(e)
       }
     }
 
-    return .value(Py.none)
+    return .none(py)
   }
 
-  internal func areArgsEqual(to objects: [PyObject]) -> Bool {
+  private func areArgsEqual(to objects: [PyObject]) -> Bool {
     let selfArgs = self.args.elements
     return selfArgs.count == objects.count &&
-      zip(selfArgs, objects).allSatisfy { $0.0 === $0.1 }
+      zip(selfArgs, objects).allSatisfy { $0.0.ptr === $0.1.ptr }
   }
 }
-
-*/

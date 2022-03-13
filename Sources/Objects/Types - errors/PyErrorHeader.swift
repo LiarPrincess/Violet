@@ -8,18 +8,32 @@ public struct PyErrorHeader {
   private static let suppressContextFlag = PyObjectHeader.Flags.custom0
 
   // sourcery: includeInLayout
-  private var args: PyTuple { self.argsPtr.pointee }
+  internal var args: PyTuple {
+    get { self.argsPtr.pointee }
+    nonmutating set { self.argsPtr.pointee = newValue }
+  }
 
   // sourcery: includeInLayout
-  private var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  internal var traceback: PyTraceback? {
+    get { self.tracebackPtr.pointee }
+    nonmutating set { self.tracebackPtr.pointee = newValue }
+  }
 
   // sourcery: includeInLayout
   /// `raise from xxx`.
-  private var cause: PyBaseException? { self.causePtr.pointee }
+  internal var cause: PyBaseException? {
+    get { self.causePtr.pointee }
+    nonmutating set { self.causePtr.pointee = newValue }
+  }
 
   // sourcery: includeInLayout
   /// Another exception during whose handling this exception was raised.
-  private var context: PyBaseException? { self.contextPtr.pointee }
+  internal var context: PyBaseException? {
+    get { self.contextPtr.pointee }
+    nonmutating set { self.contextPtr.pointee = newValue }
+  }
+
+  internal static let defaultSuppressContext = false
 
   /// Should we use `self.cause` or `self.context`?
   ///

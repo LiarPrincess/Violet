@@ -42,7 +42,12 @@ public struct Py {
               closure: PyTuple?) -> PyResult<PyObject> { fatalError() }
   }
 
+  public struct FileSystem {
+    func basename(path: Path) -> Filename { fatalError() }
+  }
+
   public let delegate = Delegate()
+  public let fileSystem = FileSystem()
 
   // MARK: - New
 
@@ -69,6 +74,7 @@ public struct Py {
 
   public func newTuple(elements: [PyObject]) -> PyTuple { fatalError() }
   public func newTuple(elements: PyObject...) -> PyTuple { fatalError() }
+  public func newTuple(iterable: PyObject) -> PyResult<PyTuple> { fatalError() }
   public func newTupleIterator(tuple: PyTuple) -> PyTupleIterator { fatalError() }
 
   public func newList(elements: [PyObject]) -> PyList { fatalError() }
