@@ -126,6 +126,7 @@ public struct PyKeyError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
 
-    return PyLookupError.pyLookupErrorInit(args: args, kwargs: kwargs)
+    let zelfAsObject = zelf.asObject
+    return PyLookupError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
 }
