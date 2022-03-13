@@ -140,18 +140,12 @@ class PyTypeDefinition:
     def print_fill_function(self):
         swift_type_name = self.t.swift_type_name
 
+        doc_property = self.t.swift_static_doc_property
+        doc_to_set = f'{swift_type_name}.{doc_property}' if doc_property else 'nil'
+
         print(f'    private func {self.fill_function_name}(_ py: Py) {{')
         print(f'      let type = self.{self.property_name}')
-
-        # ===========
-        # === Doc ===
-        # ===========
-
-        doc_property = self.t.swift_static_doc_property
-        if doc_property:
-            print(f'      type.setBuiltinTypeDoc(py, value: {swift_type_name}.{doc_property})')
-        else:
-            print(f'      type.setBuiltinTypeDoc(py, value: nil)')
+        print(f'      type.setBuiltinTypeDoc(py, value: {doc_to_set})')
 
         # ================
         # === New/init ===
@@ -185,6 +179,21 @@ class PyTypeDefinition:
 
             print(f'      let __init__ = FunctionWrapper(type: type, fn: {swift_type_name}.{fn.swift_selector})')
             print(f'      self.add(py, type: type, name: "__init__", method: __init__, doc: {get_doc(fn)})')
+
+        # ===============
+        # === Methods ===
+        # ===============
+
+        for index, fn in enumerate(self.t.python_methods):
+            python_name = fn.python_name
+            if python_name in ('__new__', '__init__'):
+                continue
+
+            if index == 0:
+                print()
+
+            print(f'      let {python_name} = FunctionWrapper(name: "{python_name}", fn: {swift_type_name}.{fn.swift_selector})')
+            print(f'      self.add(py, type: type, name: "{python_name}", method: {python_name}, doc: {get_doc(fn)})')
 
         print('    }')
         print()

@@ -48,6 +48,12 @@ public struct FunctionWrapper: CustomStringConvertible {
   case __new__(NewWrapper)
   /// Python `__init__` function.
   case __init__(InitWrapper)
+  /// Python `__eq__`, `__ne__`, `__lt__`, `__le__`, `__gt__`, `__ge__` functions.
+  case compare(CompareWrapper)
+  /// Python `__hash__` function.
+  case hash(HashWrapper)
+  /// Python `__dir__` function.
+  case dir(DirWrapper)
   /// Function with `*args` and `**kwargs`.
   case argsKwargsFunction(ArgsKwargsFunction)
   /// Method with `*args` and `**kwargs`.
@@ -112,6 +118,9 @@ public struct FunctionWrapper: CustomStringConvertible {
     switch self.kind {
     case let .__new__(w): return w.fnName
     case let .__init__(w): return w.fnName
+    case let .compare(w): return w.fnName
+    case let .hash(w): return w.fnName
+    case let .dir(w): return w.fnName
     case let .argsKwargsFunction(w): return w.fnName
     case let .argsKwargsMethod(w): return w.fnName
     case let .object_to_Result(w): return w.fnName
@@ -148,6 +157,9 @@ public struct FunctionWrapper: CustomStringConvertible {
     switch self.kind {
     case let .__new__(w): return w.call(py, args: args, kwargs: kwargs)
     case let .__init__(w): return w.call(py, args: args, kwargs: kwargs)
+    case let .compare(w): return w.call(py, args: args, kwargs: kwargs)
+    case let .hash(w): return w.call(py, args: args, kwargs: kwargs)
+    case let .dir(w): return w.call(py, args: args, kwargs: kwargs)
     case let .argsKwargsFunction(w): return w.call(py, args: args, kwargs: kwargs)
     case let .argsKwargsMethod(w): return w.call(py, args: args, kwargs: kwargs)
     case let .object_to_Result(w): return w.call(py, args: args, kwargs: kwargs)
@@ -188,6 +200,9 @@ public struct FunctionWrapper: CustomStringConvertible {
     switch self.kind {
     case .__new__: return "(Type, *args, **kwargs) -> PyResult<PyObject>"
     case .__init__: return "(Object, *args, **kwargs) -> PyResult<PyObject>"
+    case .compare: return "(Py, PyObject, PyObject) -> CompareResult"
+    case .hash: return "(Py, PyObject) -> HashResult"
+    case .dir: return "(Py, PyObject) -> PyResult<DirResult>"
     case .argsKwargsFunction: return "(*args, **kwargs) -> PyResult<PyObject>"
     case .argsKwargsMethod: return "(Object, *args, **kwargs) -> PyResult<PyObject>"
     case .object_to_Result: return "(Py, PyObject) -> PyResult<PyObject>"

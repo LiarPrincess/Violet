@@ -1238,6 +1238,19 @@ extension Py {
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
       let __init__ = FunctionWrapper(type: type, fn: PyBaseException.__init__(_:zelf:args:kwargs:))
       self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
+
+      let __repr__ = FunctionWrapper(name: "__repr__", fn: PyBaseException.__repr__(_:zelf:))
+      self.add(py, type: type, name: "__repr__", method: __repr__, doc: nil)
+      let __str__ = FunctionWrapper(name: "__str__", fn: PyBaseException.__str__(_:zelf:))
+      self.add(py, type: type, name: "__str__", method: __str__, doc: nil)
+      let __getattribute__ = FunctionWrapper(name: "__getattribute__", fn: PyBaseException.__getattribute__(_:zelf:name:))
+      self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
+      let __setattr__ = FunctionWrapper(name: "__setattr__", fn: PyBaseException.__setattr__(_:zelf:name:value:))
+      self.add(py, type: type, name: "__setattr__", method: __setattr__, doc: nil)
+      let __delattr__ = FunctionWrapper(name: "__delattr__", fn: PyBaseException.__delattr__(_:zelf:name:))
+      self.add(py, type: type, name: "__delattr__", method: __delattr__, doc: nil)
+      let with_traceback = FunctionWrapper(name: "with_traceback", fn: PyBaseException.with_traceback(_:zelf:traceback:))
+      self.add(py, type: type, name: "with_traceback", method: with_traceback, doc: PyBaseException.withTracebackDoc)
     }
 
     internal static let baseExceptionStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1463,6 +1476,9 @@ extension Py {
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
       let __init__ = FunctionWrapper(type: type, fn: PyImportError.__init__(_:zelf:args:kwargs:))
       self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
+
+      let __str__ = FunctionWrapper(name: "__str__", fn: PyImportError.__str__(_:zelf:))
+      self.add(py, type: type, name: "__str__", method: __str__, doc: nil)
     }
 
     internal static let importErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1523,6 +1539,9 @@ extension Py {
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
       let __init__ = FunctionWrapper(type: type, fn: PyKeyError.__init__(_:zelf:args:kwargs:))
       self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
+
+      let __str__ = FunctionWrapper(name: "__str__", fn: PyKeyError.__str__(_:zelf:))
+      self.add(py, type: type, name: "__str__", method: __str__, doc: nil)
     }
 
     internal static let keyErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1883,6 +1902,9 @@ extension Py {
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
       let __init__ = FunctionWrapper(type: type, fn: PySyntaxError.__init__(_:zelf:args:kwargs:))
       self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
+
+      let __str__ = FunctionWrapper(name: "__str__", fn: PySyntaxError.__str__(_:zelf:))
+      self.add(py, type: type, name: "__str__", method: __str__, doc: nil)
     }
 
     internal static let syntaxErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()

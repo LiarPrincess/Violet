@@ -3,7 +3,7 @@ import VioletCore
 /// Helper type used when implementing `__dir__` methods.
 public struct DirResult {
 
-  private var elements = [PyObject]()
+  fileprivate var elements = [PyObject]()
 
   // MARK: - Init
 
@@ -58,16 +58,22 @@ public struct DirResult {
 
     return e
   }
+}
 
-  // MARK: - Result
+extension PyResult where Wrapped == PyObject {
+  public init(_ py: Py, _ result: PyResult<DirResult>) {
+    switch result {
+    case let .value(dir):
+      let list = py.newList(elements: dir.elements)
+      switch list.sort(key: nil, isReverse: false) {
+      case .value:
+        self = PyResult(list)
+      case .error(let e):
+        self = .error(e)
+      }
 
-  public func toResult(_ py: Py) -> PyResult<PyObject> {
-    let list = py.newList(elements: self.elements)
-    switch list.sort(key: nil, isReverse: false) {
-    case .value:
-      return .value(list.asObject)
-    case .error(let e):
-      return .error(e)
+    case let .error(e):
+      self = .error(e)
     }
   }
 }
