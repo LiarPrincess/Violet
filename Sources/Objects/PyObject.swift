@@ -203,6 +203,7 @@ public struct PyObject: PyObjectMixin {
   /// NotImplemented, the normal algorithm is used.  Otherwise, it
   /// overrides the normal algorithm (and the outcome is cached).
   internal static func __subclasshook__(_ py: Py,
+                                        type: PyType,
                                         args: [PyObject],
                                         kwargs: PyDict?) -> PyResult<PyObject> {
     // This can be called with any number of arguments:

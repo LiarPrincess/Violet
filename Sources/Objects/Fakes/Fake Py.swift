@@ -108,6 +108,7 @@ public struct Py {
   public func newBuiltinFunction(fn: FunctionWrapper, module: PyObject?, doc: String?) -> PyBuiltinFunction { fatalError() }
   public func newStaticMethod(callable: PyBuiltinFunction) -> PyStaticMethod { fatalError() }
   public func newStaticMethod(callable: PyFunction) -> PyStaticMethod { fatalError() }
+  public func newClassMethod(callable: PyBuiltinFunction) -> PyClassMethod { fatalError() }
   public func newClassMethod(callable: PyFunction) -> PyClassMethod { fatalError() }
 
   internal func newType(

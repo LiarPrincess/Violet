@@ -1029,6 +1029,14 @@ extension Py {
       self.add(py, type: type, name: name, value: value)
     }
 
+    /// Adds `classmethod` to `type.__dict__`.
+    private func add(_ py: Py, type: PyType, name: String, classMethod: FunctionWrapper, doc: String?) {
+      let builtinFunction = py.newBuiltinFunction(fn: classMethod, module: nil, doc: doc)
+      let staticMethod = py.newClassMethod(callable: builtinFunction)
+      let value = staticMethod.asObject
+      self.add(py, type: type, name: name, value: value)
+    }
+
     /// Adds `staticmethod` to `type.__dict__`.
     private func add(_ py: Py, type: PyType, name: String, staticMethod: FunctionWrapper, doc: String?) {
       let builtinFunction = py.newBuiltinFunction(fn: staticMethod, module: nil, doc: doc)
@@ -1619,6 +1627,9 @@ extension Py {
       let __init__ = FunctionWrapper(type: type, fn: PyDict.__init__(_:zelf:args:kwargs:))
       self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
 
+      let fromkeys = FunctionWrapper(name: "fromkeys", fn: PyDict.fromkeys(_:type:iterable:value:))
+      self.add(py, type: type, name: "fromkeys", classMethod: fromkeys, doc: nil)
+
       let __eq__ = FunctionWrapper(name: "__eq__", fn: PyDict.__eq__(_:zelf:other:))
       self.add(py, type: type, name: "__eq__", method: __eq__, doc: nil)
       let __ne__ = FunctionWrapper(name: "__ne__", fn: PyDict.__ne__(_:zelf:other:))
@@ -1901,6 +1912,9 @@ extension Py {
 
       let __new__ = FunctionWrapper(type: type, fn: PyFloat.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: PyFloat.newDoc)
+
+      let fromhex = FunctionWrapper(name: "fromhex", fn: PyFloat.fromhex(_:type:value:))
+      self.add(py, type: type, name: "fromhex", classMethod: fromhex, doc: PyFloat.fromHexDoc)
 
       let __eq__ = FunctionWrapper(name: "__eq__", fn: PyFloat.__eq__(_:zelf:other:))
       self.add(py, type: type, name: "__eq__", method: __eq__, doc: nil)
@@ -2505,6 +2519,9 @@ extension Py {
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
       let __init__ = FunctionWrapper(type: type, fn: PyObject.__init__(_:zelf:args:kwargs:))
       self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
+
+      let __subclasshook__ = FunctionWrapper(name: "__subclasshook__", fn: PyObject.__subclasshook__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__subclasshook__", classMethod: __subclasshook__, doc: nil)
 
       let __eq__ = FunctionWrapper(name: "__eq__", fn: PyObject.__eq__(_:zelf:other:))
       self.add(py, type: type, name: "__eq__", method: __eq__, doc: nil)

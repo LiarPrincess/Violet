@@ -145,6 +145,28 @@ public struct FunctionWrapper: CustomStringConvertible {{
     print('  }')
     print()
 
+    # ==========================
+    # === Wrappers - helpers ===
+    # ==========================
+
+
+    print('  internal static func handleTypeArgument(_ py: Py,')
+    print('                                          fnName: String,')
+    print('                                          args: [PyObject]) -> PyResult<PyType> {')
+    print('    if args.isEmpty {')
+    print('      let error = py.newTypeError(message: "\(fnName)(): not enough arguments")')
+    print('      return .error(error.asBaseException)')
+    print('    }')
+    print()
+    print('    let arg0 = args[0]')
+    print('    guard let type = py.cast.asType(arg0) else {')
+    print('      let error = py.newTypeError(message: "\(fnName)(X): X is not a type object (\(arg0.typeName))")')
+    print('      return .error(error.asBaseException)')
+    print('    }')
+    print()
+    print('    return .value(type)')
+    print('  }')
+
     # ================
     # === Wrappers ===
     # ================
@@ -184,14 +206,11 @@ public struct FunctionWrapper: CustomStringConvertible {{
 
         if fn.has_type_as_1_argument:
             print('      // This function has a \'type\' argument that we have to cast')
-            print(f'      guard args.any else {{')
-            print(f'        return .typeError(py, message: "\(self.fnName)(): not enough arguments")')
-            print(f'      }}')
-            print()
-            print(f'      let arg0 = args[0]')
-            print(f'      guard let type = py.cast.asType(arg0) else {{')
-            print(f'        return .typeError(py, message: "\(self.fnName)(X): X is not a type object (\(arg0.typeName))")')
-            print(f'      }}')
+            print('      let type: PyType')
+            print('      switch FunctionWrapper.handleTypeArgument(py, fnName: self.fnName, args: args) {')
+            print('      case let .value(t): type = t')
+            print('      case let .error(e): return .error(e)')
+            print('      }')
             print()
 
         print(f'      switch args.count {{')
