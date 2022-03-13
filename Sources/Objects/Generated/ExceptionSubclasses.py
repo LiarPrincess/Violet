@@ -29,8 +29,10 @@ if __name__ == '__main__':
         if python_type_name in MANUALLY_IMPLEMENTED:
             continue
 
-        doc = t.doc.replace('\n', '\\n" +\n"')
         swift_type_name = 'Py' + python_type_name
+        swift_base_type_name = 'Py' + python_base_type_name
+
+        doc = t.doc.replace('\n', '\\n" +\n"')
         py_memory_function_name = 'new' + python_type_name
 
         print(f'''\
@@ -73,34 +75,50 @@ public struct {swift_type_name}: PyErrorMixin {{
     return "{swift_type_name}(type: \(zelf.typeName), flags: \(zelf.flags))"
   }}
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {{
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {{
+    return zelf.type
   }}
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {{
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {{
+    guard let zelf = Self.downcast(py, zelf) else {{
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }}
+
+    return PyResult(zelf.__dict__)
   }}
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<{swift_type_name}> {{
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.{py_memory_function_name}(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {{
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.{py_memory_function_name}(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }}
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {{
-    return self.py{python_base_type_name}Init(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {{
+    guard let zelf = Self.downcast(py, zelf) else {{
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }}
+
+    let zelfAsObject = zelf.asObject
+    return {swift_base_type_name}.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }}
-*/
 }}
 ''')

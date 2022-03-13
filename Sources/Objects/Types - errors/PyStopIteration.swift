@@ -145,7 +145,9 @@ public struct PyStopIteration: PyErrorMixin {
     }
 
     zelf.value = Self.extractValue(py, args: args)
-    return PyException.pyExceptionInit(args: args, kwargs: kwargs)
+
+    let zelfAsObject = zelf.asObject
+    return PyException.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
 
   private static func extractValue(_ py: Py, args: [PyObject]) -> PyObject {

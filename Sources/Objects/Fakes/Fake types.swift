@@ -65,17 +65,3 @@ extension PyBuiltinFunction {
     fn: (Py, PyObject, PyObject, PyObject?) -> PyResult<PyObject>
   ) -> PyBuiltinFunction { fatalError() }
 }
-
-// MARK: - Error
-
-extension PyException {
-  internal static func pyExceptionInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
-    fatalError()
-  }
-}
-
-extension PyLookupError {
-  internal static func pyLookupErrorInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
-    fatalError()
-  }
-}

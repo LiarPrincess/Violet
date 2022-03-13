@@ -54,35 +54,51 @@ public struct PyKeyboardInterrupt: PyErrorMixin {
     return "PyKeyboardInterrupt(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyKeyboardInterrupt> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newKeyboardInterrupt(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newKeyboardInterrupt(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyBaseExceptionInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyBaseException.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - GeneratorExit
@@ -124,35 +140,51 @@ public struct PyGeneratorExit: PyErrorMixin {
     return "PyGeneratorExit(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyGeneratorExit> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newGeneratorExit(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newGeneratorExit(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyBaseExceptionInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyBaseException.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - Exception
@@ -194,35 +226,51 @@ public struct PyException: PyErrorMixin {
     return "PyException(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyException> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newException(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newException(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyBaseExceptionInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyBaseException.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - StopAsyncIteration
@@ -264,35 +312,51 @@ public struct PyStopAsyncIteration: PyErrorMixin {
     return "PyStopAsyncIteration(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyStopAsyncIteration> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newStopAsyncIteration(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newStopAsyncIteration(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyExceptionInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyException.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - ArithmeticError
@@ -334,35 +398,51 @@ public struct PyArithmeticError: PyErrorMixin {
     return "PyArithmeticError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyArithmeticError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newArithmeticError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newArithmeticError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyExceptionInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyException.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - FloatingPointError
@@ -404,35 +484,51 @@ public struct PyFloatingPointError: PyErrorMixin {
     return "PyFloatingPointError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyFloatingPointError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newFloatingPointError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newFloatingPointError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyArithmeticErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyArithmeticError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - OverflowError
@@ -474,35 +570,51 @@ public struct PyOverflowError: PyErrorMixin {
     return "PyOverflowError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyOverflowError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newOverflowError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newOverflowError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyArithmeticErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyArithmeticError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - ZeroDivisionError
@@ -544,35 +656,51 @@ public struct PyZeroDivisionError: PyErrorMixin {
     return "PyZeroDivisionError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyZeroDivisionError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newZeroDivisionError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newZeroDivisionError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyArithmeticErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyArithmeticError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - AssertionError
@@ -614,35 +742,51 @@ public struct PyAssertionError: PyErrorMixin {
     return "PyAssertionError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyAssertionError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newAssertionError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newAssertionError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyExceptionInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyException.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - AttributeError
@@ -684,35 +828,51 @@ public struct PyAttributeError: PyErrorMixin {
     return "PyAttributeError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyAttributeError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newAttributeError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newAttributeError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyExceptionInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyException.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - BufferError
@@ -754,35 +914,51 @@ public struct PyBufferError: PyErrorMixin {
     return "PyBufferError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyBufferError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newBufferError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newBufferError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyExceptionInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyException.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - EOFError
@@ -824,35 +1000,51 @@ public struct PyEOFError: PyErrorMixin {
     return "PyEOFError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyEOFError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newEOFError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newEOFError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyExceptionInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyException.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - ModuleNotFoundError
@@ -894,35 +1086,51 @@ public struct PyModuleNotFoundError: PyErrorMixin {
     return "PyModuleNotFoundError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyModuleNotFoundError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newModuleNotFoundError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newModuleNotFoundError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyImportErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyImportError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - LookupError
@@ -964,35 +1172,51 @@ public struct PyLookupError: PyErrorMixin {
     return "PyLookupError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyLookupError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newLookupError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newLookupError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyExceptionInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyException.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - IndexError
@@ -1034,35 +1258,51 @@ public struct PyIndexError: PyErrorMixin {
     return "PyIndexError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyIndexError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newIndexError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newIndexError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyLookupErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyLookupError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - MemoryError
@@ -1104,35 +1344,51 @@ public struct PyMemoryError: PyErrorMixin {
     return "PyMemoryError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyMemoryError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newMemoryError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newMemoryError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyExceptionInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyException.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - NameError
@@ -1174,35 +1430,51 @@ public struct PyNameError: PyErrorMixin {
     return "PyNameError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNameError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newNameError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newNameError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyExceptionInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyException.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - UnboundLocalError
@@ -1244,35 +1516,51 @@ public struct PyUnboundLocalError: PyErrorMixin {
     return "PyUnboundLocalError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyUnboundLocalError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newUnboundLocalError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newUnboundLocalError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyNameErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyNameError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - OSError
@@ -1314,35 +1602,51 @@ public struct PyOSError: PyErrorMixin {
     return "PyOSError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyOSError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newOSError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newOSError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyExceptionInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyException.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - BlockingIOError
@@ -1384,35 +1688,51 @@ public struct PyBlockingIOError: PyErrorMixin {
     return "PyBlockingIOError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyBlockingIOError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newBlockingIOError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newBlockingIOError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyOSErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyOSError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - ChildProcessError
@@ -1454,35 +1774,51 @@ public struct PyChildProcessError: PyErrorMixin {
     return "PyChildProcessError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyChildProcessError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newChildProcessError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newChildProcessError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyOSErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyOSError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - ConnectionError
@@ -1524,35 +1860,51 @@ public struct PyConnectionError: PyErrorMixin {
     return "PyConnectionError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyConnectionError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newConnectionError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newConnectionError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyOSErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyOSError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - BrokenPipeError
@@ -1594,35 +1946,51 @@ public struct PyBrokenPipeError: PyErrorMixin {
     return "PyBrokenPipeError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyBrokenPipeError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newBrokenPipeError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newBrokenPipeError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyConnectionErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyConnectionError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - ConnectionAbortedError
@@ -1664,35 +2032,51 @@ public struct PyConnectionAbortedError: PyErrorMixin {
     return "PyConnectionAbortedError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyConnectionAbortedError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newConnectionAbortedError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newConnectionAbortedError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyConnectionErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyConnectionError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - ConnectionRefusedError
@@ -1734,35 +2118,51 @@ public struct PyConnectionRefusedError: PyErrorMixin {
     return "PyConnectionRefusedError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyConnectionRefusedError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newConnectionRefusedError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newConnectionRefusedError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyConnectionErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyConnectionError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - ConnectionResetError
@@ -1804,35 +2204,51 @@ public struct PyConnectionResetError: PyErrorMixin {
     return "PyConnectionResetError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyConnectionResetError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newConnectionResetError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newConnectionResetError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyConnectionErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyConnectionError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - FileExistsError
@@ -1874,35 +2290,51 @@ public struct PyFileExistsError: PyErrorMixin {
     return "PyFileExistsError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyFileExistsError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newFileExistsError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newFileExistsError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyOSErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyOSError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - FileNotFoundError
@@ -1944,35 +2376,51 @@ public struct PyFileNotFoundError: PyErrorMixin {
     return "PyFileNotFoundError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyFileNotFoundError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newFileNotFoundError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newFileNotFoundError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyOSErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyOSError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - InterruptedError
@@ -2014,35 +2462,51 @@ public struct PyInterruptedError: PyErrorMixin {
     return "PyInterruptedError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyInterruptedError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newInterruptedError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newInterruptedError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyOSErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyOSError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - IsADirectoryError
@@ -2084,35 +2548,51 @@ public struct PyIsADirectoryError: PyErrorMixin {
     return "PyIsADirectoryError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyIsADirectoryError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newIsADirectoryError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newIsADirectoryError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyOSErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyOSError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - NotADirectoryError
@@ -2154,35 +2634,51 @@ public struct PyNotADirectoryError: PyErrorMixin {
     return "PyNotADirectoryError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNotADirectoryError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newNotADirectoryError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newNotADirectoryError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyOSErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyOSError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - PermissionError
@@ -2224,35 +2720,51 @@ public struct PyPermissionError: PyErrorMixin {
     return "PyPermissionError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyPermissionError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newPermissionError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newPermissionError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyOSErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyOSError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - ProcessLookupError
@@ -2294,35 +2806,51 @@ public struct PyProcessLookupError: PyErrorMixin {
     return "PyProcessLookupError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyProcessLookupError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newProcessLookupError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newProcessLookupError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyOSErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyOSError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - TimeoutError
@@ -2364,35 +2892,51 @@ public struct PyTimeoutError: PyErrorMixin {
     return "PyTimeoutError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyTimeoutError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newTimeoutError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newTimeoutError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyOSErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyOSError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - ReferenceError
@@ -2434,35 +2978,51 @@ public struct PyReferenceError: PyErrorMixin {
     return "PyReferenceError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyReferenceError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newReferenceError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newReferenceError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyExceptionInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyException.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - RuntimeError
@@ -2504,35 +3064,51 @@ public struct PyRuntimeError: PyErrorMixin {
     return "PyRuntimeError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyRuntimeError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newRuntimeError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newRuntimeError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyExceptionInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyException.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - NotImplementedError
@@ -2574,35 +3150,51 @@ public struct PyNotImplementedError: PyErrorMixin {
     return "PyNotImplementedError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNotImplementedError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newNotImplementedError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newNotImplementedError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyRuntimeErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyRuntimeError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - RecursionError
@@ -2644,35 +3236,51 @@ public struct PyRecursionError: PyErrorMixin {
     return "PyRecursionError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyRecursionError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newRecursionError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newRecursionError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyRuntimeErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyRuntimeError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - IndentationError
@@ -2714,35 +3322,51 @@ public struct PyIndentationError: PyErrorMixin {
     return "PyIndentationError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyIndentationError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newIndentationError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newIndentationError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pySyntaxErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PySyntaxError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - TabError
@@ -2784,35 +3408,51 @@ public struct PyTabError: PyErrorMixin {
     return "PyTabError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyTabError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newTabError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newTabError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyIndentationErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyIndentationError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - SystemError
@@ -2857,35 +3497,51 @@ public struct PySystemError: PyErrorMixin {
     return "PySystemError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PySystemError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newSystemError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newSystemError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyExceptionInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyException.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - TypeError
@@ -2927,35 +3583,51 @@ public struct PyTypeError: PyErrorMixin {
     return "PyTypeError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyTypeError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newTypeError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newTypeError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyExceptionInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyException.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - ValueError
@@ -2997,35 +3669,51 @@ public struct PyValueError: PyErrorMixin {
     return "PyValueError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyValueError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newValueError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newValueError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyExceptionInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyException.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - UnicodeError
@@ -3067,35 +3755,51 @@ public struct PyUnicodeError: PyErrorMixin {
     return "PyUnicodeError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyUnicodeError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newUnicodeError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newUnicodeError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyValueErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyValueError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - UnicodeDecodeError
@@ -3137,35 +3841,51 @@ public struct PyUnicodeDecodeError: PyErrorMixin {
     return "PyUnicodeDecodeError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyUnicodeDecodeError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newUnicodeDecodeError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newUnicodeDecodeError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyUnicodeErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyUnicodeError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - UnicodeEncodeError
@@ -3207,35 +3927,51 @@ public struct PyUnicodeEncodeError: PyErrorMixin {
     return "PyUnicodeEncodeError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyUnicodeEncodeError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newUnicodeEncodeError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newUnicodeEncodeError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyUnicodeErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyUnicodeError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - UnicodeTranslateError
@@ -3277,35 +4013,51 @@ public struct PyUnicodeTranslateError: PyErrorMixin {
     return "PyUnicodeTranslateError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyUnicodeTranslateError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newUnicodeTranslateError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newUnicodeTranslateError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyUnicodeErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyUnicodeError.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - Warning
@@ -3347,35 +4099,51 @@ public struct PyWarning: PyErrorMixin {
     return "PyWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyWarning> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newWarning(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newWarning(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyExceptionInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyException.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - DeprecationWarning
@@ -3417,35 +4185,51 @@ public struct PyDeprecationWarning: PyErrorMixin {
     return "PyDeprecationWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyDeprecationWarning> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newDeprecationWarning(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newDeprecationWarning(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyWarningInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyWarning.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - PendingDeprecationWarning
@@ -3488,35 +4272,51 @@ public struct PyPendingDeprecationWarning: PyErrorMixin {
     return "PyPendingDeprecationWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyPendingDeprecationWarning> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newPendingDeprecationWarning(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newPendingDeprecationWarning(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyWarningInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyWarning.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - RuntimeWarning
@@ -3558,35 +4358,51 @@ public struct PyRuntimeWarning: PyErrorMixin {
     return "PyRuntimeWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyRuntimeWarning> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newRuntimeWarning(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newRuntimeWarning(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyWarningInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyWarning.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - SyntaxWarning
@@ -3628,35 +4444,51 @@ public struct PySyntaxWarning: PyErrorMixin {
     return "PySyntaxWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PySyntaxWarning> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newSyntaxWarning(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newSyntaxWarning(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyWarningInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyWarning.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - UserWarning
@@ -3698,35 +4530,51 @@ public struct PyUserWarning: PyErrorMixin {
     return "PyUserWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyUserWarning> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newUserWarning(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newUserWarning(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyWarningInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyWarning.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - FutureWarning
@@ -3769,35 +4617,51 @@ public struct PyFutureWarning: PyErrorMixin {
     return "PyFutureWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyFutureWarning> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newFutureWarning(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newFutureWarning(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyWarningInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyWarning.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - ImportWarning
@@ -3839,35 +4703,51 @@ public struct PyImportWarning: PyErrorMixin {
     return "PyImportWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyImportWarning> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newImportWarning(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newImportWarning(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyWarningInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyWarning.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - UnicodeWarning
@@ -3910,35 +4790,51 @@ public struct PyUnicodeWarning: PyErrorMixin {
     return "PyUnicodeWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyUnicodeWarning> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newUnicodeWarning(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newUnicodeWarning(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyWarningInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyWarning.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - BytesWarning
@@ -3981,35 +4877,51 @@ public struct PyBytesWarning: PyErrorMixin {
     return "PyBytesWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyBytesWarning> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newBytesWarning(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newBytesWarning(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyWarningInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyWarning.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 
 // MARK: - ResourceWarning
@@ -4051,34 +4963,50 @@ public struct PyResourceWarning: PyErrorMixin {
     return "PyResourceWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
-/* MARKER
   // sourcery: pyproperty = __class__
-  internal static func getClass(_ py: Py, object: PyObject) -> PyType {
-    return object.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(_ py: Py, object: PyObject) -> PyDict {
-    return object.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyNew(_ py: Py,
-                             type: PyType,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyResourceWarning> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = py.memory.newResourceWarning(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newResourceWarning(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
-  internal func pyInit(
-    args: [PyObject],
-    kwargs: PyDict?
-  ) -> PyResult<PyNone> {
-    return self.pyWarningInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    let zelfAsObject = zelf.asObject
+    return PyWarning.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }
-*/
 }
 

@@ -375,7 +375,8 @@ public struct PySyntaxError: PyErrorMixin {
 
     // Run 'super.pyInit' before our custom code, to avoid situation where
     // 'super.pyInit' errors but we already mutated entity.
-    switch PyException.pyExceptionInit(args: args, kwargs: kwargs) {
+    let zelfAsObject = zelf.asObject
+    switch PyException.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs) {
     case .value: break
     case .error(let e): return .error(e)
     }
