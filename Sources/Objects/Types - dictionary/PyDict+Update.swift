@@ -17,54 +17,55 @@ extension PyDict {
     case error
   }
 
-  public static func update(_ py: Py,
-                            zelf: PyDict,
-                            from object: PyObject,
-                            onKeyDuplicate: OnUpdateKeyDuplicate) -> PyResult<PyObject> {
+  public func update(_ py: Py,
+                     from object: PyObject,
+                     onKeyDuplicate: OnUpdateKeyDuplicate) -> PyBaseException? {
     // Fast path if we are 'dict' (but not subclass)
     if let dict = py.cast.asExactlyDict(object) {
-      return Self.update(py,
-                         zelf: zelf,
+      return self.update(py,
                          from: dict.elements,
                          onKeyDuplicate: onKeyDuplicate)
     }
 
     switch py.getKeys(object: object) {
     case .value(let keys): // We have keys -> dict-like object
-      return Self.update(py,
-                         zelf: zelf,
+      return self.update(py,
                          fromKeysOwner: object,
                          keys: keys,
                          onKeyDuplicate: onKeyDuplicate)
 
     case .missingMethod: // We don't have keys -> try iterable
-      return Self.update(py,
-                         zelf: zelf,
+      return self.update(py,
                          fromIterableOfPairs: object,
                          onKeyDuplicate: onKeyDuplicate)
 
     case .error(let e):
-      return .error(e)
+      return e
     }
   }
 
   // MARK: - From other dict
 
-  internal static func update(_ py: Py,
-                              zelf: PyDict,
-                              from data: OrderedDictionary,
-                              onKeyDuplicate: OnUpdateKeyDuplicate) -> PyResult<PyObject> {
+  internal func update(_ py: Py,
+                       from dict: PyDict,
+                       onKeyDuplicate: OnUpdateKeyDuplicate) -> PyBaseException? {
+    let data = dict.elements
+    return self.update(py, from: data, onKeyDuplicate: onKeyDuplicate)
+  }
+
+  internal func update(_ py: Py,
+                       from data: OrderedDictionary,
+                       onKeyDuplicate: OnUpdateKeyDuplicate) -> PyBaseException? {
     for entry in data {
-      if let e = Self.updateSingleEntry(py,
-                                        zelf: zelf,
-                                        key: entry.key,
-                                        value: entry.value,
-                                        onKeyDuplicate: onKeyDuplicate) {
-        return .error(e)
+      if let error = self.updateSingleEntry(py,
+                                            key: entry.key,
+                                            value: entry.value,
+                                            onKeyDuplicate: onKeyDuplicate) {
+        return error
       }
     }
 
-    return .none(py)
+    return nil
   }
 
   // MARK: - From iterable of pairs
@@ -78,13 +79,12 @@ extension PyDict {
   /// PyDict_MergeFromSeq2(PyObject *d, PyObject *seq2, int override)
   ///
   /// Iterable of sequences with 2 elements (key and value).
-  private static func update(_ py: Py,
-                             zelf: PyDict,
-                             fromIterableOfPairs iterable: PyObject,
-                             onKeyDuplicate: OnUpdateKeyDuplicate) -> PyResult<PyObject> {
+  private func update(_ py: Py,
+                      fromIterableOfPairs iterable: PyObject,
+                      onKeyDuplicate: OnUpdateKeyDuplicate) -> PyBaseException? {
     var keyValues = [KeyValue]()
     let reduceError = py.reduce(iterable: iterable, into: &keyValues) { acc, object in
-      switch Self.unpackKeyValuePair(py, iterable: object) {
+      switch self.unpackKeyValuePair(py, iterable: object) {
       case let .value(keyValue):
         acc.append(keyValue)
         return .goToNextElement
@@ -93,27 +93,26 @@ extension PyDict {
       }
     }
 
-    if let e = reduceError {
-      return .error(e)
+    if let error = reduceError {
+      return error
     }
 
     for kv in keyValues {
-      if let e = self.updateSingleEntry(py,
-                                        zelf: zelf,
-                                        key: kv.key,
-                                        value: kv.value,
-                                        onKeyDuplicate: onKeyDuplicate) {
-        return .error(e)
+      if let error = self.updateSingleEntry(py,
+                                            key: kv.key,
+                                            value: kv.value,
+                                            onKeyDuplicate: onKeyDuplicate) {
+        return error
       }
     }
 
-    return .none(py)
+    return nil
   }
 
   /// Given iterable of 2 elements it will return
   /// `iterable[0]` as key and `iterable[1]` as value.
-  private static func unpackKeyValuePair(_ py: Py,
-                                         iterable: PyObject) -> PyResult<KeyValue> {
+  private func unpackKeyValuePair(_ py: Py,
+                                  iterable: PyObject) -> PyResult<KeyValue> {
     struct Tmp {
       var key: Key?
       var value: PyObject?
@@ -121,7 +120,7 @@ extension PyDict {
     }
 
     var tmp = Tmp()
-    let e = py.reduce(iterable: iterable, into: &tmp) { acc, object in
+    let error = py.reduce(iterable: iterable, into: &tmp) { acc, object in
       acc.count += 1
 
       if acc.key == nil {
@@ -136,8 +135,8 @@ extension PyDict {
       return .goToNextElement
     }
 
-    if let e = e {
-      return .error(e)
+    if let error = error {
+      return .error(error)
     }
 
     guard let key = tmp.key, let value = tmp.value, tmp.count == 2 else {
@@ -153,12 +152,11 @@ extension PyDict {
 
   /// static int
   /// dict_merge(PyObject *a, PyObject *b, int override)
-  private static func update(_ py: Py,
-                             zelf: PyDict,
-                             fromKeysOwner dict: PyObject,
-                             keys keyIterable: PyObject,
-                             onKeyDuplicate: OnUpdateKeyDuplicate) -> PyResult<PyObject> {
-    let e = py.forEach(iterable: keyIterable) { keyObject in
+  private func update(_ py: Py,
+                      fromKeysOwner dict: PyObject,
+                      keys keyIterable: PyObject,
+                      onKeyDuplicate: OnUpdateKeyDuplicate) -> PyBaseException? {
+    let error = py.forEach(iterable: keyIterable) { keyObject in
       let key: Key
       switch PyDict.createKey(py, object: keyObject) {
       case let .value(k): key = k
@@ -172,7 +170,6 @@ extension PyDict {
       }
 
       if let e = self.updateSingleEntry(py,
-                                        zelf: zelf,
                                         key: key,
                                         value: value,
                                         onKeyDuplicate: onKeyDuplicate) {
@@ -182,23 +179,17 @@ extension PyDict {
       return .goToNextElement
     }
 
-    if let e = e {
-      return .error(e)
-    }
-
-    return .none(py)
+    // We could just 'return py.forEach', but this is easier to debug.
+    return error
   }
 
   // MARK: - Update single entry
 
-  internal static func updateSingleEntry(
-    _ py: Py,
-    zelf: PyDict,
-    key: Key,
-    value: PyObject,
-    onKeyDuplicate: OnUpdateKeyDuplicate
-  ) -> PyBaseException? {
-    switch zelf.elements.insert(py, key: key, value: value) {
+  internal func updateSingleEntry(_ py: Py,
+                                  key: Key,
+                                  value: PyObject,
+                                  onKeyDuplicate: OnUpdateKeyDuplicate) -> PyBaseException? {
+    switch self.elements.insert(py, key: key, value: value) {
     case .inserted:
       return nil
     case .updated:

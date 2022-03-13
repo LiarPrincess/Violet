@@ -60,7 +60,10 @@ public struct PyNamespace: PyObjectMixin {
       return .notImplemented
     }
 
-    return zelf.__dict__.isEqual(other.__dict__)
+    let zelfDict = zelf.__dict__
+    let otherDict = other.__dict__
+    let result = zelfDict.isEqual(py, other: otherDict)
+    return CompareResult(result)
   }
 
   // sourcery: pymethod = __lt__
@@ -227,9 +230,8 @@ public struct PyNamespace: PyObjectMixin {
     case .error(let e): return .error(e)
     }
 
-    switch zelf.__dict__.update(from: kwargs, onKeyDuplicate: .continue) {
-    case .value: break
-    case .error(let e): return .error(e)
+    if let e = zelf.__dict__.update(py, from: kwargs, onKeyDuplicate: .continue) {
+      return .error(e)
     }
 
     return .none(py)

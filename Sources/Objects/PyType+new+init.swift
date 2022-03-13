@@ -202,8 +202,8 @@ extension PyType {
     )
 
     // Initialize '__dict__' from passed-in dict
-    // Also: we have to COPY it! Swift COW will take care of this.
-    let dict = args.dict.copy()
+    // Also: we have to COPY it!
+    let dict = args.dict.copy(py)
     type.__dict__ = dict
 
     // =========================================================================
@@ -435,14 +435,12 @@ extension PyType {
       return
     }
 
-    let property = PyProperty.wrap(
-      doc: nil,
-      get: Self.getHeapType__dict__(_:zelf:),
-      set: Self.setHeapType__dict__(_:zelf:value:),
-      del: Self.delHeapType__dict__(_:zelf:)
-    )
+    let get = FunctionWrapper(name: "__get__", fn: PyType.getHeapType__dict__(_:zelf:))
+    let set = FunctionWrapper(name: "__set__", fn: PyType.setHeapType__dict__(_:zelf:value:))
+    let del = FunctionWrapper(name: "__det__", fn: PyType.delHeapType__dict__(_:zelf:))
 
     let dict = type.__dict__
+    let property = py.newProperty(get: get, set: set, del: del, doc: nil)
     dict.set(py, id: .__dict__, value: property.asObject)
   }
 
@@ -520,14 +518,14 @@ extension PyType {
       return
     }
 
-    let getattribute = PyBuiltinFunction.wrap(
+    let wrapper = FunctionWrapper(
       name: "__getattribute__",
-      doc: nil,
       fn: AttributeHelper.getAttribute(_:object:name:)
     )
 
     let dict = type.__dict__
-    dict.set(py, id: .__getattribute__, value: getattribute.asObject)
+    let function = py.newBuiltinFunction(fn: wrapper, module: nil, doc: nil)
+    dict.set(py, id: .__getattribute__, value: function.asObject)
   }
 
   // MARK: - __setattr__ method
@@ -538,14 +536,14 @@ extension PyType {
       return
     }
 
-    let setattr = PyBuiltinFunction.wrap(
+    let wrapper = FunctionWrapper(
       name: "__setattr__",
-      doc: nil,
       fn: AttributeHelper.setAttribute(_:object:name:value:)
     )
 
     let dict = type.__dict__
-    dict.set(py, id: .__setattr__, value: setattr.asObject)
+    let function = py.newBuiltinFunction(fn: wrapper, module: nil, doc: nil)
+    dict.set(py, id: .__setattr__, value: function.asObject)
   }
 
   // MARK: - __classcell__

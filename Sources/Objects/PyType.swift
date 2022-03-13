@@ -855,7 +855,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     // Fast path for 'type' type.
     // Mostly because of how common type checks are (e.g. 'type(elsa)')
     if self === py.types.type {
-      return PyType.pyNew(type: self, args: args, kwargs: kwargs)
+      return Self.__new__(py, type: self, args: args, kwargs: kwargs)
     }
 
     // '__new__' is a static method, so we can't just use 'callMethod'

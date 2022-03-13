@@ -170,7 +170,7 @@ public struct PyProperty: PyObjectMixin {
       return PyResult(zelf)
     }
 
-    return zelf.bind(to: object)
+    return zelf.bind(py, object: object)
   }
 
   internal func bind(_ py: Py, object: PyObject) -> PyResult<PyObject> {

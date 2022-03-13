@@ -527,7 +527,7 @@ public struct PyFunction: PyObjectMixin {
     // Caller and callee functions should not share the kwargs dictionary.
     var kwargsCopy: PyDict?
     if let kwargs = kwargs {
-      kwargsCopy = kwargs.copy()
+      kwargsCopy = kwargs.copy(py)
     }
 
     let argsDefaults = zelf.defaults?.elements ?? []

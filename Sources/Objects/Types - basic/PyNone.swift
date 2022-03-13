@@ -133,7 +133,7 @@ public struct PyNone: PyObjectMixin, HasCustomGetMethod {
     }
 
     if let prop = py.cast.asProperty(object) {
-      return prop.bind(to: self.asObject)
+      return prop.bind(py, object: self.asObject)
     }
 
     // No re-binding needed.

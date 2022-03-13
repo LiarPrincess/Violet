@@ -564,12 +564,10 @@ public struct PyBaseException: PyErrorMixin {
 
     // Copy kwargs
     if let kwargs = kwargs {
-      switch PyDict.update(py,
-                           zelf: zelf.__dict__,
-                           from: kwargs.elements,
-                           onKeyDuplicate: .continue) {
-      case .value: break
-      case .error(let e): return .error(e)
+      if let e = zelf.__dict__.update(py,
+                                      from: kwargs.elements,
+                                      onKeyDuplicate: .continue) {
+        return .error(e)
       }
     }
 

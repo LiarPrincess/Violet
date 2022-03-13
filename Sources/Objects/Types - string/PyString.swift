@@ -162,12 +162,17 @@ public struct PyString: PyObjectMixin, AbstractString {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
-    let quote = Self.getReprQuoteChar(zelf: zelf)
+    let result = zelf.repr()
+    return PyResult(py, result)
+  }
+
+  internal func repr() -> String {
+    let quote = self.getReprQuoteChar()
 
     var result = String(quote)
-    result.reserveCapacity(zelf.count)
+    result.reserveCapacity(self.count)
 
-    for element in zelf.elements {
+    for element in self.elements {
       switch element {
       case quote,
         "\\":
@@ -183,21 +188,21 @@ public struct PyString: PyObjectMixin, AbstractString {
         if Self.isPrintable(element: element) {
           result.append(element)
         } else {
-          let repr = Self.createNonPrintableRepr(scalar: element)
+          let repr = self.createNonPrintableRepr(scalar: element)
           result.append(repr)
         }
       }
     }
 
     result.append(quote)
-    return PyResult(py, result)
+    return result
   }
 
-  private static func getReprQuoteChar(zelf: PyString) -> UnicodeScalar {
+  private func getReprQuoteChar() -> UnicodeScalar {
     var singleCount = 0
     var doubleCount = 0
 
-    for element in zelf.elements {
+    for element in self.elements {
       switch element {
       case "'": singleCount += 1
       case "\"": doubleCount += 1
@@ -209,39 +214,39 @@ public struct PyString: PyObjectMixin, AbstractString {
     return singleCount <= doubleCount ? "'" : "\""
   }
 
-  private static func createNonPrintableRepr(scalar: UnicodeScalar) -> String {
+  private func createNonPrintableRepr(scalar: UnicodeScalar) -> String {
     var result = "\\"
     let value = scalar.value
 
     if value < 0xff {
       // Map 8-bit characters to '\xhh'
       result.append("x")
-      result.append(Self.hex((value >> 4) & 0xf))
-      result.append(Self.hex((value >> 0) & 0xf))
+      result.append(self.hex((value >> 4) & 0xf))
+      result.append(self.hex((value >> 0) & 0xf))
     } else if value < 0xffff {
       // Map 16-bit characters to '\uxxxx' // cSpell:disable-line
       result.append("u")
-      result.append(Self.hex((value >> 12) & 0xf))
-      result.append(Self.hex((value >> 8) & 0xf))
-      result.append(Self.hex((value >> 4) & 0xf))
-      result.append(Self.hex((value >> 0) & 0xf))
+      result.append(self.hex((value >> 12) & 0xf))
+      result.append(self.hex((value >> 8) & 0xf))
+      result.append(self.hex((value >> 4) & 0xf))
+      result.append(self.hex((value >> 0) & 0xf))
     } else {
       // Map 21-bit characters to '\U00xxxxxx'
       result.append("U")
-      result.append(Self.hex((value >> 28) & 0xf))
-      result.append(Self.hex((value >> 24) & 0xf))
-      result.append(Self.hex((value >> 20) & 0xf))
-      result.append(Self.hex((value >> 16) & 0xf))
-      result.append(Self.hex((value >> 12) & 0xf))
-      result.append(Self.hex((value >> 8) & 0xf))
-      result.append(Self.hex((value >> 4) & 0xf))
-      result.append(Self.hex((value >> 0) & 0xf))
+      result.append(self.hex((value >> 28) & 0xf))
+      result.append(self.hex((value >> 24) & 0xf))
+      result.append(self.hex((value >> 20) & 0xf))
+      result.append(self.hex((value >> 16) & 0xf))
+      result.append(self.hex((value >> 12) & 0xf))
+      result.append(self.hex((value >> 8) & 0xf))
+      result.append(self.hex((value >> 4) & 0xf))
+      result.append(self.hex((value >> 0) & 0xf))
     }
 
     return result
   }
 
-  private static func hex(_ value: UInt32) -> String {
+  private func hex(_ value: UInt32) -> String {
     return String(value, radix: 16, uppercase: false)
   }
 
