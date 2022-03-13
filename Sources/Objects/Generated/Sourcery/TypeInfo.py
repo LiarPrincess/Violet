@@ -74,15 +74,14 @@ class PyPropertyInfo:
 
     def __init__(self,
                  python_name: str,
-                 swift_getter_fn: str,
-                 swift_setter_fn: str,
-                 swift_type: str,
+                 has_setter: bool,
                  swift_static_doc_property: str):
         self.python_name = python_name
-        self.swift_getter_fn = swift_getter_fn
-        self.swift_setter_fn = swift_setter_fn or None
-        self.swift_type = swift_type
         self.swift_static_doc_property = swift_static_doc_property or None
+
+        self.has_setter = has_setter
+        self.selector_get = python_name + '(_:zelf:)'
+        self.selector_set = python_name + '(_:zelf:value:)' if has_setter else None
 
 
 class PyFunctionInfo:

@@ -146,6 +146,11 @@ public struct Py {
   public func newMethod(fn: PyFunction, object: PyObject) -> PyMethod { fatalError() }
   public func newMethod(fn: PyObject, object: PyObject) -> PyResult<PyMethod> { fatalError() }
 
+  public func newProperty(get: FunctionWrapper,
+                          set: FunctionWrapper?,
+                          del: FunctionWrapper?,
+                          doc: String?) -> PyProperty { fatalError() }
+
   // MARK: - String
 
   public func repr(object: PyObject) -> PyResult<PyString> { fatalError() }

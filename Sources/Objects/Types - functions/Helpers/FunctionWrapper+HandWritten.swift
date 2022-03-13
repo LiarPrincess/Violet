@@ -47,7 +47,7 @@ extension FunctionWrapper {
 
   public init(type: PyType, fn: @escaping NewFn) {
     let wrapper = NewWrapper(type: type, fn: fn)
-    self.kind = .__new__(wrapper)
+    self.kind = .new(wrapper)
   }
 
   // MARK: - Init
@@ -79,7 +79,7 @@ extension FunctionWrapper {
 
   public init(type: PyType, fn: @escaping InitFn) {
     let wrapper = InitWrapper(type: type, fn: fn)
-    self.kind = .__init__(wrapper)
+    self.kind = .`init`(wrapper)
   }
 
   // MARK: - Compare
@@ -185,6 +185,41 @@ extension FunctionWrapper {
   public init(name: String, fn: @escaping DirFn) {
     let wrapper = DirWrapper(name: name, fn: fn)
     self.kind = .dir(wrapper)
+  }
+
+  // MARK: - Class
+
+  /// Python `__class__` function.
+  public typealias ClassFn = (Py, PyObject) -> PyType
+
+  internal struct ClassWrapper {
+    private let fn: ClassFn
+    internal let fnName: String
+
+    fileprivate init(name: String, fn: @escaping ClassFn) {
+      self.fnName = name
+      self.fn = fn
+    }
+
+    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+      // This function has only positional arguments, so any kwargs -> error
+      if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
+        return .error(e.asBaseException)
+      }
+
+      switch args.count {
+      case 1:
+        let result = self.fn(py, args[0])
+        return PyResult(result)
+      default:
+        return .typeError(py, message: "expected 1 argument, got \(args.count)")
+      }
+    }
+  }
+
+  public init(name: String, fn: @escaping ClassFn) {
+    let wrapper = ClassWrapper(name: name, fn: fn)
+    self.kind = .class(wrapper)
   }
 
   // MARK: - Args kwargs function

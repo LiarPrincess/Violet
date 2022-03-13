@@ -101,6 +101,20 @@ class PyTypeDefinition:
         print('''\
     // MARK: - Helpers
 
+    /// Adds `property` to `type.__dict__`.
+    private func add(_ py: Py, type: PyType, name: String, property get: FunctionWrapper, doc: String?) {
+      let property = py.newProperty(get: get, set: nil, del: nil, doc: doc)
+      let value = property.asObject
+      self.add(py, type: type, name: name, value: value)
+    }
+
+    /// Adds `property` to `type.__dict__`.
+    private func add(_ py: Py, type: PyType, name: String, property get: FunctionWrapper, setter set: FunctionWrapper, doc: String?) {
+      let property = py.newProperty(get: get, set: set, del: nil, doc: doc)
+      let value = property.asObject
+      self.add(py, type: type, name: name, value: value)
+    }
+
     /// Adds `method` to `type.__dict__`.
     private func add(_ py: Py, type: PyType, name: String, method: FunctionWrapper, doc: String?) {
       let builtinFunction = py.newBuiltinFunction(fn: method, module: nil, doc: doc)
@@ -189,6 +203,25 @@ class PyTypeDefinition:
 
             print(f'      let __init__ = FunctionWrapper(type: type, fn: {swift_type_name}.{fn.swift_selector})')
             print(f'      self.add(py, type: type, name: "__init__", method: __init__, doc: {get_doc(fn)})')
+
+        # ==================
+        # === Properties ===
+        # ==================
+
+        for index, prop in enumerate(self.t.python_properties):
+            python_name = prop.python_name
+            doc = get_doc(fn)
+
+            if index == 0:
+                print()
+
+            if prop.has_setter:
+                print(f'      let {python_name}Get = FunctionWrapper(name: "__get__", fn: {swift_type_name}.{prop.selector_get})')
+                print(f'      let {python_name}Set = FunctionWrapper(name: "__set__", fn: {swift_type_name}.{prop.selector_set})')
+                print(f'      self.add(py, type: type, name: "{python_name}", property: {python_name}Get, setter: {python_name}Set, doc: {doc})')
+            else:
+                print(f'      let {python_name} = FunctionWrapper(name: "__get__", fn: {swift_type_name}.{prop.selector_get})')
+                print(f'      self.add(py, type: type, name: "{python_name}", property: {python_name}, doc: {doc})')
 
         # =======================================
         # === Methods, static/class functions ===

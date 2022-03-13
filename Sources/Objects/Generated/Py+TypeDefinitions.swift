@@ -1022,6 +1022,20 @@ extension Py {
 
     // MARK: - Helpers
 
+    /// Adds `property` to `type.__dict__`.
+    private func add(_ py: Py, type: PyType, name: String, property get: FunctionWrapper, doc: String?) {
+      let property = py.newProperty(get: get, set: nil, del: nil, doc: doc)
+      let value = property.asObject
+      self.add(py, type: type, name: name, value: value)
+    }
+
+    /// Adds `property` to `type.__dict__`.
+    private func add(_ py: Py, type: PyType, name: String, property get: FunctionWrapper, setter set: FunctionWrapper, doc: String?) {
+      let property = py.newProperty(get: get, set: set, del: nil, doc: doc)
+      let value = property.asObject
+      self.add(py, type: type, name: name, value: value)
+    }
+
     /// Adds `method` to `type.__dict__`.
     private func add(_ py: Py, type: PyType, name: String, method: FunctionWrapper, doc: String?) {
       let builtinFunction = py.newBuiltinFunction(fn: method, module: nil, doc: doc)
@@ -1068,6 +1082,9 @@ extension Py {
       let __new__ = FunctionWrapper(type: type, fn: PyBool.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
 
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyBool.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+
       let __repr__ = FunctionWrapper(name: "__repr__", fn: PyBool.__repr__(_:zelf:))
       self.add(py, type: type, name: "__repr__", method: __repr__, doc: nil)
       let __str__ = FunctionWrapper(name: "__str__", fn: PyBool.__str__(_:zelf:))
@@ -1094,6 +1111,21 @@ extension Py {
     private func fillBuiltinFunction(_ py: Py) {
       let type = self.builtinFunction
       type.setBuiltinTypeDoc(py, value: nil)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyBuiltinFunction.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+      let __name__ = FunctionWrapper(name: "__get__", fn: PyBuiltinFunction.__name__(_:zelf:))
+      self.add(py, type: type, name: "__name__", property: __name__, doc: nil)
+      let __qualname__ = FunctionWrapper(name: "__get__", fn: PyBuiltinFunction.__qualname__(_:zelf:))
+      self.add(py, type: type, name: "__qualname__", property: __qualname__, doc: nil)
+      let __doc__ = FunctionWrapper(name: "__get__", fn: PyBuiltinFunction.__doc__(_:zelf:))
+      self.add(py, type: type, name: "__doc__", property: __doc__, doc: nil)
+      let __text_signature__ = FunctionWrapper(name: "__get__", fn: PyBuiltinFunction.__text_signature__(_:zelf:))
+      self.add(py, type: type, name: "__text_signature__", property: __text_signature__, doc: nil)
+      let __module__ = FunctionWrapper(name: "__get__", fn: PyBuiltinFunction.__module__(_:zelf:))
+      self.add(py, type: type, name: "__module__", property: __module__, doc: nil)
+      let __self__ = FunctionWrapper(name: "__get__", fn: PyBuiltinFunction.__self__(_:zelf:))
+      self.add(py, type: type, name: "__self__", property: __self__, doc: nil)
 
       let __eq__ = FunctionWrapper(name: "__eq__", fn: PyBuiltinFunction.__eq__(_:zelf:other:))
       self.add(py, type: type, name: "__eq__", method: __eq__, doc: nil)
@@ -1125,6 +1157,21 @@ extension Py {
     private func fillBuiltinMethod(_ py: Py) {
       let type = self.builtinMethod
       type.setBuiltinTypeDoc(py, value: nil)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyBuiltinMethod.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+      let __name__ = FunctionWrapper(name: "__get__", fn: PyBuiltinMethod.__name__(_:zelf:))
+      self.add(py, type: type, name: "__name__", property: __name__, doc: nil)
+      let __qualname__ = FunctionWrapper(name: "__get__", fn: PyBuiltinMethod.__qualname__(_:zelf:))
+      self.add(py, type: type, name: "__qualname__", property: __qualname__, doc: nil)
+      let __doc__ = FunctionWrapper(name: "__get__", fn: PyBuiltinMethod.__doc__(_:zelf:))
+      self.add(py, type: type, name: "__doc__", property: __doc__, doc: nil)
+      let __text_signature__ = FunctionWrapper(name: "__get__", fn: PyBuiltinMethod.__text_signature__(_:zelf:))
+      self.add(py, type: type, name: "__text_signature__", property: __text_signature__, doc: nil)
+      let __module__ = FunctionWrapper(name: "__get__", fn: PyBuiltinMethod.__module__(_:zelf:))
+      self.add(py, type: type, name: "__module__", property: __module__, doc: nil)
+      let __self__ = FunctionWrapper(name: "__get__", fn: PyBuiltinMethod.__self__(_:zelf:))
+      self.add(py, type: type, name: "__self__", property: __self__, doc: nil)
 
       let __eq__ = FunctionWrapper(name: "__eq__", fn: PyBuiltinMethod.__eq__(_:zelf:other:))
       self.add(py, type: type, name: "__eq__", method: __eq__, doc: nil)
@@ -1161,6 +1208,9 @@ extension Py {
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
       let __init__ = FunctionWrapper(type: type, fn: PyByteArray.__init__(_:zelf:args:kwargs:))
       self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyByteArray.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
 
       let __eq__ = FunctionWrapper(name: "__eq__", fn: PyByteArray.__eq__(_:zelf:other:))
       self.add(py, type: type, name: "__eq__", method: __eq__, doc: nil)
@@ -1292,6 +1342,9 @@ extension Py {
       let __new__ = FunctionWrapper(type: type, fn: PyByteArrayIterator.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
 
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyByteArrayIterator.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+
       let __getattribute__ = FunctionWrapper(name: "__getattribute__", fn: PyByteArrayIterator.__getattribute__(_:zelf:name:))
       self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
       let __iter__ = FunctionWrapper(name: "__iter__", fn: PyByteArrayIterator.__iter__(_:zelf:))
@@ -1313,6 +1366,9 @@ extension Py {
 
       let __new__ = FunctionWrapper(type: type, fn: PyBytes.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyBytes.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
 
       let __eq__ = FunctionWrapper(name: "__eq__", fn: PyBytes.__eq__(_:zelf:other:))
       self.add(py, type: type, name: "__eq__", method: __eq__, doc: nil)
@@ -1428,6 +1484,9 @@ extension Py {
       let __new__ = FunctionWrapper(type: type, fn: PyBytesIterator.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
 
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyBytesIterator.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+
       let __getattribute__ = FunctionWrapper(name: "__getattribute__", fn: PyBytesIterator.__getattribute__(_:zelf:name:))
       self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
       let __iter__ = FunctionWrapper(name: "__iter__", fn: PyBytesIterator.__iter__(_:zelf:))
@@ -1446,6 +1505,9 @@ extension Py {
     private func fillCallableIterator(_ py: Py) {
       let type = self.callable_iterator
       type.setBuiltinTypeDoc(py, value: PyCallableIterator.doc)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyCallableIterator.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
 
       let __getattribute__ = FunctionWrapper(name: "__getattribute__", fn: PyCallableIterator.__getattribute__(_:zelf:name:))
       self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
@@ -1496,6 +1558,13 @@ extension Py {
       let __init__ = FunctionWrapper(type: type, fn: PyClassMethod.__init__(_:zelf:args:kwargs:))
       self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
 
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyClassMethod.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+      let __dict__ = FunctionWrapper(name: "__get__", fn: PyClassMethod.__dict__(_:zelf:))
+      self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
+      let __func__ = FunctionWrapper(name: "__get__", fn: PyClassMethod.__func__(_:zelf:))
+      self.add(py, type: type, name: "__func__", property: __func__, doc: nil)
+
       let __get__ = FunctionWrapper(name: "__get__", fn: PyClassMethod.__get__(_:zelf:object:type:))
       self.add(py, type: type, name: "__get__", method: __get__, doc: nil)
       let __isabstractmethod__ = FunctionWrapper(name: "__isabstractmethod__", fn: PyClassMethod.__isabstractmethod__(_:zelf:))
@@ -1510,6 +1579,21 @@ extension Py {
     private func fillCode(_ py: Py) {
       let type = self.code
       type.setBuiltinTypeDoc(py, value: PyCode.doc)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyCode.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+      let co_name = FunctionWrapper(name: "__get__", fn: PyCode.co_name(_:zelf:))
+      self.add(py, type: type, name: "co_name", property: co_name, doc: nil)
+      let co_filename = FunctionWrapper(name: "__get__", fn: PyCode.co_filename(_:zelf:))
+      self.add(py, type: type, name: "co_filename", property: co_filename, doc: nil)
+      let co_firstlineno = FunctionWrapper(name: "__get__", fn: PyCode.co_firstlineno(_:zelf:))
+      self.add(py, type: type, name: "co_firstlineno", property: co_firstlineno, doc: nil)
+      let co_argcount = FunctionWrapper(name: "__get__", fn: PyCode.co_argcount(_:zelf:))
+      self.add(py, type: type, name: "co_argcount", property: co_argcount, doc: nil)
+      let co_kwonlyargcount = FunctionWrapper(name: "__get__", fn: PyCode.co_kwonlyargcount(_:zelf:))
+      self.add(py, type: type, name: "co_kwonlyargcount", property: co_kwonlyargcount, doc: nil)
+      let co_nlocals = FunctionWrapper(name: "__get__", fn: PyCode.co_nlocals(_:zelf:))
+      self.add(py, type: type, name: "co_nlocals", property: co_nlocals, doc: nil)
 
       let __eq__ = FunctionWrapper(name: "__eq__", fn: PyCode.__eq__(_:zelf:other:))
       self.add(py, type: type, name: "__eq__", method: __eq__, doc: nil)
@@ -1542,6 +1626,13 @@ extension Py {
 
       let __new__ = FunctionWrapper(type: type, fn: PyComplex.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+
+      let real = FunctionWrapper(name: "__get__", fn: PyComplex.real(_:zelf:))
+      self.add(py, type: type, name: "real", property: real, doc: nil)
+      let imag = FunctionWrapper(name: "__get__", fn: PyComplex.imag(_:zelf:))
+      self.add(py, type: type, name: "imag", property: imag, doc: nil)
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyComplex.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
 
       let __eq__ = FunctionWrapper(name: "__eq__", fn: PyComplex.__eq__(_:zelf:other:))
       self.add(py, type: type, name: "__eq__", method: __eq__, doc: nil)
@@ -1627,6 +1718,9 @@ extension Py {
       let __init__ = FunctionWrapper(type: type, fn: PyDict.__init__(_:zelf:args:kwargs:))
       self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
 
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyDict.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+
       let fromkeys = FunctionWrapper(name: "fromkeys", fn: PyDict.fromkeys(_:type:iterable:value:))
       self.add(py, type: type, name: "fromkeys", classMethod: fromkeys, doc: nil)
 
@@ -1692,6 +1786,9 @@ extension Py {
       let __new__ = FunctionWrapper(type: type, fn: PyDictItemIterator.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
 
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyDictItemIterator.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+
       let __getattribute__ = FunctionWrapper(name: "__getattribute__", fn: PyDictItemIterator.__getattribute__(_:zelf:name:))
       self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
       let __iter__ = FunctionWrapper(name: "__iter__", fn: PyDictItemIterator.__iter__(_:zelf:))
@@ -1713,6 +1810,9 @@ extension Py {
 
       let __new__ = FunctionWrapper(type: type, fn: PyDictItems.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyDictItems.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
 
       let __eq__ = FunctionWrapper(name: "__eq__", fn: PyDictItems.__eq__(_:zelf:other:))
       self.add(py, type: type, name: "__eq__", method: __eq__, doc: nil)
@@ -1752,6 +1852,9 @@ extension Py {
       let __new__ = FunctionWrapper(type: type, fn: PyDictKeyIterator.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
 
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyDictKeyIterator.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+
       let __getattribute__ = FunctionWrapper(name: "__getattribute__", fn: PyDictKeyIterator.__getattribute__(_:zelf:name:))
       self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
       let __iter__ = FunctionWrapper(name: "__iter__", fn: PyDictKeyIterator.__iter__(_:zelf:))
@@ -1773,6 +1876,9 @@ extension Py {
 
       let __new__ = FunctionWrapper(type: type, fn: PyDictKeys.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyDictKeys.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
 
       let __eq__ = FunctionWrapper(name: "__eq__", fn: PyDictKeys.__eq__(_:zelf:other:))
       self.add(py, type: type, name: "__eq__", method: __eq__, doc: nil)
@@ -1812,6 +1918,9 @@ extension Py {
       let __new__ = FunctionWrapper(type: type, fn: PyDictValueIterator.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
 
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyDictValueIterator.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+
       let __getattribute__ = FunctionWrapper(name: "__getattribute__", fn: PyDictValueIterator.__getattribute__(_:zelf:name:))
       self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
       let __iter__ = FunctionWrapper(name: "__iter__", fn: PyDictValueIterator.__iter__(_:zelf:))
@@ -1830,6 +1939,9 @@ extension Py {
     private func fillDictValues(_ py: Py) {
       let type = self.dict_values
       type.setBuiltinTypeDoc(py, value: PyDictValues.doc)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyDictValues.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
 
       let __repr__ = FunctionWrapper(name: "__repr__", fn: PyDictValues.__repr__(_:zelf:))
       self.add(py, type: type, name: "__repr__", method: __repr__, doc: nil)
@@ -1853,6 +1965,9 @@ extension Py {
       let __new__ = FunctionWrapper(type: type, fn: PyEllipsis.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
 
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyEllipsis.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+
       let __repr__ = FunctionWrapper(name: "__repr__", fn: PyEllipsis.__repr__(_:zelf:))
       self.add(py, type: type, name: "__repr__", method: __repr__, doc: nil)
       let __reduce__ = FunctionWrapper(name: "__reduce__", fn: PyEllipsis.__reduce__(_:zelf:))
@@ -1872,6 +1987,9 @@ extension Py {
 
       let __new__ = FunctionWrapper(type: type, fn: PyEnumerate.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyEnumerate.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
 
       let __getattribute__ = FunctionWrapper(name: "__getattribute__", fn: PyEnumerate.__getattribute__(_:zelf:name:))
       self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
@@ -1893,6 +2011,9 @@ extension Py {
       let __new__ = FunctionWrapper(type: type, fn: PyFilter.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
 
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyFilter.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+
       let __getattribute__ = FunctionWrapper(name: "__getattribute__", fn: PyFilter.__getattribute__(_:zelf:name:))
       self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
       let __iter__ = FunctionWrapper(name: "__iter__", fn: PyFilter.__iter__(_:zelf:))
@@ -1912,6 +2033,13 @@ extension Py {
 
       let __new__ = FunctionWrapper(type: type, fn: PyFloat.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: PyFloat.newDoc)
+
+      let real = FunctionWrapper(name: "__get__", fn: PyFloat.real(_:zelf:))
+      self.add(py, type: type, name: "real", property: real, doc: PyFloat.hexDoc)
+      let imag = FunctionWrapper(name: "__get__", fn: PyFloat.imag(_:zelf:))
+      self.add(py, type: type, name: "imag", property: imag, doc: PyFloat.hexDoc)
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyFloat.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: PyFloat.hexDoc)
 
       let fromhex = FunctionWrapper(name: "fromhex", fn: PyFloat.fromhex(_:type:value:))
       self.add(py, type: type, name: "fromhex", classMethod: fromhex, doc: PyFloat.fromHexDoc)
@@ -2003,6 +2131,23 @@ extension Py {
       let type = self.frame
       type.setBuiltinTypeDoc(py, value: PyFrame.doc)
 
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyFrame.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+      let f_back = FunctionWrapper(name: "__get__", fn: PyFrame.f_back(_:zelf:))
+      self.add(py, type: type, name: "f_back", property: f_back, doc: nil)
+      let f_builtins = FunctionWrapper(name: "__get__", fn: PyFrame.f_builtins(_:zelf:))
+      self.add(py, type: type, name: "f_builtins", property: f_builtins, doc: nil)
+      let f_globals = FunctionWrapper(name: "__get__", fn: PyFrame.f_globals(_:zelf:))
+      self.add(py, type: type, name: "f_globals", property: f_globals, doc: nil)
+      let f_locals = FunctionWrapper(name: "__get__", fn: PyFrame.f_locals(_:zelf:))
+      self.add(py, type: type, name: "f_locals", property: f_locals, doc: nil)
+      let f_code = FunctionWrapper(name: "__get__", fn: PyFrame.f_code(_:zelf:))
+      self.add(py, type: type, name: "f_code", property: f_code, doc: nil)
+      let f_lasti = FunctionWrapper(name: "__get__", fn: PyFrame.f_lasti(_:zelf:))
+      self.add(py, type: type, name: "f_lasti", property: f_lasti, doc: nil)
+      let f_lineno = FunctionWrapper(name: "__get__", fn: PyFrame.f_lineno(_:zelf:))
+      self.add(py, type: type, name: "f_lineno", property: f_lineno, doc: nil)
+
       let __repr__ = FunctionWrapper(name: "__repr__", fn: PyFrame.__repr__(_:zelf:))
       self.add(py, type: type, name: "__repr__", method: __repr__, doc: nil)
       let __getattribute__ = FunctionWrapper(name: "__getattribute__", fn: PyFrame.__getattribute__(_:zelf:name:))
@@ -2024,6 +2169,9 @@ extension Py {
 
       let __new__ = FunctionWrapper(type: type, fn: PyFrozenSet.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyFrozenSet.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
 
       let __eq__ = FunctionWrapper(name: "__eq__", fn: PyFrozenSet.__eq__(_:zelf:other:))
       self.add(py, type: type, name: "__eq__", method: __eq__, doc: nil)
@@ -2092,6 +2240,41 @@ extension Py {
       let type = self.function
       type.setBuiltinTypeDoc(py, value: PyFunction.doc)
 
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyFunction.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+      let __name__Get = FunctionWrapper(name: "__get__", fn: PyFunction.__name__(_:zelf:))
+      let __name__Set = FunctionWrapper(name: "__set__", fn: PyFunction.__name__(_:zelf:value:))
+      self.add(py, type: type, name: "__name__", property: __name__Get, setter: __name__Set, doc: nil)
+      let __qualname__Get = FunctionWrapper(name: "__get__", fn: PyFunction.__qualname__(_:zelf:))
+      let __qualname__Set = FunctionWrapper(name: "__set__", fn: PyFunction.__qualname__(_:zelf:value:))
+      self.add(py, type: type, name: "__qualname__", property: __qualname__Get, setter: __qualname__Set, doc: nil)
+      let __defaults__Get = FunctionWrapper(name: "__get__", fn: PyFunction.__defaults__(_:zelf:))
+      let __defaults__Set = FunctionWrapper(name: "__set__", fn: PyFunction.__defaults__(_:zelf:value:))
+      self.add(py, type: type, name: "__defaults__", property: __defaults__Get, setter: __defaults__Set, doc: nil)
+      let __kwdefaults__Get = FunctionWrapper(name: "__get__", fn: PyFunction.__kwdefaults__(_:zelf:))
+      let __kwdefaults__Set = FunctionWrapper(name: "__set__", fn: PyFunction.__kwdefaults__(_:zelf:value:))
+      self.add(py, type: type, name: "__kwdefaults__", property: __kwdefaults__Get, setter: __kwdefaults__Set, doc: nil)
+      let __closure__Get = FunctionWrapper(name: "__get__", fn: PyFunction.__closure__(_:zelf:))
+      let __closure__Set = FunctionWrapper(name: "__set__", fn: PyFunction.__closure__(_:zelf:value:))
+      self.add(py, type: type, name: "__closure__", property: __closure__Get, setter: __closure__Set, doc: nil)
+      let __globals__Get = FunctionWrapper(name: "__get__", fn: PyFunction.__globals__(_:zelf:))
+      let __globals__Set = FunctionWrapper(name: "__set__", fn: PyFunction.__globals__(_:zelf:value:))
+      self.add(py, type: type, name: "__globals__", property: __globals__Get, setter: __globals__Set, doc: nil)
+      let __annotations__Get = FunctionWrapper(name: "__get__", fn: PyFunction.__annotations__(_:zelf:))
+      let __annotations__Set = FunctionWrapper(name: "__set__", fn: PyFunction.__annotations__(_:zelf:value:))
+      self.add(py, type: type, name: "__annotations__", property: __annotations__Get, setter: __annotations__Set, doc: nil)
+      let __code__Get = FunctionWrapper(name: "__get__", fn: PyFunction.__code__(_:zelf:))
+      let __code__Set = FunctionWrapper(name: "__set__", fn: PyFunction.__code__(_:zelf:value:))
+      self.add(py, type: type, name: "__code__", property: __code__Get, setter: __code__Set, doc: nil)
+      let __doc__Get = FunctionWrapper(name: "__get__", fn: PyFunction.__doc__(_:zelf:))
+      let __doc__Set = FunctionWrapper(name: "__set__", fn: PyFunction.__doc__(_:zelf:value:))
+      self.add(py, type: type, name: "__doc__", property: __doc__Get, setter: __doc__Set, doc: nil)
+      let __module__Get = FunctionWrapper(name: "__get__", fn: PyFunction.__module__(_:zelf:))
+      let __module__Set = FunctionWrapper(name: "__set__", fn: PyFunction.__module__(_:zelf:value:))
+      self.add(py, type: type, name: "__module__", property: __module__Get, setter: __module__Set, doc: nil)
+      let __dict__ = FunctionWrapper(name: "__get__", fn: PyFunction.__dict__(_:zelf:))
+      self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
+
       let __repr__ = FunctionWrapper(name: "__repr__", fn: PyFunction.__repr__(_:zelf:))
       self.add(py, type: type, name: "__repr__", method: __repr__, doc: nil)
       let __get__ = FunctionWrapper(name: "__get__", fn: PyFunction.__get__(_:zelf:object:type:))
@@ -2111,6 +2294,17 @@ extension Py {
 
       let __new__ = FunctionWrapper(type: type, fn: PyInt.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyInt.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+      let real = FunctionWrapper(name: "__get__", fn: PyInt.real(_:zelf:))
+      self.add(py, type: type, name: "real", property: real, doc: nil)
+      let imag = FunctionWrapper(name: "__get__", fn: PyInt.imag(_:zelf:))
+      self.add(py, type: type, name: "imag", property: imag, doc: nil)
+      let numerator = FunctionWrapper(name: "__get__", fn: PyInt.numerator(_:zelf:))
+      self.add(py, type: type, name: "numerator", property: numerator, doc: nil)
+      let denominator = FunctionWrapper(name: "__get__", fn: PyInt.denominator(_:zelf:))
+      self.add(py, type: type, name: "denominator", property: denominator, doc: nil)
 
       let __eq__ = FunctionWrapper(name: "__eq__", fn: PyInt.__eq__(_:zelf:other:))
       self.add(py, type: type, name: "__eq__", method: __eq__, doc: nil)
@@ -2223,6 +2417,9 @@ extension Py {
       let type = self.iterator
       type.setBuiltinTypeDoc(py, value: PyIterator.doc)
 
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyIterator.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+
       let __getattribute__ = FunctionWrapper(name: "__getattribute__", fn: PyIterator.__getattribute__(_:zelf:name:))
       self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
       let __iter__ = FunctionWrapper(name: "__iter__", fn: PyIterator.__iter__(_:zelf:))
@@ -2246,6 +2443,9 @@ extension Py {
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
       let __init__ = FunctionWrapper(type: type, fn: PyList.__init__(_:zelf:args:kwargs:))
       self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyList.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
 
       let __eq__ = FunctionWrapper(name: "__eq__", fn: PyList.__eq__(_:zelf:other:))
       self.add(py, type: type, name: "__eq__", method: __eq__, doc: nil)
@@ -2323,6 +2523,9 @@ extension Py {
       let __new__ = FunctionWrapper(type: type, fn: PyListIterator.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
 
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyListIterator.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+
       let __getattribute__ = FunctionWrapper(name: "__getattribute__", fn: PyListIterator.__getattribute__(_:zelf:name:))
       self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
       let __iter__ = FunctionWrapper(name: "__iter__", fn: PyListIterator.__iter__(_:zelf:))
@@ -2344,6 +2547,9 @@ extension Py {
 
       let __new__ = FunctionWrapper(type: type, fn: PyListReverseIterator.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyListReverseIterator.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
 
       let __getattribute__ = FunctionWrapper(name: "__getattribute__", fn: PyListReverseIterator.__getattribute__(_:zelf:name:))
       self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
@@ -2367,6 +2573,9 @@ extension Py {
       let __new__ = FunctionWrapper(type: type, fn: PyMap.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
 
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyMap.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+
       let __getattribute__ = FunctionWrapper(name: "__getattribute__", fn: PyMap.__getattribute__(_:zelf:name:))
       self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
       let __iter__ = FunctionWrapper(name: "__iter__", fn: PyMap.__iter__(_:zelf:))
@@ -2383,6 +2592,11 @@ extension Py {
     private func fillMethod(_ py: Py) {
       let type = self.method
       type.setBuiltinTypeDoc(py, value: PyMethod.doc)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyMethod.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+      let __doc__ = FunctionWrapper(name: "__get__", fn: PyMethod.__doc__(_:zelf:))
+      self.add(py, type: type, name: "__doc__", property: __doc__, doc: nil)
 
       let __eq__ = FunctionWrapper(name: "__eq__", fn: PyMethod.__eq__(_:zelf:other:))
       self.add(py, type: type, name: "__eq__", method: __eq__, doc: nil)
@@ -2422,6 +2636,11 @@ extension Py {
       let __init__ = FunctionWrapper(type: type, fn: PyModule.__init__(_:zelf:args:kwargs:))
       self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
 
+      let __dict__ = FunctionWrapper(name: "__get__", fn: PyModule.__dict__(_:zelf:))
+      self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyModule.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+
       let __repr__ = FunctionWrapper(name: "__repr__", fn: PyModule.__repr__(_:zelf:))
       self.add(py, type: type, name: "__repr__", method: __repr__, doc: nil)
       let __getattribute__ = FunctionWrapper(name: "__getattribute__", fn: PyModule.__getattribute__(_:zelf:name:))
@@ -2447,6 +2666,11 @@ extension Py {
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
       let __init__ = FunctionWrapper(type: type, fn: PyNamespace.__init__(_:zelf:args:kwargs:))
       self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyNamespace.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+      let __dict__ = FunctionWrapper(name: "__get__", fn: PyNamespace.__dict__(_:zelf:))
+      self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
 
       let __eq__ = FunctionWrapper(name: "__eq__", fn: PyNamespace.__eq__(_:zelf:other:))
       self.add(py, type: type, name: "__eq__", method: __eq__, doc: nil)
@@ -2482,6 +2706,9 @@ extension Py {
       let __new__ = FunctionWrapper(type: type, fn: PyNone.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
 
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyNone.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+
       let __repr__ = FunctionWrapper(name: "__repr__", fn: PyNone.__repr__(_:zelf:))
       self.add(py, type: type, name: "__repr__", method: __repr__, doc: nil)
       let __bool__ = FunctionWrapper(name: "__bool__", fn: PyNone.__bool__(_:zelf:))
@@ -2502,6 +2729,9 @@ extension Py {
       let __new__ = FunctionWrapper(type: type, fn: PyNotImplemented.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
 
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyNotImplemented.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+
       let __repr__ = FunctionWrapper(name: "__repr__", fn: PyNotImplemented.__repr__(_:zelf:))
       self.add(py, type: type, name: "__repr__", method: __repr__, doc: nil)
     }
@@ -2519,6 +2749,9 @@ extension Py {
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
       let __init__ = FunctionWrapper(type: type, fn: PyObject.__init__(_:zelf:args:kwargs:))
       self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyObject.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
 
       let __subclasshook__ = FunctionWrapper(name: "__subclasshook__", fn: PyObject.__subclasshook__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__subclasshook__", classMethod: __subclasshook__, doc: nil)
@@ -2569,6 +2802,18 @@ extension Py {
       let __init__ = FunctionWrapper(type: type, fn: PyProperty.__init__(_:zelf:args:kwargs:))
       self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
 
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyProperty.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+      let fget = FunctionWrapper(name: "__get__", fn: PyProperty.fget(_:zelf:))
+      self.add(py, type: type, name: "fget", property: fget, doc: nil)
+      let fset = FunctionWrapper(name: "__get__", fn: PyProperty.fset(_:zelf:))
+      self.add(py, type: type, name: "fset", property: fset, doc: nil)
+      let fdel = FunctionWrapper(name: "__get__", fn: PyProperty.fdel(_:zelf:))
+      self.add(py, type: type, name: "fdel", property: fdel, doc: nil)
+      let __doc__Get = FunctionWrapper(name: "__get__", fn: PyProperty.__doc__(_:zelf:))
+      let __doc__Set = FunctionWrapper(name: "__set__", fn: PyProperty.__doc__(_:zelf:value:))
+      self.add(py, type: type, name: "__doc__", property: __doc__Get, setter: __doc__Set, doc: nil)
+
       let __getattribute__ = FunctionWrapper(name: "__getattribute__", fn: PyProperty.__getattribute__(_:zelf:name:))
       self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
       let __get__ = FunctionWrapper(name: "__get__", fn: PyProperty.__get__(_:zelf:object:type:))
@@ -2596,6 +2841,15 @@ extension Py {
 
       let __new__ = FunctionWrapper(type: type, fn: PyRange.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyRange.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+      let start = FunctionWrapper(name: "__get__", fn: PyRange.start(_:zelf:))
+      self.add(py, type: type, name: "start", property: start, doc: nil)
+      let stop = FunctionWrapper(name: "__get__", fn: PyRange.stop(_:zelf:))
+      self.add(py, type: type, name: "stop", property: stop, doc: nil)
+      let step = FunctionWrapper(name: "__get__", fn: PyRange.step(_:zelf:))
+      self.add(py, type: type, name: "step", property: step, doc: nil)
 
       let __eq__ = FunctionWrapper(name: "__eq__", fn: PyRange.__eq__(_:zelf:other:))
       self.add(py, type: type, name: "__eq__", method: __eq__, doc: nil)
@@ -2647,6 +2901,9 @@ extension Py {
       let __new__ = FunctionWrapper(type: type, fn: PyRangeIterator.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
 
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyRangeIterator.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+
       let __getattribute__ = FunctionWrapper(name: "__getattribute__", fn: PyRangeIterator.__getattribute__(_:zelf:name:))
       self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
       let __iter__ = FunctionWrapper(name: "__iter__", fn: PyRangeIterator.__iter__(_:zelf:))
@@ -2668,6 +2925,9 @@ extension Py {
 
       let __new__ = FunctionWrapper(type: type, fn: PyReversed.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyReversed.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
 
       let __getattribute__ = FunctionWrapper(name: "__getattribute__", fn: PyReversed.__getattribute__(_:zelf:name:))
       self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
@@ -2692,6 +2952,9 @@ extension Py {
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
       let __init__ = FunctionWrapper(type: type, fn: PySet.__init__(_:zelf:args:kwargs:))
       self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PySet.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
 
       let __eq__ = FunctionWrapper(name: "__eq__", fn: PySet.__eq__(_:zelf:other:))
       self.add(py, type: type, name: "__eq__", method: __eq__, doc: nil)
@@ -2775,6 +3038,9 @@ extension Py {
       let __new__ = FunctionWrapper(type: type, fn: PySetIterator.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
 
+      let __class__ = FunctionWrapper(name: "__get__", fn: PySetIterator.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+
       let __getattribute__ = FunctionWrapper(name: "__getattribute__", fn: PySetIterator.__getattribute__(_:zelf:name:))
       self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
       let __iter__ = FunctionWrapper(name: "__iter__", fn: PySetIterator.__iter__(_:zelf:))
@@ -2796,6 +3062,15 @@ extension Py {
 
       let __new__ = FunctionWrapper(type: type, fn: PySlice.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PySlice.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+      let start = FunctionWrapper(name: "__get__", fn: PySlice.start(_:zelf:))
+      self.add(py, type: type, name: "start", property: start, doc: nil)
+      let stop = FunctionWrapper(name: "__get__", fn: PySlice.stop(_:zelf:))
+      self.add(py, type: type, name: "stop", property: stop, doc: nil)
+      let step = FunctionWrapper(name: "__get__", fn: PySlice.step(_:zelf:))
+      self.add(py, type: type, name: "step", property: step, doc: nil)
 
       let __eq__ = FunctionWrapper(name: "__eq__", fn: PySlice.__eq__(_:zelf:other:))
       self.add(py, type: type, name: "__eq__", method: __eq__, doc: nil)
@@ -2833,6 +3108,13 @@ extension Py {
       let __init__ = FunctionWrapper(type: type, fn: PyStaticMethod.__init__(_:zelf:args:kwargs:))
       self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
 
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyStaticMethod.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+      let __dict__ = FunctionWrapper(name: "__get__", fn: PyStaticMethod.__dict__(_:zelf:))
+      self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
+      let __func__ = FunctionWrapper(name: "__get__", fn: PyStaticMethod.__func__(_:zelf:))
+      self.add(py, type: type, name: "__func__", property: __func__, doc: nil)
+
       let __get__ = FunctionWrapper(name: "__get__", fn: PyStaticMethod.__get__(_:zelf:object:type:))
       self.add(py, type: type, name: "__get__", method: __get__, doc: nil)
       let __isabstractmethod__ = FunctionWrapper(name: "__isabstractmethod__", fn: PyStaticMethod.__isabstractmethod__(_:zelf:))
@@ -2850,6 +3132,9 @@ extension Py {
 
       let __new__ = FunctionWrapper(type: type, fn: PyString.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyString.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
 
       let __eq__ = FunctionWrapper(name: "__eq__", fn: PyString.__eq__(_:zelf:other:))
       self.add(py, type: type, name: "__eq__", method: __eq__, doc: nil)
@@ -2975,6 +3260,9 @@ extension Py {
       let __new__ = FunctionWrapper(type: type, fn: PyStringIterator.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
 
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyStringIterator.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+
       let __getattribute__ = FunctionWrapper(name: "__getattribute__", fn: PyStringIterator.__getattribute__(_:zelf:name:))
       self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
       let __iter__ = FunctionWrapper(name: "__iter__", fn: PyStringIterator.__iter__(_:zelf:))
@@ -2999,6 +3287,15 @@ extension Py {
       let __init__ = FunctionWrapper(type: type, fn: PySuper.__init__(_:zelf:args:kwargs:))
       self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
 
+      let __class__ = FunctionWrapper(name: "__get__", fn: PySuper.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+      let __thisclass__ = FunctionWrapper(name: "__get__", fn: PySuper.__thisclass__(_:zelf:))
+      self.add(py, type: type, name: "__thisclass__", property: __thisclass__, doc: nil)
+      let __self__ = FunctionWrapper(name: "__get__", fn: PySuper.__self__(_:zelf:))
+      self.add(py, type: type, name: "__self__", property: __self__, doc: nil)
+      let __self_class__ = FunctionWrapper(name: "__get__", fn: PySuper.__self_class__(_:zelf:))
+      self.add(py, type: type, name: "__self_class__", property: __self_class__, doc: nil)
+
       let __repr__ = FunctionWrapper(name: "__repr__", fn: PySuper.__repr__(_:zelf:))
       self.add(py, type: type, name: "__repr__", method: __repr__, doc: nil)
       let __getattribute__ = FunctionWrapper(name: "__getattribute__", fn: PySuper.__getattribute__(_:zelf:name:))
@@ -3015,6 +3312,9 @@ extension Py {
     private func fillTextFile(_ py: Py) {
       let type = self.textFile
       type.setBuiltinTypeDoc(py, value: PyTextFile.doc)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyTextFile.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
 
       let __repr__ = FunctionWrapper(name: "__repr__", fn: PyTextFile.__repr__(_:zelf:))
       self.add(py, type: type, name: "__repr__", method: __repr__, doc: nil)
@@ -3061,6 +3361,9 @@ extension Py {
 
       let __new__ = FunctionWrapper(type: type, fn: PyTuple.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyTuple.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
 
       let __eq__ = FunctionWrapper(name: "__eq__", fn: PyTuple.__eq__(_:zelf:other:))
       self.add(py, type: type, name: "__eq__", method: __eq__, doc: nil)
@@ -3112,6 +3415,9 @@ extension Py {
       let __new__ = FunctionWrapper(type: type, fn: PyTupleIterator.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
 
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyTupleIterator.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+
       let __getattribute__ = FunctionWrapper(name: "__getattribute__", fn: PyTupleIterator.__getattribute__(_:zelf:name:))
       self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
       let __iter__ = FunctionWrapper(name: "__iter__", fn: PyTupleIterator.__iter__(_:zelf:))
@@ -3135,6 +3441,30 @@ extension Py {
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
       let __init__ = FunctionWrapper(type: type, fn: PyType.__init__(_:zelf:args:kwargs:))
       self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
+
+      let __name__Get = FunctionWrapper(name: "__get__", fn: PyType.__name__(_:zelf:))
+      let __name__Set = FunctionWrapper(name: "__set__", fn: PyType.__name__(_:zelf:value:))
+      self.add(py, type: type, name: "__name__", property: __name__Get, setter: __name__Set, doc: nil)
+      let __qualname__Get = FunctionWrapper(name: "__get__", fn: PyType.__qualname__(_:zelf:))
+      let __qualname__Set = FunctionWrapper(name: "__set__", fn: PyType.__qualname__(_:zelf:value:))
+      self.add(py, type: type, name: "__qualname__", property: __qualname__Get, setter: __qualname__Set, doc: nil)
+      let __doc__Get = FunctionWrapper(name: "__get__", fn: PyType.__doc__(_:zelf:))
+      let __doc__Set = FunctionWrapper(name: "__set__", fn: PyType.__doc__(_:zelf:value:))
+      self.add(py, type: type, name: "__doc__", property: __doc__Get, setter: __doc__Set, doc: nil)
+      let __module__Get = FunctionWrapper(name: "__get__", fn: PyType.__module__(_:zelf:))
+      let __module__Set = FunctionWrapper(name: "__set__", fn: PyType.__module__(_:zelf:value:))
+      self.add(py, type: type, name: "__module__", property: __module__Get, setter: __module__Set, doc: nil)
+      let __dict__ = FunctionWrapper(name: "__get__", fn: PyType.__dict__(_:zelf:))
+      self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyType.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+      let __base__ = FunctionWrapper(name: "__get__", fn: PyType.__base__(_:zelf:))
+      self.add(py, type: type, name: "__base__", property: __base__, doc: nil)
+      let __bases__Get = FunctionWrapper(name: "__get__", fn: PyType.__bases__(_:zelf:))
+      let __bases__Set = FunctionWrapper(name: "__set__", fn: PyType.__bases__(_:zelf:value:))
+      self.add(py, type: type, name: "__bases__", property: __bases__Get, setter: __bases__Set, doc: nil)
+      let __mro__ = FunctionWrapper(name: "__get__", fn: PyType.__mro__(_:zelf:))
+      self.add(py, type: type, name: "__mro__", property: __mro__, doc: nil)
 
       let __repr__ = FunctionWrapper(name: "__repr__", fn: PyType.__repr__(_:zelf:))
       self.add(py, type: type, name: "__repr__", method: __repr__, doc: nil)
@@ -3169,6 +3499,9 @@ extension Py {
 
       let __new__ = FunctionWrapper(type: type, fn: PyZip.__new__(_:type:args:kwargs:))
       self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyZip.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
 
       let __getattribute__ = FunctionWrapper(name: "__getattribute__", fn: PyZip.__getattribute__(_:zelf:name:))
       self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
