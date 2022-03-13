@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import BigInt
 import VioletCore
@@ -62,4 +61,3 @@ internal func checkInvariants() {
   // Stored on every object, so kind of important.
   checkMemorySize(of: PyObjectHeader.LazyDict.self, expectedSize: 8)
 }
-*/

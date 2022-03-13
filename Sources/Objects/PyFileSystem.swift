@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import FileSystem
 import VioletCore
@@ -8,7 +7,7 @@ import VioletCore
 
 // MARK: - Stat
 
-public enum PyFileSystem_StatResult {
+public enum PyFileSystemStatResult {
   /// Valid result
   case value(Stat)
   /// No such file or directory
@@ -19,7 +18,7 @@ public enum PyFileSystem_StatResult {
 
 // MARK: - Readdir
 
-public enum PyFileSystem_ReaddirResult {
+public enum PyFileSystemReaddirResult {
   /// List containing names of the entries
   case entries(Readdir)
   /// No such file or directory
@@ -65,18 +64,18 @@ public protocol PyFileSystem: AnyObject {
   /// Information about given file/dir.
   ///
   /// Always chase the link.
-  func stat(fd: Int32) -> PyFileSystem_StatResult
+  func stat(fd: Int32) -> PyFileSystemStatResult
   /// Information about given file/dir.
   ///
   /// Always chase the link.
-  func stat(path: Path) -> PyFileSystem_StatResult
+  func stat(path: Path) -> PyFileSystemStatResult
 
   // MARK: - Read dir
 
   /// List containing the names of the entries in the directory given by `fd`.
-  func readdir(fd: Int32) -> PyFileSystem_ReaddirResult
+  func readdir(fd: Int32) -> PyFileSystemReaddirResult
   /// List containing the names of the entries in the directory given by `path`.
-  func readdir(path: Path) -> PyFileSystem_ReaddirResult
+  func readdir(path: Path) -> PyFileSystemReaddirResult
 
   // MARK: - Read
 
@@ -186,5 +185,3 @@ extension PyFileSystem {
     return fd.readToEnd()
   }
 }
-
-*/

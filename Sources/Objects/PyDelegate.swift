@@ -1,4 +1,3 @@
-/* MARKER
 // swiftlint:disable function_parameter_count
 
 /// Access to dynamic (runtime-dependent) data.
@@ -41,5 +40,3 @@ public protocol PyDelegate: AnyObject {
             locals: PyDict,
             closure: PyTuple?) -> PyResult<PyObject>
 }
-
-*/
