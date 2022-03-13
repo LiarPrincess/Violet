@@ -65,7 +65,7 @@ public struct PyDict: PyObjectMixin {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, .__eq__)
     }
 
-    return Self.isEqual(py, zelf: zelf, other: other)
+    return zelf.isEqual(py, other: other)
   }
 
   // sourcery: pymethod = __ne__
@@ -74,20 +74,25 @@ public struct PyDict: PyObjectMixin {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ne__)
     }
 
-    let isEqual = Self.isEqual(py, zelf: zelf, other: other)
+    let isEqual = zelf.isEqual(py, other: other)
     return isEqual.not
   }
 
-  private static func isEqual(_ py: Py, zelf: PyDict, other: PyObject) -> CompareResult {
+  internal func isEqual(_ py: Py, other: PyObject) -> CompareResult {
     guard let other = py.cast.asDict(other) else {
       return .notImplemented
     }
 
-    guard zelf.elements.count == other.elements.count else {
+    let result = self.isEqual(py, other: other)
+    return CompareResult(result)
+  }
+
+  internal func isEqual(_ py: Py, other: PyDict) -> PyResult<Bool> {
+    guard self.elements.count == other.elements.count else {
       return .value(false)
     }
 
-    for entry in zelf.elements {
+    for entry in self.elements {
       let otherValue: PyObject
       switch other.elements.get(py, key: entry.key) {
       case .value(let o): otherValue = o
@@ -673,18 +678,14 @@ public struct PyDict: PyObjectMixin {
     }
 
     // Specific 'update' methods are in different file
-    if let arg = args.first {
-      switch Self.update(py, zelf: zelf, from: arg, onKeyDuplicate: .continue) {
-      case .value: break
-      case .error(let e): return .error(e)
-      }
+    if let arg = args.first,
+       let e = zelf.update(py, from: arg, onKeyDuplicate: .continue) {
+      return .error(e)
     }
 
-    if let kwargs = kwargs {
-      switch Self.update(py, zelf: zelf, from: kwargs.asObject, onKeyDuplicate: .continue) {
-      case .value: break
-      case .error(let e): return .error(e)
-      }
+    if let kwargs = kwargs,
+       let e = zelf.update(py, from: kwargs.asObject, onKeyDuplicate: .continue) {
+      return .error(e)
     }
 
     return .none(py)
@@ -700,8 +701,12 @@ public struct PyDict: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "copy")
     }
 
-    let result = py.newDict(elements: zelf.elements)
+    let result = zelf.copy(py)
     return PyResult(result)
+  }
+
+  internal func copy(_ py: Py) -> PyDict {
+    return py.newDict(elements: self.elements)
   }
 
   // MARK: - Pop
@@ -815,11 +820,10 @@ public struct PyDict: PyObjectMixin {
     assert(py.cast.isExactlyDict(dict.asObject))
 
     for entry in dict.elements {
-      if let e = Self.updateSingleEntry(py,
-                                        zelf: target,
-                                        key: entry.key,
-                                        value: value,
-                                        onKeyDuplicate: Self.onFillFromKeysDuplicate) {
+      if let e = target.updateSingleEntry(py,
+                                          key: entry.key,
+                                          value: value,
+                                          onKeyDuplicate: Self.onFillFromKeysDuplicate) {
         return .error(e)
       }
     }
@@ -836,11 +840,10 @@ public struct PyDict: PyObjectMixin {
 
     for element in set.elements {
       let key = Key(hash: element.hash, object: element.object)
-      if let e = Self.updateSingleEntry(py,
-                                        zelf: target,
-                                        key: key,
-                                        value: value,
-                                        onKeyDuplicate: Self.onFillFromKeysDuplicate) {
+      if let e = target.updateSingleEntry(py,
+                                          key: key,
+                                          value: value,
+                                          onKeyDuplicate: Self.onFillFromKeysDuplicate) {
         return .error(e)
       }
     }

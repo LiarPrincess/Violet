@@ -146,6 +146,7 @@ public struct Py {
   public func newMethod(fn: PyFunction, object: PyObject) -> PyMethod { fatalError() }
   public func newMethod(fn: PyObject, object: PyObject) -> PyResult<PyMethod> { fatalError() }
 
+  // Check if names are '__get__/__set__/__det__'
   public func newProperty(get: FunctionWrapper,
                           set: FunctionWrapper?,
                           del: FunctionWrapper?,

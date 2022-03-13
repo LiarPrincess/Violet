@@ -65,7 +65,7 @@ extension PyResult where Wrapped == PyObject {
     switch result {
     case let .value(dir):
       let list = py.newList(elements: dir.elements)
-      switch list.sort(key: nil, isReverse: false) {
+      switch list.sort(py, key: nil, isReverse: false) {
       case .value:
         self = PyResult(list)
       case .error(let e):
