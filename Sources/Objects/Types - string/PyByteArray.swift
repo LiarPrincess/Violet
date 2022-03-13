@@ -459,7 +459,7 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
                             zelf: PyObject,
                             object: PyObject,
                             start: PyObject?,
-                            end: PyObject?) -> PyResult<BigInt> {
+                            end: PyObject?) -> PyResult<PyObject> {
     return Self.abstractFind(py, zelf: zelf, object: object, start: start, end: end)
   }
 
@@ -478,7 +478,7 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
                              zelf: PyObject,
                              object: PyObject,
                              start: PyObject?,
-                             end: PyObject?) -> PyResult<BigInt> {
+                             end: PyObject?) -> PyResult<PyObject> {
     return Self.abstractRfind(py, zelf: zelf, object: object, start: start, end: end)
   }
 

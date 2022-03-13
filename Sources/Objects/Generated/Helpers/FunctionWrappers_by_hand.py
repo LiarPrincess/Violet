@@ -26,6 +26,26 @@ def get_hand_written_function_wrappers() -> List[FunctionWrapperByHand]:
             '(Object, *args, **kwargs) -> PyResult<PyObject>',
             'Python `__init__` function.'
         ),
+
+        FunctionWrapperByHand(
+            'CompareWrapper',
+            'compare',
+            '(Py, PyObject, PyObject) -> CompareResult',
+            'Python `__eq__`, `__ne__`, `__lt__`, `__le__`, `__gt__`, `__ge__` functions.'
+        ),
+        FunctionWrapperByHand(
+            'HashWrapper',
+            'hash',
+            '(Py, PyObject) -> HashResult',
+            'Python `__hash__` function.'
+        ),
+        FunctionWrapperByHand(
+            'DirWrapper',
+            'dir',
+            '(Py, PyObject) -> PyResult<DirResult>',
+            'Python `__dir__` function.'
+        ),
+
         FunctionWrapperByHand(
             'ArgsKwargsFunction',
             'argsKwargsFunction',

@@ -52,22 +52,26 @@ public enum CompareResult {
       return .error(e)
     }
   }
+}
 
-  public func toResult(_ py: Py) -> PyResult<PyObject> {
-    switch self {
-    case .value(let value):
-      let bool = value ? py.true : py.false
-      return .value(bool.asObject)
+extension PyResult where Wrapped == PyObject {
+  public init(_ py: Py, _ result: CompareResult) {
+    switch result {
+    case .value(let bool):
+      self = PyResult(py, bool)
+
     case .notImplemented:
-      let value = py.notImplemented
-      return .value(value.asObject)
+      self = PyResult(py.notImplemented)
+
     case let .invalidSelfArgument(object, expectedType, operation):
-      let error = py.newInvalidSelfArgumentError(object: object,
-                                                 expectedType: expectedType,
-                                                 fnName: operation.rawValue)
-      return .error(error.asBaseException)
+      let fnName = operation.rawValue
+      let e = py.newInvalidSelfArgumentError(object: object,
+                                             expectedType: expectedType,
+                                             fnName: fnName)
+      self = .error(e.asBaseException)
+
     case .error(let e):
-      return .error(e)
+      self = .error(e)
     }
   }
 }

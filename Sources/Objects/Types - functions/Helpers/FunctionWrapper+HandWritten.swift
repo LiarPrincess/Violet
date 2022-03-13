@@ -5,7 +5,7 @@ extension FunctionWrapper {
   // MARK: - New
 
   /// Python `__new__` function.
-  internal typealias NewFn = (Py, PyType, [PyObject], PyDict?) -> PyResult<PyObject>
+  public typealias NewFn = (Py, PyType, [PyObject], PyDict?) -> PyResult<PyObject>
 
   internal struct NewWrapper {
     private let fn: NewFn
@@ -45,7 +45,7 @@ extension FunctionWrapper {
     }
   }
 
-  internal init(type: PyType, fn: @escaping NewFn) {
+  public init(type: PyType, fn: @escaping NewFn) {
     let wrapper = NewWrapper(type: type, fn: fn)
     self.kind = .__new__(wrapper)
   }
@@ -53,7 +53,7 @@ extension FunctionWrapper {
   // MARK: - Init
 
   /// Python `__init__` function.
-  internal typealias InitFn = (Py, PyObject, [PyObject], PyDict?) -> PyResult<PyObject>
+  public typealias InitFn = (Py, PyObject, [PyObject], PyDict?) -> PyResult<PyObject>
 
   internal struct InitWrapper {
     private let fn: InitFn
@@ -77,15 +77,120 @@ extension FunctionWrapper {
     }
   }
 
-  internal init(type: PyType, fn: @escaping InitFn) {
+  public init(type: PyType, fn: @escaping InitFn) {
     let wrapper = InitWrapper(type: type, fn: fn)
     self.kind = .__init__(wrapper)
+  }
+
+  // MARK: - Compare
+
+  /// Python `__eq__`, `__ne__`, `__lt__`, `__le__`, `__gt__`, `__ge__` functions.
+  public typealias CompareFn = (Py, PyObject, PyObject) -> CompareResult
+
+  internal struct CompareWrapper {
+    private let fn: CompareFn
+    internal let fnName: String
+
+    fileprivate init(name: String, fn: @escaping CompareFn) {
+      self.fnName = name
+      self.fn = fn
+    }
+
+    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+      // This function has only positional arguments, so any kwargs -> error
+      if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
+        return .error(e.asBaseException)
+      }
+
+      switch args.count {
+      case 2:
+        let result = self.fn(py, args[0], args[1])
+        return PyResult(py, result)
+      default:
+        return .typeError(py, message: "expected 2 arguments, got \(args.count)")
+      }
+    }
+  }
+
+  public init(name: String, fn: @escaping CompareFn) {
+    let wrapper = CompareWrapper(name: name, fn: fn)
+    self.kind = .compare(wrapper)
+  }
+
+  // MARK: - Hash
+
+  /// Python `__hash__` function.
+  public typealias HashFn = (Py, PyObject) -> HashResult
+
+  internal struct HashWrapper {
+    private let fn: HashFn
+    internal let fnName: String
+
+    fileprivate init(name: String, fn: @escaping HashFn) {
+      self.fnName = name
+      self.fn = fn
+    }
+
+    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+      // This function has only positional arguments, so any kwargs -> error
+      if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
+        return .error(e.asBaseException)
+      }
+
+      switch args.count {
+      case 1:
+        let result = self.fn(py, args[0])
+        return PyResult(py, result)
+      default:
+        return .typeError(py, message: "expected 1 argument, got \(args.count)")
+      }
+    }
+  }
+
+  public init(name: String, fn: @escaping HashFn) {
+    let wrapper = HashWrapper(name: name, fn: fn)
+    self.kind = .hash(wrapper)
+  }
+
+  // MARK: - Dir
+
+  /// Python `__dir__` function.
+  public typealias DirFn = (Py, PyObject) -> PyResult<DirResult>
+
+  internal struct DirWrapper {
+    private let fn: DirFn
+    internal let fnName: String
+
+    fileprivate init(name: String, fn: @escaping DirFn) {
+      self.fnName = name
+      self.fn = fn
+    }
+
+    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+      // This function has only positional arguments, so any kwargs -> error
+      if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
+        return .error(e.asBaseException)
+      }
+
+      switch args.count {
+      case 1:
+        let result = self.fn(py, args[0])
+        return PyResult(py, result)
+      default:
+        return .typeError(py, message: "expected 1 argument, got \(args.count)")
+      }
+    }
+  }
+
+  public init(name: String, fn: @escaping DirFn) {
+    let wrapper = DirWrapper(name: name, fn: fn)
+    self.kind = .dir(wrapper)
   }
 
   // MARK: - Args kwargs method
 
   /// Function with *args and **kwargs.
-  internal typealias ArgsKwargsMethodFn = (Py, PyObject, [PyObject], PyDict?) -> PyResult<PyObject>
+  public typealias ArgsKwargsMethodFn = (Py, PyObject, [PyObject], PyDict?) -> PyResult<PyObject>
 
   internal struct ArgsKwargsMethod {
     internal let fnName: String
@@ -108,7 +213,7 @@ extension FunctionWrapper {
     }
   }
 
-  internal init(name: String, fn: @escaping ArgsKwargsMethodFn) {
+  public init(name: String, fn: @escaping ArgsKwargsMethodFn) {
     let wrapper = ArgsKwargsMethod(name: name, fn: fn)
     self.kind = .argsKwargsMethod(wrapper)
   }
@@ -116,7 +221,7 @@ extension FunctionWrapper {
   // MARK: - Args kwargs function
 
   /// Function with *args and **kwargs.
-  internal typealias ArgsKwargsFunctionFn = (Py, [PyObject], PyDict?) -> PyResult<PyObject>
+  public typealias ArgsKwargsFunctionFn = (Py, [PyObject], PyDict?) -> PyResult<PyObject>
 
   internal struct ArgsKwargsFunction {
     private let fn: ArgsKwargsFunctionFn
@@ -132,7 +237,7 @@ extension FunctionWrapper {
     }
   }
 
-  internal init(name: String, fn: @escaping ArgsKwargsFunctionFn) {
+  public init(name: String, fn: @escaping ArgsKwargsFunctionFn) {
     let wrapper = ArgsKwargsFunction(name: name, fn: fn)
     self.kind = .argsKwargsFunction(wrapper)
   }
