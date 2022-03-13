@@ -14,7 +14,10 @@ public struct PyStopIteration: PyErrorMixin {
   internal static let stopIterationDoc = "Signal the end from iterator.__next__()."
 
   // sourcery: includeInLayout
-  internal var value: PyObject { self.valuePtr.pointee }
+  internal var value: PyObject {
+    get { self.valuePtr.pointee }
+    nonmutating set { self.valuePtr.pointee = newValue }
+  }
 
   public let ptr: RawPtr
 
@@ -26,6 +29,24 @@ public struct PyStopIteration: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            value: PyObject,
+                           traceback: PyTraceback?,
+                           cause: PyBaseException?,
+                           context: PyBaseException?,
+                           suppressContext: Bool) {
+    let args = py.newTuple(elements: value)
+    self.errorHeader.initialize(py,
+                                type: type,
+                                args: args,
+                                traceback: traceback,
+                                cause: cause,
+                                context: context,
+                                suppressContext: suppressContext)
+    self.valuePtr.initialize(to: value)
+  }
+
+  // swiftlint:disable:next function_parameter_count
+  internal func initialize(_ py: Py,
+                           type: PyType,
                            args: PyTuple,
                            traceback: PyTraceback?,
                            cause: PyBaseException?,
@@ -38,6 +59,8 @@ public struct PyStopIteration: PyErrorMixin {
                                 cause: cause,
                                 context: context,
                                 suppressContext: suppressContext)
+
+    let value = Self.extractValue(py, args: args.elements)
     self.valuePtr.initialize(to: value)
   }
 
@@ -48,55 +71,84 @@ public struct PyStopIteration: PyErrorMixin {
     let zelf = PyStopIteration(ptr: ptr)
     return "PyStopIteration(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
-}
-
-/* MARKER
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal static func getClass(stopIteration: PyStopIteration) -> PyType {
-    return stopIteration.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(stopIteration: PyStopIteration) -> PyDict {
-    return stopIteration.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // MARK: - Value
 
   // sourcery: pyproperty = value, setter
-  internal func getValue() -> PyObject {
-    return self.value
+  internal static func value(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "value")
+    }
+
+    return PyResult(zelf.value)
   }
 
-  internal func setValue(_ value: PyObject) -> PyResult<Void> {
-    self.value = value
-    return .value()
+  internal static func value(_ py: Py,
+                             zelf: PyObject,
+                             value: PyObject?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "value")
+    }
+
+    zelf.value = value?.asObject ?? py.none.asObject
+    return .none(py)
   }
 
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyStopIterationNew(type: PyType,
-                                          args: [PyObject],
-                                          kwargs: PyDict?) -> PyResult<PyStopIteration> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newStopIteration(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newStopIteration(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  internal func pyStopIterationInit(args: [PyObject],
-                                    kwargs: PyDict?) -> PyResult<PyNone> {
-    self.value = Self.extractValue(args: args)
-    return self.pyExceptionInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    zelf.value = Self.extractValue(py, args: args)
+    return PyException.pyExceptionInit(args: args, kwargs: kwargs)
+  }
+
+  private static func extractValue(_ py: Py, args: [PyObject]) -> PyObject {
+    return args.first ?? py.none.asObject
   }
 }
-
-*/

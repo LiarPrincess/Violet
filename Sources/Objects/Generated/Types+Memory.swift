@@ -6949,7 +6949,6 @@ extension PyMemory {
     msg: PyObject?,
     moduleName: PyObject?,
     modulePath: PyObject?,
-    args: PyTuple,
     traceback: PyTraceback?,
     cause: PyBaseException?,
     context: PyBaseException?,
@@ -6965,7 +6964,37 @@ extension PyMemory {
       msg: msg,
       moduleName: moduleName,
       modulePath: modulePath,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+
+  /// Allocate a new instance of `ImportError` type.
+  public func newImportError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    moduleName: PyObject?,
+    modulePath: PyObject?,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyImportError {
+    let typeLayout = PyImportError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyImportError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
       args: args,
+      moduleName: moduleName,
+      modulePath: modulePath,
       traceback: traceback,
       cause: cause,
       context: context,
@@ -9010,7 +9039,6 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     value: PyObject,
-    args: PyTuple,
     traceback: PyTraceback?,
     cause: PyBaseException?,
     context: PyBaseException?,
@@ -9024,6 +9052,32 @@ extension PyMemory {
       py,
       type: type,
       value: value,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+
+  /// Allocate a new instance of `StopIteration` type.
+  public func newStopIteration(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyStopIteration {
+    let typeLayout = PyStopIteration.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyStopIteration(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
       args: args,
       traceback: traceback,
       cause: cause,
@@ -9132,7 +9186,6 @@ extension PyMemory {
     offset: PyObject?,
     text: PyObject?,
     printFileAndLine: PyObject?,
-    args: PyTuple,
     traceback: PyTraceback?,
     cause: PyBaseException?,
     context: PyBaseException?,
@@ -9151,6 +9204,32 @@ extension PyMemory {
       offset: offset,
       text: text,
       printFileAndLine: printFileAndLine,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+
+  /// Allocate a new instance of `SyntaxError` type.
+  public func newSyntaxError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PySyntaxError {
+    let typeLayout = PySyntaxError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PySyntaxError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
       args: args,
       traceback: traceback,
       cause: cause,
@@ -9392,7 +9471,6 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     code: PyObject?,
-    args: PyTuple,
     traceback: PyTraceback?,
     cause: PyBaseException?,
     context: PyBaseException?,
@@ -9406,6 +9484,32 @@ extension PyMemory {
       py,
       type: type,
       code: code,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+
+  /// Allocate a new instance of `SystemExit` type.
+  public func newSystemExit(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PySystemExit {
+    let typeLayout = PySystemExit.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PySystemExit(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
       args: args,
       traceback: traceback,
       cause: cause,

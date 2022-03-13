@@ -118,23 +118,42 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
-    if zelf.isEmpty {
-      return PyResult(py, interned: "()")
+    switch zelf.repr(py) {
+    case let .empty(s),
+         let .reprLock(s):
+      return PyResult(py, interned: s)
+    case let .value(s):
+      return PyResult(py, s)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  internal enum Repr {
+    case empty(String)
+    case reprLock(String)
+    case value(String)
+    case error(PyBaseException)
+  }
+
+  internal func repr(_ py: Py) -> Repr {
+    if self.isEmpty {
+      return .empty("()")
     }
 
     // While not mutable, it is still possible to end up with a cycle in a tuple
     // through an object that stores itself within a tuple (and thus infinitely
     // asks for the repr of itself).
-    if zelf.hasReprLock {
-      return PyResult(py, interned: "(...)")
+    if self.hasReprLock {
+      return .reprLock("(...)")
     }
 
-    return zelf.withReprLock {
-      switch Self.abstractJoinElementsForRepr(py, zelf: zelf) {
+    return self.withReprLock {
+      switch Self.abstractJoinElementsForRepr(py, zelf: self) {
       case let .value(elements):
-        let commaIfSingleElement = zelf.count == 1 ? "," : ""
+        let commaIfSingleElement = self.count == 1 ? "," : ""
         let result = "(" + elements + commaIfSingleElement + ")"
-        return PyResult(py, result)
+        return .value(result)
 
       case let .error(e):
         return .error(e)

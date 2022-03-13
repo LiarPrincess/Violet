@@ -43,28 +43,33 @@ public struct PyKeyError: PyErrorMixin {
     let zelf = PyKeyError(ptr: ptr)
     return "PyKeyError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
-}
-
-/* MARKER
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal static func getClass(keyError: PyKeyError) -> PyType {
-    return keyError.type
+  internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {
+    return zelf.type
   }
 
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  internal static func getDict(keyError: PyKeyError) -> PyDict {
-    return keyError.__dict__
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__dict__")
+    }
+
+    return PyResult(zelf.__dict__)
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __str__
-  internal static func str(keyError: PyKeyError) -> PyResult<String> {
+  internal static func __str__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__str__")
+    }
+
     // Why this is static? See comment in 'PyBaseException.str'.
 
     // If args is a tuple of exactly one item, apply repr to args[0].
@@ -76,35 +81,51 @@ public struct PyKeyError: PyErrorMixin {
     // string, that string will be displayed in quotes.  Too bad.
     // If args is anything else, use the default BaseException__str__().
 
-    let args = keyError.getArgs()
+    let args = zelf.args
 
-    switch args.getLength() {
+    switch args.count {
     case 1:
       let first = args.elements[0]
-      return Py.reprString(object: first)
+      let result = py.repr(object: first)
+      return PyResult(result)
     default:
-      return Self.str(baseException: keyError)
+      let zelfAsBase = zelf.asBaseException
+      return PyBaseException.str(py, zelf: zelfAsBase)
     }
   }
 
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyKeyErrorNew(type: PyType,
-                                     args: [PyObject],
-                                     kwargs: PyDict?) -> PyResult<PyKeyError> {
-    let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newKeyError(type: type, args: argsTuple)
-    return .value(result)
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let argsTuple = py.newTuple(elements: args)
+    let result = py.memory.newKeyError(
+      py,
+      type: type,
+      args: argsTuple,
+      traceback: nil,
+      cause: nil,
+      context: nil,
+      suppressContext: PyErrorHeader.defaultSuppressContext
+    )
+
+    return PyResult(result)
   }
 
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  internal func pyKeyErrorInit(args: [PyObject],
-                               kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyLookupErrorInit(args: args, kwargs: kwargs)
+  internal static func __init__(_ py: Py,
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyObject> {
+    guard let zelf = Self.downcast(py, zelf) else {
+      return Self.invalidZelfArgument(py, zelf, "__init__")
+    }
+
+    return PyLookupError.pyLookupErrorInit(args: args, kwargs: kwargs)
   }
 }
-
-*/
