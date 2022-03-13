@@ -1199,12 +1199,27 @@ extension Py {
 
     // MARK: - Helpers
 
+    /// Adds `method` to `type.__dict__`.
+    private func add(_ py: Py, type: PyType, name: String, method: FunctionWrapper, doc: String?) {
+      let builtinFunction = py.newBuiltinFunction(fn: method, module: nil, doc: doc)
+      let value = builtinFunction.asObject
+      self.add(py, type: type, name: name, value: value)
+    }
+
+    /// Adds `staticmethod` to `type.__dict__`.
+    private func add(_ py: Py, type: PyType, name: String, staticMethod: FunctionWrapper, doc: String?) {
+      let builtinFunction = py.newBuiltinFunction(fn: staticMethod, module: nil, doc: doc)
+      let staticMethod = py.newStaticMethod(callable: builtinFunction)
+      let value = staticMethod.asObject
+      self.add(py, type: type, name: name, value: value)
+    }
+
     /// Adds value to `type.__dict__`.
-    private func add<T: PyObjectMixin>(_ py: Py, type: PyType, name: String, value: T) {
+    private func add(_ py: Py, type: PyType, name: String, value: PyObject) {
       let __dict__ = type.header.__dict__
       let interned = py.intern(string: name)
 
-      switch __dict__.set(py, key: interned, value: value.asObject) {
+      switch __dict__.set(py, key: interned, value: value) {
       case .ok:
         break
       case .error(let e):
@@ -1218,6 +1233,11 @@ extension Py {
     private func fillBaseException(_ py: Py) {
       let type = self.baseException
       type.setBuiltinTypeDoc(py, value: PyBaseException.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyBaseException.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyBaseException.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let baseExceptionStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1228,6 +1248,11 @@ extension Py {
     private func fillSystemExit(_ py: Py) {
       let type = self.systemExit
       type.setBuiltinTypeDoc(py, value: PySystemExit.systemExitDoc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PySystemExit.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PySystemExit.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let systemExitStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1238,6 +1263,11 @@ extension Py {
     private func fillKeyboardInterrupt(_ py: Py) {
       let type = self.keyboardInterrupt
       type.setBuiltinTypeDoc(py, value: PyKeyboardInterrupt.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyKeyboardInterrupt.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyKeyboardInterrupt.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let keyboardInterruptStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1248,6 +1278,11 @@ extension Py {
     private func fillGeneratorExit(_ py: Py) {
       let type = self.generatorExit
       type.setBuiltinTypeDoc(py, value: PyGeneratorExit.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyGeneratorExit.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyGeneratorExit.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let generatorExitStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1258,6 +1293,11 @@ extension Py {
     private func fillException(_ py: Py) {
       let type = self.exception
       type.setBuiltinTypeDoc(py, value: PyException.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyException.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyException.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let exceptionStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1268,6 +1308,11 @@ extension Py {
     private func fillStopIteration(_ py: Py) {
       let type = self.stopIteration
       type.setBuiltinTypeDoc(py, value: PyStopIteration.stopIterationDoc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyStopIteration.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyStopIteration.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let stopIterationStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1278,6 +1323,11 @@ extension Py {
     private func fillStopAsyncIteration(_ py: Py) {
       let type = self.stopAsyncIteration
       type.setBuiltinTypeDoc(py, value: PyStopAsyncIteration.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyStopAsyncIteration.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyStopAsyncIteration.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let stopAsyncIterationStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1288,6 +1338,11 @@ extension Py {
     private func fillArithmeticError(_ py: Py) {
       let type = self.arithmeticError
       type.setBuiltinTypeDoc(py, value: PyArithmeticError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyArithmeticError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyArithmeticError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let arithmeticErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1298,6 +1353,11 @@ extension Py {
     private func fillFloatingPointError(_ py: Py) {
       let type = self.floatingPointError
       type.setBuiltinTypeDoc(py, value: PyFloatingPointError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyFloatingPointError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyFloatingPointError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let floatingPointErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1308,6 +1368,11 @@ extension Py {
     private func fillOverflowError(_ py: Py) {
       let type = self.overflowError
       type.setBuiltinTypeDoc(py, value: PyOverflowError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyOverflowError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyOverflowError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let overflowErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1318,6 +1383,11 @@ extension Py {
     private func fillZeroDivisionError(_ py: Py) {
       let type = self.zeroDivisionError
       type.setBuiltinTypeDoc(py, value: PyZeroDivisionError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyZeroDivisionError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyZeroDivisionError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let zeroDivisionErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1328,6 +1398,11 @@ extension Py {
     private func fillAssertionError(_ py: Py) {
       let type = self.assertionError
       type.setBuiltinTypeDoc(py, value: PyAssertionError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyAssertionError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyAssertionError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let assertionErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1338,6 +1413,11 @@ extension Py {
     private func fillAttributeError(_ py: Py) {
       let type = self.attributeError
       type.setBuiltinTypeDoc(py, value: PyAttributeError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyAttributeError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyAttributeError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let attributeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1348,6 +1428,11 @@ extension Py {
     private func fillBufferError(_ py: Py) {
       let type = self.bufferError
       type.setBuiltinTypeDoc(py, value: PyBufferError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyBufferError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyBufferError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let bufferErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1358,6 +1443,11 @@ extension Py {
     private func fillEOFError(_ py: Py) {
       let type = self.eofError
       type.setBuiltinTypeDoc(py, value: PyEOFError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyEOFError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyEOFError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let eOFErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1368,6 +1458,11 @@ extension Py {
     private func fillImportError(_ py: Py) {
       let type = self.importError
       type.setBuiltinTypeDoc(py, value: PyImportError.importErrorDoc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyImportError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyImportError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let importErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1378,6 +1473,11 @@ extension Py {
     private func fillModuleNotFoundError(_ py: Py) {
       let type = self.moduleNotFoundError
       type.setBuiltinTypeDoc(py, value: PyModuleNotFoundError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyModuleNotFoundError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyModuleNotFoundError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let moduleNotFoundErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1388,6 +1488,11 @@ extension Py {
     private func fillLookupError(_ py: Py) {
       let type = self.lookupError
       type.setBuiltinTypeDoc(py, value: PyLookupError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyLookupError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyLookupError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let lookupErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1398,6 +1503,11 @@ extension Py {
     private func fillIndexError(_ py: Py) {
       let type = self.indexError
       type.setBuiltinTypeDoc(py, value: PyIndexError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyIndexError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyIndexError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let indexErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1408,6 +1518,11 @@ extension Py {
     private func fillKeyError(_ py: Py) {
       let type = self.keyError
       type.setBuiltinTypeDoc(py, value: PyKeyError.keyErrorDoc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyKeyError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyKeyError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let keyErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1418,6 +1533,11 @@ extension Py {
     private func fillMemoryError(_ py: Py) {
       let type = self.memoryError
       type.setBuiltinTypeDoc(py, value: PyMemoryError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyMemoryError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyMemoryError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let memoryErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1428,6 +1548,11 @@ extension Py {
     private func fillNameError(_ py: Py) {
       let type = self.nameError
       type.setBuiltinTypeDoc(py, value: PyNameError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyNameError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyNameError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let nameErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1438,6 +1563,11 @@ extension Py {
     private func fillUnboundLocalError(_ py: Py) {
       let type = self.unboundLocalError
       type.setBuiltinTypeDoc(py, value: PyUnboundLocalError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyUnboundLocalError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyUnboundLocalError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let unboundLocalErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1448,6 +1578,11 @@ extension Py {
     private func fillOSError(_ py: Py) {
       let type = self.osError
       type.setBuiltinTypeDoc(py, value: PyOSError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyOSError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyOSError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let oSErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1458,6 +1593,11 @@ extension Py {
     private func fillBlockingIOError(_ py: Py) {
       let type = self.blockingIOError
       type.setBuiltinTypeDoc(py, value: PyBlockingIOError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyBlockingIOError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyBlockingIOError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let blockingIOErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1468,6 +1608,11 @@ extension Py {
     private func fillChildProcessError(_ py: Py) {
       let type = self.childProcessError
       type.setBuiltinTypeDoc(py, value: PyChildProcessError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyChildProcessError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyChildProcessError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let childProcessErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1478,6 +1623,11 @@ extension Py {
     private func fillConnectionError(_ py: Py) {
       let type = self.connectionError
       type.setBuiltinTypeDoc(py, value: PyConnectionError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyConnectionError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyConnectionError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let connectionErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1488,6 +1638,11 @@ extension Py {
     private func fillBrokenPipeError(_ py: Py) {
       let type = self.brokenPipeError
       type.setBuiltinTypeDoc(py, value: PyBrokenPipeError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyBrokenPipeError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyBrokenPipeError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let brokenPipeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1498,6 +1653,11 @@ extension Py {
     private func fillConnectionAbortedError(_ py: Py) {
       let type = self.connectionAbortedError
       type.setBuiltinTypeDoc(py, value: PyConnectionAbortedError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyConnectionAbortedError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyConnectionAbortedError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let connectionAbortedErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1508,6 +1668,11 @@ extension Py {
     private func fillConnectionRefusedError(_ py: Py) {
       let type = self.connectionRefusedError
       type.setBuiltinTypeDoc(py, value: PyConnectionRefusedError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyConnectionRefusedError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyConnectionRefusedError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let connectionRefusedErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1518,6 +1683,11 @@ extension Py {
     private func fillConnectionResetError(_ py: Py) {
       let type = self.connectionResetError
       type.setBuiltinTypeDoc(py, value: PyConnectionResetError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyConnectionResetError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyConnectionResetError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let connectionResetErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1528,6 +1698,11 @@ extension Py {
     private func fillFileExistsError(_ py: Py) {
       let type = self.fileExistsError
       type.setBuiltinTypeDoc(py, value: PyFileExistsError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyFileExistsError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyFileExistsError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let fileExistsErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1538,6 +1713,11 @@ extension Py {
     private func fillFileNotFoundError(_ py: Py) {
       let type = self.fileNotFoundError
       type.setBuiltinTypeDoc(py, value: PyFileNotFoundError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyFileNotFoundError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyFileNotFoundError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let fileNotFoundErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1548,6 +1728,11 @@ extension Py {
     private func fillInterruptedError(_ py: Py) {
       let type = self.interruptedError
       type.setBuiltinTypeDoc(py, value: PyInterruptedError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyInterruptedError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyInterruptedError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let interruptedErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1558,6 +1743,11 @@ extension Py {
     private func fillIsADirectoryError(_ py: Py) {
       let type = self.isADirectoryError
       type.setBuiltinTypeDoc(py, value: PyIsADirectoryError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyIsADirectoryError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyIsADirectoryError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let isADirectoryErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1568,6 +1758,11 @@ extension Py {
     private func fillNotADirectoryError(_ py: Py) {
       let type = self.notADirectoryError
       type.setBuiltinTypeDoc(py, value: PyNotADirectoryError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyNotADirectoryError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyNotADirectoryError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let notADirectoryErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1578,6 +1773,11 @@ extension Py {
     private func fillPermissionError(_ py: Py) {
       let type = self.permissionError
       type.setBuiltinTypeDoc(py, value: PyPermissionError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyPermissionError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyPermissionError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let permissionErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1588,6 +1788,11 @@ extension Py {
     private func fillProcessLookupError(_ py: Py) {
       let type = self.processLookupError
       type.setBuiltinTypeDoc(py, value: PyProcessLookupError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyProcessLookupError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyProcessLookupError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let processLookupErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1598,6 +1803,11 @@ extension Py {
     private func fillTimeoutError(_ py: Py) {
       let type = self.timeoutError
       type.setBuiltinTypeDoc(py, value: PyTimeoutError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyTimeoutError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyTimeoutError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let timeoutErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1608,6 +1818,11 @@ extension Py {
     private func fillReferenceError(_ py: Py) {
       let type = self.referenceError
       type.setBuiltinTypeDoc(py, value: PyReferenceError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyReferenceError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyReferenceError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let referenceErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1618,6 +1833,11 @@ extension Py {
     private func fillRuntimeError(_ py: Py) {
       let type = self.runtimeError
       type.setBuiltinTypeDoc(py, value: PyRuntimeError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyRuntimeError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyRuntimeError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let runtimeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1628,6 +1848,11 @@ extension Py {
     private func fillNotImplementedError(_ py: Py) {
       let type = self.notImplementedError
       type.setBuiltinTypeDoc(py, value: PyNotImplementedError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyNotImplementedError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyNotImplementedError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let notImplementedErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1638,6 +1863,11 @@ extension Py {
     private func fillRecursionError(_ py: Py) {
       let type = self.recursionError
       type.setBuiltinTypeDoc(py, value: PyRecursionError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyRecursionError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyRecursionError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let recursionErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1648,6 +1878,11 @@ extension Py {
     private func fillSyntaxError(_ py: Py) {
       let type = self.syntaxError
       type.setBuiltinTypeDoc(py, value: PySyntaxError.syntaxErrorDoc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PySyntaxError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PySyntaxError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let syntaxErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1658,6 +1893,11 @@ extension Py {
     private func fillIndentationError(_ py: Py) {
       let type = self.indentationError
       type.setBuiltinTypeDoc(py, value: PyIndentationError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyIndentationError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyIndentationError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let indentationErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1668,6 +1908,11 @@ extension Py {
     private func fillTabError(_ py: Py) {
       let type = self.tabError
       type.setBuiltinTypeDoc(py, value: PyTabError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyTabError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyTabError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let tabErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1678,6 +1923,11 @@ extension Py {
     private func fillSystemError(_ py: Py) {
       let type = self.systemError
       type.setBuiltinTypeDoc(py, value: PySystemError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PySystemError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PySystemError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let systemErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1688,6 +1938,11 @@ extension Py {
     private func fillTypeError(_ py: Py) {
       let type = self.typeError
       type.setBuiltinTypeDoc(py, value: PyTypeError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyTypeError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyTypeError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let typeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1698,6 +1953,11 @@ extension Py {
     private func fillValueError(_ py: Py) {
       let type = self.valueError
       type.setBuiltinTypeDoc(py, value: PyValueError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyValueError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyValueError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let valueErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1708,6 +1968,11 @@ extension Py {
     private func fillUnicodeError(_ py: Py) {
       let type = self.unicodeError
       type.setBuiltinTypeDoc(py, value: PyUnicodeError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyUnicodeError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyUnicodeError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let unicodeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1718,6 +1983,11 @@ extension Py {
     private func fillUnicodeDecodeError(_ py: Py) {
       let type = self.unicodeDecodeError
       type.setBuiltinTypeDoc(py, value: PyUnicodeDecodeError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyUnicodeDecodeError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyUnicodeDecodeError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let unicodeDecodeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1728,6 +1998,11 @@ extension Py {
     private func fillUnicodeEncodeError(_ py: Py) {
       let type = self.unicodeEncodeError
       type.setBuiltinTypeDoc(py, value: PyUnicodeEncodeError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyUnicodeEncodeError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyUnicodeEncodeError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let unicodeEncodeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1738,6 +2013,11 @@ extension Py {
     private func fillUnicodeTranslateError(_ py: Py) {
       let type = self.unicodeTranslateError
       type.setBuiltinTypeDoc(py, value: PyUnicodeTranslateError.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyUnicodeTranslateError.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyUnicodeTranslateError.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let unicodeTranslateErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1748,6 +2028,11 @@ extension Py {
     private func fillWarning(_ py: Py) {
       let type = self.warning
       type.setBuiltinTypeDoc(py, value: PyWarning.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyWarning.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyWarning.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let warningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1758,6 +2043,11 @@ extension Py {
     private func fillDeprecationWarning(_ py: Py) {
       let type = self.deprecationWarning
       type.setBuiltinTypeDoc(py, value: PyDeprecationWarning.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyDeprecationWarning.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyDeprecationWarning.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let deprecationWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1768,6 +2058,11 @@ extension Py {
     private func fillPendingDeprecationWarning(_ py: Py) {
       let type = self.pendingDeprecationWarning
       type.setBuiltinTypeDoc(py, value: PyPendingDeprecationWarning.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyPendingDeprecationWarning.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyPendingDeprecationWarning.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let pendingDeprecationWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1778,6 +2073,11 @@ extension Py {
     private func fillRuntimeWarning(_ py: Py) {
       let type = self.runtimeWarning
       type.setBuiltinTypeDoc(py, value: PyRuntimeWarning.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyRuntimeWarning.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyRuntimeWarning.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let runtimeWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1788,6 +2088,11 @@ extension Py {
     private func fillSyntaxWarning(_ py: Py) {
       let type = self.syntaxWarning
       type.setBuiltinTypeDoc(py, value: PySyntaxWarning.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PySyntaxWarning.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PySyntaxWarning.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let syntaxWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1798,6 +2103,11 @@ extension Py {
     private func fillUserWarning(_ py: Py) {
       let type = self.userWarning
       type.setBuiltinTypeDoc(py, value: PyUserWarning.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyUserWarning.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyUserWarning.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let userWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1808,6 +2118,11 @@ extension Py {
     private func fillFutureWarning(_ py: Py) {
       let type = self.futureWarning
       type.setBuiltinTypeDoc(py, value: PyFutureWarning.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyFutureWarning.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyFutureWarning.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let futureWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1818,6 +2133,11 @@ extension Py {
     private func fillImportWarning(_ py: Py) {
       let type = self.importWarning
       type.setBuiltinTypeDoc(py, value: PyImportWarning.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyImportWarning.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyImportWarning.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let importWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1828,6 +2148,11 @@ extension Py {
     private func fillUnicodeWarning(_ py: Py) {
       let type = self.unicodeWarning
       type.setBuiltinTypeDoc(py, value: PyUnicodeWarning.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyUnicodeWarning.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyUnicodeWarning.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let unicodeWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1838,6 +2163,11 @@ extension Py {
     private func fillBytesWarning(_ py: Py) {
       let type = self.bytesWarning
       type.setBuiltinTypeDoc(py, value: PyBytesWarning.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyBytesWarning.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyBytesWarning.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let bytesWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1848,6 +2178,11 @@ extension Py {
     private func fillResourceWarning(_ py: Py) {
       let type = self.resourceWarning
       type.setBuiltinTypeDoc(py, value: PyResourceWarning.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyResourceWarning.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyResourceWarning.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let resourceWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
