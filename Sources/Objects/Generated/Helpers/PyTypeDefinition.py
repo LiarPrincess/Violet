@@ -1,5 +1,5 @@
 from typing import List
-from Sourcery import TypeInfo
+from Sourcery import TypeInfo, PyFunctionInfo
 from Helpers.NewTypeArguments import NewTypeArguments
 from Helpers.StaticMethod import ALL_STATIC_METHODS
 from Helpers.PyTypeDefinition_helpers import (
@@ -101,12 +101,27 @@ class PyTypeDefinition:
         print('''\
     // MARK: - Helpers
 
+    /// Adds `method` to `type.__dict__`.
+    private func add(_ py: Py, type: PyType, name: String, method: FunctionWrapper, doc: String?) {
+      let builtinFunction = py.newBuiltinFunction(fn: method, module: nil, doc: doc)
+      let value = builtinFunction.asObject
+      self.add(py, type: type, name: name, value: value)
+    }
+
+    /// Adds `staticmethod` to `type.__dict__`.
+    private func add(_ py: Py, type: PyType, name: String, staticMethod: FunctionWrapper, doc: String?) {
+      let builtinFunction = py.newBuiltinFunction(fn: staticMethod, module: nil, doc: doc)
+      let staticMethod = py.newStaticMethod(callable: builtinFunction)
+      let value = staticMethod.asObject
+      self.add(py, type: type, name: name, value: value)
+    }
+
     /// Adds value to `type.__dict__`.
-    private func add<T: PyObjectMixin>(_ py: Py, type: PyType, name: String, value: T) {
+    private func add(_ py: Py, type: PyType, name: String, value: PyObject) {
       let __dict__ = type.header.__dict__
       let interned = py.intern(string: name)
 
-      switch __dict__.set(py, key: interned, value: value.asObject) {
+      switch __dict__.set(py, key: interned, value: value) {
       case .ok:
         break
       case .error(let e):
@@ -137,6 +152,39 @@ class PyTypeDefinition:
             print(f'      type.setBuiltinTypeDoc(py, value: {swift_type_name}.{doc_property})')
         else:
             print(f'      type.setBuiltinTypeDoc(py, value: nil)')
+
+        # ================
+        # === New/init ===
+        # ================
+
+        def get_doc(fn: PyFunctionInfo) -> str:
+            nonlocal swift_type_name
+            static_doc_property = fn.swift_static_doc_property
+            return f'{swift_type_name}.{static_doc_property}' if static_doc_property else 'nil'
+
+        # __new__
+        has__new__ = False
+        for fn in self.t.python_static_functions:
+            python_name = fn.python_name
+            if not python_name == '__new__':
+                continue
+
+            print()
+            print(f'      let __new__ = FunctionWrapper(type: type, fn: {swift_type_name}.{fn.swift_selector})')
+            print(f'      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: {get_doc(fn)})')
+            has__new__ = True
+
+        # __init__
+        for fn in self.t.python_methods:
+            python_name = fn.python_name
+            if not python_name == '__init__':
+                continue
+
+            if not has__new__:
+                print()
+
+            print(f'      let __init__ = FunctionWrapper(type: type, fn: {swift_type_name}.{fn.swift_selector})')
+            print(f'      self.add(py, type: type, name: "__init__", method: __init__, doc: {get_doc(fn)})')
 
         print('    }')
         print()

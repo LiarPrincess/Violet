@@ -1022,12 +1022,27 @@ extension Py {
 
     // MARK: - Helpers
 
+    /// Adds `method` to `type.__dict__`.
+    private func add(_ py: Py, type: PyType, name: String, method: FunctionWrapper, doc: String?) {
+      let builtinFunction = py.newBuiltinFunction(fn: method, module: nil, doc: doc)
+      let value = builtinFunction.asObject
+      self.add(py, type: type, name: name, value: value)
+    }
+
+    /// Adds `staticmethod` to `type.__dict__`.
+    private func add(_ py: Py, type: PyType, name: String, staticMethod: FunctionWrapper, doc: String?) {
+      let builtinFunction = py.newBuiltinFunction(fn: staticMethod, module: nil, doc: doc)
+      let staticMethod = py.newStaticMethod(callable: builtinFunction)
+      let value = staticMethod.asObject
+      self.add(py, type: type, name: name, value: value)
+    }
+
     /// Adds value to `type.__dict__`.
-    private func add<T: PyObjectMixin>(_ py: Py, type: PyType, name: String, value: T) {
+    private func add(_ py: Py, type: PyType, name: String, value: PyObject) {
       let __dict__ = type.header.__dict__
       let interned = py.intern(string: name)
 
-      switch __dict__.set(py, key: interned, value: value.asObject) {
+      switch __dict__.set(py, key: interned, value: value) {
       case .ok:
         break
       case .error(let e):
@@ -1041,6 +1056,9 @@ extension Py {
     private func fillBool(_ py: Py) {
       let type = self.bool
       type.setBuiltinTypeDoc(py, value: PyBool.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyBool.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let boolStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1071,6 +1089,11 @@ extension Py {
     private func fillByteArray(_ py: Py) {
       let type = self.bytearray
       type.setBuiltinTypeDoc(py, value: PyByteArray.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyByteArray.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyByteArray.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let byteArrayStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1081,6 +1104,9 @@ extension Py {
     private func fillByteArrayIterator(_ py: Py) {
       let type = self.bytearray_iterator
       type.setBuiltinTypeDoc(py, value: PyByteArrayIterator.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyByteArrayIterator.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let byteArrayIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1091,6 +1117,9 @@ extension Py {
     private func fillBytes(_ py: Py) {
       let type = self.bytes
       type.setBuiltinTypeDoc(py, value: PyBytes.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyBytes.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let bytesStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1101,6 +1130,9 @@ extension Py {
     private func fillBytesIterator(_ py: Py) {
       let type = self.bytes_iterator
       type.setBuiltinTypeDoc(py, value: PyBytesIterator.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyBytesIterator.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let bytesIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1131,6 +1163,11 @@ extension Py {
     private func fillClassMethod(_ py: Py) {
       let type = self.classmethod
       type.setBuiltinTypeDoc(py, value: PyClassMethod.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyClassMethod.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyClassMethod.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let classMethodStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1151,6 +1188,9 @@ extension Py {
     private func fillComplex(_ py: Py) {
       let type = self.complex
       type.setBuiltinTypeDoc(py, value: PyComplex.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyComplex.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let complexStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1161,6 +1201,11 @@ extension Py {
     private func fillDict(_ py: Py) {
       let type = self.dict
       type.setBuiltinTypeDoc(py, value: PyDict.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyDict.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyDict.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let dictStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1171,6 +1216,9 @@ extension Py {
     private func fillDictItemIterator(_ py: Py) {
       let type = self.dict_itemiterator
       type.setBuiltinTypeDoc(py, value: PyDictItemIterator.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyDictItemIterator.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let dictItemIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1181,6 +1229,9 @@ extension Py {
     private func fillDictItems(_ py: Py) {
       let type = self.dict_items
       type.setBuiltinTypeDoc(py, value: PyDictItems.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyDictItems.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let dictItemsStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1191,6 +1242,9 @@ extension Py {
     private func fillDictKeyIterator(_ py: Py) {
       let type = self.dict_keyiterator
       type.setBuiltinTypeDoc(py, value: PyDictKeyIterator.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyDictKeyIterator.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let dictKeyIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1201,6 +1255,9 @@ extension Py {
     private func fillDictKeys(_ py: Py) {
       let type = self.dict_keys
       type.setBuiltinTypeDoc(py, value: PyDictKeys.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyDictKeys.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let dictKeysStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1211,6 +1268,9 @@ extension Py {
     private func fillDictValueIterator(_ py: Py) {
       let type = self.dict_valueiterator
       type.setBuiltinTypeDoc(py, value: PyDictValueIterator.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyDictValueIterator.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let dictValueIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1231,6 +1291,9 @@ extension Py {
     private func fillEllipsis(_ py: Py) {
       let type = self.ellipsis
       type.setBuiltinTypeDoc(py, value: PyEllipsis.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyEllipsis.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let ellipsisStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1241,6 +1304,9 @@ extension Py {
     private func fillEnumerate(_ py: Py) {
       let type = self.enumerate
       type.setBuiltinTypeDoc(py, value: PyEnumerate.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyEnumerate.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let enumerateStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1251,6 +1317,9 @@ extension Py {
     private func fillFilter(_ py: Py) {
       let type = self.filter
       type.setBuiltinTypeDoc(py, value: PyFilter.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyFilter.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let filterStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1261,6 +1330,9 @@ extension Py {
     private func fillFloat(_ py: Py) {
       let type = self.float
       type.setBuiltinTypeDoc(py, value: PyFloat.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyFloat.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: PyFloat.newDoc)
     }
 
     internal static let floatStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1281,6 +1353,9 @@ extension Py {
     private func fillFrozenSet(_ py: Py) {
       let type = self.frozenset
       type.setBuiltinTypeDoc(py, value: PyFrozenSet.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyFrozenSet.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let frozenSetStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1301,6 +1376,9 @@ extension Py {
     private func fillInt(_ py: Py) {
       let type = self.int
       type.setBuiltinTypeDoc(py, value: PyInt.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyInt.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let intStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1321,6 +1399,11 @@ extension Py {
     private func fillList(_ py: Py) {
       let type = self.list
       type.setBuiltinTypeDoc(py, value: PyList.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyList.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyList.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let listStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1331,6 +1414,9 @@ extension Py {
     private func fillListIterator(_ py: Py) {
       let type = self.list_iterator
       type.setBuiltinTypeDoc(py, value: PyListIterator.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyListIterator.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let listIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1341,6 +1427,9 @@ extension Py {
     private func fillListReverseIterator(_ py: Py) {
       let type = self.list_reverseiterator
       type.setBuiltinTypeDoc(py, value: PyListReverseIterator.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyListReverseIterator.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let listReverseIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1351,6 +1440,9 @@ extension Py {
     private func fillMap(_ py: Py) {
       let type = self.map
       type.setBuiltinTypeDoc(py, value: PyMap.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyMap.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let mapStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1371,6 +1463,11 @@ extension Py {
     private func fillModule(_ py: Py) {
       let type = self.module
       type.setBuiltinTypeDoc(py, value: PyModule.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyModule.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyModule.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let moduleStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1381,6 +1478,11 @@ extension Py {
     private func fillNamespace(_ py: Py) {
       let type = self.simpleNamespace
       type.setBuiltinTypeDoc(py, value: PyNamespace.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyNamespace.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyNamespace.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let namespaceStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1391,6 +1493,9 @@ extension Py {
     private func fillNone(_ py: Py) {
       let type = self.none
       type.setBuiltinTypeDoc(py, value: PyNone.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyNone.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let noneStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1401,6 +1506,9 @@ extension Py {
     private func fillNotImplemented(_ py: Py) {
       let type = self.notImplemented
       type.setBuiltinTypeDoc(py, value: PyNotImplemented.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyNotImplemented.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let notImplementedStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1411,6 +1519,11 @@ extension Py {
     private func fillObject(_ py: Py) {
       let type = self.object
       type.setBuiltinTypeDoc(py, value: PyObject.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyObject.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyObject.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let objectStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1421,6 +1534,11 @@ extension Py {
     private func fillProperty(_ py: Py) {
       let type = self.property
       type.setBuiltinTypeDoc(py, value: PyProperty.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyProperty.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyProperty.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let propertyStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1431,6 +1549,9 @@ extension Py {
     private func fillRange(_ py: Py) {
       let type = self.range
       type.setBuiltinTypeDoc(py, value: PyRange.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyRange.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let rangeStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1441,6 +1562,9 @@ extension Py {
     private func fillRangeIterator(_ py: Py) {
       let type = self.range_iterator
       type.setBuiltinTypeDoc(py, value: PyRangeIterator.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyRangeIterator.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let rangeIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1451,6 +1575,9 @@ extension Py {
     private func fillReversed(_ py: Py) {
       let type = self.reversed
       type.setBuiltinTypeDoc(py, value: PyReversed.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyReversed.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let reversedStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1461,6 +1588,11 @@ extension Py {
     private func fillSet(_ py: Py) {
       let type = self.set
       type.setBuiltinTypeDoc(py, value: PySet.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PySet.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PySet.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let setStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1471,6 +1603,9 @@ extension Py {
     private func fillSetIterator(_ py: Py) {
       let type = self.set_iterator
       type.setBuiltinTypeDoc(py, value: PySetIterator.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PySetIterator.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let setIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1481,6 +1616,9 @@ extension Py {
     private func fillSlice(_ py: Py) {
       let type = self.slice
       type.setBuiltinTypeDoc(py, value: PySlice.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PySlice.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let sliceStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1491,6 +1629,11 @@ extension Py {
     private func fillStaticMethod(_ py: Py) {
       let type = self.staticmethod
       type.setBuiltinTypeDoc(py, value: PyStaticMethod.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyStaticMethod.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyStaticMethod.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let staticMethodStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1501,6 +1644,9 @@ extension Py {
     private func fillString(_ py: Py) {
       let type = self.str
       type.setBuiltinTypeDoc(py, value: PyString.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyString.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let stringStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1511,6 +1657,9 @@ extension Py {
     private func fillStringIterator(_ py: Py) {
       let type = self.str_iterator
       type.setBuiltinTypeDoc(py, value: PyStringIterator.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyStringIterator.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let stringIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1521,6 +1670,11 @@ extension Py {
     private func fillSuper(_ py: Py) {
       let type = self.super
       type.setBuiltinTypeDoc(py, value: PySuper.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PySuper.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PySuper.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let superStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1551,6 +1705,9 @@ extension Py {
     private func fillTuple(_ py: Py) {
       let type = self.tuple
       type.setBuiltinTypeDoc(py, value: PyTuple.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyTuple.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let tupleStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1561,6 +1718,9 @@ extension Py {
     private func fillTupleIterator(_ py: Py) {
       let type = self.tuple_iterator
       type.setBuiltinTypeDoc(py, value: PyTupleIterator.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyTupleIterator.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let tupleIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1571,6 +1731,11 @@ extension Py {
     private func fillType(_ py: Py) {
       let type = self.type
       type.setBuiltinTypeDoc(py, value: PyType.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyType.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+      let __init__ = FunctionWrapper(type: type, fn: PyType.__init__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__init__", method: __init__, doc: nil)
     }
 
     internal static let typeStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1581,6 +1746,9 @@ extension Py {
     private func fillZip(_ py: Py) {
       let type = self.zip
       type.setBuiltinTypeDoc(py, value: PyZip.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyZip.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
     }
 
     internal static let zipStaticMethods = PyStaticCall.KnownNotOverriddenMethods()

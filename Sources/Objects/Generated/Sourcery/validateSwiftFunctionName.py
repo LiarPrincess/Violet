@@ -23,9 +23,7 @@ def validateSwiftFunctionNames(all_types: List[TypeInfo]):
     print('''
 === ERROR: validateSwiftFunctionNames ==========================================
 Some functions do not have the same name in Python and Swift.
-This is important since we use Swift function name to generate message
-for invalid \'self\' argument:
-func invalidSelfArgument(..., swiftFnName: StaticString = #function)
+Most of the time this is copy-paste error, so we will not allow it.
 ''')
 
     for t, fn in invalid_functions:
