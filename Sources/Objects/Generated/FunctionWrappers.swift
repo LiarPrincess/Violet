@@ -45,20 +45,22 @@ public struct FunctionWrapper: CustomStringConvertible {
   // Each kind holds a 'struct' with similar name in its payload.
   internal enum Kind {
   /// Python `__new__` function.
-  case __new__(NewWrapper)
+  case new(NewWrapper)
   /// Python `__init__` function.
-  case __init__(InitWrapper)
+  case `init`(InitWrapper)
   /// Python `__eq__`, `__ne__`, `__lt__`, `__le__`, `__gt__`, `__ge__` functions.
   case compare(CompareWrapper)
   /// Python `__hash__` function.
   case hash(HashWrapper)
   /// Python `__dir__` function.
   case dir(DirWrapper)
+  /// Python `__class__` function.
+  case `class`(ClassWrapper)
   /// Function with `*args` and `**kwargs`.
   case argsKwargsFunction(ArgsKwargsFunctionWrapper)
   /// Method with `*args` and `**kwargs`.
   case argsKwargsMethod(ArgsKwargsMethodWrapper)
-  /// Method with `*args` and `**kwargs`.
+  /// Class method with `*args` and `**kwargs`.
   case argsKwargsClassMethod(ArgsKwargsClassMethodWrapper)
   /// `(Py, PyObject) -> PyResult<PyObject>`
   case object_to_Result(Object_to_Result)
@@ -118,11 +120,12 @@ public struct FunctionWrapper: CustomStringConvertible {
   public var name: String {
     // Just delegate to specific wrapper.
     switch self.kind {
-    case let .__new__(w): return w.fnName
-    case let .__init__(w): return w.fnName
+    case let .new(w): return w.fnName
+    case let .`init`(w): return w.fnName
     case let .compare(w): return w.fnName
     case let .hash(w): return w.fnName
     case let .dir(w): return w.fnName
+    case let .`class`(w): return w.fnName
     case let .argsKwargsFunction(w): return w.fnName
     case let .argsKwargsMethod(w): return w.fnName
     case let .argsKwargsClassMethod(w): return w.fnName
@@ -158,11 +161,12 @@ public struct FunctionWrapper: CustomStringConvertible {
   public func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
     // Just delegate to specific wrapper.
     switch self.kind {
-    case let .__new__(w): return w.call(py, args: args, kwargs: kwargs)
-    case let .__init__(w): return w.call(py, args: args, kwargs: kwargs)
+    case let .new(w): return w.call(py, args: args, kwargs: kwargs)
+    case let .`init`(w): return w.call(py, args: args, kwargs: kwargs)
     case let .compare(w): return w.call(py, args: args, kwargs: kwargs)
     case let .hash(w): return w.call(py, args: args, kwargs: kwargs)
     case let .dir(w): return w.call(py, args: args, kwargs: kwargs)
+    case let .`class`(w): return w.call(py, args: args, kwargs: kwargs)
     case let .argsKwargsFunction(w): return w.call(py, args: args, kwargs: kwargs)
     case let .argsKwargsMethod(w): return w.call(py, args: args, kwargs: kwargs)
     case let .argsKwargsClassMethod(w): return w.call(py, args: args, kwargs: kwargs)
@@ -202,14 +206,15 @@ public struct FunctionWrapper: CustomStringConvertible {
 
   private func describeKind() -> String {
     switch self.kind {
-    case .__new__: return "(Type, *args, **kwargs) -> PyResult<PyObject>"
-    case .__init__: return "(Object, *args, **kwargs) -> PyResult<PyObject>"
+    case .new: return "(Type, *args, **kwargs) -> PyResult<PyObject>"
+    case .`init`: return "(Object, *args, **kwargs) -> PyResult<PyObject>"
     case .compare: return "(Py, PyObject, PyObject) -> CompareResult"
     case .hash: return "(Py, PyObject) -> HashResult"
     case .dir: return "(Py, PyObject) -> PyResult<DirResult>"
+    case .`class`: return "(Py, PyObject) -> PyType"
     case .argsKwargsFunction: return "(*args, **kwargs) -> PyResult<PyObject>"
     case .argsKwargsMethod: return "(Object, *args, **kwargs) -> PyResult<PyObject>"
-    case .argsKwargsClassMethod: return "(Object, *args, **kwargs) -> PyResult<PyObject>"
+    case .argsKwargsClassMethod: return "(Type, *args, **kwargs) -> PyResult<PyObject>"
     case .object_to_Result: return "(Py, PyObject) -> PyResult<PyObject>"
     case .type_to_Result: return "(Py, PyType) -> PyResult<PyObject>"
     case .object_Object_to_Result: return "(Py, PyObject, PyObject) -> PyResult<PyObject>"

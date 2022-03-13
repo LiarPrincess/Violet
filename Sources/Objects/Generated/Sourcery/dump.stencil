@@ -37,6 +37,13 @@ SwiftField|{{field.name}}|{{field.typeName}}
 SwiftInit|{{swift_selector_with_types}}
 {% endfor %}
 
+{% for prop in type.staticMethods|annotated:"pyproperty" %}
+{% set python_name %}{{ prop.annotations.pyproperty }}{% endset %}
+{% set has_setter %}{{ prop.annotations.setter }}{% endset %}
+{% set swift_static_doc_property %}{{ prop.annotations.doc }}{% endset %}
+PyProperty|{{python_name}}|{{has_setter}}|{{swift_static_doc_property}}
+{% endfor %}
+
 {% for method in type.staticMethods|annotated:"pymethod" %}
 {% set python_name %}{{ method.annotations.pymethod }}{% endset %}
 {% call print_method "PyMethod" python_name method %}

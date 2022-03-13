@@ -84,6 +84,17 @@ def get_types() -> List[TypeInfo]:
                 init = SwiftInitializerInfo(selector_with_types)
                 current_type.swift_initializers.append(init)
 
+            elif line_type == 'PyProperty':
+                assert current_type
+                assert len(split) == 4
+
+                python_name = split[1]
+                has_setter = bool(split[2])
+                swift_static_doc_property = split[3]
+
+                prop = PyPropertyInfo(python_name, has_setter, swift_static_doc_property)
+                current_type.python_properties.append(prop)
+
             elif line_type == 'PyMethod' or line_type == 'PyClassMethod' or line_type == 'PyStaticMethod':
                 assert current_type
                 assert len(split) == 5

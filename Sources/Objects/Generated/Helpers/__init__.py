@@ -3,6 +3,8 @@ from Helpers.strings import (
     where_to_find_errors_in_cpython
 )
 
+from Helpers.swift_keywords import is_swift_keyword, escape_swift_keyword
+
 from Helpers.exception_hierarchy import (
     ErrorInfo,
     data as exception_hierarchy

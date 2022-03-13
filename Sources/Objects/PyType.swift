@@ -209,7 +209,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   // MARK: - Qualname
 
   // sourcery: pyproperty = __qualname__, setter
-  internal static func getQualname(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __qualname__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf)
     }

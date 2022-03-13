@@ -2,7 +2,8 @@ from typing import List
 from Helpers import (
     generated_warning,
     get_positional_function_wrappers,
-    get_hand_written_function_wrappers
+    get_hand_written_function_wrappers,
+    escape_swift_keyword as escape
 )
 
 def print_mark(name: str):
@@ -63,11 +64,11 @@ public struct FunctionWrapper: CustomStringConvertible {{
 
     for fn in hand_written_functions:
         print(f'  /// {fn.doc}')
-        print(f'  case {fn.name_enum_case}({fn.name_struct})')
+        print(f'  case {escape(fn.name_enum_case)}({fn.name_struct})')
 
     for fn in positional_functions:
         print(f'  /// `{fn.signature}`')
-        print(f'  case {fn.name_enum_case}({fn.name_struct})')
+        print(f'  case {escape(fn.name_enum_case)}({fn.name_struct})')
 
     print('  }')
     print()
@@ -91,10 +92,10 @@ public struct FunctionWrapper: CustomStringConvertible {{
     print('    switch self.kind {')
 
     for fn in hand_written_functions:
-        print(f'    case let .{fn.name_enum_case}(w): return w.fnName')
+        print(f'    case let .{escape(fn.name_enum_case)}(w): return w.fnName')
 
     for fn in positional_functions:
-        print(f'    case let .{fn.name_enum_case}(w): return w.fnName')
+        print(f'    case let .{escape(fn.name_enum_case)}(w): return w.fnName')
 
     print('    }')
     print('  }')
@@ -111,10 +112,10 @@ public struct FunctionWrapper: CustomStringConvertible {{
     print('    switch self.kind {')
 
     for fn in hand_written_functions:
-        print(f'    case let .{fn.name_enum_case}(w): return w.call(py, args: args, kwargs: kwargs)')
+        print(f'    case let .{escape(fn.name_enum_case)}(w): return w.call(py, args: args, kwargs: kwargs)')
 
     for fn in positional_functions:
-        print(f'    case let .{fn.name_enum_case}(w): return w.call(py, args: args, kwargs: kwargs)')
+        print(f'    case let .{escape(fn.name_enum_case)}(w): return w.call(py, args: args, kwargs: kwargs)')
 
     print('    }')
     print('  }')
@@ -136,10 +137,10 @@ public struct FunctionWrapper: CustomStringConvertible {{
     print('    switch self.kind {')
 
     for fn in hand_written_functions:
-        print(f'    case .{fn.name_enum_case}: return "{fn.swift_description}"')
+        print(f'    case .{escape(fn.name_enum_case)}: return "{fn.swift_description}"')
 
     for fn in positional_functions:
-        print(f'    case .{fn.name_enum_case}: return "{fn.signature}"')
+        print(f'    case .{escape(fn.name_enum_case)}: return "{fn.signature}"')
 
     print('    }')
     print('  }')
