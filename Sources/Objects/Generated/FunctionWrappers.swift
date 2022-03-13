@@ -55,9 +55,11 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Python `__dir__` function.
   case dir(DirWrapper)
   /// Function with `*args` and `**kwargs`.
-  case argsKwargsFunction(ArgsKwargsFunction)
+  case argsKwargsFunction(ArgsKwargsFunctionWrapper)
   /// Method with `*args` and `**kwargs`.
-  case argsKwargsMethod(ArgsKwargsMethod)
+  case argsKwargsMethod(ArgsKwargsMethodWrapper)
+  /// Method with `*args` and `**kwargs`.
+  case argsKwargsClassMethod(ArgsKwargsClassMethodWrapper)
   /// `(Py, PyObject) -> PyResult<PyObject>`
   case object_to_Result(Object_to_Result)
   /// `(Py, PyType) -> PyResult<PyObject>`
@@ -123,6 +125,7 @@ public struct FunctionWrapper: CustomStringConvertible {
     case let .dir(w): return w.fnName
     case let .argsKwargsFunction(w): return w.fnName
     case let .argsKwargsMethod(w): return w.fnName
+    case let .argsKwargsClassMethod(w): return w.fnName
     case let .object_to_Result(w): return w.fnName
     case let .type_to_Result(w): return w.fnName
     case let .object_Object_to_Result(w): return w.fnName
@@ -162,6 +165,7 @@ public struct FunctionWrapper: CustomStringConvertible {
     case let .dir(w): return w.call(py, args: args, kwargs: kwargs)
     case let .argsKwargsFunction(w): return w.call(py, args: args, kwargs: kwargs)
     case let .argsKwargsMethod(w): return w.call(py, args: args, kwargs: kwargs)
+    case let .argsKwargsClassMethod(w): return w.call(py, args: args, kwargs: kwargs)
     case let .object_to_Result(w): return w.call(py, args: args, kwargs: kwargs)
     case let .type_to_Result(w): return w.call(py, args: args, kwargs: kwargs)
     case let .object_Object_to_Result(w): return w.call(py, args: args, kwargs: kwargs)
@@ -205,6 +209,7 @@ public struct FunctionWrapper: CustomStringConvertible {
     case .dir: return "(Py, PyObject) -> PyResult<DirResult>"
     case .argsKwargsFunction: return "(*args, **kwargs) -> PyResult<PyObject>"
     case .argsKwargsMethod: return "(Object, *args, **kwargs) -> PyResult<PyObject>"
+    case .argsKwargsClassMethod: return "(Object, *args, **kwargs) -> PyResult<PyObject>"
     case .object_to_Result: return "(Py, PyObject) -> PyResult<PyObject>"
     case .type_to_Result: return "(Py, PyType) -> PyResult<PyObject>"
     case .object_Object_to_Result: return "(Py, PyObject, PyObject) -> PyResult<PyObject>"
@@ -231,6 +236,22 @@ public struct FunctionWrapper: CustomStringConvertible {
     }
   }
 
+  internal static func handleTypeArgument(_ py: Py,
+                                          fnName: String,
+                                          args: [PyObject]) -> PyResult<PyType> {
+    if args.isEmpty {
+      let error = py.newTypeError(message: "\(fnName)(): not enough arguments")
+      return .error(error.asBaseException)
+    }
+
+    let arg0 = args[0]
+    guard let type = py.cast.asType(arg0) else {
+      let error = py.newTypeError(message: "\(fnName)(X): X is not a type object (\(arg0.typeName))")
+      return .error(error.asBaseException)
+    }
+
+    return .value(type)
+  }
   // MARK: - (Py, PyObject) -> PyResult<PyObject>
 
   /// Positional unary: single `self` argument.
@@ -290,13 +311,10 @@ public struct FunctionWrapper: CustomStringConvertible {
       }
 
       // This function has a 'type' argument that we have to cast
-      guard args.any else {
-        return .typeError(py, message: "\(self.fnName)(): not enough arguments")
-      }
-
-      let arg0 = args[0]
-      guard let type = py.cast.asType(arg0) else {
-        return .typeError(py, message: "\(self.fnName)(X): X is not a type object (\(arg0.typeName))")
+      let type: PyType
+      switch FunctionWrapper.handleTypeArgument(py, fnName: self.fnName, args: args) {
+      case let .value(t): type = t
+      case let .error(e): return .error(e)
       }
 
       switch args.count {
@@ -450,13 +468,10 @@ public struct FunctionWrapper: CustomStringConvertible {
       }
 
       // This function has a 'type' argument that we have to cast
-      guard args.any else {
-        return .typeError(py, message: "\(self.fnName)(): not enough arguments")
-      }
-
-      let arg0 = args[0]
-      guard let type = py.cast.asType(arg0) else {
-        return .typeError(py, message: "\(self.fnName)(X): X is not a type object (\(arg0.typeName))")
+      let type: PyType
+      switch FunctionWrapper.handleTypeArgument(py, fnName: self.fnName, args: args) {
+      case let .value(t): type = t
+      case let .error(e): return .error(e)
       }
 
       switch args.count {
@@ -496,13 +511,10 @@ public struct FunctionWrapper: CustomStringConvertible {
       }
 
       // This function has a 'type' argument that we have to cast
-      guard args.any else {
-        return .typeError(py, message: "\(self.fnName)(): not enough arguments")
-      }
-
-      let arg0 = args[0]
-      guard let type = py.cast.asType(arg0) else {
-        return .typeError(py, message: "\(self.fnName)(X): X is not a type object (\(arg0.typeName))")
+      let type: PyType
+      switch FunctionWrapper.handleTypeArgument(py, fnName: self.fnName, args: args) {
+      case let .value(t): type = t
+      case let .error(e): return .error(e)
       }
 
       switch args.count {
@@ -700,13 +712,10 @@ public struct FunctionWrapper: CustomStringConvertible {
       }
 
       // This function has a 'type' argument that we have to cast
-      guard args.any else {
-        return .typeError(py, message: "\(self.fnName)(): not enough arguments")
-      }
-
-      let arg0 = args[0]
-      guard let type = py.cast.asType(arg0) else {
-        return .typeError(py, message: "\(self.fnName)(X): X is not a type object (\(arg0.typeName))")
+      let type: PyType
+      switch FunctionWrapper.handleTypeArgument(py, fnName: self.fnName, args: args) {
+      case let .value(t): type = t
+      case let .error(e): return .error(e)
       }
 
       switch args.count {
@@ -746,13 +755,10 @@ public struct FunctionWrapper: CustomStringConvertible {
       }
 
       // This function has a 'type' argument that we have to cast
-      guard args.any else {
-        return .typeError(py, message: "\(self.fnName)(): not enough arguments")
-      }
-
-      let arg0 = args[0]
-      guard let type = py.cast.asType(arg0) else {
-        return .typeError(py, message: "\(self.fnName)(X): X is not a type object (\(arg0.typeName))")
+      let type: PyType
+      switch FunctionWrapper.handleTypeArgument(py, fnName: self.fnName, args: args) {
+      case let .value(t): type = t
+      case let .error(e): return .error(e)
       }
 
       switch args.count {
@@ -794,13 +800,10 @@ public struct FunctionWrapper: CustomStringConvertible {
       }
 
       // This function has a 'type' argument that we have to cast
-      guard args.any else {
-        return .typeError(py, message: "\(self.fnName)(): not enough arguments")
-      }
-
-      let arg0 = args[0]
-      guard let type = py.cast.asType(arg0) else {
-        return .typeError(py, message: "\(self.fnName)(X): X is not a type object (\(arg0.typeName))")
+      let type: PyType
+      switch FunctionWrapper.handleTypeArgument(py, fnName: self.fnName, args: args) {
+      case let .value(t): type = t
+      case let .error(e): return .error(e)
       }
 
       switch args.count {
@@ -1044,13 +1047,10 @@ public struct FunctionWrapper: CustomStringConvertible {
       }
 
       // This function has a 'type' argument that we have to cast
-      guard args.any else {
-        return .typeError(py, message: "\(self.fnName)(): not enough arguments")
-      }
-
-      let arg0 = args[0]
-      guard let type = py.cast.asType(arg0) else {
-        return .typeError(py, message: "\(self.fnName)(X): X is not a type object (\(arg0.typeName))")
+      let type: PyType
+      switch FunctionWrapper.handleTypeArgument(py, fnName: self.fnName, args: args) {
+      case let .value(t): type = t
+      case let .error(e): return .error(e)
       }
 
       switch args.count {
@@ -1090,13 +1090,10 @@ public struct FunctionWrapper: CustomStringConvertible {
       }
 
       // This function has a 'type' argument that we have to cast
-      guard args.any else {
-        return .typeError(py, message: "\(self.fnName)(): not enough arguments")
-      }
-
-      let arg0 = args[0]
-      guard let type = py.cast.asType(arg0) else {
-        return .typeError(py, message: "\(self.fnName)(X): X is not a type object (\(arg0.typeName))")
+      let type: PyType
+      switch FunctionWrapper.handleTypeArgument(py, fnName: self.fnName, args: args) {
+      case let .value(t): type = t
+      case let .error(e): return .error(e)
       }
 
       switch args.count {
@@ -1138,13 +1135,10 @@ public struct FunctionWrapper: CustomStringConvertible {
       }
 
       // This function has a 'type' argument that we have to cast
-      guard args.any else {
-        return .typeError(py, message: "\(self.fnName)(): not enough arguments")
-      }
-
-      let arg0 = args[0]
-      guard let type = py.cast.asType(arg0) else {
-        return .typeError(py, message: "\(self.fnName)(X): X is not a type object (\(arg0.typeName))")
+      let type: PyType
+      switch FunctionWrapper.handleTypeArgument(py, fnName: self.fnName, args: args) {
+      case let .value(t): type = t
+      case let .error(e): return .error(e)
       }
 
       switch args.count {
@@ -1188,13 +1182,10 @@ public struct FunctionWrapper: CustomStringConvertible {
       }
 
       // This function has a 'type' argument that we have to cast
-      guard args.any else {
-        return .typeError(py, message: "\(self.fnName)(): not enough arguments")
-      }
-
-      let arg0 = args[0]
-      guard let type = py.cast.asType(arg0) else {
-        return .typeError(py, message: "\(self.fnName)(X): X is not a type object (\(arg0.typeName))")
+      let type: PyType
+      switch FunctionWrapper.handleTypeArgument(py, fnName: self.fnName, args: args) {
+      case let .value(t): type = t
+      case let .error(e): return .error(e)
       }
 
       switch args.count {

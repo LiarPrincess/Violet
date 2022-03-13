@@ -47,14 +47,20 @@ def get_hand_written_function_wrappers() -> List[FunctionWrapperByHand]:
         ),
 
         FunctionWrapperByHand(
-            'ArgsKwargsFunction',
+            'ArgsKwargsFunctionWrapper',
             'argsKwargsFunction',
             '(*args, **kwargs) -> PyResult<PyObject>',
             'Function with `*args` and `**kwargs`.'
         ),
         FunctionWrapperByHand(
-            'ArgsKwargsMethod',
+            'ArgsKwargsMethodWrapper',
             'argsKwargsMethod',
+            '(Object, *args, **kwargs) -> PyResult<PyObject>',
+            'Method with `*args` and `**kwargs`.'
+        ),
+        FunctionWrapperByHand(
+            'ArgsKwargsClassMethodWrapper',
+            'argsKwargsClassMethod',
             '(Object, *args, **kwargs) -> PyResult<PyObject>',
             'Method with `*args` and `**kwargs`.'
         )

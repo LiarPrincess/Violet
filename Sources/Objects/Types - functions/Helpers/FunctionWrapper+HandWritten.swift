@@ -187,47 +187,16 @@ extension FunctionWrapper {
     self.kind = .dir(wrapper)
   }
 
-  // MARK: - Args kwargs method
-
-  /// Function with *args and **kwargs.
-  public typealias ArgsKwargsMethodFn = (Py, PyObject, [PyObject], PyDict?) -> PyResult<PyObject>
-
-  internal struct ArgsKwargsMethod {
-    internal let fnName: String
-    private let fn: ArgsKwargsMethodFn
-
-    fileprivate init(name: String, fn: @escaping ArgsKwargsMethodFn) {
-      self.fn = fn
-      self.fnName = name
-    }
-
-    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
-      guard args.any else {
-        return .typeError(py, message: "\(self.fnName)(): not enough arguments")
-      }
-
-      // 'self.fn' call will jump to 'self.fn' assignment inside 'init'
-      let arg0 = args[0]
-      let argsWithoutArg0 = Array(args.dropFirst())
-      return self.fn(py, arg0, argsWithoutArg0, kwargs)
-    }
-  }
-
-  public init(name: String, fn: @escaping ArgsKwargsMethodFn) {
-    let wrapper = ArgsKwargsMethod(name: name, fn: fn)
-    self.kind = .argsKwargsMethod(wrapper)
-  }
-
   // MARK: - Args kwargs function
 
   /// Function with *args and **kwargs.
-  public typealias ArgsKwargsFunctionFn = (Py, [PyObject], PyDict?) -> PyResult<PyObject>
+  public typealias ArgsKwargsFunction = (Py, [PyObject], PyDict?) -> PyResult<PyObject>
 
-  internal struct ArgsKwargsFunction {
-    private let fn: ArgsKwargsFunctionFn
+  internal struct ArgsKwargsFunctionWrapper {
+    private let fn: ArgsKwargsFunction
     internal let fnName: String
 
-    fileprivate init(name: String, fn: @escaping ArgsKwargsFunctionFn) {
+    fileprivate init(name: String, fn: @escaping ArgsKwargsFunction) {
       self.fnName = name
       self.fn = fn
     }
@@ -237,8 +206,70 @@ extension FunctionWrapper {
     }
   }
 
-  public init(name: String, fn: @escaping ArgsKwargsFunctionFn) {
-    let wrapper = ArgsKwargsFunction(name: name, fn: fn)
+  public init(name: String, fn: @escaping ArgsKwargsFunction) {
+    let wrapper = ArgsKwargsFunctionWrapper(name: name, fn: fn)
     self.kind = .argsKwargsFunction(wrapper)
+  }
+
+  // MARK: - Args kwargs method
+
+  /// Function with *args and **kwargs.
+  public typealias ArgsKwargsMethod = (Py, PyObject, [PyObject], PyDict?) -> PyResult<PyObject>
+
+  internal struct ArgsKwargsMethodWrapper {
+    internal let fnName: String
+    private let fn: ArgsKwargsMethod
+
+    fileprivate init(name: String, fn: @escaping ArgsKwargsMethod) {
+      self.fn = fn
+      self.fnName = name
+    }
+
+    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+      guard args.any else {
+        return .typeError(py, message: "\(self.fnName)(): not enough arguments")
+      }
+
+      let arg0 = args[0]
+      let argsWithoutArg0 = Array(args.dropFirst())
+      return self.fn(py, arg0, argsWithoutArg0, kwargs)
+    }
+  }
+
+  public init(name: String, fn: @escaping ArgsKwargsMethod) {
+    let wrapper = ArgsKwargsMethodWrapper(name: name, fn: fn)
+    self.kind = .argsKwargsMethod(wrapper)
+  }
+
+  // MARK: - Args kwargs class method
+
+  /// Function with *args and **kwargs.
+  public typealias ArgsKwargsClassMethod = (Py, PyType, [PyObject], PyDict?) -> PyResult<PyObject>
+
+  internal struct ArgsKwargsClassMethodWrapper {
+    internal let fnName: String
+    private let fn: ArgsKwargsClassMethod
+
+    fileprivate init(name: String, fn: @escaping ArgsKwargsClassMethod) {
+      self.fn = fn
+      self.fnName = name
+    }
+
+    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+      // This function has a 'type' argument that we have to cast
+      let type: PyType
+      switch FunctionWrapper.handleTypeArgument(py, fnName: self.fnName, args: args) {
+      case let .value(t): type = t
+      case let .error(e): return .error(e)
+      }
+
+      let argsWithoutType = Array(args.dropFirst())
+      return self.fn(py, type, argsWithoutType, kwargs)
+    }
+  }
+
+  public init(name: String, fn: @escaping ArgsKwargsClassMethod) {
+    let wrapper = ArgsKwargsClassMethodWrapper(name: name, fn: fn)
+    self.kind = .argsKwargsClassMethod(wrapper)
   }
 }

@@ -108,6 +108,14 @@ class PyTypeDefinition:
       self.add(py, type: type, name: name, value: value)
     }
 
+    /// Adds `classmethod` to `type.__dict__`.
+    private func add(_ py: Py, type: PyType, name: String, classMethod: FunctionWrapper, doc: String?) {
+      let builtinFunction = py.newBuiltinFunction(fn: classMethod, module: nil, doc: doc)
+      let staticMethod = py.newClassMethod(callable: builtinFunction)
+      let value = staticMethod.asObject
+      self.add(py, type: type, name: name, value: value)
+    }
+
     /// Adds `staticmethod` to `type.__dict__`.
     private func add(_ py: Py, type: PyType, name: String, staticMethod: FunctionWrapper, doc: String?) {
       let builtinFunction = py.newBuiltinFunction(fn: staticMethod, module: nil, doc: doc)
@@ -151,6 +159,10 @@ class PyTypeDefinition:
         # === New/init ===
         # ================
 
+        def is_new_or_init(fn: PyFunctionInfo):
+            python_name = fn.python_name
+            return python_name == '__new__' or python_name == '__init__'
+
         def get_doc(fn: PyFunctionInfo) -> str:
             nonlocal swift_type_name
             static_doc_property = fn.swift_static_doc_property
@@ -159,8 +171,7 @@ class PyTypeDefinition:
         # __new__
         has__new__ = False
         for fn in self.t.python_static_functions:
-            python_name = fn.python_name
-            if not python_name == '__new__':
+            if not is_new_or_init(fn):
                 continue
 
             print()
@@ -170,8 +181,7 @@ class PyTypeDefinition:
 
         # __init__
         for fn in self.t.python_methods:
-            python_name = fn.python_name
-            if not python_name == '__init__':
+            if not is_new_or_init(fn):
                 continue
 
             if not has__new__:
@@ -180,20 +190,38 @@ class PyTypeDefinition:
             print(f'      let __init__ = FunctionWrapper(type: type, fn: {swift_type_name}.{fn.swift_selector})')
             print(f'      self.add(py, type: type, name: "__init__", method: __init__, doc: {get_doc(fn)})')
 
-        # ===============
-        # === Methods ===
-        # ===============
+        # =======================================
+        # === Methods, static/class functions ===
+        # =======================================
 
-        for index, fn in enumerate(self.t.python_methods):
+        is_first = True
+        def print_dict_add(kind: str, fn: PyFunctionInfo):
+            nonlocal swift_type_name, is_first
             python_name = fn.python_name
-            if python_name in ('__new__', '__init__'):
-                continue
+            selector= fn.swift_selector
+            doc = get_doc(fn)
 
-            if index == 0:
+            if is_first:
                 print()
 
-            print(f'      let {python_name} = FunctionWrapper(name: "{python_name}", fn: {swift_type_name}.{fn.swift_selector})')
-            print(f'      self.add(py, type: type, name: "{python_name}", method: {python_name}, doc: {get_doc(fn)})')
+            print(f'      let {python_name} = FunctionWrapper(name: "{python_name}", fn: {swift_type_name}.{selector})')
+            print(f'      self.add(py, type: type, name: "{python_name}", {kind}: {python_name}, doc: {doc})')
+            is_first = False
+
+        is_first = True
+        for fn in self.t.python_class_functions:
+            if not is_new_or_init(fn):
+                print_dict_add('classMethod', fn)
+
+        is_first = True
+        for fn in self.t.python_static_functions:
+            if not is_new_or_init(fn):
+                print_dict_add('staticMethod', fn)
+
+        is_first = True
+        for fn in self.t.python_methods:
+            if not is_new_or_init(fn):
+                print_dict_add('method', fn)
 
         print('    }')
         print()

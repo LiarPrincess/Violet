@@ -1206,6 +1206,14 @@ extension Py {
       self.add(py, type: type, name: name, value: value)
     }
 
+    /// Adds `classmethod` to `type.__dict__`.
+    private func add(_ py: Py, type: PyType, name: String, classMethod: FunctionWrapper, doc: String?) {
+      let builtinFunction = py.newBuiltinFunction(fn: classMethod, module: nil, doc: doc)
+      let staticMethod = py.newClassMethod(callable: builtinFunction)
+      let value = staticMethod.asObject
+      self.add(py, type: type, name: name, value: value)
+    }
+
     /// Adds `staticmethod` to `type.__dict__`.
     private func add(_ py: Py, type: PyType, name: String, staticMethod: FunctionWrapper, doc: String?) {
       let builtinFunction = py.newBuiltinFunction(fn: staticMethod, module: nil, doc: doc)
