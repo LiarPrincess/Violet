@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import FileSystem
 
@@ -12,6 +11,7 @@ internal enum Configure {
     return []
   }
 
+/* MARKER
   internal static var prefix: Path {
     let executable = Py.config.executablePath
     let dirname = Py.fileSystem.dirname(path: executable)
@@ -21,6 +21,7 @@ internal enum Configure {
   internal static var execPrefix: Path {
     return Configure.prefix
   }
+*/
 
   internal static var pythonVersion = VersionInfo(
     major: 3,
@@ -48,5 +49,3 @@ I am Violet Evergarden.
     cacheTag: nil
   )
 }
-
-*/

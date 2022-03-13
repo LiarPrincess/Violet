@@ -1,4 +1,3 @@
-/* MARKER
 import FileSystem
 
 public struct PyConfig {
@@ -69,5 +68,3 @@ public struct PyConfig {
     self.standardError = standardError
   }
 }
-
-*/

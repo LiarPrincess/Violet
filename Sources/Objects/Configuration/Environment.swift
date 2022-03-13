@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import FileSystem
 import VioletCompiler
@@ -54,7 +53,7 @@ public struct Environment {
   /// If set to a comma separated string, it is equivalent to specifying `-W`
   /// multiple times, with filters later in the list taking precedence over
   /// those earlier in the list.
-  public var warnings = [WarningOption]()
+  public var warnings = [Arguments.WarningOption]()
 
   /// PYTHONDEBUG
   ///
@@ -124,7 +123,7 @@ private func splitPath(_ path: String) -> [Path] {
   return result
 }
 
-private func parseWarnings(_ value: String) -> [WarningOption] {
+private func parseWarnings(_ value: String) -> [Arguments.WarningOption] {
   return value
     .split(separator: ",")
     .compactMap { split in
@@ -143,5 +142,3 @@ private func parseWarnings(_ value: String) -> [WarningOption] {
 private func asInt(_ value: String) -> Int? {
   return Int(value)
 }
-
-*/

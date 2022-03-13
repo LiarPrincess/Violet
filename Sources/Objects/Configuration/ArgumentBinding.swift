@@ -1,4 +1,3 @@
-/* MARKER
 import ArgumentParser
 
 // swiftlint:disable let_var_whitespace
@@ -264,5 +263,3 @@ internal struct ArgumentBinding: ParsableCommand {
 
   internal init() {}
 }
-
-*/

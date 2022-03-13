@@ -1,4 +1,3 @@
-/* MARKER
 import ArgumentParser
 import FileSystem
 import VioletCore
@@ -209,5 +208,3 @@ public struct Arguments {
     return result
   }
 }
-
-*/
