@@ -14,8 +14,10 @@ public struct Py {
   public var none: PyNone { fatalError() }
   public var ellipsis: PyEllipsis { fatalError() }
   public var notImplemented: PyNotImplemented { fatalError() }
+  public var emptyTuple: PyTuple { fatalError() }
   public var emptyString: PyString { fatalError() }
   public var emptyBytes: PyBytes { fatalError() }
+  public var emptyFrozenSet: PyFrozenSet { fatalError() }
 
   public let memory = PyMemory()
   public var types: Py.Types { fatalError() }
@@ -49,6 +51,9 @@ public struct Py {
   public let delegate = Delegate()
   public let fileSystem = FileSystem()
 
+  internal func getInterned(int: Int) -> PyInt? { fatalError() }
+  internal func getInterned(int: BigInt) -> PyInt? { fatalError() }
+
   // MARK: - New
 
   public func newObject(type: PyType? = nil) -> PyObject { fatalError() } // default type
@@ -63,37 +68,6 @@ public struct Py {
   public func newBytesIterator(bytes: PyBytes) -> PyBytesIterator { fatalError() }
   public func newByteArray(_ d: Data) -> PyByteArray { fatalError() }
   public func newByteArrayIterator(bytes: PyByteArray) -> PyByteArrayIterator { fatalError() }
-
-  public func newTuple(elements: [PyObject]) -> PyTuple { fatalError() }
-  public func newTuple(elements: PyObject...) -> PyTuple { fatalError() }
-  public func newTuple(iterable: PyObject) -> PyResult<PyTuple> { fatalError() }
-  public func newTupleIterator(tuple: PyTuple) -> PyTupleIterator { fatalError() }
-
-  public func newList(elements: [PyObject]) -> PyList { fatalError() }
-  public func newListIterator(list: PyList) -> PyListIterator { fatalError() }
-  public func newListReverseIterator(list: PyList) -> PyListReverseIterator { fatalError() }
-
-  public func newDict() -> PyDict { fatalError() }
-  public func newDict(elements: PyDict.OrderedDictionary) -> PyDict { fatalError() }
-  public func newDictKeyIterator(dict: PyDict) -> PyDictKeyIterator { fatalError() }
-  public func newDictItemIterator(dict: PyDict) -> PyDictItemIterator { fatalError() }
-  public func newDictValuesIterator(dict: PyDict) -> PyDictValueIterator { fatalError() }
-  public func newDictKeys(dict: PyDict) -> PyDictKeys { fatalError() }
-  public func newDictItems(dict: PyDict) -> PyDictItems { fatalError() }
-  public func newDictValues(dict: PyDict) -> PyDictValues { fatalError() }
-
-  public func newSet(elements: OrderedSet) -> PySet { fatalError() }
-  public func newFrozenSet(elements: OrderedSet) -> PyFrozenSet { fatalError() }
-  public func newSetIterator(set: PySet) -> PySetIterator { fatalError() }
-  public func newSetIterator(set: PyFrozenSet) -> PySetIterator { fatalError() }
-
-  public func newRange(stop: PyObject) -> PyRange { fatalError() }
-  public func newRange(start: BigInt, stop: BigInt, step: BigInt?) -> PyResult<PyRange> { fatalError() }
-  public func newRange(start: PyObject, stop: PyObject, step: PyObject?) -> PyResult<PyRange> { fatalError() }
-  public func newRangeIterator(start: BigInt, step: BigInt, length: BigInt) -> PyResult<PyRangeIterator> { fatalError() }
-
-  public func newSlice(stop: PyObject) -> PyResult<PySlice> { fatalError() }
-  public func newSlice(start: PyObject, stop: PyObject, step: PyObject?) -> PyResult<PySlice> { fatalError() }
 
   public func newCode(code: CodeObject) -> PyCode { fatalError() }
   public func newCell(content: PyObject?) -> PyCell { fatalError() }
@@ -154,15 +128,6 @@ public struct Py {
 
   // MARK: - Other
 
-  public enum GetKeysResult {
-    case value(PyObject)
-    case error(PyBaseException)
-    case missingMethod(PyBaseException)
-  }
-
-  internal func selectKey(object: PyObject, key: PyObject?) -> PyResult<PyObject> { fatalError() }
-  public func getKeys(object: PyObject) -> GetKeysResult { fatalError() }
-
   /// Is `type` subtype of `baseException`?
   ///
   /// PyExceptionInstance_Check
@@ -183,48 +148,6 @@ public struct Py {
   public func hashNotAvailable(_ o: PyObject) -> PyBaseException { fatalError() }
   public func get__dict__(object: PyObject) -> PyDict? { fatalError() }
   public func globals() -> PyResult<PyDict> { fatalError() }
-  public func lengthInt(iterable: PyObject) -> PyResult<Int> { fatalError() }
-  public func lengthBigInt(iterable: PyObject) -> PyResult<BigInt> { fatalError() }
-
-  // MARK: - Collections
-
-  public func hasIter(object: PyObject) -> Bool { fatalError() }
-  func next(iterator: PyObject) -> PyResult<PyObject> { fatalError() }
-  func iter(object: PyObject) -> PyResult<PyObject> { fatalError() }
-
-  public enum ForEachStep {
-    /// Go to the next item.
-    case goToNextElement
-    /// Finish iteration.
-    case finish
-    /// Finish iteration with given error.
-    case error(PyBaseException)
-  }
-
-  public typealias ForEachFn = (PyObject) -> ForEachStep
-
-  public func forEach(iterable: PyObject, fn: ForEachFn) -> PyBaseException? { fatalError() }
-
-  public enum ReduceIntoStep<Acc> {
-    /// Go to the next item.
-    case goToNextElement
-    /// Finish reduction.
-    /// Use this if you already have the result and don't need to iterate anymore.
-    case finish
-    /// Finish reduction with given error.
-    case error(PyBaseException)
-  }
-
-  public typealias ReduceIntoFn<Acc> = (inout Acc, PyObject) -> ReduceIntoStep<Acc>
-
-  public func reduce<Acc>(iterable: PyObject,
-                          into acc: inout Acc,
-                          fn: ReduceIntoFn<Acc>) -> PyBaseException? { fatalError() }
-
-  public func toArray(iterable: PyObject) -> PyResult<[PyObject]> { fatalError() }
-
-  public func contains(iterable: PyObject, element: PyObject) -> PyResult<Bool> { fatalError() }
-  public func contains(iterable: PyObject, allFrom subset: PyObject) -> PyResult<Bool> { fatalError() }
 
   // MARK: - Attributes
 
@@ -371,6 +294,7 @@ public struct Py {
 
   public func newSuper(requestedType: PyType?, object: PyObject?, objectType: PyType?) -> PySuper { fatalError() }
 
+  public func isCallable(object: PyObject) -> Bool { fatalError() }
   public func isAbstractMethod(object: PyObject) -> PyResult<Bool> { fatalError() }
 
   // MARK: - Warn

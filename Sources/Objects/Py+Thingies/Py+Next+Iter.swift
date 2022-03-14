@@ -1,18 +1,16 @@
-/* MARKER
-extension PyInstance {
+extension Py {
 
   // MARK: - Next
 
   /// next(iterator[, default])
   /// See [this](https://docs.python.org/3/library/functions.html#next)
-  public func next(iterator: PyObject,
-                   default: PyObject? = nil) -> PyResult<PyObject> {
+  public func next(iterator: PyObject, default: PyObject? = nil) -> PyResult<PyObject> {
     switch self.callNext(iterator: iterator) {
     case .value(let r):
       return .value(r)
 
     case .error(let e):
-      if let d = `default`, PyCast.isStopIteration(e) {
+      if let d = `default`, self.cast.isStopIteration(e.asObject) {
         return .value(d)
       }
 
@@ -21,7 +19,7 @@ extension PyInstance {
   }
 
   private func callNext(iterator: PyObject) -> PyResult<PyObject> {
-    if let result = PyStaticCall.__next__(iterator) {
+    if let result = PyStaticCall.__next__(self, object: iterator) {
       return result
     }
 
@@ -29,7 +27,8 @@ extension PyInstance {
     case .value(let o):
       return .value(o)
     case .missingMethod:
-      return .typeError("'\(iterator.typeName)' object is not an iterator")
+      let message = "'\(iterator.typeName)' object is not an iterator"
+      return .typeError(self, message: message)
     case .error(let e),
          .notCallable(let e):
       return .error(e)
@@ -42,13 +41,13 @@ extension PyInstance {
   /// (as opposed to the one with `sentinel` argument)
   public func iter(object: PyObject) -> PyResult<PyObject> {
     // Check for '__iter__'.
-    if let result = PyStaticCall.__iter__(object) {
-      return .value(result)
+    if let result = PyStaticCall.__iter__(self, object: object) {
+      return PyResult(result)
     }
 
     switch self.callMethod(object: object, selector: .__iter__) {
     case .value(let o):
-      return .value(o)
+      return PyResult(o)
     case .missingMethod:
       break
     case .error(let e),
@@ -59,10 +58,12 @@ extension PyInstance {
     // Having '__getitem__' is also acceptable.
     switch self.hasMethod(object: object, selector: .__getitem__) {
     case .value(true):
-      let iter = PyMemory.newIterator(sequence: object)
-      return .value(iter)
+      let type = self.types.iterator
+      let iter = self.memory.newIterator(self, type: type, sequence: object)
+      return PyResult(iter)
     case .value(false):
-      return .typeError("'\(object.typeName)' object is not an iterable")
+      let message = "'\(object.typeName)' object is not an iterable"
+      return .typeError(self, message: message)
     case .error(let e):
       return .error(e)
     }
@@ -78,11 +79,16 @@ extension PyInstance {
     }
 
     guard self.isCallable(object: object) else {
-      return .typeError("iter(v, w): v must be callable")
+      return .typeError(self, message: "iter(v, w): v must be callable")
     }
 
-    let result = PyMemory.newCallableIterator(callable: object, sentinel: sentinel)
-    return .value(result)
+    let type = self.types.callable_iterator
+    let result = self.memory.newCallableIterator(self,
+                                                 type: type,
+                                                 callable: object,
+                                                 sentinel: sentinel)
+
+    return PyResult(result)
   }
 
   // MARK: - Has iter
@@ -94,5 +100,3 @@ extension PyInstance {
     }
   }
 }
-
-*/
