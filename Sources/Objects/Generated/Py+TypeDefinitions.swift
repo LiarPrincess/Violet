@@ -3348,6 +3348,26 @@ extension Py {
     private func fillTraceback(_ py: Py) {
       let type = self.traceback
       type.setBuiltinTypeDoc(py, value: PyTraceback.doc)
+
+      let __new__ = FunctionWrapper(type: type, fn: PyTraceback.__new__(_:type:args:kwargs:))
+      self.add(py, type: type, name: "__new__", staticMethod: __new__, doc: nil)
+
+      let __class__ = FunctionWrapper(name: "__get__", fn: PyTraceback.__class__(_:zelf:))
+      self.add(py, type: type, name: "__class__", property: __class__, doc: nil)
+      let tb_frame = FunctionWrapper(name: "__get__", fn: PyTraceback.tb_frame(_:zelf:))
+      self.add(py, type: type, name: "tb_frame", property: tb_frame, doc: nil)
+      let tb_lasti = FunctionWrapper(name: "__get__", fn: PyTraceback.tb_lasti(_:zelf:))
+      self.add(py, type: type, name: "tb_lasti", property: tb_lasti, doc: nil)
+      let tb_lineno = FunctionWrapper(name: "__get__", fn: PyTraceback.tb_lineno(_:zelf:))
+      self.add(py, type: type, name: "tb_lineno", property: tb_lineno, doc: nil)
+      let tb_nextGet = FunctionWrapper(name: "__get__", fn: PyTraceback.tb_next(_:zelf:))
+      let tb_nextSet = FunctionWrapper(name: "__set__", fn: PyTraceback.tb_next(_:zelf:value:))
+      self.add(py, type: type, name: "tb_next", property: tb_nextGet, setter: tb_nextSet, doc: nil)
+
+      let __getattribute__ = FunctionWrapper(name: "__getattribute__", fn: PyTraceback.__getattribute__(_:zelf:name:))
+      self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
+      let __dir__ = FunctionWrapper(name: "__dir__", fn: PyTraceback.__dir__(_:zelf:))
+      self.add(py, type: type, name: "__dir__", method: __dir__, doc: nil)
     }
 
     internal static let tracebackStaticMethods = PyStaticCall.KnownNotOverriddenMethods()

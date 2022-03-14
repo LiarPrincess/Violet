@@ -192,7 +192,12 @@ public struct PyBaseException: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "args")
     }
 
-    return PyResult(zelf.args)
+    let result = zelf.getArgs()
+    return PyResult(result)
+  }
+
+  internal func getArgs() -> PyTuple {
+    return self.args
   }
 
   internal static func args(_ py: Py,
@@ -209,7 +214,7 @@ public struct PyBaseException: PyErrorMixin {
     return .none(py)
   }
 
-  private func setArgs(_ py: Py, value: PyObject?) -> PyBaseException? {
+  internal func setArgs(_ py: Py, value: PyObject?) -> PyBaseException? {
     guard let value = value else {
       let error = py.newTypeError(message: "args may not be deleted")
       return error.asBaseException
@@ -229,7 +234,7 @@ public struct PyBaseException: PyErrorMixin {
     }
   }
 
-  private func setArgs(_ value: PyTuple) {
+  internal func setArgs(_ value: PyTuple) {
     self.args = value
   }
 
@@ -241,7 +246,12 @@ public struct PyBaseException: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__traceback__")
     }
 
-    return PyResult(py, zelf.traceback)
+    let result = zelf.getTraceback()
+    return PyResult(py, result)
+  }
+
+  internal func getTraceback() -> PyTraceback? {
+    return self.traceback
   }
 
   internal static func __traceback__(_ py: Py,
@@ -270,12 +280,16 @@ public struct PyBaseException: PyErrorMixin {
     }
 
     if let traceback = py.cast.asTraceback(value) {
-      self.traceback = traceback
+      self.setTraceback(traceback)
       return nil
     }
 
     let error = py.newTypeError(message: "__traceback__ must be a traceback or None")
     return error.asBaseException
+  }
+
+  internal func setTraceback(_ value: PyTraceback) {
+    self.traceback = value
   }
 
   // MARK: - With traceback
@@ -313,6 +327,10 @@ public struct PyBaseException: PyErrorMixin {
     return PyResult(py, zelf.cause)
   }
 
+  internal func getCause() -> PyBaseException? {
+    return self.cause
+  }
+
   internal static func __cause__(_ py: Py,
                                  zelf: PyObject,
                                  value: PyObject?) -> PyResult<PyObject> {
@@ -339,13 +357,13 @@ public struct PyBaseException: PyErrorMixin {
     return .typeError(py, message: message)
   }
 
-  private func setCause(_ value: PyBaseException) {
+  internal func setCause(_ value: PyBaseException) {
     // https://www.python.org/dev/peps/pep-0415/#proposal
     self.suppressContext = true
     self.cause = value
   }
 
-  private func delCause() {
+  internal func delCause() {
     self.cause = nil
   }
 
@@ -359,7 +377,12 @@ public struct PyBaseException: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__context__")
     }
 
-    return PyResult(py, zelf.context)
+    let result = zelf.getContext()
+    return PyResult(py, result)
+  }
+
+  internal func getContext() -> PyBaseException? {
+    return self.context
   }
 
   internal static func __context__(_ py: Py,
@@ -446,7 +469,7 @@ public struct PyBaseException: PyErrorMixin {
   /// except:
   ///   assert elsa.__context__ == None
   /// ```
-  private func setContext(_ value: PyBaseException, checkAndPossiblyBreakCycle: Bool) {
+  internal func setContext(_ value: PyBaseException, checkAndPossiblyBreakCycle: Bool) {
     if checkAndPossiblyBreakCycle {
       if value.ptr === self.ptr {
         // Setting itself as a '__context__' should not change existing context.
