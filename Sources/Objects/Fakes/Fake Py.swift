@@ -121,32 +121,6 @@ public struct Py {
   public func intern(string: String) -> PyString { fatalError() }
   public func get__dict__(object: PyObject) -> PyDict? { fatalError() }
 
-  // MARK: - Attributes
-
-  public func getAttribute(object: PyObject,
-                           name: String,
-                           default: PyObject? = nil) -> PyResult<PyObject> { fatalError() }
-  public func getAttribute(object: PyObject,
-                           name: IdString,
-                           default: PyObject? = nil) -> PyResult<PyObject> { fatalError() }
-  public func getAttribute(object: PyObject,
-                           name: PyObject,
-                           default: PyObject? = nil) -> PyResult<PyObject> { fatalError() }
-
-  public func hasAttribute(object: PyObject, name: String) -> PyResult<Bool> { fatalError() }
-  public func hasAttribute(object: PyObject, name: IdString) -> PyResult<Bool> { fatalError() }
-  public func hasAttribute(object: PyObject, name: PyObject) -> PyResult<Bool> { fatalError() }
-
-  public func setAttribute(object: PyObject, name: String, value: PyObject) -> PyResult<PyNone> { fatalError() }
-  public func setAttribute(object: PyObject, name: IdString, value: PyObject) -> PyResult<PyNone> { fatalError() }
-  public func setAttribute(object: PyObject, name: PyObject, value: PyObject) -> PyResult<PyNone> { fatalError() }
-
-  // MARK: - Item
-
-  public func getItem(object: PyObject, index: Int) -> PyResult<PyObject> { fatalError() }
-  public func getItem(object: PyObject, index: PyObject) -> PyResult<PyObject> { fatalError() }
-  public func setItem(object: PyObject, index: PyObject, value: PyObject) -> PyResult<PyNone> { fatalError() }
-
   // MARK: - Call
 
   public enum CallResult {
