@@ -5,7 +5,10 @@ import Foundation
 import BigInt
 import FileSystem
 import VioletCore
+import VioletLexer
+import VioletParser
 import VioletBytecode
+import VioletCompiler
 
 public struct Py {
 
@@ -25,16 +28,18 @@ public struct Py {
   public var cast: PyCast { fatalError() }
   internal var hasher: Hasher { fatalError() }
 
-  internal var builtinsModule: PyModule { fatalError() }
-
   public var delegate: PyDelegate { fatalError() }
   public var fileSystem: PyFileSystem { fatalError() }
 
-  internal func getInterned(int: Int) -> PyInt? { fatalError() }
-  internal func getInterned(int: BigInt) -> PyInt? { fatalError() }
-
   internal var sys: Sys { fatalError() }
   internal var _warnings: UnderscoreWarnings { fatalError() }
+
+  internal var sysModule: PyModule { fatalError() }
+  internal var _impModule: PyModule { fatalError() }
+  internal var builtinsModule: PyModule { fatalError() }
+
+  internal func getInterned(int: Int) -> PyInt? { fatalError() }
+  internal func getInterned(int: BigInt) -> PyInt? { fatalError() }
 
   // MARK: - New
 
@@ -85,6 +90,8 @@ public struct Py {
                                debugFn: debugFn,
                                deinitialize: deinitialize)
   }
+
+  public func newModule(name: String) -> PyModule { fatalError() }
 
   public func newBuiltinMethod(fn: FunctionWrapper,
                                object: PyObject,
@@ -195,6 +202,12 @@ public struct Py {
     }
   }
 
+  public func getMethod(object: PyObject,
+                        selector: PyString,
+                        allowsCallableFromDict: Bool = false) -> GetMethodResult {
+    fatalError()
+  }
+
   public func callMethod(object: PyObject,
                          selector: IdString,
                          arg: PyObject) -> CallMethodResult {
@@ -216,6 +229,54 @@ public struct Py {
 
   public func isCallable(object: PyObject) -> Bool { fatalError() }
   public func isAbstractMethod(object: PyObject) -> PyResult<Bool> { fatalError() }
+
+// MARK: - Compile
+
+
+  public enum CompileResult {
+    /// Code compiled successfully (Yay!)
+    case code(PyCode)
+
+    /// Lexer warning that should be treated as error OR error when printing
+    case lexerWarning(LexerWarning, PyBaseException)
+    /// Lexing failed
+    case lexerError(LexerError, PyBaseException)
+
+    /// Parser warning that should be treated as error OR error when printing
+    case parserWarning(ParserWarning, PyBaseException)
+    /// Parsing failed
+    case parserError(ParserError, PyBaseException)
+
+    /// Compiler warning that should be treated as error OR error when printing
+    case compilerWarning(CompilerWarning, PyBaseException)
+    /// Compiling failed
+    case compilerError(CompilerError, PyBaseException)
+
+    /// Non lexer, parser or compiler error
+    case error(PyBaseException)
+
+    public func asResult() -> PyResult<PyCode> {
+      switch self {
+      case let .code(c):
+        return .value(c)
+      case let .lexerWarning(_, e),
+           let .lexerError(_, e),
+           let .parserWarning(_, e),
+           let .parserError(_, e),
+           let .compilerWarning(_, e),
+           let .compilerError(_, e),
+           let .error(e):
+        return .error(e)
+      }
+    }
+  }
+
+
+  public func compile(path: Path,
+                      mode: Parser.Mode,
+                      optimize: Compiler.OptimizationLevel? = nil) -> CompileResult {
+    fatalError()
+  }
 
   // MARK: - Errors
 

@@ -1,7 +1,7 @@
-/* MARKER
 import Foundation
 import FileSystem
 import VioletCore
+import VioletParser
 
 // swiftlint:disable file_length
 
@@ -13,9 +13,9 @@ private struct ModuleSpec {
   fileprivate let nameObject: PyString
   fileprivate let filename: String
 
-  fileprivate init(name: String, filename: String) {
+  fileprivate init(_ py: Py, name: String, filename: String) {
     self.name = name
-    self.nameObject = Py.intern(string: name)
+    self.nameObject = py.newString(name)
     self.filename = filename
   }
 }
@@ -43,18 +43,9 @@ private struct ModuleSpecWithPath {
 private enum ImportlibResult<Wrapped> {
   case value(Wrapped)
   case error(PyImportError)
-
-  fileprivate var asResult: PyResult<Wrapped> {
-    switch self {
-    case let .value(w):
-      return .value(w)
-    case let .error(e):
-      return .error(e)
-    }
-  }
 }
 
-extension PyInstance {
+extension Py {
 
   // MARK: - Importlib
 
@@ -73,13 +64,14 @@ extension PyInstance {
   /// `importlib` is the module used for importing other modules.
   public func initImportlibIfNeeded() -> PyResult<PyModule> {
     let spec = ModuleSpec(
+      self,
       name: "importlib",
       filename: "importlib.py"
     )
 
-    let args = [self.sysModule, self._impModule]
+    let args = [self.sysModule.asObject, self._impModule.asObject]
     let module = self.initImportlibModule(spec: spec, installArgs: args)
-    return module.asResult
+    return self.toResult(module)
   }
 
   // MARK: - Importlib external
@@ -107,13 +99,23 @@ extension PyInstance {
     importlib: PyModule
   ) -> PyResult<PyModule> {
     let spec = ModuleSpec(
+      self,
       name: "importlib_external",
       filename: "importlib_external.py"
     )
 
-    let args = [importlib]
+    let args = [importlib.asObject]
     let module = self.initImportlibModule(spec: spec, installArgs: args)
-    return module.asResult
+    return self.toResult(module)
+  }
+
+  private func toResult(_ result: ImportlibResult<PyModule>) -> PyResult<PyModule> {
+    switch result {
+    case let .value(w):
+      return .value(w)
+    case let .error(e):
+      return .error(e.asBaseException)
+    }
   }
 
   // MARK: - Shared
@@ -141,9 +143,9 @@ extension PyInstance {
     switch compileResult.asResult() {
     case let .value(c): code = c
     case let .error(e):
-      let msg = "can't compile \(spec.name)"
-      let e = self.newImportError(msg: msg, spec: specPath, cause: e)
-      return .error(e)
+      let message = "can't compile \(spec.name)"
+      let cause = e.asBaseException
+      return .error(self.newImportError(message: message, spec: specPath, cause: cause))
     }
 
     let module: PyModule
@@ -168,18 +170,18 @@ private enum GetModuleFromSysResult {
   case error(PyImportError)
 }
 
-extension PyInstance {
+extension Py {
 
   private func getModuleFromSys(spec: ModuleSpec) -> GetModuleFromSysResult {
-    switch Py.sys.getModule(name: spec.nameObject) {
+    switch self.sys.getModule(name: spec.nameObject) {
     case .module(let m): // Already initialized. Nothing to do…
       return .value(m)
     case .notModule, // Override whatever we have there
          .notFound: // We have to initialize it
       return .notFound
     case .error(let e):
-      let msg = "error when checking if '\(spec.name)' was already initialized"
-      let e = self.newImportError(msg: msg, spec: spec, cause: e)
+      let message = "error when checking if '\(spec.name)' was already initialized"
+      let e = self.newImportError(message: message, spec: spec, cause: e)
       return .error(e)
     }
   }
@@ -188,24 +190,24 @@ extension PyInstance {
 
   private func findModuleOnDisc(spec: ModuleSpec) -> ImportlibResult<Path> {
     let moduleSearchPaths: PyList
-    switch Py.sys.getPath() {
+    switch self.sys.getPath() {
     case let .value(l): moduleSearchPaths = l
     case let .error(e):
-      let msg = "Unable to obtain 'sys.path'"
-      let e = self.newImportError(msg: msg, spec: spec, cause: e)
+      let message = "Unable to obtain 'sys.path'"
+      let e = self.newImportError(message: message, spec: spec, cause: e)
       return .error(e)
     }
 
     var triedPaths = [Path]()
     for object in moduleSearchPaths.elements {
       // If this is not 'str' then ignore
-      guard let dirPyString = PyCast.asString(object) else {
+      guard let dirPyString = self.cast.asString(object) else {
         continue
       }
 
       // Try 'dir/filename'
       let dir = Path(string: dirPyString.value)
-      let modulePath = Py.fileSystem.join(path: dir, element: spec.filename)
+      let modulePath = self.fileSystem.join(path: dir, element: spec.filename)
       triedPaths.append(dir)
 
       let stat: Stat
@@ -213,9 +215,9 @@ extension PyInstance {
       case .value(let s): stat = s
       case .enoent: continue // No such file - just try next 'path'
       case .error(let e):
-        let msg = "\(spec.name) spec error for '\(dir)'"
-        let e = self.newImportError(msg: msg, spec: spec, cause: e)
-        return .error(e)
+        let message = "\(spec.name) spec error for '\(dir)'"
+        let cause = e.asBaseException
+        return .error(self.newImportError(message: message, spec: spec, cause: cause))
       }
 
       // Currently our 'importlib' is just a single file,
@@ -228,26 +230,28 @@ extension PyInstance {
     }
 
     let paths = triedPaths.lazy.map { $0.string }.joined(separator: ", ")
-    let msg = "'\(spec.name)' not found, tried: \(paths)."
-    return .error(self.newImportError(msg: msg, spec: spec))
+    let message = "'\(spec.name)' not found, tried: \(paths)."
+    return .error(self.newImportError(message: message, spec: spec))
   }
 
   // MARK: - Create module
 
   private func createModule(spec: ModuleSpecWithPath,
                             code: PyCode) -> ImportlibResult<PyModule> {
-    let module = Py.newModule(name: spec.name)
+    let module = self.newModule(name: spec.name)
 
     let moduleDict = module.getDict()
-    moduleDict.set(id: .__name__, to: spec.nameObject)
-    moduleDict.set(id: .__file__, to: code.filename)
+    let nameObject = spec.nameObject.asObject
+    let filenameObject = code.filename.asObject
+    moduleDict.set(self, id: .__name__, value: nameObject)
+    moduleDict.set(self, id: .__file__, value: filenameObject)
 
-    if let e = Py.sys.addModule(module: module) {
+    if let e = self.sys.addModule(module: module) {
       return .error(self.createModuleError(spec: spec, cause: e))
     }
 
     // Run the module code, using 'module.__dict__' as env
-    let result = Py.delegate.eval(
+    let result = self.delegate.eval(
       name: nil,
       qualname: nil,
       code: code,
@@ -270,8 +274,8 @@ extension PyInstance {
 
   private func createModuleError(spec: ModuleSpecWithPath,
                                  cause: PyBaseException) -> PyImportError {
-    let msg = "can't create '\(spec.name)' module"
-    return self.newImportError(msg: msg, spec: spec, cause: cause)
+    let message = "can't create '\(spec.name)' module"
+    return self.newImportError(message: message, spec: spec, cause: cause)
   }
 
   // MARK: - Install
@@ -280,9 +284,10 @@ extension PyInstance {
   private func callInstall(spec: ModuleSpecWithPath,
                            module: PyModule,
                            args: [PyObject]) -> PyImportError? {
-    switch Py.getAttribute(object: module, name: "_install") {
+    let moduleObject = module.asObject
+    switch self.getAttribute(object: moduleObject, name: "_install") {
     case let .value(fn):
-      switch Py.call(callable: fn, args: args, kwargs: nil) {
+      switch self.call(callable: fn, args: args, kwargs: nil) {
       case .value:
         return nil
       case .notCallable(let e),
@@ -297,34 +302,34 @@ extension PyInstance {
 
   private func createInstallError(spec: ModuleSpecWithPath,
                                   cause: PyBaseException) -> PyImportError {
-    let msg = "can't install \(spec.name)"
-    return self.newImportError(msg: msg, spec: spec, cause: cause)
+    let message = "can't install \(spec.name)"
+    return self.newImportError(message: message, spec: spec, cause: cause)
   }
 
   // MARK: - Create errors
 
-  private func newImportError(msg: String,
+  private func newImportError(message: String,
                               spec: ModuleSpec,
                               cause: PyBaseException? = nil) -> PyImportError {
-    let result = Py.newImportError(msg: msg,
-                                   moduleName: spec.name)
-
-    if let cause = cause {
-      result.setCause(cause)
-    }
-
+    let result = self.newImportError(message: message, moduleName: spec.name)
+    self.setCause(error: result, cause: cause)
     return result
   }
 
-  private func newImportError(msg: String,
+  private func newImportError(message: String,
                               spec: ModuleSpecWithPath,
                               cause: PyBaseException) -> PyImportError {
-    let result = Py.newImportError(msg: msg,
-                                   moduleName: spec.name,
-                                   modulePath: spec.path)
-    result.setCause(cause)
+    let result = self.newImportError(message: message,
+                                     moduleName: spec.name,
+                                     modulePath: spec.path)
+    self.setCause(error: result, cause: cause)
     return result
   }
-}
 
-*/
+  private func setCause(error: PyImportError, cause: PyBaseException?) {
+    if let cause = cause {
+      let base = error.asBaseException
+      self.setCause(exception: base, cause: cause)
+    }
+  }
+}
