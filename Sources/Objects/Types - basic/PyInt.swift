@@ -115,8 +115,12 @@ public struct PyInt: PyObjectMixin {
       return .invalidSelfArgument(zelf, Self.pythonTypeName)
     }
 
-    let result = py.hasher.hash(zelf.value)
+    let result = zelf.hash(py)
     return .value(result)
+  }
+
+  internal func hash(_ py: Py) -> PyHash {
+    return py.hasher.hash(self.value)
   }
 
   // MARK: - String

@@ -1,11 +1,10 @@
-/* MARKER
 // In CPython:
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
 // cSpell:ignore unhashable
 
-extension PyInstance {
+extension Py {
 
   /// hash(object)
   /// See [this](https://docs.python.org/3/library/functions.html#hash)
@@ -13,13 +12,18 @@ extension PyInstance {
   /// Py_hash_t PyObject_Hash(PyObject *v)
   /// slot_tp_hash(PyObject *self)
   public func hash(object: PyObject) -> PyResult<PyHash> {
-    if let result = PyStaticCall.__hash__(object) {
+    if let result = PyStaticCall.__hash__(self, object: object) {
       switch result {
       case let .value(hash):
         return .value(hash)
       case let .unhashable(object):
-        let e = self.hashNotAvailable(object)
-        return .error(e)
+        let error = HashResult.createUnhashableError(self, object: object)
+        return .error(error.asBaseException)
+      case let .invalidSelfArgument(object, expectedType):
+        let error = HashResult.createInvalidSelfArgumentError(self,
+                                                              object: object,
+                                                              expectedType: expectedType)
+        return .error(error.asBaseException)
       case let .error(e):
         return .error(e)
       }
@@ -30,16 +34,16 @@ extension PyInstance {
     case .value(let o):
       result = o
     case .missingMethod:
-      let e = self.hashNotAvailable(object)
-      return .error(e)
+      let error = self.newUnhashableObjectError(object: object)
+      return .error(error.asBaseException)
     case .error(let e),
          .notCallable(let e):
       return .error(e)
     }
 
-    guard let pyInt = PyCast.asInt(result) else {
-      let t = result.typeName
-      return .typeError("__hash__ method should return an integer, not \(t)")
+    guard let pyInt = self.cast.asInt(result) else {
+      let message = "__hash__ method should return an integer, not \(result.typeName)"
+      return .typeError(self, message: message)
     }
 
     if let hash = PyHash(exactly: pyInt.value) {
@@ -49,15 +53,13 @@ extension PyInstance {
     // `result` was not within the range of a Py_hash_t, so we're free to
     // use any sufficiently bit-mixing transformation;
     // long.__hash__ will do nicely.
-    let pyIntHash = pyInt.hash()
+    let pyIntHash = pyInt.hash(self)
     return .value(pyIntHash)
   }
 
   /// Py_hash_t PyObject_HashNotImplemented(PyObject *v)
-  internal func hashNotAvailable(_ object: PyObject) -> PyBaseException {
-    let msg = "unhashable type: '\(object.typeName)'"
-    return self.newTypeError(msg: msg)
+  internal func newUnhashableObjectError(object: PyObject) -> PyTypeError {
+    let message = "unhashable type: '\(object.typeName)'"
+    return self.newTypeError(message: message)
   }
 }
-
-*/

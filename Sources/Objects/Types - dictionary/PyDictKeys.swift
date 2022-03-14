@@ -135,7 +135,7 @@ public struct PyDictKeys: PyObjectMixin, AbstractDictView {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
-    let result = py.newDictKeyIterator(dict: zelf.dict)
+    let result = py.newIterator(keys: zelf.dict)
     return PyResult(result)
   }
 

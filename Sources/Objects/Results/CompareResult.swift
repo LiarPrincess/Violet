@@ -52,6 +52,18 @@ public enum CompareResult {
       return .error(e)
     }
   }
+
+  internal static func createInvalidSelfArgumentError(
+    _ py: Py,
+    object: PyObject,
+    expectedType: String,
+    operation: Operation
+  ) -> PyTypeError {
+    let fnName = operation.rawValue
+    return py.newInvalidSelfArgumentError(object: object,
+                                          expectedType: expectedType,
+                                          fnName: fnName)
+  }
 }
 
 extension PyResult where Wrapped == PyObject {
@@ -64,11 +76,12 @@ extension PyResult where Wrapped == PyObject {
       self = PyResult(py.notImplemented)
 
     case let .invalidSelfArgument(object, expectedType, operation):
-      let fnName = operation.rawValue
-      let e = py.newInvalidSelfArgumentError(object: object,
-                                             expectedType: expectedType,
-                                             fnName: fnName)
-      self = .error(e.asBaseException)
+      let error = CompareResult.createInvalidSelfArgumentError(py,
+                                                               object: object,
+                                                               expectedType: expectedType,
+                                                               operation: operation)
+
+      self = .error(error.asBaseException)
 
     case .error(let e):
       self = .error(e)
