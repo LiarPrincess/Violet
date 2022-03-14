@@ -1,4 +1,3 @@
-/* MARKER
 // In CPython:
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
@@ -6,7 +5,7 @@
 // swiftlint:disable file_length
 // cSpell:ignore attrid
 
-extension PyInstance {
+extension Py {
 
   // MARK: - Get
 
@@ -15,10 +14,8 @@ extension PyInstance {
   public func getAttribute(object: PyObject,
                            name: String,
                            default: PyObject? = nil) -> PyResult<PyObject> {
-    let interned = self.asObject(name: name)
-    return self.getAttribute(object: object,
-                             name: interned,
-                             default: `default`)
+    let n = self.asObject(name: name)
+    return self.getAttribute(object: object, name: n, default: `default`)
   }
 
   /// getattr(object, name[, default])
@@ -26,9 +23,8 @@ extension PyInstance {
   public func getAttribute(object: PyObject,
                            name: IdString,
                            default: PyObject? = nil) -> PyResult<PyObject> {
-    return self.getAttribute(object: object,
-                             name: name.value,
-                             default: `default`)
+    let n = name.value.asObject
+    return self.getAttribute(object: object, name: n, default: `default`)
   }
 
   /// getattr(object, name[, default])
@@ -43,8 +39,8 @@ extension PyInstance {
   public func getAttribute(object: PyObject,
                            name: PyObject,
                            default: PyObject? = nil) -> PyResult<PyObject> {
-    guard let name = PyCast.asString(name) else {
-      return .typeError("getattr(): attribute name must be string")
+    guard self.isString(name: name) else {
+      return .typeError(self, message: "getattr(): attribute name must be string")
     }
 
     // https://docs.python.org/3.8/reference/datamodel.html#object.__getattribute__
@@ -53,7 +49,7 @@ extension PyInstance {
     case let .value(o):
       return .value(o)
     case let .error(e):
-      if PyCast.isAttributeError(e) {
+      if self.cast.isAttributeError(e.asObject) {
         __getattribute__AttributeError = e
         break // There is still a hope! Let's ask '__getattr__'.
       }
@@ -69,7 +65,7 @@ extension PyInstance {
     case .missingMethod:
       break // __getattr__ is optional
     case let .error(e):
-      if PyCast.isAttributeError(e) {
+      if self.cast.isAttributeError(e.asObject) {
         __getattr__AttributeError = e
         break
       }
@@ -98,24 +94,23 @@ extension PyInstance {
   }
 
   private func call__getattribute__(object: PyObject,
-                                    name: PyString) -> PyResult<PyObject> {
+                                    name: PyObject) -> PyResult<PyObject> {
     // Fast path: we know the method at compile time
-    if let result = PyStaticCall.__getattribute__(object, name: name) {
+    if let result = PyStaticCall.__getattribute__(self, object: object, name: name) {
       return result
     }
 
     // Calling '__getattribute__' could ask for '__getattribute__' attribute.
     // That would create a cycle which we have to break.
     // Trust me it is not a hack, it is… yeah it is a hack.
-    if name.value == "__getattribute__" {
-      let result = AttributeHelper.getAttribute(from: object, name: name)
+    assert(self.isString(name: name), "This should be checked before.")
+    if let n = self.cast.asString(name), n.value == "__getattribute__" {
+      let result = AttributeHelper.getAttribute(self, object: object, name: name)
       return result
     }
 
     // Slow python path
-    switch self.callMethod(object: object,
-                           selector: .__getattribute__,
-                           arg: name) {
+    switch self.callMethod(object: object, selector: .__getattribute__, arg: name) {
     case let .value(o):
       return .value(o)
     case let .missingMethod(e),
@@ -139,9 +134,9 @@ extension PyInstance {
   }
 
   private func call__getattr__(object: PyObject,
-                               name: PyString) -> CallGetattrResult {
+                               name: PyObject) -> CallGetattrResult {
     // Fast path: we know the method at compile time
-    if let result = PyStaticCall.__getattr__(object, name: name) {
+    if let result = PyStaticCall.__getattr__(self, object: object, name: name) {
       return CallGetattrResult(result: result)
     }
 
@@ -162,21 +157,22 @@ extension PyInstance {
   /// hasattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#hasattr)
   public func hasAttribute(object: PyObject, name: String) -> PyResult<Bool> {
-    let interned = self.asObject(name: name)
-    return self.hasAttribute(object: object, name: interned)
+    let n = self.asObject(name: name)
+    return self.hasAttribute(object: object, name: n)
   }
 
   /// hasattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#hasattr)
   public func hasAttribute(object: PyObject, name: IdString) -> PyResult<Bool> {
-    return self.hasAttribute(object: object, name: name.value)
+    let n = name.value.asObject
+    return self.hasAttribute(object: object, name: n)
   }
 
   /// hasattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#hasattr)
   public func hasAttribute(object: PyObject, name: PyObject) -> PyResult<Bool> {
-    guard let name = PyCast.asString(name) else {
-      return .typeError("hasattr(): attribute name must be string")
+    guard self.isString(name: name) else {
+      return .typeError(self, message: "hasattr(): attribute name must be string")
     }
 
     switch self.getAttribute(object: object, name: name, default: nil) {
@@ -184,7 +180,7 @@ extension PyInstance {
       return .value(true)
 
     case .error(let e):
-      if PyCast.isAttributeError(e) {
+      if self.cast.isAttributeError(e.asObject) {
         return .value(false)
       }
 
@@ -198,38 +194,39 @@ extension PyInstance {
   /// See [this](https://docs.python.org/3/library/functions.html#setattr)
   public func setAttribute(object: PyObject,
                            name: String,
-                           value: PyObject) -> PyResult<PyNone> {
-    let interned = self.asObject(name: name)
-    return self.setAttribute(object: object, name: interned, value: value)
+                           value: PyObject) -> PyResult<PyObject> {
+    let n = self.asObject(name: name)
+    return self.setAttribute(object: object, name: n, value: value)
   }
 
   /// setattr(object, name, value)
   /// See [this](https://docs.python.org/3/library/functions.html#setattr)
   public func setAttribute(object: PyObject,
                            name: IdString,
-                           value: PyObject) -> PyResult<PyNone> {
-    return self.setAttribute(object: object, name: name.value, value: value)
+                           value: PyObject) -> PyResult<PyObject> {
+    let n = name.value.asObject
+    return self.setAttribute(object: object, name: n, value: value)
   }
 
   /// setattr(object, name, value)
   /// See [this](https://docs.python.org/3/library/functions.html#setattr)
   public func setAttribute(object: PyObject,
-                           name: PyObject,
-                           value: PyObject) -> PyResult<PyNone> {
-    guard let name = PyCast.asString(name) else {
-      return .typeError("setattr(): attribute name must be string")
+                           name nameObject: PyObject,
+                           value: PyObject) -> PyResult<PyObject> {
+    guard let name = self.cast.asString(nameObject) else {
+      return .typeError(self, message: "setattr(): attribute name must be string")
     }
 
-    if let result = PyStaticCall.__setattr__(object, name: name, value: value) {
+    if let result = PyStaticCall.__setattr__(self, object: object, name: nameObject, value: value) {
       return result
     }
 
-    let args = [name, value]
+    let args = [nameObject, value]
     switch self.callMethod(object: object, selector: .__setattr__, args: args) {
-    case .value:
-      return .value(self.none)
+    case .value(let o):
+      return .value(o)
     case .missingMethod:
-      let operation: AttributeOperation = PyCast.isNone(value) ? .del : .set
+      let operation: AttributeOperation = self.cast.isNone(value) ? .del : .set
       let error = self.attributeModificationError(object: object,
                                                   name: name,
                                                   operation: operation)
@@ -251,23 +248,24 @@ extension PyInstance {
     name: PyString,
     operation: AttributeOperation
   ) -> PyBaseException {
-    let t = object.typeName
     let name = name.repr()
 
-    let details: String = {
-      switch operation {
-      case .del: return "(del \(name))"
-      case .set: return "(assign to \(name))"
-      }
-    }()
+    let details: String
+    switch operation {
+    case .del: details = "(del \(name))"
+    case .set: details = "(assign to \(name))"
+    }
 
+    let type = object.typeName
     switch self.hasAttribute(object: object, name: name) {
     case .value(true):
-      let msg = "'\(t)' object has only read-only attributes \(details)"
-      return Py.newTypeError(msg: msg)
+      let message = "'\(type)' object has only read-only attributes \(details)"
+      let error = self.newTypeError(message: message)
+      return error.asBaseException
     case .value(false):
-      let msg = "'\(t)' object has no attributes \(details)"
-      return Py.newTypeError(msg: msg)
+      let message = "'\(type)' object has no attributes \(details)"
+      let error = self.newTypeError(message: message)
+      return error.asBaseException
     case let .error(e):
       return e
     }
@@ -277,31 +275,33 @@ extension PyInstance {
 
   /// delattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#delattr)
-  public func delAttribute(object: PyObject, name: String) -> PyResult<PyNone> {
-    let interned = self.asObject(name: name)
-    return self.delAttribute(object: object, name: interned)
+  public func delAttribute(object: PyObject, name: String) -> PyResult<PyObject> {
+    let n = self.asObject(name: name)
+    return self.delAttribute(object: object, name: n)
   }
 
   /// delattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#delattr)
-  public func delAttribute(object: PyObject, name: IdString) -> PyResult<PyNone> {
-    return self.delAttribute(object: object, name: name.value)
+  public func delAttribute(object: PyObject, name: IdString) -> PyResult<PyObject> {
+    let n = name.value.asObject
+    return self.delAttribute(object: object, name: n)
   }
 
   /// delattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#delattr)
-  public func delAttribute(object: PyObject, name: PyObject) -> PyResult<PyNone> {
-    guard let name = PyCast.asString(name) else {
-      return .typeError("delattr(): attribute name must be string")
+  public func delAttribute(object: PyObject,
+                           name nameObject: PyObject) -> PyResult<PyObject> {
+    guard let name = self.cast.asString(nameObject) else {
+      return .typeError(self, message: "delattr(): attribute name must be string")
     }
 
-    if let result = PyStaticCall.__delattr__(object, name: name) {
+    if let result = PyStaticCall.__delattr__(self, object: object, name: nameObject) {
       return result
     }
 
-    switch self.callMethod(object: object, selector: .__delattr__, arg: name) {
-    case .value:
-      return .value(self.none)
+    switch self.callMethod(object: object, selector: .__delattr__, arg: nameObject) {
+    case .value(let o):
+      return .value(o)
     case .missingMethod:
       let error = self.attributeModificationError(object: object,
                                                   name: name,
@@ -326,11 +326,11 @@ extension PyInstance {
   /// _PyObject_LookupSpecial(PyObject *self, _Py_Identifier *attrid)
   public func mroLookup(object: PyObject, name: IdString) -> LookupResult {
     let type = object.type
-    guard let lookup = type.mroLookup(name: name) else {
+    guard let lookup = type.mroLookup(self, name: name) else {
       return .notFound
     }
 
-    if let descr = GetDescriptor(object: object, attribute: lookup.object) {
+    if let descr = GetDescriptor(self, object: object, attribute: lookup.object) {
       switch descr.call() {
       case let .value(o): return .value(o)
       case let .error(e): return .error(e)
@@ -342,10 +342,13 @@ extension PyInstance {
 
   // MARK: - Helpers
 
+  private func isString(name: PyObject) -> Bool {
+    return self.cast.isString(name)
+  }
+
   /// We will intern attribute names, because they tend to be repeated a lot.
-  private func asObject(name: String) -> PyString {
-    return self.intern(string: name)
+  private func asObject(name: String) -> PyObject {
+    let interned = self.intern(string: name)
+    return interned.asObject
   }
 }
-
-*/

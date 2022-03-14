@@ -1,19 +1,18 @@
-/* MARKER
 // cSpell:ignore subscriptable
 
-extension PyInstance {
+extension Py {
 
   // MARK: - Get
 
   /// PySequence_GetItem
   public func getItem(object: PyObject, index: Int) -> PyResult<PyObject> {
-    let int = self.newInt(index)
+    let int = self.newInt(index).asObject
     return self.getItem(object: object, index: int)
   }
 
   /// PyObject_GetItem
   public func getItem(object: PyObject, index: PyObject) -> PyResult<PyObject> {
-    if let result = PyStaticCall.__getitem__(object, index: index) {
+    if let result = PyStaticCall.__getitem__(self, object: object, index: index) {
       return result
     }
 
@@ -21,7 +20,7 @@ extension PyInstance {
     case .value(let r):
       return .value(r)
     case .missingMethod:
-      return .typeError("'\(object.typeName)' object is not subscriptable")
+      return .typeError(self, message: "'\(object.typeName)' object is not subscriptable")
     case .error(let e),
          .notCallable(let e):
       return .error(e)
@@ -33,18 +32,21 @@ extension PyInstance {
   /// PyObject_SetItem
   public func setItem(object: PyObject,
                       index: PyObject,
-                      value: PyObject) -> PyResult<PyNone> {
-    if let result = PyStaticCall.__setitem__(object, index: index, value: value) {
+                      value: PyObject) -> PyResult<PyObject> {
+    if let result = PyStaticCall.__setitem__(self,
+                                             object: object,
+                                             index: index,
+                                             value: value) {
       return result
     }
 
     let args = [index, value]
     switch self.callMethod(object: object, selector: .__setitem__, args: args) {
     case .value:
-      return .value(self.none)
+      return .none(self)
     case .missingMethod:
       let t = object.typeName
-      return .typeError("'\(t)' object does not support item assignment")
+      return .typeError(self, message: "'\(t)' object does not support item assignment")
     case .error(let e),
          .notCallable(let e):
       return .error(e)
@@ -54,22 +56,20 @@ extension PyInstance {
   // MARK: - Delete
 
   /// PyObject_DelItem
-  public func deleteItem(object: PyObject, index: PyObject) -> PyResult<PyNone> {
-    if let result = PyStaticCall.__delitem__(object, index: index) {
+  public func deleteItem(object: PyObject, index: PyObject) -> PyResult<PyObject> {
+    if let result = PyStaticCall.__delitem__(self, object: object, index: index) {
       return result
     }
 
     switch self.callMethod(object: object, selector: .__delitem__, arg: index) {
     case .value:
-      return .value(self.none)
+      return .none(self)
     case .missingMethod:
       let t = object.typeName
-      return .typeError("'\(t)' object does not support item deletion")
+      return .typeError(self, message: "'\(t)' object does not support item deletion")
     case .error(let e),
          .notCallable(let e):
       return .error(e)
     }
   }
 }
-
-*/
