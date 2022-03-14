@@ -138,7 +138,7 @@ public struct PySlice: PyObjectMixin {
   private static func getFirstNonEqualValues(_ py: Py,
                                              zelf: PySlice,
                                              other: PyObject) -> FirstNonEqualValues {
-    guard let o = py.cast.asSlice(other) else {
+    guard let o = Self.downcast(py, other) else {
       return .notImplemented
     }
 

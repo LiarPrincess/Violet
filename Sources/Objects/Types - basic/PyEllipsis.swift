@@ -36,7 +36,7 @@ public struct PyEllipsis: PyObjectMixin {
 
   // sourcery: pymethod = __repr__
   internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    guard py.cast.isEllipsis(zelf) else {
+    guard Self.downcast(py, zelf) != nil else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
@@ -54,7 +54,7 @@ public struct PyEllipsis: PyObjectMixin {
 
   // sourcery: pymethod = __reduce__
   internal static func __reduce__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    guard py.cast.isEllipsis(zelf) else {
+    guard Self.downcast(py, zelf) != nil else {
       return Self.invalidZelfArgument(py, zelf, "__reduce__")
     }
 
@@ -67,7 +67,7 @@ public struct PyEllipsis: PyObjectMixin {
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
                                         name: PyObject) -> PyResult<PyObject> {
-    guard let zelf = py.cast.asEllipsis(zelf) else {
+    guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
 

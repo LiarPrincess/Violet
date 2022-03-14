@@ -35,7 +35,7 @@ extension PyString {
   // MARK: - Get elements
 
   internal static func getElements(_ py: Py, object: PyObject) -> Elements? {
-    if let string = py.cast.asString(object) {
+    if let string = Self.downcast(py, object) {
       return string.elements
     }
 
@@ -47,7 +47,7 @@ extension PyString {
     object: PyObject
   ) -> AbstractStringElementsForFindCountContainsIndexOf<Elements> {
     // Nothing special here, only 'str' can be used in 'find', 'count' etc… '.
-    if let string = py.cast.asString(object) {
+    if let string = Self.downcast(py, object) {
       return .value(string.elements)
     }
 

@@ -143,7 +143,7 @@ public struct PyBuiltinFunction: PyObjectMixin, AbstractBuiltinFunction {
 
   // sourcery: pyproperty = __self__
   internal static func __self__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    guard py.cast.isBuiltinFunction(zelf) else {
+    guard Self.downcast(py, zelf) != nil else {
       return Self.invalidZelfArgument(py, zelf, "__self__")
     }
 

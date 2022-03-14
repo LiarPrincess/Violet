@@ -204,7 +204,7 @@ public struct PyBool: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
 
-    guard let other = py.cast.asBool(other) else {
+    guard let other = Self.downcast(py, other) else {
       return intFn(py, zelf.asObject, other)
     }
 

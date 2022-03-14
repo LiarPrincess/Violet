@@ -198,7 +198,7 @@ public struct PyFloat: PyObjectMixin {
 
   // sourcery: pyproperty = imag
   internal static func imag(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    guard py.cast.isFloat(zelf) else {
+    guard Self.downcast(py, zelf) != nil else {
       return Self.invalidZelfArgument(py, zelf, "imag")
     }
 
@@ -1104,7 +1104,7 @@ public struct PyFloat: PyObjectMixin {
   ///
   /// CPython: `define CONVERT_TO_DOUBLE(obj, dbl)`
   internal static func asDouble(_ py: Py, object: PyObject) -> AsDouble {
-    if let pyFloat = py.cast.asFloat(object) {
+    if let pyFloat = Self.downcast(py, object) {
       return .value(pyFloat.value)
     }
 

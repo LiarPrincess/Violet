@@ -69,7 +69,7 @@ public struct PyMethod: PyObjectMixin {
   }
 
   private static func isEqual(_ py: Py, zelf: PyMethod, other: PyObject) -> CompareResult {
-    guard let other = py.cast.asMethod(other) else {
+    guard let other = Self.downcast(py, other) else {
       return .notImplemented
     }
 
