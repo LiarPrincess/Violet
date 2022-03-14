@@ -128,14 +128,6 @@ public struct Py {
 
   // MARK: - Other
 
-  /// Is `type` subtype of `baseException`?
-  ///
-  /// PyExceptionInstance_Check
-  public func isException(type: PyType) -> Bool {
-    let baseException = self.errorTypes.baseException
-    return type.isSubtype(of: baseException)
-  }
-
   public func intern(scalar: UnicodeScalar) -> PyString { fatalError() }
   public func intern(string: String) -> PyString { fatalError() }
   public func get__dict__(object: PyObject) -> PyDict? { fatalError() }
@@ -243,7 +235,31 @@ public struct Py {
   public func isCallable(object: PyObject) -> Bool { fatalError() }
   public func isAbstractMethod(object: PyObject) -> PyResult<Bool> { fatalError() }
 
-  // MARK: - Warn
+  // MARK: - Errors
+
+  // 'IndentationError' is a subclass of 'SyntaxError' with custom 'init'
+  // ImportError: Exception # Import can't find module, or can't find name in module.
+  // ModuleNotFoundError: ImportError # Module not found.
+  //
+  // SyntaxError: Exception # Invalid syntax.
+  // IndentationError: SyntaxError # Improper indentation.
+  // TabError: IndentationError # Improper mixture of spaces and tabs.
+
+  public func newIndentationError(message: String?,
+                                  filename: String?,
+                                  lineno: BigInt?,
+                                  offset: BigInt?,
+                                  text: String?,
+                                  printFileAndLine: Bool?) -> PyIndentationError { fatalError() }
+
+  public func newIndentationError(message: PyString?,
+                                  filename: PyString?,
+                                  lineno: PyInt?,
+                                  offset: PyInt?,
+                                  text: PyString?,
+                                  printFileAndLine: PyBool?) -> PyIndentationError { fatalError() }
+
+  // MARK: - Warnings
 
   public enum PyWarningEnum {
     /// Base class for warning categories.

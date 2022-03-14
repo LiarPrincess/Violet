@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 
 // In CPython:
@@ -6,7 +5,7 @@ import Foundation
 // Python -> errors.c
 // https://docs.python.org/3.7/library/exceptions.html
 
-extension PyInstance {
+extension Py {
 
   // MARK: - Exception matches
 
@@ -23,13 +22,13 @@ extension PyInstance {
   ///   - expectedType: Exception type to check against (tuples are also allowed).
   public func exceptionMatches(exception: PyObject,
                                expectedType: PyObject) -> Bool {
-    if let tuple = PyCast.asTuple(expectedType) {
+    if let tuple = self.cast.asTuple(expectedType) {
       return tuple.elements.contains {
         self.exceptionMatches(exception: exception, expectedType: $0)
       }
     }
 
-    if let type = PyCast.asType(expectedType) {
+    if let type = self.cast.asType(expectedType) {
       return self.exceptionMatches(exception: exception, expectedType: type)
     }
 
@@ -39,7 +38,7 @@ extension PyInstance {
   private func exceptionMatches(exception: PyObject,
                                 expectedType: PyType) -> Bool {
     // 'error' is a type
-    if let type = PyCast.asType(exception) {
+    if let type = self.cast.asType(exception) {
       return self.exceptionMatches(type: type, expectedType: expectedType)
     }
 
@@ -50,15 +49,24 @@ extension PyInstance {
   /// Final version of `exceptionMatches` where we compare types.
   private func exceptionMatches(type: PyType,
                                 expectedType: PyType) -> Bool {
-    guard type.isException else {
+    guard self.isException(type: type) else {
       return false
     }
 
-    guard expectedType.isException else {
+    guard self.isException(type: expectedType) else {
       return false
     }
 
     return type.isSubtype(of: expectedType)
+  }
+
+  // MARK: - Is exception
+
+  /// Is `type` subtype of `baseException`?
+  ///
+  /// PyExceptionInstance_Check
+  public func isException(type: PyType) -> Bool {
+    return type.typeFlags.isBaseExceptionSubclass
   }
 
   // MARK: - Args
@@ -99,7 +107,7 @@ extension PyInstance {
     }
 
     let currentContext = exception.getContext()
-    let hasNoContext = PyCast.isNilOrNone(currentContext)
+    let hasNoContext = self.cast.isNilOrNone(currentContext?.asObject)
     guard hasNoContext || overrideCurrent else {
       return
     }
@@ -109,21 +117,21 @@ extension PyInstance {
 
   // MARK: - Traceback
 
-  public func newTraceback(frame: PyFrame,
-                           exception: PyBaseException?) -> PyTraceback {
+  public func newTraceback(frame: PyFrame, exception: PyBaseException?) -> PyTraceback {
     let traceback = exception?.getTraceback()
     return self.newTraceback(frame: frame, next: traceback)
   }
 
-  public func newTraceback(frame: PyFrame,
-                           next: PyTraceback?) -> PyTraceback {
+  public func newTraceback(frame: PyFrame, next: PyTraceback?) -> PyTraceback {
+    let type = self.types.traceback
     let instruction = self.newInt(frame.currentInstructionIndex ?? 0)
     let line = self.newInt(frame.currentInstructionLine)
-
-    return PyMemory.newTraceback(next: next,
-                                 frame: frame,
-                                 lastInstruction: instruction,
-                                 lineNo: line)
+    return self.memory.newTraceback(self,
+                                    type: type,
+                                    next: next,
+                                    frame: frame,
+                                    lastInstruction: instruction,
+                                    lineNo: line)
   }
 
   public func getTraceback(exception: PyBaseException) -> PyTraceback? {
@@ -134,12 +142,10 @@ extension PyInstance {
   public func addTraceback(to exception: PyBaseException, frame: PyFrame) {
     let current = exception.getTraceback()
     let new = self.newTraceback(frame: frame, next: current)
-    exception.setTraceback(traceback: new)
+    exception.setTraceback(new)
   }
 
   public func getFrame(traceback: PyTraceback) -> PyFrame {
     return traceback.getFrame()
   }
 }
-
-*/
