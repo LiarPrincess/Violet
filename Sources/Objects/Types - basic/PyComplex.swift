@@ -123,7 +123,7 @@ public struct PyComplex: PyObjectMixin {
   private static func compareOperation(_ py: Py,
                                        zelf: PyObject,
                                        op: CompareResult.Operation) -> CompareResult {
-    guard py.cast.isComplex(zelf.asObject) else {
+    guard Self.downcast(py, zelf) != nil else {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, op)
     }
 
@@ -216,7 +216,7 @@ public struct PyComplex: PyObjectMixin {
 
   // sourcery: pymethod = __int__
   internal static func __int__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    guard py.cast.isComplex(zelf) else {
+    guard Self.downcast(py, zelf) != nil else {
       return Self.invalidZelfArgument(py, zelf, "__int__")
     }
 
@@ -225,7 +225,7 @@ public struct PyComplex: PyObjectMixin {
 
   // sourcery: pymethod = __float__
   internal static func __float__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    guard py.cast.isComplex(zelf) else {
+    guard Self.downcast(py, zelf) != nil else {
       return Self.invalidZelfArgument(py, zelf, "__float__")
     }
 
@@ -582,7 +582,7 @@ public struct PyComplex: PyObjectMixin {
   internal static func __floordiv__(_ py: Py,
                                     zelf: PyObject,
                                     other: PyObject) -> PyResult<PyObject> {
-    guard py.cast.isComplex(zelf) else {
+    guard Self.downcast(py, zelf) != nil else {
       return Self.invalidZelfArgument(py, zelf, "__floordiv__")
     }
 
@@ -593,7 +593,7 @@ public struct PyComplex: PyObjectMixin {
   internal static func __rfloordiv__(_ py: Py,
                                      zelf: PyObject,
                                      other: PyObject) -> PyResult<PyObject> {
-    guard py.cast.isComplex(zelf) else {
+    guard Self.downcast(py, zelf) != nil else {
       return Self.invalidZelfArgument(py, zelf, "__rfloordiv__")
     }
 
@@ -608,7 +608,7 @@ public struct PyComplex: PyObjectMixin {
   internal static func __mod__(_ py: Py,
                                zelf: PyObject,
                                other: PyObject) -> PyResult<PyObject> {
-    guard py.cast.isComplex(zelf) else {
+    guard Self.downcast(py, zelf) != nil else {
       return Self.invalidZelfArgument(py, zelf, "__mod__")
     }
 
@@ -619,7 +619,7 @@ public struct PyComplex: PyObjectMixin {
   internal static func __rmod__(_ py: Py,
                                 zelf: PyObject,
                                 other: PyObject) -> PyResult<PyObject> {
-    guard py.cast.isComplex(zelf) else {
+    guard Self.downcast(py, zelf) != nil else {
       return Self.invalidZelfArgument(py, zelf, "__rmod__")
     }
 
@@ -634,7 +634,7 @@ public struct PyComplex: PyObjectMixin {
   internal static func __divmod__(_ py: Py,
                                   zelf: PyObject,
                                   other: PyObject) -> PyResult<PyObject> {
-    guard py.cast.isComplex(zelf) else {
+    guard Self.downcast(py, zelf) != nil else {
       return Self.invalidZelfArgument(py, zelf, "__divmod__")
     }
 
@@ -645,7 +645,7 @@ public struct PyComplex: PyObjectMixin {
   internal static func __rdivmod__(_ py: Py,
                                    zelf: PyObject,
                                    other: PyObject) -> PyResult<PyObject> {
-    guard py.cast.isComplex(zelf) else {
+    guard Self.downcast(py, zelf) != nil else {
       return Self.invalidZelfArgument(py, zelf, "__rdivmod__")
     }
 

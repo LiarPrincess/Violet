@@ -99,7 +99,7 @@ public struct PyInt: PyObjectMixin {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, op)
     }
 
-    guard let other = py.cast.asInt(other) else {
+    guard let other = Self.downcast(py, other) else {
       return .notImplemented
     }
 
@@ -373,7 +373,7 @@ public struct PyInt: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "__pow__")
     }
 
-    guard let exp = py.cast.asInt(exp) else {
+    guard let exp = Self.downcast(py, exp) else {
       return .notImplemented(py)
     }
 
@@ -421,7 +421,7 @@ public struct PyInt: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "__rpow__")
     }
 
-    guard let base = py.cast.asInt(base) else {
+    guard let base = Self.downcast(py, base) else {
       return .notImplemented(py)
     }
 
@@ -452,7 +452,7 @@ public struct PyInt: PyObjectMixin {
       return .none
     }
 
-    if let int = py.cast.asInt(mod) {
+    if let int = Self.downcast(py, mod) {
       return .int(int)
     }
 
@@ -540,7 +540,7 @@ public struct PyInt: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
 
-    guard let other = py.cast.asInt(other) else {
+    guard let other = Self.downcast(py, other) else {
       return .notImplemented(py)
     }
 
@@ -604,7 +604,7 @@ public struct PyInt: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
 
-    guard let other = py.cast.asInt(other) else {
+    guard let other = Self.downcast(py, other) else {
       return .notImplemented(py)
     }
 
@@ -652,7 +652,7 @@ public struct PyInt: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
 
-    guard let other = py.cast.asInt(other) else {
+    guard let other = Self.downcast(py, other) else {
       return .notImplemented(py)
     }
 
@@ -700,7 +700,7 @@ public struct PyInt: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
 
-    guard let other = py.cast.asInt(other) else {
+    guard let other = Self.downcast(py, other) else {
       return .notImplemented(py)
     }
 
@@ -812,7 +812,7 @@ public struct PyInt: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
 
-    guard let other = py.cast.asInt(other) else {
+    guard let other = Self.downcast(py, other) else {
       return .notImplemented(py)
     }
 
@@ -868,7 +868,7 @@ public struct PyInt: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
 
-    guard let other = py.cast.asInt(other) else {
+    guard let other = Self.downcast(py, other) else {
       return .notImplemented(py)
     }
 
@@ -1355,7 +1355,7 @@ public struct PyInt: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
 
-    guard let other = py.cast.asInt(other) else {
+    guard let other = Self.downcast(py, other) else {
       return .notImplemented(py)
     }
 

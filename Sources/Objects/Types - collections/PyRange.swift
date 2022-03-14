@@ -148,7 +148,7 @@ public struct PyRange: PyObjectMixin {
   }
 
   internal static func isEqual(_ py: Py, zelf: PyRange, other: PyObject) -> CompareResult {
-    guard let other = py.cast.asRange(other) else {
+    guard let other = Self.downcast(py, other) else {
       return .notImplemented
     }
 
@@ -196,7 +196,7 @@ public struct PyRange: PyObjectMixin {
   private static func compare(_ py: Py,
                               zelf: PyObject,
                               operation: CompareResult.Operation) -> CompareResult {
-    guard py.cast.isRange(zelf) else {
+    guard Self.downcast(py, zelf) != nil else {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, operation)
     }
 
