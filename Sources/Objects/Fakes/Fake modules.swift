@@ -1,5 +1,20 @@
 public struct Sys {
   public var flags: Flags { fatalError() }
+
+  public func getPath() -> PyResult<PyList> { fatalError() }
+
+  public enum GetModuleResult {
+    case module(PyModule)
+    /// Value was found in `modules`, but it is not an `module` object.
+    case notModule(PyObject)
+    case notFound(PyBaseException)
+    case error(PyBaseException)
+  }
+
+  public func getModule(name: PyString) -> GetModuleResult { fatalError() }
+  public func getModule(name: PyObject) -> GetModuleResult { fatalError() }
+
+  public func addModule(module: PyModule) -> PyBaseException? { fatalError() }
 }
 
 public struct UnderscoreWarnings {

@@ -1,4 +1,3 @@
-/* MARKER
 // swiftlint:disable file_length
 // cSpell:ignore initimport sysmod
 
@@ -10,7 +9,7 @@
 // https://docs.python.org/3.7/reference/import.html
 // https://docs.python.org/3.7/library/importlib.html
 
-extension PyInstance {
+extension Py {
 
   // MARK: - Get __import__
 
@@ -21,12 +20,13 @@ extension PyInstance {
   public func get__import__() -> PyResult<PyObject> {
     let dict = self.builtinsModule.__dict__
 
-    if let fn = dict.get(id: .__import__) {
+    if let fn = dict.get(self, id: .__import__) {
       return .value(fn)
     }
 
-    let msg = "'__import__' function not found inside builtins module"
-    return .error(self.newAttributeError(msg: msg))
+    let message = "'__import__' function not found inside builtins module"
+    let error = self.newAttributeError(message: message)
+    return .error(error.asBaseException)
   }
 
   // MARK: - __import__
@@ -42,8 +42,8 @@ extension PyInstance {
                          locals: PyObject? = nil,
                          fromList: PyObject? = nil,
                          level levelArg: PyObject? = nil) -> PyResult<PyObject> {
-    guard let name = PyCast.asString(nameArg) else {
-      return .typeError("module name must be a string")
+    guard let name = self.cast.asString(nameArg) else {
+      return .typeError(self, message: "module name must be a string")
     }
 
     let level: PyInt
@@ -82,13 +82,11 @@ extension PyInstance {
     case let .error(e): return .error(e)
     }
 
-    return self.handleFromList(
-      name: name,
-      absName: absName,
-      level: level,
-      module: module,
-      fromList: fromList
-    )
+    return self.handleFromList(name: name,
+                               absName: absName,
+                               level: level,
+                               module: module,
+                               fromList: fromList)
   }
 
   // MARK: - Parse level
@@ -98,12 +96,12 @@ extension PyInstance {
       return .value(self.newInt(0))
     }
 
-    guard let int = PyCast.asInt(object) else {
-      return .typeError("module level must be a int")
+    guard let int = self.cast.asInt(object) else {
+      return .typeError(self, message: "module level must be a int")
     }
 
     guard int.value >= 0 else {
-      return .valueError("level must be >= 0")
+      return .valueError(self, message: "level must be >= 0")
     }
 
     return .value(int)
@@ -122,7 +120,7 @@ extension PyInstance {
                             globals: PyObject?) -> PyResult<String> {
     if level.value == 0 {
       if name.isEmpty {
-        return .valueError("Empty module name")
+        return .valueError(self, message: "Empty module name")
       }
 
       return .value(name.value)
@@ -138,7 +136,7 @@ extension PyInstance {
     }
 
     if package.isEmpty {
-      return .importError("attempted relative import with no known parent package")
+      return .importError(self, message: "attempted relative import with no known parent package")
     }
 
     var base = package[package.startIndex...]
@@ -146,7 +144,7 @@ extension PyInstance {
     // Go up a few levels. In example: base = disnep
     for _ in 1..<level.value {
       guard let index = base.lastIndex(of: ".") else {
-        return .valueError("attempted relative import beyond top-level package")
+        return .valueError(self, message: "attempted relative import beyond top-level package")
       }
 
       base = base[..<index]
@@ -162,17 +160,17 @@ extension PyInstance {
   private func getPackage(globals globalsArg: PyObject?) -> PyResult<String> {
     // 'globals' represent 'module.__dict__'
     guard let globalsObject = globalsArg else {
-      return .keyError("'__name__' not in globals")
+      return .keyError(self, message: "'__name__' not in globals")
     }
 
-    guard let globals = PyCast.asDict(globalsObject) else {
-      return .typeError("globals must be a dict")
+    guard let globals = self.cast.asDict(globalsObject) else {
+      return .typeError(self, message: "globals must be a dict")
     }
 
     // Try to get 'globals.__package__':
-    if let package = globals.get(id: .__package__), !PyCast.isNone(package) {
-      guard let result = PyCast.asString(package) else {
-        return .typeError("package must be a string")
+    if let package = globals.get(self, id: .__package__), !self.cast.isNone(package) {
+      guard let result = self.cast.asString(package) else {
+        return .typeError(self, message: "package must be a string")
       }
 
       // We should compare if string == __spec__.parent, but we are lazy
@@ -180,14 +178,14 @@ extension PyInstance {
     }
 
     // Try to get 'globals.__spec__.parent':
-    if let spec = globals.get(id: .__spec__), !PyCast.isNone(spec) {
+    if let spec = globals.get(self, id: .__spec__), !self.cast.isNone(spec) {
       return self.getParent(spec: spec).map { $0.value }
     }
 
     // Last resort '__name__' and '__path__':
-    let msg = "can't resolve package from __spec__ or __package__, " +
-    "falling back on __name__ and __path__"
-    if let e = self.warn(type: .import, msg: msg) {
+    let message = "can't resolve package from __spec__ or __package__, " +
+      "falling back on __name__ and __path__"
+    if let e = self.warn(type: .import, message: message) {
       return .error(e)
     }
 
@@ -198,7 +196,7 @@ extension PyInstance {
     }
 
     // If we don't have '__path__' then we will just slice last component:
-    let path = globals.get(id: .__path__)
+    let path = globals.get(self, id: .__path__)
 
     if path == nil {
       if let dot = name.value.lastIndex(of: ".") {
@@ -213,8 +211,8 @@ extension PyInstance {
   private func getParent(spec: PyObject) -> PyResult<PyString> {
     switch self.getAttribute(object: spec, name: "parent") {
     case let .value(object):
-      guard let string = PyCast.asString(object) else {
-        return .typeError("__spec__.parent must be a string")
+      guard let string = self.cast.asString(object) else {
+        return .typeError(self, message: "__spec__.parent must be a string")
       }
 
       return .value(string)
@@ -224,12 +222,12 @@ extension PyInstance {
   }
 
   private func get__name__(globals: PyDict) -> PyResult<PyString> {
-    guard let object = globals.get(id: .__name__) else {
-      return .keyError("'__name__' not in globals")
+    guard let object = globals.get(self, id: .__name__) else {
+      return .keyError(self, message: "'__name__' not in globals")
     }
 
-    guard let str = PyCast.asString(object) else {
-      return .typeError("__name__ must be a string")
+    guard let str = self.cast.asString(object) else {
+      return .typeError(self, message: "__name__ must be a string")
     }
 
     return .value(str)
@@ -242,12 +240,12 @@ extension PyInstance {
   private func getExistingOrLoadModule(absName: PyString) -> PyResult<PyObject> {
     switch self.sys.getModule(name: absName) {
     case let .module(m):
-      return .value(m)
+      return .value(m.asObject)
     case .notModule,
          .notFound:
       return self.call_find_and_load(absName: absName)
     case let .error(e):
-      assert(!PyCast.isKeyError(e), "KeyError means not found")
+      assert(!self.cast.isKeyError(e.asObject), "KeyError means not found")
       return .error(e)
     }
   }
@@ -261,7 +259,7 @@ extension PyInstance {
     case let .error(e): return .error(e)
     }
 
-    let args = [absName, __import__]
+    let args = [absName.asObject, __import__]
     let callResult = self.callImportlibMethod(selector: ._find_and_load, args: args)
     return callResult.asResult
   }
@@ -277,7 +275,8 @@ extension PyInstance {
     // We need to 'allowsCallableFromDict' because we don't want to call
     // PyModule method, but our own 'def'.
 
-    switch self.getMethod(object: importlib,
+    let importlibObject = importlib.asObject
+    switch self.getMethod(object: importlibObject,
                           selector: selector.value,
                           allowsCallableFromDict: true) {
     case let .value(method):
@@ -297,7 +296,7 @@ extension PyInstance {
                               module: PyObject,
                               fromList: PyObject?) -> PyResult<PyObject> {
     // If we have 'fromList' then call '_handle_fromlist' from 'importlib'
-    if let fl = fromList, !PyCast.isNone(fl) {
+    if let fl = fromList, !self.cast.isNone(fl) {
       switch self.isTrueBool(object: fl) {
       case .value(true):
         return self.call_handle_fromlist(module: module, fromList: fl)
@@ -319,11 +318,13 @@ extension PyInstance {
     // to extract 'toplevel' name.
     if level.value == 0 {
       let front = String(nameScalars[..<nameDotIndex])
-      return self.__import__(name: self.newString(front),
+      let frontObject = self.newString(front)
+      let level = self.newInt(0)
+      return self.__import__(name: frontObject.asObject,
                              globals: nil,
                              locals: nil,
                              fromList: nil,
-                             level: self.newInt(0))
+                             level: level.asObject)
     }
 
     // Extract toplevel module (the one that is bound by the import statement)
@@ -337,14 +338,13 @@ extension PyInstance {
     let interned = self.intern(string: absTopLevel)
     switch self.sys.getModule(name: interned) {
     case .module(let m):
-      return .value(m)
+      return .value(m.asObject)
     case .notModule(let o):
       // This is an interesting case,
       // but we will trust that import knows its stuff.
       return .value(o)
     case .notFound:
-      let msg = "\(absTopLevel) not in sys.modules as expected"
-      return .error(self.newKeyError(msg: msg))
+      return .keyError(self, message: "\(absTopLevel) not in sys.modules as expected")
     case .error(let e):
       return .error(e)
     }
@@ -354,11 +354,11 @@ extension PyInstance {
   /// We have not changed our naming convention.
   private func call_handle_fromlist(module: PyObject,
                                     fromList: PyObject) -> PyResult<PyObject> {
-     let __import__: PyObject
-     switch self.get__import__() {
-     case let .value(i): __import__ = i
-     case let .error(e): return .error(e)
-     }
+    let __import__: PyObject
+    switch self.get__import__() {
+    case let .value(i): __import__ = i
+    case let .error(e): return .error(e)
+    }
 
     let args = [module, fromList, __import__]
     let callResult = self.callImportlibMethod(selector: ._handle_fromlist, args: args)
@@ -395,5 +395,3 @@ extension PyInstance {
     return String(topLevelAbs)
   }
 }
-
-*/
