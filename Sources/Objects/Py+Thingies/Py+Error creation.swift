@@ -29,7 +29,7 @@ extension Py {
   /// Inappropriate argument type.
   public func newTypeError(message: String) -> PyTypeError {
     let type = self.errorTypes.typeError
-    let args = self.createArgs(message: message)
+    let args = self.createErrorArgs(message: message)
     return self.memory.newTypeError(self, type: type, args: args)
   }
 
@@ -46,7 +46,7 @@ extension Py {
   /// Inappropriate argument value (of correct type).
   public func newValueError(message: String) -> PyValueError {
     let type = self.errorTypes.valueError
-    let args = self.createArgs(message: message)
+    let args = self.createErrorArgs(message: message)
     return self.memory.newValueError(self, type: type, args: args)
   }
 
@@ -55,7 +55,7 @@ extension Py {
   /// Sequence index out of range.
   public func newIndexError(message: String) -> PyIndexError {
     let type = self.errorTypes.indexError
-    let args = self.createArgs(message: message)
+    let args = self.createErrorArgs(message: message)
     return self.memory.newIndexError(self, type: type, args: args)
   }
 
@@ -64,7 +64,7 @@ extension Py {
   /// Attribute not found.
   public func newAttributeError(message: String) -> PyAttributeError {
     let type = self.errorTypes.attributeError
-    let args = self.createArgs(message: message)
+    let args = self.createErrorArgs(message: message)
     return self.memory.newAttributeError(self, type: type, args: args)
   }
 
@@ -102,14 +102,14 @@ extension Py {
   /// Second argument to a division or modulo operation was zero.
   public func newZeroDivisionError(message: String) -> PyZeroDivisionError {
     let type = self.errorTypes.zeroDivisionError
-    let args = self.createArgs(message: message)
+    let args = self.createErrorArgs(message: message)
     return self.memory.newZeroDivisionError(self, type: type, args: args)
   }
 
   /// Result too large to be represented.
   public func newOverflowError(message: String) -> PyOverflowError {
     let type = self.errorTypes.overflowError
-    let args = self.createArgs(message: message)
+    let args = self.createErrorArgs(message: message)
     return self.memory.newOverflowError(self, type: type, args: args)
   }
 
@@ -118,7 +118,7 @@ extension Py {
   /// Internal error in the Python interpreter.
   public func newSystemError(message: String) -> PySystemError {
     let type = self.errorTypes.systemError
-    let args = self.createArgs(message: message)
+    let args = self.createErrorArgs(message: message)
     return self.memory.newSystemError(self, type: type, args: args)
   }
 
@@ -135,7 +135,7 @@ extension Py {
   /// Unspecified run-time error.
   public func newRuntimeError(message: String) -> PyRuntimeError {
     let type = self.errorTypes.runtimeError
-    let args = self.createArgs(message: message)
+    let args = self.createErrorArgs(message: message)
     return self.memory.newRuntimeError(self, type: type, args: args)
   }
 
@@ -146,7 +146,7 @@ extension Py {
   /// https://docs.python.org/3/library/exceptions.html#OSError
   public func newOSError(message: String) -> PyOSError {
     let type = self.errorTypes.osError
-    let args = self.createArgs(message: message)
+    let args = self.createErrorArgs(message: message)
     return self.memory.newOSError(self, type: type, args: args)
   }
 
@@ -393,7 +393,7 @@ extension Py {
 
   /// Mapping key not found or duplicate entry when updating.
   public func newKeyError(message: String) -> PyKeyError {
-    let args = self.createArgs(message: message)
+    let args = self.createErrorArgs(message: message)
     return self.createKeyError(args: args)
   }
 
@@ -413,7 +413,7 @@ extension Py {
   /// Base class for lookup errors.
   public func newLookupError(message: String) -> PyLookupError {
     let type = self.errorTypes.lookupError
-    let args = self.createArgs(message: message)
+    let args = self.createErrorArgs(message: message)
     return self.memory.newLookupError(self, type: type, args: args)
   }
 
@@ -431,14 +431,14 @@ extension Py {
   /// Name not found globally.
   public func newNameError(message: String) -> PyNameError {
     let type = self.errorTypes.nameError
-    let args = self.createArgs(message: message)
+    let args = self.createErrorArgs(message: message)
     return self.memory.newNameError(self, type: type, args: args)
   }
 
   /// Local name referenced but not bound to a value.
   public func newUnboundLocalError(variableName: String) -> PyUnboundLocalError {
     let message = "local variable '\(variableName)' referenced before assignment"
-    let args = self.createArgs(message: message)
+    let args = self.createErrorArgs(message: message)
     let type = self.errorTypes.unboundLocalError
     return self.memory.newUnboundLocalError(self, type: type, args: args)
   }
@@ -468,7 +468,7 @@ extension Py {
   internal func newUnicodeDecodeError(bytes: PyAnyBytes,
                                       encoding: PyString.Encoding) -> PyUnicodeDecodeError {
     let message = "'\(encoding)' codec can't decode data"
-    let args = self.createArgs(message: message)
+    let args = self.createErrorArgs(message: message)
     let type = self.errorTypes.unicodeDecodeError
     let error = self.memory.newUnicodeDecodeError(self, type: type, args: args)
 
@@ -492,7 +492,7 @@ extension Py {
   public func newUnicodeEncodeError(string: PyString,
                                     encoding: PyString.Encoding) -> PyUnicodeEncodeError {
     let message = "'\(encoding)' codec can't encode data"
-    let args = self.createArgs(message: message)
+    let args = self.createErrorArgs(message: message)
     let type = self.errorTypes.unicodeEncodeError
     let error = self.memory.newUnicodeEncodeError(self, type: type, args: args)
 
@@ -514,7 +514,7 @@ extension Py {
   /// Assertion failed.
   public func newAssertionError(message: String) -> PyAssertionError {
     let type = self.errorTypes.assertionError
-    let args = self.createArgs(message: message)
+    let args = self.createErrorArgs(message: message)
     return self.memory.newAssertionError(self, type: type, args: args)
   }
 
@@ -548,7 +548,7 @@ extension Py {
 
   public func newEOFError(message: String) -> PyEOFError {
     let type = self.errorTypes.eofError
-    let args = self.createArgs(message: message)
+    let args = self.createErrorArgs(message: message)
     return self.memory.newEOFError(self, type: type, args: args)
   }
 
@@ -717,7 +717,7 @@ extension Py {
 
   public func newRecursionError() -> PyRecursionError {
     let message = self.intern(string: "maximum recursion depth exceeded")
-    let args = self.createArgs(message: message)
+    let args = self.createErrorArgs(message: message)
     let type = self.errorTypes.recursionError
     return self.memory.newRecursionError(self, type: type, args: args)
   }
@@ -768,12 +768,12 @@ extension Py {
 
   // MARK: - Helpers
 
-  private func createArgs(message: String) -> PyTuple {
+  internal func createErrorArgs(message: String) -> PyTuple {
     let object = self.newString(message)
     return self.newTuple(elements: object.asObject)
   }
 
-  private func createArgs(message: PyString) -> PyTuple {
+  internal func createErrorArgs(message: PyString) -> PyTuple {
     return self.newTuple(elements: message.asObject)
   }
 }

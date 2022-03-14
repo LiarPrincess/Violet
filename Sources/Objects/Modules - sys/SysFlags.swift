@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCompiler
 
 // cSpell:ignore pystate
@@ -81,7 +80,7 @@ extension Sys {
     /// Warning options.
     ///
     /// Order: the LATER in the list the bigger the priority.
-    public var warnings: [WarningOption] {
+    public var warnings: [Arguments.WarningOption] {
       // Comment from CPython 'config_init_warnoptions':
       //
       // The priority order for warnings configuration is (highest first):
@@ -96,7 +95,7 @@ extension Sys {
       return env + self.arguments.warnings
     }
 
-    public var bytesWarning: BytesWarningOption {
+    public var bytesWarning: Arguments.BytesWarningOption {
       return self.arguments.bytesWarning
     }
 
@@ -113,5 +112,3 @@ extension Sys {
     }
   }
 }
-
-*/
