@@ -53,14 +53,6 @@ public struct Py {
 
   public func newObject(type: PyType? = nil) -> PyObject { fatalError() } // default type
 
-  public func newBool(_ value: Bool) -> PyBool { fatalError() }
-  public func newInt(_ value: Int) -> PyInt { fatalError() }
-  public func newInt(_ value: UInt8) -> PyInt { fatalError() }
-  public func newInt(_ value: BigInt) -> PyInt { fatalError() }
-  public func newInt(double value: Double) -> PyResult<PyInt> { fatalError() }
-  public func newFloat(_ value: Double) -> PyFloat { fatalError() }
-  public func newComplex(real: Double, imag: Double) -> PyComplex { fatalError() }
-
   public func newString(_ s: String) -> PyString { fatalError() }
   public func newString(_ s: String.UnicodeScalarView) -> PyString { fatalError() }
   public func newString(_ s: Substring.UnicodeScalarView) -> PyString { fatalError() }
@@ -193,12 +185,6 @@ public struct Py {
   public func globals() -> PyResult<PyDict> { fatalError() }
   public func lengthInt(iterable: PyObject) -> PyResult<Int> { fatalError() }
   public func lengthBigInt(iterable: PyObject) -> PyResult<BigInt> { fatalError() }
-
-  // MARK: - Bool
-  public func not(object: PyObject) -> PyResult<PyBool> { fatalError() }
-  public func isTrue(object: PyObject) -> PyResult<PyBool> { fatalError() }
-  public func isTrueBool(object: PyBool) -> Bool { fatalError() }
-  public func isTrueBool(object: PyObject) -> PyResult<Bool> { fatalError() }
 
   // MARK: - Collections
 
