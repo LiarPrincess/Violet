@@ -1,4 +1,3 @@
-/* MARKER
 import BigInt
 import VioletCore
 
@@ -9,77 +8,93 @@ import VioletCore
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-extension PyInstance {
+extension Py {
 
   // MARK: - Tuple
 
   /// PyObject * PyTuple_New(Py_ssize_t size)
-  public func newTuple(_ elements: PyObject...) -> PyTuple {
+  public func newTuple(elements: PyObject...) -> PyTuple {
     return self.newTuple(elements: elements)
   }
 
   /// PyObject * PyTuple_New(Py_ssize_t size)
   public func newTuple(elements: [PyObject]) -> PyTuple {
-    return elements.isEmpty ?
-      self.emptyTuple :
-      PyMemory.newTuple(elements: elements)
+    if elements.isEmpty {
+      return self.emptyTuple
+    }
+
+
+    let type = self.types.tuple
+    return self.memory.newTuple(self, type: type, elements: elements)
   }
 
   /// PyObject * PyList_AsTuple(PyObject *v)
-  public func newTuple(fromList object: PyObject) -> PyResult<PyTuple> {
-    guard let list = PyCast.asList(object) else {
-      let e = self.unexpectedCollectionTypeError(expected: "list", got: object)
-      return .error(e)
+  public func newTuple(list object: PyObject) -> PyResult<PyTuple> {
+    guard let list = self.cast.asList(object) else {
+      let message = "expected tuple, but received a '\(object.typeName)'"
+      return .typeError(self, message: message)
     }
 
-    let result = self.newTuple(fromList: list)
+    let result = self.newTuple(list: list)
     return .value(result)
   }
 
-  public func newTuple(fromList list: PyList) -> PyTuple {
+  public func newTuple(list: PyList) -> PyTuple {
     return self.newTuple(elements: list.elements)
   }
 
   public func newTuple(iterable: PyObject) -> PyResult<PyTuple> {
-    return self.toArray(iterable: iterable).map(self.newTuple)
+    let array = self.toArray(iterable: iterable)
+    return array.map(self.newTuple)
   }
 
-  private func unexpectedCollectionTypeError(expected: String,
-                                             got: PyObject) -> PyTypeError {
-    let gotType = got.typeName
-    let msg = "expected \(expected), but received a '\(gotType)'"
-    return Py.newTypeError(msg: msg)
+  public func newIterator(tuple: PyTuple) -> PyTupleIterator {
+    let type = self.types.tuple_iterator
+    return self.memory.newTupleIterator(self, type: type, tuple: tuple)
   }
 
   // MARK: - List
 
   /// PyObject * PyList_New(Py_ssize_t size)
-  public func newList(_ elements: PyObject...) -> PyList {
+  public func newList(elements: PyObject...) -> PyList {
     return self.newList(elements: elements)
   }
 
   /// PyObject * PyList_New(Py_ssize_t size)
   public func newList(elements: [PyObject]) -> PyList {
-    return PyMemory.newList(elements: elements)
+    let type = self.types.list
+    return self.memory.newList(self, type: type, elements: elements)
   }
 
   public func newList(iterable: PyObject) -> PyResult<PyList> {
-    return self.toArray(iterable: iterable).map(self.newList)
+    let array = self.toArray(iterable: iterable)
+    return array.map(self.newList)
   }
 
   /// int PyList_Append(PyObject *op, PyObject *newitem)
-  public func add(list object: PyObject, element: PyObject) -> PyResult<PyNone> {
-    guard let list = PyCast.asList(object) else {
-      let e = self.unexpectedCollectionTypeError(expected: "list", got: object)
-      return .error(e)
+  public func add(list: PyObject, object: PyObject) -> PyBaseException? {
+    guard let list = self.cast.asList(list) else {
+      let message = "expected list, but received a '\(object.typeName)'"
+      let error = self.newTypeError(message: message)
+      return error.asBaseException
     }
 
-    self.add(list: list, element: element)
-    return .value(Py.none)
+    self.add(list: list, object: object)
+    return nil
   }
 
-  public func add(list: PyList, element: PyObject) {
-    list.append(object: element)
+  public func add(list: PyList, object: PyObject) {
+    list.append(object: object)
+  }
+
+  public func newIterator(list: PyList) -> PyListIterator {
+    let type = self.types.list_iterator
+    return self.memory.newListIterator(self, type: type, list: list)
+  }
+
+  public func newReverseIterator(list: PyList) -> PyListReverseIterator {
+    let type = self.types.list_reverseiterator
+    return self.memory.newListReverseIterator(self, type: type, list: list)
   }
 
   // MARK: - Set
@@ -90,7 +105,8 @@ extension PyInstance {
   }
 
   internal func newSet(elements: PySet.OrderedSet) -> PySet {
-    return PyMemory.newSet(elements: elements)
+    let type = self.types.set
+    return self.memory.newSet(self, type: type, elements: elements)
   }
 
   /// PyObject * PySet_New(PyObject *iterable)
@@ -103,11 +119,11 @@ extension PyInstance {
     var result = PySet.OrderedSet(count: args.count)
 
     for object in args {
-      switch Py.hash(object: object) {
+      switch self.hash(object: object) {
       case let .value(hash):
         let element = PySet.Element(hash: hash, object: object)
 
-        switch result.insert(element: element) {
+        switch result.insert(self, element: element) {
         case .inserted,
              .updated:
           break
@@ -124,21 +140,27 @@ extension PyInstance {
   }
 
   /// int PySet_Add(PyObject *anyset, PyObject *key)
-  public func add(set object: PyObject, element: PyObject) -> PyResult<PyNone> {
-    guard let set = PyCast.asSet(object) else {
-      let e = self.unexpectedCollectionTypeError(expected: "set", got: object)
-      return .error(e)
+  public func add(set: PyObject, object: PyObject) -> PyBaseException? {
+    guard let set = self.cast.asSet(set) else {
+      let message = "expected set, but received a '\(object.typeName)'"
+      let error = self.newTypeError(message: message)
+      return error.asBaseException
     }
 
-    return self.add(set: set, element: element)
+    return self.add(set: set, object: object)
   }
 
-  public func add(set: PySet, element: PyObject) -> PyResult<PyNone> {
-    return set.add(object: element)
+  public func add(set: PySet, object: PyObject) -> PyBaseException? {
+    return set.add(self, object: object)
   }
 
-  public func update(set: PySet, from object: PyObject) -> PyResult<PyNone> {
-    return set.update(from: object)
+  public func update(set: PySet, fromIterable iterable: PyObject) -> PyBaseException? {
+    return set.update(self, fromIterable: iterable)
+  }
+
+  public func newIterator(set: PySet) -> PySetIterator {
+    let type = self.types.set_iterator
+    return self.memory.newSetIterator(self, type: type, set: set)
   }
 
   // MARK: - Frozen set
@@ -148,15 +170,23 @@ extension PyInstance {
   }
 
   internal func newFrozenSet(elements: PyFrozenSet.OrderedSet) -> PyFrozenSet {
-    return elements.isEmpty ?
-      self.emptyFrozenSet :
-      PyMemory.newFrozenSet(elements: elements)
+    if elements.isEmpty {
+      return self.emptyFrozenSet
+    }
+
+    let type = self.types.frozenset
+    return self.memory.newFrozenSet(self, type: type, elements: elements)
   }
 
   public func newFrozenSet(elements args: [PyObject]) -> PyResult<PyFrozenSet> {
     let elements = self.asSetElements(args: args)
     return elements.map(self.newFrozenSet(elements:))
   }
+
+ public func newIterator(set: PyFrozenSet) -> PySetIterator {
+   let type = self.types.set_iterator
+   return self.memory.newSetIterator(self, type: type, frozenSet: set)
+ }
 
   // MARK: - Dictionary
 
@@ -166,7 +196,8 @@ extension PyInstance {
   }
 
   internal func newDict(elements: PyDict.OrderedDictionary) -> PyDict {
-    return PyMemory.newDict(elements: elements)
+    let type = self.types.dict
+    return self.memory.newDict(self, type: type, elements: elements)
   }
 
   public struct DictionaryElement {
@@ -183,7 +214,7 @@ extension PyInstance {
     let result = self.newDict()
 
     for element in elements {
-      let setResult = result.set(key: element.key, to: element.value)
+      let setResult = result.set(self, key: element.key, value: element.value)
       switch setResult {
       case .ok:
         break
@@ -197,16 +228,17 @@ extension PyInstance {
 
   public func newDict(keys: PyTuple, elements: [PyObject]) -> PyResult<PyDict> {
     guard keys.elements.count == elements.count else {
-      return .valueError("bad 'dictionary(keyTuple:elements:)' keys argument")
+      let message = "bad 'dictionary(keyTuple:elements:)' keys argument"
+      return .valueError(self, message: message)
     }
 
     var result = PyDict.OrderedDictionary()
 
-    for (key, value) in Swift.zip(keys.elements, elements) {
-      switch self.hash(object: key) {
+    for (keyObject, value) in Swift.zip(keys.elements, elements) {
+      switch self.hash(object: keyObject) {
       case let .value(hash):
-        let dictKey = PyDict.Key(hash: hash, object: key)
-        switch result.insert(key: dictKey, value: value) {
+        let key = PyDict.Key(hash: hash, object: keyObject)
+        switch result.insert(self, key: key, value: value) {
         case .inserted,
              .updated: break
         case .error(let e): return .error(e)
@@ -220,32 +252,63 @@ extension PyInstance {
     return .value(dict)
   }
 
-  public func add(dict object: PyObject,
-                  key: IdString,
-                  value: PyObject) -> PyResult<PyNone> {
-    return self.add(dict: object, key: key.value, value: value)
+  public func add(dict: PyObject, key: IdString, value: PyObject) -> PyBaseException? {
+    let keyObject = key.value
+    return self.add(dict: dict, key: keyObject, value: value)
   }
 
-  public func add(dict object: PyObject,
-                  key: PyObject,
-                  value: PyObject) -> PyResult<PyNone> {
-    guard let dict = PyCast.asDict(object) else {
-      let e = self.unexpectedCollectionTypeError(expected: "dict", got: object)
-      return .error(e)
+  public func add(dict: PyObject, key: PyString, value: PyObject) -> PyBaseException? {
+    let keyObject = key.asObject
+    return self.add(dict: dict, key: keyObject, value: value)
+  }
+
+  public func add(dict: PyObject, key: PyObject, value: PyObject) -> PyBaseException? {
+    guard let dict = self.cast.asDict(dict) else {
+      let message = "expected dict, but received a '\(dict.typeName)'"
+      let error = self.newTypeError(message: message)
+      return error.asBaseException
     }
 
     return self.add(dict: dict, key: key, value: value)
   }
 
-  public func add(dict: PyDict,
-                  key: PyObject,
-                  value: PyObject) -> PyResult<PyNone> {
-    switch dict.set(key: key, to: value) {
+  public func add(dict: PyDict, key: PyObject, value: PyObject) -> PyBaseException? {
+    switch dict.set(self, key: key, value: value) {
     case .ok:
-      return .value(Py.none)
+      return nil
     case .error(let e):
-      return .error(e)
+      return e
     }
+  }
+
+  public func newDictKeys(dict: PyDict) -> PyDictKeys {
+    let type = self.types.dict_keys
+    return self.memory.newDictKeys(self, type: type, dict: dict)
+  }
+
+  public func newDictItems(dict: PyDict) -> PyDictItems {
+    let type = self.types.dict_items
+    return self.memory.newDictItems(self, type: type, dict: dict)
+  }
+
+  public func newDictValues(dict: PyDict) -> PyDictValues {
+    let type = self.types.dict_values
+    return self.memory.newDictValues(self, type: type, dict: dict)
+  }
+
+  public func newIterator(keys dict: PyDict) -> PyDictKeyIterator {
+    let type = self.types.dict_keyiterator
+    return self.memory.newDictKeyIterator(self, type: type, dict: dict)
+  }
+
+  public func newIterator(items dict: PyDict) -> PyDictItemIterator {
+    let type = self.types.dict_itemiterator
+    return self.memory.newDictItemIterator(self, type: type, dict: dict)
+  }
+
+  public func newIterator(values dict: PyDict) -> PyDictValueIterator {
+    let type = self.types.dict_valueiterator
+    return self.memory.newDictValueIterator(self, type: type, dict: dict)
   }
 
   // MARK: - Keys
@@ -258,11 +321,11 @@ extension PyInstance {
 
   /// Call the `keys` method on object.
   public func getKeys(object: PyObject) -> GetKeysResult {
-    if let result = PyStaticCall.keys(object) {
+    if let result = PyStaticCall.keys(self, object: object) {
       return .value(result)
     }
 
-    switch Py.callMethod(object: object, selector: .keys) {
+    switch self.callMethod(object: object, selector: .keys) {
     case let .value(o):
       return .value(o)
     case let .missingMethod(e):
@@ -285,7 +348,8 @@ extension PyInstance {
   }
 
   public func newRange(stop: PyObject) -> PyResult<PyRange> {
-    return self.extractRangeProperty(stop).flatMap(self.newRange(stop:))
+    let extracted = self.extractRangeProperty(stop)
+    return extracted.flatMap(self.newRange(stop:))
   }
 
   public func newRange(start: BigInt,
@@ -302,11 +366,22 @@ extension PyInstance {
                        stop: PyInt,
                        step: PyInt?) -> PyResult<PyRange> {
     if let s = step, s.value == 0 {
-      return .valueError("range() arg 3 must not be zero")
+      let error = self.newInvalidRangeStepError()
+      return .error(error.asBaseException)
     }
 
-    let result = PyMemory.newRange(start: start, stop: stop, step: step)
+    let type = self.types.range
+    let result = self.memory.newRange(self,
+                                      type: type,
+                                      start: start,
+                                      stop: stop,
+                                      step: step)
+
     return .value(result)
+  }
+
+  private func newInvalidRangeStepError() -> PyValueError {
+    return self.newValueError(message: "range() arg 3 must not be zero")
   }
 
   public func newRange(start: PyObject,
@@ -342,113 +417,132 @@ extension PyInstance {
     // >>> i = 2**60 # <-- high value to skip interned values (small int cache)
     // >>> assert range(i).stop is i
 
-    if let objectInt = PyCast.asInt(object) {
+    if let objectInt = self.cast.asInt(object) {
       return .value(objectInt)
     }
 
-    switch IndexHelper.bigInt(object) {
+    switch IndexHelper.pyInt(self, object: object) {
     case let .value(int):
-      return .value(self.newInt(int))
+      return .value(int)
     case let .notIndex(lazyError):
-      let e = lazyError.create()
+      let e = lazyError.create(self)
       return .error(e)
     case let .error(e):
       return .error(e)
     }
   }
 
+  public func newRangeIterator(start: BigInt,
+                               step: BigInt,
+                               length: BigInt) -> PyRangeIterator {
+    let type = self.types.range_iterator
+    return self.memory.newRangeIterator(self,
+                                        type: type,
+                                        start: start,
+                                        step: step,
+                                        length: length)
+  }
+
   // MARK: - Enumerate
 
   public func newEnumerate(iterable: PyObject,
-                           startFrom index: Int) -> PyResult<PyEnumerate> {
-    return self.newEnumerate(iterable: iterable, startFrom: BigInt(index))
+                           initialIndex: Int) -> PyResult<PyEnumerate> {
+    let bigIndex = BigInt(initialIndex)
+    return self.newEnumerate(iterable: iterable, initialIndex: bigIndex)
   }
 
   public func newEnumerate(iterable: PyObject,
-                           startFrom index: BigInt) -> PyResult<PyEnumerate> {
-    let iter: PyObject
+                           initialIndex: BigInt) -> PyResult<PyEnumerate> {
+    let iterator: PyObject
     switch self.iter(object: iterable) {
-    case let .value(i): iter = i
+    case let .value(i): iterator = i
     case let .error(e): return .error(e)
     }
 
-    let result = PyMemory.newEnumerate(iterator: iter, startFrom: index)
+    let type = self.types.enumerate
+    let result = self.memory.newEnumerate(self,
+                                          type: type,
+                                          iterator: iterator,
+                                          initialIndex: initialIndex)
+
     return .value(result)
   }
 
   // MARK: - Slice
 
   public func newSlice(stop: PyObject) -> PySlice {
-    return PyMemory.newSlice(start: self.none,
-                             stop: stop,
-                             step: self.none)
+    let none = self.none.asObject
+    return self.newSlice(start: none, stop: stop, step: none)
   }
 
   public func newSlice(start: PyObject?,
                        stop: PyObject?,
                        step: PyObject? = nil) -> PySlice {
-    return PyMemory.newSlice(start: start ?? self.none,
-                             stop: stop ?? self.none,
-                             step: step ?? self.none)
+    let type = self.types.slice
+    let none = self.none.asObject
+    return self.memory.newSlice(self,
+                                type: type,
+                                start: start ?? none,
+                                stop: stop ?? none,
+                                step: step ?? none)
   }
 
   // MARK: - Length
 
   /// len(s)
   /// See [this](https://docs.python.org/3/library/functions.html#len)
-  public func len(iterable: PyObject) -> PyResult<PyObject> {
-    if let result = PyStaticCall.__len__(iterable) {
-      return .value(self.newInt(result))
+  public func length(iterable: PyObject) -> PyResult<PyObject> {
+    if let result = PyStaticCall.__len__(self, object: iterable) {
+      return PyResult(result)
     }
 
     switch self.callMethod(object: iterable, selector: .__len__) {
     case .value(let o):
       return .value(o)
     case .missingMethod:
-      return .typeError("object of type '\(iterable.typeName)' has no len()")
+      let message = "object of type '\(iterable.typeName)' has no len()"
+      return .typeError(self, message: message)
     case .error(let e),
          .notCallable(let e):
       return .error(e)
     }
   }
 
-  public func lenBigInt(iterable: PyObject) -> PyResult<BigInt> {
-    // Avoid 'PyObject' allocation inside `self.length(iterable: PyObject)`
-    if let result = PyStaticCall.__len__(iterable) {
-      return .value(result)
-    }
-
-    // Use `self.length(iterable: PyObject)`
-    switch self.len(iterable: iterable) {
+  public func lengthPyInt(iterable: PyObject) -> PyResult<PyInt> {
+    switch self.length(iterable: iterable) {
     case let .value(object):
-      guard let pyInt = PyCast.asInt(object) else {
-        return .typeError("'\(object)' object cannot be interpreted as an integer")
+      guard let result = self.cast.asInt(object) else {
+        let message = "'\(object)' object cannot be interpreted as an integer"
+        return .typeError(self, message: message)
       }
 
-      return .value(pyInt.value)
+      return .value(result)
 
     case let .error(e):
       return .error(e)
     }
   }
 
-  public func lenInt(tuple: PyTuple) -> Int {
+  public func lengthInt(tuple: PyTuple) -> Int {
     return tuple.count
   }
 
-  public func lenInt(dict: PyDict) -> Int {
+  public func lengthInt(dict: PyDict) -> Int {
     return dict.elements.count
   }
 
-  public func lenInt(iterable: PyObject) -> PyResult<Int> {
-    return self.lenBigInt(iterable: iterable)
-      .flatMap { bigInt -> PyResult<Int> in
-        guard let int = Int(exactly: bigInt) else {
-          return .overflowError("Object length is too big")
-        }
-
-        return .value(int)
+  public func lengthInt(iterable: PyObject) -> PyResult<Int> {
+    switch self.lengthPyInt(iterable: iterable) {
+    case let .value(pyInt):
+      guard let int = Int(exactly: pyInt.value) else {
+        return .overflowError(self, message: "Object length is too big")
       }
+
+      return .value(int)
+
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Contains
@@ -457,14 +551,14 @@ extension PyInstance {
   ///
   /// int
   /// PySequence_Contains(PyObject *seq, PyObject *ob)
-  public func contains(iterable: PyObject, element: PyObject) -> PyResult<Bool> {
-    if let result = PyStaticCall.__contains__(iterable, element: element) {
-      return result
+  public func contains(iterable: PyObject, object: PyObject) -> PyResult<PyObject> {
+    if let result = PyStaticCall.__contains__(self, object: iterable, element: object) {
+      return PyResult(result)
     }
 
-    switch self.callMethod(object: iterable, selector: .__contains__, arg: element) {
+    switch self.callMethod(object: iterable, selector: .__contains__, arg: object) {
     case .value(let o):
-      return self.isTrueBool(object: o)
+      return PyResult(o)
     case .missingMethod:
       break // try other things
     case .error(let e),
@@ -472,20 +566,21 @@ extension PyInstance {
       return .error(e)
     }
 
-    return self.iterSearch(iterable: iterable, element: element)
+    return self.iterSearch(iterable: iterable, object: object)
   }
 
   /// Py_ssize_t
   /// _PySequence_IterSearch(PyObject *seq, PyObject *obj, int operation)
-  private func iterSearch(iterable: PyObject,
-                          element: PyObject) -> PyResult<Bool> {
-    return self.reduce(iterable: iterable, initial: false) { _, object in
-      switch self.isEqualBool(left: object, right: element) {
+  private func iterSearch(iterable: PyObject, object: PyObject) -> PyResult<PyObject> {
+    let result = self.reduce(iterable: iterable, initial: false) { _, object in
+      switch self.isEqualBool(left: object, right: object) {
       case .value(true): return .finish(true)
       case .value(false): return .goToNextElement
       case .error(let e): return .error(e)
       }
     }
+
+    return result.map { $0 ? self.true.asObject : self.false.asObject }
   }
 
   /// Does this `iterable` contain all of the elments from other iterable?
@@ -493,10 +588,16 @@ extension PyInstance {
                        allFrom subset: PyObject) -> PyResult<Bool> {
     // Iterate 'subset' and check if every element is in 'iterable'.
     return self.reduce(iterable: subset, initial: true) { _, object in
-      switch self.contains(iterable: iterable, element: object) {
-      case .value(true): return .goToNextElement
-      case .value(false): return .finish(false)
-      case .error(let e): return .error(e)
+      switch self.contains(iterable: iterable, object: object) {
+      case let .value(object):
+        switch self.isTrueBool(object: object) {
+        case .value(true): return .goToNextElement
+        case .value(false): return .finish(false)
+        case .error(let e): return .error(e)
+        }
+
+      case let .error(e):
+        return .error(e)
       }
     }
   }
@@ -509,288 +610,14 @@ extension PyInstance {
                        kwargs: PyDict?) -> PyResult<PyList> {
     switch self.newList(iterable: iterable) {
     case let .value(list):
-      switch list.sort(args: [], kwargs: kwargs) {
+      let listObject = list.asObject
+      switch PyList.sort(self, zelf: listObject, args: [], kwargs: kwargs) {
       case .value: return .value(list)
       case .error(let e): return .error(e)
       }
     case let .error(e):
       return .error(e)
     }
-  }
-
-  // MARK: - To array
-
-  /// Convert iterable to Swift array.
-  ///
-  /// Most of the time you want to use `Py.reduce` though…
-  public func toArray(iterable: PyObject) -> PyResult<[PyObject]> {
-    if let trivialArray = self.triviallyIntoSwiftArray(iterable: iterable) {
-      return .value(trivialArray)
-    }
-
-    var result = [PyObject]()
-    let reduceError = self.reduce(iterable: iterable, into: &result) { acc, object in
-      acc.append(object)
-      return .goToNextElement
-    }
-
-    if let e = reduceError {
-      return .error(e)
-    }
-
-    return .value(result)
-  }
-
-  /// Some types can be trivially converted to Swift array without all of that
-  /// `__iter__/__next__` ceremony.
-  private func triviallyIntoSwiftArray(iterable: PyObject) -> [PyObject]? {
-    // swiftlint:disable:previous discouraged_optional_collection
-
-    // We always have to go with 'asExactly…' version because user can override
-    // '__iter__' or '__next__' in which case they are no longer 'trivial'.
-
-    if let tuple = PyCast.asExactlyTuple(iterable) {
-      return tuple.elements
-    }
-
-    if let list = PyCast.asExactlyList(iterable) {
-      return list.elements
-    }
-
-    if let dict = PyCast.asExactlyDict(iterable) {
-      // '__iter__' on dict returns 'dict_keyiterator'
-      return dict.elements.map { $0.key.object }
-    }
-
-    if let set = PyCast.asExactlyAnySet(iterable) {
-      return set.elements.map { $0.object }
-    }
-
-    if let bytes = PyCast.asExactlyAnyBytes(iterable) {
-      return bytes.elements.map(self.newInt)
-    }
-
-    if let string = PyCast.asExactlyString(iterable) {
-      return string.elements.map(self.intern(scalar:))
-    }
-
-    return nil
-  }
-
-  // MARK: - For each
-
-  public enum ForEachStep {
-    /// Go to the next item.
-    case goToNextElement
-    /// Finish iteration.
-    case finish
-    /// Finish iteration with given error.
-    case error(PyBaseException)
-  }
-
-  public typealias ForEachFn = (PyObject) -> ForEachStep
-
-  /// Iterate `iterable` without returning any result (just for the side-effects).
-  public func forEach(iterable: PyObject, fn: ForEachFn) -> PyBaseException? {
-    let result = self.reduce(iterable: iterable, initial: ()) { _, object in
-      switch fn(object) {
-      case .goToNextElement: return .goToNextElement
-      case .finish: return .finish(())
-      case .error(let e): return .error(e)
-      }
-    }
-
-    switch result {
-    case .value:
-      return nil
-    case .error(let e):
-      return e
-    }
-  }
-
-  public typealias ForEachDictFn = (PyObject, PyObject) -> ForEachStep
-
-  /// Iterate `dict` without returning any result (just for the side-effects).
-  ///
-  /// 1st argument is `key`.
-  /// 2nd argument is `value`.
-  public func forEach(dict: PyDict, fn: ForEachDictFn) -> PyBaseException? {
-    for e in dict.elements {
-      let key = e.key.object
-      let value = e.value
-
-      switch fn(key, value) {
-      case .goToNextElement:
-        break
-      case .finish:
-        return nil
-      case .error(let e):
-        return e
-      }
-    }
-
-    return nil
-  }
-
-  // MARK: - Reduce
-
-  /// `Builtins.reduce(iterable:initial:fn)` trampoline.
-  public enum ReduceStep<Acc> {
-    /// Go to the next item without changing `acc`.
-    case goToNextElement
-    /// Go to the next item using given `acc`.
-    case setAcc(Acc)
-    /// Finish reduction with given `acc`.
-    /// Use this if you already have the result and don't need to iterate anymore.
-    case finish(Acc)
-    /// Finish reduction with given error.
-    case error(PyBaseException)
-  }
-
-  public typealias ReduceFn<Acc> = (Acc, PyObject) -> ReduceStep<Acc>
-
-  /// Returns the result of combining the elements of the sequence
-  /// using the given closure.
-  ///
-  /// This method is similar to `Swift.Sequence.reduce(_:_:)`.
-  public func reduce<Acc>(iterable: PyObject,
-                          initial: Acc,
-                          fn: ReduceFn<Acc>) -> PyResult<Acc> {
-    // Fast path if we are an object with known conversion.
-    if let array = self.triviallyIntoSwiftArray(iterable: iterable) {
-      return self.reduce(array: array, initial: initial, fn: fn)
-    }
-
-    let iter: PyObject
-    switch self.iter(object: iterable) {
-    case let .value(i): iter = i
-    case let .error(e): return .error(e)
-    }
-
-    var acc = initial
-    while true {
-      switch self.next(iterator: iter) {
-      case .value(let object):
-        switch fn(acc, object) {
-        case .goToNextElement: break // do nothing
-        case .setAcc(let a): acc = a
-        case .finish(let a): return .value(a)
-        case .error(let e): return .error(e)
-        }
-
-      case .error(let e):
-        if PyCast.isStopIteration(e) {
-          return .value(acc)
-        }
-
-        return .error(e)
-      }
-    }
-  }
-
-  private func reduce<Acc>(array: [PyObject],
-                           initial: Acc,
-                           fn: ReduceFn<Acc>) -> PyResult<Acc> {
-    var acc = initial
-
-    for o in array {
-      switch fn(acc, o) {
-      case .goToNextElement: break // do nothing
-      case .setAcc(let a): acc = a
-      case .finish(let a): return .value(a)
-      case .error(let e): return .error(e)
-      }
-    }
-
-    return .value(acc)
-  }
-
-  // MARK: - Reduce into
-
-  /// `Builtins.reduce(iterable:into:fn)` trampoline.
-  public enum ReduceIntoStep<Acc> {
-    /// Go to the next item.
-    case goToNextElement
-    /// Finish reduction.
-    /// Use this if you already have the result and don't need to iterate anymore.
-    case finish
-    /// Finish reduction with given error.
-    case error(PyBaseException)
-  }
-
-  public typealias ReduceIntoFn<Acc> = (inout Acc, PyObject) -> ReduceIntoStep<Acc>
-
-  /// Returns the result of combining the elements of the sequence
-  /// using the given closure.
-  ///
-  /// This is preferred over `reduce(iterable:initial:fn:)` for efficiency when
-  /// the result is a copy-on-write type, for example an `Array` or a `Dictionary`.
-  ///
-  /// - Important
-  /// This is a bit different than the `Swift.Sequence.reduce(into:)`!
-  /// It will not copy  the `into` argument, but pass it directly into provided
-  /// `fn` function for modification.
-  ///
-  /// Example usage:
-  ///
-  /// ```Swift
-  /// var values = [1, 2, 3]
-  /// let reduceError = Py.reduce(iterable: iterable, into: &values) { acc, object in
-  ///   // Modify 'acc'
-  ///   // Swift non-overlapping access guarantees that 'values' are not accessible
-  /// }
-  ///
-  /// // Handle 'error' (if any) or use 'values' (now you can access them)
-  /// ```
-  ///
-  /// - Warning
-  /// Do not merge into `Py.reduce(iterable:initial:fn:)`!
-  /// I am 90% sure it will create needles copy during COW.
-  public func reduce<Acc>(iterable: PyObject,
-                          into acc: inout Acc,
-                          fn: ReduceIntoFn<Acc>) -> PyBaseException? {
-    // Fast path if we are an object with known conversion.
-    if let array = self.triviallyIntoSwiftArray(iterable: iterable) {
-      return self.reduce(array: array, into: &acc, fn: fn)
-    }
-
-    let iter: PyObject
-    switch self.iter(object: iterable) {
-    case let .value(i): iter = i
-    case let .error(e): return e
-    }
-
-    while true {
-      switch self.next(iterator: iter) {
-      case .value(let object):
-        switch fn(&acc, object) {
-        case .goToNextElement: break // mutation is our side-effect
-        case .finish: return nil
-        case .error(let e): return e
-        }
-
-      case .error(let e):
-        if PyCast.isStopIteration(e) {
-          return nil
-        }
-
-        return e
-      }
-    }
-  }
-
-  private func reduce<Acc>(array: [PyObject],
-                           into acc: inout Acc,
-                           fn: ReduceIntoFn<Acc>) -> PyBaseException? {
-    for object in array {
-      switch fn(&acc, object) {
-      case .goToNextElement: break // mutation is our side-effect
-      case .finish: return nil
-      case .error(let e): return e
-      }
-    }
-
-    return nil
   }
 
   // MARK: - Select key
@@ -811,5 +638,3 @@ extension PyInstance {
     }
   }
 }
-
-*/
