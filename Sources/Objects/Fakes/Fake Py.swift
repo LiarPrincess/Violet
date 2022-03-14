@@ -166,51 +166,6 @@ public struct Py {
   public func getItem(object: PyObject, index: PyObject) -> PyResult<PyObject> { fatalError() }
   public func setItem(object: PyObject, index: PyObject, value: PyObject) -> PyResult<PyNone> { fatalError() }
 
-  // MARK: - Errors
-
-  public func newInvalidSelfArgumentError(object: PyObject,
-                                          expectedType: String,
-                                          swiftFnName: StaticString) -> PyTypeError {
-    // Note that 'swiftFnName' is a full selector!
-    // For example: '__repr__(_:zelf:)'
-    fatalError()
-  }
-
-  public func newInvalidSelfArgumentError(object: PyObject,
-                                          expectedType: String,
-                                          fnName: String) -> PyTypeError {
-    let t = object.typeName
-    let message = "descriptor '\(fnName)' requires a '\(expectedType)' object but received a '\(t)'"
-    return self.newTypeError(message: message)
-  }
-
-  public func newSystemError(message: String) -> PySystemError { fatalError() }
-  public func newTypeError(message: String) -> PyTypeError { fatalError() }
-  public func newAttributeError(message: String) -> PyAttributeError { fatalError() }
-  public func newAttributeError(object: PyObject, hasNoAttribute: PyString) -> PyAttributeError { fatalError() }
-  public func newAttributeError(object: PyObject, attributeIsReadOnly: PyString) -> PyAttributeError { fatalError() }
-  public func newIndexError(message: String) -> PyIndexError { fatalError() }
-  public func newZeroDivisionError(message: String) -> PyZeroDivisionError { fatalError() }
-  public func newOverflowError(message: String) -> PyOverflowError { fatalError() }
-  public func newNameError(message: String) -> PyNameError { fatalError() }
-  public func newKeyError(message: String) -> PyKeyError { fatalError() }
-  public func newValueError(message: String) -> PyValueError { fatalError() }
-  public func newLookupError(message: String) -> PyLookupError { fatalError() }
-  public func newRuntimeError(message: String) -> PyRuntimeError { fatalError() }
-  public func newOSError(message: String) -> PyOSError { fatalError() }
-  public func newAssertionError(message: String) -> PyAssertionError { fatalError() }
-  public func newEOFError(message: String) -> PyEOFError { fatalError() }
-  public func newKeyError(key: PyObject) -> PyKeyError { fatalError() }
-  public func newStopIteration(value: PyObject?) -> PyStopIteration { fatalError() }
-  public func newUnboundLocalError(variableName: String) -> PyUnboundLocalError { fatalError() }
-  public func newUnicodeDecodeError(data: Data, encoding: PyString.Encoding) -> PyUnicodeDecodeError { fatalError() }
-  public func newUnicodeEncodeError(string: String, encoding: PyString.Encoding) -> PyUnicodeEncodeError { fatalError() }
-  public func newImportError(message: String,
-                             moduleName: String?,
-                             modulePath: String?) -> PyImportError { fatalError() }
-  public func newImportError(message: String,
-                             moduleName: String?,
-                             modulePath: Path?) -> PyImportError { fatalError() }
   // MARK: - Call
 
   public enum CallResult {

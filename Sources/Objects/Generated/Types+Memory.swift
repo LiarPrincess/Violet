@@ -4732,6 +4732,7 @@ extension PyMemory {
   /// Allocate a new instance of `traceback` type.
   public func newTraceback(
     _ py: Py,
+    type: PyType,
     next: PyTraceback?,
     frame: PyFrame,
     lastInstruction: PyInt,
@@ -4743,6 +4744,7 @@ extension PyMemory {
 
     result.initialize(
       py,
+      type: type,
       next: next,
       frame: frame,
       lastInstruction: lastInstruction,
@@ -5207,10 +5209,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyArithmeticError {
     let typeLayout = PyArithmeticError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -5289,10 +5291,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyAssertionError {
     let typeLayout = PyAssertionError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -5371,10 +5373,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyAttributeError {
     let typeLayout = PyAttributeError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -5453,10 +5455,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyBaseException {
     let typeLayout = PyBaseException.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -5535,10 +5537,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyBlockingIOError {
     let typeLayout = PyBlockingIOError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -5617,10 +5619,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyBrokenPipeError {
     let typeLayout = PyBrokenPipeError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -5699,10 +5701,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyBufferError {
     let typeLayout = PyBufferError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -5781,10 +5783,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyBytesWarning {
     let typeLayout = PyBytesWarning.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -5863,10 +5865,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyChildProcessError {
     let typeLayout = PyChildProcessError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -5945,10 +5947,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyConnectionAbortedError {
     let typeLayout = PyConnectionAbortedError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -6027,10 +6029,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyConnectionError {
     let typeLayout = PyConnectionError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -6109,10 +6111,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyConnectionRefusedError {
     let typeLayout = PyConnectionRefusedError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -6191,10 +6193,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyConnectionResetError {
     let typeLayout = PyConnectionResetError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -6273,10 +6275,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyDeprecationWarning {
     let typeLayout = PyDeprecationWarning.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -6355,10 +6357,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyEOFError {
     let typeLayout = PyEOFError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -6437,10 +6439,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyException {
     let typeLayout = PyException.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -6519,10 +6521,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyFileExistsError {
     let typeLayout = PyFileExistsError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -6601,10 +6603,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyFileNotFoundError {
     let typeLayout = PyFileNotFoundError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -6683,10 +6685,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyFloatingPointError {
     let typeLayout = PyFloatingPointError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -6765,10 +6767,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyFutureWarning {
     let typeLayout = PyFutureWarning.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -6847,10 +6849,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyGeneratorExit {
     let typeLayout = PyGeneratorExit.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -6949,10 +6951,10 @@ extension PyMemory {
     msg: PyObject?,
     moduleName: PyObject?,
     modulePath: PyObject?,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyImportError {
     let typeLayout = PyImportError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -6980,10 +6982,10 @@ extension PyMemory {
     args: PyTuple,
     moduleName: PyObject?,
     modulePath: PyObject?,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyImportError {
     let typeLayout = PyImportError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -7064,10 +7066,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyImportWarning {
     let typeLayout = PyImportWarning.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -7146,10 +7148,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyIndentationError {
     let typeLayout = PyIndentationError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -7228,10 +7230,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyIndexError {
     let typeLayout = PyIndexError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -7310,10 +7312,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyInterruptedError {
     let typeLayout = PyInterruptedError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -7392,10 +7394,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyIsADirectoryError {
     let typeLayout = PyIsADirectoryError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -7474,10 +7476,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyKeyError {
     let typeLayout = PyKeyError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -7556,10 +7558,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyKeyboardInterrupt {
     let typeLayout = PyKeyboardInterrupt.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -7638,10 +7640,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyLookupError {
     let typeLayout = PyLookupError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -7720,10 +7722,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyMemoryError {
     let typeLayout = PyMemoryError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -7802,10 +7804,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyModuleNotFoundError {
     let typeLayout = PyModuleNotFoundError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -7884,10 +7886,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyNameError {
     let typeLayout = PyNameError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -7966,10 +7968,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyNotADirectoryError {
     let typeLayout = PyNotADirectoryError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -8048,10 +8050,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyNotImplementedError {
     let typeLayout = PyNotImplementedError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -8130,10 +8132,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyOSError {
     let typeLayout = PyOSError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -8212,10 +8214,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyOverflowError {
     let typeLayout = PyOverflowError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -8294,10 +8296,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyPendingDeprecationWarning {
     let typeLayout = PyPendingDeprecationWarning.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -8376,10 +8378,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyPermissionError {
     let typeLayout = PyPermissionError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -8458,10 +8460,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyProcessLookupError {
     let typeLayout = PyProcessLookupError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -8540,10 +8542,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyRecursionError {
     let typeLayout = PyRecursionError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -8622,10 +8624,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyReferenceError {
     let typeLayout = PyReferenceError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -8704,10 +8706,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyResourceWarning {
     let typeLayout = PyResourceWarning.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -8786,10 +8788,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyRuntimeError {
     let typeLayout = PyRuntimeError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -8868,10 +8870,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyRuntimeWarning {
     let typeLayout = PyRuntimeWarning.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -8950,10 +8952,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyStopAsyncIteration {
     let typeLayout = PyStopAsyncIteration.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -9039,10 +9041,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     value: PyObject,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyStopIteration {
     let typeLayout = PyStopIteration.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -9066,10 +9068,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyStopIteration {
     let typeLayout = PyStopIteration.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -9186,10 +9188,10 @@ extension PyMemory {
     offset: PyObject?,
     text: PyObject?,
     printFileAndLine: PyObject?,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PySyntaxError {
     let typeLayout = PySyntaxError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -9218,10 +9220,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PySyntaxError {
     let typeLayout = PySyntaxError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -9300,10 +9302,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PySyntaxWarning {
     let typeLayout = PySyntaxWarning.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -9382,10 +9384,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PySystemError {
     let typeLayout = PySystemError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -9471,10 +9473,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     code: PyObject?,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PySystemExit {
     let typeLayout = PySystemExit.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -9498,10 +9500,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PySystemExit {
     let typeLayout = PySystemExit.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -9580,10 +9582,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyTabError {
     let typeLayout = PyTabError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -9662,10 +9664,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyTimeoutError {
     let typeLayout = PyTimeoutError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -9744,10 +9746,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyTypeError {
     let typeLayout = PyTypeError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -9826,10 +9828,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyUnboundLocalError {
     let typeLayout = PyUnboundLocalError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -9908,10 +9910,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyUnicodeDecodeError {
     let typeLayout = PyUnicodeDecodeError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -9990,10 +9992,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyUnicodeEncodeError {
     let typeLayout = PyUnicodeEncodeError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -10072,10 +10074,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyUnicodeError {
     let typeLayout = PyUnicodeError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -10154,10 +10156,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyUnicodeTranslateError {
     let typeLayout = PyUnicodeTranslateError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -10236,10 +10238,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyUnicodeWarning {
     let typeLayout = PyUnicodeWarning.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -10318,10 +10320,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyUserWarning {
     let typeLayout = PyUserWarning.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -10400,10 +10402,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyValueError {
     let typeLayout = PyValueError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -10482,10 +10484,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyWarning {
     let typeLayout = PyWarning.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -10564,10 +10566,10 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    traceback: PyTraceback?,
-    cause: PyBaseException?,
-    context: PyBaseException?,
-    suppressContext: Bool
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
   ) -> PyZeroDivisionError {
     let typeLayout = PyZeroDivisionError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)

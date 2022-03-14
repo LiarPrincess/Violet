@@ -29,10 +29,10 @@ public struct PyStopIteration: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            value: PyObject,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     let args = py.newTuple(elements: value)
     self.errorHeader.initialize(py,
                                 type: type,
@@ -48,10 +48,10 @@ public struct PyStopIteration: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,

@@ -5,6 +5,7 @@ public struct PyErrorHeader {
 
   // MARK: - Properties
 
+  public static let defaultSuppressContext = false
   private static let suppressContextFlag = PyObjectHeader.Flags.custom0
 
   // sourcery: includeInLayout
@@ -32,8 +33,6 @@ public struct PyErrorHeader {
     get { self.contextPtr.pointee }
     nonmutating set { self.contextPtr.pointee = newValue }
   }
-
-  internal static let defaultSuppressContext = false
 
   /// Should we use `self.cause` or `self.context`?
   ///
