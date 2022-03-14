@@ -1,4 +1,3 @@
-/* MARKER
 // In CPython:
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
@@ -53,15 +52,15 @@ private protocol BinaryOp {
   static var inPlaceSelector: IdString { get }
 
   /// Fast path: we know the method at compile time
-  static func callStatic(left: PyObject, right: PyObject) -> StaticCallResult
+  static func callStatic(_ py: Py, left: PyObject, right: PyObject) -> StaticCallResult
   /// Fast path: we know the reflected method at compile time
   ///
   /// For `__add__` it should call `__radd__`.
-  static func callStaticReflected(left: PyObject, right: PyObject) -> StaticCallResult
+  static func callStaticReflected(_ py: Py, left: PyObject, right: PyObject) -> StaticCallResult
   /// Fast path: we know the in-place method at compile time
   ///
   /// For `__add__` it should call `__iadd__`.
-  static func callStaticInPlace(left: PyObject, right: PyObject) -> StaticCallResult
+  static func callStaticInPlace(_ py: Py, left: PyObject, right: PyObject) -> StaticCallResult
 }
 
 extension BinaryOp {
@@ -73,23 +72,24 @@ extension BinaryOp {
   /// static PyObject *
   /// binary_op(PyObject *v, PyObject *w, const int op_slot, const char *op_name)
   /// define SLOT1BINFULL(FUNCNAME, TESTFUNC, SLOTNAME, OPSTR, ROPSTR)
-  fileprivate static func call(left: PyObject,
+  fileprivate static func call(_ py: Py,
+                               left: PyObject,
                                right: PyObject) -> PyResult<PyObject> {
-    switch self.callInner(left: left, right: right) {
+    switch self.callInner(py, left: left, right: right) {
     case let .value(result):
-      if PyCast.isNotImplemented(result) {
+      if py.cast.isNotImplemented(result) {
         let leftType = left.typeName
         let rightType = right.typeName
         var msg = "unsupported operand type(s) for \(op): \(leftType) and \(rightType)."
 
         // For C++ programmers who try to `print << 'Elsa'`:
-        if let fn = PyCast.asBuiltinFunction(left),
+        if let fn = py.cast.asBuiltinFunction(left),
            fn.name == "print",
            Self.op == "<<" {
           msg += " Did you mean \"print(<message>, file=<output_stream>)\"?"
         }
 
-        return .typeError(msg)
+        return .typeError(py, message: msg)
       }
 
       return .value(result)
@@ -101,11 +101,12 @@ extension BinaryOp {
 
   // MARK: Call in place
 
-  fileprivate static func callInPlace(left: PyObject,
+  fileprivate static func callInPlace(_ py: Py,
+                                      left: PyObject,
                                       right: PyObject) -> PyResult<PyObject> {
-    switch self.callInPlaceOp(left: left, right: right) {
+    switch self.callInPlaceOp(py, left: left, right: right) {
     case let .value(result):
-      if PyCast.isNotImplemented(result) {
+      if py.cast.isNotImplemented(result) {
         break // try other options
       }
 
@@ -116,12 +117,13 @@ extension BinaryOp {
     }
 
     // Try standard operation, for example '+'
-    switch self.callInner(left: left, right: right) {
+    switch self.callInner(py, left: left, right: right) {
     case let .value(result):
-      if PyCast.isNotImplemented(result) {
-        let msg = "unsupported operand type(s) for \(inPlaceOp): " +
-          "\(left.typeName) and \(right.typeName)."
-        return .typeError(msg)
+      if py.cast.isNotImplemented(result) {
+        let leftType = left.typeName
+        let rightType = right.typeName
+        let msg = "unsupported operand type(s) for \(inPlaceOp): \(leftType) and \(rightType)."
+        return .typeError(py, message: msg)
       }
 
       return .value(result)
@@ -138,7 +140,8 @@ extension BinaryOp {
   /// binary_op1(PyObject *v, PyObject *w, const int op_slot)
   /// static PyObject *
   /// binary_op(PyObject *v, PyObject *w, const int op_slot, const char *op_name)
-  fileprivate static func callInner(left: PyObject,
+  fileprivate static func callInner(_ py: Py,
+                                    left: PyObject,
                                     right: PyObject) -> PyResult<PyObject> {
     var checkedReflected = false
 
@@ -146,9 +149,9 @@ extension BinaryOp {
     if left.type !== right.type && right.type.isSubtype(of: left.type) {
       checkedReflected = true
 
-      switch self.callReflectedOp(left: left, right: right) {
+      switch self.callReflectedOp(py, left: left, right: right) {
       case .value(let result):
-        if PyCast.isNotImplemented(result) {
+        if py.cast.isNotImplemented(result) {
           break // try other options
         }
         return .value(result)
@@ -158,9 +161,9 @@ extension BinaryOp {
     }
 
     // Try left `op` right (default path)
-    switch self.callOp(left: left, right: right) {
+    switch self.callOp(py, left: left, right: right) {
     case .value(let result):
-      if PyCast.isNotImplemented(result) {
+      if py.cast.isNotImplemented(result) {
         break // try other options
       }
       return .value(result)
@@ -170,9 +173,9 @@ extension BinaryOp {
 
     // Try reflected on right
     if !checkedReflected {
-      switch self.callReflectedOp(left: left, right: right) {
+      switch self.callReflectedOp(py, left: left, right: right) {
       case .value(let result):
-        if PyCast.isNotImplemented(result) {
+        if py.cast.isNotImplemented(result) {
           break // try other options
         }
         return .value(result)
@@ -182,15 +185,16 @@ extension BinaryOp {
     }
 
     // No hope left! We are doomed!
-    return .value(Py.notImplemented)
+    return .notImplemented(py)
   }
 
   // MARK: Call op
 
-  private static func callOp(left: PyObject,
+  private static func callOp(_ py: Py,
+                             left: PyObject,
                              right: PyObject) -> PyResult<PyObject> {
     // Fast path: we know the method at compile time
-    switch self.callStatic(left: left, right: right) {
+    switch self.callStatic(py, left: left, right: right) {
     case .value(let result):
       return .value(result)
     case .unavailable:
@@ -200,21 +204,22 @@ extension BinaryOp {
     }
 
     // Try standard Python dispatch
-    switch Py.callMethod(object: left, selector: selector, arg: right) {
+    switch py.callMethod(object: left, selector: selector, arg: right) {
     case .value(let result):
       return .value(result)
     case .missingMethod:
-      return .value(Py.notImplemented)
+      return .notImplemented(py)
     case .error(let e),
          .notCallable(let e):
       return .error(e)
     }
   }
 
-  private static func callReflectedOp(left: PyObject,
+  private static func callReflectedOp(_ py: Py,
+                                      left: PyObject,
                                       right: PyObject) -> PyResult<PyObject> {
     // Fast path: we know the method at compile time
-    switch self.callStaticReflected(left: left, right: right) {
+    switch self.callStaticReflected(py, left: left, right: right) {
     case .value(let result):
       return .value(result)
     case .unavailable:
@@ -224,21 +229,22 @@ extension BinaryOp {
     }
 
     // Try standard Python dispatch
-    switch Py.callMethod(object: right, selector: reflectedSelector, arg: left) {
+    switch py.callMethod(object: right, selector: reflectedSelector, arg: left) {
     case .value(let result):
       return .value(result)
     case .missingMethod:
-      return .value(Py.notImplemented)
+      return .notImplemented(py)
     case .error(let e),
          .notCallable(let e):
       return .error(e)
     }
   }
 
-  private static func callInPlaceOp(left: PyObject,
+  private static func callInPlaceOp(_ py: Py,
+                                    left: PyObject,
                                     right: PyObject) -> PyResult<PyObject> {
     // Fast path: we know the method at compile time
-    switch self.callStaticInPlace(left: left, right: right) {
+    switch self.callStaticInPlace(py, left: left, right: right) {
     case .value(let result):
       return .value(result)
     case .unavailable:
@@ -248,11 +254,11 @@ extension BinaryOp {
     }
 
     // Try standard Python dispatch
-    switch Py.callMethod(object: left, selector: inPlaceSelector, arg: right) {
+    switch py.callMethod(object: left, selector: inPlaceSelector, arg: right) {
     case .value(let result):
       return .value(result)
     case .missingMethod:
-      return .value(Py.notImplemented)
+      return .notImplemented(py)
     case .error(let e),
          .notCallable(let e):
       return .error(e)
@@ -270,33 +276,36 @@ private struct AddOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__radd__
   fileprivate static let inPlaceSelector = IdString.__iadd__
 
-  fileprivate static func callStatic(left: PyObject,
+  fileprivate static func callStatic(_ py: Py,
+                                     left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__add__(left: left, right: right)
+    let result = PyStaticCall.__add__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticReflected(left: PyObject,
+  fileprivate static func callStaticReflected(_ py: Py,
+                                              left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__radd__(left: right, right: left)
+    let result = PyStaticCall.__radd__(py, left: right, right: left)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticInPlace(left: PyObject,
+  fileprivate static func callStaticInPlace(_ py: Py,
+                                            left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__iadd__(left: left, right: right)
+    let result = PyStaticCall.__iadd__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 }
 
-extension PyInstance {
+extension Py {
 
   public func add(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return AddOp.call(left: left, right: right)
+    return AddOp.call(self, left: left, right: right)
   }
 
   public func addInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return AddOp.callInPlace(left: left, right: right)
+    return AddOp.callInPlace(self, left: left, right: right)
   }
 }
 
@@ -310,33 +319,36 @@ private struct SubOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__rsub__
   fileprivate static let inPlaceSelector = IdString.__isub__
 
-  fileprivate static func callStatic(left: PyObject,
+  fileprivate static func callStatic(_ py: Py,
+                                     left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__sub__(left: left, right: right)
+    let result = PyStaticCall.__sub__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticReflected(left: PyObject,
+  fileprivate static func callStaticReflected(_ py: Py,
+                                              left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rsub__(left: right, right: left)
+    let result = PyStaticCall.__rsub__(py, left: right, right: left)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticInPlace(left: PyObject,
+  fileprivate static func callStaticInPlace(_ py: Py,
+                                            left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__isub__(left: left, right: right)
+    let result = PyStaticCall.__isub__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 }
 
-extension PyInstance {
+extension Py {
 
   public func sub(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return SubOp.call(left: left, right: right)
+    return SubOp.call(self, left: left, right: right)
   }
 
   public func subInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return SubOp.callInPlace(left: left, right: right)
+    return SubOp.callInPlace(self, left: left, right: right)
   }
 }
 
@@ -350,33 +362,36 @@ private struct MulOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__rmul__
   fileprivate static let inPlaceSelector = IdString.__imul__
 
-  fileprivate static func callStatic(left: PyObject,
+  fileprivate static func callStatic(_ py: Py,
+                                     left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__mul__(left: left, right: right)
+    let result = PyStaticCall.__mul__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticReflected(left: PyObject,
+  fileprivate static func callStaticReflected(_ py: Py,
+                                              left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rmul__(left: right, right: left)
+    let result = PyStaticCall.__rmul__(py, left: right, right: left)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticInPlace(left: PyObject,
+  fileprivate static func callStaticInPlace(_ py: Py,
+                                            left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__imul__(left: left, right: right)
+    let result = PyStaticCall.__imul__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 }
 
-extension PyInstance {
+extension Py {
 
   public func mul(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return MulOp.call(left: left, right: right)
+    return MulOp.call(self, left: left, right: right)
   }
 
   public func mulInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return MulOp.callInPlace(left: left, right: right)
+    return MulOp.callInPlace(self, left: left, right: right)
   }
 }
 
@@ -390,33 +405,36 @@ private struct MatmulOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__rmatmul__
   fileprivate static let inPlaceSelector = IdString.__imatmul__
 
-  fileprivate static func callStatic(left: PyObject,
+  fileprivate static func callStatic(_ py: Py,
+                                     left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__matmul__(left: left, right: right)
+    let result = PyStaticCall.__matmul__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticReflected(left: PyObject,
+  fileprivate static func callStaticReflected(_ py: Py,
+                                              left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rmatmul__(left: right, right: left)
+    let result = PyStaticCall.__rmatmul__(py, left: right, right: left)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticInPlace(left: PyObject,
+  fileprivate static func callStaticInPlace(_ py: Py,
+                                            left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__imatmul__(left: left, right: right)
+    let result = PyStaticCall.__imatmul__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 }
 
-extension PyInstance {
+extension Py {
 
   public func matmul(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return MatmulOp.call(left: left, right: right)
+    return MatmulOp.call(self, left: left, right: right)
   }
 
   public func matmulInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return MatmulOp.callInPlace(left: left, right: right)
+    return MatmulOp.callInPlace(self, left: left, right: right)
   }
 }
 
@@ -430,33 +448,36 @@ private struct TruedivOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__rtruediv__
   fileprivate static let inPlaceSelector = IdString.__itruediv__
 
-  fileprivate static func callStatic(left: PyObject,
+  fileprivate static func callStatic(_ py: Py,
+                                     left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__truediv__(left: left, right: right)
+    let result = PyStaticCall.__truediv__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticReflected(left: PyObject,
+  fileprivate static func callStaticReflected(_ py: Py,
+                                              left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rtruediv__(left: right, right: left)
+    let result = PyStaticCall.__rtruediv__(py, left: right, right: left)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticInPlace(left: PyObject,
+  fileprivate static func callStaticInPlace(_ py: Py,
+                                            left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__itruediv__(left: left, right: right)
+    let result = PyStaticCall.__itruediv__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 }
 
-extension PyInstance {
+extension Py {
 
   public func truediv(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return TruedivOp.call(left: left, right: right)
+    return TruedivOp.call(self, left: left, right: right)
   }
 
   public func truedivInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return TruedivOp.callInPlace(left: left, right: right)
+    return TruedivOp.callInPlace(self, left: left, right: right)
   }
 }
 
@@ -470,33 +491,36 @@ private struct FloordivOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__rfloordiv__
   fileprivate static let inPlaceSelector = IdString.__ifloordiv__
 
-  fileprivate static func callStatic(left: PyObject,
+  fileprivate static func callStatic(_ py: Py,
+                                     left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__floordiv__(left: left, right: right)
+    let result = PyStaticCall.__floordiv__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticReflected(left: PyObject,
+  fileprivate static func callStaticReflected(_ py: Py,
+                                              left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rfloordiv__(left: right, right: left)
+    let result = PyStaticCall.__rfloordiv__(py, left: right, right: left)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticInPlace(left: PyObject,
+  fileprivate static func callStaticInPlace(_ py: Py,
+                                            left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__ifloordiv__(left: left, right: right)
+    let result = PyStaticCall.__ifloordiv__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 }
 
-extension PyInstance {
+extension Py {
 
   public func floordiv(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return FloordivOp.call(left: left, right: right)
+    return FloordivOp.call(self, left: left, right: right)
   }
 
   public func floordivInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return FloordivOp.callInPlace(left: left, right: right)
+    return FloordivOp.callInPlace(self, left: left, right: right)
   }
 }
 
@@ -510,33 +534,36 @@ private struct ModOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__rmod__
   fileprivate static let inPlaceSelector = IdString.__imod__
 
-  fileprivate static func callStatic(left: PyObject,
+  fileprivate static func callStatic(_ py: Py,
+                                     left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__mod__(left: left, right: right)
+    let result = PyStaticCall.__mod__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticReflected(left: PyObject,
+  fileprivate static func callStaticReflected(_ py: Py,
+                                              left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rmod__(left: right, right: left)
+    let result = PyStaticCall.__rmod__(py, left: right, right: left)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticInPlace(left: PyObject,
+  fileprivate static func callStaticInPlace(_ py: Py,
+                                            left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__imod__(left: left, right: right)
+    let result = PyStaticCall.__imod__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 }
 
-extension PyInstance {
+extension Py {
 
   public func mod(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return ModOp.call(left: left, right: right)
+    return ModOp.call(self, left: left, right: right)
   }
 
   public func modInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return ModOp.callInPlace(left: left, right: right)
+    return ModOp.callInPlace(self, left: left, right: right)
   }
 }
 
@@ -550,31 +577,34 @@ private struct DivmodOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__rdivmod__
   fileprivate static let inPlaceSelector = IdString.__idivmod__
 
-  fileprivate static func callStatic(left: PyObject,
+  fileprivate static func callStatic(_ py: Py,
+                                     left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__divmod__(left: left, right: right)
+    let result = PyStaticCall.__divmod__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticReflected(left: PyObject,
+  fileprivate static func callStaticReflected(_ py: Py,
+                                              left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rdivmod__(left: right, right: left)
+    let result = PyStaticCall.__rdivmod__(py, left: right, right: left)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticInPlace(left: PyObject,
+  fileprivate static func callStaticInPlace(_ py: Py,
+                                            left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__idivmod__(left: left, right: right)
+    let result = PyStaticCall.__idivmod__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 }
 
-extension PyInstance {
+extension Py {
 
   /// divmod(a, b)
   /// See [this](https://docs.python.org/3/library/functions.html#divmod)
   public func divmod(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return DivmodOp.call(left: left, right: right)
+    return DivmodOp.call(self, left: left, right: right)
   }
 
   // `divmod` in place does not make sense
@@ -590,33 +620,36 @@ private struct LshiftOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__rlshift__
   fileprivate static let inPlaceSelector = IdString.__ilshift__
 
-  fileprivate static func callStatic(left: PyObject,
+  fileprivate static func callStatic(_ py: Py,
+                                     left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__lshift__(left: left, right: right)
+    let result = PyStaticCall.__lshift__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticReflected(left: PyObject,
+  fileprivate static func callStaticReflected(_ py: Py,
+                                              left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rlshift__(left: right, right: left)
+    let result = PyStaticCall.__rlshift__(py, left: right, right: left)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticInPlace(left: PyObject,
+  fileprivate static func callStaticInPlace(_ py: Py,
+                                            left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__ilshift__(left: left, right: right)
+    let result = PyStaticCall.__ilshift__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 }
 
-extension PyInstance {
+extension Py {
 
   public func lshift(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return LshiftOp.call(left: left, right: right)
+    return LshiftOp.call(self, left: left, right: right)
   }
 
   public func lshiftInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return LshiftOp.callInPlace(left: left, right: right)
+    return LshiftOp.callInPlace(self, left: left, right: right)
   }
 }
 
@@ -630,33 +663,36 @@ private struct RshiftOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__rrshift__
   fileprivate static let inPlaceSelector = IdString.__irshift__
 
-  fileprivate static func callStatic(left: PyObject,
+  fileprivate static func callStatic(_ py: Py,
+                                     left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rshift__(left: left, right: right)
+    let result = PyStaticCall.__rshift__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticReflected(left: PyObject,
+  fileprivate static func callStaticReflected(_ py: Py,
+                                              left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rrshift__(left: right, right: left)
+    let result = PyStaticCall.__rrshift__(py, left: right, right: left)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticInPlace(left: PyObject,
+  fileprivate static func callStaticInPlace(_ py: Py,
+                                            left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__irshift__(left: left, right: right)
+    let result = PyStaticCall.__irshift__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 }
 
-extension PyInstance {
+extension Py {
 
   public func rshift(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return RshiftOp.call(left: left, right: right)
+    return RshiftOp.call(self, left: left, right: right)
   }
 
   public func rshiftInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return RshiftOp.callInPlace(left: left, right: right)
+    return RshiftOp.callInPlace(self, left: left, right: right)
   }
 }
 
@@ -670,33 +706,36 @@ private struct AndOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__rand__
   fileprivate static let inPlaceSelector = IdString.__iand__
 
-  fileprivate static func callStatic(left: PyObject,
+  fileprivate static func callStatic(_ py: Py,
+                                     left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__and__(left: left, right: right)
+    let result = PyStaticCall.__and__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticReflected(left: PyObject,
+  fileprivate static func callStaticReflected(_ py: Py,
+                                              left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rand__(left: right, right: left)
+    let result = PyStaticCall.__rand__(py, left: right, right: left)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticInPlace(left: PyObject,
+  fileprivate static func callStaticInPlace(_ py: Py,
+                                            left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__iand__(left: left, right: right)
+    let result = PyStaticCall.__iand__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 }
 
-extension PyInstance {
+extension Py {
 
   public func and(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return AndOp.call(left: left, right: right)
+    return AndOp.call(self, left: left, right: right)
   }
 
   public func andInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return AndOp.callInPlace(left: left, right: right)
+    return AndOp.callInPlace(self, left: left, right: right)
   }
 }
 
@@ -710,33 +749,36 @@ private struct OrOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__ror__
   fileprivate static let inPlaceSelector = IdString.__ior__
 
-  fileprivate static func callStatic(left: PyObject,
+  fileprivate static func callStatic(_ py: Py,
+                                     left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__or__(left: left, right: right)
+    let result = PyStaticCall.__or__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticReflected(left: PyObject,
+  fileprivate static func callStaticReflected(_ py: Py,
+                                              left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__ror__(left: right, right: left)
+    let result = PyStaticCall.__ror__(py, left: right, right: left)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticInPlace(left: PyObject,
+  fileprivate static func callStaticInPlace(_ py: Py,
+                                            left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__ior__(left: left, right: right)
+    let result = PyStaticCall.__ior__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 }
 
-extension PyInstance {
+extension Py {
 
   public func or(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return OrOp.call(left: left, right: right)
+    return OrOp.call(self, left: left, right: right)
   }
 
   public func orInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return OrOp.callInPlace(left: left, right: right)
+    return OrOp.callInPlace(self, left: left, right: right)
   }
 }
 
@@ -750,34 +792,35 @@ private struct XorOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__rxor__
   fileprivate static let inPlaceSelector = IdString.__ixor__
 
-  fileprivate static func callStatic(left: PyObject,
+  fileprivate static func callStatic(_ py: Py,
+                                     left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__xor__(left: left, right: right)
+    let result = PyStaticCall.__xor__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticReflected(left: PyObject,
+  fileprivate static func callStaticReflected(_ py: Py,
+                                              left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rxor__(left: right, right: left)
+    let result = PyStaticCall.__rxor__(py, left: right, right: left)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticInPlace(left: PyObject,
+  fileprivate static func callStaticInPlace(_ py: Py,
+                                            left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__ixor__(left: left, right: right)
+    let result = PyStaticCall.__ixor__(py, left: left, right: right)
     return StaticCallResult(result)
   }
 }
 
-extension PyInstance {
+extension Py {
 
   public func xor(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return XorOp.call(left: left, right: right)
+    return XorOp.call(self, left: left, right: right)
   }
 
   public func xorInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return XorOp.callInPlace(left: left, right: right)
+    return XorOp.callInPlace(self, left: left, right: right)
   }
 }
-
-*/

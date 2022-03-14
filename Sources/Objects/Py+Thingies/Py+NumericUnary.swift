@@ -1,15 +1,14 @@
-/* MARKER
 // In CPython:
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-extension PyInstance {
+extension Py {
 
   // MARK: - Pos
 
   /// PyObject * PyNumber_Positive(PyObject *o)
-  public func pos(object: PyObject) -> PyResult<PyObject> {
-    if let result = PyStaticCall.__pos__(object) {
+  public func positive(object: PyObject) -> PyResult<PyObject> {
+    if let result = PyStaticCall.__pos__(self, object: object) {
       return .value(result)
     }
 
@@ -21,8 +20,8 @@ extension PyInstance {
   // MARK: - Neg
 
   /// PyObject * PyNumber_Negative(PyObject *o)
-  public func neg(object: PyObject) -> PyResult<PyObject> {
-    if let result = PyStaticCall.__neg__(object) {
+  public func negative(object: PyObject) -> PyResult<PyObject> {
+    if let result = PyStaticCall.__neg__(self, object: object) {
       return .value(result)
     }
 
@@ -35,7 +34,7 @@ extension PyInstance {
 
   /// PyObject * PyNumber_Invert(PyObject *o)
   public func invert(object: PyObject) -> PyResult<PyObject> {
-    if let result = PyStaticCall.__invert__(object) {
+    if let result = PyStaticCall.__invert__(self, object: object) {
       return .value(result)
     }
 
@@ -51,7 +50,7 @@ extension PyInstance {
   ///
   /// PyObject * PyNumber_Absolute(PyObject *o)
   public func abs(object: PyObject) -> PyResult<PyObject> {
-    if let result = PyStaticCall.__abs__(object) {
+    if let result = PyStaticCall.__abs__(self, object: object) {
       return .value(result)
     }
 
@@ -69,12 +68,11 @@ extension PyInstance {
     case .value(let result):
       return .value(result)
     case .missingMethod:
-      return .typeError("bad operand type for \(operation): '\(object.typeName)'")
+      let message = "bad operand type for \(operation): '\(object.typeName)'"
+      return .typeError(self, message: message)
     case .error(let e),
-         .notCallable(let e):
+        .notCallable(let e):
       return .error(e)
     }
   }
 }
-
-*/

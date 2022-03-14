@@ -1,4 +1,3 @@
-/* MARKER
 // In CPython:
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
@@ -47,17 +46,20 @@ private protocol TernaryOp {
   static var inPlaceSelector: IdString { get }
 
   /// Call op with fast protocol dispatch.
-  static func callStatic(left: PyObject,
+  static func callStatic(_ py: Py,
+                         left: PyObject,
                          middle: PyObject,
                          right: PyObject) -> StaticCallResult
   /// Call reflected op with fast protocol dispatch.
   /// For `__pow__` it should call `__rpow__`.
-  static func callStaticReflected(left: PyObject,
+  static func callStaticReflected(_ py: Py,
+                                  left: PyObject,
                                   middle: PyObject,
                                   right: PyObject) -> StaticCallResult
   /// Call in-place op with fast protocol dispatch.
   /// For `__pow__` it should call `__ipow__`.
-  static func callStaticInPlace(left: PyObject,
+  static func callStaticInPlace(_ py: Py,
+                                left: PyObject,
                                 middle: PyObject,
                                 right: PyObject) -> StaticCallResult
 }
@@ -66,15 +68,16 @@ extension TernaryOp {
 
   // MARK: Call
 
-  fileprivate static func call(left: PyObject,
+  fileprivate static func call(_ py: Py,
+                               left: PyObject,
                                middle: PyObject,
                                right: PyObject) -> PyResult<PyObject> {
-    switch self.callInner(left: left, middle: middle, right: right) {
+    switch self.callInner(py, left: left, middle: middle, right: right) {
     case let .value(result):
-      if PyCast.isNotImplemented(result) {
-        let msg = "unsupported operand type(s) for \(op): " +
+      if py.cast.isNotImplemented(result) {
+        let message = "unsupported operand type(s) for \(op): " +
           "\(left.typeName), \(middle.typeName) and \(right.typeName)"
-        return .typeError(msg)
+        return .typeError(py, message: message)
       }
 
       return .value(result)
@@ -85,12 +88,13 @@ extension TernaryOp {
 
   // MARK: Call in place
 
-  fileprivate static func callInPlace(left: PyObject,
+  fileprivate static func callInPlace(_ py: Py,
+                                      left: PyObject,
                                       middle: PyObject,
                                       right: PyObject) -> PyResult<PyObject> {
-    switch self.callInPlaceOp(left: left, middle: middle, right: right) {
+    switch self.callInPlaceOp(py, left: left, middle: middle, right: right) {
     case let .value(result):
-      if PyCast.isNotImplemented(result) {
+      if py.cast.isNotImplemented(result) {
         break // try other options
       }
 
@@ -101,12 +105,12 @@ extension TernaryOp {
     }
 
     // Try standard operation, for example '**'
-    switch self.callInner(left: left, middle: middle, right: right) {
+    switch self.callInner(py, left: left, middle: middle, right: right) {
     case let .value(result):
-      if PyCast.isNotImplemented(result) {
-        let msg = "unsupported operand type(s) for \(inPlaceOp): " +
+      if py.cast.isNotImplemented(result) {
+        let message = "unsupported operand type(s) for \(inPlaceOp): " +
           "\(left.typeName), \(middle.typeName) and \(right.typeName)"
-        return .typeError(msg)
+        return .typeError(py, message: message)
       }
 
       return .value(result)
@@ -118,7 +122,8 @@ extension TernaryOp {
 
   /// Standard operation call.
   /// Basically code shared between normal and in-place call.
-  fileprivate static func callInner(left: PyObject,
+  fileprivate static func callInner(_ py: Py,
+                                    left: PyObject,
                                     middle: PyObject,
                                     right: PyObject) -> PyResult<PyObject> {
     var checkedReflected = false
@@ -127,9 +132,9 @@ extension TernaryOp {
     if left.type !== middle.type && middle.type.isSubtype(of: left.type) {
       checkedReflected = true
 
-      switch self.callReflectedOp(left: left, middle: middle, right: right) {
+      switch self.callReflectedOp(py, left: left, middle: middle, right: right) {
       case .value(let result):
-        if PyCast.isNotImplemented(result) {
+        if py.cast.isNotImplemented(result) {
           break // try other options
         }
         return .value(result)
@@ -139,9 +144,9 @@ extension TernaryOp {
     }
 
     // Try left `op` middle, right (default path)
-    switch self.callOp(left: left, middle: middle, right: right) {
+    switch self.callOp(py, left: left, middle: middle, right: right) {
     case .value(let result):
-      if PyCast.isNotImplemented(result) {
+      if py.cast.isNotImplemented(result) {
         break // try other options
       }
       return .value(result)
@@ -151,9 +156,9 @@ extension TernaryOp {
 
     // Try reflected on middle
     if !checkedReflected {
-      switch self.callReflectedOp(left: left, middle: middle, right: right) {
+      switch self.callReflectedOp(py, left: left, middle: middle, right: right) {
       case .value(let result):
-        if PyCast.isNotImplemented(result) {
+        if py.cast.isNotImplemented(result) {
           break // try other options
         }
         return .value(result)
@@ -163,16 +168,17 @@ extension TernaryOp {
     }
 
     // No hope left! We are doomed!
-    return .value(Py.notImplemented)
+    return .notImplemented(py)
   }
 
   // MARK: Call op
 
-  private static func callOp(left: PyObject,
+  private static func callOp(_ py: Py,
+                             left: PyObject,
                              middle: PyObject,
                              right: PyObject) -> PyResult<PyObject> {
     // Fast path: we know the method at compile time
-    switch self.callStatic(left: left, middle: middle, right: right) {
+    switch self.callStatic(py, left: left, middle: middle, right: right) {
     case .value(let result):
       return .value(result)
     case .unavailable:
@@ -182,22 +188,23 @@ extension TernaryOp {
     }
 
     // Try standard Python dispatch
-    switch Py.callMethod(object: left, selector: selector, args: [middle, right]) {
+    switch py.callMethod(object: left, selector: selector, args: [middle, right]) {
     case .value(let result):
       return .value(result)
     case .missingMethod:
-      return .value(Py.notImplemented)
+      return .notImplemented(py)
     case .error(let e),
          .notCallable(let e):
       return .error(e)
     }
   }
 
-  private static func callReflectedOp(left: PyObject,
+  private static func callReflectedOp(_ py: Py,
+                                      left: PyObject,
                                       middle: PyObject,
                                       right: PyObject) -> PyResult<PyObject> {
     // Fast path: we know the method at compile time
-    switch self.callStaticReflected(left: left, middle: middle, right: right) {
+    switch self.callStaticReflected(py, left: left, middle: middle, right: right) {
     case .value(let result):
       return .value(result)
     case .unavailable:
@@ -207,22 +214,23 @@ extension TernaryOp {
     }
 
     // Try standard Python dispatch
-    switch Py.callMethod(object: middle, selector: reflectedSelector, args: [left, right]) {
+    switch py.callMethod(object: middle, selector: reflectedSelector, args: [left, right]) {
     case .value(let result):
       return .value(result)
     case .missingMethod:
-      return .value(Py.notImplemented)
+      return .notImplemented(py)
     case .error(let e),
          .notCallable(let e):
       return .error(e)
     }
   }
 
-  private static func callInPlaceOp(left: PyObject,
+  private static func callInPlaceOp(_ py: Py,
+                                    left: PyObject,
                                     middle: PyObject,
                                     right: PyObject) -> PyResult<PyObject> {
     // Fast path: we know the method at compile time
-    switch self.callStaticInPlace(left: left, middle: middle, right: right) {
+    switch self.callStaticInPlace(py, left: left, middle: middle, right: right) {
     case .value(let result):
       return .value(result)
     case .unavailable:
@@ -233,11 +241,11 @@ extension TernaryOp {
 
     // Try standard Python dispatch
     let args = [middle, right]
-    switch Py.callMethod(object: left, selector: inPlaceSelector, args: args) {
+    switch py.callMethod(object: left, selector: inPlaceSelector, args: args) {
     case .value(let result):
       return .value(result)
     case .missingMethod:
-      return .value(Py.notImplemented)
+      return .notImplemented(py)
     case .error(let e),
          .notCallable(let e):
       return .error(e)
@@ -256,29 +264,32 @@ private enum PowOp: TernaryOp {
   fileprivate static var reflectedSelector = IdString.__rpow__
   fileprivate static var inPlaceSelector = IdString.__ipow__
 
-  fileprivate static func callStatic(left: PyObject,
+  fileprivate static func callStatic(_ py: Py,
+                                     left: PyObject,
                                      middle: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__pow__(base: left, exp: middle, mod: right)
+    let result = PyStaticCall.__pow__(py, base: left, exp: middle, mod: right)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticReflected(left: PyObject,
+  fileprivate static func callStaticReflected(_ py: Py,
+                                              left: PyObject,
                                               middle: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rpow__(base: middle, exp: left, mod: right)
+    let result = PyStaticCall.__rpow__(py, base: middle, exp: left, mod: right)
     return StaticCallResult(result)
   }
 
-  fileprivate static func callStaticInPlace(left: PyObject,
+  fileprivate static func callStaticInPlace(_ py: Py,
+                                            left: PyObject,
                                             middle: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__ipow__(base: left, exp: middle, mod: right)
+    let result = PyStaticCall.__ipow__(py, base: left, exp: middle, mod: right)
     return StaticCallResult(result)
   }
 }
 
-extension PyInstance {
+extension Py {
 
   /// pow(base, exp[, mod])
   /// See [this](https://docs.python.org/3/library/functions.html#pow)
@@ -288,16 +299,14 @@ extension PyInstance {
   public func pow(base: PyObject,
                   exp: PyObject,
                   mod: PyObject? = nil) -> PyResult<PyObject> {
-    let mod = mod ?? self.none
-    return PowOp.call(left: base, middle: exp, right: mod)
+    let mod = mod ?? self.none.asObject
+    return PowOp.call(self, left: base, middle: exp, right: mod)
   }
 
   public func powInPlace(base: PyObject,
                          exp: PyObject,
                          mod: PyObject? = nil) -> PyResult<PyObject> {
-    let mod = mod ?? self.none
-    return PowOp.callInPlace(left: base, middle: exp, right: mod)
+    let mod = mod ?? self.none.asObject
+    return PowOp.callInPlace(self, left: base, middle: exp, right: mod)
   }
 }
-
-*/
