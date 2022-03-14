@@ -1,17 +1,16 @@
-/* MARKER
 import VioletCore
 
 // In CPython:
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-extension PyInstance {
+extension Py {
 
   /// globals()
   /// See [this](https://docs.python.org/3/library/functions.html#globals)
   public func globals() -> PyResult<PyDict> {
     guard let frame = self.delegate.frame else {
-      return .runtimeError("globals(): no current frame")
+      return .runtimeError(self, message: "globals(): no current frame")
     }
 
     let dict = frame.globals
@@ -22,7 +21,7 @@ extension PyInstance {
   /// See [this](https://docs.python.org/3/library/functions.html#locals)
   public func locals() -> PyResult<PyDict> {
     guard let frame = self.delegate.frame else {
-      return .runtimeError("locals(): no current frame")
+      return .runtimeError(self, message: "locals(): no current frame")
     }
 
     // Interesting edge case:
@@ -42,7 +41,7 @@ extension PyInstance {
     // Well yes…
     // (All this is CPython internal implementation leaking)
 
-    if let e = frame.copyFastToLocals() {
+    if let e = frame.copyFastToLocals(self) {
       return .error(e)
     }
 
@@ -50,5 +49,3 @@ extension PyInstance {
     return .value(dict)
   }
 }
-
-*/

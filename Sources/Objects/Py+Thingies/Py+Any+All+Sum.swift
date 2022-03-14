@@ -1,9 +1,8 @@
-/* MARKER
 // In CPython:
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-extension PyInstance {
+extension Py {
 
   // MARK: - Any
 
@@ -41,21 +40,24 @@ extension PyInstance {
     let initial: PyObject
 
     if let start = start {
-      if PyCast.isString(start) {
-        return .typeError("sum() can't sum strings [use ''.join(seq) instead]")
+      if self.cast.isString(start) {
+        let message = "sum() can't sum strings [use ''.join(seq) instead]"
+        return .typeError(self, message: message)
       }
 
-      if PyCast.isBytes(start) {
-        return .typeError("sum() can't sum bytes [use b''.join(seq) instead]")
+      if self.cast.isBytes(start) {
+        let message = "sum() can't sum bytes [use b''.join(seq) instead]"
+        return .typeError(self, message: message)
       }
 
-      if PyCast.isByteArray(start) {
-        return .typeError("sum() can't sum bytearray [use b''.join(seq) instead]")
+      if self.cast.isByteArray(start) {
+        let message = "sum() can't sum bytearray [use b''.join(seq) instead]"
+        return .typeError(self, message: message)
       }
 
       initial = start
     } else {
-      initial = Py.newInt(0)
+      initial = self.newInt(0).asObject
     }
 
     return self.reduce(iterable: iterable, initial: initial) { acc, object in
@@ -66,5 +68,3 @@ extension PyInstance {
     }
   }
 }
-
-*/
