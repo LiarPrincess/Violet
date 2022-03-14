@@ -140,8 +140,12 @@ public struct PyTraceback: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "tb_lasti")
     }
 
-    let result = zelf.lastInstruction
+    let result = zelf.getLastInstruction()
     return PyResult(result)
+  }
+
+  internal func getLastInstruction() -> PyInt {
+    return self.lastInstruction
   }
 
   // MARK: - Line number
@@ -152,8 +156,12 @@ public struct PyTraceback: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "tb_lineno")
     }
 
-    let result = zelf.lineNo
+    let result = zelf.getLineNo()
     return PyResult(result)
+  }
+
+  internal func getLineNo() -> PyInt {
+    return self.lineNo
   }
 
   // MARK: - Next
@@ -164,8 +172,12 @@ public struct PyTraceback: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "tb_next")
     }
 
-    let result = zelf.next
+    let result = zelf.getNext()
     return PyResult(py, result)
+  }
+
+  internal func getNext() -> PyTraceback? {
+    return self.next
   }
 
   internal static func tb_next(_ py: Py,

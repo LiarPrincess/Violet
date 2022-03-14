@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import BigInt
 import FileSystem
@@ -17,12 +16,11 @@ import VioletCore
 /// CPython: `TB_RECURSIVE_CUTOFF`
 private let recursiveCutoff = 3
 
-extension PyInstance {
+extension Py {
 
   /// int
   /// PyTraceBack_Print(PyObject *v, PyObject *f)
-  public func print(traceback: PyTraceback,
-                    file: PyTextFile) -> PyBaseException? {
+  public func print(file: PyTextFile, traceback: PyTraceback) -> PyBaseException? {
     func clampToInt(bigInt: BigInt) -> Int {
       if let int = Int(exactly: bigInt) {
         return int
@@ -34,7 +32,7 @@ extension PyInstance {
     switch self.sys.getTracebackLimit() {
     case let .value(i):
       let limit: Int = clampToInt(bigInt: i.value)
-      return self.print(traceback: traceback, file: file, limit: limit)
+      return self.print(file: file, traceback: traceback, limit: limit)
     case let .error(e):
       return e
     }
@@ -42,8 +40,8 @@ extension PyInstance {
 
   /// static int
   /// tb_printinternal(PyTracebackObject *tb, PyObject *f, long limit)
-  public func print(traceback: PyTraceback,
-                    file: PyTextFile,
+  public func print(file: PyTextFile,
+                    traceback: PyTraceback,
                     limit: Int) -> PyBaseException? {
     // From 'https://docs.python.org/3.7/library/sys.html#sys.tracebacklimit':
     // When set to 0 or less, all traceback information is suppressed
@@ -53,7 +51,7 @@ extension PyInstance {
     }
 
     let header = "Traceback (most recent call last):\n"
-    if let e = self.write(file: file, string: header) {
+    if let e = file.write(self, string: header) {
       return e
     }
 
@@ -67,10 +65,7 @@ extension PyInstance {
 
     // This is 1:1 from CPython, because it is quite mind-bending:
     while let tb = current {
-      let samePlace = self.hasEqualFileLineAndName(current: tb,
-                                                   previous: previous)
-
-      if !samePlace {
+      if !self.hasEqualFileLineAndName(current: tb, previous: previous) {
         if recursiveCount > recursiveCutoff {
           if let e = self.printLineRepeated(file: file, count: recursiveCount) {
             return e
@@ -146,8 +141,10 @@ extension PyInstance {
     let code = current.getFrame().code
     let previousCode = previous.getFrame().code
 
-    return code.filename.isEqual(previousCode.filename)
-        && current.getLineNo().isEqual(previous.getLineNo())
+    // Start with line, because it has the biggest probability to be different
+    // (and also 'int' is easier to compare than 'str').
+    return current.getLineNo().isEqual(previous.getLineNo())
+        && code.filename.isEqual(previousCode.filename)
         && code.name.isEqual(previousCode.name)
   }
 
@@ -164,15 +161,14 @@ extension PyInstance {
       "  [Previous line repeated \(msgCount) more times]\n" :
       "  [Previous line repeated \(msgCount) more time]\n"
 
-    return self.write(file: file, string: string)
+    return file.write(self, string: string)
   }
 
   // MARK: - Print line
 
   /// static int
   /// tb_displayline(PyObject *f, PyObject *filename, int lineno, PyObject *name)
-  private func printLine(file: PyTextFile,
-                         traceback: PyTraceback) -> PyBaseException? {
+  private func printLine(file: PyTextFile, traceback: PyTraceback) -> PyBaseException? {
     let frame = traceback.getFrame()
     let code = frame.code
 
@@ -181,7 +177,7 @@ extension PyInstance {
     let name = code.name.value
 
     let string = "  File \"\(filename)\", line \(lineno), in \(name)\n"
-    if let e = self.write(file: file, string: string) {
+    if let e = file.write(self, string: string) {
       return e
     }
 
@@ -189,7 +185,7 @@ extension PyInstance {
     switch self.getLine(path: filenamePath, lineno: lineno) {
     case .value(let code):
       let line = "    \(code)\n"
-      return self.write(file: file, string: line)
+      return file.write(self, string: line)
     case .fileNotFound:
       return nil
     case .error(let e):
@@ -242,10 +238,10 @@ extension PyInstance {
     case .readError: break // File may not exit, try 'sys.path'
     }
 
-    let basename = Py.fileSystem.basename(path: path)
+    let basename = self.fileSystem.basename(path: path)
 
     let sysPath: PyList
-    switch Py.sys.getPath() {
+    switch self.sys.getPath() {
     case let .value(l): sysPath = l
     case let .error(e): return .error(e)
     }
@@ -256,13 +252,14 @@ extension PyInstance {
       case notFound
     }
 
-    let result = Py.reduce(iterable: sysPath, initial: Result.notFound) { _, object in
-      guard let dir = PyCast.asString(object) else {
+    let sysPathObject = sysPath.asObject
+    let result = self.reduce(iterable: sysPathObject, initial: Result.notFound) { _, object in
+      guard let dir = self.cast.asString(object) else {
         return .goToNextElement
       }
 
       let dirPath = Path(string: dir.value)
-      let filePath = Py.fileSystem.join(path: dirPath, element: basename)
+      let filePath = self.fileSystem.join(path: dirPath, element: basename)
 
       switch self.readSourceFile(path: filePath) {
       case .value(let s): return .finish(.value(s))
@@ -287,7 +284,7 @@ extension PyInstance {
                        lineno requestedLineNumber: BigInt) -> PyResult<Substring> {
     guard let requestedLineNumber = Int(exactly: requestedLineNumber),
           requestedLineNumber >= 0 else {
-      return .eofError("EOF when reading a line")
+      return .eofError(self, message: "EOF when reading a line")
     }
 
     let scalars = source.unicodeScalars
@@ -319,7 +316,7 @@ extension PyInstance {
       scalars.formIndex(after: &index)
     }
 
-    return .eofError("EOF when reading a line")
+    return .eofError(self, message: "EOF when reading a line")
   }
 
   private func trim(substring: Substring) -> Substring {
@@ -347,17 +344,4 @@ extension PyInstance {
       scalars.formIndex(after: &index)
     }
   }
-
-  // MARK: - Write
-
-  private func write(file: PyTextFile, string: String) -> PyBaseException? {
-    switch file.write(string: string) {
-    case .value:
-      return nil
-    case .error(let e):
-      return e
-    }
-  }
 }
-
-*/

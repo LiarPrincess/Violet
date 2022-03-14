@@ -29,6 +29,15 @@ extension Py {
 
   /// getattr(object, name[, default])
   /// See [this](https://docs.python.org/3/library/functions.html#getattr)
+  public func getAttribute(object: PyObject,
+                           name: PyString,
+                           default: PyObject? = nil) -> PyResult<PyObject> {
+    let n = name.asObject
+    return self.getAttribute(object: object, name: n, default: `default`)
+  }
+
+  /// getattr(object, name[, default])
+  /// See [this](https://docs.python.org/3/library/functions.html#getattr)
   ///
   /// static PyObject *
   /// builtin_getattr(PyObject *self, PyObject *const *args, Py_ssize_t nargs)
@@ -95,6 +104,8 @@ extension Py {
 
   private func call__getattribute__(object: PyObject,
                                     name: PyObject) -> PyResult<PyObject> {
+    assert(self.isString(name: name), "Attribute should be string.")
+
     // Fast path: we know the method at compile time
     if let result = PyStaticCall.__getattribute__(self, object: object, name: name) {
       return result
@@ -103,7 +114,6 @@ extension Py {
     // Calling '__getattribute__' could ask for '__getattribute__' attribute.
     // That would create a cycle which we have to break.
     // Trust me it is not a hack, it is… yeah it is a hack.
-    assert(self.isString(name: name), "This should be checked before.")
     if let n = self.cast.asString(name), n.value == "__getattribute__" {
       let result = AttributeHelper.getAttribute(self, object: object, name: name)
       return result
@@ -135,6 +145,8 @@ extension Py {
 
   private func call__getattr__(object: PyObject,
                                name: PyObject) -> CallGetattrResult {
+    assert(self.isString(name: name), "Attribute should be string.")
+
     // Fast path: we know the method at compile time
     if let result = PyStaticCall.__getattr__(self, object: object, name: name) {
       return CallGetattrResult(result: result)
@@ -165,6 +177,13 @@ extension Py {
   /// See [this](https://docs.python.org/3/library/functions.html#hasattr)
   public func hasAttribute(object: PyObject, name: IdString) -> PyResult<Bool> {
     let n = name.value.asObject
+    return self.hasAttribute(object: object, name: n)
+  }
+
+  /// hasattr(object, name)
+  /// See [this](https://docs.python.org/3/library/functions.html#hasattr)
+  public func hasAttribute(object: PyObject, name: PyString) -> PyResult<Bool> {
+    let n = name.asObject
     return self.hasAttribute(object: object, name: n)
   }
 
@@ -205,6 +224,15 @@ extension Py {
                            name: IdString,
                            value: PyObject) -> PyResult<PyObject> {
     let n = name.value.asObject
+    return self.setAttribute(object: object, name: n, value: value)
+  }
+
+  /// setattr(object, name, value)
+  /// See [this](https://docs.python.org/3/library/functions.html#setattr)
+  public func setAttribute(object: PyObject,
+                           name: PyString,
+                           value: PyObject) -> PyResult<PyObject> {
+    let n = name.asObject
     return self.setAttribute(object: object, name: n, value: value)
   }
 
@@ -284,6 +312,13 @@ extension Py {
   /// See [this](https://docs.python.org/3/library/functions.html#delattr)
   public func delAttribute(object: PyObject, name: IdString) -> PyResult<PyObject> {
     let n = name.value.asObject
+    return self.delAttribute(object: object, name: n)
+  }
+
+  /// delattr(object, name)
+  /// See [this](https://docs.python.org/3/library/functions.html#delattr)
+  public func delAttribute(object: PyObject, name: PyString) -> PyResult<PyObject> {
+    let n = name.asObject
     return self.delAttribute(object: object, name: n)
   }
 

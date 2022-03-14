@@ -531,8 +531,8 @@ extension Py {
 
   /// Import failed.
   public func newImportError(message: String,
-                             moduleName: String?,
-                             modulePath: String?) -> PyImportError {
+                             moduleName: String? = nil,
+                             modulePath: String? = nil) -> PyImportError {
     let messageObject = self.newString(message)
     let moduleNameObject = moduleName.map(self.newString(_:))
     let modulePathObject = modulePath.map(self.newString(_:))
