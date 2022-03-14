@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import BigInt
 import VioletCore
@@ -24,14 +23,13 @@ private let contextMsg = """
 
   """
 
-extension PyInstance {
+extension Py {
 
   // MARK: - Print
 
   /// static void
   /// print_exception(PyObject *f, PyObject *value)
-  public func print(error: PyBaseException,
-                    file: PyTextFile) -> PyBaseException? {
+  public func print(file: PyTextFile, error: PyBaseException) -> PyBaseException? {
     // This is what we are going after:
     // >>> raise AnnaException('Then don\'t run into fire!')
     // Traceback (most recent call last):
@@ -48,31 +46,31 @@ extension PyInstance {
     // But we are not monsters…
 
     if let traceback = error.getTraceback() {
-      if let e = self.print(traceback: traceback, file: file) {
+      if let e = self.print(file: file, traceback: traceback) {
         return e
       }
     }
 
-    if let e = self.printFileAndLine(error: error, file: file) {
+    let errorObject = error.asObject
+    if let e = self.printFileAndLine(file: file, error: errorObject) {
       return e
     }
 
-    if let e = self.printModuleDotClassName(error: error, file: file) {
+    if let e = self.printModuleDotClassName(file: file, error: error) {
       return e
     }
 
-    let str: String = {
-      switch self.strString(object: error) {
-      case .value(let s) where s.isEmpty:
-        return "\n"
-      case .value(let s):
-        return ": " + s + "\n"
-      case .error:
-        return ": <exception str() failed>\n"
-      }
-    }()
+    let str: String
+    switch self.strString(object: errorObject) {
+    case .value(let s) where s.isEmpty:
+      str = "\n"
+    case .value(let s):
+      str =  ": " + s + "\n"
+    case .error:
+      str =  ": <exception str() failed>\n"
+    }
 
-    return self.write(file: file, string: str)
+    return file.write(self, string: str)
   }
 
   // MARK: - Print recursive
@@ -81,11 +79,11 @@ extension PyInstance {
   ///
   /// static void
   /// print_exception_recursive(PyObject *f, PyObject *value, PyObject *seen)
-  public func printRecursiveIgnoringErrors(error: PyBaseException,
-                                           file: PyTextFile) {
-    var alreadyPrinted = Set<ObjectIdentifier>()
-    self.printRecursiveIgnoringErrors(error: error,
-                                      file: file,
+  public func printRecursiveIgnoringErrors(file: PyTextFile,
+                                           error: PyBaseException) {
+    var alreadyPrinted = Set<ErrorId>()
+    self.printRecursiveIgnoringErrors(file: file,
+                                      error: error,
                                       alreadyPrinted: &alreadyPrinted)
   }
 
@@ -93,41 +91,48 @@ extension PyInstance {
   ///
   /// static void
   /// print_exception_recursive(PyObject *f, PyObject *value, PyObject *seen)
-  private func printRecursiveIgnoringErrors(error: PyBaseException,
-                                            file: PyTextFile,
-                                            alreadyPrinted: inout Set<ObjectIdentifier>) {
+  private func printRecursiveIgnoringErrors(file: PyTextFile,
+                                            error: PyBaseException,
+                                            alreadyPrinted: inout Set<ErrorId>) {
     // Mark it as 'already printed' (even though it was not yet printed),
     // to prevent infinite recursion.
-    let id = ObjectIdentifier(error)
+    let id = self.newId(error)
     alreadyPrinted.insert(id)
 
     if let cause = error.getCause() {
-      let causeId = ObjectIdentifier(cause)
+      let causeId = self.newId(cause)
       if !alreadyPrinted.contains(causeId) {
-        self.printRecursiveIgnoringErrors(error: cause,
-                                          file: file,
+        self.printRecursiveIgnoringErrors(file: file,
+                                          error: cause,
                                           alreadyPrinted: &alreadyPrinted)
 
-        _ = self.write(file: file, string: causeMsg) // swallow error
+        _ = file.write(self, string: causeMsg) // Swallow error
       }
     } else if let context = error.getContext(), !error.getSuppressContext() {
-      let contextId = ObjectIdentifier(context)
+      let contextId = self.newId(context)
       if !alreadyPrinted.contains(contextId) {
-        self.printRecursiveIgnoringErrors(error: context,
-                                          file: file,
+        self.printRecursiveIgnoringErrors(file: file,
+                                          error: context,
                                           alreadyPrinted: &alreadyPrinted)
 
-        _ = self.write(file: file, string: contextMsg) // swallow error
+        _ = file.write(self, string: contextMsg) // Swallow error
       }
     }
 
-    _ = self.print(error: error, file: file) // swallow error (again…)
+    _ = self.print(file: file, error: error) // Swallow error (again…)
+  }
+
+  private typealias ErrorId = Int
+
+  private func newId(_ error: PyBaseException) -> Int {
+    return Int(bitPattern: error.ptr)
   }
 
   // MARK: - File and line
 
-  private func printFileAndLine(error: PyBaseException,
-                                file: PyTextFile) -> PyBaseException? {
+  private func printFileAndLine(file: PyTextFile, error: PyObject) -> PyBaseException? {
+    assert(self.isException(object: error))
+
     let print_file_and_line = self.intern(string: "print_file_and_line")
     switch self.hasAttribute(object: error, name: print_file_and_line) {
     case .value(true): break
@@ -148,11 +153,11 @@ extension PyInstance {
     }
 
     let line = "  File \"\(filename)\", line \(lineno)\n"
-    return self.write(file: file, string: line)
+    return file.write(self, string: line)
   }
 
-  private func getErrorAttribute(error: PyBaseException,
-                                 name: String) -> PyResult<String> {
+  private func getErrorAttribute(error: PyObject, name: String) -> PyResult<String> {
+    assert(self.isException(object: error))
     let key = self.intern(string: name)
 
     let object: PyObject
@@ -166,21 +171,24 @@ extension PyInstance {
 
   // MARK: - Module (dot) class
 
-  private func printModuleDotClassName(error: PyBaseException,
-                                       file: PyTextFile) -> PyBaseException? {
+  private func printModuleDotClassName(file: PyTextFile,
+                                       error: PyBaseException) -> PyBaseException? {
     let type = error.type
-    assert(type.isException)
+    assert(self.isException(type: type))
 
     // Module
-    switch type.getModuleString() {
+    switch type.getModuleName(self) {
     case .builtins:
       break // do not write module
     case .string(let name):
-      if let e = self.write(file: file, string: name + ".") {
+      if let e = file.write(self, string: name) {
+        return e
+      }
+      if let e = file.write(self, string: ".") {
         return e
       }
     case .error:
-      if let e = self.write(file: file, string: "<unknown>.") {
+      if let e = file.write(self, string: "<unknown>.") {
         return e
       }
     }
@@ -197,19 +205,6 @@ extension PyInstance {
       return typeName
     }()
 
-    return self.write(file: file, string: className)
-  }
-
-  // MARK: - Write
-
-  private func write(file: PyTextFile, string: String) -> PyBaseException? {
-    switch file.write(string: string) {
-    case .value:
-      return nil
-    case .error(let e):
-      return e
-    }
+    return file.write(self, string: className)
   }
 }
-
-*/

@@ -15,6 +15,21 @@ public struct Sys {
   public func getModule(name: PyObject) -> GetModuleResult { fatalError() }
 
   public func addModule(module: PyModule) -> PyBaseException? { fatalError() }
+
+  public enum OutputStream {
+    /// `sys.__stdout__`
+    case __stdout__
+    /// `sys.stdout`
+    case stdout
+    /// `sys.__stderr__`
+    case __stderr__
+    /// `sys.stderr`
+    case stderr
+
+    public func getFile() -> PyResult<PyTextFile> { fatalError() }
+  }
+
+  public func getTracebackLimit() -> PyResult<PyInt> { fatalError() }
 }
 
 public struct UnderscoreWarnings {

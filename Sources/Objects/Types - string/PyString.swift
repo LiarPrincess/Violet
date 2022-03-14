@@ -138,6 +138,10 @@ public struct PyString: PyObjectMixin, AbstractString {
     return Self.abstract__ge__(py, zelf: zelf, other: other)
   }
 
+  internal func isEqual(_ other: PyString) -> Bool {
+    return Self.abstractIsEqual(zelf: self, other: other.elements)
+  }
+
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__

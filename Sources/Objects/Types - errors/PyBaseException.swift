@@ -523,7 +523,12 @@ public struct PyBaseException: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__suppress_context__")
     }
 
-    return PyResult(py, zelf.suppressContext)
+    let result = zelf.getSuppressContext()
+    return PyResult(py, result)
+  }
+
+  internal func getSuppressContext() -> Bool {
+    return self.suppressContext
   }
 
   internal static func __suppress_context__(_ py: Py,

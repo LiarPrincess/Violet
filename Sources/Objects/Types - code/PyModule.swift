@@ -80,7 +80,12 @@ public struct PyModule: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.getDict()
+    return PyResult(result)
+  }
+
+  internal func getDict() -> PyDict {
+    return self.__dict__
   }
 
   // MARK: - String

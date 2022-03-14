@@ -206,6 +206,17 @@ public struct Py {
 
 // MARK: - Compile
 
+  internal enum ReadSourceFileResult {
+    case value(String)
+    /// Error when reading a file (it may not exist etc.)
+    case readError(PyBaseException)
+    /// File exists but we cant read it
+    case decodingError(PyBaseException)
+  }
+
+  internal func readSourceFile(path: Path) -> ReadSourceFileResult {
+    fatalError()
+  }
 
   public enum CompileResult {
     /// Code compiled successfully (Yay!)

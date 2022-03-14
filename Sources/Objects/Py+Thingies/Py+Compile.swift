@@ -14,7 +14,7 @@ import VioletCompiler
 
 private let sourceFileEncoding = PyString.Encoding.utf8
 
-extension PyInstance {
+extension Py {
 
   /// compile(source, filename, mode, flags=0, dont_inherit=False, optimize=-1)
   /// See [this](https://docs.python.org/3/library/functions.html#compile)
@@ -182,7 +182,7 @@ extension PyInstance {
       }
 
       for warning in delegate.parserWarnings {
-        if let e = Py.warn(filename: filename, warning: warning) {
+        if let e = self.warn(filename: filename, warning: warning) {
           return .parserWarning(warning, e)
         }
       }
@@ -199,7 +199,7 @@ extension PyInstance {
       let code = try compiler.run()
 
       for warning in delegate.compilerWarnings {
-        if let e = Py.warn(filename: filename, warning: warning) {
+        if let e = self.warn(filename: filename, warning: warning) {
           return .compilerWarning(warning, e)
         }
       }
@@ -227,17 +227,17 @@ extension PyInstance {
          .bytes(_, let s):
       return .value(s)
     case .byteDecodingError:
-      return .typeError("compile(): cannot decode arg \(index) as string")
+      return .typeError(self, message: "compile(): cannot decode arg \(index) as string")
     case .notStringOrBytes:
-      return .typeError("compile(): arg \(index) must be a string or bytes object")
+      return .typeError(self, message: "compile(): arg \(index) must be a string or bytes object")
     }
   }
 
   // MARK: - Mode
 
   private func parseMode(arg: PyObject) -> PyResult<Parser.Mode> {
-    guard let string = PyCast.asString(arg) else {
-      return .typeError("compile(): mode must be an str")
+    guard let string = self.cast.asString(arg) else {
+      return .typeError(self, message: "compile(): mode must be an str")
     }
 
     if string.isEqual("exec") {
@@ -252,7 +252,7 @@ extension PyInstance {
       return .value(.single)
     }
 
-    return .typeError("compile() mode must be 'exec', 'eval' or 'single'")
+    return .typeError(self, message: "compile() mode must be 'exec', 'eval' or 'single'")
   }
 
   // MARK: - Optimize
@@ -270,8 +270,8 @@ extension PyInstance {
       return .value(self.optimizeFromSysFlags)
     }
 
-    guard let int = PyCast.asInt(arg) else {
-      return .typeError("compile(): optimize must be an int")
+    guard let int = self.cast.asInt(arg) else {
+      return .typeError(self, message: "compile(): optimize must be an int")
     }
 
     switch int.value {
@@ -284,7 +284,7 @@ extension PyInstance {
     case 2:
       return .value(.OO)
     default:
-      return .valueError("compile(): invalid optimize value")
+      return .valueError(self, message: "compile(): invalid optimize value")
     }
   }
 }

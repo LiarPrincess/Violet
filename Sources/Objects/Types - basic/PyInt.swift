@@ -90,6 +90,10 @@ public struct PyInt: PyObjectMixin {
     return Self.compareOperation(py, zelf: zelf, other: other, op: .__ge__) { $0 >= $1 }
   }
 
+  internal func isEqual(_ other: PyInt) -> Bool {
+    return self.value == other.value
+  }
+
   private static func compareOperation(_ py: Py,
                                        zelf: PyObject,
                                        other: PyObject,

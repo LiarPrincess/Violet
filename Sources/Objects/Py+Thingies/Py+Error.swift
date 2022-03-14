@@ -62,6 +62,11 @@ extension Py {
 
   // MARK: - Is exception
 
+  public func isException(object: PyObject) -> Bool {
+    let type = object.type
+    return self.isException(type: type)
+  }
+
   /// Is `type` subtype of `baseException`?
   ///
   /// PyExceptionInstance_Check
