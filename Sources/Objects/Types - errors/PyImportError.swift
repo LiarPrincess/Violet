@@ -44,10 +44,10 @@ public struct PyImportError: PyErrorMixin {
                            msg: PyObject?,
                            moduleName: PyObject?,
                            modulePath: PyObject?,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     // Only 'msg' goes to args
     var argsElements = [PyObject]()
     if let msg = msg {
@@ -74,10 +74,10 @@ public struct PyImportError: PyErrorMixin {
                            args: PyTuple,
                            moduleName: PyObject?,
                            modulePath: PyObject?,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,

@@ -33,10 +33,10 @@ public struct PyKeyboardInterrupt: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -119,10 +119,10 @@ public struct PyGeneratorExit: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -205,10 +205,10 @@ public struct PyException: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -291,10 +291,10 @@ public struct PyStopAsyncIteration: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -377,10 +377,10 @@ public struct PyArithmeticError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -463,10 +463,10 @@ public struct PyFloatingPointError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -549,10 +549,10 @@ public struct PyOverflowError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -635,10 +635,10 @@ public struct PyZeroDivisionError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -721,10 +721,10 @@ public struct PyAssertionError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -807,10 +807,10 @@ public struct PyAttributeError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -893,10 +893,10 @@ public struct PyBufferError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -979,10 +979,10 @@ public struct PyEOFError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -1065,10 +1065,10 @@ public struct PyModuleNotFoundError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -1151,10 +1151,10 @@ public struct PyLookupError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -1237,10 +1237,10 @@ public struct PyIndexError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -1323,10 +1323,10 @@ public struct PyMemoryError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -1409,10 +1409,10 @@ public struct PyNameError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -1495,10 +1495,10 @@ public struct PyUnboundLocalError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -1581,10 +1581,10 @@ public struct PyOSError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -1667,10 +1667,10 @@ public struct PyBlockingIOError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -1753,10 +1753,10 @@ public struct PyChildProcessError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -1839,10 +1839,10 @@ public struct PyConnectionError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -1925,10 +1925,10 @@ public struct PyBrokenPipeError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -2011,10 +2011,10 @@ public struct PyConnectionAbortedError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -2097,10 +2097,10 @@ public struct PyConnectionRefusedError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -2183,10 +2183,10 @@ public struct PyConnectionResetError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -2269,10 +2269,10 @@ public struct PyFileExistsError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -2355,10 +2355,10 @@ public struct PyFileNotFoundError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -2441,10 +2441,10 @@ public struct PyInterruptedError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -2527,10 +2527,10 @@ public struct PyIsADirectoryError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -2613,10 +2613,10 @@ public struct PyNotADirectoryError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -2699,10 +2699,10 @@ public struct PyPermissionError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -2785,10 +2785,10 @@ public struct PyProcessLookupError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -2871,10 +2871,10 @@ public struct PyTimeoutError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -2957,10 +2957,10 @@ public struct PyReferenceError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -3043,10 +3043,10 @@ public struct PyRuntimeError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -3129,10 +3129,10 @@ public struct PyNotImplementedError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -3215,10 +3215,10 @@ public struct PyRecursionError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -3301,10 +3301,10 @@ public struct PyIndentationError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -3387,10 +3387,10 @@ public struct PyTabError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -3476,10 +3476,10 @@ public struct PySystemError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -3562,10 +3562,10 @@ public struct PyTypeError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -3648,10 +3648,10 @@ public struct PyValueError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -3734,10 +3734,10 @@ public struct PyUnicodeError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -3820,10 +3820,10 @@ public struct PyUnicodeDecodeError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -3906,10 +3906,10 @@ public struct PyUnicodeEncodeError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -3992,10 +3992,10 @@ public struct PyUnicodeTranslateError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -4078,10 +4078,10 @@ public struct PyWarning: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -4164,10 +4164,10 @@ public struct PyDeprecationWarning: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -4251,10 +4251,10 @@ public struct PyPendingDeprecationWarning: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -4337,10 +4337,10 @@ public struct PyRuntimeWarning: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -4423,10 +4423,10 @@ public struct PySyntaxWarning: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -4509,10 +4509,10 @@ public struct PyUserWarning: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -4596,10 +4596,10 @@ public struct PyFutureWarning: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -4682,10 +4682,10 @@ public struct PyImportWarning: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -4769,10 +4769,10 @@ public struct PyUnicodeWarning: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -4856,10 +4856,10 @@ public struct PyBytesWarning: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
@@ -4942,10 +4942,10 @@ public struct PyResourceWarning: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback?,
-                           cause: PyBaseException?,
-                           context: PyBaseException?,
-                           suppressContext: Bool) {
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     self.errorHeader.initialize(py,
                                 type: type,
                                 args: args,
