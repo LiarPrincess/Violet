@@ -233,7 +233,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
-    let result = py.newTupleIterator(tuple: zelf)
+    let result = py.newIterator(tuple: zelf)
     return PyResult(result)
   }
 

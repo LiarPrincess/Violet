@@ -83,7 +83,7 @@ public struct PyDictValues: PyObjectMixin, AbstractDictView {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
-    let result = py.newDictValuesIterator(dict: zelf.dict)
+    let result = py.newIterator(values: zelf.dict)
     return PyResult(result)
   }
 }

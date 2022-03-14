@@ -136,18 +136,9 @@ public struct Py {
     return type.isSubtype(of: baseException)
   }
 
-  public func isEqual(left: PyObject, right: PyObject) -> PyResult<PyObject> { fatalError() }
-  public func isEqualBool(left: PyObject, right: PyObject) -> PyResult<Bool> { fatalError() }
-  public func isLessBool(left: PyObject, right: PyObject) -> PyResult<Bool> { fatalError() }
-  public func isLessEqualBool(left: PyObject, right: PyObject) -> PyResult<Bool> { fatalError() }
-  public func isGreaterBool(left: PyObject, right: PyObject) -> PyResult<Bool> { fatalError() }
-  public func isGreaterEqualBool(left: PyObject, right: PyObject) -> PyResult<Bool> { fatalError() }
-
-  public func hash(object: PyObject) -> PyResult<PyHash> { fatalError() }
+  public func intern(scalar: UnicodeScalar) -> PyString { fatalError() }
   public func intern(string: String) -> PyString { fatalError() }
-  public func hashNotAvailable(_ o: PyObject) -> PyBaseException { fatalError() }
   public func get__dict__(object: PyObject) -> PyDict? { fatalError() }
-  public func globals() -> PyResult<PyDict> { fatalError() }
 
   // MARK: - Attributes
 

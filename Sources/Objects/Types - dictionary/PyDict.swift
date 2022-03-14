@@ -637,7 +637,7 @@ public struct PyDict: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
-    let result = py.newDictKeyIterator(dict: zelf)
+    let result = py.newIterator(keys: zelf)
     return PyResult(result)
   }
 

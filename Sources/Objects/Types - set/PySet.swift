@@ -332,18 +332,26 @@ public struct PySet: PyObjectMixin, AbstractSet {
       return Self.invalidZelfArgument(py, zelf, "add")
     }
 
-    switch Self.createElement(py, object: other) {
+    if let error = zelf.add(py, object: other) {
+      return .error(error)
+    }
+
+    return .none(py)
+  }
+
+  internal func add(_ py: Py, object: PyObject) -> PyBaseException? {
+    switch Self.createElement(py, object: object) {
     case let .value(element):
-      switch zelf.elements.insert(py, element: element) {
+      switch self.elements.insert(py, element: element) {
       case .inserted,
-          .updated:
-        return .none(py)
+           .updated:
+        return nil
       case .error(let e):
-        return .error(e)
+        return e
       }
 
     case let .error(e):
-      return .error(e)
+      return e
     }
   }
 
@@ -361,20 +369,18 @@ public struct PySet: PyObjectMixin, AbstractSet {
       return Self.invalidZelfArgument(py, zelf, "update")
     }
 
-    if let e = Self.update(py, zelf: zelf, iterable: other) {
+    if let e = zelf.update(py, fromIterable: other) {
       return .error(e)
     }
 
     return .none(py)
   }
 
-  private static func update(_ py: Py,
-                             zelf: PySet,
-                             iterable: PyObject) -> PyBaseException? {
+  internal func update(_ py: Py, fromIterable iterable: PyObject) -> PyBaseException? {
     switch Self.getElements(py, iterable: iterable) {
     case let .value(set):
       for element in set {
-        switch zelf.elements.insert(py, element: element) {
+        switch self.elements.insert(py, element: element) {
         case .inserted,
              .updated:
           break
@@ -522,7 +528,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
-    let result = py.newSetIterator(set: zelf)
+    let result = py.newIterator(set: zelf)
     return PyResult(result)
   }
 
@@ -569,7 +575,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
     }
 
     if let iterable = args.first {
-      if let e = Self.update(py, zelf: zelf, iterable: iterable) {
+      if let e = zelf.update(py, fromIterable: iterable) {
         return .error(e)
       }
     }

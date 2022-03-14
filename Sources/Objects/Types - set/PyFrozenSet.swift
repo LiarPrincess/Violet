@@ -346,7 +346,7 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
-    let result = py.newSetIterator(set: zelf)
+    let result = py.newIterator(set: zelf)
     return PyResult(result)
   }
 

@@ -198,7 +198,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
-    let result = py.newListIterator(list: zelf)
+    let result = py.newIterator(list: zelf)
     return PyResult(result)
   }
 
@@ -208,7 +208,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
       return Self.invalidZelfArgument(py, zelf, "__reversed__")
     }
 
-    let result = py.newListReverseIterator(list: zelf)
+    let result = py.newReverseIterator(list: zelf)
     return PyResult(result)
   }
 
@@ -292,8 +292,12 @@ public struct PyList: PyObjectMixin, AbstractSequence {
       return Self.invalidZelfArgument(py, zelf, "append")
     }
 
-    zelf.elements.append(object)
+    zelf.append(object: object)
     return .none(py)
+  }
+
+  internal func append(object: PyObject) {
+    self.elements.append(object)
   }
 
   // This is not a Python method, but it is used by other types

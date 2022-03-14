@@ -109,13 +109,13 @@ public struct PyIterator: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "__length_hint__")
     }
 
-    let len: BigInt
-    switch py.lengthBigInt(iterable: zelf.sequence) {
+    let len: PyInt
+    switch py.lengthPyInt(iterable: zelf.sequence) {
     case let .value(l): len = l
     case let .error(e): return .error(e)
     }
 
-    let result = len - BigInt(zelf.index)
+    let result = len.value - BigInt(zelf.index)
     return PyResult(py, result)
   }
 }
