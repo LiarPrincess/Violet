@@ -22,9 +22,9 @@ public struct PyComplex: PyObjectMixin {
     This is equivalent to (real + imag*1j) where imag defaults to 0.
     """
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var real: Double { self.realPtr.pointee }
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var imag: Double { self.imagPtr.pointee }
 
   public let ptr: RawPtr

@@ -28,13 +28,13 @@ public struct PyRange: PyObjectMixin {
 
   // MARK: - Properties
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var start: PyInt { self.startPtr.pointee }
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var stop: PyInt { self.stopPtr.pointee }
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var step: PyInt { self.stepPtr.pointee }
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Number of elements in range.
   internal var length: PyInt { self.lengthPtr.pointee }
 

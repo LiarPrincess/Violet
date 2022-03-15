@@ -34,7 +34,7 @@ public struct PyInt: PyObjectMixin {
     4
     """
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   // Do not add 'set' to 'self.value' - we cache most used ints!
   internal var value: BigInt { self.valuePtr.pointee }
 

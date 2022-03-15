@@ -27,7 +27,7 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
             super().cmeth(arg)
     """
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Type that the user requested (`__thisclass__` in Python).
   ///
   /// For example:
@@ -37,13 +37,13 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
     nonmutating set { self.thisClassPtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var object: PyObject? {
     get { self.objectPtr.pointee }
     nonmutating set { self.objectPtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var objectType: PyType? {
     get { self.objectTypePtr.pointee }
     nonmutating set { self.objectTypePtr.pointee = newValue }

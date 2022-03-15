@@ -28,46 +28,46 @@ public struct PyFrame: PyObjectMixin {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Code object being executed in this frame.
   ///
   /// Cpython: `f_code`.
   public var code: PyCode { self.codePtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Next outer frame object (this frame’s caller).
   ///
   /// Cpython: `f_back`.
   public var parent: PyFrame? { self.parentPtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Stack of `PyObjects`.
   public var stack: ObjectStack { self.stackPtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Stack of blocks (for loops, exception handlers etc.).
   public var blocks: BlockStack { self.blocksPtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Local namespace seen by this frame.
   ///
   /// CPython: `f_locals`.
   public var locals: PyDict { self.localsPtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Global namespace seen by this frame.
   ///
   /// CPython: `f_globals`.
   public var globals: PyDict { self.globalsPtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Builtins namespace seen by this frame
   /// (most of the time it would be `Py.builtinsModule.__dict__`).
   ///
   /// CPython: `f_builtins`.
   public var builtins: PyDict { self.builtinsPtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Function args and local variables.
   ///
   /// We could use `self.localSymbols` but that would be `O(1)` with
@@ -83,7 +83,7 @@ public struct PyFrame: PyObjectMixin {
     nonmutating _modify { yield &self.fastLocalsPtr.pointee }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Cell variables (variables from upper scopes).
   ///
   /// Btw. `Cell` = source for `free` variable.
@@ -93,7 +93,7 @@ public struct PyFrame: PyObjectMixin {
   /// \#hipsters
   public var cellVariables: [PyCell] { self.cellVariablesPtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Free variables (variables from upper scopes).
   ///
   /// Btw. `Free` = cell from upper scope.
@@ -103,7 +103,7 @@ public struct PyFrame: PyObjectMixin {
   /// \#hipsters
   public var freeVariables: [PyCell] { self.freeVariablesPtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Index of last attempted instruction in bytecode
   /// (`nil` it we have not started).
   ///
@@ -115,7 +115,7 @@ public struct PyFrame: PyObjectMixin {
   /// CPython: `f_lasti`.
   public var currentInstructionIndex: Int? { self.currentInstructionIndexPtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// `PC`
   ///
   /// Index of the next executed instruction.

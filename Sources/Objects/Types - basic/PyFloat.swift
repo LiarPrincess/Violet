@@ -25,7 +25,7 @@ public struct PyFloat: PyObjectMixin {
     Convert a string or number to a floating point number, if possible.
     """
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var value: Double { self.valuePtr.pointee }
 
   public let ptr: RawPtr

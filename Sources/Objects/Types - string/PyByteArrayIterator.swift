@@ -11,10 +11,10 @@ public struct PyByteArrayIterator: PyObjectMixin {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var bytes: PyByteArray { self.bytesPtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var index: Int {
     get { self.indexPtr.pointee }
     nonmutating set { self.indexPtr.pointee = newValue }

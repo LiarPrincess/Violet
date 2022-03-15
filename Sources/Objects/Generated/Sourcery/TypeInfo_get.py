@@ -1,7 +1,7 @@
 import os.path
 from typing import List, Union
 
-from Sourcery.TypeInfo import TypeInfo, SwiftFieldInMemoryInfo, SwiftInitializerInfo, PyPropertyInfo, PyFunctionInfo
+from Sourcery.TypeInfo import TypeInfo, SwiftProperty, SwiftInitializerInfo, PyPropertyInfo, PyFunctionInfo
 from Sourcery.validateSwiftFunctionName import validateSwiftFunctionNames
 
 def get_types() -> List[TypeInfo]:
@@ -65,15 +65,15 @@ def get_types() -> List[TypeInfo]:
                 assert len(split) == 2
                 current_type.swift_static_doc_property = split[1]
 
-            elif line_type == 'SwiftField':
+            elif line_type == 'SwiftProperty':
                 assert current_type
                 assert len(split) == 3
 
-                field_name = split[1]
-                field_type = split[2]
+                property_name = split[1]
+                property_type = split[2]
 
-                field = SwiftFieldInMemoryInfo(field_name, field_type)
-                current_type.swift_fields.append(field)
+                property = SwiftProperty(property_name, property_type)
+                current_type.swift_properties.append(property)
 
             elif line_type == 'SwiftInit':
                 assert current_type

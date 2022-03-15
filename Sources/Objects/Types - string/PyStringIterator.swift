@@ -11,10 +11,10 @@ public struct PyStringIterator: PyObjectMixin {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var string: PyString { self.stringPtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var index: Int {
     get { self.indexPtr.pointee }
     nonmutating set { self.indexPtr.pointee = newValue }

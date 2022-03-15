@@ -20,7 +20,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
     If the argument is a tuple, the return value is the same object.
     """
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var elements: [PyObject] { self.elementsPtr.pointee }
 
   public let ptr: RawPtr

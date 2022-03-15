@@ -49,25 +49,25 @@ public struct PyProperty: PyObjectMixin {
 
   // MARK: - Properties
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var _get: PyObject? {
     get { self._getPtr.pointee }
     nonmutating set { self._getPtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var _set: PyObject? {
     get { self._setPtr.pointee }
     nonmutating set { self._setPtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var _del: PyObject? {
     get { self._delPtr.pointee }
     nonmutating set { self._delPtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var doc: PyObject? {
     get { self.docPtr.pointee }
     nonmutating set { self.docPtr.pointee = newValue }

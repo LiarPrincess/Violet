@@ -35,7 +35,7 @@ public struct PyString: PyObjectMixin, AbstractString {
   private static let invalidCount = -1
   private static let invalidHash = PyHash.zero
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Cache 'count' because 'String.unicodeScalars.count' is O(n)!
   /// (yes, on EVERY call!)
   ///
@@ -47,7 +47,7 @@ public struct PyString: PyObjectMixin, AbstractString {
     nonmutating set { self.cachedCountPtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Cache hash value because `str` is very often used as `__dict__` key.
   ///
   /// We can do this because `str` is immutable.
@@ -56,7 +56,7 @@ public struct PyString: PyObjectMixin, AbstractString {
     nonmutating set { self.cachedHashPtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var value: String { self.valuePtr.pointee }
 
   /// We work on scalars (Unicode code points) instead of graphemes because:

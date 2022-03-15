@@ -11,16 +11,16 @@ public struct PyDictItemIterator: PyObjectMixin, AbstractDictViewIterator {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var dict: PyDict { self.dictPtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var index: Int {
     get { self.indexPtr.pointee }
     nonmutating set { self.indexPtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var initialCount: Int { self.initialCountPtr.pointee }
 
   public let ptr: RawPtr

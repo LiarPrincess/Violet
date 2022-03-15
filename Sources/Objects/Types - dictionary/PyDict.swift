@@ -29,7 +29,7 @@ public struct PyDict: PyObjectMixin {
   public typealias OrderedDictionary = VioletObjects.OrderedDictionary<PyObject>
   public typealias Key = OrderedDictionary.Key
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var elements: PyDict.OrderedDictionary {
     get { self.elementsPtr.pointee }
     nonmutating _modify { yield &self.elementsPtr.pointee }

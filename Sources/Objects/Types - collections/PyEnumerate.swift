@@ -29,11 +29,11 @@ public struct PyEnumerate: PyObjectMixin {
     (0, seq[0]), (1, seq[1]), (2, seq[2]), ...
     """
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Secondary iterator of enumeration
   internal var iterator: PyObject { self.iteratorPtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Next used index of enumeration
   internal var nextIndex: BigInt {
     get { self.nextIndexPtr.pointee }

@@ -28,8 +28,8 @@ Annotation|{{name}}
 Doc|{{variable.name}}
 {% endfor %}
 
-{% for field in type.allVariables|annotated:"includeInLayout" %}
-SwiftField|{{field.name}}|{{field.typeName}}
+{% for field in type.allVariables|annotated:"storedProperty" %}
+SwiftProperty|{{field.name}}|{{field.typeName}}
 {% endfor %}
 
 {% for method in type.allMethods where method.shortName == "initialize" %}
@@ -65,13 +65,13 @@ PyProperty|{{python_name}}|{{has_setter}}|{{swift_static_doc_property}}
 {# ============ #}
 
 {% for type in types.structs where type.name == "PyObjectHeader" %}
-{% for field in type.allVariables|annotated:"includeInLayout" %}
+{% for field in type.allVariables|annotated:"storedProperty" %}
 ObjectHeaderField|{{field.name}}|{{field.typeName}}
 {% endfor %}
 {% endfor %}
 
 {% for type in types.structs where type.name == "PyErrorHeader" %}
-{% for field in type.allVariables|annotated:"includeInLayout" %}
+{% for field in type.allVariables|annotated:"storedProperty" %}
 ErrorHeaderField|{{field.name}}|{{field.typeName}}
 {% endfor %}
 {% endfor %}

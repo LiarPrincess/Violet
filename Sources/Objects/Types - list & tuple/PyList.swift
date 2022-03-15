@@ -23,7 +23,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
     The argument must be an iterable if specified.
     """
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var elements: [PyObject] {
     get { self.elementsPtr.pointee }
     nonmutating _modify { yield &self.elementsPtr.pointee }

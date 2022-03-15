@@ -15,9 +15,9 @@ public struct PyFilter: PyObjectMixin {
     is true. If function is None, return the items that are true.
     """
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var fn: PyObject { self.fnPtr.pointee }
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var iterator: PyObject { self.iteratorPtr.pointee }
 
   public let ptr: RawPtr

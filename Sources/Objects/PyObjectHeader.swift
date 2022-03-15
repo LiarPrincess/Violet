@@ -7,7 +7,7 @@ public struct PyObjectHeader {
 
   // MARK: - Type
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Also known as `klass`, but we are using CPython naming convention.
   public var type: PyType {
     return self.typePtr.pointee
@@ -24,7 +24,7 @@ public struct PyObjectHeader {
     case created(PyDict)
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   private var lazy__dict__: PyObjectHeader.LazyDict {
     get { return self.lazy__dict__Ptr.pointee }
     nonmutating set { self.lazy__dict__Ptr.pointee = newValue }
@@ -77,7 +77,7 @@ public struct PyObjectHeader {
 
   // MARK: - Flags
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Various flags that describe the current state of the `PyObject`.
   ///
   /// It can also be used to store `Bool` properties (via `custom` flags).

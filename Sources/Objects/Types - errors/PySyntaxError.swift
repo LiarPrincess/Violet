@@ -17,37 +17,37 @@ public struct PySyntaxError: PyErrorMixin {
   // sourcery: pytypedoc
   internal static let syntaxErrorDoc = "Invalid syntax."
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var msg: PyObject? {
     get { self.msgPtr.pointee }
     nonmutating set { self.msgPtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var filename: PyObject? {
     get { self.filenamePtr.pointee }
     nonmutating set { self.filenamePtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var lineno: PyObject? {
     get { self.linenoPtr.pointee }
     nonmutating set { self.linenoPtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var offset: PyObject? {
     get { self.offsetPtr.pointee }
     nonmutating set { self.offsetPtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var text: PyObject? {
     get { self.textPtr.pointee }
     nonmutating set { self.textPtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var printFileAndLine: PyObject? {
     get { self.printFileAndLinePtr.pointee }
     nonmutating set { self.printFileAndLinePtr.pointee = newValue }

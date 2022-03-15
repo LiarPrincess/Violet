@@ -13,7 +13,7 @@ public struct PyStopIteration: PyErrorMixin {
   // sourcery: pytypedoc
   internal static let stopIterationDoc = "Signal the end from iterator.__next__()."
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var value: PyObject {
     get { self.valuePtr.pointee }
     nonmutating set { self.valuePtr.pointee = newValue }

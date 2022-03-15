@@ -16,11 +16,11 @@ public struct PyMethod: PyObjectMixin {
     Create a bound instance method object.
     """
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// The callable object implementing the method
   internal var function: PyFunction { self.functionPtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// The instance it is bound to
   internal var object: PyObject { self.objectPtr.pointee }
 

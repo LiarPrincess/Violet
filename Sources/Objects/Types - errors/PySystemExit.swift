@@ -13,7 +13,7 @@ public struct PySystemExit: PyErrorMixin {
   // sourcery: pytypedoc
   internal static let systemExitDoc = "Request to exit from the interpreter."
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var code: PyObject? {
     get { self.codePtr.pointee }
     nonmutating set { self.codePtr.pointee = newValue }

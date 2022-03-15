@@ -31,66 +31,66 @@ public struct PyFunction: PyObjectMixin {
 
   // MARK: - Properties
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// The `__name__` attribute, a string object
   internal var name: PyString {
     get { self.namePtr.pointee }
     nonmutating set { self.namePtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// The qualified name
   internal var qualname: PyString {
     get { self.qualnamePtr.pointee }
     nonmutating set { self.qualnamePtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// The `__doc__` attribute
   internal var doc: PyString? {
     get { self.docPtr.pointee }
     nonmutating set { self.docPtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// The `__module__` attribute, can be anything
   internal var module: PyObject {
     get { self.modulePtr.pointee }
     nonmutating set { self.modulePtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// A code object, the `__code__` attribute
   internal var code: PyCode {
     get { self.codePtr.pointee }
     nonmutating set { self.codePtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var globals: PyDict {
     get { self.globalsPtr.pointee }
     nonmutating set { self.globalsPtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var defaults: PyTuple? {
     get { self.defaultsPtr.pointee }
     nonmutating set { self.defaultsPtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var kwDefaults: PyDict? {
     get { self.kwDefaultsPtr.pointee }
     nonmutating set { self.kwDefaultsPtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var closure: PyTuple? {
     get { self.closurePtr.pointee }
     nonmutating set { self.closurePtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var annotations: PyDict? {
     get { self.annotationsPtr.pointee }
     nonmutating set { self.annotationsPtr.pointee = newValue }
