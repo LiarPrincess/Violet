@@ -167,7 +167,12 @@ public struct PyFunction: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "__name__")
     }
 
-    return PyResult(zelf.name)
+    let result = zelf.getName()
+    return PyResult(result)
+  }
+
+  internal func getName() -> PyString {
+    return self.name
   }
 
   internal static func __name__(_ py: Py,
@@ -237,17 +242,26 @@ public struct PyFunction: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "__defaults__")
     }
 
+    if let e = zelf.setDefaults(py, value: value) {
+      return .error(e)
+    }
+
+    return .none(py)
+  }
+
+  internal func setDefaults(_ py: Py, value: PyObject?) -> PyBaseException? {
     guard let value = value, !py.cast.isNone(value) else {
-      zelf.defaults = nil
-      return .none(py)
+      self.defaults = nil
+      return nil
     }
 
     guard let tuple = py.cast.asTuple(value) else {
-      return .systemError(py, message: "non-tuple default args")
+      let error = py.newSystemError(message: "non-tuple default args")
+      return error.asBaseException
     }
 
-    zelf.defaults = tuple
-    return .none(py)
+    self.defaults = tuple
+    return nil
   }
 
   // MARK: - Keyword defaults
@@ -268,17 +282,26 @@ public struct PyFunction: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "__kwdefaults__")
     }
 
+    if let e = zelf.setKeywordDefaults(py, value: value) {
+      return .error(e)
+    }
+
+    return .none(py)
+  }
+
+  internal func setKeywordDefaults(_ py: Py, value: PyObject?) -> PyBaseException? {
     guard let value = value, !py.cast.isNone(value) else {
-      zelf.kwDefaults = nil
-      return .none(py)
+      self.kwDefaults = nil
+      return nil
     }
 
     guard let dict = py.cast.asDict(value) else {
-      return .systemError(py, message: "non-dict keyword only default args")
+      let error = py.newSystemError(message: "non-dict keyword only default args")
+      return error.asBaseException
     }
 
-    zelf.kwDefaults = dict
-    return .none(py)
+    self.kwDefaults = dict
+    return nil
   }
 
   // MARK: - Closure
@@ -301,17 +324,27 @@ public struct PyFunction: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "__closure__")
     }
 
+    if let e = zelf.setClosure(py, value: value) {
+      return .error(e)
+    }
+
+    return .none(py)
+  }
+
+  internal func setClosure(_ py: Py, value: PyObject?) -> PyBaseException? {
     guard let value = value, !py.cast.isNone(value) else {
-      zelf.closure = nil
-      return .none(py)
+      self.closure = nil
+      return nil
     }
 
     guard let tuple = py.cast.asTuple(value) else {
-      return .systemError(py, message: "expected tuple for closure, got '\(value.typeName)'")
+      let message = "expected tuple for closure, got '\(value.typeName)'"
+      let error = py.newSystemError(message: message)
+      return error.asBaseException
     }
 
-    zelf.closure = tuple
-    return .none(py)
+    self.closure = tuple
+    return nil
   }
 
   // MARK: - Globals
@@ -362,17 +395,26 @@ public struct PyFunction: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "__annotations__")
     }
 
+    if let e = zelf.setAnnotations(py, value: value) {
+      return .error(e)
+    }
+
+    return .none(py)
+  }
+
+  internal func setAnnotations(_ py: Py, value: PyObject?) -> PyBaseException? {
     guard let value = value, !py.cast.isNone(value) else {
-      zelf.annotations = nil
-      return .none(py)
+      self.annotations = nil
+      return nil
     }
 
     guard let dict = py.cast.asDict(value) else {
-      return .systemError(py, message: "non-dict annotations")
+      let error = py.newSystemError(message: "non-dict annotations")
+      return error.asBaseException
     }
 
-    zelf.annotations = dict
-    return .none(py)
+    self.annotations = dict
+    return nil
   }
 
   // MARK: - Code

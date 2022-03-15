@@ -299,21 +299,6 @@ extension PyInstance {
 
     return dir.asFunctionResult
   }
-
-  // MARK: - Is abstract method
-
-  public func isAbstractMethod(object: PyObject) -> PyResult<Bool> {
-    if let result = PyStaticCall.__isabstractmethod__(object) {
-      return result
-    }
-
-    switch self.getAttribute(object: object, name: .__isabstractmethod__) {
-    case let .value(o):
-      return self.isTrueBool(object: o)
-    case let .error(e):
-      return .error(e)
-    }
-  }
 }
 
 */

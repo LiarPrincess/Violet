@@ -110,8 +110,13 @@ extension AbstractBuiltinFunction {
       return Self.invalidZelfArgument(py, zelf, "__name__")
     }
 
-    let result = zelf.name
-    return PyResult(py, interned: result)
+    let result = zelf.getName(py)
+    return PyResult(result)
+  }
+
+  internal func getName(_ py: Py) -> PyString {
+    let result = self.name
+    return py.intern(string: result)
   }
 
   internal static func abstract__doc__(_ py: Py,

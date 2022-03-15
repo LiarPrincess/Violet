@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import VioletCore
 import VioletLexer
@@ -12,13 +11,34 @@ import VioletCompiler
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-extension PyInstance {
+extension Py {
+
+  // MARK: - Builtin function
+
+  public func newBuiltinFunction(fn: FunctionWrapper,
+                                 module: PyObject?,
+                                 doc: String?) -> PyBuiltinFunction {
+    let type = self.types.builtinFunction
+    return self.memory.newBuiltinFunction(self,
+                                          type: type,
+                                          function: fn,
+                                          module: module,
+                                          doc: doc)
+  }
 
   // MARK: - Builtin method
 
-  public func newMethod(fn: PyBuiltinFunction,
-                        object: PyObject) -> PyBuiltinMethod {
-    return PyMemory.newBuiltinMethod(fn: fn.function, object: object)
+  public func newBuiltinMethod(fn: FunctionWrapper,
+                               object: PyObject,
+                               module: PyObject?,
+                               doc: String?) -> PyBuiltinMethod {
+    let type = self.types.builtinMethod
+    return self.memory.newBuiltinMethod(self,
+                                        type: type,
+                                        function: fn,
+                                        object: object,
+                                        module: module,
+                                        doc: doc)
   }
 
   // MARK: - Function
@@ -31,19 +51,19 @@ extension PyInstance {
                           keywordDefaults: PyObject?,
                           closure: PyObject?,
                           annotations: PyObject?) -> PyResult<PyFunction> {
-    guard let codeValue = PyCast.asCode(code) else {
-      let t = code.typeName
-      return .typeError("function() code must be code, not \(t)")
+    guard let codeValue = self.cast.asCode(code) else {
+      let message = "function() code must be code, not \(code.typeName)"
+      return .typeError(self, message: message)
     }
 
     let qualnameValue: PyString?
-    if PyCast.isNone(qualname) {
+    if self.cast.isNone(qualname) {
       qualnameValue = nil
-    } else if let q = PyCast.asString(qualname) {
+    } else if let q = self.cast.asString(qualname) {
       qualnameValue = q
     } else {
-      let t = qualname.typeName
-      return .typeError("function() qualname must be None or string, not \(t)")
+      let message = "function() qualname must be None or string, not \(qualname.typeName)"
+      return .typeError(self, message: message)
     }
 
     return self.newFunction(qualname: qualnameValue,
@@ -63,39 +83,33 @@ extension PyInstance {
                           keywordDefaults: PyObject?,
                           closure: PyObject?,
                           annotations: PyObject?) -> PyResult<PyFunction> {
-    let module = globals.get(id: .__name__) ?? self.none
+    let type = self.types.function
+    let module = globals.get(self, id: .__name__) ?? self.none.asObject
+    let result = self.memory.newFunction(self,
+                                         type: type,
+                                         qualname: qualname,
+                                         module: module,
+                                         code: code,
+                                         globals: globals)
 
-    let result = PyMemory.newFunction(qualname: qualname,
-                                      module: module,
-                                      code: code,
-                                      globals: globals)
-
-    if let defaults = defaults {
-      switch result.setDefaults(defaults) {
-      case .value: break
-      case .error(let e): return .error(e)
-      }
+    if let defaults = defaults,
+       let e = result.setDefaults(self, value: defaults) {
+      return .error(e)
     }
 
-    if let keywordDefaults = keywordDefaults {
-      switch result.setKeywordDefaults(keywordDefaults) {
-      case .value: break
-      case .error(let e): return .error(e)
-      }
+    if let keywordDefaults = keywordDefaults,
+       let e = result.setKeywordDefaults(self, value: keywordDefaults) {
+      return .error(e)
     }
 
-    if let closure = closure {
-      switch result.setClosure(closure) {
-      case .value: break
-      case .error(let e): return .error(e)
-      }
+    if let closure = closure,
+       let e = result.setClosure(self, value: closure) {
+      return .error(e)
     }
 
-    if let annotations = annotations {
-      switch result.setAnnotations(annotations) {
-      case .value: break
-      case .error(let e): return .error(e)
-      }
+    if let annotations = annotations,
+       let e = result.setAnnotations(self, value: annotations) {
+      return .error(e)
     }
 
     return .value(result)
@@ -103,53 +117,124 @@ extension PyInstance {
 
   // MARK: - Method
 
-  public func newMethod(fn: PyFunction,
-                        object: PyObject) -> PyMethod {
-    return PyMemory.newMethod(fn: fn, object: object)
+  public func newMethod(fn: PyFunction, object: PyObject) -> PyMethod {
+    let type = self.types.method
+    return self.memory.newMethod(self, type: type, function: fn, object: object)
   }
 
-  public func newMethod(fn: PyObject,
-                        object: PyObject) -> PyResult<PyObject> {
-    if let f = PyCast.asBuiltinFunction(fn) {
-      let result = self.newMethod(fn: f, object: object)
-      return .value(result)
+  public func newMethod(fn: PyObject, object: PyObject) -> PyResult<PyObject> {
+    if let f = self.cast.asBuiltinFunction(fn) {
+      let fn = f.function
+      let module = f.module
+      let doc = f.doc
+      let result = self.newBuiltinMethod(fn: fn, object: object, module: module, doc: doc)
+      return .value(result.asObject)
     }
 
-    if let f = PyCast.asFunction(fn) {
+    if let f = self.cast.asFunction(fn) {
       let result = self.newMethod(fn: f, object: object)
-      return .value(result)
+      return .value(result.asObject)
     }
 
-    return .typeError("method() func must be function, not \(fn.typeName)")
+    let message = "method() func must be function, not \(fn.typeName)"
+    return .typeError(self, message: message)
+  }
+
+  // MARK: -  Static method
+
+  public func newStaticMethod(callable: PyBuiltinFunction) -> PyStaticMethod {
+    let object = callable.asObject
+    return self.newStaticMethod(callable: object)
+  }
+
+  public func newStaticMethod(callable: PyFunction) -> PyStaticMethod {
+    let object = callable.asObject
+    return self.newStaticMethod(callable: object)
+  }
+
+  private func newStaticMethod(callable: PyObject) -> PyStaticMethod {
+    let type = self.types.staticmethod
+    return self.memory.newStaticMethod(self, type: type, callable: callable)
+  }
+
+  // MARK: -  Class method
+
+  public func newClassMethod(callable: PyBuiltinFunction) -> PyClassMethod {
+    let object = callable.asObject
+    return self.newClassMethod(callable: object)
+  }
+
+  public func newClassMethod(callable: PyFunction) -> PyClassMethod {
+    let object = callable.asObject
+    return self.newClassMethod(callable: object)
+  }
+
+  private func newClassMethod(callable: PyObject) -> PyClassMethod {
+    let type = self.types.classmethod
+    return self.memory.newClassMethod(self, type: type, callable: callable)
+  }
+
+  // MARK: - Property
+
+  public func newProperty(get: FunctionWrapper,
+                          set: FunctionWrapper?,
+                          del: FunctionWrapper?,
+                          doc: String?) -> PyProperty {
+    // We need to make sure that names are '__get__/__set__/__det__'.
+    let _get = self.createPropertyFn(name: "__get__", fn: get)
+    let _set = self.createPropertyFnOptional(name: "__set__", fn: set)
+    let _del = self.createPropertyFnOptional(name: "__del__", fn: del)
+    let _doc = doc.map(self.intern(string:))
+
+    let type = self.types.property
+    return self.memory.newProperty(self,
+                                   type: type,
+                                   get: _get,
+                                   set: _set,
+                                   del: _del,
+                                   doc: _doc?.asObject)
+  }
+
+  private func createPropertyFnOptional(name: String,
+                                        fn: FunctionWrapper?) -> PyObject? {
+    guard let fn = fn else {
+      return nil
+    }
+
+    return self.createPropertyFn(name: name, fn: fn)
+  }
+
+  private func createPropertyFn(name: String, fn: FunctionWrapper) -> PyObject {
+    assert(fn.name == name)
+    let result = self.newBuiltinFunction(fn: fn, module: nil, doc: nil)
+    return result.asObject
   }
 
   // MARK: - Function name
 
-  public func getFunctionName(object: PyObject) -> String? {
-    if let fn = PyCast.asBuiltinFunction(object) {
+  public func getFunctionName(object: PyObject) -> PyString? {
+    if let fn = self.cast.asBuiltinFunction(object) {
+      return fn.getName(self)
+    }
+
+    if let fn = self.cast.asBuiltinMethod(object) {
+      return fn.getName(self)
+    }
+
+    if let fn = self.cast.asFunction(object) {
       return fn.getName()
     }
 
-    if let fn = PyCast.asBuiltinMethod(object) {
-      return fn.getName()
-    }
-
-    if let fn = PyCast.asFunction(object) {
-      let result = fn.getName()
-      return result.value
-    }
-
-    if let method = PyCast.asMethod(object) {
+    if let method = self.cast.asMethod(object) {
       let fn = method.getFunction()
-      let result = fn.getName()
-      return result.value
+      return fn.getName()
     }
 
-    if let method = PyCast.asStaticMethod(object), let fn = method.getFunction() {
+    if let method = self.cast.asStaticMethod(object), let fn = method.getFunction() {
       return self.getFunctionName(object: fn)
     }
 
-    if let method = PyCast.asClassMethod(object), let fn = method.getFunction() {
+    if let method = self.cast.asClassMethod(object), let fn = method.getFunction() {
       return self.getFunctionName(object: fn)
     }
 
@@ -158,18 +243,19 @@ extension PyInstance {
 
   // MARK: - Module
 
-  public func newModule(name: String,
-                        doc: String? = nil,
-                        dict: PyDict? = nil) -> PyModule {
-    let nameObject = self.intern(string: name)
-    let docObject = doc.map(self.newString)
-    return self.newModule(name: nameObject, doc: docObject, dict: dict)
+  public func newModule(name: String, doc: String?, dict: PyDict?) -> PyModule {
+    let _name = self.intern(string: name)
+    let _doc = doc.map(self.newString)
+    return self.newModule(name: _name.asObject, doc: _doc?.asObject, dict: dict)
   }
 
-  public func newModule(name: PyObject,
-                        doc: PyObject? = nil,
-                        dict: PyDict? = nil) -> PyModule {
-    return PyMemory.newModule(name: name, doc: doc, dict: dict)
+  public func newModule(name: PyObject, doc: PyObject?, dict: PyDict?) -> PyModule {
+    let type = self.types.module
+    return self.memory.newModule(self,
+                                 type: type,
+                                 name: name,
+                                 doc: doc,
+                                 __dict__: dict)
   }
 
   public enum ModuleName {
@@ -180,11 +266,11 @@ extension PyInstance {
   }
 
   public func getModuleName(object: PyObject) -> ModuleName {
-    guard let module = PyCast.asModule(object) else {
+    guard let module = self.cast.asModule(object) else {
       return .notModule
     }
 
-    switch module.getNameString() {
+    switch module.getNameString(self) {
     case let .string(string):
       return .string(string)
     case let .stringConversionFailed(object, e):
@@ -197,7 +283,8 @@ extension PyInstance {
   // MARK: - Code
 
   public func newCode(code: CodeObject) -> PyCode {
-    return PyMemory.newCode(code: code)
+    let type = self.types.code
+    return self.memory.newCode(self, type: type, code: code)
   }
 
   // MARK: - Frame
@@ -208,17 +295,47 @@ extension PyInstance {
                        locals: PyDict,
                        globals: PyDict,
                        parent: PyFrame?) -> PyFrame {
-    return PyMemory.newFrame(code: code,
-                             locals: locals,
-                             globals: globals,
-                             parent: parent)
+    let type = self.types.frame
+    return self.memory.newFrame(self,
+                                type: type,
+                                code: code,
+                                locals: locals,
+                                globals: globals,
+                                parent: parent)
+  }
+
+  // MARK: - Super
+
+  public func newSuper(requestedType: PyType?,
+                       object: PyObject?,
+                       objectType: PyType?) -> PySuper {
+    let type = self.types.super
+    return self.memory.newSuper(self,
+                                type: type,
+                                requestedType: requestedType,
+                                object: object,
+                                objectType: objectType)
   }
 
   // MARK: - Cell
 
   public func newCell(content: PyObject?) -> PyCell {
-    return PyMemory.newCell(content: content)
+    let type = self.types.cell
+    return self.memory.newCell(self, type: type, content: content)
+  }
+
+  // MARK: - Is abstract method
+
+  public func isAbstractMethod(object: PyObject) -> PyResult<Bool> {
+    if let result = PyStaticCall.__isabstractmethod__(self, object: object) {
+      return result.map(self.isTrueBool(object:))
+    }
+
+    switch self.getAttribute(object: object, name: .__isabstractmethod__) {
+    case let .value(o):
+      return self.isTrueBool(object: o)
+    case let .error(e):
+      return .error(e)
+    }
   }
 }
-
-*/

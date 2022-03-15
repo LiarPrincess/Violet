@@ -16,14 +16,6 @@ import VioletCompiler
 
 extension Py {
 
-  public func newInvalidSelfArgumentError(object: PyObject,
-                                          expectedType: String,
-                                          swiftFnName: StaticString) -> PyTypeError {
-    // Note that 'swiftFnName' is a full selector!
-    // For example: '__repr__(_:zelf:)'
-    fatalError()
-  }
-
   // MARK: - Type error
 
   /// Inappropriate argument type.
