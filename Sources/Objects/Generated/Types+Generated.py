@@ -69,9 +69,18 @@ def print_layout(swift_type_name: str,
     print(f'  /// Arrangement of fields in memory.')
     print('  internal static let layout = Layout()')
 
-def print_pointer_properties(fields: List[PropertyInLayout]):
-    for f in fields:
-        print(f'  internal var {f.pointer_property_name}: Ptr<{f.swift_type}> {{ Ptr(self.ptr, offset: Self.layout.{f.layout_offset_property_name}) }}')
+def print_pointer_properties(properties_base: List[PropertyInLayout], properties_type: List[PropertyInLayout]):
+    for p in properties_base:
+        swift_type_name = p.declared_in_type.swift_type_name
+        print(f'  /// Property from base class: `{swift_type_name}.{p.swift_name}`.')
+        print(f'  internal var {p.pointer_property_name}: Ptr<{p.swift_type}> {{ Ptr(self.ptr, offset: {swift_type_name}.layout.{p.layout_offset_property_name}) }}')
+
+
+def print_base_types_properties(properties_base: List[PropertyInLayout]):
+    for p in properties_base:
+        swift_type_name = p.declared_in_type.swift_type_name
+        print(f'  /// Property from base class: `{swift_type_name}.{p.swift_name}`.')
+        print(f'  internal var {p.swift_name}: {p.swift_type} {{ self.{p.pointer_property_name}.pointee }}')
 
 # ===========================
 # === Object/error header ===
@@ -88,7 +97,7 @@ def print_object_header_extension(h: ObjectHeader):
     print()
     print_layout('PyObjectHeader', '0', '0', fields)
     print()
-    print_pointer_properties(fields)
+    print_pointer_properties([], fields)
     print('}')
     print()
 
@@ -103,7 +112,7 @@ def print_error_header_extension(h: ErrorHeader):
     print()
     print_layout('PyErrorHeader', HEADER_OFFSET, HEADER_ALIGNMENT, fields)
     print()
-    print_pointer_properties(fields)
+    print_pointer_properties([], fields)
     print('}')
     print()
 
@@ -186,28 +195,20 @@ def print_type_extension(t: TypeInfo):
     swift_type_name = t.swift_type_name
     swift_type_name_without_py = swift_type_name[2:]
 
-    # int -> bool
-    # Exception -> *ImportError* -> ModuleNotFoundError
-    # Exception -> LookupError -> (IndexError, *KeyError*)
-    # Exception -> *SyntaxError* -> IndentationError -> TabError
-
-    # # We need to include base types fields
-    # fields: List[PropertyInLayout] = []
-    # type_or_base = t
-    # while type_or_base != None:
-    #     type_or_base_fields: List[PropertyInLayout] = []
-    #     for field in type_or_base.swift_properties:
-    #         f = PropertyInLayout(field.swift_name, field.swift_type, type_or_base)
-    #         type_or_base_fields.append(f)
-
-    #     # base fields are before our fields
-    #     fields = type_or_base_fields + fields
-    #     type_or_base = type_or_base.base_type_info
-    #     break
-
-    fields: List[PropertyInLayout] = []
+    properties_type: List[PropertyInLayout] = []
     for f in t.swift_properties:
-        fields.append(PropertyInLayout(f.swift_name, f.swift_type, t))
+        properties_type.append(PropertyInLayout(f.swift_name, f.swift_type, t))
+
+    current_base = t.base_type_info
+    properties_base: List[PropertyInLayout] = []
+    while current_base != None:
+        current_base_properties: List[PropertyInLayout] = []
+        for p in current_base.swift_properties:
+            current_base_properties.append(PropertyInLayout(p.swift_name, p.swift_type, current_base))
+
+        # Sort base properties: 'object' -> 'base_base' -> 'base'
+        properties_base = properties_base + current_base_properties
+        current_base = current_base.base_type_info
 
     print(f'// MARK: - {swift_type_name}')
     print()
@@ -218,13 +219,22 @@ def print_type_extension(t: TypeInfo):
     print(f'  public static let pythonTypeName = "{t.python_type_name}"')
     print()
 
-    (initial_offset, initial_alignment) = (ERROR_HEADER_OFFSET, ERROR_HEADER_ALIGNMENT) \
-        if t.is_error else (HEADER_OFFSET, HEADER_ALIGNMENT)
+    if t.base_type_info is None:
+        assert t.python_type_name == 'object'
+        initial_offset = '0'
+        initial_alignment = '0'
+    else:
+        base_swift_type_name = t.base_type_info.swift_type_name
+        initial_offset = base_swift_type_name + '.layout.size'
+        initial_alignment = base_swift_type_name + '.layout.alignment'
 
-    print_layout(swift_type_name, initial_offset, initial_alignment, fields)
+    print_layout(swift_type_name, initial_offset, initial_alignment, properties_type)
     print()
-    print_pointer_properties(fields)
-    if len(fields):
+    print_pointer_properties(properties_base, properties_type)
+    print()
+    print_base_types_properties(properties_base)
+
+    if properties_base:
         print()
 
     # ====================
@@ -235,13 +245,13 @@ def print_type_extension(t: TypeInfo):
     print(f'    let zelf = {swift_type_name}(ptr: ptr)')
     print(f'    zelf.beforeDeinitialize()')
 
-    if len(fields) >= 3:
+    if len(properties_type) >= 3:
         print()
 
     header = 'errorHeader' if t.is_error else 'header'
     print(f'    zelf.{header}.deinitialize()')
 
-    for p in fields:
+    for p in properties_type:
         print(f'    zelf.{p.pointer_property_name}.deinitialize()')
 
     print('  }')

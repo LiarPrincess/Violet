@@ -181,21 +181,17 @@ extension PyBool {
   /// This type was automatically generated based on `PyBool` fields
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
-    internal let valueOffset: Int
     internal let size: Int
     internal let alignment: Int
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
-        fields: [
-          PyMemory.FieldLayout(from: BigInt.self) // PyBool.value
-        ]
+        initialOffset: PyInt.layout.size,
+        initialAlignment: PyInt.layout.alignment,
+        fields: []
       )
 
-      assert(layout.offsets.count == 1)
-      self.valueOffset = layout.offsets[0]
+      assert(layout.offsets.count == 0)
       self.size = layout.size
       self.alignment = layout.alignment
     }
@@ -204,13 +200,16 @@ extension PyBool {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
-  internal var valuePtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
+  /// Property from base class: `PyInt.value`.
+  internal var valuePtr: Ptr<BigInt> { Ptr(self.ptr, offset: PyInt.layout.valueOffset) }
+
+  /// Property from base class: `PyInt.value`.
+  internal var value: BigInt { self.valuePtr.pointee }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBool(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.header.deinitialize()
-    zelf.valuePtr.deinitialize()
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyBool? {
@@ -270,8 +269,8 @@ extension PyBuiltinFunction {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: FunctionWrapper.self), // PyBuiltinFunction.function
           PyMemory.FieldLayout(from: PyObject?.self), // PyBuiltinFunction.module
@@ -291,8 +290,11 @@ extension PyBuiltinFunction {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyBuiltinFunction.function`.
   internal var functionPtr: Ptr<FunctionWrapper> { Ptr(self.ptr, offset: Self.layout.functionOffset) }
+  /// Property: `PyBuiltinFunction.module`.
   internal var modulePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.moduleOffset) }
+  /// Property: `PyBuiltinFunction.doc`.
   internal var docPtr: Ptr<String?> { Ptr(self.ptr, offset: Self.layout.docOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -367,8 +369,8 @@ extension PyBuiltinMethod {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: FunctionWrapper.self), // PyBuiltinMethod.function
           PyMemory.FieldLayout(from: PyObject.self), // PyBuiltinMethod.object
@@ -390,9 +392,13 @@ extension PyBuiltinMethod {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyBuiltinMethod.function`.
   internal var functionPtr: Ptr<FunctionWrapper> { Ptr(self.ptr, offset: Self.layout.functionOffset) }
+  /// Property: `PyBuiltinMethod.object`.
   internal var objectPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.objectOffset) }
+  /// Property: `PyBuiltinMethod.module`.
   internal var modulePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.moduleOffset) }
+  /// Property: `PyBuiltinMethod.doc`.
   internal var docPtr: Ptr<String?> { Ptr(self.ptr, offset: Self.layout.docOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -467,8 +473,8 @@ extension PyByteArray {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: Data.self) // PyByteArray.elements
         ]
@@ -484,6 +490,7 @@ extension PyByteArray {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyByteArray.elements`.
   internal var elementsPtr: Ptr<Data> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -549,8 +556,8 @@ extension PyByteArrayIterator {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyByteArray.self), // PyByteArrayIterator.bytes
           PyMemory.FieldLayout(from: Int.self) // PyByteArrayIterator.index
@@ -568,7 +575,9 @@ extension PyByteArrayIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyByteArrayIterator.bytes`.
   internal var bytesPtr: Ptr<PyByteArray> { Ptr(self.ptr, offset: Self.layout.bytesOffset) }
+  /// Property: `PyByteArrayIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -634,8 +643,8 @@ extension PyBytes {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: Data.self) // PyBytes.elements
         ]
@@ -651,6 +660,7 @@ extension PyBytes {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyBytes.elements`.
   internal var elementsPtr: Ptr<Data> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -716,8 +726,8 @@ extension PyBytesIterator {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyBytes.self), // PyBytesIterator.bytes
           PyMemory.FieldLayout(from: Int.self) // PyBytesIterator.index
@@ -735,7 +745,9 @@ extension PyBytesIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyBytesIterator.bytes`.
   internal var bytesPtr: Ptr<PyBytes> { Ptr(self.ptr, offset: Self.layout.bytesOffset) }
+  /// Property: `PyBytesIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -802,8 +814,8 @@ extension PyCallableIterator {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyObject.self), // PyCallableIterator.callable
           PyMemory.FieldLayout(from: PyObject.self) // PyCallableIterator.sentinel
@@ -821,7 +833,9 @@ extension PyCallableIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyCallableIterator.callable`.
   internal var callablePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.callableOffset) }
+  /// Property: `PyCallableIterator.sentinel`.
   internal var sentinelPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.sentinelOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -889,8 +903,8 @@ extension PyCell {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyObject?.self) // PyCell.content
         ]
@@ -906,6 +920,7 @@ extension PyCell {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyCell.content`.
   internal var contentPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.contentOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -970,8 +985,8 @@ extension PyClassMethod {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyObject?.self) // PyClassMethod.callable
         ]
@@ -987,6 +1002,7 @@ extension PyClassMethod {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyClassMethod.callable`.
   internal var callablePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.callableOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -1064,8 +1080,8 @@ extension PyCode {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyString.self), // PyCode.name
           PyMemory.FieldLayout(from: PyString.self), // PyCode.qualifiedName
@@ -1107,19 +1123,33 @@ extension PyCode {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyCode.name`.
   internal var namePtr: Ptr<PyString> { Ptr(self.ptr, offset: Self.layout.nameOffset) }
+  /// Property: `PyCode.qualifiedName`.
   internal var qualifiedNamePtr: Ptr<PyString> { Ptr(self.ptr, offset: Self.layout.qualifiedNameOffset) }
+  /// Property: `PyCode.filename`.
   internal var filenamePtr: Ptr<PyString> { Ptr(self.ptr, offset: Self.layout.filenameOffset) }
+  /// Property: `PyCode.instructions`.
   internal var instructionsPtr: Ptr<[Instruction]> { Ptr(self.ptr, offset: Self.layout.instructionsOffset) }
+  /// Property: `PyCode.firstLine`.
   internal var firstLinePtr: Ptr<SourceLine> { Ptr(self.ptr, offset: Self.layout.firstLineOffset) }
+  /// Property: `PyCode.instructionLines`.
   internal var instructionLinesPtr: Ptr<[SourceLine]> { Ptr(self.ptr, offset: Self.layout.instructionLinesOffset) }
+  /// Property: `PyCode.constants`.
   internal var constantsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Self.layout.constantsOffset) }
+  /// Property: `PyCode.labels`.
   internal var labelsPtr: Ptr<[CodeObject.Label]> { Ptr(self.ptr, offset: Self.layout.labelsOffset) }
+  /// Property: `PyCode.names`.
   internal var namesPtr: Ptr<[PyString]> { Ptr(self.ptr, offset: Self.layout.namesOffset) }
+  /// Property: `PyCode.variableNames`.
   internal var variableNamesPtr: Ptr<[MangledName]> { Ptr(self.ptr, offset: Self.layout.variableNamesOffset) }
+  /// Property: `PyCode.cellVariableNames`.
   internal var cellVariableNamesPtr: Ptr<[MangledName]> { Ptr(self.ptr, offset: Self.layout.cellVariableNamesOffset) }
+  /// Property: `PyCode.freeVariableNames`.
   internal var freeVariableNamesPtr: Ptr<[MangledName]> { Ptr(self.ptr, offset: Self.layout.freeVariableNamesOffset) }
+  /// Property: `PyCode.argCount`.
   internal var argCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.argCountOffset) }
+  /// Property: `PyCode.kwOnlyArgCount`.
   internal var kwOnlyArgCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.kwOnlyArgCountOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -1199,8 +1229,8 @@ extension PyComplex {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: Double.self), // PyComplex.real
           PyMemory.FieldLayout(from: Double.self) // PyComplex.imag
@@ -1218,7 +1248,9 @@ extension PyComplex {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyComplex.real`.
   internal var realPtr: Ptr<Double> { Ptr(self.ptr, offset: Self.layout.realOffset) }
+  /// Property: `PyComplex.imag`.
   internal var imagPtr: Ptr<Double> { Ptr(self.ptr, offset: Self.layout.imagOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -1286,8 +1318,8 @@ extension PyDict {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyDict.OrderedDictionary.self) // PyDict.elements
         ]
@@ -1303,6 +1335,7 @@ extension PyDict {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyDict.elements`.
   internal var elementsPtr: Ptr<PyDict.OrderedDictionary> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -1369,8 +1402,8 @@ extension PyDictItemIterator {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyDict.self), // PyDictItemIterator.dict
           PyMemory.FieldLayout(from: Int.self), // PyDictItemIterator.index
@@ -1390,8 +1423,11 @@ extension PyDictItemIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyDictItemIterator.dict`.
   internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
+  /// Property: `PyDictItemIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+  /// Property: `PyDictItemIterator.initialCount`.
   internal var initialCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.initialCountOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -1459,8 +1495,8 @@ extension PyDictItems {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyDict.self) // PyDictItems.dict
         ]
@@ -1476,6 +1512,7 @@ extension PyDictItems {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyDictItems.dict`.
   internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -1542,8 +1579,8 @@ extension PyDictKeyIterator {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyDict.self), // PyDictKeyIterator.dict
           PyMemory.FieldLayout(from: Int.self), // PyDictKeyIterator.index
@@ -1563,8 +1600,11 @@ extension PyDictKeyIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyDictKeyIterator.dict`.
   internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
+  /// Property: `PyDictKeyIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+  /// Property: `PyDictKeyIterator.initialCount`.
   internal var initialCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.initialCountOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -1632,8 +1672,8 @@ extension PyDictKeys {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyDict.self) // PyDictKeys.dict
         ]
@@ -1649,6 +1689,7 @@ extension PyDictKeys {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyDictKeys.dict`.
   internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -1715,8 +1756,8 @@ extension PyDictValueIterator {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyDict.self), // PyDictValueIterator.dict
           PyMemory.FieldLayout(from: Int.self), // PyDictValueIterator.index
@@ -1736,8 +1777,11 @@ extension PyDictValueIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyDictValueIterator.dict`.
   internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
+  /// Property: `PyDictValueIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+  /// Property: `PyDictValueIterator.initialCount`.
   internal var initialCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.initialCountOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -1805,8 +1849,8 @@ extension PyDictValues {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyDict.self) // PyDictValues.dict
         ]
@@ -1822,6 +1866,7 @@ extension PyDictValues {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyDictValues.dict`.
   internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -1885,8 +1930,8 @@ extension PyEllipsis {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: []
       )
 
@@ -1898,6 +1943,7 @@ extension PyEllipsis {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyEllipsis(ptr: ptr)
@@ -1959,8 +2005,8 @@ extension PyEnumerate {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyObject.self), // PyEnumerate.iterator
           PyMemory.FieldLayout(from: BigInt.self) // PyEnumerate.nextIndex
@@ -1978,7 +2024,9 @@ extension PyEnumerate {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyEnumerate.iterator`.
   internal var iteratorPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.iteratorOffset) }
+  /// Property: `PyEnumerate.nextIndex`.
   internal var nextIndexPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.nextIndexOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -2047,8 +2095,8 @@ extension PyFilter {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyObject.self), // PyFilter.fn
           PyMemory.FieldLayout(from: PyObject.self) // PyFilter.iterator
@@ -2066,7 +2114,9 @@ extension PyFilter {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyFilter.fn`.
   internal var fnPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.fnOffset) }
+  /// Property: `PyFilter.iterator`.
   internal var iteratorPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.iteratorOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -2134,8 +2184,8 @@ extension PyFloat {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: Double.self) // PyFloat.value
         ]
@@ -2151,6 +2201,7 @@ extension PyFloat {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyFloat.value`.
   internal var valuePtr: Ptr<Double> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -2226,8 +2277,8 @@ extension PyFrame {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyCode.self), // PyFrame.code
           PyMemory.FieldLayout(from: PyFrame?.self), // PyFrame.parent
@@ -2265,17 +2316,29 @@ extension PyFrame {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyFrame.code`.
   internal var codePtr: Ptr<PyCode> { Ptr(self.ptr, offset: Self.layout.codeOffset) }
+  /// Property: `PyFrame.parent`.
   internal var parentPtr: Ptr<PyFrame?> { Ptr(self.ptr, offset: Self.layout.parentOffset) }
+  /// Property: `PyFrame.stack`.
   internal var stackPtr: Ptr<ObjectStack> { Ptr(self.ptr, offset: Self.layout.stackOffset) }
+  /// Property: `PyFrame.blocks`.
   internal var blocksPtr: Ptr<BlockStack> { Ptr(self.ptr, offset: Self.layout.blocksOffset) }
+  /// Property: `PyFrame.locals`.
   internal var localsPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.localsOffset) }
+  /// Property: `PyFrame.globals`.
   internal var globalsPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.globalsOffset) }
+  /// Property: `PyFrame.builtins`.
   internal var builtinsPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.builtinsOffset) }
+  /// Property: `PyFrame.fastLocals`.
   internal var fastLocalsPtr: Ptr<[PyObject?]> { Ptr(self.ptr, offset: Self.layout.fastLocalsOffset) }
+  /// Property: `PyFrame.cellVariables`.
   internal var cellVariablesPtr: Ptr<[PyCell]> { Ptr(self.ptr, offset: Self.layout.cellVariablesOffset) }
+  /// Property: `PyFrame.freeVariables`.
   internal var freeVariablesPtr: Ptr<[PyCell]> { Ptr(self.ptr, offset: Self.layout.freeVariablesOffset) }
+  /// Property: `PyFrame.currentInstructionIndex`.
   internal var currentInstructionIndexPtr: Ptr<Int?> { Ptr(self.ptr, offset: Self.layout.currentInstructionIndexOffset) }
+  /// Property: `PyFrame.nextInstructionIndex`.
   internal var nextInstructionIndexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.nextInstructionIndexOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -2358,8 +2421,8 @@ extension PyFrozenSet {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: OrderedSet.self) // PyFrozenSet.elements
         ]
@@ -2375,6 +2438,7 @@ extension PyFrozenSet {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyFrozenSet.elements`.
   internal var elementsPtr: Ptr<OrderedSet> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -2448,8 +2512,8 @@ extension PyFunction {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyString.self), // PyFunction.name
           PyMemory.FieldLayout(from: PyString.self), // PyFunction.qualname
@@ -2483,15 +2547,25 @@ extension PyFunction {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyFunction.name`.
   internal var namePtr: Ptr<PyString> { Ptr(self.ptr, offset: Self.layout.nameOffset) }
+  /// Property: `PyFunction.qualname`.
   internal var qualnamePtr: Ptr<PyString> { Ptr(self.ptr, offset: Self.layout.qualnameOffset) }
+  /// Property: `PyFunction.doc`.
   internal var docPtr: Ptr<PyString?> { Ptr(self.ptr, offset: Self.layout.docOffset) }
+  /// Property: `PyFunction.module`.
   internal var modulePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.moduleOffset) }
+  /// Property: `PyFunction.code`.
   internal var codePtr: Ptr<PyCode> { Ptr(self.ptr, offset: Self.layout.codeOffset) }
+  /// Property: `PyFunction.globals`.
   internal var globalsPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.globalsOffset) }
+  /// Property: `PyFunction.defaults`.
   internal var defaultsPtr: Ptr<PyTuple?> { Ptr(self.ptr, offset: Self.layout.defaultsOffset) }
+  /// Property: `PyFunction.kwDefaults`.
   internal var kwDefaultsPtr: Ptr<PyDict?> { Ptr(self.ptr, offset: Self.layout.kwDefaultsOffset) }
+  /// Property: `PyFunction.closure`.
   internal var closurePtr: Ptr<PyTuple?> { Ptr(self.ptr, offset: Self.layout.closureOffset) }
+  /// Property: `PyFunction.annotations`.
   internal var annotationsPtr: Ptr<PyDict?> { Ptr(self.ptr, offset: Self.layout.annotationsOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -2572,8 +2646,8 @@ extension PyInt {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: BigInt.self) // PyInt.value
         ]
@@ -2589,6 +2663,7 @@ extension PyInt {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyInt.value`.
   internal var valuePtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -2654,8 +2729,8 @@ extension PyIterator {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyObject.self), // PyIterator.sequence
           PyMemory.FieldLayout(from: Int.self) // PyIterator.index
@@ -2673,7 +2748,9 @@ extension PyIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyIterator.sequence`.
   internal var sequencePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.sequenceOffset) }
+  /// Property: `PyIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -2739,8 +2816,8 @@ extension PyList {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: [PyObject].self) // PyList.elements
         ]
@@ -2756,6 +2833,7 @@ extension PyList {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyList.elements`.
   internal var elementsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -2821,8 +2899,8 @@ extension PyListIterator {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyList.self), // PyListIterator.list
           PyMemory.FieldLayout(from: Int.self) // PyListIterator.index
@@ -2840,7 +2918,9 @@ extension PyListIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyListIterator.list`.
   internal var listPtr: Ptr<PyList> { Ptr(self.ptr, offset: Self.layout.listOffset) }
+  /// Property: `PyListIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -2907,8 +2987,8 @@ extension PyListReverseIterator {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyList.self), // PyListReverseIterator.list
           PyMemory.FieldLayout(from: Int.self) // PyListReverseIterator.index
@@ -2926,7 +3006,9 @@ extension PyListReverseIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyListReverseIterator.list`.
   internal var listPtr: Ptr<PyList> { Ptr(self.ptr, offset: Self.layout.listOffset) }
+  /// Property: `PyListReverseIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -2993,8 +3075,8 @@ extension PyMap {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyObject.self), // PyMap.fn
           PyMemory.FieldLayout(from: [PyObject].self) // PyMap.iterators
@@ -3012,7 +3094,9 @@ extension PyMap {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyMap.fn`.
   internal var fnPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.fnOffset) }
+  /// Property: `PyMap.iterators`.
   internal var iteratorsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Self.layout.iteratorsOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -3081,8 +3165,8 @@ extension PyMethod {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyFunction.self), // PyMethod.function
           PyMemory.FieldLayout(from: PyObject.self) // PyMethod.object
@@ -3100,7 +3184,9 @@ extension PyMethod {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyMethod.function`.
   internal var functionPtr: Ptr<PyFunction> { Ptr(self.ptr, offset: Self.layout.functionOffset) }
+  /// Property: `PyMethod.object`.
   internal var objectPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.objectOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -3167,8 +3253,8 @@ extension PyModule {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: []
       )
 
@@ -3180,6 +3266,7 @@ extension PyModule {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyModule(ptr: ptr)
@@ -3245,8 +3332,8 @@ extension PyNamespace {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: []
       )
 
@@ -3258,6 +3345,7 @@ extension PyNamespace {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyNamespace(ptr: ptr)
@@ -3319,8 +3407,8 @@ extension PyNone {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: []
       )
 
@@ -3332,6 +3420,7 @@ extension PyNone {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyNone(ptr: ptr)
@@ -3391,8 +3480,8 @@ extension PyNotImplemented {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: []
       )
 
@@ -3404,6 +3493,7 @@ extension PyNotImplemented {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyNotImplemented(ptr: ptr)
@@ -3463,8 +3553,8 @@ extension PyObject {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: 0,
+        initialAlignment: 0,
         fields: []
       )
 
@@ -3476,6 +3566,7 @@ extension PyObject {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyObject(ptr: ptr)
@@ -3525,8 +3616,8 @@ extension PyProperty {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyObject?.self), // PyProperty._get
           PyMemory.FieldLayout(from: PyObject?.self), // PyProperty._set
@@ -3548,9 +3639,13 @@ extension PyProperty {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyProperty._get`.
   internal var _getPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout._getOffset) }
+  /// Property: `PyProperty._set`.
   internal var _setPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout._setOffset) }
+  /// Property: `PyProperty._del`.
   internal var _delPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout._delOffset) }
+  /// Property: `PyProperty.doc`.
   internal var docPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.docOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -3628,8 +3723,8 @@ extension PyRange {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyInt.self), // PyRange.start
           PyMemory.FieldLayout(from: PyInt.self), // PyRange.stop
@@ -3651,9 +3746,13 @@ extension PyRange {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyRange.start`.
   internal var startPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Self.layout.startOffset) }
+  /// Property: `PyRange.stop`.
   internal var stopPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Self.layout.stopOffset) }
+  /// Property: `PyRange.step`.
   internal var stepPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Self.layout.stepOffset) }
+  /// Property: `PyRange.length`.
   internal var lengthPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Self.layout.lengthOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -3729,8 +3828,8 @@ extension PyRangeIterator {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: BigInt.self), // PyRangeIterator.start
           PyMemory.FieldLayout(from: BigInt.self), // PyRangeIterator.step
@@ -3752,9 +3851,13 @@ extension PyRangeIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyRangeIterator.start`.
   internal var startPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.startOffset) }
+  /// Property: `PyRangeIterator.step`.
   internal var stepPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.stepOffset) }
+  /// Property: `PyRangeIterator.length`.
   internal var lengthPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.lengthOffset) }
+  /// Property: `PyRangeIterator.index`.
   internal var indexPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -3828,8 +3931,8 @@ extension PyReversed {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyObject.self), // PyReversed.sequence
           PyMemory.FieldLayout(from: Int.self) // PyReversed.index
@@ -3847,7 +3950,9 @@ extension PyReversed {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyReversed.sequence`.
   internal var sequencePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.sequenceOffset) }
+  /// Property: `PyReversed.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -3915,8 +4020,8 @@ extension PySet {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: OrderedSet.self) // PySet.elements
         ]
@@ -3932,6 +4037,7 @@ extension PySet {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PySet.elements`.
   internal var elementsPtr: Ptr<OrderedSet> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -3998,8 +4104,8 @@ extension PySetIterator {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyAnySet.self), // PySetIterator.set
           PyMemory.FieldLayout(from: Int.self), // PySetIterator.index
@@ -4019,8 +4125,11 @@ extension PySetIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PySetIterator.set`.
   internal var setPtr: Ptr<PyAnySet> { Ptr(self.ptr, offset: Self.layout.setOffset) }
+  /// Property: `PySetIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+  /// Property: `PySetIterator.initialCount`.
   internal var initialCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.initialCountOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -4109,8 +4218,8 @@ extension PySlice {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyObject.self), // PySlice.start
           PyMemory.FieldLayout(from: PyObject.self), // PySlice.stop
@@ -4130,8 +4239,11 @@ extension PySlice {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PySlice.start`.
   internal var startPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.startOffset) }
+  /// Property: `PySlice.stop`.
   internal var stopPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.stopOffset) }
+  /// Property: `PySlice.step`.
   internal var stepPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.stepOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -4203,8 +4315,8 @@ extension PyStaticMethod {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyObject?.self) // PyStaticMethod.callable
         ]
@@ -4220,6 +4332,7 @@ extension PyStaticMethod {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyStaticMethod.callable`.
   internal var callablePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.callableOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -4286,8 +4399,8 @@ extension PyString {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: Int.self), // PyString.cachedCount
           PyMemory.FieldLayout(from: PyHash.self), // PyString.cachedHash
@@ -4307,8 +4420,11 @@ extension PyString {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyString.cachedCount`.
   internal var cachedCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.cachedCountOffset) }
+  /// Property: `PyString.cachedHash`.
   internal var cachedHashPtr: Ptr<PyHash> { Ptr(self.ptr, offset: Self.layout.cachedHashOffset) }
+  /// Property: `PyString.value`.
   internal var valuePtr: Ptr<String> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -4377,8 +4493,8 @@ extension PyStringIterator {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyString.self), // PyStringIterator.string
           PyMemory.FieldLayout(from: Int.self) // PyStringIterator.index
@@ -4396,7 +4512,9 @@ extension PyStringIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyStringIterator.string`.
   internal var stringPtr: Ptr<PyString> { Ptr(self.ptr, offset: Self.layout.stringOffset) }
+  /// Property: `PyStringIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -4464,8 +4582,8 @@ extension PySuper {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyType?.self), // PySuper.thisClass
           PyMemory.FieldLayout(from: PyObject?.self), // PySuper.object
@@ -4485,8 +4603,11 @@ extension PySuper {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PySuper.thisClass`.
   internal var thisClassPtr: Ptr<PyType?> { Ptr(self.ptr, offset: Self.layout.thisClassOffset) }
+  /// Property: `PySuper.object`.
   internal var objectPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.objectOffset) }
+  /// Property: `PySuper.objectType`.
   internal var objectTypePtr: Ptr<PyType?> { Ptr(self.ptr, offset: Self.layout.objectTypeOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -4562,8 +4683,8 @@ extension PyTextFile {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: String?.self), // PyTextFile.name
           PyMemory.FieldLayout(from: FileDescriptorType.self), // PyTextFile.fd
@@ -4587,10 +4708,15 @@ extension PyTextFile {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyTextFile.name`.
   internal var namePtr: Ptr<String?> { Ptr(self.ptr, offset: Self.layout.nameOffset) }
+  /// Property: `PyTextFile.fd`.
   internal var fdPtr: Ptr<FileDescriptorType> { Ptr(self.ptr, offset: Self.layout.fdOffset) }
+  /// Property: `PyTextFile.mode`.
   internal var modePtr: Ptr<FileMode> { Ptr(self.ptr, offset: Self.layout.modeOffset) }
+  /// Property: `PyTextFile.encoding`.
   internal var encodingPtr: Ptr<PyString.Encoding> { Ptr(self.ptr, offset: Self.layout.encodingOffset) }
+  /// Property: `PyTextFile.errorHandling`.
   internal var errorHandlingPtr: Ptr<PyString.ErrorHandling> { Ptr(self.ptr, offset: Self.layout.errorHandlingOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -4673,8 +4799,8 @@ extension PyTraceback {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyTraceback?.self), // PyTraceback.next
           PyMemory.FieldLayout(from: PyFrame.self), // PyTraceback.frame
@@ -4696,9 +4822,13 @@ extension PyTraceback {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyTraceback.next`.
   internal var nextPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: Self.layout.nextOffset) }
+  /// Property: `PyTraceback.frame`.
   internal var framePtr: Ptr<PyFrame> { Ptr(self.ptr, offset: Self.layout.frameOffset) }
+  /// Property: `PyTraceback.lastInstruction`.
   internal var lastInstructionPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Self.layout.lastInstructionOffset) }
+  /// Property: `PyTraceback.lineNo`.
   internal var lineNoPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Self.layout.lineNoOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -4773,8 +4903,8 @@ extension PyTuple {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: [PyObject].self) // PyTuple.elements
         ]
@@ -4790,6 +4920,7 @@ extension PyTuple {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyTuple.elements`.
   internal var elementsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -4855,8 +4986,8 @@ extension PyTupleIterator {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyTuple.self), // PyTupleIterator.tuple
           PyMemory.FieldLayout(from: Int.self) // PyTupleIterator.index
@@ -4874,7 +5005,9 @@ extension PyTupleIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyTupleIterator.tuple`.
   internal var tuplePtr: Ptr<PyTuple> { Ptr(self.ptr, offset: Self.layout.tupleOffset) }
+  /// Property: `PyTupleIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -4949,8 +5082,8 @@ extension PyType {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: String.self), // PyType.name
           PyMemory.FieldLayout(from: String.self), // PyType.qualname
@@ -4984,15 +5117,25 @@ extension PyType {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyType.name`.
   internal var namePtr: Ptr<String> { Ptr(self.ptr, offset: Self.layout.nameOffset) }
+  /// Property: `PyType.qualname`.
   internal var qualnamePtr: Ptr<String> { Ptr(self.ptr, offset: Self.layout.qualnameOffset) }
+  /// Property: `PyType.base`.
   internal var basePtr: Ptr<PyType?> { Ptr(self.ptr, offset: Self.layout.baseOffset) }
+  /// Property: `PyType.bases`.
   internal var basesPtr: Ptr<[PyType]> { Ptr(self.ptr, offset: Self.layout.basesOffset) }
+  /// Property: `PyType.mro`.
   internal var mroPtr: Ptr<[PyType]> { Ptr(self.ptr, offset: Self.layout.mroOffset) }
+  /// Property: `PyType.subclasses`.
   internal var subclassesPtr: Ptr<[PyType]> { Ptr(self.ptr, offset: Self.layout.subclassesOffset) }
+  /// Property: `PyType.layout`.
   internal var layoutPtr: Ptr<MemoryLayout> { Ptr(self.ptr, offset: Self.layout.layoutOffset) }
+  /// Property: `PyType.staticMethods`.
   internal var staticMethodsPtr: Ptr<PyStaticCall.KnownNotOverriddenMethods> { Ptr(self.ptr, offset: Self.layout.staticMethodsOffset) }
+  /// Property: `PyType.debugFn`.
   internal var debugFnPtr: Ptr<DebugFn> { Ptr(self.ptr, offset: Self.layout.debugFnOffset) }
+  /// Property: `PyType.deinitialize`.
   internal var deinitializePtr: Ptr<DeinitializeFn> { Ptr(self.ptr, offset: Self.layout.deinitializeOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -5087,8 +5230,8 @@ extension PyZip {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: [PyObject].self) // PyZip.iterators
         ]
@@ -5104,6 +5247,7 @@ extension PyZip {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyZip.iterators`.
   internal var iteratorsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Self.layout.iteratorsOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -5167,8 +5311,8 @@ extension PyArithmeticError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyException.layout.size,
+        initialAlignment: PyException.layout.alignment,
         fields: []
       )
 
@@ -5180,6 +5324,7 @@ extension PyArithmeticError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyArithmeticError(ptr: ptr)
@@ -5249,8 +5394,8 @@ extension PyAssertionError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyException.layout.size,
+        initialAlignment: PyException.layout.alignment,
         fields: []
       )
 
@@ -5262,6 +5407,7 @@ extension PyAssertionError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyAssertionError(ptr: ptr)
@@ -5331,8 +5477,8 @@ extension PyAttributeError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyException.layout.size,
+        initialAlignment: PyException.layout.alignment,
         fields: []
       )
 
@@ -5344,6 +5490,7 @@ extension PyAttributeError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyAttributeError(ptr: ptr)
@@ -5413,8 +5560,8 @@ extension PyBaseException {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: []
       )
 
@@ -5426,6 +5573,7 @@ extension PyBaseException {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBaseException(ptr: ptr)
@@ -5495,8 +5643,8 @@ extension PyBlockingIOError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyOSError.layout.size,
+        initialAlignment: PyOSError.layout.alignment,
         fields: []
       )
 
@@ -5508,6 +5656,7 @@ extension PyBlockingIOError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBlockingIOError(ptr: ptr)
@@ -5577,8 +5726,8 @@ extension PyBrokenPipeError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyConnectionError.layout.size,
+        initialAlignment: PyConnectionError.layout.alignment,
         fields: []
       )
 
@@ -5590,6 +5739,7 @@ extension PyBrokenPipeError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBrokenPipeError(ptr: ptr)
@@ -5659,8 +5809,8 @@ extension PyBufferError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyException.layout.size,
+        initialAlignment: PyException.layout.alignment,
         fields: []
       )
 
@@ -5672,6 +5822,7 @@ extension PyBufferError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBufferError(ptr: ptr)
@@ -5741,8 +5892,8 @@ extension PyBytesWarning {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyWarning.layout.size,
+        initialAlignment: PyWarning.layout.alignment,
         fields: []
       )
 
@@ -5754,6 +5905,7 @@ extension PyBytesWarning {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBytesWarning(ptr: ptr)
@@ -5823,8 +5975,8 @@ extension PyChildProcessError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyOSError.layout.size,
+        initialAlignment: PyOSError.layout.alignment,
         fields: []
       )
 
@@ -5836,6 +5988,7 @@ extension PyChildProcessError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyChildProcessError(ptr: ptr)
@@ -5905,8 +6058,8 @@ extension PyConnectionAbortedError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyConnectionError.layout.size,
+        initialAlignment: PyConnectionError.layout.alignment,
         fields: []
       )
 
@@ -5918,6 +6071,7 @@ extension PyConnectionAbortedError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyConnectionAbortedError(ptr: ptr)
@@ -5987,8 +6141,8 @@ extension PyConnectionError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyOSError.layout.size,
+        initialAlignment: PyOSError.layout.alignment,
         fields: []
       )
 
@@ -6000,6 +6154,7 @@ extension PyConnectionError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyConnectionError(ptr: ptr)
@@ -6069,8 +6224,8 @@ extension PyConnectionRefusedError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyConnectionError.layout.size,
+        initialAlignment: PyConnectionError.layout.alignment,
         fields: []
       )
 
@@ -6082,6 +6237,7 @@ extension PyConnectionRefusedError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyConnectionRefusedError(ptr: ptr)
@@ -6151,8 +6307,8 @@ extension PyConnectionResetError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyConnectionError.layout.size,
+        initialAlignment: PyConnectionError.layout.alignment,
         fields: []
       )
 
@@ -6164,6 +6320,7 @@ extension PyConnectionResetError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyConnectionResetError(ptr: ptr)
@@ -6233,8 +6390,8 @@ extension PyDeprecationWarning {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyWarning.layout.size,
+        initialAlignment: PyWarning.layout.alignment,
         fields: []
       )
 
@@ -6246,6 +6403,7 @@ extension PyDeprecationWarning {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyDeprecationWarning(ptr: ptr)
@@ -6315,8 +6473,8 @@ extension PyEOFError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyException.layout.size,
+        initialAlignment: PyException.layout.alignment,
         fields: []
       )
 
@@ -6328,6 +6486,7 @@ extension PyEOFError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyEOFError(ptr: ptr)
@@ -6397,8 +6556,8 @@ extension PyException {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyBaseException.layout.size,
+        initialAlignment: PyBaseException.layout.alignment,
         fields: []
       )
 
@@ -6410,6 +6569,7 @@ extension PyException {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyException(ptr: ptr)
@@ -6479,8 +6639,8 @@ extension PyFileExistsError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyOSError.layout.size,
+        initialAlignment: PyOSError.layout.alignment,
         fields: []
       )
 
@@ -6492,6 +6652,7 @@ extension PyFileExistsError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFileExistsError(ptr: ptr)
@@ -6561,8 +6722,8 @@ extension PyFileNotFoundError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyOSError.layout.size,
+        initialAlignment: PyOSError.layout.alignment,
         fields: []
       )
 
@@ -6574,6 +6735,7 @@ extension PyFileNotFoundError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFileNotFoundError(ptr: ptr)
@@ -6643,8 +6805,8 @@ extension PyFloatingPointError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyArithmeticError.layout.size,
+        initialAlignment: PyArithmeticError.layout.alignment,
         fields: []
       )
 
@@ -6656,6 +6818,7 @@ extension PyFloatingPointError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFloatingPointError(ptr: ptr)
@@ -6725,8 +6888,8 @@ extension PyFutureWarning {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyWarning.layout.size,
+        initialAlignment: PyWarning.layout.alignment,
         fields: []
       )
 
@@ -6738,6 +6901,7 @@ extension PyFutureWarning {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFutureWarning(ptr: ptr)
@@ -6807,8 +6971,8 @@ extension PyGeneratorExit {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyBaseException.layout.size,
+        initialAlignment: PyBaseException.layout.alignment,
         fields: []
       )
 
@@ -6820,6 +6984,7 @@ extension PyGeneratorExit {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyGeneratorExit(ptr: ptr)
@@ -6892,8 +7057,8 @@ extension PyImportError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyException.layout.size,
+        initialAlignment: PyException.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyObject?.self), // PyImportError.msg
           PyMemory.FieldLayout(from: PyObject?.self), // PyImportError.moduleName
@@ -6913,8 +7078,11 @@ extension PyImportError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyImportError.msg`.
   internal var msgPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.msgOffset) }
+  /// Property: `PyImportError.moduleName`.
   internal var moduleNamePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.moduleNameOffset) }
+  /// Property: `PyImportError.modulePath`.
   internal var modulePathPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.modulePathOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -7024,8 +7192,8 @@ extension PyImportWarning {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyWarning.layout.size,
+        initialAlignment: PyWarning.layout.alignment,
         fields: []
       )
 
@@ -7037,6 +7205,7 @@ extension PyImportWarning {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyImportWarning(ptr: ptr)
@@ -7106,8 +7275,8 @@ extension PyIndentationError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PySyntaxError.layout.size,
+        initialAlignment: PySyntaxError.layout.alignment,
         fields: []
       )
 
@@ -7119,6 +7288,32 @@ extension PyIndentationError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
+  /// Property from base class: `PySyntaxError.msg`.
+  internal var msgPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: PySyntaxError.layout.msgOffset) }
+  /// Property from base class: `PySyntaxError.filename`.
+  internal var filenamePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: PySyntaxError.layout.filenameOffset) }
+  /// Property from base class: `PySyntaxError.lineno`.
+  internal var linenoPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: PySyntaxError.layout.linenoOffset) }
+  /// Property from base class: `PySyntaxError.offset`.
+  internal var offsetPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: PySyntaxError.layout.offsetOffset) }
+  /// Property from base class: `PySyntaxError.text`.
+  internal var textPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: PySyntaxError.layout.textOffset) }
+  /// Property from base class: `PySyntaxError.printFileAndLine`.
+  internal var printFileAndLinePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: PySyntaxError.layout.printFileAndLineOffset) }
+
+  /// Property from base class: `PySyntaxError.msg`.
+  internal var msg: PyObject? { self.msgPtr.pointee }
+  /// Property from base class: `PySyntaxError.filename`.
+  internal var filename: PyObject? { self.filenamePtr.pointee }
+  /// Property from base class: `PySyntaxError.lineno`.
+  internal var lineno: PyObject? { self.linenoPtr.pointee }
+  /// Property from base class: `PySyntaxError.offset`.
+  internal var offset: PyObject? { self.offsetPtr.pointee }
+  /// Property from base class: `PySyntaxError.text`.
+  internal var text: PyObject? { self.textPtr.pointee }
+  /// Property from base class: `PySyntaxError.printFileAndLine`.
+  internal var printFileAndLine: PyObject? { self.printFileAndLinePtr.pointee }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyIndentationError(ptr: ptr)
@@ -7188,8 +7383,8 @@ extension PyIndexError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyLookupError.layout.size,
+        initialAlignment: PyLookupError.layout.alignment,
         fields: []
       )
 
@@ -7201,6 +7396,7 @@ extension PyIndexError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyIndexError(ptr: ptr)
@@ -7270,8 +7466,8 @@ extension PyInterruptedError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyOSError.layout.size,
+        initialAlignment: PyOSError.layout.alignment,
         fields: []
       )
 
@@ -7283,6 +7479,7 @@ extension PyInterruptedError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyInterruptedError(ptr: ptr)
@@ -7352,8 +7549,8 @@ extension PyIsADirectoryError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyOSError.layout.size,
+        initialAlignment: PyOSError.layout.alignment,
         fields: []
       )
 
@@ -7365,6 +7562,7 @@ extension PyIsADirectoryError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyIsADirectoryError(ptr: ptr)
@@ -7434,8 +7632,8 @@ extension PyKeyError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyLookupError.layout.size,
+        initialAlignment: PyLookupError.layout.alignment,
         fields: []
       )
 
@@ -7447,6 +7645,7 @@ extension PyKeyError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyKeyError(ptr: ptr)
@@ -7516,8 +7715,8 @@ extension PyKeyboardInterrupt {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyBaseException.layout.size,
+        initialAlignment: PyBaseException.layout.alignment,
         fields: []
       )
 
@@ -7529,6 +7728,7 @@ extension PyKeyboardInterrupt {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyKeyboardInterrupt(ptr: ptr)
@@ -7598,8 +7798,8 @@ extension PyLookupError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyException.layout.size,
+        initialAlignment: PyException.layout.alignment,
         fields: []
       )
 
@@ -7611,6 +7811,7 @@ extension PyLookupError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyLookupError(ptr: ptr)
@@ -7680,8 +7881,8 @@ extension PyMemoryError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyException.layout.size,
+        initialAlignment: PyException.layout.alignment,
         fields: []
       )
 
@@ -7693,6 +7894,7 @@ extension PyMemoryError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyMemoryError(ptr: ptr)
@@ -7762,8 +7964,8 @@ extension PyModuleNotFoundError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyImportError.layout.size,
+        initialAlignment: PyImportError.layout.alignment,
         fields: []
       )
 
@@ -7775,6 +7977,20 @@ extension PyModuleNotFoundError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
+  /// Property from base class: `PyImportError.msg`.
+  internal var msgPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: PyImportError.layout.msgOffset) }
+  /// Property from base class: `PyImportError.moduleName`.
+  internal var moduleNamePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: PyImportError.layout.moduleNameOffset) }
+  /// Property from base class: `PyImportError.modulePath`.
+  internal var modulePathPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: PyImportError.layout.modulePathOffset) }
+
+  /// Property from base class: `PyImportError.msg`.
+  internal var msg: PyObject? { self.msgPtr.pointee }
+  /// Property from base class: `PyImportError.moduleName`.
+  internal var moduleName: PyObject? { self.moduleNamePtr.pointee }
+  /// Property from base class: `PyImportError.modulePath`.
+  internal var modulePath: PyObject? { self.modulePathPtr.pointee }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyModuleNotFoundError(ptr: ptr)
@@ -7844,8 +8060,8 @@ extension PyNameError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyException.layout.size,
+        initialAlignment: PyException.layout.alignment,
         fields: []
       )
 
@@ -7857,6 +8073,7 @@ extension PyNameError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyNameError(ptr: ptr)
@@ -7926,8 +8143,8 @@ extension PyNotADirectoryError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyOSError.layout.size,
+        initialAlignment: PyOSError.layout.alignment,
         fields: []
       )
 
@@ -7939,6 +8156,7 @@ extension PyNotADirectoryError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyNotADirectoryError(ptr: ptr)
@@ -8008,8 +8226,8 @@ extension PyNotImplementedError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyRuntimeError.layout.size,
+        initialAlignment: PyRuntimeError.layout.alignment,
         fields: []
       )
 
@@ -8021,6 +8239,7 @@ extension PyNotImplementedError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyNotImplementedError(ptr: ptr)
@@ -8090,8 +8309,8 @@ extension PyOSError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyException.layout.size,
+        initialAlignment: PyException.layout.alignment,
         fields: []
       )
 
@@ -8103,6 +8322,7 @@ extension PyOSError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyOSError(ptr: ptr)
@@ -8172,8 +8392,8 @@ extension PyOverflowError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyArithmeticError.layout.size,
+        initialAlignment: PyArithmeticError.layout.alignment,
         fields: []
       )
 
@@ -8185,6 +8405,7 @@ extension PyOverflowError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyOverflowError(ptr: ptr)
@@ -8254,8 +8475,8 @@ extension PyPendingDeprecationWarning {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyWarning.layout.size,
+        initialAlignment: PyWarning.layout.alignment,
         fields: []
       )
 
@@ -8267,6 +8488,7 @@ extension PyPendingDeprecationWarning {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyPendingDeprecationWarning(ptr: ptr)
@@ -8336,8 +8558,8 @@ extension PyPermissionError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyOSError.layout.size,
+        initialAlignment: PyOSError.layout.alignment,
         fields: []
       )
 
@@ -8349,6 +8571,7 @@ extension PyPermissionError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyPermissionError(ptr: ptr)
@@ -8418,8 +8641,8 @@ extension PyProcessLookupError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyOSError.layout.size,
+        initialAlignment: PyOSError.layout.alignment,
         fields: []
       )
 
@@ -8431,6 +8654,7 @@ extension PyProcessLookupError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyProcessLookupError(ptr: ptr)
@@ -8500,8 +8724,8 @@ extension PyRecursionError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyRuntimeError.layout.size,
+        initialAlignment: PyRuntimeError.layout.alignment,
         fields: []
       )
 
@@ -8513,6 +8737,7 @@ extension PyRecursionError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyRecursionError(ptr: ptr)
@@ -8582,8 +8807,8 @@ extension PyReferenceError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyException.layout.size,
+        initialAlignment: PyException.layout.alignment,
         fields: []
       )
 
@@ -8595,6 +8820,7 @@ extension PyReferenceError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyReferenceError(ptr: ptr)
@@ -8664,8 +8890,8 @@ extension PyResourceWarning {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyWarning.layout.size,
+        initialAlignment: PyWarning.layout.alignment,
         fields: []
       )
 
@@ -8677,6 +8903,7 @@ extension PyResourceWarning {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyResourceWarning(ptr: ptr)
@@ -8746,8 +8973,8 @@ extension PyRuntimeError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyException.layout.size,
+        initialAlignment: PyException.layout.alignment,
         fields: []
       )
 
@@ -8759,6 +8986,7 @@ extension PyRuntimeError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyRuntimeError(ptr: ptr)
@@ -8828,8 +9056,8 @@ extension PyRuntimeWarning {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyWarning.layout.size,
+        initialAlignment: PyWarning.layout.alignment,
         fields: []
       )
 
@@ -8841,6 +9069,7 @@ extension PyRuntimeWarning {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyRuntimeWarning(ptr: ptr)
@@ -8910,8 +9139,8 @@ extension PyStopAsyncIteration {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyException.layout.size,
+        initialAlignment: PyException.layout.alignment,
         fields: []
       )
 
@@ -8923,6 +9152,7 @@ extension PyStopAsyncIteration {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyStopAsyncIteration(ptr: ptr)
@@ -8993,8 +9223,8 @@ extension PyStopIteration {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyException.layout.size,
+        initialAlignment: PyException.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyObject.self) // PyStopIteration.value
         ]
@@ -9010,6 +9240,7 @@ extension PyStopIteration {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyStopIteration.value`.
   internal var valuePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -9114,8 +9345,8 @@ extension PySyntaxError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyException.layout.size,
+        initialAlignment: PyException.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyObject?.self), // PySyntaxError.msg
           PyMemory.FieldLayout(from: PyObject?.self), // PySyntaxError.filename
@@ -9141,11 +9372,17 @@ extension PySyntaxError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PySyntaxError.msg`.
   internal var msgPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.msgOffset) }
+  /// Property: `PySyntaxError.filename`.
   internal var filenamePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.filenameOffset) }
+  /// Property: `PySyntaxError.lineno`.
   internal var linenoPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.linenoOffset) }
+  /// Property: `PySyntaxError.offset`.
   internal var offsetPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.offsetOffset) }
+  /// Property: `PySyntaxError.text`.
   internal var textPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.textOffset) }
+  /// Property: `PySyntaxError.printFileAndLine`.
   internal var printFileAndLinePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.printFileAndLineOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -9260,8 +9497,8 @@ extension PySyntaxWarning {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyWarning.layout.size,
+        initialAlignment: PyWarning.layout.alignment,
         fields: []
       )
 
@@ -9273,6 +9510,7 @@ extension PySyntaxWarning {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PySyntaxWarning(ptr: ptr)
@@ -9342,8 +9580,8 @@ extension PySystemError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyException.layout.size,
+        initialAlignment: PyException.layout.alignment,
         fields: []
       )
 
@@ -9355,6 +9593,7 @@ extension PySystemError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PySystemError(ptr: ptr)
@@ -9425,8 +9664,8 @@ extension PySystemExit {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyBaseException.layout.size,
+        initialAlignment: PyBaseException.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyObject?.self) // PySystemExit.code
         ]
@@ -9442,6 +9681,7 @@ extension PySystemExit {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PySystemExit.code`.
   internal var codePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.codeOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
@@ -9540,8 +9780,8 @@ extension PyTabError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyIndentationError.layout.size,
+        initialAlignment: PyIndentationError.layout.alignment,
         fields: []
       )
 
@@ -9553,6 +9793,32 @@ extension PyTabError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
+  /// Property from base class: `PySyntaxError.msg`.
+  internal var msgPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: PySyntaxError.layout.msgOffset) }
+  /// Property from base class: `PySyntaxError.filename`.
+  internal var filenamePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: PySyntaxError.layout.filenameOffset) }
+  /// Property from base class: `PySyntaxError.lineno`.
+  internal var linenoPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: PySyntaxError.layout.linenoOffset) }
+  /// Property from base class: `PySyntaxError.offset`.
+  internal var offsetPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: PySyntaxError.layout.offsetOffset) }
+  /// Property from base class: `PySyntaxError.text`.
+  internal var textPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: PySyntaxError.layout.textOffset) }
+  /// Property from base class: `PySyntaxError.printFileAndLine`.
+  internal var printFileAndLinePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: PySyntaxError.layout.printFileAndLineOffset) }
+
+  /// Property from base class: `PySyntaxError.msg`.
+  internal var msg: PyObject? { self.msgPtr.pointee }
+  /// Property from base class: `PySyntaxError.filename`.
+  internal var filename: PyObject? { self.filenamePtr.pointee }
+  /// Property from base class: `PySyntaxError.lineno`.
+  internal var lineno: PyObject? { self.linenoPtr.pointee }
+  /// Property from base class: `PySyntaxError.offset`.
+  internal var offset: PyObject? { self.offsetPtr.pointee }
+  /// Property from base class: `PySyntaxError.text`.
+  internal var text: PyObject? { self.textPtr.pointee }
+  /// Property from base class: `PySyntaxError.printFileAndLine`.
+  internal var printFileAndLine: PyObject? { self.printFileAndLinePtr.pointee }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyTabError(ptr: ptr)
@@ -9622,8 +9888,8 @@ extension PyTimeoutError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyOSError.layout.size,
+        initialAlignment: PyOSError.layout.alignment,
         fields: []
       )
 
@@ -9635,6 +9901,7 @@ extension PyTimeoutError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyTimeoutError(ptr: ptr)
@@ -9704,8 +9971,8 @@ extension PyTypeError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyException.layout.size,
+        initialAlignment: PyException.layout.alignment,
         fields: []
       )
 
@@ -9717,6 +9984,7 @@ extension PyTypeError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyTypeError(ptr: ptr)
@@ -9786,8 +10054,8 @@ extension PyUnboundLocalError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyNameError.layout.size,
+        initialAlignment: PyNameError.layout.alignment,
         fields: []
       )
 
@@ -9799,6 +10067,7 @@ extension PyUnboundLocalError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUnboundLocalError(ptr: ptr)
@@ -9868,8 +10137,8 @@ extension PyUnicodeDecodeError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyUnicodeError.layout.size,
+        initialAlignment: PyUnicodeError.layout.alignment,
         fields: []
       )
 
@@ -9881,6 +10150,7 @@ extension PyUnicodeDecodeError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUnicodeDecodeError(ptr: ptr)
@@ -9950,8 +10220,8 @@ extension PyUnicodeEncodeError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyUnicodeError.layout.size,
+        initialAlignment: PyUnicodeError.layout.alignment,
         fields: []
       )
 
@@ -9963,6 +10233,7 @@ extension PyUnicodeEncodeError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUnicodeEncodeError(ptr: ptr)
@@ -10032,8 +10303,8 @@ extension PyUnicodeError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyValueError.layout.size,
+        initialAlignment: PyValueError.layout.alignment,
         fields: []
       )
 
@@ -10045,6 +10316,7 @@ extension PyUnicodeError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUnicodeError(ptr: ptr)
@@ -10114,8 +10386,8 @@ extension PyUnicodeTranslateError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyUnicodeError.layout.size,
+        initialAlignment: PyUnicodeError.layout.alignment,
         fields: []
       )
 
@@ -10127,6 +10399,7 @@ extension PyUnicodeTranslateError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUnicodeTranslateError(ptr: ptr)
@@ -10196,8 +10469,8 @@ extension PyUnicodeWarning {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyWarning.layout.size,
+        initialAlignment: PyWarning.layout.alignment,
         fields: []
       )
 
@@ -10209,6 +10482,7 @@ extension PyUnicodeWarning {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUnicodeWarning(ptr: ptr)
@@ -10278,8 +10552,8 @@ extension PyUserWarning {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyWarning.layout.size,
+        initialAlignment: PyWarning.layout.alignment,
         fields: []
       )
 
@@ -10291,6 +10565,7 @@ extension PyUserWarning {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUserWarning(ptr: ptr)
@@ -10360,8 +10635,8 @@ extension PyValueError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyException.layout.size,
+        initialAlignment: PyException.layout.alignment,
         fields: []
       )
 
@@ -10373,6 +10648,7 @@ extension PyValueError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyValueError(ptr: ptr)
@@ -10442,8 +10718,8 @@ extension PyWarning {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyException.layout.size,
+        initialAlignment: PyException.layout.alignment,
         fields: []
       )
 
@@ -10455,6 +10731,7 @@ extension PyWarning {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyWarning(ptr: ptr)
@@ -10524,8 +10801,8 @@ extension PyZeroDivisionError {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyErrorHeader.layout.size,
-        initialAlignment: PyErrorHeader.layout.alignment,
+        initialOffset: PyArithmeticError.layout.size,
+        initialAlignment: PyArithmeticError.layout.alignment,
         fields: []
       )
 
@@ -10537,6 +10814,7 @@ extension PyZeroDivisionError {
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
+
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyZeroDivisionError(ptr: ptr)
