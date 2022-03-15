@@ -67,6 +67,14 @@ public struct PyObjectHeader {
     }
   }
 
+  internal var has__dict__: Bool {
+    switch self.lazy__dict__ {
+    case .thereIsNoDict: return false
+    case .lazyNotCreated: return true
+    case .created: return true
+    }
+  }
+
   // MARK: - Flags
 
   // sourcery: includeInLayout
