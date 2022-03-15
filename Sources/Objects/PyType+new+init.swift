@@ -100,7 +100,7 @@ extension PyType {
     }
   }
 
-  private static func guaranteeAllBasesAreTypes(
+  internal static func guaranteeAllBasesAreTypes(
     _ py: Py,
     bases: PyTuple
   ) -> PyResult<[PyType]> {

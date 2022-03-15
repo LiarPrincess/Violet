@@ -1,10 +1,9 @@
-/* MARKER
 import VioletCore
 
 // In CPython:
 // Python -> builtinmodule.c
 
-extension PyInstance {
+extension Py {
 
   // MARK: - Get __build_class__
 
@@ -12,12 +11,13 @@ extension PyInstance {
   public func get__build_class__() -> PyResult<PyObject> {
     let dict = self.builtinsModule.__dict__
 
-    if let fn = dict.get(id: .__build_class__) {
+    if let fn = dict.get(self, id: .__build_class__) {
       return .value(fn)
     }
 
-    let msg = "'__build_class__' function not found inside builtins module"
-    return .error(self.newAttributeError(msg: msg))
+    let message = "'__build_class__' function not found inside builtins module"
+    let error = self.newAttributeError(message: message)
+    return .error(error.asBaseException)
   }
 
   // MARK: - __build_class__
@@ -41,9 +41,15 @@ extension PyInstance {
   ///             (or MutableSequence) representing the locals is passed
   ///   - kwargs: keyword arguments and **kwds argument
   public func __build_class__(name: PyString,
-                              bases: PyTuple,
+                              bases basesTuple: PyTuple,
                               bodyFn: PyFunction,
                               kwargs: PyDict?) -> PyResult<PyObject> {
+    let bases: [PyType]
+    switch PyType.guaranteeAllBasesAreTypes(self, bases: basesTuple) {
+    case let .value(b): bases = b
+    case let .error(e): return .error(e)
+    }
+
     // Type of our type. Most of the time it will be 'PyType' instance.
     // But technically you can 'class Elsa(some_object): pass'.
     // If you try hard enough with 'some_object' it may even work…
@@ -56,7 +62,7 @@ extension PyInstance {
     // Our class '__dict__' (the thing that contains methods etc.)
     // CPython: namespace
     let dict: PyDict
-    switch self.createDict(name: name, bases: bases, metatype: metatype) {
+    switch self.createDict(name: name, bases: basesTuple, metatype: metatype) {
     case let .value(n): dict = n
     case let .error(e): return .error(e)
     }
@@ -79,7 +85,7 @@ extension PyInstance {
     // Call our metatype to create type.
     // Most of the time it will call 'PyType.call'.
     let result: PyObject
-    let metaArgs = [name, bases, dict]
+    let metaArgs = [name.asObject, basesTuple.asObject, dict.asObject]
     switch self.call(callable: metatype, args: metaArgs, kwargs: kwargs) {
     case let .value(r):
       result = r
@@ -99,25 +105,25 @@ extension PyInstance {
 
   // MARK: - Metaclass
 
-  private func calculateMetaclass(bases: PyTuple,
+  private func calculateMetaclass(bases: [PyType],
                                   kwargs: PyDict?) -> PyResult<PyObject> {
     var result: PyObject
 
-    if let kwargs = kwargs, let meta = kwargs.get(id: .metaclass) {
+    if let kwargs = kwargs, let meta = kwargs.get(self, id: .metaclass) {
       // 'metaclass' should not be propagated later when we call our 'metatype'
       // to create new type.
-      _ = kwargs.del(id: .metaclass)
+      _ = kwargs.del(self, id: .metaclass)
       result = meta
     } else {
-      result = bases.elements.first?.type ?? self.types.type
+      result = bases.first?.type.asObject ?? self.types.type.asObject
     }
 
-    if let metaType = PyCast.asType(result) {
+    if let metaType = self.cast.asType(result) {
       // meta is really a class, so check for a more derived
       // metaclass, or possible metaclass conflicts:
-      switch PyType.calculateMetaclass(metatype: metaType, bases: bases.elements) {
+      switch PyType.calculateMetaclass(self, metatype: metaType, bases: bases) {
       case let .value(winner):
-        result = winner
+        result = winner.asObject
       case let .error(e):
         return .error(e)
       }
@@ -145,7 +151,8 @@ extension PyInstance {
     switch self.get__prepare__(metatype: metatype) {
     case let .value(__prepare__):
       let object: PyObject
-      switch self.call(callable: __prepare__, args: [name, bases], kwargs: nil) {
+      let args = [name.asObject, bases.asObject]
+      switch self.call(callable: __prepare__, args: args, kwargs: nil) {
       case let .value(o):
         object = o
       case let .error(e),
@@ -153,11 +160,10 @@ extension PyInstance {
         return .error(e)
       }
 
-      guard let dict = PyCast.asDict(object) else {
-        let mt = metatype.typeName
-        let ot = object.typeName
-        let msg = "\(mt).__prepare__() must return a mapping, not \(ot)"
-        return .typeError(msg)
+      guard let dict = self.cast.asDict(object) else {
+        let t = metatype.typeName
+        let message = "\(t).__prepare__() must return a mapping, not \(object.typeName)"
+        return .typeError(self, message: message)
       }
 
       return .value(dict)
@@ -177,7 +183,7 @@ extension PyInstance {
       return .value(o)
 
     case let .error(e):
-      if PyCast.isAttributeError(e) {
+      if self.cast.isAttributeError(e.asObject) {
         return .none
       }
 
@@ -206,35 +212,34 @@ extension PyInstance {
 
   private func fill__class__cell(cell _cell: PyObject,
                                  with _type: PyObject) -> PyBaseException? {
-    guard let type = PyCast.asType(_type),
-          let cell = PyCast.asCell(_cell) else {
-      assert(PyCast.isNone(_cell), "__class__ should be cell or None. Compiler error?")
+    guard let type = self.cast.asType(_type),
+          let cell = self.cast.asCell(_cell) else {
+      assert(self.cast.isNone(_cell), "__class__ should be cell or None. Compiler error?")
       return nil
     }
 
     // If content is nil -> it may be warning
     if cell.content == nil {
       let typeName = type.getNameString()
-      let typeRepr = self.reprOrGenericString(object: type)
-      let msg = "__class__ not set defining \(typeName) as \(typeRepr). " +
+      let typeRepr = self.reprOrGenericString(object: type.asObject)
+      let message = "__class__ not set defining \(typeName) as \(typeRepr). " +
                 "Was __classcell__ propagated to type.__new__?"
-      if let e = self.warn(type: .deprecation, msg: msg) {
+      if let e = self.warn(type: .deprecation, message: message) {
         return e
       }
     }
 
     // If we already have content that is not our class -> throw
-    if let content = cell.content, content !== type {
+    if let content = cell.content, content.ptr !== type.ptr {
       let typeName = type.getNameString()
-      let typeRepr = self.reprOrGenericString(object: type)
+      let typeRepr = self.reprOrGenericString(object: type.asObject)
       let contentRepr = self.reprOrGenericString(object: content)
-      let msg = "__class__ set to \(contentRepr) defining \(typeName) as \(typeRepr)"
-      return self.newTypeError(msg: msg)
+      let message = "__class__ set to \(contentRepr) defining \(typeName) as \(typeRepr)"
+      let error = self.newTypeError(message: message)
+      return error.asBaseException
     }
 
-    cell.content = type
+    cell.content = type.asObject
     return nil
   }
 }
-
-*/

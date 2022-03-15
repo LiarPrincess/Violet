@@ -43,33 +43,6 @@ public struct Py {
 
   public func newObject(type: PyType? = nil) -> PyObject { fatalError() } // default type
 
-  internal func newType(
-    name: String,
-    qualname: String,
-    flags: PyType.TypeFlags,
-    base: PyType,
-    mro: MethodResolutionOrder,
-    layout: PyType.MemoryLayout,
-    staticMethods: PyStaticCall.KnownNotOverriddenMethods,
-    debugFn: @escaping PyType.DebugFn,
-    deinitialize: @escaping PyType.DeinitializeFn
-  ) -> PyType {
-    let metatype = self.types.type
-    return self.memory.newType(self,
-                               type: metatype,
-                               name: name,
-                               qualname: qualname,
-                               flags: flags,
-                               base: base,
-                               bases: mro.baseClasses,
-                               mroWithoutSelf: mro.resolutionOrder,
-                               subclasses: [],
-                               layout: layout,
-                               staticMethods: staticMethods,
-                               debugFn: debugFn,
-                               deinitialize: deinitialize)
-  }
-
   // MARK: - Other
 
   internal func getInterned(int: Int) -> PyInt? { fatalError() }
