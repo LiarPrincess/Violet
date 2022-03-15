@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import FileSystem
 import VioletCore
@@ -10,7 +9,7 @@ import VioletCore
 // Modules -> _io -> _iomodule.c
 // https://docs.python.org/3.7/library/io.html
 
-extension PyInstance {
+extension Py {
 
   /// open(file, mode='r', buffering=-1, encoding=None, errors=None, newline=None,
   ///            closefd=True, opener=None)
@@ -22,7 +21,7 @@ extension PyInstance {
                    errors errorsArg: PyObject? = nil,
                    newline: PyObject? = nil,
                    closefd closefdArg: PyObject? = nil,
-                   opener: PyObject? = nil) -> PyResult<PyObject> {
+                   opener: PyObject? = nil) -> PyResult<PyTextFile> {
     // We will ignore 'buffering', 'newline', and 'opener' because we are lazy.
 
     let source: Source
@@ -42,19 +41,19 @@ extension PyInstance {
     }
 
     let encoding: PyString.Encoding
-    switch PyString.Encoding.from(object: encodingArg) {
+    switch PyString.Encoding.from(self, object: encodingArg) {
     case let .value(e): encoding = e
     case let .error(e): return .error(e)
     }
 
     let errorHandling: PyString.ErrorHandling
-    switch PyString.ErrorHandling.from(object: errorsArg) {
+    switch PyString.ErrorHandling.from(self, object: errorsArg) {
     case let .value(e): errorHandling = e
     case let .error(e): return .error(e)
     }
 
     let closeOnDealloc: Bool
-    switch self.isTrueBool(object: closefdArg ?? self.true) {
+    switch self.isTrueBool(object: closefdArg ?? self.true.asObject) {
     case let .value(b): closeOnDealloc = b
     case let .error(e): return .error(e)
     }
@@ -74,26 +73,43 @@ extension PyInstance {
                     type: FileType,
                     encoding: PyString.Encoding,
                     errorHandling: PyString.ErrorHandling,
-                    closeOnDealloc: Bool) -> PyResult<PyObject> {
+                    closeOnDealloc: Bool) -> PyResult<PyTextFile> {
     switch type {
     case .binary:
-      return .valueError("only text mode is currently supported in Violet")
+      return .valueError(self, message: "only text mode is currently supported in Violet")
 
     case .text:
       switch self.openFileDescriptor(source: source, mode: mode) {
       case let .value(fd):
-        let result = PyMemory.newTextFile(name: fd.path?.string,
-                                          fd: fd.value,
-                                          mode: mode,
-                                          encoding: encoding,
-                                          errorHandling: errorHandling,
-                                          closeOnDealloc: closeOnDealloc)
+        let result = self.newTextFile(name: fd.path?.string,
+                                      fd: fd.value,
+                                      mode: mode,
+                                      encoding: encoding,
+                                      errorHandling: errorHandling,
+                                      closeOnDealloc: closeOnDealloc)
         return .value(result)
 
       case let .error(e):
         return .error(e)
       }
     }
+  }
+
+  public func newTextFile(name: String?,
+                          fd: FileDescriptorType,
+                          mode: FileMode,
+                          encoding: PyString.Encoding,
+                          errorHandling: PyString.ErrorHandling,
+                          closeOnDealloc: Bool) -> PyTextFile {
+    let type = self.types.textFile
+    return self.memory.newTextFile(self,
+                                   type: type,
+                                   name: name,
+                                   fd: fd,
+                                   mode: mode,
+                                   encoding: encoding,
+                                   errorHandling: errorHandling,
+                                   closeOnDealloc: closeOnDealloc)
   }
 
   private struct OpenedFileDescriptor {
@@ -120,8 +136,8 @@ extension PyInstance {
       return _open(string: string)
 
     case let .bytes(data):
-      guard let string = Py.getString(data: data) else {
-        return .valueError("bytes cannot interpreted as path")
+      guard let string = self.getString(data: data, encoding: nil) else {
+        return .valueError(self, message: "bytes cannot interpreted as path")
       }
 
       return _open(string: string)
@@ -141,21 +157,21 @@ extension PyInstance {
   }
 
   private func parseFileSource(object: PyObject) -> PyResult<Source> {
-    if let int = PyCast.asInt(object),
+    if let int = self.cast.asInt(object),
        let fd = Int32(exactly: int.value) {
       return .value(.fileDescriptor(fd))
     }
 
-    if let string = PyCast.asString(object) {
+    if let string = self.cast.asString(object) {
       return .value(.string(string.value))
     }
 
-    if let bytes = PyCast.asAnyBytes(object) {
+    if let bytes = self.cast.asAnyBytes(object) {
       return .value(.bytes(bytes.elements))
     }
 
-    let repr = Py.reprOrGenericString(object: object)
-    return .typeError("invalid file: \(repr)")
+    let repr = self.reprOrGenericString(object: object)
+    return .typeError(self, message: "invalid file: \(repr)")
   }
 
   // MARK: - Mode and type
@@ -172,10 +188,12 @@ extension PyInstance {
 
   private struct ModeAndType {
 
+    private let py: Py
     fileprivate private(set) var mode: FileMode?
     fileprivate private(set) var type: FileType?
 
-    fileprivate init() {
+    fileprivate init(_ py: Py) {
+      self.py = py
       self.mode = nil
       self.type = nil
     }
@@ -186,8 +204,9 @@ extension PyInstance {
       }
 
       guard self.mode == nil else {
-        let msg = "must have exactly one of create/read/write/append mode"
-        return Py.newValueError(msg: msg)
+        let message = "must have exactly one of create/read/write/append mode"
+        let error = self.py.newValueError(message: message)
+        return error.asBaseException
       }
 
       self.mode = mode
@@ -200,8 +219,9 @@ extension PyInstance {
       }
 
       guard self.type == nil else {
-        let msg = "can't have text and binary mode at once"
-        return Py.newValueError(msg: msg)
+        let message = "can't have text and binary mode at once"
+        let error = self.py.newValueError(message: message)
+        return error.asBaseException
       }
 
       self.type = type
@@ -212,11 +232,12 @@ extension PyInstance {
   /// Parser for `xrwa+tb` string (2nd argument of `open`).
   private func parseModeAndType(object: PyObject?) -> PyResult<ModeAndType> {
     guard let object = object else {
-      return .value(ModeAndType())
+      let result = ModeAndType(self)
+      return .value(result)
     }
 
-    guard let string = PyCast.asString(object) else {
-      return .typeError("mode must be str, not \(object.typeName)")
+    guard let string = self.cast.asString(object) else {
+      return .typeError(self, message: "mode must be str, not \(object.typeName)")
     }
 
     return self.parseModeAndType(string: string.value)
@@ -224,12 +245,12 @@ extension PyInstance {
 
   /// Parser for `xrwa+tb` string (2nd argument of `open`).
   private func parseModeAndType(string: String) -> PyResult<ModeAndType> {
-    var result = ModeAndType()
+    var result = ModeAndType(self)
     var preventDuplicates = Set<UnicodeScalar>()
 
     for s in string.unicodeScalars {
       if preventDuplicates.contains(s) {
-        return .valueError("invalid mode: '\(string)'")
+        return .valueError(self, message: "invalid mode: '\(string)'")
       }
 
       preventDuplicates.insert(s)
@@ -243,16 +264,14 @@ extension PyInstance {
       case "t": if let e = result.setType(type: .text) { return .error(e) }
       case "b": if let e = result.setType(type: .binary) { return .error(e) }
       case "U":
-        if let e = Py.warn(type: .deprecation, msg: "'U' mode is deprecated") {
+        if let e = self.warn(type: .deprecation, message: "'U' mode is deprecated") {
           return .error(e)
         }
       default:
-        return .valueError("invalid mode: '\(string)'")
+        return .valueError(self, message: "invalid mode: '\(string)'")
       }
     }
 
     return .value(result)
   }
 }
-
-*/
