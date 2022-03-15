@@ -57,14 +57,6 @@ public struct Py {
   public func newByteArray(_ d: Data) -> PyByteArray { fatalError() }
   public func newByteArrayIterator(bytes: PyByteArray) -> PyByteArrayIterator { fatalError() }
 
-  public func newCode(code: CodeObject) -> PyCode { fatalError() }
-  public func newCell(content: PyObject?) -> PyCell { fatalError() }
-  public func newBuiltinFunction(fn: FunctionWrapper, module: PyObject?, doc: String?) -> PyBuiltinFunction { fatalError() }
-  public func newStaticMethod(callable: PyBuiltinFunction) -> PyStaticMethod { fatalError() }
-  public func newStaticMethod(callable: PyFunction) -> PyStaticMethod { fatalError() }
-  public func newClassMethod(callable: PyBuiltinFunction) -> PyClassMethod { fatalError() }
-  public func newClassMethod(callable: PyFunction) -> PyClassMethod { fatalError() }
-
   internal func newType(
     name: String,
     qualname: String,
@@ -92,22 +84,6 @@ public struct Py {
                                deinitialize: deinitialize)
   }
 
-  public func newModule(name: String) -> PyModule { fatalError() }
-
-  public func newBuiltinMethod(fn: FunctionWrapper,
-                               object: PyObject,
-                               module: PyObject?,
-                               doc: String?) -> PyBuiltinMethod { fatalError() }
-
-  public func newMethod(fn: PyFunction, object: PyObject) -> PyMethod { fatalError() }
-  public func newMethod(fn: PyObject, object: PyObject) -> PyResult<PyMethod> { fatalError() }
-
-  // Check if names are '__get__/__set__/__det__'
-  public func newProperty(get: FunctionWrapper,
-                          set: FunctionWrapper?,
-                          del: FunctionWrapper?,
-                          doc: String?) -> PyProperty { fatalError() }
-
   // MARK: - String
 
   public func repr(object: PyObject) -> PyResult<PyString> { fatalError() }
@@ -122,90 +98,15 @@ public struct Py {
   public func intern(string: String) -> PyString { fatalError() }
   public func get__dict__(object: PyObject) -> PyDict? { fatalError() }
 
-  // MARK: - Call
-
-  public enum CallResult {
-    case value(PyObject)
-    /// Object is not callable.
-    case notCallable(PyBaseException)
-    case error(PyBaseException)
-
-    public var asResult: PyResult<PyObject> {
-      switch self {
-      case let .value(o):
-        return .value(o)
-      case let .error(e),
-           let .notCallable(e):
-        return .error(e)
-      }
-    }
-  }
-
-  public func call(callable: PyObject) -> CallResult { fatalError() }
-  public func call(callable: PyObject, arg: PyObject) -> CallResult { fatalError() }
-  public func call(callable: PyObject, args: PyObject, kwargs: PyObject?) -> CallResult { fatalError() }
-  public func call(callable: PyObject, args: [PyObject] = [], kwargs: PyDict? = nil) -> CallResult { fatalError() }
-
-  // MARK: - Methods
-
-  public enum GetMethodResult {
-    /// Method found (_yay!_), here is its value (_double yay!_).
-    case value(PyObject)
-    /// Such method does not exist.
-    case notFound(PyBaseException)
-    /// Raise error in VM.
-    case error(PyBaseException)
-  }
-
-  public enum CallMethodResult {
-    case value(PyObject)
-    /// Such method does not exists.
-    case missingMethod(PyBaseException)
-    /// Method exists, but it is not callable.
-    case notCallable(PyBaseException)
-    case error(PyBaseException)
-
-    public var asResult: PyResult<PyObject> {
-      switch self {
-      case let .value(o):
-        return .value(o)
-      case let .error(e),
-           let .notCallable(e),
-           let .missingMethod(e):
-        return .error(e)
-      }
-    }
-  }
-
-  public func getMethod(object: PyObject,
-                        selector: PyString,
-                        allowsCallableFromDict: Bool = false) -> GetMethodResult {
-    fatalError()
-  }
-
-  public func callMethod(object: PyObject,
-                         selector: IdString,
-                         arg: PyObject) -> CallMethodResult {
-    fatalError()
-  }
-
-  public func callMethod(object: PyObject,
-                         selector: IdString,
-                         args: [PyObject] = [],
-                         kwargs: PyDict? = nil,
-                         allowsCallableFromDict: Bool = false) -> CallMethodResult {
-    fatalError()
-  }
-
-  public func hasMethod(object: PyObject, selector: IdString) -> PyResult<Bool> { fatalError() }
-  public func hasMethod(object: PyObject, selector: PyObject) -> PyResult<Bool> { fatalError() }
-
-  public func newSuper(requestedType: PyType?, object: PyObject?, objectType: PyType?) -> PySuper { fatalError() }
-
-  public func isCallable(object: PyObject) -> Bool { fatalError() }
-  public func isAbstractMethod(object: PyObject) -> PyResult<Bool> { fatalError() }
-
   // MARK: - Errors
+
+  public func newInvalidSelfArgumentError(object: PyObject,
+                                          expectedType: String,
+                                          swiftFnName: StaticString) -> PyTypeError {
+    // Note that 'swiftFnName' is a full selector!
+    // For example: '__repr__(_:zelf:)'
+    fatalError()
+  }
 
   // 'IndentationError' is a subclass of 'SyntaxError' with custom 'init'
   // ImportError: Exception # Import can't find module, or can't find name in module.

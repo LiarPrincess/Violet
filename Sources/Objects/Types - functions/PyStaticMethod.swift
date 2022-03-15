@@ -79,7 +79,12 @@ public struct PyStaticMethod: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "__func__")
     }
 
-    return PyResult(py, zelf.callable)
+    let result = zelf.getFunction()
+    return PyResult(py, result)
+  }
+
+  internal func getFunction() -> PyObject? {
+    return self.callable
   }
 
   // MARK: - Get

@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // swiftlint:disable file_length
@@ -9,7 +8,7 @@ import VioletCore
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-extension PyInstance {
+extension Py {
 
   // MARK: - Call
 
@@ -30,12 +29,12 @@ extension PyInstance {
     }
   }
 
-  /// Call `callable` with single positional argument.
+  /// Call `callable` with a single positional argument.
   public func call(callable: PyObject, arg: PyObject) -> CallResult {
     return self.call(callable: callable, args: [arg], kwargs: nil)
   }
 
-  /// Call with positional arguments and optional keyword arguments.
+  /// Call `callable` with positional arguments and optional keyword arguments.
   ///
   /// - Parameters:
   ///   - callable: object to call
@@ -45,20 +44,21 @@ extension PyInstance {
                    args: PyObject,
                    kwargs: PyObject?) -> CallResult {
     let argsArray: [PyObject]
-    switch ArgumentParser.unpackArgsTuple(args: args) {
+    switch ArgumentParser.unpackArgsTuple(self, args: args) {
     case let .value(o): argsArray = o
     case let .error(e): return .error(e)
     }
 
-    switch ArgumentParser.unpackKwargsDict(kwargs: kwargs) {
-    case let .value(kwargsDict):
-      return self.call(callable: callable, args: argsArray, kwargs: kwargsDict)
-    case let .error(e):
-      return .error(e)
+    let kwargsDict: PyDict?
+    switch ArgumentParser.unpackKwargsDict(self, kwargs: kwargs) {
+    case let .value(o): kwargsDict = o
+    case let .error(e): return .error(e)
     }
+
+    return self.call(callable: callable, args: argsArray, kwargs: kwargsDict)
   }
 
-  /// Call with positional arguments and optional keyword arguments.
+  /// Call `callable` with positional arguments and optional keyword arguments.
   ///
   /// - Parameters:
   ///   - callable: object to call
@@ -67,7 +67,7 @@ extension PyInstance {
   public func call(callable: PyObject,
                    args: [PyObject] = [],
                    kwargs: PyDict? = nil) -> CallResult {
-    if let result = PyStaticCall.__call__(callable, args: args, kwargs: kwargs) {
+    if let result = PyStaticCall.__call__(self, object: callable, args: args, kwargs: kwargs) {
       switch result {
       case let .value(result): return .value(result)
       case let .error(e): return .error(e)
@@ -83,8 +83,9 @@ extension PyInstance {
     case let .value(o):
       return .value(o)
     case .missingMethod:
-      let msg = "object of type '\(callable.typeName)' is not callable"
-      return .notCallable(self.newTypeError(msg: msg))
+      let message = "object of type '\(callable.typeName)' is not callable"
+      let error = self.newTypeError(message: message)
+      return .notCallable(error.asBaseException)
     case let .notCallable(e):
       return .notCallable(e)
     case let .error(e):
@@ -97,14 +98,14 @@ extension PyInstance {
   /// callable(object)
   /// See [this](https://docs.python.org/3/library/functions.html#callable)
   public func isCallable(object: PyObject) -> Bool {
-    let lookup = object.type.mroLookup(name: .__call__)
+    let lookup = object.type.mroLookup(self, name: .__call__)
     return lookup != nil
   }
 }
 
 // MARK: - Has method
 
-extension PyInstance {
+extension Py {
 
   public func hasMethod(object: PyObject,
                         selector: IdString) -> PyResult<Bool> {
@@ -131,11 +132,12 @@ extension PyInstance {
 // MARK: - Get method
 
 internal protocol HasCustomGetMethod {
-  func getMethod(selector: PyString,
-                 allowsCallableFromDict: Bool) -> PyInstance.GetMethodResult
+  func getMethod(_ py: Py,
+                 selector: PyString,
+                 allowsCallableFromDict: Bool) -> Py.GetMethodResult
 }
 
-extension PyInstance {
+extension Py {
 
   public enum GetMethodResult {
     /// Method found (_yay!_), here is its value (_double yay!_).
@@ -174,17 +176,18 @@ extension PyInstance {
                         selector: PyString,
                         allowsCallableFromDict: Bool = false) -> GetMethodResult {
     if let obj = object as? HasCustomGetMethod {
-      return obj.getMethod(selector: selector,
+      return obj.getMethod(self,
+                           selector: selector,
                            allowsCallableFromDict: allowsCallableFromDict)
     }
 
     let staticProperty: PyObject?
     let staticDescriptor: GetDescriptor?
 
-    switch object.type.mroLookup(name: selector) {
+    switch object.type.mroLookup(self, name: selector) {
     case .value(let lookup):
       staticProperty = lookup.object
-      staticDescriptor = GetDescriptor(object: object, attribute: lookup.object)
+      staticDescriptor = GetDescriptor(self, object: object, attribute: lookup.object)
     case .notFound:
       staticProperty = nil
       staticDescriptor = nil
@@ -201,7 +204,7 @@ extension PyInstance {
     // Do not bind the result! It is 'just' a callable entry in '__dict__'.
     if allowsCallableFromDict {
       if let dict = self.get__dict__(object: object) {
-        switch dict.get(key: selector) {
+        switch dict.get(self, key: selector) {
         case .value(let attr): return .value(attr)
         case .notFound: break
         case .error(let e): return .error(e)
@@ -219,7 +222,7 @@ extension PyInstance {
     }
 
     let e = self.newAttributeError(object: object, hasNoAttribute: selector)
-    return .notFound(e)
+    return .notFound(e.asBaseException)
   }
 
   // MARK: - Call method
@@ -244,14 +247,14 @@ extension PyInstance {
     }
   }
 
-  /// Call method with single positional argument.
+  /// Call method with a single positional argument.
   public func callMethod(object: PyObject,
                          selector: IdString,
                          arg: PyObject) -> CallMethodResult {
     return self.callMethod(object: object, selector: selector, args: [arg])
   }
 
-  /// Call method with single positional argument.
+  /// Call method with a single positional argument.
   public func callMethod(object: PyObject,
                          selector: PyString,
                          arg: PyObject) -> CallMethodResult {
@@ -285,12 +288,12 @@ extension PyInstance {
                          args: PyObject,
                          kwargs: PyObject?) -> CallMethodResult {
     let argsArray: [PyObject]
-    switch ArgumentParser.unpackArgsTuple(args: args) {
+    switch ArgumentParser.unpackArgsTuple(self, args: args) {
     case let .value(o): argsArray = o
     case let .error(e): return .error(e)
     }
 
-    switch ArgumentParser.unpackKwargsDict(kwargs: kwargs) {
+    switch ArgumentParser.unpackKwargsDict(self, kwargs: kwargs) {
     case let .value(kwargsDict):
       return self.callMethod(object: object,
                              selector: selector,
@@ -361,23 +364,25 @@ extension PyInstance {
     // >>> o2(1)
     // 2
 
-    if let fn = PyCast.asBuiltinFunction(method) {
-      method = fn.bind(to: object)
+    if let fn = self.cast.asBuiltinFunction(method) {
+      let bound = fn.bind(self, object: object)
+      method = bound.asObject
     }
-    if let fn = PyCast.asFunction(method) {
-      method = fn.bind(to: object)
+
+    if let fn = self.cast.asFunction(method) {
+      let bound = fn.bind(self, object: object)
+      method = bound.asObject
     }
 
     switch self.call(callable: method, args: args, kwargs: kwargs) {
     case .value(let result):
       return .value(result)
     case .notCallable:
-      let msg = "attribute of type '\(method.typeName)' is not callable"
-      return .notCallable(self.newTypeError(msg: msg))
+      let message = "attribute of type '\(method.typeName)' is not callable"
+      let error = self.newTypeError(message: message)
+      return .notCallable(error.asBaseException)
     case .error(let e):
       return .error(e)
     }
   }
 }
-
-*/

@@ -238,7 +238,7 @@ extension Py {
 
   private func createModule(spec: ModuleSpecWithPath,
                             code: PyCode) -> ImportlibResult<PyModule> {
-    let module = self.newModule(name: spec.name)
+    let module = self.newModule(name: spec.name, doc: nil, dict: nil)
 
     let moduleDict = module.getDict()
     let nameObject = spec.nameObject.asObject

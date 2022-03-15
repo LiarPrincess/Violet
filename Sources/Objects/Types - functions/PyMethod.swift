@@ -247,7 +247,12 @@ public struct PyMethod: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "__func__")
     }
 
-    return PyResult(zelf.function)
+    let result = zelf.getFunction()
+    return PyResult(result)
+  }
+
+  internal func getFunction() -> PyFunction {
+    return self.function
   }
 
   // sourcery: pymethod = __self__
