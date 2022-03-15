@@ -60,18 +60,23 @@ public struct DirResult {
   }
 }
 
+// MARK: - PyResult
+
 extension PyResult where Wrapped == PyObject {
+  public init(_ py: Py, _ dir: DirResult) {
+    let list = py.newList(elements: dir.elements)
+    switch list.sort(py, key: nil, isReverse: false) {
+    case .value:
+      self = PyResult(list)
+    case .error(let e):
+      self = .error(e)
+    }
+  }
+
   public init(_ py: Py, _ result: PyResult<DirResult>) {
     switch result {
     case let .value(dir):
-      let list = py.newList(elements: dir.elements)
-      switch list.sort(py, key: nil, isReverse: false) {
-      case .value:
-        self = PyResult(list)
-      case .error(let e):
-        self = .error(e)
-      }
-
+      self = PyResult(py, dir)
     case let .error(e):
       self = .error(e)
     }

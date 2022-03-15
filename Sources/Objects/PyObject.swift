@@ -250,7 +250,7 @@ public struct PyObject: PyObjectMixin {
       }
     }
 
-    let result = py.newObject(type: type)
+    let result = py.memory.newObject(py, type: type)
     return .value(result)
   }
 

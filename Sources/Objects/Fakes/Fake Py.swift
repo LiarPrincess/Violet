@@ -39,19 +39,13 @@ public struct Py {
   internal var _impModule: PyModule { fatalError() }
   internal var builtinsModule: PyModule { fatalError() }
 
-  // MARK: - New
-
-  public func newObject(type: PyType? = nil) -> PyObject { fatalError() } // default type
-
-  // MARK: - Other
+  // MARK: - Intern
 
   internal func getInterned(int: Int) -> PyInt? { fatalError() }
   internal func getInterned(int: BigInt) -> PyInt? { fatalError() }
 
   public func intern(scalar: UnicodeScalar) -> PyString { fatalError() }
   public func intern(string: String) -> PyString { fatalError() }
-
-  public func get__dict__(object: PyObject) -> PyDict? { fatalError() }
 
   // MARK: - Errors
 
