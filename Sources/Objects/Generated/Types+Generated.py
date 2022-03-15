@@ -186,6 +186,25 @@ def print_type_extension(t: TypeInfo):
     swift_type_name = t.swift_type_name
     swift_type_name_without_py = swift_type_name[2:]
 
+    # int -> bool
+    # Exception -> *ImportError* -> ModuleNotFoundError
+    # Exception -> LookupError -> (IndexError, *KeyError*)
+    # Exception -> *SyntaxError* -> IndentationError -> TabError
+
+    # # We need to include base types fields
+    # fields: List[FieldIncludedInLayout] = []
+    # type_or_base = t
+    # while type_or_base != None:
+    #     type_or_base_fields: List[FieldIncludedInLayout] = []
+    #     for field in type_or_base.swift_fields:
+    #         f = FieldIncludedInLayout(field.swift_name, field.swift_type, type_or_base)
+    #         type_or_base_fields.append(f)
+
+    #     # base fields are before our fields
+    #     fields = type_or_base_fields + fields
+    #     type_or_base = type_or_base.base_type_info
+    #     break
+
     fields: List[FieldIncludedInLayout] = []
     for f in t.swift_fields:
         fields.append(FieldIncludedInLayout(f.swift_name, f.swift_type, t))

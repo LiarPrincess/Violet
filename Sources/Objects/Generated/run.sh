@@ -15,8 +15,8 @@ sourcery \
   --output "$GENERATED/Sourcery/dump.txt" \
   --quiet
 
-echo "Types+Memory"
-python3 "$GENERATED/Types+Memory.py" > "$GENERATED/Types+Memory.swift"
+echo "Types+Generated"
+python3 "$GENERATED/Types+Generated.py" > "$GENERATED/Types+Generated.swift"
 echo "PyStaticCall"
 python3 "$GENERATED/PyStaticCall.py" > "$GENERATED/PyStaticCall.swift"
 echo "Py+TypeDefinitions"
