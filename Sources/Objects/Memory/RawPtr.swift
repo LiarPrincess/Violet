@@ -9,7 +9,8 @@ public struct RawPtr: CustomStringConvertible {
   fileprivate let value: UnsafeRawPointer
 
   public var description: String {
-    return String(describing: self.value)
+    let int = Int(bitPattern: self)
+    return "0x" + String(int, radix: 16, uppercase: true)
   }
 
   public init(_ value: UnsafeRawPointer) {

@@ -39,23 +39,9 @@ public struct Py {
   internal var _impModule: PyModule { fatalError() }
   internal var builtinsModule: PyModule { fatalError() }
 
-  internal func getInterned(int: Int) -> PyInt? { fatalError() }
-  internal func getInterned(int: BigInt) -> PyInt? { fatalError() }
-
   // MARK: - New
 
   public func newObject(type: PyType? = nil) -> PyObject { fatalError() } // default type
-
-  public func newString(_ s: String) -> PyString { fatalError() }
-  public func newString(_ s: String.UnicodeScalarView) -> PyString { fatalError() }
-  public func newString(_ s: Substring.UnicodeScalarView) -> PyString { fatalError() }
-  public func newString(scalar: UnicodeScalar) -> PyString { fatalError() }
-  public func newStringIterator(string: PyString) -> PyStringIterator { fatalError() }
-
-  public func newBytes(_ d: Data) -> PyBytes { fatalError() }
-  public func newBytesIterator(bytes: PyBytes) -> PyBytesIterator { fatalError() }
-  public func newByteArray(_ d: Data) -> PyByteArray { fatalError() }
-  public func newByteArrayIterator(bytes: PyByteArray) -> PyByteArrayIterator { fatalError() }
 
   internal func newType(
     name: String,
@@ -84,18 +70,14 @@ public struct Py {
                                deinitialize: deinitialize)
   }
 
-  // MARK: - String
-
-  public func repr(object: PyObject) -> PyResult<PyString> { fatalError() }
-  public func reprString(object: PyObject) -> PyResult<String> { fatalError() }
-  public func reprOrGenericString(object: PyObject) -> String { fatalError() }
-  public func str(object: PyObject) -> PyResult<PyString> { fatalError() }
-  public func strString(object: PyObject) -> PyResult<String> { fatalError() }
-
   // MARK: - Other
+
+  internal func getInterned(int: Int) -> PyInt? { fatalError() }
+  internal func getInterned(int: BigInt) -> PyInt? { fatalError() }
 
   public func intern(scalar: UnicodeScalar) -> PyString { fatalError() }
   public func intern(string: String) -> PyString { fatalError() }
+
   public func get__dict__(object: PyObject) -> PyDict? { fatalError() }
 
   // MARK: - Errors
@@ -129,28 +111,4 @@ public struct Py {
                                   offset: PyInt?,
                                   text: PyString?,
                                   printFileAndLine: PyBool?) -> PyIndentationError { fatalError() }
-
-  // MARK: - Get string
-
-  internal enum GetStringResult {
-    case string(PyString, String)
-    case bytes(PyAnyBytes, String)
-    case byteDecodingError(PyAnyBytes)
-    case notStringOrBytes
-  }
-
-  internal func getString(object: PyObject,
-                          encoding: PyString.Encoding?) -> GetStringResult {
-    fatalError()
-  }
-
-  internal func getString(bytes: PyAnyBytes,
-                          encoding: PyString.Encoding?) -> String? {
-    fatalError()
-  }
-
-  internal func getString(data: Data,
-                          encoding: PyString.Encoding?) -> String? {
-    fatalError()
-  }
 }

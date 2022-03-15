@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // swiftlint:disable file_length
@@ -8,7 +7,7 @@ import VioletCore
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-extension PyInstance {
+extension Py {
 
   // MARK: - Repr
 
@@ -17,7 +16,7 @@ extension PyInstance {
   public func repr(object: PyObject) -> PyResult<PyString> {
     switch self.reprImpl(object: object) {
     case .string(let s):
-      let py = Py.newString(s)
+      let py = self.newString(s)
       return .value(py)
     case .pyString(let s):
       return .value(s)
@@ -48,38 +47,36 @@ extension PyInstance {
   }
 
   private enum ReprImplResult {
-    /// Result of the static call
     case string(String)
-    /// Result of the dynamic call
     case pyString(PyString)
-    /// When the dynamic call returns non-string
     case methodReturnedNonString(PyObject)
     case notCallable(PyBaseException)
     case error(PyBaseException)
+
+    fileprivate init(_ py: Py, object: PyObject) {
+      switch py.cast.asString(object) {
+      case .some(let string):
+        self = .pyString(string)
+      case .none:
+        self = .methodReturnedNonString(object)
+      }
+    }
   }
 
   private func reprImpl(object: PyObject) -> ReprImplResult {
-    if let result = PyStaticCall.__repr__(object) {
+    if let result = PyStaticCall.__repr__(self, object: object) {
       switch result {
-      case let .value(s):
-        return .string(s)
-      case let .error(e):
-        return .error(e)
+      case let .value(o): return ReprImplResult(self, object: o)
+      case let .error(e): return .error(e)
       }
     }
 
     switch self.callMethod(object: object, selector: .__repr__) {
-    case let .value(result):
-      guard let pyString = PyCast.asString(result) else {
-        return .methodReturnedNonString(result)
-      }
-
-      return .pyString(pyString)
-
+    case let .value(object):
+      return ReprImplResult(self, object: object)
     case .missingMethod:
       let generic = self.genericRepr(object: object)
       return .string(generic)
-
     case let .notCallable(e):
       return .notCallable(e)
     case let .error(e):
@@ -89,7 +86,8 @@ extension PyInstance {
 
   private func createReprReturnedNonStringError(object: PyObject) -> PyBaseException {
     let type = object.typeName
-    return Py.newTypeError(msg: "__repr__ returned non-string (\(type))")
+    let error = self.newTypeError(message: "__repr__ returned non-string (\(type))")
+    return error.asBaseException
   }
 
   // MARK: - Repr or generic
@@ -100,14 +98,14 @@ extension PyInstance {
   public func reprOrGeneric(object: PyObject) -> PyString {
     switch self.reprImpl(object: object) {
     case .string(let s):
-      return Py.newString(s)
+      return self.newString(s)
     case .pyString(let s):
       return s
     case .methodReturnedNonString,
          .error,
          .notCallable:
       let generic = self.genericRepr(object: object)
-      return Py.newString(generic)
+      return self.newString(generic)
     }
   }
 
@@ -138,14 +136,14 @@ extension PyInstance {
   public func str(object: PyObject) -> PyResult<PyString> {
     switch self.strImpl(object: object) {
     case .reprLock:
-      return .value(Py.emptyString)
+      return .value(self.emptyString)
     case .string(let s):
-      let py = Py.newString(s)
+      let py = self.newString(s)
       return .value(py)
     case .pyString(let s):
       return .value(s)
     case .methodReturnedNonString(let o):
-      return .typeError("__str__ returned non-string (\(o.typeName))")
+      return .typeError(self, message: "__str__ returned non-string (\(o.typeName))")
     case .notCallable(let e):
       return .error(e)
     case .error(let e):
@@ -164,7 +162,7 @@ extension PyInstance {
     case .pyString(let s):
       return .value(s.value)
     case .methodReturnedNonString(let o):
-      return .typeError("__str__ returned non-string (\(o.typeName))")
+      return .typeError(self, message: "__str__ returned non-string (\(o.typeName))")
     case .notCallable(let e):
       return .error(e)
     case .error(let e):
@@ -174,14 +172,20 @@ extension PyInstance {
 
   private enum StrImplResult {
     case reprLock
-    /// Result of the static call
     case string(String)
-    /// Result of the dynamic call
     case pyString(PyString)
-    /// When the dynamic call returns non-string
     case methodReturnedNonString(PyObject)
     case notCallable(PyBaseException)
     case error(PyBaseException)
+
+    fileprivate init(_ py: Py, object: PyObject) {
+      switch py.cast.asString(object) {
+      case .some(let string):
+        self = .pyString(string)
+      case .none:
+        self = .methodReturnedNonString(object)
+      }
+    }
 
     fileprivate init(repr: ReprImplResult) {
       switch repr {
@@ -205,26 +209,20 @@ extension PyInstance {
       return StrImplResult(repr: repr)
     }
 
-    if let result = PyStaticCall.__str__(object) {
+    if let result = PyStaticCall.__str__(self, object: object) {
       switch result {
-      case let .value(s): return .string(s)
+      case let .value(o): return StrImplResult(self, object: o)
       case let .error(e): return .error(e)
       }
     }
 
     switch self.callMethod(object: object, selector: .__str__) {
-    case let .value(result):
-      guard let pyString = PyCast.asString(result) else {
-        return .methodReturnedNonString(result)
-      }
-
-      return .pyString(pyString)
-
+    case let .value(object):
+      return StrImplResult(self, object: object)
     case .missingMethod:
       // Hmm… we checked that we have custom '__str__', so we should not end up here
       let repr = self.reprImpl(object: object)
       return StrImplResult(repr: repr)
-
     case let .notCallable(e):
       return .notCallable(e)
     case let .error(e):
@@ -235,11 +233,11 @@ extension PyInstance {
   private func hasCustom__str__(object: PyObject) -> Bool {
     let type = object.type
 
-    guard let lookup = type.mroLookup(name: .__str__) else {
+    guard let lookup = type.mroLookup(self, name: .__str__) else {
       // 'object' has default implementation for '__str__',
       // if we did not find it then something went really wrong.
       let typeName = type.getNameString()
-      trap("'\(typeName)' is not a subclass of 'object'")
+      trap("'\(typeName)' is not a subclass of 'object'?")
     }
 
     let isFromObject = lookup.type === self.types.object
@@ -253,7 +251,7 @@ extension PyInstance {
   public func ascii(object: PyObject) -> PyResult<PyString> {
     switch self.asciiImpl(object: object) {
     case let .string(s):
-      let py = Py.newString(s)
+      let py = self.newString(s)
       return .value(py)
     case let .pystring(s):
       return .value(s)
@@ -328,62 +326,6 @@ extension PyInstance {
     return .string(result)
   }
 
-  // MARK: - Join
-
-  /// _PyUnicode_JoinArray
-  public func join(strings elements: [PyObject],
-                   separator: PyObject) -> PyResult<PyString> {
-    if elements.isEmpty {
-      return .value(self.emptyString)
-    }
-
-    if elements.count == 1 {
-      if let s = PyCast.asString(elements[0]) {
-        return .value(s)
-      }
-    }
-
-    guard let sep = PyCast.asString(separator) else {
-      return .typeError("separator: expected str instance, \(separator.typeName) found")
-    }
-
-    let strings: [PyString]
-    switch self.asStringArray(elements: elements) {
-    case let .value(r): strings = r
-    case let .error(e): return .error(e)
-    }
-
-    var result = ""
-    for (index, string) in strings.enumerated() {
-      result.append(string.value)
-
-      let isLast = index == strings.count - 1
-      if !isLast {
-        result.append(sep.value)
-      }
-    }
-
-    return .value(self.newString(result))
-  }
-
-  private func asStringArray(elements: [PyObject]) -> PyResult<[PyString]> {
-    var result = [PyString]()
-
-    for (index, object) in elements.enumerated() {
-      switch PyCast.asString(object) {
-      case .some(let s):
-        result.append(s)
-      case .none:
-        let msg = "sequence item \(index): expected str instance, \(object.typeName) found"
-        return .typeError(msg)
-      }
-    }
-
-    return .value(result)
-  }
-
-  // MARK: - Helpers
-
   private func hex(value: UInt32, padTo: Int) -> String {
     let string = String(value, radix: 16, uppercase: false)
     if string.count >= padTo {
@@ -397,5 +339,3 @@ extension PyInstance {
     return padding + string
   }
 }
-
-*/

@@ -15,6 +15,10 @@ public struct Sys {
     case error(PyBaseException)
   }
 
+  public var defaultEncoding: PyString.Encoding {
+    fatalError()
+  }
+
   public func getModule(name: PyString) -> GetModuleResult { fatalError() }
   public func getModule(name: PyObject) -> GetModuleResult { fatalError() }
 

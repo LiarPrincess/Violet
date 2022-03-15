@@ -136,7 +136,7 @@ extension Py {
       return _open(string: string)
 
     case let .bytes(data):
-      guard let string = self.getString(data: data, encoding: nil) else {
+      guard let string = self.getString(data: data, encoding: .default) else {
         return .valueError(self, message: "bytes cannot interpreted as path")
       }
 
