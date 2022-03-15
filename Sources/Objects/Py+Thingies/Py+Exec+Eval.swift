@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import VioletCore
 import VioletLexer
@@ -16,19 +15,20 @@ private protocol ExecEval {
   static func createLocalsNotDictError(type: String) -> String
   static func createGlobalsNotDictError(type: String) -> String
 
-  static func createSourceWithFreeVariablesError() -> String
-  static func createSourceDecodingError() -> String
-  static func createSourceArgumentHasInvalidTypeError() -> String
+  static var sourceWithFreeVariablesError: String { get }
+  static var sourceDecodingError: String { get }
+  static var sourceArgumentHasInvalidTypeError: String { get }
 }
 
 extension ExecEval {
 
-  fileprivate static func run(source: PyObject,
+  fileprivate static func run(_ py: Py,
+                              source: PyObject,
                               globals _globals: PyObject?,
                               locals _locals: PyObject?) -> PyResult<PyObject> {
     let locals: PyDict
     let globals: PyDict
-    switch Self.parseEnv(globals: _globals, locals: _locals) {
+    switch Self.parseEnv(py, globals: _globals, locals: _locals) {
     case let .value(env):
       globals = env.globals
       locals = env.locals
@@ -36,20 +36,20 @@ extension ExecEval {
       return .error(e)
     }
 
-    if globals.get(id: .__builtins__) == nil {
-      let builtins = Py.delegate.frame?.builtins ?? Py.builtins.__dict__
-      globals.set(id: .__builtins__, to: builtins)
+    if globals.get(py, id: .__builtins__) == nil {
+      let builtins = py.delegate.frame?.builtins ?? py.builtins.__dict__
+      globals.set(py, id: .__builtins__, value: builtins.asObject)
     }
 
     let code: PyCode
-    switch Self.parseSource(arg: source) {
+    switch Self.parseSource(py, arg: source) {
     case let .value(c):
       code = c
     case let .error(e):
       return .error(e)
     }
 
-    return Py.delegate.eval(
+    return py.delegate.eval(
       name: nil,
       qualname: nil,
       code: code,
@@ -81,37 +81,38 @@ private enum DictOrNone {
 
 extension ExecEval {
 
-  private static func parseEnv(globals: PyObject?,
+  private static func parseEnv(_ py: Py,
+                               globals: PyObject?,
                                locals: PyObject?) -> PyResult<Env> {
     // Omg! This code looks soooooo bad.
     // So, we basically try to do 'Self.parseDictOrNone' 2 times
     // (on both 'globals' and 'locals'), so that gives us 7 cases to handle.
-    switch Self.parseDictOrNone(object: globals) {
+    switch Self.parseDictOrNone(py, object: globals) {
     case .dict(let g):
-      switch Self.parseDictOrNone(object: locals) {
+      switch Self.parseDictOrNone(py, object: locals) {
       case .dict(let l):
         return .value(Env(globals: g, locals: l))
       case .none:
         return .value(Env(globals: g, locals: g))
       case .somethingElse(let type):
-        return .typeError(Self.createLocalsNotDictError(type: type))
+        return .typeError(py, message: Self.createLocalsNotDictError(type: type))
       }
 
     case .none:
-      switch Py.globals() {
+      switch py.globals() {
       case let .value(g):
-        switch Self.parseDictOrNone(object: locals) {
+        switch Self.parseDictOrNone(py, object: locals) {
         case .dict(let l):
           return .value(Env(globals: g, locals: l))
         case .none:
-          switch Py.locals() {
+          switch py.locals() {
           case let .value(l):
             return .value(Env(globals: g, locals: l))
           case let .error(e):
             return .error(e)
           }
         case .somethingElse(let type):
-          return .typeError(Self.createLocalsNotDictError(type: type))
+          return .typeError(py, message: Self.createLocalsNotDictError(type: type))
         }
 
       case let .error(e):
@@ -119,20 +120,20 @@ extension ExecEval {
       }
 
     case .somethingElse(let type):
-      return .typeError(Self.createGlobalsNotDictError(type: type))
+      return .typeError(py, message: Self.createGlobalsNotDictError(type: type))
     }
   }
 
-  private static func parseDictOrNone(object: PyObject?) -> DictOrNone {
+  private static func parseDictOrNone(_ py: Py, object: PyObject?) -> DictOrNone {
     guard let obj = object else {
       return .none
     }
 
-    if let dict = PyCast.asDict(obj) {
+    if let dict = py.cast.asDict(obj) {
       return .dict(dict)
     }
 
-    if PyCast.isNone(obj) {
+    if py.cast.isNone(obj) {
       return .none
     }
 
@@ -141,19 +142,19 @@ extension ExecEval {
 
   // MARK: - Source
 
-  private static func parseSource(arg: PyObject) -> PyResult<PyCode> {
-    if let code = PyCast.asCode(arg) {
+  private static func parseSource(_ py: Py, arg: PyObject) -> PyResult<PyCode> {
+    if let code = py.cast.asCode(arg) {
       if code.freeVariableCount > 0 {
-        return .typeError(Self.createSourceWithFreeVariablesError())
+        return .typeError(py, message: Self.sourceWithFreeVariablesError)
       }
 
       return .value(code)
     }
 
-    switch Py.getString(object: arg) {
+    switch py.getString(object: arg, encoding: nil) {
     case .string(_, let source),
          .bytes(_, let source):
-      let compileResult = Py.compile(source: source,
+      let compileResult = py.compile(source: source,
                                      filename: Self.filename,
                                      mode: Self.parserMode,
                                      optimize: Compiler.OptimizationLevel.none)
@@ -161,16 +162,14 @@ extension ExecEval {
       return compileResult.asResult()
 
     case .byteDecodingError:
-      return .typeError(Self.createSourceArgumentHasInvalidTypeError())
+      return .typeError(py, message: Self.sourceArgumentHasInvalidTypeError)
     case .notStringOrBytes:
-      return .typeError(Self.createSourceArgumentHasInvalidTypeError())
+      return .typeError(py, message: Self.sourceArgumentHasInvalidTypeError)
     }
   }
 }
 
-// MARK: - PyInstance
-
-extension PyInstance {
+extension Py {
 
   // MARK: - Exec
 
@@ -187,17 +186,14 @@ extension PyInstance {
       return "exec() globals must be a dict, not \(type)"
     }
 
-    fileprivate static func createSourceWithFreeVariablesError() -> String {
-      return "code object passed to exec() may not contain free variables"
-    }
+    fileprivate static let sourceWithFreeVariablesError =
+      "code object passed to exec() may not contain free variables"
 
-    fileprivate static func createSourceDecodingError() -> String {
-      return "exec(): cannot decode arg 1 as string"
-    }
+    fileprivate static let sourceDecodingError =
+      "exec(): cannot decode arg 1 as string"
 
-    fileprivate static func createSourceArgumentHasInvalidTypeError() -> String {
-      return "exec(): arg 1 must be a string, bytes or code object"
-    }
+    fileprivate static let sourceArgumentHasInvalidTypeError =
+      "exec(): arg 1 must be a string, bytes or code object"
   }
 
   /// exec(object[, globals[, locals]])
@@ -207,9 +203,13 @@ extension PyInstance {
   /// builtin_exec_impl(PyObject *module, PyObject *source, PyObject *globals,
   public func exec(source: PyObject,
                    globals: PyObject?,
-                   locals: PyObject?) -> PyResult<PyNone> {
-    let result = Exec.run(source: source, globals: globals, locals: locals)
-    return result.map { _ in self.none }
+                   locals: PyObject?) -> PyBaseException? {
+    switch Exec.run(self, source: source, globals: globals, locals: locals) {
+    case .value:
+      return nil
+    case .error(let e):
+      return e
+    }
   }
 
   // MARK: - Eval
@@ -227,17 +227,14 @@ extension PyInstance {
       return "globals must be a dict"
     }
 
-    fileprivate static func createSourceWithFreeVariablesError() -> String {
-      return "code object passed to eval() may not contain free variables"
-    }
+    fileprivate static let sourceWithFreeVariablesError =
+      "code object passed to eval() may not contain free variables"
 
-    fileprivate static func createSourceDecodingError() -> String {
-      return "eval(): cannot decode arg 1 as string"
-    }
+    fileprivate static let sourceDecodingError =
+      "eval(): cannot decode arg 1 as string"
 
-    fileprivate static func createSourceArgumentHasInvalidTypeError() -> String {
-      return "eval(): arg 1 must be a string, bytes or code object"
-    }
+    fileprivate static let sourceArgumentHasInvalidTypeError =
+      "eval(): arg 1 must be a string, bytes or code object"
   }
 
   /// eval(expression[, globals[, locals]])
@@ -245,8 +242,6 @@ extension PyInstance {
   public func eval(source: PyObject,
                    globals: PyObject?,
                    locals: PyObject?) -> PyResult<PyObject> {
-    return Eval.run(source: source, globals: globals, locals: locals)
+    return Eval.run(self, source: source, globals: globals, locals: locals)
   }
 }
-
-*/

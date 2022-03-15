@@ -31,6 +31,7 @@ public struct Py {
   public var delegate: PyDelegate { fatalError() }
   public var fileSystem: PyFileSystem { fatalError() }
 
+  internal var builtins: Builtins { fatalError() }
   internal var sys: Sys { fatalError() }
   internal var _warnings: UnderscoreWarnings { fatalError() }
 
@@ -203,65 +204,6 @@ public struct Py {
 
   public func isCallable(object: PyObject) -> Bool { fatalError() }
   public func isAbstractMethod(object: PyObject) -> PyResult<Bool> { fatalError() }
-
-// MARK: - Compile
-
-  internal enum ReadSourceFileResult {
-    case value(String)
-    /// Error when reading a file (it may not exist etc.)
-    case readError(PyBaseException)
-    /// File exists but we cant read it
-    case decodingError(PyBaseException)
-  }
-
-  internal func readSourceFile(path: Path) -> ReadSourceFileResult {
-    fatalError()
-  }
-
-  public enum CompileResult {
-    /// Code compiled successfully (Yay!)
-    case code(PyCode)
-
-    /// Lexer warning that should be treated as error OR error when printing
-    case lexerWarning(LexerWarning, PyBaseException)
-    /// Lexing failed
-    case lexerError(LexerError, PyBaseException)
-
-    /// Parser warning that should be treated as error OR error when printing
-    case parserWarning(ParserWarning, PyBaseException)
-    /// Parsing failed
-    case parserError(ParserError, PyBaseException)
-
-    /// Compiler warning that should be treated as error OR error when printing
-    case compilerWarning(CompilerWarning, PyBaseException)
-    /// Compiling failed
-    case compilerError(CompilerError, PyBaseException)
-
-    /// Non lexer, parser or compiler error
-    case error(PyBaseException)
-
-    public func asResult() -> PyResult<PyCode> {
-      switch self {
-      case let .code(c):
-        return .value(c)
-      case let .lexerWarning(_, e),
-           let .lexerError(_, e),
-           let .parserWarning(_, e),
-           let .parserError(_, e),
-           let .compilerWarning(_, e),
-           let .compilerError(_, e),
-           let .error(e):
-        return .error(e)
-      }
-    }
-  }
-
-
-  public func compile(path: Path,
-                      mode: Parser.Mode,
-                      optimize: Compiler.OptimizationLevel? = nil) -> CompileResult {
-    fatalError()
-  }
 
   // MARK: - Errors
 

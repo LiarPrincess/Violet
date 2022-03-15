@@ -1,3 +1,7 @@
+public struct Builtins {
+  internal var __dict__: PyDict { fatalError() }
+}
+
 public struct Sys {
   public var flags: Flags { fatalError() }
 
