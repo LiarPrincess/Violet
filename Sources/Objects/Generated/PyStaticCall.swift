@@ -113,7 +113,7 @@ public enum PyStaticCall {
     public typealias Keys = (Py, PyObject) -> PyObject
     public typealias Del = (Py, PyObject) -> PyResult<PyObject>
     public typealias Call = (Py, PyObject, [PyObject], PyDict?) -> PyResult<PyObject>
-    public typealias InstanceCheck = (Py, PyObject, PyObject) -> PyBool
+    public typealias InstanceCheck = (Py, PyObject, PyObject) -> PyResult<PyBool>
     public typealias SubclassCheck = (Py, PyObject, PyObject) -> PyResult<PyBool>
     public typealias IsAbstractMethod = (Py, PyObject) -> PyResult<PyBool>
     public typealias NumericUnary = (Py, PyObject) -> PyObject
@@ -864,7 +864,7 @@ public enum PyStaticCall {
 
   // MARK: - __instancecheck__
 
-  internal static func __instancecheck__(_ py: Py, type: PyObject, object: PyObject) -> PyBool? {
+  internal static func __instancecheck__(_ py: Py, type: PyObject, object: PyObject) -> PyResult<PyBool>? {
     if let method = type.type.staticMethods.__instancecheck__ {
       return method(py, type, object)
     }
