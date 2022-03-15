@@ -957,7 +957,7 @@ public struct PyFloat: PyObjectMixin {
   }
 
   private static func new(_ py: Py, fromString object: PyObject) -> DoubleFromString {
-    switch py.getString(object: object, encoding: nil) {
+    switch py.getString(object: object, encoding: .default) {
     case .string(_, let s),
          .bytes(_, let s):
       guard let value = Double(parseUsingPythonRules: s) else {

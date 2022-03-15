@@ -1280,7 +1280,7 @@ public struct PyInt: PyObjectMixin {
                           fromString object: PyObject,
                           base: Int) -> NewFromStringResult {
     let string: String
-    switch py.getString(object: object, encoding: nil) {
+    switch py.getString(object: object, encoding: .default) {
     case .string(_, let s),
          .bytes(_, let s):
       string = s

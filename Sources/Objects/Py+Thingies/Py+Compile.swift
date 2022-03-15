@@ -225,7 +225,7 @@ extension Py {
 
   private func parseStringArg(argumentIndex index: Int,
                               arg: PyObject) -> PyResult<String> {
-    switch self.getString(object: arg, encoding: nil) {
+    switch self.getString(object: arg, encoding: .default) {
     case .string(_, let s),
          .bytes(_, let s):
       return .value(s)

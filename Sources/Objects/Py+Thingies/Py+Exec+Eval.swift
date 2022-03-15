@@ -151,7 +151,7 @@ extension ExecEval {
       return .value(code)
     }
 
-    switch py.getString(object: arg, encoding: nil) {
+    switch py.getString(object: arg, encoding: .default) {
     case .string(_, let source),
          .bytes(_, let source):
       let compileResult = py.compile(source: source,
