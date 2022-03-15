@@ -12,14 +12,14 @@ public struct PyRangeIterator: PyObjectMixin {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var start: BigInt { self.startPtr.pointee }
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var step: BigInt { self.stepPtr.pointee }
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var length: BigInt { self.lengthPtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var index: BigInt {
     get { self.indexPtr.pointee }
     nonmutating set { self.indexPtr.pointee = newValue }

@@ -22,7 +22,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
 
   internal typealias Element = OrderedSet.Element
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var elements: OrderedSet {
     get { self.elementsPtr.pointee }
     nonmutating _modify { yield &self.elementsPtr.pointee }

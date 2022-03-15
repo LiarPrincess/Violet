@@ -15,7 +15,7 @@ public struct PyTraceback: PyObjectMixin {
     Create a new traceback object.
     """
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Next inner traceback object (called by this level)
   ///
   /// CPython: `tb_next`.
@@ -24,19 +24,19 @@ public struct PyTraceback: PyObjectMixin {
     nonmutating set { self.nextPtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Frame object at this level
   ///
   /// CPython: `tb_frame`.
   private var frame: PyFrame { self.framePtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Index of last attempted instruction in bytecode
   ///
   /// CPython: `tb_lasti`.
   private var lastInstruction: PyInt { self.lastInstructionPtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Current line number in Python source code
   ///
   /// CPython: `tb_lineno`.

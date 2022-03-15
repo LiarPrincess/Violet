@@ -12,7 +12,7 @@ public struct PyDictValues: PyObjectMixin, AbstractDictView {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var dict: PyDict { self.dictPtr.pointee }
 
   public let ptr: RawPtr

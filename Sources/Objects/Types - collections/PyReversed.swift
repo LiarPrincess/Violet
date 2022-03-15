@@ -20,10 +20,10 @@ public struct PyReversed: PyObjectMixin {
 
   private static let endIndex = -1
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var sequence: PyObject { self.sequencePtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var index: Int {
     get { self.indexPtr.pointee }
     nonmutating set { self.indexPtr.pointee = newValue }

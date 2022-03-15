@@ -8,26 +8,26 @@ public struct PyErrorHeader {
   public static let defaultSuppressContext = false
   private static let suppressContextFlag = PyObjectHeader.Flags.custom0
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var args: PyTuple {
     get { self.argsPtr.pointee }
     nonmutating set { self.argsPtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var traceback: PyTraceback? {
     get { self.tracebackPtr.pointee }
     nonmutating set { self.tracebackPtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// `raise from xxx`.
   internal var cause: PyBaseException? {
     get { self.causePtr.pointee }
     nonmutating set { self.causePtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Another exception during whose handling this exception was raised.
   internal var context: PyBaseException? {
     get { self.contextPtr.pointee }

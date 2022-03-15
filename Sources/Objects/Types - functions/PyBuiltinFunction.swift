@@ -8,15 +8,15 @@
 /// not Python methods in user-defined classes.
 public struct PyBuiltinFunction: PyObjectMixin, AbstractBuiltinFunction {
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// The Swift function that will be called.
   internal var function: FunctionWrapper { self.functionPtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// The `__module__` attribute, can be anything.
   internal var module: PyObject? { self.modulePtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// The `__doc__` attribute, or `nil`.
   internal var doc: String? { self.docPtr.pointee }
 

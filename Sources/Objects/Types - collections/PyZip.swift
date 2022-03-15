@@ -17,7 +17,7 @@ public struct PyZip: PyObjectMixin {
     is exhausted and then it raises StopIteration.
     """
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var iterators: [PyObject] { self.iteratorsPtr.pointee }
 
   public let ptr: RawPtr

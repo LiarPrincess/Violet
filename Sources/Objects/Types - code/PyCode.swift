@@ -18,7 +18,7 @@ public struct PyCode: PyObjectMixin {
 
   // MARK: - Name
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Non-unique name of this code object.
   ///
   /// It will be:
@@ -32,7 +32,7 @@ public struct PyCode: PyObjectMixin {
   /// - dictionary comprehension -> \<dictcomp\>
   public var name: PyString { self.namePtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Unique dot-separated qualified name.
   ///
   /// For example:
@@ -43,7 +43,7 @@ public struct PyCode: PyObjectMixin {
   /// ```
   public var qualifiedName: PyString { self.qualifiedNamePtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// The filename from which the code was compiled.
   /// Will be `<stdin>` for code entered in the interactive interpreter
   /// or whatever name is given as the second argument to `compile`
@@ -52,18 +52,18 @@ public struct PyCode: PyObjectMixin {
 
   // MARK: - Instructions
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Instruction opcodes.
   /// CPython: `co_code`.
   public var instructions: [Instruction] { self.instructionsPtr.pointee }
 
   // MARK: - Lines
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// First line that contains a valid instruction.
   public var firstLine: SourceLine { self.firstLinePtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   private var instructionLines: [SourceLine] { self.instructionLinesPtr.pointee }
 
   /// CPython: `co_lnotab` <- but not exactly the same.
@@ -75,7 +75,7 @@ public struct PyCode: PyObjectMixin {
 
   // MARK: - Constants
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Constants used.
   /// E.g. `LoadConst 5` loads `self.constants[5]` value.
   /// CPython: `co_consts`.
@@ -83,14 +83,14 @@ public struct PyCode: PyObjectMixin {
 
   // MARK: - Labels
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Absolute jump targets.
   /// E.g. label `5` will move us to instruction at `self.labels[5]` index.
   public var labels: [CodeObject.Label] { self.labelsPtr.pointee }
 
   // MARK: - Names
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Names which aren’t covered by any of the other fields (they are not local
   /// variables, they are not free variables, etc) used by the bytecode.
   /// This includes names deemed to be in the global or builtin namespace
@@ -103,7 +103,7 @@ public struct PyCode: PyObjectMixin {
 
   // MARK: - Variables
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Names of the local variables (including arguments).
   ///
   /// In the ‘richest’ case, `variableNames` contains (in order):
@@ -127,7 +127,7 @@ public struct PyCode: PyObjectMixin {
 
   // MARK: - Cell variables
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// List of cell variable names.
   /// Cell = source for 'free' variable.
   ///
@@ -142,7 +142,7 @@ public struct PyCode: PyObjectMixin {
     return self.cellVariableNames.count
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// List of free variable names.
   ///
   /// 'Free variable' means a variable which is referenced by an expression
@@ -161,13 +161,13 @@ public struct PyCode: PyObjectMixin {
 
   // MARK: - Count
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// The number of positional arguments the code object expects to receive,
   /// including those with default values (but excluding `*args`).
   /// CPython: `co_argcount`.
   internal var argCount: Int { self.argCountPtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// The number of keyword arguments the code object can receive.
   /// CPython: `co_kwonlyargcount`.
   internal var kwOnlyArgCount: Int { self.kwOnlyArgCountPtr.pointee }

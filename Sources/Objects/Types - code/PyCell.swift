@@ -10,7 +10,7 @@
 /// can interact with value in parent frame.
 public struct PyCell: PyObjectMixin {
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   // This has to be public for performance
   internal var content: PyObject? {
     get { self.contentPtr.pointee }

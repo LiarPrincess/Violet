@@ -28,7 +28,7 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
       - an integer
     """
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var elements: Data {
     get { self.elementsPtr.pointee }
     nonmutating _modify { yield &self.elementsPtr.pointee }

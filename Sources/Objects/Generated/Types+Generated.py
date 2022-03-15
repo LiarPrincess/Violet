@@ -11,7 +11,7 @@ ERROR_HEADER_ALIGNMENT = 'PyErrorHeader.layout.alignment'
 # === Helpers ===
 # ===============
 
-class FieldIncludedInLayout:
+class PropertyInLayout:
     def __init__(self, swift_name: str, swift_type: str, declared_in_type: Optional[TypeInfo] = None):
         self.swift_name = swift_name
         self.swift_type = swift_type
@@ -22,11 +22,11 @@ class FieldIncludedInLayout:
 def print_layout(swift_type_name: str,
                  initial_offset: str,
                  initial_alignment: str,
-                 fields: List[FieldIncludedInLayout]):
+                 fields: List[PropertyInLayout]):
     print(f'  /// Arrangement of fields in memory.')
     print(f'  ///')
     print(f'  /// This type was automatically generated based on `{swift_type_name}` fields')
-    print(f'  /// with `sourcery: includeInLayout` annotation.')
+    print(f'  /// with `sourcery: storedProperty` annotation.')
     print(f'  internal struct Layout {{')
 
     for p in fields:
@@ -69,7 +69,7 @@ def print_layout(swift_type_name: str,
     print(f'  /// Arrangement of fields in memory.')
     print('  internal static let layout = Layout()')
 
-def print_pointer_properties(fields: List[FieldIncludedInLayout]):
+def print_pointer_properties(fields: List[PropertyInLayout]):
     for f in fields:
         print(f'  internal var {f.pointer_property_name}: Ptr<{f.swift_type}> {{ Ptr(self.ptr, offset: Self.layout.{f.layout_offset_property_name}) }}')
 
@@ -78,9 +78,9 @@ def print_pointer_properties(fields: List[FieldIncludedInLayout]):
 # ===========================
 
 def print_object_header_extension(h: ObjectHeader):
-    fields: List[FieldIncludedInLayout] = []
+    fields: List[PropertyInLayout] = []
     for f in h.fields:
-        fields.append(FieldIncludedInLayout(f.swift_name, f.swift_type))
+        fields.append(PropertyInLayout(f.swift_name, f.swift_type))
 
     print('// MARK: - PyObjectHeader')
     print()
@@ -93,9 +93,9 @@ def print_object_header_extension(h: ObjectHeader):
     print()
 
 def print_error_header_extension(h: ErrorHeader):
-    fields: List[FieldIncludedInLayout] = []
+    fields: List[PropertyInLayout] = []
     for f in h.fields:
-        fields.append(FieldIncludedInLayout(f.swift_name, f.swift_type))
+        fields.append(PropertyInLayout(f.swift_name, f.swift_type))
 
     print('// MARK: - PyErrorHeader')
     print()
@@ -192,12 +192,12 @@ def print_type_extension(t: TypeInfo):
     # Exception -> *SyntaxError* -> IndentationError -> TabError
 
     # # We need to include base types fields
-    # fields: List[FieldIncludedInLayout] = []
+    # fields: List[PropertyInLayout] = []
     # type_or_base = t
     # while type_or_base != None:
-    #     type_or_base_fields: List[FieldIncludedInLayout] = []
-    #     for field in type_or_base.swift_fields:
-    #         f = FieldIncludedInLayout(field.swift_name, field.swift_type, type_or_base)
+    #     type_or_base_fields: List[PropertyInLayout] = []
+    #     for field in type_or_base.swift_properties:
+    #         f = PropertyInLayout(field.swift_name, field.swift_type, type_or_base)
     #         type_or_base_fields.append(f)
 
     #     # base fields are before our fields
@@ -205,9 +205,9 @@ def print_type_extension(t: TypeInfo):
     #     type_or_base = type_or_base.base_type_info
     #     break
 
-    fields: List[FieldIncludedInLayout] = []
-    for f in t.swift_fields:
-        fields.append(FieldIncludedInLayout(f.swift_name, f.swift_type, t))
+    fields: List[PropertyInLayout] = []
+    for f in t.swift_properties:
+        fields.append(PropertyInLayout(f.swift_name, f.swift_type, t))
 
     print(f'// MARK: - {swift_type_name}')
     print()

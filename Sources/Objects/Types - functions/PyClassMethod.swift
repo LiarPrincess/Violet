@@ -31,7 +31,7 @@ public struct PyClassMethod: PyObjectMixin {
     If you want those, see the staticmethod builtin.
     """
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var callable: PyObject? {
     get { self.callablePtr.pointee }
     nonmutating set { self.callablePtr.pointee = newValue }

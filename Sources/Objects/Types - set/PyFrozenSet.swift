@@ -22,7 +22,7 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
 
   internal typealias Element = OrderedSet.Element
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var elements: OrderedSet { self.elementsPtr.pointee }
 
   public let ptr: RawPtr

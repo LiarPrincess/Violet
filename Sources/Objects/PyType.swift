@@ -37,33 +37,33 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   public typealias DebugFn = (RawPtr) -> String
   public typealias DeinitializeFn = (RawPtr) -> Void
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var name: String {
     get { self.namePtr.pointee }
     nonmutating set { self.namePtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var qualname: String {
     get { self.qualnamePtr.pointee }
     nonmutating set { self.qualnamePtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var base: PyType? { self.basePtr.pointee }
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var bases: [PyType] { self.basesPtr.pointee }
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var mro: [PyType] { self.mroPtr.pointee }
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var subclasses: [PyType] { self.subclassesPtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Swift storage (layout).
   /// See `PyType.MemoryLayout` documentation for details.
   internal var layout: MemoryLayout { self.layoutPtr.pointee }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   /// Methods needed to make `PyStaticCall` work.
   ///
   /// See `PyStaticCall` documentation for more information.
@@ -71,9 +71,9 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     self.staticMethodsPtr.pointee
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var debugFn: DebugFn { self.debugFnPtr.pointee }
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var deinitialize: DeinitializeFn { self.deinitializePtr.pointee }
 
   /// `PyObjectHeader.flags` that are only available on `type` instances.

@@ -28,7 +28,7 @@ public struct PyBool: PyObjectMixin {
     The class bool is a subclass of the class int, and cannot be subclassed
     """
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var value: BigInt { self.valuePtr.pointee }
 
   internal var isTrue: Bool {

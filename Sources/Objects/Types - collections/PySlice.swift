@@ -24,11 +24,11 @@ public struct PySlice: PyObjectMixin {
 
   // MARK: - Properties
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var start: PyObject { self.startPtr.pointee }
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var stop: PyObject { self.stopPtr.pointee }
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var step: PyObject { self.stepPtr.pointee }
 
   // MARK: - Swift init

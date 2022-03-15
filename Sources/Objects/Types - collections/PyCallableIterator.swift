@@ -11,9 +11,9 @@ public struct PyCallableIterator: PyObjectMixin {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var callable: PyObject { self.callablePtr.pointee }
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var sentinel: PyObject { self.sentinelPtr.pointee }
 
   public let ptr: RawPtr

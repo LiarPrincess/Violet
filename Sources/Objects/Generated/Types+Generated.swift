@@ -1,8 +1,8 @@
-// =========================================================================
-// Automatically generated from: ./Sources/Objects/Generated/Types+Memory.py
+// ============================================================================
+// Automatically generated from: ./Sources/Objects/Generated/Types+Generated.py
 // Use 'make gen' in repository root to regenerate.
 // DO NOT EDIT!
-// =========================================================================
+// ============================================================================
 
 import Foundation
 import BigInt
@@ -39,7 +39,7 @@ extension PyObjectHeader {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyObjectHeader` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let typeOffset: Int
     internal let lazy__dict__Offset: Int
@@ -82,7 +82,7 @@ extension PyErrorHeader {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyErrorHeader` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let argsOffset: Int
     internal let tracebackOffset: Int
@@ -179,7 +179,7 @@ extension PyBool {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyBool` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let valueOffset: Int
     internal let size: Int
@@ -260,7 +260,7 @@ extension PyBuiltinFunction {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyBuiltinFunction` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let functionOffset: Int
     internal let moduleOffset: Int
@@ -356,7 +356,7 @@ extension PyBuiltinMethod {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyBuiltinMethod` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let functionOffset: Int
     internal let objectOffset: Int
@@ -459,7 +459,7 @@ extension PyByteArray {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyByteArray` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let elementsOffset: Int
     internal let size: Int
@@ -540,7 +540,7 @@ extension PyByteArrayIterator {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyByteArrayIterator` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let bytesOffset: Int
     internal let indexOffset: Int
@@ -626,7 +626,7 @@ extension PyBytes {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyBytes` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let elementsOffset: Int
     internal let size: Int
@@ -707,7 +707,7 @@ extension PyBytesIterator {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyBytesIterator` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let bytesOffset: Int
     internal let indexOffset: Int
@@ -793,7 +793,7 @@ extension PyCallableIterator {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyCallableIterator` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let callableOffset: Int
     internal let sentinelOffset: Int
@@ -881,7 +881,7 @@ extension PyCell {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyCell` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let contentOffset: Int
     internal let size: Int
@@ -962,7 +962,7 @@ extension PyClassMethod {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyClassMethod` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let callableOffset: Int
     internal let size: Int
@@ -1043,7 +1043,7 @@ extension PyCode {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyCode` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let nameOffset: Int
     internal let qualifiedNameOffset: Int
@@ -1190,7 +1190,7 @@ extension PyComplex {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyComplex` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let realOffset: Int
     internal let imagOffset: Int
@@ -1278,7 +1278,7 @@ extension PyDict {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyDict` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let elementsOffset: Int
     internal let size: Int
@@ -1359,7 +1359,7 @@ extension PyDictItemIterator {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyDictItemIterator` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let dictOffset: Int
     internal let indexOffset: Int
@@ -1451,7 +1451,7 @@ extension PyDictItems {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyDictItems` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let dictOffset: Int
     internal let size: Int
@@ -1532,7 +1532,7 @@ extension PyDictKeyIterator {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyDictKeyIterator` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let dictOffset: Int
     internal let indexOffset: Int
@@ -1624,7 +1624,7 @@ extension PyDictKeys {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyDictKeys` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let dictOffset: Int
     internal let size: Int
@@ -1705,7 +1705,7 @@ extension PyDictValueIterator {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyDictValueIterator` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let dictOffset: Int
     internal let indexOffset: Int
@@ -1797,7 +1797,7 @@ extension PyDictValues {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyDictValues` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let dictOffset: Int
     internal let size: Int
@@ -1878,7 +1878,7 @@ extension PyEllipsis {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyEllipsis` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -1950,7 +1950,7 @@ extension PyEnumerate {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyEnumerate` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let iteratorOffset: Int
     internal let nextIndexOffset: Int
@@ -2038,7 +2038,7 @@ extension PyFilter {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyFilter` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let fnOffset: Int
     internal let iteratorOffset: Int
@@ -2126,7 +2126,7 @@ extension PyFloat {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyFloat` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let valueOffset: Int
     internal let size: Int
@@ -2207,7 +2207,7 @@ extension PyFrame {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyFrame` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let codeOffset: Int
     internal let parentOffset: Int
@@ -2350,7 +2350,7 @@ extension PyFrozenSet {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyFrozenSet` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let elementsOffset: Int
     internal let size: Int
@@ -2431,7 +2431,7 @@ extension PyFunction {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyFunction` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let nameOffset: Int
     internal let qualnameOffset: Int
@@ -2564,7 +2564,7 @@ extension PyInt {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyInt` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let valueOffset: Int
     internal let size: Int
@@ -2645,7 +2645,7 @@ extension PyIterator {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyIterator` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let sequenceOffset: Int
     internal let indexOffset: Int
@@ -2731,7 +2731,7 @@ extension PyList {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyList` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let elementsOffset: Int
     internal let size: Int
@@ -2812,7 +2812,7 @@ extension PyListIterator {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyListIterator` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let listOffset: Int
     internal let indexOffset: Int
@@ -2898,7 +2898,7 @@ extension PyListReverseIterator {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyListReverseIterator` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let listOffset: Int
     internal let indexOffset: Int
@@ -2984,7 +2984,7 @@ extension PyMap {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyMap` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let fnOffset: Int
     internal let iteratorsOffset: Int
@@ -3072,7 +3072,7 @@ extension PyMethod {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyMethod` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let functionOffset: Int
     internal let objectOffset: Int
@@ -3160,7 +3160,7 @@ extension PyModule {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyModule` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -3238,7 +3238,7 @@ extension PyNamespace {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyNamespace` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -3312,7 +3312,7 @@ extension PyNone {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyNone` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -3384,7 +3384,7 @@ extension PyNotImplemented {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyNotImplemented` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -3456,7 +3456,7 @@ extension PyObject {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyObject` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -3514,7 +3514,7 @@ extension PyProperty {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyProperty` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let _getOffset: Int
     internal let _setOffset: Int
@@ -3617,7 +3617,7 @@ extension PyRange {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyRange` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let startOffset: Int
     internal let stopOffset: Int
@@ -3718,7 +3718,7 @@ extension PyRangeIterator {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyRangeIterator` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let startOffset: Int
     internal let stepOffset: Int
@@ -3819,7 +3819,7 @@ extension PyReversed {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyReversed` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let sequenceOffset: Int
     internal let indexOffset: Int
@@ -3907,7 +3907,7 @@ extension PySet {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PySet` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let elementsOffset: Int
     internal let size: Int
@@ -3988,7 +3988,7 @@ extension PySetIterator {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PySetIterator` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let setOffset: Int
     internal let indexOffset: Int
@@ -4099,7 +4099,7 @@ extension PySlice {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PySlice` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let startOffset: Int
     internal let stopOffset: Int
@@ -4195,7 +4195,7 @@ extension PyStaticMethod {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyStaticMethod` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let callableOffset: Int
     internal let size: Int
@@ -4276,7 +4276,7 @@ extension PyString {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyString` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let cachedCountOffset: Int
     internal let cachedHashOffset: Int
@@ -4368,7 +4368,7 @@ extension PyStringIterator {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyStringIterator` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let stringOffset: Int
     internal let indexOffset: Int
@@ -4454,7 +4454,7 @@ extension PySuper {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PySuper` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let thisClassOffset: Int
     internal let objectOffset: Int
@@ -4550,7 +4550,7 @@ extension PyTextFile {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyTextFile` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let nameOffset: Int
     internal let fdOffset: Int
@@ -4662,7 +4662,7 @@ extension PyTraceback {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyTraceback` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let nextOffset: Int
     internal let frameOffset: Int
@@ -4765,7 +4765,7 @@ extension PyTuple {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyTuple` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let elementsOffset: Int
     internal let size: Int
@@ -4846,7 +4846,7 @@ extension PyTupleIterator {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyTupleIterator` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let tupleOffset: Int
     internal let indexOffset: Int
@@ -4932,7 +4932,7 @@ extension PyType {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyType` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let nameOffset: Int
     internal let qualnameOffset: Int
@@ -5079,7 +5079,7 @@ extension PyZip {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyZip` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let iteratorsOffset: Int
     internal let size: Int
@@ -5160,7 +5160,7 @@ extension PyArithmeticError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyArithmeticError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -5242,7 +5242,7 @@ extension PyAssertionError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyAssertionError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -5324,7 +5324,7 @@ extension PyAttributeError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyAttributeError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -5406,7 +5406,7 @@ extension PyBaseException {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyBaseException` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -5488,7 +5488,7 @@ extension PyBlockingIOError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyBlockingIOError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -5570,7 +5570,7 @@ extension PyBrokenPipeError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyBrokenPipeError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -5652,7 +5652,7 @@ extension PyBufferError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyBufferError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -5734,7 +5734,7 @@ extension PyBytesWarning {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyBytesWarning` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -5816,7 +5816,7 @@ extension PyChildProcessError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyChildProcessError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -5898,7 +5898,7 @@ extension PyConnectionAbortedError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyConnectionAbortedError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -5980,7 +5980,7 @@ extension PyConnectionError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyConnectionError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -6062,7 +6062,7 @@ extension PyConnectionRefusedError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyConnectionRefusedError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -6144,7 +6144,7 @@ extension PyConnectionResetError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyConnectionResetError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -6226,7 +6226,7 @@ extension PyDeprecationWarning {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyDeprecationWarning` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -6308,7 +6308,7 @@ extension PyEOFError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyEOFError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -6390,7 +6390,7 @@ extension PyException {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyException` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -6472,7 +6472,7 @@ extension PyFileExistsError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyFileExistsError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -6554,7 +6554,7 @@ extension PyFileNotFoundError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyFileNotFoundError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -6636,7 +6636,7 @@ extension PyFloatingPointError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyFloatingPointError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -6718,7 +6718,7 @@ extension PyFutureWarning {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyFutureWarning` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -6800,7 +6800,7 @@ extension PyGeneratorExit {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyGeneratorExit` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -6882,7 +6882,7 @@ extension PyImportError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyImportError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let msgOffset: Int
     internal let moduleNameOffset: Int
@@ -7017,7 +7017,7 @@ extension PyImportWarning {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyImportWarning` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -7099,7 +7099,7 @@ extension PyIndentationError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyIndentationError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -7181,7 +7181,7 @@ extension PyIndexError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyIndexError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -7263,7 +7263,7 @@ extension PyInterruptedError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyInterruptedError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -7345,7 +7345,7 @@ extension PyIsADirectoryError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyIsADirectoryError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -7427,7 +7427,7 @@ extension PyKeyError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyKeyError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -7509,7 +7509,7 @@ extension PyKeyboardInterrupt {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyKeyboardInterrupt` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -7591,7 +7591,7 @@ extension PyLookupError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyLookupError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -7673,7 +7673,7 @@ extension PyMemoryError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyMemoryError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -7755,7 +7755,7 @@ extension PyModuleNotFoundError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyModuleNotFoundError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -7837,7 +7837,7 @@ extension PyNameError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyNameError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -7919,7 +7919,7 @@ extension PyNotADirectoryError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyNotADirectoryError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -8001,7 +8001,7 @@ extension PyNotImplementedError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyNotImplementedError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -8083,7 +8083,7 @@ extension PyOSError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyOSError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -8165,7 +8165,7 @@ extension PyOverflowError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyOverflowError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -8247,7 +8247,7 @@ extension PyPendingDeprecationWarning {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyPendingDeprecationWarning` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -8329,7 +8329,7 @@ extension PyPermissionError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyPermissionError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -8411,7 +8411,7 @@ extension PyProcessLookupError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyProcessLookupError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -8493,7 +8493,7 @@ extension PyRecursionError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyRecursionError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -8575,7 +8575,7 @@ extension PyReferenceError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyReferenceError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -8657,7 +8657,7 @@ extension PyResourceWarning {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyResourceWarning` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -8739,7 +8739,7 @@ extension PyRuntimeError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyRuntimeError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -8821,7 +8821,7 @@ extension PyRuntimeWarning {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyRuntimeWarning` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -8903,7 +8903,7 @@ extension PyStopAsyncIteration {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyStopAsyncIteration` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -8985,7 +8985,7 @@ extension PyStopIteration {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyStopIteration` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let valueOffset: Int
     internal let size: Int
@@ -9101,7 +9101,7 @@ extension PySyntaxError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PySyntaxError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let msgOffset: Int
     internal let filenameOffset: Int
@@ -9253,7 +9253,7 @@ extension PySyntaxWarning {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PySyntaxWarning` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -9335,7 +9335,7 @@ extension PySystemError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PySystemError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -9417,7 +9417,7 @@ extension PySystemExit {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PySystemExit` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let codeOffset: Int
     internal let size: Int
@@ -9533,7 +9533,7 @@ extension PyTabError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyTabError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -9615,7 +9615,7 @@ extension PyTimeoutError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyTimeoutError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -9697,7 +9697,7 @@ extension PyTypeError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyTypeError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -9779,7 +9779,7 @@ extension PyUnboundLocalError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyUnboundLocalError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -9861,7 +9861,7 @@ extension PyUnicodeDecodeError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyUnicodeDecodeError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -9943,7 +9943,7 @@ extension PyUnicodeEncodeError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyUnicodeEncodeError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -10025,7 +10025,7 @@ extension PyUnicodeError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyUnicodeError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -10107,7 +10107,7 @@ extension PyUnicodeTranslateError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyUnicodeTranslateError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -10189,7 +10189,7 @@ extension PyUnicodeWarning {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyUnicodeWarning` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -10271,7 +10271,7 @@ extension PyUserWarning {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyUserWarning` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -10353,7 +10353,7 @@ extension PyValueError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyValueError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -10435,7 +10435,7 @@ extension PyWarning {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyWarning` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int
@@ -10517,7 +10517,7 @@ extension PyZeroDivisionError {
   /// Arrangement of fields in memory.
   ///
   /// This type was automatically generated based on `PyZeroDivisionError` fields
-  /// with `sourcery: includeInLayout` annotation.
+  /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let size: Int
     internal let alignment: Int

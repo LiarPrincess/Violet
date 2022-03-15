@@ -14,19 +14,19 @@ public struct PyImportError: PyErrorMixin {
   internal static let importErrorDoc =
     "Import can't find module, or can't find name in module."
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var msg: PyObject? {
     get { self.msgPtr.pointee }
     nonmutating set { self.msgPtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var moduleName: PyObject? {
     get { self.moduleNamePtr.pointee }
     nonmutating set { self.moduleNamePtr.pointee = newValue }
   }
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var modulePath: PyObject? {
     get { self.modulePathPtr.pointee }
     nonmutating set { self.modulePathPtr.pointee = newValue }

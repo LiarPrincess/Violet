@@ -27,7 +27,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
       - an integer
     """
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var elements: Data { self.elementsPtr.pointee }
 
   public let ptr: RawPtr

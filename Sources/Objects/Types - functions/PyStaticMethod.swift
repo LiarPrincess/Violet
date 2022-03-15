@@ -28,7 +28,7 @@ public struct PyStaticMethod: PyObjectMixin {
     For a more advanced concept, see the classmethod builtin.
     """
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var callable: PyObject? {
     get { self.callablePtr.pointee }
     nonmutating set { self.callablePtr.pointee = newValue }

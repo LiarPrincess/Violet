@@ -36,15 +36,15 @@ public struct PyTextFile: PyObjectMixin {
 
   // MARK: - Properties
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var name: String? { self.namePtr.pointee }
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var fd: FileDescriptorType { self.fdPtr.pointee }
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var mode: FileMode { self.modePtr.pointee }
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var encoding: PyString.Encoding { self.encodingPtr.pointee }
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var errorHandling: PyString.ErrorHandling { self.errorHandlingPtr.pointee }
 
   private static let closeOnDeallocFlag = PyObjectHeader.Flags.custom0

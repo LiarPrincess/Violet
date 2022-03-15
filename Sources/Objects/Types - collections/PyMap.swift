@@ -15,9 +15,9 @@ public struct PyMap: PyObjectMixin {
     each of the iterables.  Stops when the shortest iterable is exhausted.
     """
 
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var fn: PyObject { self.fnPtr.pointee }
-  // sourcery: includeInLayout
+  // sourcery: storedProperty
   internal var iterators: [PyObject] { self.iteratorsPtr.pointee }
 
   public let ptr: RawPtr
