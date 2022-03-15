@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import BigInt
 import FileSystem
@@ -96,7 +95,7 @@ extension Py {
 
     guard let source = sourceFileEncoding.decode(data: data) else {
       let e = self.newUnicodeDecodeError(data: data, encoding: sourceFileEncoding)
-      return .decodingError(e)
+      return .decodingError(e.asBaseException)
     }
 
     return .value(source)
@@ -207,14 +206,18 @@ extension Py {
       let result = self.newCode(code: code)
       return .code(result)
     } catch let e as LexerError {
-      return .lexerError(e, self.newSyntaxError(filename: filename, error: e))
+      let syntaxError = self.newSyntaxError(filename: filename, error: e)
+      return .lexerError(e, syntaxError.asBaseException)
     } catch let e as ParserError {
-      return .parserError(e, self.newSyntaxError(filename: filename, error: e))
+      let syntaxError = self.newSyntaxError(filename: filename, error: e)
+      return .parserError(e, syntaxError.asBaseException)
     } catch let e as CompilerError {
-      return .compilerError(e, self.newSyntaxError(filename: filename, error: e))
+      let syntaxError = self.newSyntaxError(filename: filename, error: e)
+      return .compilerError(e, syntaxError.asBaseException)
     } catch {
-      let msg = "Error when compiling '\(filename)': '\(error)'"
-      return .error(self.newRuntimeError(msg: msg))
+      let message = "Error when compiling '\(filename)': '\(error)'"
+      let error = self.newRuntimeError(message: message)
+      return .error(error.asBaseException)
     }
   }
 
@@ -222,7 +225,7 @@ extension Py {
 
   private func parseStringArg(argumentIndex index: Int,
                               arg: PyObject) -> PyResult<String> {
-    switch self.getString(object: arg) {
+    switch self.getString(object: arg, encoding: nil) {
     case .string(_, let s),
          .bytes(_, let s):
       return .value(s)
@@ -288,5 +291,3 @@ extension Py {
     }
   }
 }
-
-*/
