@@ -34,13 +34,14 @@ public struct PyStopIteration: PyErrorMixin {
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
     let args = py.newTuple(elements: value)
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
+
     self.valuePtr.initialize(to: value)
   }
 
@@ -52,16 +53,16 @@ public struct PyStopIteration: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
 
-    let value = Self.extractValue(py, args: args.elements)
-    self.valuePtr.initialize(to: value)
+    let none = py.none.asObject
+    self.valuePtr.initialize(to: none)
   }
 
   // Nothing to do here.
@@ -121,16 +122,7 @@ public struct PyStopIteration: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newStopIteration(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newStopIteration(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -145,13 +137,11 @@ public struct PyStopIteration: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
 
-    zelf.value = Self.extractValue(py, args: args)
+    if let first = args.first {
+      zelf.value = first
+    }
 
     let zelfAsObject = zelf.asObject
     return PyException.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
-  }
-
-  private static func extractValue(_ py: Py, args: [PyObject]) -> PyObject {
-    return args.first ?? py.none.asObject
   }
 }

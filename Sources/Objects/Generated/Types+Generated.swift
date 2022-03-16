@@ -7782,8 +7782,6 @@ extension PyMemory {
     _ py: Py,
     type: PyType,
     args: PyTuple,
-    moduleName: PyObject?,
-    modulePath: PyObject?,
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
@@ -7797,8 +7795,6 @@ extension PyMemory {
       py,
       type: type,
       args: args,
-      moduleName: moduleName,
-      modulePath: modulePath,
       traceback: traceback,
       cause: cause,
       context: context,
@@ -8032,6 +8028,43 @@ extension PyIndentationError {
 }
 
 extension PyMemory {
+
+  /// Allocate a new instance of `IndentationError` type.
+  public func newIndentationError(
+    _ py: Py,
+    type: PyType,
+    msg: PyObject?,
+    filename: PyObject?,
+    lineno: PyObject?,
+    offset: PyObject?,
+    text: PyObject?,
+    printFileAndLine: PyObject?,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
+  ) -> PyIndentationError {
+    let typeLayout = PyIndentationError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyIndentationError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      msg: msg,
+      filename: filename,
+      lineno: lineno,
+      offset: offset,
+      text: text,
+      printFileAndLine: printFileAndLine,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
 
   /// Allocate a new instance of `IndentationError` type.
   public func newIndentationError(
@@ -8830,8 +8863,6 @@ extension PyModuleNotFoundError {
   internal func initializeBase(_ py: Py,
                                type: PyType,
                                args: PyTuple,
-                               moduleName: PyObject?,
-                               modulePath: PyObject?,
                                traceback: PyTraceback? = nil,
                                cause: PyBaseException? = nil,
                                context: PyBaseException? = nil,
@@ -8840,8 +8871,6 @@ extension PyModuleNotFoundError {
     base.initialize(py,
                     type: type,
                     args: args,
-                    moduleName: moduleName,
-                    modulePath: modulePath,
                     traceback: traceback,
                     cause: cause,
                     context: context,
@@ -8870,6 +8899,37 @@ extension PyModuleNotFoundError {
 }
 
 extension PyMemory {
+
+  /// Allocate a new instance of `ModuleNotFoundError` type.
+  public func newModuleNotFoundError(
+    _ py: Py,
+    type: PyType,
+    msg: PyObject?,
+    moduleName: PyObject?,
+    modulePath: PyObject?,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
+  ) -> PyModuleNotFoundError {
+    let typeLayout = PyModuleNotFoundError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyModuleNotFoundError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      msg: msg,
+      moduleName: moduleName,
+      modulePath: modulePath,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
 
   /// Allocate a new instance of `ModuleNotFoundError` type.
   public func newModuleNotFoundError(
@@ -11001,6 +11061,33 @@ extension PyTabError {
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
+                               msg: PyObject?,
+                               filename: PyObject?,
+                               lineno: PyObject?,
+                               offset: PyObject?,
+                               text: PyObject?,
+                               printFileAndLine: PyObject?,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyIndentationError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    msg: msg,
+                    filename: filename,
+                    lineno: lineno,
+                    offset: offset,
+                    text: text,
+                    printFileAndLine: printFileAndLine,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
                                args: PyTuple,
                                traceback: PyTraceback? = nil,
                                cause: PyBaseException? = nil,
@@ -11038,6 +11125,43 @@ extension PyTabError {
 }
 
 extension PyMemory {
+
+  /// Allocate a new instance of `TabError` type.
+  public func newTabError(
+    _ py: Py,
+    type: PyType,
+    msg: PyObject?,
+    filename: PyObject?,
+    lineno: PyObject?,
+    offset: PyObject?,
+    text: PyObject?,
+    printFileAndLine: PyObject?,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyErrorHeader.defaultSuppressContext
+  ) -> PyTabError {
+    let typeLayout = PyTabError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyTabError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      msg: msg,
+      filename: filename,
+      lineno: lineno,
+      offset: offset,
+      text: text,
+      printFileAndLine: printFileAndLine,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
 
   /// Allocate a new instance of `TabError` type.
   public func newTabError(

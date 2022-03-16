@@ -55,13 +55,13 @@ public struct PyImportError: PyErrorMixin {
     }
 
     let args = py.newTuple(elements: argsElements)
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
 
     self.msgPtr.initialize(to: msg)
     self.moduleNamePtr.initialize(to: moduleName)
@@ -72,28 +72,20 @@ public struct PyImportError: PyErrorMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           moduleName: PyObject?,
-                           modulePath: PyObject?,
                            traceback: PyTraceback? = nil,
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
-
-    let msg = Self.getMsg(args: args.elements)
-    self.msgPtr.initialize(to: msg)
-    self.moduleNamePtr.initialize(to: moduleName)
-    self.modulePathPtr.initialize(to: modulePath)
-  }
-
-  private static func getMsg(args: [PyObject]) -> PyObject? {
-    return args.count == 1 ? args[0] : nil
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
+    self.msgPtr.initialize(to: nil)
+    self.moduleNamePtr.initialize(to: nil)
+    self.modulePathPtr.initialize(to: nil)
   }
 
   // Nothing to do here.
@@ -216,18 +208,7 @@ public struct PyImportError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newImportError(
-      py,
-      type: type,
-      args: argsTuple,
-      moduleName: nil,
-      modulePath: nil,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newImportError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -249,14 +230,16 @@ public struct PyImportError: PyErrorMixin {
 
     // Run 'super.pyInit' before our custom code, to avoid situation where
     // 'super.pyInit' errors but we already mutated entity.
-    switch PyBaseException.__init__(py,
-                                    zelf: zelf.asObject,
-                                    args: args,
-                                    kwargs: kwargs) {
+    let zelfAsObject = zelf.asObject
+    switch PyBaseException.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs) {
     case .value:
       break
     case .error(let e):
       return .error(e)
+    }
+
+    if args.count == 1 {
+      zelf.msg = args[0]
     }
 
     switch Self.initArguments.bind(py, args: [], kwargs: kwargs) {
@@ -270,7 +253,6 @@ public struct PyImportError: PyErrorMixin {
       return .error(e)
     }
 
-    zelf.msg = Self.getMsg(args: args)
     return .none(py)
   }
 }

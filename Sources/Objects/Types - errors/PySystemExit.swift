@@ -39,13 +39,13 @@ public struct PySystemExit: PyErrorMixin {
     }
 
     let args = py.newTuple(elements: argsElements)
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
 
     self.codePtr.initialize(to: code)
   }
@@ -58,40 +58,15 @@ public struct PySystemExit: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
 
-    let code: PyObject?
-    switch Self.getInitCode(args: args.elements) {
-    case .none: code = nil
-    case .object(let object): code = object
-    case .tuple(let elements): code = py.newTuple(elements: elements).asObject
-    }
-
-    self.codePtr.initialize(to: code)
-  }
-
-  private enum InitCode {
-    case none
-    case object(PyObject)
-    case tuple([PyObject])
-  }
-
-  private static func getInitCode(args: [PyObject]) -> InitCode {
-    switch args.count {
-    case 0:
-      return .none
-    case 1:
-      let object = args[0]
-      return .object(object)
-    default:
-      return .tuple(args)
-    }
+    self.codePtr.initialize(to: nil)
   }
 
   // Nothing to do here.
@@ -150,19 +125,8 @@ public struct PySystemExit: PyErrorMixin {
                                type: PyType,
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
-    let result = py.memory.newSystemExit(
-      py,
-      type: type,
-      code: nil,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
-    // 'code' will be filled later in '__init__', but 'args' have to be filled here.
     let argsTuple = py.newTuple(elements: args)
-    result.args = argsTuple
+    let result = py.memory.newSystemExit(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -177,13 +141,13 @@ public struct PySystemExit: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
 
-    switch Self.getInitCode(args: args) {
-    case .none:
+    switch args.count {
+    case 0:
       zelf.code = nil
-    case .object(let code):
-      zelf.code = code
-    case .tuple(let elements):
-      let code = py.newTuple(elements: elements)
+    case 1:
+      zelf.code = args[0]
+    default:
+      let code = py.newTuple(elements: args)
       zelf.code = code.asObject
     }
 

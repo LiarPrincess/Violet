@@ -1,10 +1,10 @@
 from typing import List, Optional
+from Helpers import NewTypeArguments, generated_warning
 from Sourcery import (
     ObjectHeader, get_object_header,
     ErrorHeader, get_error_header,
     TypeInfo, SwiftInitializerInfo, get_types
 )
-from Helpers import NewTypeArguments, generated_warning
 
 HEADER_OFFSET = 'PyObjectHeader.layout.size'
 HEADER_ALIGNMENT = 'PyObjectHeader.layout.alignment'
@@ -211,7 +211,7 @@ def print_type_extension(t: TypeInfo):
             current_base_properties.append(PropertyInLayout(p.swift_name, p.swift_type, current_base))
 
         # Sort base properties: 'object' -> 'base_base' -> 'base'
-        properties_base = properties_base + current_base_properties
+        properties_base = current_base_properties + properties_base
         current_base = current_base.base_type_info
 
     print(f'// MARK: - {swift_type_name}')

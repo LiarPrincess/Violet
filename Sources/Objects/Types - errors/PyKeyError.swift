@@ -27,13 +27,13 @@ public struct PyKeyError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -103,16 +103,7 @@ public struct PyKeyError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newKeyError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newKeyError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
