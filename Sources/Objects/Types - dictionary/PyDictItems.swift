@@ -22,7 +22,7 @@ public struct PyDictItems: PyObjectMixin, AbstractDictView {
   }
 
   internal func initialize(_ py: Py, type: PyType, dict: PyDict) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.dictPtr.initialize(to: dict)
   }
 

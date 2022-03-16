@@ -35,7 +35,7 @@ public struct PyFloat: PyObjectMixin {
   }
 
   internal func initialize(_ py: Py, type: PyType, value: Double) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.valuePtr.initialize(to: value)
   }
 

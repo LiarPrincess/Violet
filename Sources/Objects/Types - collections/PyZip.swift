@@ -27,7 +27,7 @@ public struct PyZip: PyObjectMixin {
   }
 
   internal func initialize(_ py: Py, type: PyType, iterators: [PyObject]) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.iteratorsPtr.initialize(to: iterators)
   }
 

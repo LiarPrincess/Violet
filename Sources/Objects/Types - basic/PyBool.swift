@@ -41,8 +41,8 @@ public struct PyBool: PyObjectMixin {
   }
 
   internal func initialize(_ py: Py, type: PyType, value: Bool) {
-    self.header.initialize(py, type: type)
-    self.valuePtr.initialize(to: value ? 1 : 0)
+    let valueBigInt: BigInt = value ? 1 : 0
+    self.initializeBase(py, type: type, value: valueBigInt)
   }
 
   // Nothing to do here.

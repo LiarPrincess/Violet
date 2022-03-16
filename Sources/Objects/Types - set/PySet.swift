@@ -35,7 +35,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
   }
 
   internal func initialize(_ py: Py, type: PyType, elements: OrderedSet) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.elementsPtr.initialize(to: elements)
   }
 

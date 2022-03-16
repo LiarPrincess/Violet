@@ -54,7 +54,7 @@ public struct PyTraceback: PyObjectMixin {
                            frame: PyFrame,
                            lastInstruction: PyInt,
                            lineNo: PyInt) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.nextPtr.initialize(to: next)
     self.framePtr.initialize(to: frame)
     self.lastInstructionPtr.initialize(to: lastInstruction)

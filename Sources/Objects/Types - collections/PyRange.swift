@@ -90,7 +90,7 @@ public struct PyRange: PyObjectMixin {
                                       stop: stop.value,
                                       step: unwrappedStep)
 
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.startPtr.initialize(to: start)
     self.stopPtr.initialize(to: stop)
     self.stepPtr.initialize(to: py.newInt(unwrappedStep))

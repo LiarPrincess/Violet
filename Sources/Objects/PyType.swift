@@ -111,7 +111,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     }
 
     let mro = [self] + mroWithoutSelf
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.namePtr.initialize(to: name)
     self.qualnamePtr.initialize(to: qualname)
     self.basePtr.initialize(to: base)

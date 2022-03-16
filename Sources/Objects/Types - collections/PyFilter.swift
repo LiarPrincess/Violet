@@ -27,7 +27,7 @@ public struct PyFilter: PyObjectMixin {
   }
 
   internal func initialize(_ py: Py, type: PyType, fn: PyObject, iterator: PyObject) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.fnPtr.initialize(to: fn)
     self.iteratorPtr.initialize(to: iterator)
   }

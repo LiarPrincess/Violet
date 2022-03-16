@@ -45,7 +45,7 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
   }
 
   internal func initialize(_ py: Py, type: PyType, elements: Data) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.elementsPtr.initialize(to: elements)
   }
 

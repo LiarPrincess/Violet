@@ -18,7 +18,7 @@ public struct PyNone: PyObjectMixin, HasCustomGetMethod {
   }
 
   internal func initialize(_ py: Py, type: PyType) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
   }
 
   // Nothing to do here.

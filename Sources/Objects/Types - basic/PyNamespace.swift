@@ -23,7 +23,7 @@ public struct PyNamespace: PyObjectMixin {
   }
 
   internal func initialize(_ py: Py, type: PyType, __dict__: PyDict?) {
-    self.header.initialize(py, type: type, __dict__: __dict__)
+    self.initializeBase(py, type: type, __dict__: __dict__)
   }
 
   // Nothing to do here.

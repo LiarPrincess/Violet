@@ -47,7 +47,7 @@ public struct PyEnumerate: PyObjectMixin {
   }
 
   internal func initialize(_ py: Py, type: PyType, iterator: PyObject, initialIndex: BigInt) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.iteratorPtr.initialize(to: iterator)
     self.nextIndexPtr.initialize(to: initialIndex)
   }

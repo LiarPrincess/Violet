@@ -34,7 +34,7 @@ public struct PyComplex: PyObjectMixin {
   }
 
   internal func initialize(_ py: Py, type: PyType, real: Double, imag: Double) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.realPtr.initialize(to: real)
     self.imagPtr.initialize(to: imag)
   }

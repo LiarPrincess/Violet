@@ -39,7 +39,7 @@ public struct PySetIterator: PyObjectMixin {
 
   internal func initializeCommon(_ py: Py, type: PyType, set: PyAnySet) {
     let initialCount = set.elements.count
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.setPtr.initialize(to: set)
     self.indexPtr.initialize(to: 0)
     self.initialCountPtr.initialize(to: initialCount)

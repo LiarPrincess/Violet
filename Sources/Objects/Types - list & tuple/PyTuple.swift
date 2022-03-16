@@ -30,7 +30,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
   }
 
   internal func initialize(_ py: Py, type: PyType, elements: [PyObject]) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.elementsPtr.initialize(to: elements)
   }
 

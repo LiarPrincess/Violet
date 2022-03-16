@@ -32,7 +32,7 @@ public struct PyRangeIterator: PyObjectMixin {
   }
 
   internal func initialize(_ py: Py, type: PyType, start: BigInt, step: BigInt, length: BigInt) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.startPtr.initialize(to: start)
     self.stepPtr.initialize(to: step)
     self.lengthPtr.initialize(to: length)

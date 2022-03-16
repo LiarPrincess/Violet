@@ -44,7 +44,7 @@ public struct PyDict: PyObjectMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            elements: PyDict.OrderedDictionary) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.elementsPtr.initialize(to: elements)
   }
 
