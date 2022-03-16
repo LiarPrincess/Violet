@@ -206,6 +206,11 @@ extension PyBool {
   /// Property from base class: `PyInt.value`.
   internal var value: BigInt { self.valuePtr.pointee }
 
+  internal func initializeBase(_ py: Py, type: PyType, value: BigInt) {
+    let base = PyInt(ptr: self.ptr)
+    base.initialize(py, type: type, value: value)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBool(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -296,6 +301,11 @@ extension PyBuiltinFunction {
   internal var modulePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.moduleOffset) }
   /// Property: `PyBuiltinFunction.doc`.
   internal var docPtr: Ptr<String?> { Ptr(self.ptr, offset: Self.layout.docOffset) }
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBuiltinFunction(ptr: ptr)
@@ -401,6 +411,11 @@ extension PyBuiltinMethod {
   /// Property: `PyBuiltinMethod.doc`.
   internal var docPtr: Ptr<String?> { Ptr(self.ptr, offset: Self.layout.docOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBuiltinMethod(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -493,6 +508,11 @@ extension PyByteArray {
   /// Property: `PyByteArray.elements`.
   internal var elementsPtr: Ptr<Data> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyByteArray(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -580,6 +600,11 @@ extension PyByteArrayIterator {
   /// Property: `PyByteArrayIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyByteArrayIterator(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -662,6 +687,11 @@ extension PyBytes {
 
   /// Property: `PyBytes.elements`.
   internal var elementsPtr: Ptr<Data> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBytes(ptr: ptr)
@@ -749,6 +779,11 @@ extension PyBytesIterator {
   internal var bytesPtr: Ptr<PyBytes> { Ptr(self.ptr, offset: Self.layout.bytesOffset) }
   /// Property: `PyBytesIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBytesIterator(ptr: ptr)
@@ -838,6 +873,11 @@ extension PyCallableIterator {
   /// Property: `PyCallableIterator.sentinel`.
   internal var sentinelPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.sentinelOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyCallableIterator(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -923,6 +963,11 @@ extension PyCell {
   /// Property: `PyCell.content`.
   internal var contentPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.contentOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyCell(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -1004,6 +1049,11 @@ extension PyClassMethod {
 
   /// Property: `PyClassMethod.callable`.
   internal var callablePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.callableOffset) }
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyClassMethod(ptr: ptr)
@@ -1152,6 +1202,11 @@ extension PyCode {
   /// Property: `PyCode.kwOnlyArgCount`.
   internal var kwOnlyArgCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.kwOnlyArgCountOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyCode(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -1253,6 +1308,11 @@ extension PyComplex {
   /// Property: `PyComplex.imag`.
   internal var imagPtr: Ptr<Double> { Ptr(self.ptr, offset: Self.layout.imagOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyComplex(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -1337,6 +1397,11 @@ extension PyDict {
 
   /// Property: `PyDict.elements`.
   internal var elementsPtr: Ptr<PyDict.OrderedDictionary> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyDict(ptr: ptr)
@@ -1430,6 +1495,11 @@ extension PyDictItemIterator {
   /// Property: `PyDictItemIterator.initialCount`.
   internal var initialCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.initialCountOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyDictItemIterator(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -1514,6 +1584,11 @@ extension PyDictItems {
 
   /// Property: `PyDictItems.dict`.
   internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyDictItems(ptr: ptr)
@@ -1607,6 +1682,11 @@ extension PyDictKeyIterator {
   /// Property: `PyDictKeyIterator.initialCount`.
   internal var initialCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.initialCountOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyDictKeyIterator(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -1691,6 +1771,11 @@ extension PyDictKeys {
 
   /// Property: `PyDictKeys.dict`.
   internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyDictKeys(ptr: ptr)
@@ -1784,6 +1869,11 @@ extension PyDictValueIterator {
   /// Property: `PyDictValueIterator.initialCount`.
   internal var initialCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.initialCountOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyDictValueIterator(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -1869,6 +1959,11 @@ extension PyDictValues {
   /// Property: `PyDictValues.dict`.
   internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyDictValues(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -1944,6 +2039,11 @@ extension PyEllipsis {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyEllipsis(ptr: ptr)
@@ -2028,6 +2128,11 @@ extension PyEnumerate {
   internal var iteratorPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.iteratorOffset) }
   /// Property: `PyEnumerate.nextIndex`.
   internal var nextIndexPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.nextIndexOffset) }
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyEnumerate(ptr: ptr)
@@ -2119,6 +2224,11 @@ extension PyFilter {
   /// Property: `PyFilter.iterator`.
   internal var iteratorPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.iteratorOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFilter(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -2203,6 +2313,11 @@ extension PyFloat {
 
   /// Property: `PyFloat.value`.
   internal var valuePtr: Ptr<Double> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFloat(ptr: ptr)
@@ -2341,6 +2456,11 @@ extension PyFrame {
   /// Property: `PyFrame.nextInstructionIndex`.
   internal var nextInstructionIndexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.nextInstructionIndexOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFrame(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -2440,6 +2560,11 @@ extension PyFrozenSet {
 
   /// Property: `PyFrozenSet.elements`.
   internal var elementsPtr: Ptr<OrderedSet> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFrozenSet(ptr: ptr)
@@ -2568,6 +2693,11 @@ extension PyFunction {
   /// Property: `PyFunction.annotations`.
   internal var annotationsPtr: Ptr<PyDict?> { Ptr(self.ptr, offset: Self.layout.annotationsOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFunction(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -2666,6 +2796,11 @@ extension PyInt {
   /// Property: `PyInt.value`.
   internal var valuePtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyInt(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -2753,6 +2888,11 @@ extension PyIterator {
   /// Property: `PyIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyIterator(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -2835,6 +2975,11 @@ extension PyList {
 
   /// Property: `PyList.elements`.
   internal var elementsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyList(ptr: ptr)
@@ -2922,6 +3067,11 @@ extension PyListIterator {
   internal var listPtr: Ptr<PyList> { Ptr(self.ptr, offset: Self.layout.listOffset) }
   /// Property: `PyListIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyListIterator(ptr: ptr)
@@ -3011,6 +3161,11 @@ extension PyListReverseIterator {
   /// Property: `PyListReverseIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyListReverseIterator(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -3098,6 +3253,11 @@ extension PyMap {
   internal var fnPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.fnOffset) }
   /// Property: `PyMap.iterators`.
   internal var iteratorsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Self.layout.iteratorsOffset) }
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyMap(ptr: ptr)
@@ -3189,6 +3349,11 @@ extension PyMethod {
   /// Property: `PyMethod.object`.
   internal var objectPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.objectOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyMethod(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -3267,6 +3432,11 @@ extension PyModule {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyModule(ptr: ptr)
@@ -3347,6 +3517,11 @@ extension PyNamespace {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyNamespace(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -3422,6 +3597,11 @@ extension PyNone {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyNone(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -3494,6 +3674,11 @@ extension PyNotImplemented {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyNotImplemented(ptr: ptr)
@@ -3580,7 +3765,8 @@ extension PyMemory {
   /// Allocate a new instance of `object` type.
   public func newObject(
     _ py: Py,
-    type: PyType
+    type: PyType,
+    __dict__: PyDict? = nil
   ) -> PyObject {
     let typeLayout = PyObject.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
@@ -3588,7 +3774,8 @@ extension PyMemory {
 
     result.initialize(
       py,
-      type: type
+      type: type,
+      __dict__: __dict__
     )
 
     return result
@@ -3647,6 +3834,11 @@ extension PyProperty {
   internal var _delPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout._delOffset) }
   /// Property: `PyProperty.doc`.
   internal var docPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.docOffset) }
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyProperty(ptr: ptr)
@@ -3755,6 +3947,11 @@ extension PyRange {
   /// Property: `PyRange.length`.
   internal var lengthPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Self.layout.lengthOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyRange(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -3860,6 +4057,11 @@ extension PyRangeIterator {
   /// Property: `PyRangeIterator.index`.
   internal var indexPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyRangeIterator(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -3955,6 +4157,11 @@ extension PyReversed {
   /// Property: `PyReversed.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyReversed(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -4039,6 +4246,11 @@ extension PySet {
 
   /// Property: `PySet.elements`.
   internal var elementsPtr: Ptr<OrderedSet> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PySet(ptr: ptr)
@@ -4131,6 +4343,11 @@ extension PySetIterator {
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
   /// Property: `PySetIterator.initialCount`.
   internal var initialCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.initialCountOffset) }
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PySetIterator(ptr: ptr)
@@ -4246,6 +4463,11 @@ extension PySlice {
   /// Property: `PySlice.step`.
   internal var stepPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.stepOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PySlice(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -4334,6 +4556,11 @@ extension PyStaticMethod {
 
   /// Property: `PyStaticMethod.callable`.
   internal var callablePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.callableOffset) }
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyStaticMethod(ptr: ptr)
@@ -4427,6 +4654,11 @@ extension PyString {
   /// Property: `PyString.value`.
   internal var valuePtr: Ptr<String> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyString(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -4516,6 +4748,11 @@ extension PyStringIterator {
   internal var stringPtr: Ptr<PyString> { Ptr(self.ptr, offset: Self.layout.stringOffset) }
   /// Property: `PyStringIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyStringIterator(ptr: ptr)
@@ -4609,6 +4846,11 @@ extension PySuper {
   internal var objectPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.objectOffset) }
   /// Property: `PySuper.objectType`.
   internal var objectTypePtr: Ptr<PyType?> { Ptr(self.ptr, offset: Self.layout.objectTypeOffset) }
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PySuper(ptr: ptr)
@@ -4718,6 +4960,11 @@ extension PyTextFile {
   internal var encodingPtr: Ptr<PyString.Encoding> { Ptr(self.ptr, offset: Self.layout.encodingOffset) }
   /// Property: `PyTextFile.errorHandling`.
   internal var errorHandlingPtr: Ptr<PyString.ErrorHandling> { Ptr(self.ptr, offset: Self.layout.errorHandlingOffset) }
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyTextFile(ptr: ptr)
@@ -4831,6 +5078,11 @@ extension PyTraceback {
   /// Property: `PyTraceback.lineNo`.
   internal var lineNoPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Self.layout.lineNoOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyTraceback(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -4923,6 +5175,11 @@ extension PyTuple {
   /// Property: `PyTuple.elements`.
   internal var elementsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyTuple(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -5009,6 +5266,11 @@ extension PyTupleIterator {
   internal var tuplePtr: Ptr<PyTuple> { Ptr(self.ptr, offset: Self.layout.tupleOffset) }
   /// Property: `PyTupleIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyTupleIterator(ptr: ptr)
@@ -5138,6 +5400,11 @@ extension PyType {
   /// Property: `PyType.deinitialize`.
   internal var deinitializePtr: Ptr<DeinitializeFn> { Ptr(self.ptr, offset: Self.layout.deinitializeOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyType(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -5250,6 +5517,11 @@ extension PyZip {
   /// Property: `PyZip.iterators`.
   internal var iteratorsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Self.layout.iteratorsOffset) }
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyZip(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -5325,6 +5597,23 @@ extension PyArithmeticError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyException(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyArithmeticError(ptr: ptr)
@@ -5409,6 +5698,23 @@ extension PyAssertionError {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyException(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyAssertionError(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -5491,6 +5797,23 @@ extension PyAttributeError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyException(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyAttributeError(ptr: ptr)
@@ -5575,6 +5898,11 @@ extension PyBaseException {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBaseException(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -5657,6 +5985,23 @@ extension PyBlockingIOError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyOSError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBlockingIOError(ptr: ptr)
@@ -5741,6 +6086,23 @@ extension PyBrokenPipeError {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyConnectionError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBrokenPipeError(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -5823,6 +6185,23 @@ extension PyBufferError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyException(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBufferError(ptr: ptr)
@@ -5907,6 +6286,23 @@ extension PyBytesWarning {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyWarning(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBytesWarning(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -5989,6 +6385,23 @@ extension PyChildProcessError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyOSError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyChildProcessError(ptr: ptr)
@@ -6073,6 +6486,23 @@ extension PyConnectionAbortedError {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyConnectionError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyConnectionAbortedError(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -6155,6 +6585,23 @@ extension PyConnectionError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyOSError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyConnectionError(ptr: ptr)
@@ -6239,6 +6686,23 @@ extension PyConnectionRefusedError {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyConnectionError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyConnectionRefusedError(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -6321,6 +6785,23 @@ extension PyConnectionResetError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyConnectionError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyConnectionResetError(ptr: ptr)
@@ -6405,6 +6886,23 @@ extension PyDeprecationWarning {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyWarning(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyDeprecationWarning(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -6487,6 +6985,23 @@ extension PyEOFError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyException(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyEOFError(ptr: ptr)
@@ -6571,6 +7086,23 @@ extension PyException {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyBaseException(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyException(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -6653,6 +7185,23 @@ extension PyFileExistsError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyOSError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFileExistsError(ptr: ptr)
@@ -6737,6 +7286,23 @@ extension PyFileNotFoundError {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyOSError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFileNotFoundError(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -6819,6 +7385,23 @@ extension PyFloatingPointError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyArithmeticError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFloatingPointError(ptr: ptr)
@@ -6903,6 +7486,23 @@ extension PyFutureWarning {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyWarning(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFutureWarning(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -6985,6 +7585,23 @@ extension PyGeneratorExit {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyBaseException(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyGeneratorExit(ptr: ptr)
@@ -7084,6 +7701,23 @@ extension PyImportError {
   internal var moduleNamePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.moduleNameOffset) }
   /// Property: `PyImportError.modulePath`.
   internal var modulePathPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.modulePathOffset) }
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyException(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyImportError(ptr: ptr)
@@ -7207,6 +7841,23 @@ extension PyImportWarning {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyWarning(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyImportWarning(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -7315,6 +7966,50 @@ extension PyIndentationError {
   /// Property from base class: `PySyntaxError.printFileAndLine`.
   internal var printFileAndLine: PyObject? { self.printFileAndLinePtr.pointee }
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               msg: PyObject?,
+                               filename: PyObject?,
+                               lineno: PyObject?,
+                               offset: PyObject?,
+                               text: PyObject?,
+                               printFileAndLine: PyObject?,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PySyntaxError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    msg: msg,
+                    filename: filename,
+                    lineno: lineno,
+                    offset: offset,
+                    text: text,
+                    printFileAndLine: printFileAndLine,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PySyntaxError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyIndentationError(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -7397,6 +8092,23 @@ extension PyIndexError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyLookupError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyIndexError(ptr: ptr)
@@ -7481,6 +8193,23 @@ extension PyInterruptedError {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyOSError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyInterruptedError(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -7563,6 +8292,23 @@ extension PyIsADirectoryError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyOSError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyIsADirectoryError(ptr: ptr)
@@ -7647,6 +8393,23 @@ extension PyKeyError {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyLookupError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyKeyError(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -7729,6 +8492,23 @@ extension PyKeyboardInterrupt {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyBaseException(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyKeyboardInterrupt(ptr: ptr)
@@ -7813,6 +8593,23 @@ extension PyLookupError {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyException(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyLookupError(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -7895,6 +8692,23 @@ extension PyMemoryError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyException(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyMemoryError(ptr: ptr)
@@ -7992,6 +8806,48 @@ extension PyModuleNotFoundError {
   /// Property from base class: `PyImportError.modulePath`.
   internal var modulePath: PyObject? { self.modulePathPtr.pointee }
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               msg: PyObject?,
+                               moduleName: PyObject?,
+                               modulePath: PyObject?,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyImportError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    msg: msg,
+                    moduleName: moduleName,
+                    modulePath: modulePath,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               moduleName: PyObject?,
+                               modulePath: PyObject?,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyImportError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    moduleName: moduleName,
+                    modulePath: modulePath,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyModuleNotFoundError(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -8074,6 +8930,23 @@ extension PyNameError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyException(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyNameError(ptr: ptr)
@@ -8158,6 +9031,23 @@ extension PyNotADirectoryError {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyOSError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyNotADirectoryError(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -8240,6 +9130,23 @@ extension PyNotImplementedError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyRuntimeError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyNotImplementedError(ptr: ptr)
@@ -8324,6 +9231,23 @@ extension PyOSError {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyException(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyOSError(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -8406,6 +9330,23 @@ extension PyOverflowError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyArithmeticError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyOverflowError(ptr: ptr)
@@ -8490,6 +9431,23 @@ extension PyPendingDeprecationWarning {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyWarning(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyPendingDeprecationWarning(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -8572,6 +9530,23 @@ extension PyPermissionError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyOSError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyPermissionError(ptr: ptr)
@@ -8656,6 +9631,23 @@ extension PyProcessLookupError {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyOSError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyProcessLookupError(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -8738,6 +9730,23 @@ extension PyRecursionError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyRuntimeError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyRecursionError(ptr: ptr)
@@ -8822,6 +9831,23 @@ extension PyReferenceError {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyException(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyReferenceError(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -8904,6 +9930,23 @@ extension PyResourceWarning {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyWarning(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyResourceWarning(ptr: ptr)
@@ -8988,6 +10031,23 @@ extension PyRuntimeError {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyException(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyRuntimeError(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -9071,6 +10131,23 @@ extension PyRuntimeWarning {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyWarning(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyRuntimeWarning(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -9153,6 +10230,23 @@ extension PyStopAsyncIteration {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyException(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyStopAsyncIteration(ptr: ptr)
@@ -9242,6 +10336,23 @@ extension PyStopIteration {
 
   /// Property: `PyStopIteration.value`.
   internal var valuePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyException(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyStopIteration(ptr: ptr)
@@ -9385,6 +10496,23 @@ extension PySyntaxError {
   /// Property: `PySyntaxError.printFileAndLine`.
   internal var printFileAndLinePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.printFileAndLineOffset) }
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyException(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PySyntaxError(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -9512,6 +10640,23 @@ extension PySyntaxWarning {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyWarning(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PySyntaxWarning(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -9594,6 +10739,23 @@ extension PySystemError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyException(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PySystemError(ptr: ptr)
@@ -9683,6 +10845,23 @@ extension PySystemExit {
 
   /// Property: `PySystemExit.code`.
   internal var codePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.codeOffset) }
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyBaseException(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PySystemExit(ptr: ptr)
@@ -9820,6 +10999,23 @@ extension PyTabError {
   /// Property from base class: `PySyntaxError.printFileAndLine`.
   internal var printFileAndLine: PyObject? { self.printFileAndLinePtr.pointee }
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyIndentationError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyTabError(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -9902,6 +11098,23 @@ extension PyTimeoutError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyOSError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyTimeoutError(ptr: ptr)
@@ -9986,6 +11199,23 @@ extension PyTypeError {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyException(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyTypeError(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -10068,6 +11298,23 @@ extension PyUnboundLocalError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyNameError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUnboundLocalError(ptr: ptr)
@@ -10152,6 +11399,23 @@ extension PyUnicodeDecodeError {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyUnicodeError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUnicodeDecodeError(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -10234,6 +11498,23 @@ extension PyUnicodeEncodeError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyUnicodeError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUnicodeEncodeError(ptr: ptr)
@@ -10318,6 +11599,23 @@ extension PyUnicodeError {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyValueError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUnicodeError(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -10400,6 +11698,23 @@ extension PyUnicodeTranslateError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyUnicodeError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUnicodeTranslateError(ptr: ptr)
@@ -10484,6 +11799,23 @@ extension PyUnicodeWarning {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyWarning(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUnicodeWarning(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -10566,6 +11898,23 @@ extension PyUserWarning {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyWarning(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUserWarning(ptr: ptr)
@@ -10650,6 +11999,23 @@ extension PyValueError {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyException(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyValueError(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -10733,6 +12099,23 @@ extension PyWarning {
   internal static let layout = Layout()
 
 
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyException(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
+
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyWarning(ptr: ptr)
     zelf.beforeDeinitialize()
@@ -10815,6 +12198,23 @@ extension PyZeroDivisionError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+
+  internal func initializeBase(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    let base = PyArithmeticError(ptr: self.ptr)
+    base.initialize(py,
+                    type: type,
+                    args: args,
+                    traceback: traceback,
+                    cause: cause,
+                    context: context,
+                    suppressContext: suppressContext)
+  }
 
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyZeroDivisionError(ptr: ptr)

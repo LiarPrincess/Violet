@@ -1,8 +1,8 @@
-from typing import List, Union
+from typing import List, Optional
 
 
 class ArgumentInfo:
-    def __init__(self, label: Union[str, None], name: str, typ: str, default_value: str):
+    def __init__(self, label: Optional[str], name: str, typ: str, default_value: Optional[str]):
         self.label = label
         self.name = name
         self.typ = typ
@@ -64,7 +64,7 @@ def parse_arguments(s: str) -> List[ArgumentInfo]:
         result = s[start_index:index]
         return result.rstrip()
 
-    def consume_default_value() -> str:
+    def consume_default_value() -> Optional[str]:
         nonlocal s
         nonlocal index
 
@@ -79,7 +79,8 @@ def parse_arguments(s: str) -> List[ArgumentInfo]:
             index += 1
 
         result = s[start_index:index]
-        return result.rstrip()
+        result = result.rstrip()
+        return result if len(result) else None
 
     while index < len(s):
         # Reset
