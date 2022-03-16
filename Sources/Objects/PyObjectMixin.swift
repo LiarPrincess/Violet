@@ -18,15 +18,6 @@ extension PyObjectMixin {
   /// [Convenience] Name of the runtime type of this Python object.
   public var typeName: String { self.type.name }
 
-  /// Read the docs in `PyObjectHeader` first!
-  ///
-  /// Accessing `__dict__` on object that does not have it will trap!
-  /// Use `Py.get__dict__` instead.
-  internal var __dict__: PyDict {
-    get { self.header.__dict__ }
-    nonmutating set { self.header.__dict__ = newValue }
-  }
-
   /// Various flags that describe the current state of the `PyObject`.
   ///
   /// It can also be used to store `Bool` properties (via `custom` flags).

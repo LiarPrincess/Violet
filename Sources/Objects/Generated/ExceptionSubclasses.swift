@@ -65,7 +65,8 @@ public struct PyKeyboardInterrupt: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -151,7 +152,8 @@ public struct PyGeneratorExit: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -237,7 +239,8 @@ public struct PyException: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -323,7 +326,8 @@ public struct PyStopAsyncIteration: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -409,7 +413,8 @@ public struct PyArithmeticError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -495,7 +500,8 @@ public struct PyFloatingPointError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -581,7 +587,8 @@ public struct PyOverflowError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -667,7 +674,8 @@ public struct PyZeroDivisionError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -753,7 +761,8 @@ public struct PyAssertionError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -839,7 +848,8 @@ public struct PyAttributeError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -925,7 +935,8 @@ public struct PyBufferError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1011,7 +1022,8 @@ public struct PyEOFError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1097,7 +1109,8 @@ public struct PyModuleNotFoundError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1183,7 +1196,8 @@ public struct PyLookupError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1269,7 +1283,8 @@ public struct PyIndexError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1355,7 +1370,8 @@ public struct PyMemoryError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1441,7 +1457,8 @@ public struct PyNameError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1527,7 +1544,8 @@ public struct PyUnboundLocalError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1613,7 +1631,8 @@ public struct PyOSError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1699,7 +1718,8 @@ public struct PyBlockingIOError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1785,7 +1805,8 @@ public struct PyChildProcessError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1871,7 +1892,8 @@ public struct PyConnectionError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1957,7 +1979,8 @@ public struct PyBrokenPipeError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -2043,7 +2066,8 @@ public struct PyConnectionAbortedError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -2129,7 +2153,8 @@ public struct PyConnectionRefusedError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -2215,7 +2240,8 @@ public struct PyConnectionResetError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -2301,7 +2327,8 @@ public struct PyFileExistsError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -2387,7 +2414,8 @@ public struct PyFileNotFoundError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -2473,7 +2501,8 @@ public struct PyInterruptedError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -2559,7 +2588,8 @@ public struct PyIsADirectoryError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -2645,7 +2675,8 @@ public struct PyNotADirectoryError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -2731,7 +2762,8 @@ public struct PyPermissionError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -2817,7 +2849,8 @@ public struct PyProcessLookupError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -2903,7 +2936,8 @@ public struct PyTimeoutError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -2989,7 +3023,8 @@ public struct PyReferenceError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -3075,7 +3110,8 @@ public struct PyRuntimeError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -3161,7 +3197,8 @@ public struct PyNotImplementedError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -3247,7 +3284,8 @@ public struct PyRecursionError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -3333,7 +3371,8 @@ public struct PyIndentationError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -3419,7 +3458,8 @@ public struct PyTabError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -3508,7 +3548,8 @@ public struct PySystemError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -3594,7 +3635,8 @@ public struct PyTypeError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -3680,7 +3722,8 @@ public struct PyValueError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -3766,7 +3809,8 @@ public struct PyUnicodeError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -3852,7 +3896,8 @@ public struct PyUnicodeDecodeError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -3938,7 +3983,8 @@ public struct PyUnicodeEncodeError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -4024,7 +4070,8 @@ public struct PyUnicodeTranslateError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -4110,7 +4157,8 @@ public struct PyWarning: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -4196,7 +4244,8 @@ public struct PyDeprecationWarning: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -4283,7 +4332,8 @@ public struct PyPendingDeprecationWarning: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -4369,7 +4419,8 @@ public struct PyRuntimeWarning: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -4455,7 +4506,8 @@ public struct PySyntaxWarning: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -4541,7 +4593,8 @@ public struct PyUserWarning: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -4628,7 +4681,8 @@ public struct PyFutureWarning: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -4714,7 +4768,8 @@ public struct PyImportWarning: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -4801,7 +4856,8 @@ public struct PyUnicodeWarning: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -4888,7 +4944,8 @@ public struct PyBytesWarning: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
@@ -4974,7 +5031,8 @@ public struct PyResourceWarning: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__

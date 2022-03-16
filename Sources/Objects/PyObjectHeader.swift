@@ -5,7 +5,7 @@ import VioletCore
 /// Guaranteed to be word aligned.
 public struct PyObjectHeader {
 
-  // MARK: - Type
+  // MARK: - Property - type
 
   // sourcery: storedProperty
   /// Also known as `klass`, but we are using CPython naming convention.
@@ -13,23 +13,35 @@ public struct PyObjectHeader {
     return self.typePtr.pointee
   }
 
-  // MARK: - __dict__
+  // MARK: - Property - __dict__
 
   /// Lazy property written by hand.
-  internal enum LazyDict {
+  internal enum Lazy__dict__ {
     /// There is no spoon... (aka. `self.type` does not allow `__dict__`)
-    case thereIsNoDict
+    case noDict
     /// `__dict__` is available, but not yet created
-    case lazyNotCreated(Py)
+    case notCreated
     case created(PyDict)
+
+    internal mutating func get(_ py: Py) -> PyDict? {
+      switch self {
+      case .noDict:
+        return nil
+      case .notCreated:
+        let value = py.newDict()
+        self = .created(value)
+        return value
+      case .created(let value):
+        return value
+      }
+    }
+
+    internal mutating func set(_ value: PyDict) {
+      self = .created(value)
+    }
   }
 
   // sourcery: storedProperty
-  private var lazy__dict__: PyObjectHeader.LazyDict {
-    get { return self.lazy__dict__Ptr.pointee }
-    nonmutating set { self.lazy__dict__Ptr.pointee = newValue }
-  }
-
   /// Internal dictionary of attributes for the specific instance.
   ///
   /// We will reserve space for `PyDict` reference on EVERY object, even though
@@ -42,40 +54,19 @@ public struct PyObjectHeader {
   /// ```
   ///
   /// Whether the object has access to `__dict__` or not is controlled by
-  /// `has__dict__` flag.
+  /// `has__dict__` flag on type.
   ///
   /// - Important:
-  /// Accessing `__dict__` on object that does not have it will trap!
   /// Use `Py.get__dict__` instead.
-  public internal(set) var __dict__: PyDict {
-    get {
-      switch self.lazy__dict__ {
-      case .thereIsNoDict:
-        let typeName = self.type.name
-        trap("\(typeName) does not even '__dict__'.")
-      case .lazyNotCreated(let py):
-        let value = py.newDict()
-        self.lazy__dict__ = LazyDict.created(value)
-        return value
-      case .created(let value):
-        return value
-      }
-    }
+  internal var __dict__: PyObjectHeader.Lazy__dict__ {
+    get { return self.__dict__Ptr.pointee }
     nonmutating set {
       assert(self.type.typeFlags.instancesHave__dict__)
-      self.lazy__dict__ = LazyDict.created(newValue)
+      self.__dict__Ptr.pointee = newValue
     }
   }
 
-  internal var has__dict__: Bool {
-    switch self.lazy__dict__ {
-    case .thereIsNoDict: return false
-    case .lazyNotCreated: return true
-    case .created: return true
-    }
-  }
-
-  // MARK: - Flags
+  // MARK: - Property - flags
 
   // sourcery: storedProperty
   /// Various flags that describe the current state of the `PyObject`.
@@ -99,24 +90,24 @@ public struct PyObjectHeader {
   internal func initialize(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     self.typePtr.initialize(to: type)
 
-    let flags = PyObjectHeader.Flags()
+    let flags = Flags()
     self.flagsPtr.initialize(to: flags)
 
-    let lazy__dict__: LazyDict
+    let lazy__dict__: Lazy__dict__
     if let value = __dict__ {
       lazy__dict__ = .created(value)
     } else if type.typeFlags.instancesHave__dict__ {
-      lazy__dict__ = .lazyNotCreated(py)
+      lazy__dict__ = .notCreated
     } else {
-      lazy__dict__ = .thereIsNoDict
+      lazy__dict__ = .noDict
     }
 
-    self.lazy__dict__Ptr.initialize(to: lazy__dict__)
+    self.__dict__Ptr.initialize(to: lazy__dict__)
   }
 
   internal func deinitialize() {
     self.typePtr.deinitialize()
-    self.lazy__dict__Ptr.deinitialize()
+    self.__dict__Ptr.deinitialize()
     self.flagsPtr.deinitialize() // Trivial
   }
 }

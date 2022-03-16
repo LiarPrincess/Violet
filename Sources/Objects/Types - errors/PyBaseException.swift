@@ -138,7 +138,16 @@ public struct PyBaseException: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.getDict(py)
+    return PyResult(result)
+  }
+
+  internal func getDict(_ py: Py) -> PyDict {
+    guard let result = self.header.__dict__.get(py) else {
+      py.trapMissing__dict__(object: self)
+    }
+
+    return result
   }
 
   // MARK: - Class
@@ -592,9 +601,8 @@ public struct PyBaseException: PyErrorMixin {
 
     // Copy kwargs
     if let kwargs = kwargs {
-      if let e = zelf.__dict__.update(py,
-                                      from: kwargs.elements,
-                                      onKeyDuplicate: .continue) {
+      let dict = py.get__dict__(error: zelf)
+      if let e = dict.update(py, from: kwargs.elements, onKeyDuplicate: .continue) {
         return .error(e)
       }
     }

@@ -37,12 +37,13 @@ public struct PyModule: PyObjectMixin {
     // >>> builtins.__dict__['__name__'] = 1
     // >>> repr(builtins)
     // "<module 1 (built-in)>"
+    let dict = self.getDict(py)
     let none = py.none.asObject
-    self.__dict__.set(py, id: .__name__, value: name ?? none)
-    self.__dict__.set(py, id: .__doc__, value: doc ?? none)
-    self.__dict__.set(py, id: .__package__, value: none)
-    self.__dict__.set(py, id: .__loader__, value: none)
-    self.__dict__.set(py, id: .__spec__, value: none)
+    dict.set(py, id: .__name__, value: name ?? none)
+    dict.set(py, id: .__doc__, value: doc ?? none)
+    dict.set(py, id: .__package__, value: none)
+    dict.set(py, id: .__loader__, value: none)
+    dict.set(py, id: .__spec__, value: none)
   }
 
   // Nothing to do here.
@@ -80,12 +81,16 @@ public struct PyModule: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    let result = zelf.getDict()
+    let result = zelf.getDict(py)
     return PyResult(result)
   }
 
-  internal func getDict() -> PyDict {
-    return self.__dict__
+  internal func getDict(_ py: Py) -> PyDict {
+    guard let result = self.header.__dict__.get(py) else {
+      py.trapMissing__dict__(object: self)
+    }
+
+    return result
   }
 
   // MARK: - String
@@ -140,7 +145,8 @@ public struct PyModule: PyObjectMixin {
   }
 
   private func getNameObjectOrNil(_ py: Py) -> PyObject? {
-    return self.__dict__.get(py, id: .__name__)
+    let dict = self.getDict(py)
+    return dict.get(py, id: .__name__)
   }
 
   private static func createNamelessModuleError(_ py: Py) -> PyBaseException {
@@ -185,7 +191,8 @@ public struct PyModule: PyObjectMixin {
       return .error(e)
     }
 
-    if let getAttr = zelf.__dict__.get(py, id: .__getattr__) {
+    let dict = zelf.getDict(py)
+    if let getAttr = dict.get(py, id: .__getattr__) {
       switch py.call(callable: getAttr, args: [zelfObject, name.asObject]) {
       case .value(let r):
         return .value(r)
@@ -258,7 +265,8 @@ public struct PyModule: PyObjectMixin {
     let error: PyBaseException?
 
     // If we have our own '__dir__' method then call it.
-    if let dirFn = zelf.__dict__.get(py, id: .__dir__) {
+    let dict = zelf.getDict(py)
+    if let dirFn = dict.get(py, id: .__dir__) {
       switch py.call(callable: dirFn) {
       case .value(let o):
         error = result.append(py, elementsFrom: o)
@@ -268,7 +276,7 @@ public struct PyModule: PyObjectMixin {
       }
     } else {
       // Otherwise just fill it with our keys
-      error = result.append(py, keysFrom: zelf.__dict__)
+      error = result.append(py, keysFrom: dict)
     }
 
     if let e = error {

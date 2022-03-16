@@ -132,7 +132,7 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
 
     for index in indexAfterTypeIndex..<mro.count {
       let base = mro[index]
-      let dict = base.__dict__
+      let dict = base.getDict(py)
 
       switch dict.get(py, key: name) {
       case .value(let res):

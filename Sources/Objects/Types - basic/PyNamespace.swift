@@ -60,8 +60,8 @@ public struct PyNamespace: PyObjectMixin {
       return .notImplemented
     }
 
-    let zelfDict = zelf.__dict__
-    let otherDict = other.__dict__
+    let zelfDict = zelf.getDict(py)
+    let otherDict = other.getDict(py)
     let result = zelfDict.isEqual(py, other: otherDict)
     return CompareResult(result)
   }
@@ -111,7 +111,16 @@ public struct PyNamespace: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.getDict(py)
+    return PyResult(result)
+  }
+
+  internal func getDict(_ py: Py) -> PyDict {
+    guard let result = self.header.__dict__.get(py) else {
+      py.trapMissing__dict__(object: self)
+    }
+
+    return result
   }
 
   // MARK: - String
@@ -133,7 +142,8 @@ public struct PyNamespace: PyObjectMixin {
     return zelf.withReprLock {
       var values = ""
 
-      for (index, entry) in zelf.__dict__.elements.enumerated() {
+      let dict = zelf.getDict(py)
+      for (index, entry) in dict.elements.enumerated() {
         if index > 0 {
           values.append(", ")
         }
@@ -230,7 +240,8 @@ public struct PyNamespace: PyObjectMixin {
     case .error(let e): return .error(e)
     }
 
-    if let e = zelf.__dict__.update(py, from: kwargs, onKeyDuplicate: .continue) {
+    let dict = zelf.getDict(py)
+    if let e = dict.update(py, from: kwargs, onKeyDuplicate: .continue) {
       return .error(e)
     }
 

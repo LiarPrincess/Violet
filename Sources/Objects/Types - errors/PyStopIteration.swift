@@ -87,7 +87,8 @@ public struct PyStopIteration: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }
 
   // MARK: - Value

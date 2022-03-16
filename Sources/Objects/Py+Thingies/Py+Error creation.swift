@@ -464,7 +464,7 @@ extension Py {
     let type = self.errorTypes.unicodeDecodeError
     let error = self.memory.newUnicodeDecodeError(self, type: type, args: args)
 
-    let dict = error.__dict__
+    let dict = error.asBaseException.getDict(self)
     dict.set(self, id: .object, value: bytes.asObject)
 
     let encodingString = self.toString(encoding: encoding)
@@ -488,7 +488,7 @@ extension Py {
     let type = self.errorTypes.unicodeEncodeError
     let error = self.memory.newUnicodeEncodeError(self, type: type, args: args)
 
-    let dict = error.__dict__
+    let dict = error.asBaseException.getDict(self)
     dict.set(self, id: .object, value: string.asObject)
 
     let encodingString = self.toString(encoding: encoding)

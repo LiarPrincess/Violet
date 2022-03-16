@@ -1061,10 +1061,10 @@ extension Py {
 
     /// Adds value to `type.__dict__`.
     private func add(_ py: Py, type: PyType, name: String, value: PyObject) {
-      let __dict__ = type.header.__dict__
+      let dict = type.getDict(py)
       let interned = py.intern(string: name)
 
-      switch __dict__.set(py, key: interned, value: value) {
+      switch dict.set(py, key: interned, value: value) {
       case .ok:
         break
       case .error(let e):

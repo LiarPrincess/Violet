@@ -42,15 +42,23 @@ extension Py {
   /// In such situation this function returns real '\_\_dict\_\_'
   /// (not the user property!).
   public func get__dict__(object: PyObject) -> PyDict? {
-    if object.header.has__dict__ {
-      return object.__dict__
-    }
+    return object.header.__dict__.get(self)
+  }
 
-    return nil
+  public func get__dict__(type: PyType) -> PyDict {
+    return type.getDict(self)
   }
 
   public func get__dict__(module: PyModule) -> PyDict {
-    return module.__dict__
+    return module.getDict(self)
+  }
+
+  public func get__dict__(error: PyBaseException) -> PyDict {
+    return error.getDict(self)
+  }
+
+  internal func trapMissing__dict__<T: PyObjectMixin>(object: T) -> Never {
+    trap("Expected '\(object.typeName)' to have a dict? Guess not.")
   }
 
   // MARK: - Id

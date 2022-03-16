@@ -42,7 +42,7 @@ extension PyObjectHeader {
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let typeOffset: Int
-    internal let lazy__dict__Offset: Int
+    internal let __dict__Offset: Int
     internal let flagsOffset: Int
     internal let size: Int
     internal let alignment: Int
@@ -53,14 +53,14 @@ extension PyObjectHeader {
         initialAlignment: 0,
         fields: [
           PyMemory.FieldLayout(from: PyType.self), // type
-          PyMemory.FieldLayout(from: PyObjectHeader.LazyDict.self), // lazy__dict__
+          PyMemory.FieldLayout(from: PyObjectHeader.Lazy__dict__.self), // __dict__
           PyMemory.FieldLayout(from: Flags.self) // flags
         ]
       )
 
       assert(layout.offsets.count == 3)
       self.typeOffset = layout.offsets[0]
-      self.lazy__dict__Offset = layout.offsets[1]
+      self.__dict__Offset = layout.offsets[1]
       self.flagsOffset = layout.offsets[2]
       self.size = layout.size
       self.alignment = layout.alignment
@@ -71,7 +71,7 @@ extension PyObjectHeader {
   internal static let layout = Layout()
 
   internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: Self.layout.typeOffset) }
-  internal var lazy__dict__Ptr: Ptr<PyObjectHeader.LazyDict> { Ptr(self.ptr, offset: Self.layout.lazy__dict__Offset) }
+  internal var __dict__Ptr: Ptr<PyObjectHeader.Lazy__dict__> { Ptr(self.ptr, offset: Self.layout.__dict__Offset) }
   internal var flagsPtr: Ptr<Flags> { Ptr(self.ptr, offset: Self.layout.flagsOffset) }
 }
 
