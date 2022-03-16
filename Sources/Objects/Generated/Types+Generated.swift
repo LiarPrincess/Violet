@@ -17,9 +17,6 @@ import VioletCompiler
 // swiftlint:disable file_length
 
 // This file contains:
-// - For 'PyErrorHeader':
-//   - PyErrorHeader.Layout - mainly field offsets
-//   - PyErrorHeader.xxxPtr - pointer properties to fields
 // - PyMemory.newTypeAndObjectTypes - because they have recursive dependency
 // - Then for each type:
 //   - static let pythonTypeName - name of the type in Python
@@ -28,53 +25,6 @@ import VioletCompiler
 //   - static func downcast(py: Py, object: PyObject) -> [TYPE_NAME]?
 //   - static func invalidZelfArgument<T>(py: Py, object: PyObject, fnName: String) -> PyResult<T>
 //   - PyMemory.new[TYPE_NAME] - to create new object of this type
-
-// MARK: - PyErrorHeader
-
-extension PyErrorHeader {
-
-  /// Arrangement of fields in memory.
-  ///
-  /// This type was automatically generated based on `PyErrorHeader` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let argsOffset: Int
-    internal let tracebackOffset: Int
-    internal let causeOffset: Int
-    internal let contextOffset: Int
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyObject.layout.size,
-        initialAlignment: PyObject.layout.alignment,
-        fields: [
-          PyMemory.FieldLayout(from: PyTuple.self), // args
-          PyMemory.FieldLayout(from: PyTraceback?.self), // traceback
-          PyMemory.FieldLayout(from: PyBaseException?.self), // cause
-          PyMemory.FieldLayout(from: PyBaseException?.self) // context
-        ]
-      )
-
-      assert(layout.offsets.count == 4)
-      self.argsOffset = layout.offsets[0]
-      self.tracebackOffset = layout.offsets[1]
-      self.causeOffset = layout.offsets[2]
-      self.contextOffset = layout.offsets[3]
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
-
-  /// Arrangement of fields in memory.
-  internal static let layout = Layout()
-
-  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: Self.layout.argsOffset) }
-  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: Self.layout.tracebackOffset) }
-  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: Self.layout.causeOffset) }
-  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: Self.layout.contextOffset) }
-}
 
 // MARK: - Type/object types init
 
@@ -6892,6 +6842,14 @@ extension PyArithmeticError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -6905,6 +6863,14 @@ extension PyArithmeticError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -7016,6 +6982,14 @@ extension PyAssertionError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -7029,6 +7003,14 @@ extension PyAssertionError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -7140,6 +7122,14 @@ extension PyAttributeError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -7153,6 +7143,14 @@ extension PyAttributeError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -7239,6 +7237,10 @@ extension PyBaseException {
   /// This type was automatically generated based on `PyBaseException` fields
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
+    internal let argsOffset: Int
+    internal let tracebackOffset: Int
+    internal let causeOffset: Int
+    internal let contextOffset: Int
     internal let size: Int
     internal let alignment: Int
 
@@ -7246,10 +7248,19 @@ extension PyBaseException {
       let layout = PyMemory.GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
-        fields: []
+        fields: [
+          PyMemory.FieldLayout(from: PyTuple.self), // PyBaseException.args
+          PyMemory.FieldLayout(from: PyTraceback?.self), // PyBaseException.traceback
+          PyMemory.FieldLayout(from: PyBaseException?.self), // PyBaseException.cause
+          PyMemory.FieldLayout(from: PyBaseException?.self) // PyBaseException.context
+        ]
       )
 
-      assert(layout.offsets.count == 0)
+      assert(layout.offsets.count == 4)
+      self.argsOffset = layout.offsets[0]
+      self.tracebackOffset = layout.offsets[1]
+      self.causeOffset = layout.offsets[2]
+      self.contextOffset = layout.offsets[3]
       self.size = layout.size
       self.alignment = layout.alignment
     }
@@ -7264,6 +7275,14 @@ extension PyBaseException {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: Self.layout.argsOffset) }
+  /// Property: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: Self.layout.tracebackOffset) }
+  /// Property: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: Self.layout.causeOffset) }
+  /// Property: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: Self.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -7287,6 +7306,13 @@ extension PyBaseException {
     // Call 'beforeDeinitialize' starting from most-specific type.
     PyBaseException(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
+
+    // Call 'deinitialize' on all of our own properties.
+    let zelf = PyBaseException(ptr: ptr)
+    zelf.argsPtr.deinitialize()
+    zelf.tracebackPtr.deinitialize()
+    zelf.causePtr.deinitialize()
+    zelf.contextPtr.deinitialize()
 
     // Call 'deinitialize' on base type.
     PyObject.deinitialize(ptr: ptr)
@@ -7374,6 +7400,14 @@ extension PyBlockingIOError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -7387,6 +7421,14 @@ extension PyBlockingIOError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -7499,6 +7541,14 @@ extension PyBrokenPipeError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -7512,6 +7562,14 @@ extension PyBrokenPipeError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -7625,6 +7683,14 @@ extension PyBufferError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -7638,6 +7704,14 @@ extension PyBufferError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -7749,6 +7823,14 @@ extension PyBytesWarning {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -7762,6 +7844,14 @@ extension PyBytesWarning {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -7874,6 +7964,14 @@ extension PyChildProcessError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -7887,6 +7985,14 @@ extension PyChildProcessError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -7999,6 +8105,14 @@ extension PyConnectionAbortedError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -8012,6 +8126,14 @@ extension PyConnectionAbortedError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -8125,6 +8247,14 @@ extension PyConnectionError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -8138,6 +8268,14 @@ extension PyConnectionError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -8250,6 +8388,14 @@ extension PyConnectionRefusedError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -8263,6 +8409,14 @@ extension PyConnectionRefusedError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -8376,6 +8530,14 @@ extension PyConnectionResetError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -8389,6 +8551,14 @@ extension PyConnectionResetError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -8502,6 +8672,14 @@ extension PyDeprecationWarning {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -8515,6 +8693,14 @@ extension PyDeprecationWarning {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -8627,6 +8813,14 @@ extension PyEOFError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -8640,6 +8834,14 @@ extension PyEOFError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -8751,6 +8953,14 @@ extension PyException {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -8764,6 +8974,14 @@ extension PyException {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -8874,6 +9092,14 @@ extension PyFileExistsError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -8887,6 +9113,14 @@ extension PyFileExistsError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -8999,6 +9233,14 @@ extension PyFileNotFoundError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -9012,6 +9254,14 @@ extension PyFileNotFoundError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -9124,6 +9374,14 @@ extension PyFloatingPointError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -9137,6 +9395,14 @@ extension PyFloatingPointError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -9249,6 +9515,14 @@ extension PyFutureWarning {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -9262,6 +9536,14 @@ extension PyFutureWarning {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -9374,6 +9656,14 @@ extension PyGeneratorExit {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -9387,6 +9677,14 @@ extension PyGeneratorExit {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -9507,6 +9805,14 @@ extension PyImportError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
   /// Property: `PyImportError.msg`.
   internal var msgPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.msgOffset) }
   /// Property: `PyImportError.moduleName`.
@@ -9526,6 +9832,14 @@ extension PyImportError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -9674,6 +9988,14 @@ extension PyImportWarning {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -9687,6 +10009,14 @@ extension PyImportWarning {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -9799,6 +10129,14 @@ extension PyIndentationError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
   /// Property from base class: `PySyntaxError.msg`.
   internal var msgPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: PySyntaxError.layout.msgOffset) }
   /// Property from base class: `PySyntaxError.filename`.
@@ -9824,6 +10162,14 @@ extension PyIndentationError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
   /// Property from base class: `PySyntaxError.msg`.
   internal var msg: PyObject? { self.msgPtr.pointee }
   /// Property from base class: `PySyntaxError.filename`.
@@ -10012,6 +10358,14 @@ extension PyIndexError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -10025,6 +10379,14 @@ extension PyIndexError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -10137,6 +10499,14 @@ extension PyInterruptedError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -10150,6 +10520,14 @@ extension PyInterruptedError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -10262,6 +10640,14 @@ extension PyIsADirectoryError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -10275,6 +10661,14 @@ extension PyIsADirectoryError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -10387,6 +10781,14 @@ extension PyKeyError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -10400,6 +10802,14 @@ extension PyKeyError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -10512,6 +10922,14 @@ extension PyKeyboardInterrupt {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -10525,6 +10943,14 @@ extension PyKeyboardInterrupt {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -10635,6 +11061,14 @@ extension PyLookupError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -10648,6 +11082,14 @@ extension PyLookupError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -10759,6 +11201,14 @@ extension PyMemoryError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -10772,6 +11222,14 @@ extension PyMemoryError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -10883,6 +11341,14 @@ extension PyModuleNotFoundError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
   /// Property from base class: `PyImportError.msg`.
   internal var msgPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: PyImportError.layout.msgOffset) }
   /// Property from base class: `PyImportError.moduleName`.
@@ -10902,6 +11368,14 @@ extension PyModuleNotFoundError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
   /// Property from base class: `PyImportError.msg`.
   internal var msg: PyObject? { self.msgPtr.pointee }
   /// Property from base class: `PyImportError.moduleName`.
@@ -11072,6 +11546,14 @@ extension PyNameError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -11085,6 +11567,14 @@ extension PyNameError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -11196,6 +11686,14 @@ extension PyNotADirectoryError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -11209,6 +11707,14 @@ extension PyNotADirectoryError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -11321,6 +11827,14 @@ extension PyNotImplementedError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -11334,6 +11848,14 @@ extension PyNotImplementedError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -11446,6 +11968,14 @@ extension PyOSError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -11459,6 +11989,14 @@ extension PyOSError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -11570,6 +12108,14 @@ extension PyOverflowError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -11583,6 +12129,14 @@ extension PyOverflowError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -11695,6 +12249,14 @@ extension PyPendingDeprecationWarning {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -11708,6 +12270,14 @@ extension PyPendingDeprecationWarning {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -11820,6 +12390,14 @@ extension PyPermissionError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -11833,6 +12411,14 @@ extension PyPermissionError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -11945,6 +12531,14 @@ extension PyProcessLookupError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -11958,6 +12552,14 @@ extension PyProcessLookupError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -12070,6 +12672,14 @@ extension PyRecursionError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -12083,6 +12693,14 @@ extension PyRecursionError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -12195,6 +12813,14 @@ extension PyReferenceError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -12208,6 +12834,14 @@ extension PyReferenceError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -12319,6 +12953,14 @@ extension PyResourceWarning {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -12332,6 +12974,14 @@ extension PyResourceWarning {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -12444,6 +13094,14 @@ extension PyRuntimeError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -12457,6 +13115,14 @@ extension PyRuntimeError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -12568,6 +13234,14 @@ extension PyRuntimeWarning {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -12581,6 +13255,14 @@ extension PyRuntimeWarning {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -12693,6 +13375,14 @@ extension PyStopAsyncIteration {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -12706,6 +13396,14 @@ extension PyStopAsyncIteration {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -12821,6 +13519,14 @@ extension PyStopIteration {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
   /// Property: `PyStopIteration.value`.
   internal var valuePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
 
@@ -12836,6 +13542,14 @@ extension PyStopIteration {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -12997,6 +13711,14 @@ extension PySyntaxError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
   /// Property: `PySyntaxError.msg`.
   internal var msgPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.msgOffset) }
   /// Property: `PySyntaxError.filename`.
@@ -13022,6 +13744,14 @@ extension PySyntaxError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -13179,6 +13909,14 @@ extension PySyntaxWarning {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -13192,6 +13930,14 @@ extension PySyntaxWarning {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -13304,6 +14050,14 @@ extension PySystemError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -13317,6 +14071,14 @@ extension PySystemError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -13432,6 +14194,14 @@ extension PySystemExit {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
   /// Property: `PySystemExit.code`.
   internal var codePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.codeOffset) }
 
@@ -13447,6 +14217,14 @@ extension PySystemExit {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -13588,6 +14366,14 @@ extension PyTabError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
   /// Property from base class: `PySyntaxError.msg`.
   internal var msgPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: PySyntaxError.layout.msgOffset) }
   /// Property from base class: `PySyntaxError.filename`.
@@ -13613,6 +14399,14 @@ extension PyTabError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
   /// Property from base class: `PySyntaxError.msg`.
   internal var msg: PyObject? { self.msgPtr.pointee }
   /// Property from base class: `PySyntaxError.filename`.
@@ -13802,6 +14596,14 @@ extension PyTimeoutError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -13815,6 +14617,14 @@ extension PyTimeoutError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -13927,6 +14737,14 @@ extension PyTypeError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -13940,6 +14758,14 @@ extension PyTypeError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -14051,6 +14877,14 @@ extension PyUnboundLocalError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -14064,6 +14898,14 @@ extension PyUnboundLocalError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -14176,6 +15018,14 @@ extension PyUnicodeDecodeError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -14189,6 +15039,14 @@ extension PyUnicodeDecodeError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -14302,6 +15160,14 @@ extension PyUnicodeEncodeError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -14315,6 +15181,14 @@ extension PyUnicodeEncodeError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -14428,6 +15302,14 @@ extension PyUnicodeError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -14441,6 +15323,14 @@ extension PyUnicodeError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -14553,6 +15443,14 @@ extension PyUnicodeTranslateError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -14566,6 +15464,14 @@ extension PyUnicodeTranslateError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -14679,6 +15585,14 @@ extension PyUnicodeWarning {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -14692,6 +15606,14 @@ extension PyUnicodeWarning {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -14804,6 +15726,14 @@ extension PyUserWarning {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -14817,6 +15747,14 @@ extension PyUserWarning {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -14929,6 +15867,14 @@ extension PyValueError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -14942,6 +15888,14 @@ extension PyValueError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -15053,6 +16007,14 @@ extension PyWarning {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -15066,6 +16028,14 @@ extension PyWarning {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -15177,6 +16147,14 @@ extension PyZeroDivisionError {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property from base class: `PyBaseException.args`.
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: PyBaseException.layout.argsOffset) }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: PyBaseException.layout.tracebackOffset) }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.causeOffset) }
+  /// Property from base class: `PyBaseException.context`.
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: PyBaseException.layout.contextOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -15190,6 +16168,14 @@ extension PyZeroDivisionError {
     get { self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
+  /// Property from base class: `PyBaseException.args`.
+  internal var args: PyTuple { self.argsPtr.pointee }
+  /// Property from base class: `PyBaseException.traceback`.
+  internal var traceback: PyTraceback? { self.tracebackPtr.pointee }
+  /// Property from base class: `PyBaseException.cause`.
+  internal var cause: PyBaseException? { self.causePtr.pointee }
+  /// Property from base class: `PyBaseException.context`.
+  internal var context: PyBaseException? { self.contextPtr.pointee }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,

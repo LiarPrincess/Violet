@@ -1,9 +1,6 @@
 from typing import List, Optional
 from Helpers import NewTypeArguments, generated_warning
-from Sourcery import (
-    ErrorHeader, get_error_header,
-    TypeInfo, SwiftInitializerInfo, get_types
-)
+from Sourcery import TypeInfo, SwiftInitializerInfo, get_types
 
 # ===============
 # === Helpers ===
@@ -95,29 +92,6 @@ def print_base_types_properties(properties_base: List[PropertyInLayout]):
             print(f'  }}')
         else:
             print(f'  internal var {name}: {typ} {{ self.{pointer_property_name}.pointee }}')
-
-# ===========================
-# === Object/error header ===
-# ===========================
-
-def print_error_header_extension(h: ErrorHeader):
-    fields: List[PropertyInLayout] = []
-    for f in h.fields:
-        fields.append(PropertyInLayout(f.swift_name, f.swift_type))
-
-
-    HEADER_OFFSET = 'PyObject.layout.size'
-    HEADER_ALIGNMENT = 'PyObject.layout.alignment'
-
-    print('// MARK: - PyErrorHeader')
-    print()
-    print('extension PyErrorHeader {')
-    print()
-    print_layout('PyErrorHeader', HEADER_OFFSET, HEADER_ALIGNMENT, fields)
-    print()
-    print_pointer_properties([], fields)
-    print('}')
-    print()
 
 # =========================================
 # === PyMemory + type/object types init ===
@@ -428,9 +402,6 @@ import VioletCompiler
 // swiftlint:disable file_length
 
 // This file contains:
-// - For 'PyErrorHeader':
-//   - PyErrorHeader.Layout - mainly field offsets
-//   - PyErrorHeader.xxxPtr - pointer properties to fields
 // - PyMemory.newTypeAndObjectTypes - because they have recursive dependency
 // - Then for each type:
 //   - static let pythonTypeName - name of the type in Python
@@ -440,9 +411,6 @@ import VioletCompiler
 //   - static func invalidZelfArgument<T>(py: Py, object: PyObject, fnName: String) -> PyResult<T>
 //   - PyMemory.new[TYPE_NAME] - to create new object of this type
 ''')
-
-    error_header = get_error_header()
-    print_error_header_extension(error_header)
 
     all_types = get_types()
     print_type_and_object_types_init(all_types)

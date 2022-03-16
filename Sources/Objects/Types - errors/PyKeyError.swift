@@ -71,8 +71,6 @@ public struct PyKeyError: PyErrorMixin {
       return Self.invalidZelfArgument(py, zelf, "__str__")
     }
 
-    // Why this is static? See comment in 'PyBaseException.str'.
-
     // If args is a tuple of exactly one item, apply repr to args[0].
     // This is done so that e.g. the exception raised by {{}}[''] prints
     //     KeyError: ''
