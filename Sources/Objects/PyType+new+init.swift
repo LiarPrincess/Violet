@@ -204,7 +204,7 @@ extension PyType {
     // Initialize '__dict__' from passed-in dict
     // Also: we have to COPY it!
     let dict = args.dict.copy(py)
-    type.__dict__ = dict
+    type.setDict(dict)
 
     // =========================================================================
     // === We filled flags and set __dict__, so the 'core' type is finished. ===
@@ -342,7 +342,8 @@ extension PyType {
     _ py: Py,
     type: PyType
   ) -> PyBaseException? {
-    let dict = type.__dict__
+    let dict = type.getDict(py)
+
     let isAlreadyPresent = dict.get(py, id: .__module__) != nil
     if isAlreadyPresent {
       return nil
@@ -370,7 +371,7 @@ extension PyType {
     _ py: Py,
     type: PyType
   ) -> PyBaseException? {
-    let dict = type.__dict__
+    let dict = type.getDict(py)
 
     // Otherwise it will stay the same as during 'init'
     if let qualname = dict.get(py, id: .__qualname__) {
@@ -390,7 +391,7 @@ extension PyType {
     type: PyType,
     fnName: IdString
   ) {
-    let dict = type.__dict__
+    let dict = type.getDict(py)
 
     guard let object = dict.get(py, id: fnName) else {
       return
@@ -409,7 +410,7 @@ extension PyType {
     type: PyType,
     fnName: IdString
   ) {
-    let dict = type.__dict__
+    let dict = type.getDict(py)
 
     guard let object = dict.get(py, id: fnName) else {
       return
@@ -439,7 +440,7 @@ extension PyType {
     let set = FunctionWrapper(name: "__set__", fn: PyType.setHeapType__dict__(_:zelf:value:))
     let del = FunctionWrapper(name: "__det__", fn: PyType.delHeapType__dict__(_:zelf:))
 
-    let dict = type.__dict__
+    let dict = type.getDict(py)
     let property = py.newProperty(get: get, set: set, del: del, doc: nil)
     dict.set(py, id: .__dict__, value: property.asObject)
   }
@@ -474,7 +475,8 @@ extension PyType {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.getDict(py)
+    return PyResult(result)
   }
 
   private static func setHeapType__dict__(_ py: Py,
@@ -489,7 +491,7 @@ extension PyType {
       return .typeError(py, message: message)
     }
 
-    zelf.__dict__ = dict
+    zelf.setDict(dict)
     return .none(py)
   }
 
@@ -506,7 +508,8 @@ extension PyType {
     // >>> del elsa.__dict__
     // >>> print(elsa.__dict__)
     // {}
-    zelf.__dict__ = py.newDict()
+    let dict = py.newDict()
+    zelf.setDict(dict)
     return .none(py)
   }
 
@@ -523,7 +526,7 @@ extension PyType {
       fn: AttributeHelper.getAttribute(_:object:name:)
     )
 
-    let dict = type.__dict__
+    let dict = type.getDict(py)
     let function = py.newBuiltinFunction(fn: wrapper, module: nil, doc: nil)
     dict.set(py, id: .__getattribute__, value: function.asObject)
   }
@@ -541,7 +544,7 @@ extension PyType {
       fn: AttributeHelper.setAttribute(_:object:name:value:)
     )
 
-    let dict = type.__dict__
+    let dict = type.getDict(py)
     let function = py.newBuiltinFunction(fn: wrapper, module: nil, doc: nil)
     dict.set(py, id: .__setattr__, value: function.asObject)
   }
@@ -550,7 +553,7 @@ extension PyType {
 
   private static func fill__classcell__(_ py: Py,
                                         type: PyType) -> PyTypeError? {
-    let dict = type.__dict__
+    let dict = type.getDict(py)
 
     guard let __classcell__ = dict.get(py, id: .__classcell__) else {
       return nil
@@ -575,7 +578,7 @@ extension PyType {
     _ py: Py,
     type: PyType
   ) -> PyBaseException? {
-    let dict = type.__dict__
+    let dict = type.getDict(py)
 
     for entry in dict.elements {
       let key = entry.key.object

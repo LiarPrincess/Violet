@@ -199,10 +199,10 @@ public struct PyFrame: PyObjectMixin {
     let globalBuiltins = globals.get(py, id: .__builtins__)
     let globalBuiltinsModule = globalBuiltins.flatMap(py.cast.asModule(_:))
     if let module = globalBuiltinsModule {
-      return module.__dict__
+      return module.getDict(py)
     }
 
-    return py.builtinsModule.__dict__
+    return py.builtins.__dict__
   }
 
   // Nothing to do here.

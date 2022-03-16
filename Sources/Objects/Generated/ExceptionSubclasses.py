@@ -86,7 +86,8 @@ public struct {swift_type_name}: PyErrorMixin {{
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }}
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.asBaseException.getDict(py)
+    return PyResult(result)
   }}
 
   // sourcery: pystaticmethod = __new__

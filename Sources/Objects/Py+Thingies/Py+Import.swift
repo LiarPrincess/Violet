@@ -18,7 +18,7 @@ extension Py {
   /// This value is set in:
   /// 'initimport(PyInterpreterState *interp, PyObject *sysmod)'
   public func get__import__() -> PyResult<PyObject> {
-    let dict = self.builtinsModule.__dict__
+    let dict = self.builtins.__dict__
 
     if let fn = dict.get(self, id: .__import__) {
       return .value(fn)

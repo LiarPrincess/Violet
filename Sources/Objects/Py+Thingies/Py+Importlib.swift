@@ -239,12 +239,13 @@ extension Py {
   private func createModule(spec: ModuleSpecWithPath,
                             code: PyCode) -> ImportlibResult<PyModule> {
     let module = self.newModule(name: spec.name, doc: nil, dict: nil)
+    let dict = module.getDict(self)
 
-    let moduleDict = module.getDict()
     let nameObject = spec.nameObject.asObject
+    dict.set(self, id: .__name__, value: nameObject)
+
     let filenameObject = code.filename.asObject
-    moduleDict.set(self, id: .__name__, value: nameObject)
-    moduleDict.set(self, id: .__file__, value: filenameObject)
+    dict.set(self, id: .__file__, value: filenameObject)
 
     if let e = self.sys.addModule(module: module) {
       return .error(self.createModuleError(spec: spec, cause: e))
@@ -259,8 +260,8 @@ extension Py {
       kwargs: nil,
       defaults: [],
       kwDefaults: nil,
-      globals: moduleDict,
-      locals: moduleDict,
+      globals: dict,
+      locals: dict,
       closure: nil
     )
 

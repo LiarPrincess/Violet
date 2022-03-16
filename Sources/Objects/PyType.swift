@@ -265,7 +265,8 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
       return Self.invalidZelfArgument(py, zelf)
     }
 
-    guard let doc = zelf.__dict__.get(py, id: .__doc__) else {
+    let dict = zelf.getDict(py)
+    guard let doc = dict.get(py, id: .__doc__) else {
       return .none(py)
     }
 
@@ -289,7 +290,8 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     case let .error(e): return .error(e)
     }
 
-    zelf.__dict__.set(py, id: .__doc__, value: object)
+    let dict = zelf.getDict(py)
+    dict.set(py, id: .__doc__, value: object)
     return .none(py)
   }
 
@@ -307,7 +309,8 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
       object = py.none.asObject
     }
 
-    self.__dict__.set(py, id: .__doc__, value: object)
+    let dict = self.getDict(py)
+    dict.set(py, id: .__doc__, value: object)
   }
 
   // MARK: - Module
@@ -369,7 +372,9 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   // This whole thing to try to avoid conversion for 'objectNotYetConvertedToString'.
   private func getModuleNameRaw(_ py: Py) -> GetModuleNameRawResult {
     if self.typeFlags.isHeapType {
-      guard let object = self.__dict__.get(py, id: .__module__) else {
+      let dict = self.getDict(py)
+
+      guard let object = dict.get(py, id: .__module__) else {
         let e = py.newAttributeError(message: "__module__")
         return .error(e.asBaseException)
       }
@@ -421,7 +426,8 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     case let .error(e): return .error(e)
     }
 
-    self.__dict__.set(py, id: .__module__, value: object)
+    let dict = self.getDict(py)
+    dict.set(py, id: .__module__, value: object)
     return .value()
   }
 
@@ -433,7 +439,20 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
       return Self.invalidZelfArgument(py, zelf)
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.getDict(py)
+    return PyResult(result)
+  }
+
+  internal func getDict(_ py: Py) -> PyDict {
+    guard let result = self.header.__dict__.get(py) else {
+      py.trapMissing__dict__(object: self)
+    }
+
+    return result
+  }
+
+  internal func setDict(_ value: PyDict) {
+    self.header.__dict__.set(value)
   }
 
   // MARK: - Class
@@ -749,7 +768,8 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     var result = DirResult()
 
     for base in self.mro {
-      if let e = result.append(py, keysFrom: base.__dict__) {
+      let dict = base.getDict(py)
+      if let e = result.append(py, keysFrom: dict) {
         return .error(e)
       }
     }
@@ -772,7 +792,9 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   /// _PyType_Lookup(PyTypeObject *type, PyObject *name)
   internal func mroLookup(_ py: Py, name: IdString) -> MroLookupResult? {
     for type in self.mro {
-      if let object = type.__dict__.get(py, id: name) {
+      let dict = type.getDict(py)
+
+      if let object = dict.get(py, id: name) {
         return MroLookupResult(object: object, type: type)
       }
     }
@@ -792,7 +814,9 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   /// _PyType_Lookup(PyTypeObject *type, PyObject *name)
   internal func mroLookup(_ py: Py, name: PyString) -> MroLookupByStringResult {
     for type in self.mro {
-      switch type.__dict__.get(py, key: name.asObject) {
+      let dict = type.getDict(py)
+
+      switch dict.get(py, key: name.asObject) {
       case .value(let o):
         return .value(MroLookupResult(object: o, type: type))
       case .notFound:

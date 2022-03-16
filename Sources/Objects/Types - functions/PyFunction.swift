@@ -527,7 +527,16 @@ public struct PyFunction: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
-    return PyResult(zelf.__dict__)
+    let result = zelf.getDict(py)
+    return PyResult(result)
+  }
+
+  internal func getDict(_ py: Py) -> PyDict {
+    guard let result = self.header.__dict__.get(py) else {
+      py.trapMissing__dict__(object: self)
+    }
+
+    return result
   }
 
   // MARK: - Get

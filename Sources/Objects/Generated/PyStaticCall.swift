@@ -339,7 +339,8 @@ public enum PyStaticCall {
 
       // We need to start from the back (the most base type, probably 'object').
       for type in mro.reversed() {
-        self.removeOverriddenMethods(py, dict: type.header.__dict__)
+        let dict = type.getDict(py)
+        self.removeOverriddenMethods(py, dict: dict)
         self.copyMethods(from: type.staticMethods)
       }
 

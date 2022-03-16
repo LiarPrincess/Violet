@@ -9,7 +9,7 @@ extension Py {
 
   /// Get `__build_class__` from `builtins` module.
   public func get__build_class__() -> PyResult<PyObject> {
-    let dict = self.builtinsModule.__dict__
+    let dict = self.builtins.__dict__
 
     if let fn = dict.get(self, id: .__build_class__) {
       return .value(fn)
