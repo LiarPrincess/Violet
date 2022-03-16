@@ -64,18 +64,20 @@ public struct PySyntaxError: PyErrorMixin {
   // Not me!
 
   // swiftlint:disable:next function_parameter_count
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           msg: PyObject?,
-                           filename: PyObject?,
-                           lineno: PyObject?,
-                           offset: PyObject?,
-                           text: PyObject?,
-                           printFileAndLine: PyObject?,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    msg: PyObject?,
+    filename: PyObject?,
+    lineno: PyObject?,
+    offset: PyObject?,
+    text: PyObject?,
+    printFileAndLine: PyObject?,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     // Only 'msg' goes to args
     var argsElements = [PyObject]()
     if let msg = msg {
@@ -100,13 +102,15 @@ public struct PySyntaxError: PyErrorMixin {
   }
 
   // swiftlint:disable:next function_parameter_count
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
