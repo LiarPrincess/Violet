@@ -149,20 +149,12 @@ extension PyBool {
 extension PyMemory {
 
   /// Allocate a new instance of `bool` type.
-  public func newBool(
-    _ py: Py,
-    type: PyType,
-    value: Bool
-  ) -> PyBool {
+  public func newBool(_ py: Py, type: PyType, value: Bool) -> PyBool {
     let typeLayout = PyBool.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyBool(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      value: value
-    )
+    let result = PyBool(ptr: ptr)
+    result.initialize(py, type: type, value: value)
 
     return result
   }
@@ -273,24 +265,20 @@ extension PyBuiltinFunction {
 extension PyMemory {
 
   /// Allocate a new instance of `builtinFunction` type.
-  public func newBuiltinFunction(
-    _ py: Py,
-    type: PyType,
-    function: FunctionWrapper,
-    module: PyObject?,
-    doc: String?
-  ) -> PyBuiltinFunction {
+  public func newBuiltinFunction(_ py: Py,
+                                 type: PyType,
+                                 function: FunctionWrapper,
+                                 module: PyObject?,
+                                 doc: String?) -> PyBuiltinFunction {
     let typeLayout = PyBuiltinFunction.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyBuiltinFunction(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      function: function,
-      module: module,
-      doc: doc
-    )
+    let result = PyBuiltinFunction(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      function: function,
+                      module: module,
+                      doc: doc)
 
     return result
   }
@@ -407,26 +395,22 @@ extension PyBuiltinMethod {
 extension PyMemory {
 
   /// Allocate a new instance of `builtinMethod` type.
-  public func newBuiltinMethod(
-    _ py: Py,
-    type: PyType,
-    function: FunctionWrapper,
-    object: PyObject,
-    module: PyObject?,
-    doc: String?
-  ) -> PyBuiltinMethod {
+  public func newBuiltinMethod(_ py: Py,
+                               type: PyType,
+                               function: FunctionWrapper,
+                               object: PyObject,
+                               module: PyObject?,
+                               doc: String?) -> PyBuiltinMethod {
     let typeLayout = PyBuiltinMethod.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyBuiltinMethod(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      function: function,
-      object: object,
-      module: module,
-      doc: doc
-    )
+    let result = PyBuiltinMethod(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      function: function,
+                      object: object,
+                      module: module,
+                      doc: doc)
 
     return result
   }
@@ -525,20 +509,12 @@ extension PyByteArray {
 extension PyMemory {
 
   /// Allocate a new instance of `bytearray` type.
-  public func newByteArray(
-    _ py: Py,
-    type: PyType,
-    elements: Data
-  ) -> PyByteArray {
+  public func newByteArray(_ py: Py, type: PyType, elements: Data) -> PyByteArray {
     let typeLayout = PyByteArray.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyByteArray(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      elements: elements
-    )
+    let result = PyByteArray(ptr: ptr)
+    result.initialize(py, type: type, elements: elements)
 
     return result
   }
@@ -643,20 +619,12 @@ extension PyByteArrayIterator {
 extension PyMemory {
 
   /// Allocate a new instance of `bytearray_iterator` type.
-  public func newByteArrayIterator(
-    _ py: Py,
-    type: PyType,
-    bytes: PyByteArray
-  ) -> PyByteArrayIterator {
+  public func newByteArrayIterator(_ py: Py, type: PyType, bytes: PyByteArray) -> PyByteArrayIterator {
     let typeLayout = PyByteArrayIterator.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyByteArrayIterator(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      bytes: bytes
-    )
+    let result = PyByteArrayIterator(ptr: ptr)
+    result.initialize(py, type: type, bytes: bytes)
 
     return result
   }
@@ -755,20 +723,12 @@ extension PyBytes {
 extension PyMemory {
 
   /// Allocate a new instance of `bytes` type.
-  public func newBytes(
-    _ py: Py,
-    type: PyType,
-    elements: Data
-  ) -> PyBytes {
+  public func newBytes(_ py: Py, type: PyType, elements: Data) -> PyBytes {
     let typeLayout = PyBytes.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyBytes(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      elements: elements
-    )
+    let result = PyBytes(ptr: ptr)
+    result.initialize(py, type: type, elements: elements)
 
     return result
   }
@@ -873,20 +833,12 @@ extension PyBytesIterator {
 extension PyMemory {
 
   /// Allocate a new instance of `bytes_iterator` type.
-  public func newBytesIterator(
-    _ py: Py,
-    type: PyType,
-    bytes: PyBytes
-  ) -> PyBytesIterator {
+  public func newBytesIterator(_ py: Py, type: PyType, bytes: PyBytes) -> PyBytesIterator {
     let typeLayout = PyBytesIterator.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyBytesIterator(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      bytes: bytes
-    )
+    let result = PyBytesIterator(ptr: ptr)
+    result.initialize(py, type: type, bytes: bytes)
 
     return result
   }
@@ -991,22 +943,18 @@ extension PyCallableIterator {
 extension PyMemory {
 
   /// Allocate a new instance of `callable_iterator` type.
-  public func newCallableIterator(
-    _ py: Py,
-    type: PyType,
-    callable: PyObject,
-    sentinel: PyObject
-  ) -> PyCallableIterator {
+  public func newCallableIterator(_ py: Py,
+                                  type: PyType,
+                                  callable: PyObject,
+                                  sentinel: PyObject) -> PyCallableIterator {
     let typeLayout = PyCallableIterator.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyCallableIterator(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      callable: callable,
-      sentinel: sentinel
-    )
+    let result = PyCallableIterator(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      callable: callable,
+                      sentinel: sentinel)
 
     return result
   }
@@ -1105,20 +1053,12 @@ extension PyCell {
 extension PyMemory {
 
   /// Allocate a new instance of `cell` type.
-  public func newCell(
-    _ py: Py,
-    type: PyType,
-    content: PyObject?
-  ) -> PyCell {
+  public func newCell(_ py: Py, type: PyType, content: PyObject?) -> PyCell {
     let typeLayout = PyCell.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyCell(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      content: content
-    )
+    let result = PyCell(ptr: ptr)
+    result.initialize(py, type: type, content: content)
 
     return result
   }
@@ -1217,20 +1157,12 @@ extension PyClassMethod {
 extension PyMemory {
 
   /// Allocate a new instance of `classmethod` type.
-  public func newClassMethod(
-    _ py: Py,
-    type: PyType,
-    callable: PyObject?
-  ) -> PyClassMethod {
+  public func newClassMethod(_ py: Py, type: PyType, callable: PyObject?) -> PyClassMethod {
     let typeLayout = PyClassMethod.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyClassMethod(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      callable: callable
-    )
+    let result = PyClassMethod(ptr: ptr)
+    result.initialize(py, type: type, callable: callable)
 
     return result
   }
@@ -1407,20 +1339,12 @@ extension PyCode {
 extension PyMemory {
 
   /// Allocate a new instance of `code` type.
-  public func newCode(
-    _ py: Py,
-    type: PyType,
-    code: CodeObject
-  ) -> PyCode {
+  public func newCode(_ py: Py, type: PyType, code: CodeObject) -> PyCode {
     let typeLayout = PyCode.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyCode(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      code: code
-    )
+    let result = PyCode(ptr: ptr)
+    result.initialize(py, type: type, code: code)
 
     return result
   }
@@ -1525,22 +1449,18 @@ extension PyComplex {
 extension PyMemory {
 
   /// Allocate a new instance of `complex` type.
-  public func newComplex(
-    _ py: Py,
-    type: PyType,
-    real: Double,
-    imag: Double
-  ) -> PyComplex {
+  public func newComplex(_ py: Py,
+                         type: PyType,
+                         real: Double,
+                         imag: Double) -> PyComplex {
     let typeLayout = PyComplex.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyComplex(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      real: real,
-      imag: imag
-    )
+    let result = PyComplex(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      real: real,
+                      imag: imag)
 
     return result
   }
@@ -1639,20 +1559,12 @@ extension PyDict {
 extension PyMemory {
 
   /// Allocate a new instance of `dict` type.
-  public func newDict(
-    _ py: Py,
-    type: PyType,
-    elements: PyDict.OrderedDictionary
-  ) -> PyDict {
+  public func newDict(_ py: Py, type: PyType, elements: PyDict.OrderedDictionary) -> PyDict {
     let typeLayout = PyDict.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyDict(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      elements: elements
-    )
+    let result = PyDict(ptr: ptr)
+    result.initialize(py, type: type, elements: elements)
 
     return result
   }
@@ -1763,20 +1675,12 @@ extension PyDictItemIterator {
 extension PyMemory {
 
   /// Allocate a new instance of `dict_itemiterator` type.
-  public func newDictItemIterator(
-    _ py: Py,
-    type: PyType,
-    dict: PyDict
-  ) -> PyDictItemIterator {
+  public func newDictItemIterator(_ py: Py, type: PyType, dict: PyDict) -> PyDictItemIterator {
     let typeLayout = PyDictItemIterator.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyDictItemIterator(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      dict: dict
-    )
+    let result = PyDictItemIterator(ptr: ptr)
+    result.initialize(py, type: type, dict: dict)
 
     return result
   }
@@ -1875,20 +1779,12 @@ extension PyDictItems {
 extension PyMemory {
 
   /// Allocate a new instance of `dict_items` type.
-  public func newDictItems(
-    _ py: Py,
-    type: PyType,
-    dict: PyDict
-  ) -> PyDictItems {
+  public func newDictItems(_ py: Py, type: PyType, dict: PyDict) -> PyDictItems {
     let typeLayout = PyDictItems.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyDictItems(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      dict: dict
-    )
+    let result = PyDictItems(ptr: ptr)
+    result.initialize(py, type: type, dict: dict)
 
     return result
   }
@@ -1999,20 +1895,12 @@ extension PyDictKeyIterator {
 extension PyMemory {
 
   /// Allocate a new instance of `dict_keyiterator` type.
-  public func newDictKeyIterator(
-    _ py: Py,
-    type: PyType,
-    dict: PyDict
-  ) -> PyDictKeyIterator {
+  public func newDictKeyIterator(_ py: Py, type: PyType, dict: PyDict) -> PyDictKeyIterator {
     let typeLayout = PyDictKeyIterator.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyDictKeyIterator(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      dict: dict
-    )
+    let result = PyDictKeyIterator(ptr: ptr)
+    result.initialize(py, type: type, dict: dict)
 
     return result
   }
@@ -2111,20 +1999,12 @@ extension PyDictKeys {
 extension PyMemory {
 
   /// Allocate a new instance of `dict_keys` type.
-  public func newDictKeys(
-    _ py: Py,
-    type: PyType,
-    dict: PyDict
-  ) -> PyDictKeys {
+  public func newDictKeys(_ py: Py, type: PyType, dict: PyDict) -> PyDictKeys {
     let typeLayout = PyDictKeys.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyDictKeys(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      dict: dict
-    )
+    let result = PyDictKeys(ptr: ptr)
+    result.initialize(py, type: type, dict: dict)
 
     return result
   }
@@ -2235,20 +2115,12 @@ extension PyDictValueIterator {
 extension PyMemory {
 
   /// Allocate a new instance of `dict_valueiterator` type.
-  public func newDictValueIterator(
-    _ py: Py,
-    type: PyType,
-    dict: PyDict
-  ) -> PyDictValueIterator {
+  public func newDictValueIterator(_ py: Py, type: PyType, dict: PyDict) -> PyDictValueIterator {
     let typeLayout = PyDictValueIterator.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyDictValueIterator(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      dict: dict
-    )
+    let result = PyDictValueIterator(ptr: ptr)
+    result.initialize(py, type: type, dict: dict)
 
     return result
   }
@@ -2347,20 +2219,12 @@ extension PyDictValues {
 extension PyMemory {
 
   /// Allocate a new instance of `dict_values` type.
-  public func newDictValues(
-    _ py: Py,
-    type: PyType,
-    dict: PyDict
-  ) -> PyDictValues {
+  public func newDictValues(_ py: Py, type: PyType, dict: PyDict) -> PyDictValues {
     let typeLayout = PyDictValues.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyDictValues(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      dict: dict
-    )
+    let result = PyDictValues(ptr: ptr)
+    result.initialize(py, type: type, dict: dict)
 
     return result
   }
@@ -2434,18 +2298,12 @@ extension PyEllipsis {
 extension PyMemory {
 
   /// Allocate a new instance of `ellipsis` type.
-  public func newEllipsis(
-    _ py: Py,
-    type: PyType
-  ) -> PyEllipsis {
+  public func newEllipsis(_ py: Py, type: PyType) -> PyEllipsis {
     let typeLayout = PyEllipsis.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyEllipsis(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type
-    )
+    let result = PyEllipsis(ptr: ptr)
+    result.initialize(py, type: type)
 
     return result
   }
@@ -2550,22 +2408,18 @@ extension PyEnumerate {
 extension PyMemory {
 
   /// Allocate a new instance of `enumerate` type.
-  public func newEnumerate(
-    _ py: Py,
-    type: PyType,
-    iterator: PyObject,
-    initialIndex: BigInt
-  ) -> PyEnumerate {
+  public func newEnumerate(_ py: Py,
+                           type: PyType,
+                           iterator: PyObject,
+                           initialIndex: BigInt) -> PyEnumerate {
     let typeLayout = PyEnumerate.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyEnumerate(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      iterator: iterator,
-      initialIndex: initialIndex
-    )
+    let result = PyEnumerate(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      iterator: iterator,
+                      initialIndex: initialIndex)
 
     return result
   }
@@ -2670,22 +2524,18 @@ extension PyFilter {
 extension PyMemory {
 
   /// Allocate a new instance of `filter` type.
-  public func newFilter(
-    _ py: Py,
-    type: PyType,
-    fn: PyObject,
-    iterator: PyObject
-  ) -> PyFilter {
+  public func newFilter(_ py: Py,
+                        type: PyType,
+                        fn: PyObject,
+                        iterator: PyObject) -> PyFilter {
     let typeLayout = PyFilter.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyFilter(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      fn: fn,
-      iterator: iterator
-    )
+    let result = PyFilter(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      fn: fn,
+                      iterator: iterator)
 
     return result
   }
@@ -2784,20 +2634,12 @@ extension PyFloat {
 extension PyMemory {
 
   /// Allocate a new instance of `float` type.
-  public func newFloat(
-    _ py: Py,
-    type: PyType,
-    value: Double
-  ) -> PyFloat {
+  public func newFloat(_ py: Py, type: PyType, value: Double) -> PyFloat {
     let typeLayout = PyFloat.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyFloat(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      value: value
-    )
+    let result = PyFloat(ptr: ptr)
+    result.initialize(py, type: type, value: value)
 
     return result
   }
@@ -2962,26 +2804,22 @@ extension PyFrame {
 extension PyMemory {
 
   /// Allocate a new instance of `frame` type.
-  public func newFrame(
-    _ py: Py,
-    type: PyType,
-    code: PyCode,
-    locals: PyDict,
-    globals: PyDict,
-    parent: PyFrame?
-  ) -> PyFrame {
+  public func newFrame(_ py: Py,
+                       type: PyType,
+                       code: PyCode,
+                       locals: PyDict,
+                       globals: PyDict,
+                       parent: PyFrame?) -> PyFrame {
     let typeLayout = PyFrame.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyFrame(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      code: code,
-      locals: locals,
-      globals: globals,
-      parent: parent
-    )
+    let result = PyFrame(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      code: code,
+                      locals: locals,
+                      globals: globals,
+                      parent: parent)
 
     return result
   }
@@ -3080,20 +2918,12 @@ extension PyFrozenSet {
 extension PyMemory {
 
   /// Allocate a new instance of `frozenset` type.
-  public func newFrozenSet(
-    _ py: Py,
-    type: PyType,
-    elements: OrderedSet
-  ) -> PyFrozenSet {
+  public func newFrozenSet(_ py: Py, type: PyType, elements: OrderedSet) -> PyFrozenSet {
     let typeLayout = PyFrozenSet.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyFrozenSet(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      elements: elements
-    )
+    let result = PyFrozenSet(ptr: ptr)
+    result.initialize(py, type: type, elements: elements)
 
     return result
   }
@@ -3246,26 +3076,22 @@ extension PyFunction {
 extension PyMemory {
 
   /// Allocate a new instance of `function` type.
-  public func newFunction(
-    _ py: Py,
-    type: PyType,
-    qualname: PyString?,
-    module: PyObject,
-    code: PyCode,
-    globals: PyDict
-  ) -> PyFunction {
+  public func newFunction(_ py: Py,
+                          type: PyType,
+                          qualname: PyString?,
+                          module: PyObject,
+                          code: PyCode,
+                          globals: PyDict) -> PyFunction {
     let typeLayout = PyFunction.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyFunction(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      qualname: qualname,
-      module: module,
-      code: code,
-      globals: globals
-    )
+    let result = PyFunction(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      qualname: qualname,
+                      module: module,
+                      code: code,
+                      globals: globals)
 
     return result
   }
@@ -3364,20 +3190,12 @@ extension PyInt {
 extension PyMemory {
 
   /// Allocate a new instance of `int` type.
-  public func newInt(
-    _ py: Py,
-    type: PyType,
-    value: BigInt
-  ) -> PyInt {
+  public func newInt(_ py: Py, type: PyType, value: BigInt) -> PyInt {
     let typeLayout = PyInt.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyInt(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      value: value
-    )
+    let result = PyInt(ptr: ptr)
+    result.initialize(py, type: type, value: value)
 
     return result
   }
@@ -3482,20 +3300,12 @@ extension PyIterator {
 extension PyMemory {
 
   /// Allocate a new instance of `iterator` type.
-  public func newIterator(
-    _ py: Py,
-    type: PyType,
-    sequence: PyObject
-  ) -> PyIterator {
+  public func newIterator(_ py: Py, type: PyType, sequence: PyObject) -> PyIterator {
     let typeLayout = PyIterator.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyIterator(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      sequence: sequence
-    )
+    let result = PyIterator(ptr: ptr)
+    result.initialize(py, type: type, sequence: sequence)
 
     return result
   }
@@ -3594,20 +3404,12 @@ extension PyList {
 extension PyMemory {
 
   /// Allocate a new instance of `list` type.
-  public func newList(
-    _ py: Py,
-    type: PyType,
-    elements: [PyObject]
-  ) -> PyList {
+  public func newList(_ py: Py, type: PyType, elements: [PyObject]) -> PyList {
     let typeLayout = PyList.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyList(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      elements: elements
-    )
+    let result = PyList(ptr: ptr)
+    result.initialize(py, type: type, elements: elements)
 
     return result
   }
@@ -3712,20 +3514,12 @@ extension PyListIterator {
 extension PyMemory {
 
   /// Allocate a new instance of `list_iterator` type.
-  public func newListIterator(
-    _ py: Py,
-    type: PyType,
-    list: PyList
-  ) -> PyListIterator {
+  public func newListIterator(_ py: Py, type: PyType, list: PyList) -> PyListIterator {
     let typeLayout = PyListIterator.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyListIterator(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      list: list
-    )
+    let result = PyListIterator(ptr: ptr)
+    result.initialize(py, type: type, list: list)
 
     return result
   }
@@ -3830,20 +3624,12 @@ extension PyListReverseIterator {
 extension PyMemory {
 
   /// Allocate a new instance of `list_reverseiterator` type.
-  public func newListReverseIterator(
-    _ py: Py,
-    type: PyType,
-    list: PyList
-  ) -> PyListReverseIterator {
+  public func newListReverseIterator(_ py: Py, type: PyType, list: PyList) -> PyListReverseIterator {
     let typeLayout = PyListReverseIterator.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyListReverseIterator(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      list: list
-    )
+    let result = PyListReverseIterator(ptr: ptr)
+    result.initialize(py, type: type, list: list)
 
     return result
   }
@@ -3948,22 +3734,18 @@ extension PyMap {
 extension PyMemory {
 
   /// Allocate a new instance of `map` type.
-  public func newMap(
-    _ py: Py,
-    type: PyType,
-    fn: PyObject,
-    iterators: [PyObject]
-  ) -> PyMap {
+  public func newMap(_ py: Py,
+                     type: PyType,
+                     fn: PyObject,
+                     iterators: [PyObject]) -> PyMap {
     let typeLayout = PyMap.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyMap(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      fn: fn,
-      iterators: iterators
-    )
+    let result = PyMap(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      fn: fn,
+                      iterators: iterators)
 
     return result
   }
@@ -4068,22 +3850,18 @@ extension PyMethod {
 extension PyMemory {
 
   /// Allocate a new instance of `method` type.
-  public func newMethod(
-    _ py: Py,
-    type: PyType,
-    function: PyFunction,
-    object: PyObject
-  ) -> PyMethod {
+  public func newMethod(_ py: Py,
+                        type: PyType,
+                        function: PyFunction,
+                        object: PyObject) -> PyMethod {
     let typeLayout = PyMethod.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyMethod(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      function: function,
-      object: object
-    )
+    let result = PyMethod(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      function: function,
+                      object: object)
 
     return result
   }
@@ -4157,24 +3935,20 @@ extension PyModule {
 extension PyMemory {
 
   /// Allocate a new instance of `module` type.
-  public func newModule(
-    _ py: Py,
-    type: PyType,
-    name: PyObject?,
-    doc: PyObject?,
-    __dict__: PyDict? = nil
-  ) -> PyModule {
+  public func newModule(_ py: Py,
+                        type: PyType,
+                        name: PyObject?,
+                        doc: PyObject?,
+                        __dict__: PyDict? = nil) -> PyModule {
     let typeLayout = PyModule.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyModule(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      name: name,
-      doc: doc,
-      __dict__: __dict__
-    )
+    let result = PyModule(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      name: name,
+                      doc: doc,
+                      __dict__: __dict__)
 
     return result
   }
@@ -4248,20 +4022,12 @@ extension PyNamespace {
 extension PyMemory {
 
   /// Allocate a new instance of `SimpleNamespace` type.
-  public func newNamespace(
-    _ py: Py,
-    type: PyType,
-    __dict__: PyDict?
-  ) -> PyNamespace {
+  public func newNamespace(_ py: Py, type: PyType, __dict__: PyDict?) -> PyNamespace {
     let typeLayout = PyNamespace.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyNamespace(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      __dict__: __dict__
-    )
+    let result = PyNamespace(ptr: ptr)
+    result.initialize(py, type: type, __dict__: __dict__)
 
     return result
   }
@@ -4335,18 +4101,12 @@ extension PyNone {
 extension PyMemory {
 
   /// Allocate a new instance of `NoneType` type.
-  public func newNone(
-    _ py: Py,
-    type: PyType
-  ) -> PyNone {
+  public func newNone(_ py: Py, type: PyType) -> PyNone {
     let typeLayout = PyNone.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyNone(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type
-    )
+    let result = PyNone(ptr: ptr)
+    result.initialize(py, type: type)
 
     return result
   }
@@ -4420,18 +4180,12 @@ extension PyNotImplemented {
 extension PyMemory {
 
   /// Allocate a new instance of `NotImplementedType` type.
-  public func newNotImplemented(
-    _ py: Py,
-    type: PyType
-  ) -> PyNotImplemented {
+  public func newNotImplemented(_ py: Py, type: PyType) -> PyNotImplemented {
     let typeLayout = PyNotImplemented.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyNotImplemented(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type
-    )
+    let result = PyNotImplemented(ptr: ptr)
+    result.initialize(py, type: type)
 
     return result
   }
@@ -4500,20 +4254,12 @@ extension PyObject {
 extension PyMemory {
 
   /// Allocate a new instance of `object` type.
-  public func newObject(
-    _ py: Py,
-    type: PyType,
-    __dict__: PyDict? = nil
-  ) -> PyObject {
+  public func newObject(_ py: Py, type: PyType, __dict__: PyDict? = nil) -> PyObject {
     let typeLayout = PyObject.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyObject(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      __dict__: __dict__
-    )
+    let result = PyObject(ptr: ptr)
+    result.initialize(py, type: type, __dict__: __dict__)
 
     return result
   }
@@ -4630,26 +4376,22 @@ extension PyProperty {
 extension PyMemory {
 
   /// Allocate a new instance of `property` type.
-  public func newProperty(
-    _ py: Py,
-    type: PyType,
-    get: PyObject?,
-    set: PyObject?,
-    del: PyObject?,
-    doc: PyObject?
-  ) -> PyProperty {
+  public func newProperty(_ py: Py,
+                          type: PyType,
+                          get: PyObject?,
+                          set: PyObject?,
+                          del: PyObject?,
+                          doc: PyObject?) -> PyProperty {
     let typeLayout = PyProperty.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyProperty(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      get: get,
-      set: set,
-      del: del,
-      doc: doc
-    )
+    let result = PyProperty(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      get: get,
+                      set: set,
+                      del: del,
+                      doc: doc)
 
     return result
   }
@@ -4766,24 +4508,20 @@ extension PyRange {
 extension PyMemory {
 
   /// Allocate a new instance of `range` type.
-  public func newRange(
-    _ py: Py,
-    type: PyType,
-    start: PyInt,
-    stop: PyInt,
-    step: PyInt?
-  ) -> PyRange {
+  public func newRange(_ py: Py,
+                       type: PyType,
+                       start: PyInt,
+                       stop: PyInt,
+                       step: PyInt?) -> PyRange {
     let typeLayout = PyRange.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyRange(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      start: start,
-      stop: stop,
-      step: step
-    )
+    let result = PyRange(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      start: start,
+                      stop: stop,
+                      step: step)
 
     return result
   }
@@ -4900,24 +4638,20 @@ extension PyRangeIterator {
 extension PyMemory {
 
   /// Allocate a new instance of `range_iterator` type.
-  public func newRangeIterator(
-    _ py: Py,
-    type: PyType,
-    start: BigInt,
-    step: BigInt,
-    length: BigInt
-  ) -> PyRangeIterator {
+  public func newRangeIterator(_ py: Py,
+                               type: PyType,
+                               start: BigInt,
+                               step: BigInt,
+                               length: BigInt) -> PyRangeIterator {
     let typeLayout = PyRangeIterator.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyRangeIterator(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      start: start,
-      step: step,
-      length: length
-    )
+    let result = PyRangeIterator(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      start: start,
+                      step: step,
+                      length: length)
 
     return result
   }
@@ -5022,22 +4756,18 @@ extension PyReversed {
 extension PyMemory {
 
   /// Allocate a new instance of `reversed` type.
-  public func newReversed(
-    _ py: Py,
-    type: PyType,
-    sequence: PyObject,
-    count: Int
-  ) -> PyReversed {
+  public func newReversed(_ py: Py,
+                          type: PyType,
+                          sequence: PyObject,
+                          count: Int) -> PyReversed {
     let typeLayout = PyReversed.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyReversed(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      sequence: sequence,
-      count: count
-    )
+    let result = PyReversed(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      sequence: sequence,
+                      count: count)
 
     return result
   }
@@ -5136,20 +4866,12 @@ extension PySet {
 extension PyMemory {
 
   /// Allocate a new instance of `set` type.
-  public func newSet(
-    _ py: Py,
-    type: PyType,
-    elements: OrderedSet
-  ) -> PySet {
+  public func newSet(_ py: Py, type: PyType, elements: OrderedSet) -> PySet {
     let typeLayout = PySet.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PySet(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      elements: elements
-    )
+    let result = PySet(ptr: ptr)
+    result.initialize(py, type: type, elements: elements)
 
     return result
   }
@@ -5260,39 +4982,23 @@ extension PySetIterator {
 extension PyMemory {
 
   /// Allocate a new instance of `set_iterator` type.
-  public func newSetIterator(
-    _ py: Py,
-    type: PyType,
-    set: PySet
-  ) -> PySetIterator {
+  public func newSetIterator(_ py: Py, type: PyType, set: PySet) -> PySetIterator {
     let typeLayout = PySetIterator.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PySetIterator(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      set: set
-    )
+    let result = PySetIterator(ptr: ptr)
+    result.initialize(py, type: type, set: set)
 
     return result
   }
 
   /// Allocate a new instance of `set_iterator` type.
-  public func newSetIterator(
-    _ py: Py,
-    type: PyType,
-    frozenSet: PyFrozenSet
-  ) -> PySetIterator {
+  public func newSetIterator(_ py: Py, type: PyType, frozenSet: PyFrozenSet) -> PySetIterator {
     let typeLayout = PySetIterator.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PySetIterator(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      frozenSet: frozenSet
-    )
+    let result = PySetIterator(ptr: ptr)
+    result.initialize(py, type: type, frozenSet: frozenSet)
 
     return result
   }
@@ -5403,24 +5109,20 @@ extension PySlice {
 extension PyMemory {
 
   /// Allocate a new instance of `slice` type.
-  public func newSlice(
-    _ py: Py,
-    type: PyType,
-    start: PyObject,
-    stop: PyObject,
-    step: PyObject
-  ) -> PySlice {
+  public func newSlice(_ py: Py,
+                       type: PyType,
+                       start: PyObject,
+                       stop: PyObject,
+                       step: PyObject) -> PySlice {
     let typeLayout = PySlice.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PySlice(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      start: start,
-      stop: stop,
-      step: step
-    )
+    let result = PySlice(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      start: start,
+                      stop: stop,
+                      step: step)
 
     return result
   }
@@ -5519,20 +5221,12 @@ extension PyStaticMethod {
 extension PyMemory {
 
   /// Allocate a new instance of `staticmethod` type.
-  public func newStaticMethod(
-    _ py: Py,
-    type: PyType,
-    callable: PyObject?
-  ) -> PyStaticMethod {
+  public func newStaticMethod(_ py: Py, type: PyType, callable: PyObject?) -> PyStaticMethod {
     let typeLayout = PyStaticMethod.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyStaticMethod(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      callable: callable
-    )
+    let result = PyStaticMethod(ptr: ptr)
+    result.initialize(py, type: type, callable: callable)
 
     return result
   }
@@ -5643,20 +5337,12 @@ extension PyString {
 extension PyMemory {
 
   /// Allocate a new instance of `str` type.
-  public func newString(
-    _ py: Py,
-    type: PyType,
-    value: String
-  ) -> PyString {
+  public func newString(_ py: Py, type: PyType, value: String) -> PyString {
     let typeLayout = PyString.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyString(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      value: value
-    )
+    let result = PyString(ptr: ptr)
+    result.initialize(py, type: type, value: value)
 
     return result
   }
@@ -5761,20 +5447,12 @@ extension PyStringIterator {
 extension PyMemory {
 
   /// Allocate a new instance of `str_iterator` type.
-  public func newStringIterator(
-    _ py: Py,
-    type: PyType,
-    string: PyString
-  ) -> PyStringIterator {
+  public func newStringIterator(_ py: Py, type: PyType, string: PyString) -> PyStringIterator {
     let typeLayout = PyStringIterator.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyStringIterator(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      string: string
-    )
+    let result = PyStringIterator(ptr: ptr)
+    result.initialize(py, type: type, string: string)
 
     return result
   }
@@ -5885,24 +5563,20 @@ extension PySuper {
 extension PyMemory {
 
   /// Allocate a new instance of `super` type.
-  public func newSuper(
-    _ py: Py,
-    type: PyType,
-    requestedType: PyType?,
-    object: PyObject?,
-    objectType: PyType?
-  ) -> PySuper {
+  public func newSuper(_ py: Py,
+                       type: PyType,
+                       requestedType: PyType?,
+                       object: PyObject?,
+                       objectType: PyType?) -> PySuper {
     let typeLayout = PySuper.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PySuper(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      requestedType: requestedType,
-      object: object,
-      objectType: objectType
-    )
+    let result = PySuper(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      requestedType: requestedType,
+                      object: object,
+                      objectType: objectType)
 
     return result
   }
@@ -6025,30 +5699,26 @@ extension PyTextFile {
 extension PyMemory {
 
   /// Allocate a new instance of `TextFile` type.
-  public func newTextFile(
-    _ py: Py,
-    type: PyType,
-    name: String?,
-    fd: FileDescriptorType,
-    mode: FileMode,
-    encoding: PyString.Encoding,
-    errorHandling: PyString.ErrorHandling,
-    closeOnDealloc: Bool
-  ) -> PyTextFile {
+  public func newTextFile(_ py: Py,
+                          type: PyType,
+                          name: String?,
+                          fd: FileDescriptorType,
+                          mode: FileMode,
+                          encoding: PyString.Encoding,
+                          errorHandling: PyString.ErrorHandling,
+                          closeOnDealloc: Bool) -> PyTextFile {
     let typeLayout = PyTextFile.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyTextFile(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      name: name,
-      fd: fd,
-      mode: mode,
-      encoding: encoding,
-      errorHandling: errorHandling,
-      closeOnDealloc: closeOnDealloc
-    )
+    let result = PyTextFile(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      name: name,
+                      fd: fd,
+                      mode: mode,
+                      encoding: encoding,
+                      errorHandling: errorHandling,
+                      closeOnDealloc: closeOnDealloc)
 
     return result
   }
@@ -6165,26 +5835,22 @@ extension PyTraceback {
 extension PyMemory {
 
   /// Allocate a new instance of `traceback` type.
-  public func newTraceback(
-    _ py: Py,
-    type: PyType,
-    next: PyTraceback?,
-    frame: PyFrame,
-    lastInstruction: PyInt,
-    lineNo: PyInt
-  ) -> PyTraceback {
+  public func newTraceback(_ py: Py,
+                           type: PyType,
+                           next: PyTraceback?,
+                           frame: PyFrame,
+                           lastInstruction: PyInt,
+                           lineNo: PyInt) -> PyTraceback {
     let typeLayout = PyTraceback.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyTraceback(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      next: next,
-      frame: frame,
-      lastInstruction: lastInstruction,
-      lineNo: lineNo
-    )
+    let result = PyTraceback(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      next: next,
+                      frame: frame,
+                      lastInstruction: lastInstruction,
+                      lineNo: lineNo)
 
     return result
   }
@@ -6283,20 +5949,12 @@ extension PyTuple {
 extension PyMemory {
 
   /// Allocate a new instance of `tuple` type.
-  public func newTuple(
-    _ py: Py,
-    type: PyType,
-    elements: [PyObject]
-  ) -> PyTuple {
+  public func newTuple(_ py: Py, type: PyType, elements: [PyObject]) -> PyTuple {
     let typeLayout = PyTuple.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyTuple(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      elements: elements
-    )
+    let result = PyTuple(ptr: ptr)
+    result.initialize(py, type: type, elements: elements)
 
     return result
   }
@@ -6401,20 +6059,12 @@ extension PyTupleIterator {
 extension PyMemory {
 
   /// Allocate a new instance of `tuple_iterator` type.
-  public func newTupleIterator(
-    _ py: Py,
-    type: PyType,
-    tuple: PyTuple
-  ) -> PyTupleIterator {
+  public func newTupleIterator(_ py: Py, type: PyType, tuple: PyTuple) -> PyTupleIterator {
     let typeLayout = PyTupleIterator.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyTupleIterator(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      tuple: tuple
-    )
+    let result = PyTupleIterator(ptr: ptr)
+    result.initialize(py, type: type, tuple: tuple)
 
     return result
   }
@@ -6567,40 +6217,36 @@ extension PyType {
 extension PyMemory {
 
   /// Allocate a new instance of `type` type.
-  public func newType(
-    _ py: Py,
-    type: PyType,
-    name: String,
-    qualname: String,
-    flags: PyType.TypeFlags,
-    base: PyType?,
-    bases: [PyType],
-    mroWithoutSelf: [PyType],
-    subclasses: [PyType],
-    layout: PyType.MemoryLayout,
-    staticMethods: PyStaticCall.KnownNotOverriddenMethods,
-    debugFn: @escaping PyType.DebugFn,
-    deinitialize: @escaping PyType.DeinitializeFn
-  ) -> PyType {
+  public func newType(_ py: Py,
+                      type: PyType,
+                      name: String,
+                      qualname: String,
+                      flags: PyType.TypeFlags,
+                      base: PyType?,
+                      bases: [PyType],
+                      mroWithoutSelf: [PyType],
+                      subclasses: [PyType],
+                      layout: PyType.MemoryLayout,
+                      staticMethods: PyStaticCall.KnownNotOverriddenMethods,
+                      debugFn: @escaping PyType.DebugFn,
+                      deinitialize: @escaping PyType.DeinitializeFn) -> PyType {
     let typeLayout = PyType.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyType(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      name: name,
-      qualname: qualname,
-      flags: flags,
-      base: base,
-      bases: bases,
-      mroWithoutSelf: mroWithoutSelf,
-      subclasses: subclasses,
-      layout: layout,
-      staticMethods: staticMethods,
-      debugFn: debugFn,
-      deinitialize: deinitialize
-    )
+    let result = PyType(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      name: name,
+                      qualname: qualname,
+                      flags: flags,
+                      base: base,
+                      bases: bases,
+                      mroWithoutSelf: mroWithoutSelf,
+                      subclasses: subclasses,
+                      layout: layout,
+                      staticMethods: staticMethods,
+                      debugFn: debugFn,
+                      deinitialize: deinitialize)
 
     return result
   }
@@ -6699,20 +6345,12 @@ extension PyZip {
 extension PyMemory {
 
   /// Allocate a new instance of `zip` type.
-  public func newZip(
-    _ py: Py,
-    type: PyType,
-    iterators: [PyObject]
-  ) -> PyZip {
+  public func newZip(_ py: Py, type: PyType, iterators: [PyObject]) -> PyZip {
     let typeLayout = PyZip.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyZip(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      iterators: iterators
-    )
+    let result = PyZip(ptr: ptr)
+    result.initialize(py, type: type, iterators: iterators)
 
     return result
   }
@@ -6816,28 +6454,24 @@ extension PyArithmeticError {
 extension PyMemory {
 
   /// Allocate a new instance of `ArithmeticError` type.
-  public func newArithmeticError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyArithmeticError {
+  public func newArithmeticError(_ py: Py,
+                                 type: PyType,
+                                 args: PyTuple,
+                                 traceback: PyTraceback? = nil,
+                                 cause: PyBaseException? = nil,
+                                 context: PyBaseException? = nil,
+                                 suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyArithmeticError {
     let typeLayout = PyArithmeticError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyArithmeticError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyArithmeticError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -6941,28 +6575,24 @@ extension PyAssertionError {
 extension PyMemory {
 
   /// Allocate a new instance of `AssertionError` type.
-  public func newAssertionError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyAssertionError {
+  public func newAssertionError(_ py: Py,
+                                type: PyType,
+                                args: PyTuple,
+                                traceback: PyTraceback? = nil,
+                                cause: PyBaseException? = nil,
+                                context: PyBaseException? = nil,
+                                suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyAssertionError {
     let typeLayout = PyAssertionError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyAssertionError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyAssertionError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -7066,28 +6696,24 @@ extension PyAttributeError {
 extension PyMemory {
 
   /// Allocate a new instance of `AttributeError` type.
-  public func newAttributeError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyAttributeError {
+  public func newAttributeError(_ py: Py,
+                                type: PyType,
+                                args: PyTuple,
+                                traceback: PyTraceback? = nil,
+                                cause: PyBaseException? = nil,
+                                context: PyBaseException? = nil,
+                                suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyAttributeError {
     let typeLayout = PyAttributeError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyAttributeError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyAttributeError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -7204,28 +6830,24 @@ extension PyBaseException {
 extension PyMemory {
 
   /// Allocate a new instance of `BaseException` type.
-  public func newBaseException(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyBaseException {
+  public func newBaseException(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyBaseException {
     let typeLayout = PyBaseException.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyBaseException(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyBaseException(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -7330,28 +6952,24 @@ extension PyBlockingIOError {
 extension PyMemory {
 
   /// Allocate a new instance of `BlockingIOError` type.
-  public func newBlockingIOError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyBlockingIOError {
+  public func newBlockingIOError(_ py: Py,
+                                 type: PyType,
+                                 args: PyTuple,
+                                 traceback: PyTraceback? = nil,
+                                 cause: PyBaseException? = nil,
+                                 context: PyBaseException? = nil,
+                                 suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyBlockingIOError {
     let typeLayout = PyBlockingIOError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyBlockingIOError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyBlockingIOError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -7457,28 +7075,24 @@ extension PyBrokenPipeError {
 extension PyMemory {
 
   /// Allocate a new instance of `BrokenPipeError` type.
-  public func newBrokenPipeError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyBrokenPipeError {
+  public func newBrokenPipeError(_ py: Py,
+                                 type: PyType,
+                                 args: PyTuple,
+                                 traceback: PyTraceback? = nil,
+                                 cause: PyBaseException? = nil,
+                                 context: PyBaseException? = nil,
+                                 suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyBrokenPipeError {
     let typeLayout = PyBrokenPipeError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyBrokenPipeError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyBrokenPipeError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -7582,28 +7196,24 @@ extension PyBufferError {
 extension PyMemory {
 
   /// Allocate a new instance of `BufferError` type.
-  public func newBufferError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyBufferError {
+  public func newBufferError(_ py: Py,
+                             type: PyType,
+                             args: PyTuple,
+                             traceback: PyTraceback? = nil,
+                             cause: PyBaseException? = nil,
+                             context: PyBaseException? = nil,
+                             suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyBufferError {
     let typeLayout = PyBufferError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyBufferError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyBufferError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -7708,28 +7318,24 @@ extension PyBytesWarning {
 extension PyMemory {
 
   /// Allocate a new instance of `BytesWarning` type.
-  public func newBytesWarning(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyBytesWarning {
+  public func newBytesWarning(_ py: Py,
+                              type: PyType,
+                              args: PyTuple,
+                              traceback: PyTraceback? = nil,
+                              cause: PyBaseException? = nil,
+                              context: PyBaseException? = nil,
+                              suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyBytesWarning {
     let typeLayout = PyBytesWarning.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyBytesWarning(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyBytesWarning(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -7834,28 +7440,24 @@ extension PyChildProcessError {
 extension PyMemory {
 
   /// Allocate a new instance of `ChildProcessError` type.
-  public func newChildProcessError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyChildProcessError {
+  public func newChildProcessError(_ py: Py,
+                                   type: PyType,
+                                   args: PyTuple,
+                                   traceback: PyTraceback? = nil,
+                                   cause: PyBaseException? = nil,
+                                   context: PyBaseException? = nil,
+                                   suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyChildProcessError {
     let typeLayout = PyChildProcessError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyChildProcessError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyChildProcessError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -7961,28 +7563,24 @@ extension PyConnectionAbortedError {
 extension PyMemory {
 
   /// Allocate a new instance of `ConnectionAbortedError` type.
-  public func newConnectionAbortedError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyConnectionAbortedError {
+  public func newConnectionAbortedError(_ py: Py,
+                                        type: PyType,
+                                        args: PyTuple,
+                                        traceback: PyTraceback? = nil,
+                                        cause: PyBaseException? = nil,
+                                        context: PyBaseException? = nil,
+                                        suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyConnectionAbortedError {
     let typeLayout = PyConnectionAbortedError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyConnectionAbortedError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyConnectionAbortedError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -8087,28 +7685,24 @@ extension PyConnectionError {
 extension PyMemory {
 
   /// Allocate a new instance of `ConnectionError` type.
-  public func newConnectionError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyConnectionError {
+  public func newConnectionError(_ py: Py,
+                                 type: PyType,
+                                 args: PyTuple,
+                                 traceback: PyTraceback? = nil,
+                                 cause: PyBaseException? = nil,
+                                 context: PyBaseException? = nil,
+                                 suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyConnectionError {
     let typeLayout = PyConnectionError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyConnectionError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyConnectionError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -8214,28 +7808,24 @@ extension PyConnectionRefusedError {
 extension PyMemory {
 
   /// Allocate a new instance of `ConnectionRefusedError` type.
-  public func newConnectionRefusedError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyConnectionRefusedError {
+  public func newConnectionRefusedError(_ py: Py,
+                                        type: PyType,
+                                        args: PyTuple,
+                                        traceback: PyTraceback? = nil,
+                                        cause: PyBaseException? = nil,
+                                        context: PyBaseException? = nil,
+                                        suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyConnectionRefusedError {
     let typeLayout = PyConnectionRefusedError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyConnectionRefusedError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyConnectionRefusedError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -8341,28 +7931,24 @@ extension PyConnectionResetError {
 extension PyMemory {
 
   /// Allocate a new instance of `ConnectionResetError` type.
-  public func newConnectionResetError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyConnectionResetError {
+  public func newConnectionResetError(_ py: Py,
+                                      type: PyType,
+                                      args: PyTuple,
+                                      traceback: PyTraceback? = nil,
+                                      cause: PyBaseException? = nil,
+                                      context: PyBaseException? = nil,
+                                      suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyConnectionResetError {
     let typeLayout = PyConnectionResetError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyConnectionResetError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyConnectionResetError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -8467,28 +8053,24 @@ extension PyDeprecationWarning {
 extension PyMemory {
 
   /// Allocate a new instance of `DeprecationWarning` type.
-  public func newDeprecationWarning(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyDeprecationWarning {
+  public func newDeprecationWarning(_ py: Py,
+                                    type: PyType,
+                                    args: PyTuple,
+                                    traceback: PyTraceback? = nil,
+                                    cause: PyBaseException? = nil,
+                                    context: PyBaseException? = nil,
+                                    suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyDeprecationWarning {
     let typeLayout = PyDeprecationWarning.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyDeprecationWarning(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyDeprecationWarning(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -8592,28 +8174,24 @@ extension PyEOFError {
 extension PyMemory {
 
   /// Allocate a new instance of `EOFError` type.
-  public func newEOFError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyEOFError {
+  public func newEOFError(_ py: Py,
+                          type: PyType,
+                          args: PyTuple,
+                          traceback: PyTraceback? = nil,
+                          cause: PyBaseException? = nil,
+                          context: PyBaseException? = nil,
+                          suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyEOFError {
     let typeLayout = PyEOFError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyEOFError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyEOFError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -8716,28 +8294,24 @@ extension PyException {
 extension PyMemory {
 
   /// Allocate a new instance of `Exception` type.
-  public func newException(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyException {
+  public func newException(_ py: Py,
+                           type: PyType,
+                           args: PyTuple,
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyException {
     let typeLayout = PyException.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyException(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyException(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -8842,28 +8416,24 @@ extension PyFileExistsError {
 extension PyMemory {
 
   /// Allocate a new instance of `FileExistsError` type.
-  public func newFileExistsError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyFileExistsError {
+  public func newFileExistsError(_ py: Py,
+                                 type: PyType,
+                                 args: PyTuple,
+                                 traceback: PyTraceback? = nil,
+                                 cause: PyBaseException? = nil,
+                                 context: PyBaseException? = nil,
+                                 suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyFileExistsError {
     let typeLayout = PyFileExistsError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyFileExistsError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyFileExistsError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -8968,28 +8538,24 @@ extension PyFileNotFoundError {
 extension PyMemory {
 
   /// Allocate a new instance of `FileNotFoundError` type.
-  public func newFileNotFoundError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyFileNotFoundError {
+  public func newFileNotFoundError(_ py: Py,
+                                   type: PyType,
+                                   args: PyTuple,
+                                   traceback: PyTraceback? = nil,
+                                   cause: PyBaseException? = nil,
+                                   context: PyBaseException? = nil,
+                                   suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyFileNotFoundError {
     let typeLayout = PyFileNotFoundError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyFileNotFoundError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyFileNotFoundError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -9094,28 +8660,24 @@ extension PyFloatingPointError {
 extension PyMemory {
 
   /// Allocate a new instance of `FloatingPointError` type.
-  public func newFloatingPointError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyFloatingPointError {
+  public func newFloatingPointError(_ py: Py,
+                                    type: PyType,
+                                    args: PyTuple,
+                                    traceback: PyTraceback? = nil,
+                                    cause: PyBaseException? = nil,
+                                    context: PyBaseException? = nil,
+                                    suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyFloatingPointError {
     let typeLayout = PyFloatingPointError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyFloatingPointError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyFloatingPointError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -9220,28 +8782,24 @@ extension PyFutureWarning {
 extension PyMemory {
 
   /// Allocate a new instance of `FutureWarning` type.
-  public func newFutureWarning(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyFutureWarning {
+  public func newFutureWarning(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyFutureWarning {
     let typeLayout = PyFutureWarning.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyFutureWarning(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyFutureWarning(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -9344,28 +8902,24 @@ extension PyGeneratorExit {
 extension PyMemory {
 
   /// Allocate a new instance of `GeneratorExit` type.
-  public func newGeneratorExit(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyGeneratorExit {
+  public func newGeneratorExit(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyGeneratorExit {
     let typeLayout = PyGeneratorExit.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyGeneratorExit(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyGeneratorExit(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -9506,59 +9060,51 @@ extension PyImportError {
 extension PyMemory {
 
   /// Allocate a new instance of `ImportError` type.
-  public func newImportError(
-    _ py: Py,
-    type: PyType,
-    msg: PyObject?,
-    moduleName: PyObject?,
-    modulePath: PyObject?,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyImportError {
+  public func newImportError(_ py: Py,
+                             type: PyType,
+                             msg: PyObject?,
+                             moduleName: PyObject?,
+                             modulePath: PyObject?,
+                             traceback: PyTraceback? = nil,
+                             cause: PyBaseException? = nil,
+                             context: PyBaseException? = nil,
+                             suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyImportError {
     let typeLayout = PyImportError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyImportError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      msg: msg,
-      moduleName: moduleName,
-      modulePath: modulePath,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyImportError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      msg: msg,
+                      moduleName: moduleName,
+                      modulePath: modulePath,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
 
   /// Allocate a new instance of `ImportError` type.
-  public func newImportError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyImportError {
+  public func newImportError(_ py: Py,
+                             type: PyType,
+                             args: PyTuple,
+                             traceback: PyTraceback? = nil,
+                             cause: PyBaseException? = nil,
+                             context: PyBaseException? = nil,
+                             suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyImportError {
     let typeLayout = PyImportError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyImportError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyImportError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -9663,28 +9209,24 @@ extension PyImportWarning {
 extension PyMemory {
 
   /// Allocate a new instance of `ImportWarning` type.
-  public func newImportWarning(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyImportWarning {
+  public func newImportWarning(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyImportWarning {
     let typeLayout = PyImportWarning.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyImportWarning(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyImportWarning(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -9840,65 +9382,57 @@ extension PyIndentationError {
 extension PyMemory {
 
   /// Allocate a new instance of `IndentationError` type.
-  public func newIndentationError(
-    _ py: Py,
-    type: PyType,
-    msg: PyObject?,
-    filename: PyObject?,
-    lineno: PyObject?,
-    offset: PyObject?,
-    text: PyObject?,
-    printFileAndLine: PyObject?,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyIndentationError {
+  public func newIndentationError(_ py: Py,
+                                  type: PyType,
+                                  msg: PyObject?,
+                                  filename: PyObject?,
+                                  lineno: PyObject?,
+                                  offset: PyObject?,
+                                  text: PyObject?,
+                                  printFileAndLine: PyObject?,
+                                  traceback: PyTraceback? = nil,
+                                  cause: PyBaseException? = nil,
+                                  context: PyBaseException? = nil,
+                                  suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyIndentationError {
     let typeLayout = PyIndentationError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyIndentationError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      msg: msg,
-      filename: filename,
-      lineno: lineno,
-      offset: offset,
-      text: text,
-      printFileAndLine: printFileAndLine,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyIndentationError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      msg: msg,
+                      filename: filename,
+                      lineno: lineno,
+                      offset: offset,
+                      text: text,
+                      printFileAndLine: printFileAndLine,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
 
   /// Allocate a new instance of `IndentationError` type.
-  public func newIndentationError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyIndentationError {
+  public func newIndentationError(_ py: Py,
+                                  type: PyType,
+                                  args: PyTuple,
+                                  traceback: PyTraceback? = nil,
+                                  cause: PyBaseException? = nil,
+                                  context: PyBaseException? = nil,
+                                  suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyIndentationError {
     let typeLayout = PyIndentationError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyIndentationError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyIndentationError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -10003,28 +9537,24 @@ extension PyIndexError {
 extension PyMemory {
 
   /// Allocate a new instance of `IndexError` type.
-  public func newIndexError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyIndexError {
+  public func newIndexError(_ py: Py,
+                            type: PyType,
+                            args: PyTuple,
+                            traceback: PyTraceback? = nil,
+                            cause: PyBaseException? = nil,
+                            context: PyBaseException? = nil,
+                            suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyIndexError {
     let typeLayout = PyIndexError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyIndexError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyIndexError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -10129,28 +9659,24 @@ extension PyInterruptedError {
 extension PyMemory {
 
   /// Allocate a new instance of `InterruptedError` type.
-  public func newInterruptedError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyInterruptedError {
+  public func newInterruptedError(_ py: Py,
+                                  type: PyType,
+                                  args: PyTuple,
+                                  traceback: PyTraceback? = nil,
+                                  cause: PyBaseException? = nil,
+                                  context: PyBaseException? = nil,
+                                  suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyInterruptedError {
     let typeLayout = PyInterruptedError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyInterruptedError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyInterruptedError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -10255,28 +9781,24 @@ extension PyIsADirectoryError {
 extension PyMemory {
 
   /// Allocate a new instance of `IsADirectoryError` type.
-  public func newIsADirectoryError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyIsADirectoryError {
+  public func newIsADirectoryError(_ py: Py,
+                                   type: PyType,
+                                   args: PyTuple,
+                                   traceback: PyTraceback? = nil,
+                                   cause: PyBaseException? = nil,
+                                   context: PyBaseException? = nil,
+                                   suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyIsADirectoryError {
     let typeLayout = PyIsADirectoryError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyIsADirectoryError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyIsADirectoryError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -10381,28 +9903,24 @@ extension PyKeyError {
 extension PyMemory {
 
   /// Allocate a new instance of `KeyError` type.
-  public func newKeyError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyKeyError {
+  public func newKeyError(_ py: Py,
+                          type: PyType,
+                          args: PyTuple,
+                          traceback: PyTraceback? = nil,
+                          cause: PyBaseException? = nil,
+                          context: PyBaseException? = nil,
+                          suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyKeyError {
     let typeLayout = PyKeyError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyKeyError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyKeyError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -10505,28 +10023,24 @@ extension PyKeyboardInterrupt {
 extension PyMemory {
 
   /// Allocate a new instance of `KeyboardInterrupt` type.
-  public func newKeyboardInterrupt(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyKeyboardInterrupt {
+  public func newKeyboardInterrupt(_ py: Py,
+                                   type: PyType,
+                                   args: PyTuple,
+                                   traceback: PyTraceback? = nil,
+                                   cause: PyBaseException? = nil,
+                                   context: PyBaseException? = nil,
+                                   suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyKeyboardInterrupt {
     let typeLayout = PyKeyboardInterrupt.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyKeyboardInterrupt(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyKeyboardInterrupt(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -10630,28 +10144,24 @@ extension PyLookupError {
 extension PyMemory {
 
   /// Allocate a new instance of `LookupError` type.
-  public func newLookupError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyLookupError {
+  public func newLookupError(_ py: Py,
+                             type: PyType,
+                             args: PyTuple,
+                             traceback: PyTraceback? = nil,
+                             cause: PyBaseException? = nil,
+                             context: PyBaseException? = nil,
+                             suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyLookupError {
     let typeLayout = PyLookupError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyLookupError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyLookupError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -10755,28 +10265,24 @@ extension PyMemoryError {
 extension PyMemory {
 
   /// Allocate a new instance of `MemoryError` type.
-  public func newMemoryError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyMemoryError {
+  public func newMemoryError(_ py: Py,
+                             type: PyType,
+                             args: PyTuple,
+                             traceback: PyTraceback? = nil,
+                             cause: PyBaseException? = nil,
+                             context: PyBaseException? = nil,
+                             suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyMemoryError {
     let typeLayout = PyMemoryError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyMemoryError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyMemoryError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -10914,59 +10420,51 @@ extension PyModuleNotFoundError {
 extension PyMemory {
 
   /// Allocate a new instance of `ModuleNotFoundError` type.
-  public func newModuleNotFoundError(
-    _ py: Py,
-    type: PyType,
-    msg: PyObject?,
-    moduleName: PyObject?,
-    modulePath: PyObject?,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyModuleNotFoundError {
+  public func newModuleNotFoundError(_ py: Py,
+                                     type: PyType,
+                                     msg: PyObject?,
+                                     moduleName: PyObject?,
+                                     modulePath: PyObject?,
+                                     traceback: PyTraceback? = nil,
+                                     cause: PyBaseException? = nil,
+                                     context: PyBaseException? = nil,
+                                     suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyModuleNotFoundError {
     let typeLayout = PyModuleNotFoundError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyModuleNotFoundError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      msg: msg,
-      moduleName: moduleName,
-      modulePath: modulePath,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyModuleNotFoundError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      msg: msg,
+                      moduleName: moduleName,
+                      modulePath: modulePath,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
 
   /// Allocate a new instance of `ModuleNotFoundError` type.
-  public func newModuleNotFoundError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyModuleNotFoundError {
+  public func newModuleNotFoundError(_ py: Py,
+                                     type: PyType,
+                                     args: PyTuple,
+                                     traceback: PyTraceback? = nil,
+                                     cause: PyBaseException? = nil,
+                                     context: PyBaseException? = nil,
+                                     suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyModuleNotFoundError {
     let typeLayout = PyModuleNotFoundError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyModuleNotFoundError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyModuleNotFoundError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -11070,28 +10568,24 @@ extension PyNameError {
 extension PyMemory {
 
   /// Allocate a new instance of `NameError` type.
-  public func newNameError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyNameError {
+  public func newNameError(_ py: Py,
+                           type: PyType,
+                           args: PyTuple,
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyNameError {
     let typeLayout = PyNameError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyNameError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyNameError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -11196,28 +10690,24 @@ extension PyNotADirectoryError {
 extension PyMemory {
 
   /// Allocate a new instance of `NotADirectoryError` type.
-  public func newNotADirectoryError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyNotADirectoryError {
+  public func newNotADirectoryError(_ py: Py,
+                                    type: PyType,
+                                    args: PyTuple,
+                                    traceback: PyTraceback? = nil,
+                                    cause: PyBaseException? = nil,
+                                    context: PyBaseException? = nil,
+                                    suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyNotADirectoryError {
     let typeLayout = PyNotADirectoryError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyNotADirectoryError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyNotADirectoryError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -11322,28 +10812,24 @@ extension PyNotImplementedError {
 extension PyMemory {
 
   /// Allocate a new instance of `NotImplementedError` type.
-  public func newNotImplementedError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyNotImplementedError {
+  public func newNotImplementedError(_ py: Py,
+                                     type: PyType,
+                                     args: PyTuple,
+                                     traceback: PyTraceback? = nil,
+                                     cause: PyBaseException? = nil,
+                                     context: PyBaseException? = nil,
+                                     suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyNotImplementedError {
     let typeLayout = PyNotImplementedError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyNotImplementedError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyNotImplementedError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -11447,28 +10933,24 @@ extension PyOSError {
 extension PyMemory {
 
   /// Allocate a new instance of `OSError` type.
-  public func newOSError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyOSError {
+  public func newOSError(_ py: Py,
+                         type: PyType,
+                         args: PyTuple,
+                         traceback: PyTraceback? = nil,
+                         cause: PyBaseException? = nil,
+                         context: PyBaseException? = nil,
+                         suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyOSError {
     let typeLayout = PyOSError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyOSError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyOSError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -11573,28 +11055,24 @@ extension PyOverflowError {
 extension PyMemory {
 
   /// Allocate a new instance of `OverflowError` type.
-  public func newOverflowError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyOverflowError {
+  public func newOverflowError(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyOverflowError {
     let typeLayout = PyOverflowError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyOverflowError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyOverflowError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -11699,28 +11177,24 @@ extension PyPendingDeprecationWarning {
 extension PyMemory {
 
   /// Allocate a new instance of `PendingDeprecationWarning` type.
-  public func newPendingDeprecationWarning(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyPendingDeprecationWarning {
+  public func newPendingDeprecationWarning(_ py: Py,
+                                           type: PyType,
+                                           args: PyTuple,
+                                           traceback: PyTraceback? = nil,
+                                           cause: PyBaseException? = nil,
+                                           context: PyBaseException? = nil,
+                                           suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyPendingDeprecationWarning {
     let typeLayout = PyPendingDeprecationWarning.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyPendingDeprecationWarning(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyPendingDeprecationWarning(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -11825,28 +11299,24 @@ extension PyPermissionError {
 extension PyMemory {
 
   /// Allocate a new instance of `PermissionError` type.
-  public func newPermissionError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyPermissionError {
+  public func newPermissionError(_ py: Py,
+                                 type: PyType,
+                                 args: PyTuple,
+                                 traceback: PyTraceback? = nil,
+                                 cause: PyBaseException? = nil,
+                                 context: PyBaseException? = nil,
+                                 suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyPermissionError {
     let typeLayout = PyPermissionError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyPermissionError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyPermissionError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -11951,28 +11421,24 @@ extension PyProcessLookupError {
 extension PyMemory {
 
   /// Allocate a new instance of `ProcessLookupError` type.
-  public func newProcessLookupError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyProcessLookupError {
+  public func newProcessLookupError(_ py: Py,
+                                    type: PyType,
+                                    args: PyTuple,
+                                    traceback: PyTraceback? = nil,
+                                    cause: PyBaseException? = nil,
+                                    context: PyBaseException? = nil,
+                                    suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyProcessLookupError {
     let typeLayout = PyProcessLookupError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyProcessLookupError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyProcessLookupError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -12077,28 +11543,24 @@ extension PyRecursionError {
 extension PyMemory {
 
   /// Allocate a new instance of `RecursionError` type.
-  public func newRecursionError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyRecursionError {
+  public func newRecursionError(_ py: Py,
+                                type: PyType,
+                                args: PyTuple,
+                                traceback: PyTraceback? = nil,
+                                cause: PyBaseException? = nil,
+                                context: PyBaseException? = nil,
+                                suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyRecursionError {
     let typeLayout = PyRecursionError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyRecursionError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyRecursionError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -12202,28 +11664,24 @@ extension PyReferenceError {
 extension PyMemory {
 
   /// Allocate a new instance of `ReferenceError` type.
-  public func newReferenceError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyReferenceError {
+  public func newReferenceError(_ py: Py,
+                                type: PyType,
+                                args: PyTuple,
+                                traceback: PyTraceback? = nil,
+                                cause: PyBaseException? = nil,
+                                context: PyBaseException? = nil,
+                                suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyReferenceError {
     let typeLayout = PyReferenceError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyReferenceError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyReferenceError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -12328,28 +11786,24 @@ extension PyResourceWarning {
 extension PyMemory {
 
   /// Allocate a new instance of `ResourceWarning` type.
-  public func newResourceWarning(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyResourceWarning {
+  public func newResourceWarning(_ py: Py,
+                                 type: PyType,
+                                 args: PyTuple,
+                                 traceback: PyTraceback? = nil,
+                                 cause: PyBaseException? = nil,
+                                 context: PyBaseException? = nil,
+                                 suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyResourceWarning {
     let typeLayout = PyResourceWarning.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyResourceWarning(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyResourceWarning(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -12453,28 +11907,24 @@ extension PyRuntimeError {
 extension PyMemory {
 
   /// Allocate a new instance of `RuntimeError` type.
-  public func newRuntimeError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyRuntimeError {
+  public func newRuntimeError(_ py: Py,
+                              type: PyType,
+                              args: PyTuple,
+                              traceback: PyTraceback? = nil,
+                              cause: PyBaseException? = nil,
+                              context: PyBaseException? = nil,
+                              suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyRuntimeError {
     let typeLayout = PyRuntimeError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyRuntimeError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyRuntimeError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -12579,28 +12029,24 @@ extension PyRuntimeWarning {
 extension PyMemory {
 
   /// Allocate a new instance of `RuntimeWarning` type.
-  public func newRuntimeWarning(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyRuntimeWarning {
+  public func newRuntimeWarning(_ py: Py,
+                                type: PyType,
+                                args: PyTuple,
+                                traceback: PyTraceback? = nil,
+                                cause: PyBaseException? = nil,
+                                context: PyBaseException? = nil,
+                                suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyRuntimeWarning {
     let typeLayout = PyRuntimeWarning.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyRuntimeWarning(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyRuntimeWarning(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -12704,28 +12150,24 @@ extension PyStopAsyncIteration {
 extension PyMemory {
 
   /// Allocate a new instance of `StopAsyncIteration` type.
-  public func newStopAsyncIteration(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyStopAsyncIteration {
+  public func newStopAsyncIteration(_ py: Py,
+                                    type: PyType,
+                                    args: PyTuple,
+                                    traceback: PyTraceback? = nil,
+                                    cause: PyBaseException? = nil,
+                                    context: PyBaseException? = nil,
+                                    suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyStopAsyncIteration {
     let typeLayout = PyStopAsyncIteration.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyStopAsyncIteration(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyStopAsyncIteration(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -12854,55 +12296,47 @@ extension PyStopIteration {
 extension PyMemory {
 
   /// Allocate a new instance of `StopIteration` type.
-  public func newStopIteration(
-    _ py: Py,
-    type: PyType,
-    value: PyObject,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyStopIteration {
+  public func newStopIteration(_ py: Py,
+                               type: PyType,
+                               value: PyObject,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyStopIteration {
     let typeLayout = PyStopIteration.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyStopIteration(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      value: value,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyStopIteration(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      value: value,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
 
   /// Allocate a new instance of `StopIteration` type.
-  public func newStopIteration(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyStopIteration {
+  public func newStopIteration(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyStopIteration {
     let typeLayout = PyStopIteration.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyStopIteration(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyStopIteration(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -13061,65 +12495,57 @@ extension PySyntaxError {
 extension PyMemory {
 
   /// Allocate a new instance of `SyntaxError` type.
-  public func newSyntaxError(
-    _ py: Py,
-    type: PyType,
-    msg: PyObject?,
-    filename: PyObject?,
-    lineno: PyObject?,
-    offset: PyObject?,
-    text: PyObject?,
-    printFileAndLine: PyObject?,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PySyntaxError {
+  public func newSyntaxError(_ py: Py,
+                             type: PyType,
+                             msg: PyObject?,
+                             filename: PyObject?,
+                             lineno: PyObject?,
+                             offset: PyObject?,
+                             text: PyObject?,
+                             printFileAndLine: PyObject?,
+                             traceback: PyTraceback? = nil,
+                             cause: PyBaseException? = nil,
+                             context: PyBaseException? = nil,
+                             suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PySyntaxError {
     let typeLayout = PySyntaxError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PySyntaxError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      msg: msg,
-      filename: filename,
-      lineno: lineno,
-      offset: offset,
-      text: text,
-      printFileAndLine: printFileAndLine,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PySyntaxError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      msg: msg,
+                      filename: filename,
+                      lineno: lineno,
+                      offset: offset,
+                      text: text,
+                      printFileAndLine: printFileAndLine,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
 
   /// Allocate a new instance of `SyntaxError` type.
-  public func newSyntaxError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PySyntaxError {
+  public func newSyntaxError(_ py: Py,
+                             type: PyType,
+                             args: PyTuple,
+                             traceback: PyTraceback? = nil,
+                             cause: PyBaseException? = nil,
+                             context: PyBaseException? = nil,
+                             suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PySyntaxError {
     let typeLayout = PySyntaxError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PySyntaxError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PySyntaxError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -13224,28 +12650,24 @@ extension PySyntaxWarning {
 extension PyMemory {
 
   /// Allocate a new instance of `SyntaxWarning` type.
-  public func newSyntaxWarning(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PySyntaxWarning {
+  public func newSyntaxWarning(_ py: Py,
+                               type: PyType,
+                               args: PyTuple,
+                               traceback: PyTraceback? = nil,
+                               cause: PyBaseException? = nil,
+                               context: PyBaseException? = nil,
+                               suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PySyntaxWarning {
     let typeLayout = PySyntaxWarning.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PySyntaxWarning(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PySyntaxWarning(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -13349,28 +12771,24 @@ extension PySystemError {
 extension PyMemory {
 
   /// Allocate a new instance of `SystemError` type.
-  public func newSystemError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PySystemError {
+  public func newSystemError(_ py: Py,
+                             type: PyType,
+                             args: PyTuple,
+                             traceback: PyTraceback? = nil,
+                             cause: PyBaseException? = nil,
+                             context: PyBaseException? = nil,
+                             suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PySystemError {
     let typeLayout = PySystemError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PySystemError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PySystemError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -13498,55 +12916,47 @@ extension PySystemExit {
 extension PyMemory {
 
   /// Allocate a new instance of `SystemExit` type.
-  public func newSystemExit(
-    _ py: Py,
-    type: PyType,
-    code: PyObject?,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PySystemExit {
+  public func newSystemExit(_ py: Py,
+                            type: PyType,
+                            code: PyObject?,
+                            traceback: PyTraceback? = nil,
+                            cause: PyBaseException? = nil,
+                            context: PyBaseException? = nil,
+                            suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PySystemExit {
     let typeLayout = PySystemExit.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PySystemExit(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      code: code,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PySystemExit(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      code: code,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
 
   /// Allocate a new instance of `SystemExit` type.
-  public func newSystemExit(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PySystemExit {
+  public func newSystemExit(_ py: Py,
+                            type: PyType,
+                            args: PyTuple,
+                            traceback: PyTraceback? = nil,
+                            cause: PyBaseException? = nil,
+                            context: PyBaseException? = nil,
+                            suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PySystemExit {
     let typeLayout = PySystemExit.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PySystemExit(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PySystemExit(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -13703,65 +13113,57 @@ extension PyTabError {
 extension PyMemory {
 
   /// Allocate a new instance of `TabError` type.
-  public func newTabError(
-    _ py: Py,
-    type: PyType,
-    msg: PyObject?,
-    filename: PyObject?,
-    lineno: PyObject?,
-    offset: PyObject?,
-    text: PyObject?,
-    printFileAndLine: PyObject?,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyTabError {
+  public func newTabError(_ py: Py,
+                          type: PyType,
+                          msg: PyObject?,
+                          filename: PyObject?,
+                          lineno: PyObject?,
+                          offset: PyObject?,
+                          text: PyObject?,
+                          printFileAndLine: PyObject?,
+                          traceback: PyTraceback? = nil,
+                          cause: PyBaseException? = nil,
+                          context: PyBaseException? = nil,
+                          suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyTabError {
     let typeLayout = PyTabError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyTabError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      msg: msg,
-      filename: filename,
-      lineno: lineno,
-      offset: offset,
-      text: text,
-      printFileAndLine: printFileAndLine,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyTabError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      msg: msg,
+                      filename: filename,
+                      lineno: lineno,
+                      offset: offset,
+                      text: text,
+                      printFileAndLine: printFileAndLine,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
 
   /// Allocate a new instance of `TabError` type.
-  public func newTabError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyTabError {
+  public func newTabError(_ py: Py,
+                          type: PyType,
+                          args: PyTuple,
+                          traceback: PyTraceback? = nil,
+                          cause: PyBaseException? = nil,
+                          context: PyBaseException? = nil,
+                          suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyTabError {
     let typeLayout = PyTabError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyTabError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyTabError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -13866,28 +13268,24 @@ extension PyTimeoutError {
 extension PyMemory {
 
   /// Allocate a new instance of `TimeoutError` type.
-  public func newTimeoutError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyTimeoutError {
+  public func newTimeoutError(_ py: Py,
+                              type: PyType,
+                              args: PyTuple,
+                              traceback: PyTraceback? = nil,
+                              cause: PyBaseException? = nil,
+                              context: PyBaseException? = nil,
+                              suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyTimeoutError {
     let typeLayout = PyTimeoutError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyTimeoutError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyTimeoutError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -13991,28 +13389,24 @@ extension PyTypeError {
 extension PyMemory {
 
   /// Allocate a new instance of `TypeError` type.
-  public func newTypeError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyTypeError {
+  public func newTypeError(_ py: Py,
+                           type: PyType,
+                           args: PyTuple,
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyTypeError {
     let typeLayout = PyTypeError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyTypeError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyTypeError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -14117,28 +13511,24 @@ extension PyUnboundLocalError {
 extension PyMemory {
 
   /// Allocate a new instance of `UnboundLocalError` type.
-  public func newUnboundLocalError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyUnboundLocalError {
+  public func newUnboundLocalError(_ py: Py,
+                                   type: PyType,
+                                   args: PyTuple,
+                                   traceback: PyTraceback? = nil,
+                                   cause: PyBaseException? = nil,
+                                   context: PyBaseException? = nil,
+                                   suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyUnboundLocalError {
     let typeLayout = PyUnboundLocalError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyUnboundLocalError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyUnboundLocalError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -14244,28 +13634,24 @@ extension PyUnicodeDecodeError {
 extension PyMemory {
 
   /// Allocate a new instance of `UnicodeDecodeError` type.
-  public func newUnicodeDecodeError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyUnicodeDecodeError {
+  public func newUnicodeDecodeError(_ py: Py,
+                                    type: PyType,
+                                    args: PyTuple,
+                                    traceback: PyTraceback? = nil,
+                                    cause: PyBaseException? = nil,
+                                    context: PyBaseException? = nil,
+                                    suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyUnicodeDecodeError {
     let typeLayout = PyUnicodeDecodeError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyUnicodeDecodeError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyUnicodeDecodeError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -14371,28 +13757,24 @@ extension PyUnicodeEncodeError {
 extension PyMemory {
 
   /// Allocate a new instance of `UnicodeEncodeError` type.
-  public func newUnicodeEncodeError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyUnicodeEncodeError {
+  public func newUnicodeEncodeError(_ py: Py,
+                                    type: PyType,
+                                    args: PyTuple,
+                                    traceback: PyTraceback? = nil,
+                                    cause: PyBaseException? = nil,
+                                    context: PyBaseException? = nil,
+                                    suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyUnicodeEncodeError {
     let typeLayout = PyUnicodeEncodeError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyUnicodeEncodeError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyUnicodeEncodeError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -14497,28 +13879,24 @@ extension PyUnicodeError {
 extension PyMemory {
 
   /// Allocate a new instance of `UnicodeError` type.
-  public func newUnicodeError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyUnicodeError {
+  public func newUnicodeError(_ py: Py,
+                              type: PyType,
+                              args: PyTuple,
+                              traceback: PyTraceback? = nil,
+                              cause: PyBaseException? = nil,
+                              context: PyBaseException? = nil,
+                              suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyUnicodeError {
     let typeLayout = PyUnicodeError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyUnicodeError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyUnicodeError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -14624,28 +14002,24 @@ extension PyUnicodeTranslateError {
 extension PyMemory {
 
   /// Allocate a new instance of `UnicodeTranslateError` type.
-  public func newUnicodeTranslateError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyUnicodeTranslateError {
+  public func newUnicodeTranslateError(_ py: Py,
+                                       type: PyType,
+                                       args: PyTuple,
+                                       traceback: PyTraceback? = nil,
+                                       cause: PyBaseException? = nil,
+                                       context: PyBaseException? = nil,
+                                       suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyUnicodeTranslateError {
     let typeLayout = PyUnicodeTranslateError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyUnicodeTranslateError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyUnicodeTranslateError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -14750,28 +14124,24 @@ extension PyUnicodeWarning {
 extension PyMemory {
 
   /// Allocate a new instance of `UnicodeWarning` type.
-  public func newUnicodeWarning(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyUnicodeWarning {
+  public func newUnicodeWarning(_ py: Py,
+                                type: PyType,
+                                args: PyTuple,
+                                traceback: PyTraceback? = nil,
+                                cause: PyBaseException? = nil,
+                                context: PyBaseException? = nil,
+                                suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyUnicodeWarning {
     let typeLayout = PyUnicodeWarning.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyUnicodeWarning(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyUnicodeWarning(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -14876,28 +14246,24 @@ extension PyUserWarning {
 extension PyMemory {
 
   /// Allocate a new instance of `UserWarning` type.
-  public func newUserWarning(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyUserWarning {
+  public func newUserWarning(_ py: Py,
+                             type: PyType,
+                             args: PyTuple,
+                             traceback: PyTraceback? = nil,
+                             cause: PyBaseException? = nil,
+                             context: PyBaseException? = nil,
+                             suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyUserWarning {
     let typeLayout = PyUserWarning.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyUserWarning(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyUserWarning(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -15001,28 +14367,24 @@ extension PyValueError {
 extension PyMemory {
 
   /// Allocate a new instance of `ValueError` type.
-  public func newValueError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyValueError {
+  public func newValueError(_ py: Py,
+                            type: PyType,
+                            args: PyTuple,
+                            traceback: PyTraceback? = nil,
+                            cause: PyBaseException? = nil,
+                            context: PyBaseException? = nil,
+                            suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyValueError {
     let typeLayout = PyValueError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyValueError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyValueError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -15126,28 +14488,24 @@ extension PyWarning {
 extension PyMemory {
 
   /// Allocate a new instance of `Warning` type.
-  public func newWarning(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyWarning {
+  public func newWarning(_ py: Py,
+                         type: PyType,
+                         args: PyTuple,
+                         traceback: PyTraceback? = nil,
+                         cause: PyBaseException? = nil,
+                         context: PyBaseException? = nil,
+                         suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyWarning {
     let typeLayout = PyWarning.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyWarning(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyWarning(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }
@@ -15252,28 +14610,24 @@ extension PyZeroDivisionError {
 extension PyMemory {
 
   /// Allocate a new instance of `ZeroDivisionError` type.
-  public func newZeroDivisionError(
-    _ py: Py,
-    type: PyType,
-    args: PyTuple,
-    traceback: PyTraceback? = nil,
-    cause: PyBaseException? = nil,
-    context: PyBaseException? = nil,
-    suppressContext: Bool = PyBaseException.defaultSuppressContext
-  ) -> PyZeroDivisionError {
+  public func newZeroDivisionError(_ py: Py,
+                                   type: PyType,
+                                   args: PyTuple,
+                                   traceback: PyTraceback? = nil,
+                                   cause: PyBaseException? = nil,
+                                   context: PyBaseException? = nil,
+                                   suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyZeroDivisionError {
     let typeLayout = PyZeroDivisionError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
-    let result = PyZeroDivisionError(ptr: ptr)
 
-    result.initialize(
-      py,
-      type: type,
-      args: args,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext
-    )
+    let result = PyZeroDivisionError(ptr: ptr)
+    result.initialize(py,
+                      type: type,
+                      args: args,
+                      traceback: traceback,
+                      cause: cause,
+                      context: context,
+                      suppressContext: suppressContext)
 
     return result
   }

@@ -339,45 +339,64 @@ def print_type_extension(t: TypeInfo):
     for init in t.swift_initializers:
         init_arguments = init.arguments
 
+        arguments: List[str] = []
+        call_arguments: List[str] = []
+        for index, arg in enumerate(init_arguments):
+            label = '' if arg.label is None else arg.label + ' '
+            default_value =  '' if arg.default_value is None else ' = ' + arg.default_value
+            arguments.append(f'{label}{arg.name}: {arg.typ}{default_value}')
+
+            if arg.label == '_':
+                call_label = ''
+            elif arg.label:
+                call_label = arg.label + ': '
+            else:
+                call_label = arg.name + ': '
+
+            call_arguments.append(f'{call_label}{arg.name}')
+
         print()
         print(f'  /// Allocate a new instance of `{python_type_name}` type.')
-        print(f'  public func new{swift_type_name_without_py}(')
+        print(f'  public func new{swift_type_name_without_py}(', end='')
 
-        for index, arg in enumerate(init_arguments):
+        is_single_line = len(arguments) <= 3
+
+        for index, arg in enumerate(arguments):
+            is_first = index == 0
             is_last = index == len(init_arguments) - 1
             comma = '' if is_last else ','
 
-            label = ''
-            if arg.label:
-                label = arg.label + ' '
+            if is_single_line:
+                indent = ''
+                end = '' if is_last else f' '
+            else:
+                indent = '' if is_first else ((18 + len(swift_type_name_without_py)) * ' ')
+                end = '' if is_last else '\n'
 
-            default_value = ''
-            if arg.default_value:
-                default_value = ' = ' + arg.default_value
+            print(f'{indent}{arg}{comma}', end=end)
 
-            print(f'    {label}{arg.name}: {arg.typ}{default_value}{comma}')
-
-        print(f'  ) -> {swift_type_name} {{')
+        print(f') -> {swift_type_name} {{')
         print(f'    let typeLayout = {swift_type_name}.layout')
         print(f'    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)')
-        print(f'    let result = {swift_type_name}(ptr: ptr)')
         print()
+        print(f'    let result = {swift_type_name}(ptr: ptr)')
+        print(f'    result.initialize(', end='')
 
-        print(f'    result.initialize(')
-
-        for index, arg in enumerate(init_arguments):
-            label = arg.label or arg.name
-            label_colon = label + ': '
-
-            # Special case '_' label
-            if label_colon == '_: ':
-                label_colon = ''
-
+        for index, arg in enumerate(call_arguments):
+            is_first = index == 0
             is_last = index == len(init_arguments) - 1
             comma = '' if is_last else ','
-            print(f'      {label_colon}{arg.name}{comma}')
 
-        print('    )')
+            if is_single_line:
+                indent = ''
+                end = '' if is_last else f' '
+            else:
+                indent = '' if is_first else (22 * ' ')
+                end = '' if is_last else f'\n'
+
+            print(f'{indent}{arg}{comma}', end=end)
+
+        print(')')
         print()
         print('    return result')
         print('  }')
