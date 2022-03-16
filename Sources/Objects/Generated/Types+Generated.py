@@ -79,6 +79,11 @@ def print_pointer_properties(properties_base: List[PropertyInLayout], properties
         print(f'  /// Property from base class: `{swift_type_name}.{p.swift_name}`.')
         print(f'  internal var {p.pointer_property_name}: Ptr<{p.swift_type}> {{ Ptr(self.ptr, offset: {swift_type_name}.layout.{p.layout_offset_property_name}) }}')
 
+    for p in properties_type:
+        if p.declared_in_type:
+            swift_type_name = p.declared_in_type.swift_type_name
+            print(f'  /// Property: `{swift_type_name}.{p.swift_name}`.')
+        print(f'  internal var {p.pointer_property_name}: Ptr<{p.swift_type}> {{ Ptr(self.ptr, offset: Self.layout.{p.layout_offset_property_name}) }}')
 
 def print_base_types_properties(properties_base: List[PropertyInLayout]):
     for p in properties_base:
@@ -305,19 +310,32 @@ def print_type_extension(t: TypeInfo):
     # ====================
 
     print(f'  internal static func deinitialize(ptr: RawPtr) {{')
-    print(f'    let zelf = {swift_type_name}(ptr: ptr)')
-    print(f'    zelf.beforeDeinitialize()')
+    print(f'    // Call \'beforeDeinitialize\' starting from most-specific type.')
 
-    if len(properties_type) >= 3:
+    current_type = t
+    while current_type is not None:
+        print(f'    {current_type.swift_type_name}(ptr: ptr).beforeDeinitialize()')
+        current_type = current_type.base_type_info
+
+    if properties_type:
         print()
+        print(f'    // Call \'deinitialize\' all of our own properties.')
+        print(f'    let zelf = {swift_type_name}(ptr: ptr)')
 
-    header = 'errorHeader' if t.is_error else 'header'
-    print(f'    zelf.{header}.deinitialize()')
+        for p in properties_type:
+            print(f'    zelf.{p.pointer_property_name}.deinitialize()')
 
-    for p in properties_type:
-        print(f'    zelf.{p.pointer_property_name}.deinitialize()')
+    if t.base_type_info is not None:
+        print()
+        base_swift_type_name = t.base_type_info.swift_type_name
+        print(f'    // Call \'deinitialize\' on base type.')
+        print(f'    {base_swift_type_name}.deinitialize(ptr: ptr)')
 
     print('  }')
+
+    # ==================
+    # === Functions ===
+    # ==================
 
     if python_type_name != 'object':
         print()
