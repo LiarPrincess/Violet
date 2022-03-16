@@ -1,6 +1,3 @@
-from Sourcery.ObjectHeader import ObjectHeader, ObjectHeaderField
-from Sourcery.ObjectHeader_get import get_object_header
-
 from Sourcery.ErrorHeader import ErrorHeader, ErrorHeaderField
 from Sourcery.ErrorHeader_get import get_error_header
 

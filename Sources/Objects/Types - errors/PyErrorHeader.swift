@@ -6,7 +6,7 @@ public struct PyErrorHeader {
   // MARK: - Properties
 
   public static let defaultSuppressContext = false
-  private static let suppressContextFlag = PyObjectHeader.Flags.custom0
+  private static let suppressContextFlag = PyObject.Flags.custom0
 
   // sourcery: storedProperty
   internal var args: PyTuple {
@@ -38,12 +38,14 @@ public struct PyErrorHeader {
   ///
   /// If we have `cause` then probably `cause`, otherwise `context`.
   internal var suppressContext: Bool {
-    get { self.objectHeader.flags.isSet(Self.suppressContextFlag) }
-    nonmutating set { self.objectHeader.flags.set(Self.suppressContextFlag, to: newValue) }
-  }
-
-  private var objectHeader: PyObjectHeader {
-    PyObjectHeader(ptr: self.ptr)
+    get {
+      let object = PyObject(ptr: self.ptr)
+      return object.flags.isSet(Self.suppressContextFlag)
+    }
+    nonmutating set {
+      let object = PyObject(ptr: self.ptr)
+      object.flags.set(Self.suppressContextFlag, to: newValue)
+    }
   }
 
   // MARK: - Init
@@ -64,7 +66,7 @@ public struct PyErrorHeader {
                            cause: PyBaseException?,
                            context: PyBaseException?,
                            suppressContext: Bool) {
-    self.objectHeader.initialize(py, type: type)
+//    self.objectHeader.initialize(py, type: type)
     self.argsPtr.initialize(to: args)
     self.tracebackPtr.initialize(to: traceback)
     self.causePtr.initialize(to: cause)
@@ -73,7 +75,7 @@ public struct PyErrorHeader {
   }
 
   internal func deinitialize() {
-    self.objectHeader.deinitialize()
+//    self.objectHeader.deinitialize()
     self.argsPtr.deinitialize()
     self.tracebackPtr.deinitialize()
     self.causePtr.deinitialize()

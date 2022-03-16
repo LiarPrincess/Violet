@@ -45,7 +45,7 @@ public struct PyRange: PyObjectMixin {
     case implicit
   }
 
-  private static let isStepImplicitFlag = PyObjectHeader.Flags.custom0
+  private static let isStepImplicitFlag = PyObject.Flags.custom0
 
   /// Remember how user created this range (`repr` depends on it).
   private var stepType: StepType {

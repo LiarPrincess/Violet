@@ -17,9 +17,6 @@ import VioletCompiler
 // swiftlint:disable file_length
 
 // This file contains:
-// - For 'PyObjectHeader':
-//   - PyObjectHeader.Layout - mainly field offsets
-//   - PyObjectHeader.xxxPtr - pointer properties to fields
 // - For 'PyErrorHeader':
 //   - PyErrorHeader.Layout - mainly field offsets
 //   - PyErrorHeader.xxxPtr - pointer properties to fields
@@ -31,49 +28,6 @@ import VioletCompiler
 //   - static func downcast(py: Py, object: PyObject) -> [TYPE_NAME]?
 //   - static func invalidZelfArgument<T>(py: Py, object: PyObject, fnName: String) -> PyResult<T>
 //   - PyMemory.new[TYPE_NAME] - to create new object of this type
-
-// MARK: - PyObjectHeader
-
-extension PyObjectHeader {
-
-  /// Arrangement of fields in memory.
-  ///
-  /// This type was automatically generated based on `PyObjectHeader` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let typeOffset: Int
-    internal let __dict__Offset: Int
-    internal let flagsOffset: Int
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: 0,
-        initialAlignment: 0,
-        fields: [
-          PyMemory.FieldLayout(from: PyType.self), // type
-          PyMemory.FieldLayout(from: PyObjectHeader.Lazy__dict__.self), // __dict__
-          PyMemory.FieldLayout(from: Flags.self) // flags
-        ]
-      )
-
-      assert(layout.offsets.count == 3)
-      self.typeOffset = layout.offsets[0]
-      self.__dict__Offset = layout.offsets[1]
-      self.flagsOffset = layout.offsets[2]
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
-
-  /// Arrangement of fields in memory.
-  internal static let layout = Layout()
-
-  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: Self.layout.typeOffset) }
-  internal var __dict__Ptr: Ptr<PyObjectHeader.Lazy__dict__> { Ptr(self.ptr, offset: Self.layout.__dict__Offset) }
-  internal var flagsPtr: Ptr<Flags> { Ptr(self.ptr, offset: Self.layout.flagsOffset) }
-}
 
 // MARK: - PyErrorHeader
 
@@ -93,8 +47,8 @@ extension PyErrorHeader {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.layout.size,
-        initialAlignment: PyObjectHeader.layout.alignment,
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: PyTuple.self), // args
           PyMemory.FieldLayout(from: PyTraceback?.self), // traceback
@@ -200,9 +154,27 @@ extension PyBool {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property from base class: `PyInt.value`.
   internal var valuePtr: Ptr<BigInt> { Ptr(self.ptr, offset: PyInt.layout.valueOffset) }
 
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
   /// Property from base class: `PyInt.value`.
   internal var value: BigInt { self.valuePtr.pointee }
 
@@ -299,12 +271,31 @@ extension PyBuiltinFunction {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyBuiltinFunction.function`.
   internal var functionPtr: Ptr<FunctionWrapper> { Ptr(self.ptr, offset: Self.layout.functionOffset) }
   /// Property: `PyBuiltinFunction.module`.
   internal var modulePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.moduleOffset) }
   /// Property: `PyBuiltinFunction.doc`.
   internal var docPtr: Ptr<String?> { Ptr(self.ptr, offset: Self.layout.docOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -316,7 +307,7 @@ extension PyBuiltinFunction {
     PyBuiltinFunction(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyBuiltinFunction(ptr: ptr)
     zelf.functionPtr.deinitialize()
     zelf.modulePtr.deinitialize()
@@ -411,6 +402,12 @@ extension PyBuiltinMethod {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyBuiltinMethod.function`.
   internal var functionPtr: Ptr<FunctionWrapper> { Ptr(self.ptr, offset: Self.layout.functionOffset) }
   /// Property: `PyBuiltinMethod.object`.
@@ -419,6 +416,19 @@ extension PyBuiltinMethod {
   internal var modulePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.moduleOffset) }
   /// Property: `PyBuiltinMethod.doc`.
   internal var docPtr: Ptr<String?> { Ptr(self.ptr, offset: Self.layout.docOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -430,7 +440,7 @@ extension PyBuiltinMethod {
     PyBuiltinMethod(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyBuiltinMethod(ptr: ptr)
     zelf.functionPtr.deinitialize()
     zelf.objectPtr.deinitialize()
@@ -519,8 +529,27 @@ extension PyByteArray {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyByteArray.elements`.
   internal var elementsPtr: Ptr<Data> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -532,7 +561,7 @@ extension PyByteArray {
     PyByteArray(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyByteArray(ptr: ptr)
     zelf.elementsPtr.deinitialize()
 
@@ -615,10 +644,29 @@ extension PyByteArrayIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyByteArrayIterator.bytes`.
   internal var bytesPtr: Ptr<PyByteArray> { Ptr(self.ptr, offset: Self.layout.bytesOffset) }
   /// Property: `PyByteArrayIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -630,7 +678,7 @@ extension PyByteArrayIterator {
     PyByteArrayIterator(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyByteArrayIterator(ptr: ptr)
     zelf.bytesPtr.deinitialize()
     zelf.indexPtr.deinitialize()
@@ -711,8 +759,27 @@ extension PyBytes {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyBytes.elements`.
   internal var elementsPtr: Ptr<Data> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -724,7 +791,7 @@ extension PyBytes {
     PyBytes(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyBytes(ptr: ptr)
     zelf.elementsPtr.deinitialize()
 
@@ -807,10 +874,29 @@ extension PyBytesIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyBytesIterator.bytes`.
   internal var bytesPtr: Ptr<PyBytes> { Ptr(self.ptr, offset: Self.layout.bytesOffset) }
   /// Property: `PyBytesIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -822,7 +908,7 @@ extension PyBytesIterator {
     PyBytesIterator(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyBytesIterator(ptr: ptr)
     zelf.bytesPtr.deinitialize()
     zelf.indexPtr.deinitialize()
@@ -906,10 +992,29 @@ extension PyCallableIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyCallableIterator.callable`.
   internal var callablePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.callableOffset) }
   /// Property: `PyCallableIterator.sentinel`.
   internal var sentinelPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.sentinelOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -921,7 +1026,7 @@ extension PyCallableIterator {
     PyCallableIterator(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyCallableIterator(ptr: ptr)
     zelf.callablePtr.deinitialize()
     zelf.sentinelPtr.deinitialize()
@@ -1004,8 +1109,27 @@ extension PyCell {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyCell.content`.
   internal var contentPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.contentOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -1017,7 +1141,7 @@ extension PyCell {
     PyCell(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyCell(ptr: ptr)
     zelf.contentPtr.deinitialize()
 
@@ -1097,8 +1221,27 @@ extension PyClassMethod {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyClassMethod.callable`.
   internal var callablePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.callableOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -1110,7 +1253,7 @@ extension PyClassMethod {
     PyClassMethod(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyClassMethod(ptr: ptr)
     zelf.callablePtr.deinitialize()
 
@@ -1229,6 +1372,12 @@ extension PyCode {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyCode.name`.
   internal var namePtr: Ptr<PyString> { Ptr(self.ptr, offset: Self.layout.nameOffset) }
   /// Property: `PyCode.qualifiedName`.
@@ -1258,6 +1407,19 @@ extension PyCode {
   /// Property: `PyCode.kwOnlyArgCount`.
   internal var kwOnlyArgCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.kwOnlyArgCountOffset) }
 
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
+
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
     base.initialize(py, type: type, __dict__: __dict__)
@@ -1268,7 +1430,7 @@ extension PyCode {
     PyCode(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyCode(ptr: ptr)
     zelf.namePtr.deinitialize()
     zelf.qualifiedNamePtr.deinitialize()
@@ -1364,10 +1526,29 @@ extension PyComplex {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyComplex.real`.
   internal var realPtr: Ptr<Double> { Ptr(self.ptr, offset: Self.layout.realOffset) }
   /// Property: `PyComplex.imag`.
   internal var imagPtr: Ptr<Double> { Ptr(self.ptr, offset: Self.layout.imagOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -1379,7 +1560,7 @@ extension PyComplex {
     PyComplex(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyComplex(ptr: ptr)
     zelf.realPtr.deinitialize()
     zelf.imagPtr.deinitialize()
@@ -1462,8 +1643,27 @@ extension PyDict {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyDict.elements`.
   internal var elementsPtr: Ptr<PyDict.OrderedDictionary> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -1475,7 +1675,7 @@ extension PyDict {
     PyDict(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyDict(ptr: ptr)
     zelf.elementsPtr.deinitialize()
 
@@ -1561,12 +1761,31 @@ extension PyDictItemIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyDictItemIterator.dict`.
   internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
   /// Property: `PyDictItemIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
   /// Property: `PyDictItemIterator.initialCount`.
   internal var initialCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.initialCountOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -1578,7 +1797,7 @@ extension PyDictItemIterator {
     PyDictItemIterator(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyDictItemIterator(ptr: ptr)
     zelf.dictPtr.deinitialize()
     zelf.indexPtr.deinitialize()
@@ -1660,8 +1879,27 @@ extension PyDictItems {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyDictItems.dict`.
   internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -1673,7 +1911,7 @@ extension PyDictItems {
     PyDictItems(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyDictItems(ptr: ptr)
     zelf.dictPtr.deinitialize()
 
@@ -1759,12 +1997,31 @@ extension PyDictKeyIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyDictKeyIterator.dict`.
   internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
   /// Property: `PyDictKeyIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
   /// Property: `PyDictKeyIterator.initialCount`.
   internal var initialCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.initialCountOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -1776,7 +2033,7 @@ extension PyDictKeyIterator {
     PyDictKeyIterator(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyDictKeyIterator(ptr: ptr)
     zelf.dictPtr.deinitialize()
     zelf.indexPtr.deinitialize()
@@ -1858,8 +2115,27 @@ extension PyDictKeys {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyDictKeys.dict`.
   internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -1871,7 +2147,7 @@ extension PyDictKeys {
     PyDictKeys(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyDictKeys(ptr: ptr)
     zelf.dictPtr.deinitialize()
 
@@ -1957,12 +2233,31 @@ extension PyDictValueIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyDictValueIterator.dict`.
   internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
   /// Property: `PyDictValueIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
   /// Property: `PyDictValueIterator.initialCount`.
   internal var initialCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.initialCountOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -1974,7 +2269,7 @@ extension PyDictValueIterator {
     PyDictValueIterator(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyDictValueIterator(ptr: ptr)
     zelf.dictPtr.deinitialize()
     zelf.indexPtr.deinitialize()
@@ -2056,8 +2351,27 @@ extension PyDictValues {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyDictValues.dict`.
   internal var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.dictOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -2069,7 +2383,7 @@ extension PyDictValues {
     PyDictValues(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyDictValues(ptr: ptr)
     zelf.dictPtr.deinitialize()
 
@@ -2145,6 +2459,25 @@ extension PyEllipsis {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -2233,10 +2566,29 @@ extension PyEnumerate {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyEnumerate.iterator`.
   internal var iteratorPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.iteratorOffset) }
   /// Property: `PyEnumerate.nextIndex`.
   internal var nextIndexPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.nextIndexOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -2248,7 +2600,7 @@ extension PyEnumerate {
     PyEnumerate(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyEnumerate(ptr: ptr)
     zelf.iteratorPtr.deinitialize()
     zelf.nextIndexPtr.deinitialize()
@@ -2334,10 +2686,29 @@ extension PyFilter {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyFilter.fn`.
   internal var fnPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.fnOffset) }
   /// Property: `PyFilter.iterator`.
   internal var iteratorPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.iteratorOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -2349,7 +2720,7 @@ extension PyFilter {
     PyFilter(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyFilter(ptr: ptr)
     zelf.fnPtr.deinitialize()
     zelf.iteratorPtr.deinitialize()
@@ -2432,8 +2803,27 @@ extension PyFloat {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyFloat.value`.
   internal var valuePtr: Ptr<Double> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -2445,7 +2835,7 @@ extension PyFloat {
     PyFloat(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyFloat(ptr: ptr)
     zelf.valuePtr.deinitialize()
 
@@ -2558,6 +2948,12 @@ extension PyFrame {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyFrame.code`.
   internal var codePtr: Ptr<PyCode> { Ptr(self.ptr, offset: Self.layout.codeOffset) }
   /// Property: `PyFrame.parent`.
@@ -2583,6 +2979,19 @@ extension PyFrame {
   /// Property: `PyFrame.nextInstructionIndex`.
   internal var nextInstructionIndexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.nextInstructionIndexOffset) }
 
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
+
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
     base.initialize(py, type: type, __dict__: __dict__)
@@ -2593,7 +3002,7 @@ extension PyFrame {
     PyFrame(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyFrame(ptr: ptr)
     zelf.codePtr.deinitialize()
     zelf.parentPtr.deinitialize()
@@ -2690,8 +3099,27 @@ extension PyFrozenSet {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyFrozenSet.elements`.
   internal var elementsPtr: Ptr<OrderedSet> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -2703,7 +3131,7 @@ extension PyFrozenSet {
     PyFrozenSet(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyFrozenSet(ptr: ptr)
     zelf.elementsPtr.deinitialize()
 
@@ -2810,6 +3238,12 @@ extension PyFunction {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyFunction.name`.
   internal var namePtr: Ptr<PyString> { Ptr(self.ptr, offset: Self.layout.nameOffset) }
   /// Property: `PyFunction.qualname`.
@@ -2831,6 +3265,19 @@ extension PyFunction {
   /// Property: `PyFunction.annotations`.
   internal var annotationsPtr: Ptr<PyDict?> { Ptr(self.ptr, offset: Self.layout.annotationsOffset) }
 
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
+
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
     base.initialize(py, type: type, __dict__: __dict__)
@@ -2841,7 +3288,7 @@ extension PyFunction {
     PyFunction(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyFunction(ptr: ptr)
     zelf.namePtr.deinitialize()
     zelf.qualnamePtr.deinitialize()
@@ -2936,8 +3383,27 @@ extension PyInt {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyInt.value`.
   internal var valuePtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -2949,7 +3415,7 @@ extension PyInt {
     PyInt(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyInt(ptr: ptr)
     zelf.valuePtr.deinitialize()
 
@@ -3032,10 +3498,29 @@ extension PyIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyIterator.sequence`.
   internal var sequencePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.sequenceOffset) }
   /// Property: `PyIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -3047,7 +3532,7 @@ extension PyIterator {
     PyIterator(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyIterator(ptr: ptr)
     zelf.sequencePtr.deinitialize()
     zelf.indexPtr.deinitialize()
@@ -3128,8 +3613,27 @@ extension PyList {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyList.elements`.
   internal var elementsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -3141,7 +3645,7 @@ extension PyList {
     PyList(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyList(ptr: ptr)
     zelf.elementsPtr.deinitialize()
 
@@ -3224,10 +3728,29 @@ extension PyListIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyListIterator.list`.
   internal var listPtr: Ptr<PyList> { Ptr(self.ptr, offset: Self.layout.listOffset) }
   /// Property: `PyListIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -3239,7 +3762,7 @@ extension PyListIterator {
     PyListIterator(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyListIterator(ptr: ptr)
     zelf.listPtr.deinitialize()
     zelf.indexPtr.deinitialize()
@@ -3323,10 +3846,29 @@ extension PyListReverseIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyListReverseIterator.list`.
   internal var listPtr: Ptr<PyList> { Ptr(self.ptr, offset: Self.layout.listOffset) }
   /// Property: `PyListReverseIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -3338,7 +3880,7 @@ extension PyListReverseIterator {
     PyListReverseIterator(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyListReverseIterator(ptr: ptr)
     zelf.listPtr.deinitialize()
     zelf.indexPtr.deinitialize()
@@ -3422,10 +3964,29 @@ extension PyMap {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyMap.fn`.
   internal var fnPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.fnOffset) }
   /// Property: `PyMap.iterators`.
   internal var iteratorsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Self.layout.iteratorsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -3437,7 +3998,7 @@ extension PyMap {
     PyMap(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyMap(ptr: ptr)
     zelf.fnPtr.deinitialize()
     zelf.iteratorsPtr.deinitialize()
@@ -3523,10 +4084,29 @@ extension PyMethod {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyMethod.function`.
   internal var functionPtr: Ptr<PyFunction> { Ptr(self.ptr, offset: Self.layout.functionOffset) }
   /// Property: `PyMethod.object`.
   internal var objectPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.objectOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -3538,7 +4118,7 @@ extension PyMethod {
     PyMethod(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyMethod(ptr: ptr)
     zelf.functionPtr.deinitialize()
     zelf.objectPtr.deinitialize()
@@ -3617,6 +4197,25 @@ extension PyModule {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -3704,6 +4303,25 @@ extension PyNamespace {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -3787,6 +4405,25 @@ extension PyNone {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -3868,6 +4505,25 @@ extension PyNotImplemented {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -3930,6 +4586,9 @@ extension PyObject {
   /// This type was automatically generated based on `PyObject` fields
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
+    internal let typeOffset: Int
+    internal let __dict__Offset: Int
+    internal let flagsOffset: Int
     internal let size: Int
     internal let alignment: Int
 
@@ -3937,10 +4596,17 @@ extension PyObject {
       let layout = PyMemory.GenericLayout(
         initialOffset: 0,
         initialAlignment: 0,
-        fields: []
+        fields: [
+          PyMemory.FieldLayout(from: PyType.self), // PyObject.type
+          PyMemory.FieldLayout(from: PyObject.Lazy__dict__.self), // PyObject.__dict__
+          PyMemory.FieldLayout(from: PyObject.Flags.self) // PyObject.flags
+        ]
       )
 
-      assert(layout.offsets.count == 0)
+      assert(layout.offsets.count == 3)
+      self.typeOffset = layout.offsets[0]
+      self.__dict__Offset = layout.offsets[1]
+      self.flagsOffset = layout.offsets[2]
       self.size = layout.size
       self.alignment = layout.alignment
     }
@@ -3949,10 +4615,22 @@ extension PyObject {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: Self.layout.typeOffset) }
+  /// Property: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: Self.layout.__dict__Offset) }
+  /// Property: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: Self.layout.flagsOffset) }
 
   internal static func deinitialize(ptr: RawPtr) {
     // Call 'beforeDeinitialize' starting from most-specific type.
     PyObject(ptr: ptr).beforeDeinitialize()
+
+    // Call 'deinitialize' on all of our own properties.
+    let zelf = PyObject(ptr: ptr)
+    zelf.typePtr.deinitialize()
+    zelf.__dict__Ptr.deinitialize()
+    zelf.flagsPtr.deinitialize()
   }
 }
 
@@ -4022,6 +4700,12 @@ extension PyProperty {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyProperty._get`.
   internal var _getPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout._getOffset) }
   /// Property: `PyProperty._set`.
@@ -4030,6 +4714,19 @@ extension PyProperty {
   internal var _delPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout._delOffset) }
   /// Property: `PyProperty.doc`.
   internal var docPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.docOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -4041,7 +4738,7 @@ extension PyProperty {
     PyProperty(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyProperty(ptr: ptr)
     zelf._getPtr.deinitialize()
     zelf._setPtr.deinitialize()
@@ -4139,6 +4836,12 @@ extension PyRange {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyRange.start`.
   internal var startPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Self.layout.startOffset) }
   /// Property: `PyRange.stop`.
@@ -4147,6 +4850,19 @@ extension PyRange {
   internal var stepPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Self.layout.stepOffset) }
   /// Property: `PyRange.length`.
   internal var lengthPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Self.layout.lengthOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -4158,7 +4874,7 @@ extension PyRange {
     PyRange(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyRange(ptr: ptr)
     zelf.startPtr.deinitialize()
     zelf.stopPtr.deinitialize()
@@ -4254,6 +4970,12 @@ extension PyRangeIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyRangeIterator.start`.
   internal var startPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.startOffset) }
   /// Property: `PyRangeIterator.step`.
@@ -4262,6 +4984,19 @@ extension PyRangeIterator {
   internal var lengthPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.lengthOffset) }
   /// Property: `PyRangeIterator.index`.
   internal var indexPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -4273,7 +5008,7 @@ extension PyRangeIterator {
     PyRangeIterator(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyRangeIterator(ptr: ptr)
     zelf.startPtr.deinitialize()
     zelf.stepPtr.deinitialize()
@@ -4363,10 +5098,29 @@ extension PyReversed {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyReversed.sequence`.
   internal var sequencePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.sequenceOffset) }
   /// Property: `PyReversed.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -4378,7 +5132,7 @@ extension PyReversed {
     PyReversed(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyReversed(ptr: ptr)
     zelf.sequencePtr.deinitialize()
     zelf.indexPtr.deinitialize()
@@ -4461,8 +5215,27 @@ extension PySet {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PySet.elements`.
   internal var elementsPtr: Ptr<OrderedSet> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -4474,7 +5247,7 @@ extension PySet {
     PySet(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PySet(ptr: ptr)
     zelf.elementsPtr.deinitialize()
 
@@ -4560,12 +5333,31 @@ extension PySetIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PySetIterator.set`.
   internal var setPtr: Ptr<PyAnySet> { Ptr(self.ptr, offset: Self.layout.setOffset) }
   /// Property: `PySetIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
   /// Property: `PySetIterator.initialCount`.
   internal var initialCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.initialCountOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -4577,7 +5369,7 @@ extension PySetIterator {
     PySetIterator(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PySetIterator(ptr: ptr)
     zelf.setPtr.deinitialize()
     zelf.indexPtr.deinitialize()
@@ -4684,12 +5476,31 @@ extension PySlice {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PySlice.start`.
   internal var startPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.startOffset) }
   /// Property: `PySlice.stop`.
   internal var stopPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.stopOffset) }
   /// Property: `PySlice.step`.
   internal var stepPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.stepOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -4701,7 +5512,7 @@ extension PySlice {
     PySlice(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PySlice(ptr: ptr)
     zelf.startPtr.deinitialize()
     zelf.stopPtr.deinitialize()
@@ -4787,8 +5598,27 @@ extension PyStaticMethod {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyStaticMethod.callable`.
   internal var callablePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.callableOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -4800,7 +5630,7 @@ extension PyStaticMethod {
     PyStaticMethod(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyStaticMethod(ptr: ptr)
     zelf.callablePtr.deinitialize()
 
@@ -4886,12 +5716,31 @@ extension PyString {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyString.cachedCount`.
   internal var cachedCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.cachedCountOffset) }
   /// Property: `PyString.cachedHash`.
   internal var cachedHashPtr: Ptr<PyHash> { Ptr(self.ptr, offset: Self.layout.cachedHashOffset) }
   /// Property: `PyString.value`.
   internal var valuePtr: Ptr<String> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -4903,7 +5752,7 @@ extension PyString {
     PyString(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyString(ptr: ptr)
     zelf.cachedCountPtr.deinitialize()
     zelf.cachedHashPtr.deinitialize()
@@ -4988,10 +5837,29 @@ extension PyStringIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyStringIterator.string`.
   internal var stringPtr: Ptr<PyString> { Ptr(self.ptr, offset: Self.layout.stringOffset) }
   /// Property: `PyStringIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -5003,7 +5871,7 @@ extension PyStringIterator {
     PyStringIterator(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyStringIterator(ptr: ptr)
     zelf.stringPtr.deinitialize()
     zelf.indexPtr.deinitialize()
@@ -5090,12 +5958,31 @@ extension PySuper {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PySuper.thisClass`.
   internal var thisClassPtr: Ptr<PyType?> { Ptr(self.ptr, offset: Self.layout.thisClassOffset) }
   /// Property: `PySuper.object`.
   internal var objectPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.objectOffset) }
   /// Property: `PySuper.objectType`.
   internal var objectTypePtr: Ptr<PyType?> { Ptr(self.ptr, offset: Self.layout.objectTypeOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -5107,7 +5994,7 @@ extension PySuper {
     PySuper(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PySuper(ptr: ptr)
     zelf.thisClassPtr.deinitialize()
     zelf.objectPtr.deinitialize()
@@ -5205,6 +6092,12 @@ extension PyTextFile {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyTextFile.name`.
   internal var namePtr: Ptr<String?> { Ptr(self.ptr, offset: Self.layout.nameOffset) }
   /// Property: `PyTextFile.fd`.
@@ -5216,6 +6109,19 @@ extension PyTextFile {
   /// Property: `PyTextFile.errorHandling`.
   internal var errorHandlingPtr: Ptr<PyString.ErrorHandling> { Ptr(self.ptr, offset: Self.layout.errorHandlingOffset) }
 
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
+
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
     base.initialize(py, type: type, __dict__: __dict__)
@@ -5226,7 +6132,7 @@ extension PyTextFile {
     PyTextFile(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyTextFile(ptr: ptr)
     zelf.namePtr.deinitialize()
     zelf.fdPtr.deinitialize()
@@ -5329,6 +6235,12 @@ extension PyTraceback {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyTraceback.next`.
   internal var nextPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: Self.layout.nextOffset) }
   /// Property: `PyTraceback.frame`.
@@ -5337,6 +6249,19 @@ extension PyTraceback {
   internal var lastInstructionPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Self.layout.lastInstructionOffset) }
   /// Property: `PyTraceback.lineNo`.
   internal var lineNoPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Self.layout.lineNoOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -5348,7 +6273,7 @@ extension PyTraceback {
     PyTraceback(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyTraceback(ptr: ptr)
     zelf.nextPtr.deinitialize()
     zelf.framePtr.deinitialize()
@@ -5437,8 +6362,27 @@ extension PyTuple {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyTuple.elements`.
   internal var elementsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Self.layout.elementsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -5450,7 +6394,7 @@ extension PyTuple {
     PyTuple(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyTuple(ptr: ptr)
     zelf.elementsPtr.deinitialize()
 
@@ -5533,10 +6477,29 @@ extension PyTupleIterator {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyTupleIterator.tuple`.
   internal var tuplePtr: Ptr<PyTuple> { Ptr(self.ptr, offset: Self.layout.tupleOffset) }
   /// Property: `PyTupleIterator.index`.
   internal var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.indexOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -5548,7 +6511,7 @@ extension PyTupleIterator {
     PyTupleIterator(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyTupleIterator(ptr: ptr)
     zelf.tuplePtr.deinitialize()
     zelf.indexPtr.deinitialize()
@@ -5656,6 +6619,12 @@ extension PyType {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyType.name`.
   internal var namePtr: Ptr<String> { Ptr(self.ptr, offset: Self.layout.nameOffset) }
   /// Property: `PyType.qualname`.
@@ -5677,6 +6646,19 @@ extension PyType {
   /// Property: `PyType.deinitialize`.
   internal var deinitializePtr: Ptr<DeinitializeFn> { Ptr(self.ptr, offset: Self.layout.deinitializeOffset) }
 
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
+
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
     base.initialize(py, type: type, __dict__: __dict__)
@@ -5687,7 +6669,7 @@ extension PyType {
     PyType(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyType(ptr: ptr)
     zelf.namePtr.deinitialize()
     zelf.qualnamePtr.deinitialize()
@@ -5796,8 +6778,27 @@ extension PyZip {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyZip.iterators`.
   internal var iteratorsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Self.layout.iteratorsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -5809,7 +6810,7 @@ extension PyZip {
     PyZip(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyZip(ptr: ptr)
     zelf.iteratorsPtr.deinitialize()
 
@@ -5885,6 +6886,25 @@ extension PyArithmeticError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -5990,6 +7010,25 @@ extension PyAssertionError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -6095,6 +7134,25 @@ extension PyAttributeError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -6200,6 +7258,25 @@ extension PyBaseException {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     let base = PyObject(ptr: self.ptr)
@@ -6291,6 +7368,25 @@ extension PyBlockingIOError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -6397,6 +7493,25 @@ extension PyBrokenPipeError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -6504,6 +7619,25 @@ extension PyBufferError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -6609,6 +7743,25 @@ extension PyBytesWarning {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -6715,6 +7868,25 @@ extension PyChildProcessError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -6821,6 +7993,25 @@ extension PyConnectionAbortedError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -6928,6 +8119,25 @@ extension PyConnectionError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -7034,6 +8244,25 @@ extension PyConnectionRefusedError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -7141,6 +8370,25 @@ extension PyConnectionResetError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -7248,6 +8496,25 @@ extension PyDeprecationWarning {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -7354,6 +8621,25 @@ extension PyEOFError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -7459,6 +8745,25 @@ extension PyException {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -7563,6 +8868,25 @@ extension PyFileExistsError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -7669,6 +8993,25 @@ extension PyFileNotFoundError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -7775,6 +9118,25 @@ extension PyFloatingPointError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -7881,6 +9243,25 @@ extension PyFutureWarning {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -7987,6 +9368,25 @@ extension PyGeneratorExit {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -8101,12 +9501,31 @@ extension PyImportError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyImportError.msg`.
   internal var msgPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.msgOffset) }
   /// Property: `PyImportError.moduleName`.
   internal var moduleNamePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.moduleNameOffset) }
   /// Property: `PyImportError.modulePath`.
   internal var modulePathPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.modulePathOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -8132,7 +9551,7 @@ extension PyImportError {
     PyBaseException(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyImportError(ptr: ptr)
     zelf.msgPtr.deinitialize()
     zelf.moduleNamePtr.deinitialize()
@@ -8249,6 +9668,25 @@ extension PyImportWarning {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -8355,6 +9793,12 @@ extension PyIndentationError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property from base class: `PySyntaxError.msg`.
   internal var msgPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: PySyntaxError.layout.msgOffset) }
   /// Property from base class: `PySyntaxError.filename`.
@@ -8368,6 +9812,18 @@ extension PyIndentationError {
   /// Property from base class: `PySyntaxError.printFileAndLine`.
   internal var printFileAndLinePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: PySyntaxError.layout.printFileAndLineOffset) }
 
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
   /// Property from base class: `PySyntaxError.msg`.
   internal var msg: PyObject? { self.msgPtr.pointee }
   /// Property from base class: `PySyntaxError.filename`.
@@ -8550,6 +10006,25 @@ extension PyIndexError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -8656,6 +10131,25 @@ extension PyInterruptedError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -8762,6 +10256,25 @@ extension PyIsADirectoryError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -8868,6 +10381,25 @@ extension PyKeyError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -8974,6 +10506,25 @@ extension PyKeyboardInterrupt {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -9078,6 +10629,25 @@ extension PyLookupError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -9183,6 +10753,25 @@ extension PyMemoryError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -9288,6 +10877,12 @@ extension PyModuleNotFoundError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property from base class: `PyImportError.msg`.
   internal var msgPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: PyImportError.layout.msgOffset) }
   /// Property from base class: `PyImportError.moduleName`.
@@ -9295,6 +10890,18 @@ extension PyModuleNotFoundError {
   /// Property from base class: `PyImportError.modulePath`.
   internal var modulePathPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: PyImportError.layout.modulePathOffset) }
 
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
   /// Property from base class: `PyImportError.msg`.
   internal var msg: PyObject? { self.msgPtr.pointee }
   /// Property from base class: `PyImportError.moduleName`.
@@ -9459,6 +11066,25 @@ extension PyNameError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -9564,6 +11190,25 @@ extension PyNotADirectoryError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -9670,6 +11315,25 @@ extension PyNotImplementedError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -9776,6 +11440,25 @@ extension PyOSError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -9881,6 +11564,25 @@ extension PyOverflowError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -9987,6 +11689,25 @@ extension PyPendingDeprecationWarning {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -10093,6 +11814,25 @@ extension PyPermissionError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -10199,6 +11939,25 @@ extension PyProcessLookupError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -10305,6 +12064,25 @@ extension PyRecursionError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -10411,6 +12189,25 @@ extension PyReferenceError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -10516,6 +12313,25 @@ extension PyResourceWarning {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -10622,6 +12438,25 @@ extension PyRuntimeError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -10727,6 +12562,25 @@ extension PyRuntimeWarning {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -10833,6 +12687,25 @@ extension PyStopAsyncIteration {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -10942,8 +12815,27 @@ extension PyStopIteration {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PyStopIteration.value`.
   internal var valuePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -10969,7 +12861,7 @@ extension PyStopIteration {
     PyBaseException(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PyStopIteration(ptr: ptr)
     zelf.valuePtr.deinitialize()
 
@@ -11099,6 +12991,12 @@ extension PySyntaxError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PySyntaxError.msg`.
   internal var msgPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.msgOffset) }
   /// Property: `PySyntaxError.filename`.
@@ -11111,6 +13009,19 @@ extension PySyntaxError {
   internal var textPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.textOffset) }
   /// Property: `PySyntaxError.printFileAndLine`.
   internal var printFileAndLinePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.printFileAndLineOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -11136,7 +13047,7 @@ extension PySyntaxError {
     PyBaseException(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PySyntaxError(ptr: ptr)
     zelf.msgPtr.deinitialize()
     zelf.filenamePtr.deinitialize()
@@ -11262,6 +13173,25 @@ extension PySyntaxWarning {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -11368,6 +13298,25 @@ extension PySystemError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -11477,8 +13426,27 @@ extension PySystemExit {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property: `PySystemExit.code`.
   internal var codePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.codeOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -11503,7 +13471,7 @@ extension PySystemExit {
     PyBaseException(ptr: ptr).beforeDeinitialize()
     PyObject(ptr: ptr).beforeDeinitialize()
 
-    // Call 'deinitialize' all of our own properties.
+    // Call 'deinitialize' on all of our own properties.
     let zelf = PySystemExit(ptr: ptr)
     zelf.codePtr.deinitialize()
 
@@ -11614,6 +13582,12 @@ extension PyTabError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
   /// Property from base class: `PySyntaxError.msg`.
   internal var msgPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: PySyntaxError.layout.msgOffset) }
   /// Property from base class: `PySyntaxError.filename`.
@@ -11627,6 +13601,18 @@ extension PyTabError {
   /// Property from base class: `PySyntaxError.printFileAndLine`.
   internal var printFileAndLinePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: PySyntaxError.layout.printFileAndLineOffset) }
 
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
   /// Property from base class: `PySyntaxError.msg`.
   internal var msg: PyObject? { self.msgPtr.pointee }
   /// Property from base class: `PySyntaxError.filename`.
@@ -11810,6 +13796,25 @@ extension PyTimeoutError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -11916,6 +13921,25 @@ extension PyTypeError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -12021,6 +14045,25 @@ extension PyUnboundLocalError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -12127,6 +14170,25 @@ extension PyUnicodeDecodeError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -12234,6 +14296,25 @@ extension PyUnicodeEncodeError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -12341,6 +14422,25 @@ extension PyUnicodeError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -12447,6 +14547,25 @@ extension PyUnicodeTranslateError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -12554,6 +14673,25 @@ extension PyUnicodeWarning {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -12660,6 +14798,25 @@ extension PyUserWarning {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -12766,6 +14923,25 @@ extension PyValueError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -12871,6 +15047,25 @@ extension PyWarning {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,
@@ -12976,6 +15171,25 @@ extension PyZeroDivisionError {
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
 
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
   internal func initializeBase(_ py: Py,
                                type: PyType,

@@ -27,7 +27,7 @@ public struct PyModule: PyObjectMixin {
                            name: PyObject?,
                            doc: PyObject?,
                            __dict__: PyDict? = nil) {
-    self.header.initialize(py, type: type, __dict__: __dict__)
+    self.initializeBase(py, type: type, __dict__: __dict__)
     self.init__dict__(py, name: name, doc: doc)
   }
 
@@ -86,7 +86,7 @@ public struct PyModule: PyObjectMixin {
   }
 
   internal func getDict(_ py: Py) -> PyDict {
-    guard let result = self.header.__dict__.get(py) else {
+    guard let result = self.__dict__.get(py) else {
       py.trapMissing__dict__(object: self)
     }
 

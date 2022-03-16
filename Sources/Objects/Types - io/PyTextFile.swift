@@ -47,7 +47,7 @@ public struct PyTextFile: PyObjectMixin {
   // sourcery: storedProperty
   internal var errorHandling: PyString.ErrorHandling { self.errorHandlingPtr.pointee }
 
-  private static let closeOnDeallocFlag = PyObjectHeader.Flags.custom0
+  private static let closeOnDeallocFlag = PyObject.Flags.custom0
 
   /// Should we close the file when deallocating?
   internal var closeOnDealloc: Bool {

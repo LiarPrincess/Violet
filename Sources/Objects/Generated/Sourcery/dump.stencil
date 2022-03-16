@@ -64,12 +64,6 @@ PyProperty|{{python_name}}|{{has_setter}}|{{swift_static_doc_property}}
 {# === Main === #}
 {# ============ #}
 
-{% for type in types.structs where type.name == "PyObjectHeader" %}
-{% for field in type.allVariables|annotated:"storedProperty" %}
-ObjectHeaderField|{{field.name}}|{{field.typeName}}
-{% endfor %}
-{% endfor %}
-
 {% for type in types.structs where type.name == "PyErrorHeader" %}
 {% for field in type.allVariables|annotated:"storedProperty" %}
 ErrorHeaderField|{{field.name}}|{{field.typeName}}

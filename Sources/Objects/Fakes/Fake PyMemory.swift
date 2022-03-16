@@ -6,7 +6,7 @@ public struct PyMemory {
   // MARK: - Allocate
 
   public func allocate(size: Int, alignment: Int) -> RawPtr {
-    assert(size >= PyObjectHeader.layout.size)
+    assert(size >= PyObject.layout.size)
     return RawPtr.allocate(byteCount: size, alignment: alignment)
   }
 

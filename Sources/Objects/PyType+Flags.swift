@@ -23,15 +23,15 @@ extension PyType {
     public static let instancesHave__dict__Flag = TypeFlags(objectFlags: .custom20)
     public static let subclassInstancesHave__dict__Flag = TypeFlags(objectFlags: .custom21)
 
-    internal private(set) var objectFlags: PyObjectHeader.Flags
+    internal private(set) var objectFlags: PyObject.Flags
 
     // MARK: - Init
 
     public init() {
-      self.objectFlags = PyObjectHeader.Flags()
+      self.objectFlags = PyObject.Flags()
     }
 
-    public init(objectFlags: PyObjectHeader.Flags) {
+    public init(objectFlags: PyObject.Flags) {
       self.objectFlags = objectFlags
     }
 

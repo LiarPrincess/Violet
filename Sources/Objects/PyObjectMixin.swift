@@ -2,7 +2,7 @@
 public protocol PyObjectMixin: CustomStringConvertible {
   /// Pointer to and object.
   ///
-  /// Each object starts with `PyObjectHeader`.
+  /// Each object starts with the same fields as `PyObject`.
   var ptr: RawPtr { get }
 }
 
@@ -10,47 +10,44 @@ extension PyObjectMixin {
 
   // MARK: - Header
 
-  // Assumption: headerOffset = 0, but this should be valid for all of our types.
-  public var header: PyObjectHeader { PyObjectHeader(ptr: self.ptr) }
-
-  /// Also known as `klass`, but we are using CPython naming convention.
-  public var type: PyType { self.header.type }
-  /// [Convenience] Name of the runtime type of this Python object.
-  public var typeName: String { self.type.name }
-
-  /// Various flags that describe the current state of the `PyObject`.
-  ///
-  /// It can also be used to store `Bool` properties (via `custom` flags).
-  public var flags: PyObjectHeader.Flags {
-    get { self.header.flags }
-    nonmutating set { self.header.flags = newValue }
+  /// [Convenience] Convert this object to `PyObject`.
+  public var asObject: PyObject {
+    return PyObject(ptr: self.ptr)
   }
 
-  /// [Convenience] Convert this object to `PyObject`.
-  public var asObject: PyObject { PyObject(ptr: self.ptr) }
+  /// [Convenience] Name of the runtime type of this Python object.
+  public var typeName: String {
+    let object = self.asObject
+    let type = object.type
+    return type.name
+  }
 
   // MARK: - Repr
 
   /// This flag is used to control infinite recursion
   /// in `repr`, `str`, `print` etc.
   internal var hasReprLock: Bool {
-    return self.flags.isSet(.reprLock)
+    let object = self.asObject
+    return object.flags.isSet(.reprLock)
   }
 
   /// Set, execute `body` and then unset `reprLock` flag
   /// (the one that is used to control recursion in `repr`, `str`, `print` etc).
   internal func withReprLock<T>(body: () -> T) -> T {
+    let object = self.asObject
+
     // We do not need 'defer' because 'body' is not throwing
-    self.flags.set(.reprLock)
+    object.flags.set(.reprLock)
     let result = body()
-    self.flags.unset(.reprLock)
+    object.flags.unset(.reprLock)
     return result
   }
 
   // MARK: - Description
 
   public var description: String {
-    let type = self.header.type
+    let object = self.asObject
+    let type = object.type
     return type.debugFn(self.ptr)
   }
 

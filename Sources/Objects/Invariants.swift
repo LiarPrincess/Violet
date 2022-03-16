@@ -59,5 +59,5 @@ internal func checkInvariants() {
   checkMemorySize(of: Token.Kind.self, expectedSize: 17)
 
   // Stored on every object, so kind of important.
-  checkMemorySize(of: PyObjectHeader.Lazy__dict__.self, expectedSize: 8)
+  checkMemorySize(of: PyObject.Lazy__dict__.self, expectedSize: 8)
 }
