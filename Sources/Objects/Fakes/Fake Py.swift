@@ -34,6 +34,7 @@ public struct Py {
   internal var builtins: Builtins { fatalError() }
   internal var sys: Sys { fatalError() }
   internal var _warnings: UnderscoreWarnings { fatalError() }
+  internal var _os: UnderscoreOS { fatalError() }
 
   internal var sysModule: PyModule { fatalError() }
   internal var _impModule: PyModule { fatalError() }
@@ -46,6 +47,7 @@ public struct Py {
 
   public func intern(scalar: UnicodeScalar) -> PyString { fatalError() }
   public func intern(string: String) -> PyString { fatalError() }
+  public func intern(path: Path) -> PyString { fatalError() }
 
   // MARK: - Errors
 

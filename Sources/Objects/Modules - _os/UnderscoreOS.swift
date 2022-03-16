@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import FileSystem
 
@@ -18,41 +17,49 @@ public final class UnderscoreOS: PyModuleImplementation {
     It is a helper module to speed up interpreter start-up.
     """
 
-  // MARK: - Dict
-
   /// This dict will be used inside our `PyModule` instance.
-  public let __dict__ = Py.newDict()
+  internal let __dict__: PyDict
+  internal let py: Py
 
   // MARK: - Init
 
-  internal init() {
+  internal init(_ py: Py) {
+    self.py = py
+    self.__dict__ = self.py.newDict()
     self.fill__dict__()
   }
 
   // MARK: - Fill dict
 
   private func fill__dict__() {
-    // Note that capturing 'self' is intended.
-    // See comment at the top of 'PyModuleImplementation' for details.
-    self.setOrTrap(.getcwd, doc: nil, fn: self.getCwd)
-    self.setOrTrap(.fspath, doc: nil, fn: self.getFSPath(path:))
-    self.setOrTrap(.stat, doc: nil, fn: self.getStat(path:))
-    self.setOrTrap(.listdir, doc: nil, fn: self.listdir(path:))
+    self.setOrTrap(.getcwd, doc: nil, fn: Self.getcwd(_:))
+    self.setOrTrap(.fspath, doc: nil, fn: Self.fspath(_:path:))
+    self.setOrTrap(.stat, doc: nil, fn: Self.stat(_:path:))
+    self.setOrTrap(.listdir, doc: nil, fn: Self.listdir(_:path:))
   }
 
   // MARK: - Cwd
 
+  internal static func getcwd(_ py: Py) -> PyResult<PyObject> {
+    let result = py._os.getCwd()
+    return PyResult(result)
+  }
+
   /// static PyObject *
   /// posix_getcwd(int use_bytes)
   public func getCwd() -> PyString {
-    let value = Py.fileSystem.currentWorkingDirectory
-
     // 'cwd' tend not to change during the program runtime, so we can cache it.
     // If we ever get different value from fileSystem we will re-intern it.
-    return Py.intern(path: value)
+    let value = self.py.fileSystem.currentWorkingDirectory
+    return self.py.intern(path: value)
   }
 
   // MARK: - FSPath
+
+  internal static func fspath(_ py: Py, path: PyObject) -> PyResult<PyObject> {
+    let result = py._os.getFSPath(path: path)
+    return PyResult(result)
+  }
 
   /// Return the file system representation of the path.
   ///
@@ -71,79 +78,91 @@ public final class UnderscoreOS: PyModuleImplementation {
 
   // MARK: - Stat
 
+  internal static func stat(_ py: Py, path: PyObject) -> PyResult<PyObject> {
+    let result = py._os.getStat(path: path)
+    return PyResult(result)
+  }
+
   /// Doc:
   /// https://docs.python.org/3/library/os.html#os.DirEntry.stat
   ///
   /// static int
   /// _io_FileIO___init___impl(fileio *self, PyObject *nameobj, … )
-  public func getStat(path: PyObject) -> PyResult<PyObject> {
+  public func getStat(path: PyObject) -> PyResult<PyNamespace> {
     switch self.parsePathOrDescriptor(object: path) {
     case let .descriptor(fd):
-      let stat = Py.fileSystem.stat(fd: fd)
-      return self.createStat(from: stat)
+      let stat = self.py.fileSystem.stat(fd: fd)
+      return self.createStatObject(stat: stat)
 
     case let .path(path):
-      let stat = Py.fileSystem.stat(path: path)
-      return self.createStat(from: stat, path: path)
+      let stat = self.py.fileSystem.stat(path: path)
+      return self.createStatObject(stat: stat, path: path)
 
     case let .error(e):
       return .error(e)
     }
   }
 
-  private func createStat(from stat: PyFileSystem_StatResult,
-                          path: Path? = nil) -> PyResult<PyObject> {
+  private func createStatObject(stat: PyFileSystemStatResult,
+                                path: Path? = nil) -> PyResult<PyNamespace> {
     switch stat {
     case .value(let stat):
-      let result = self.createStat(from: stat)
-      return result.map { $0 as PyObject }
-
+      return self.createStatObject(stat: stat)
     case .enoent:
-      return .error(Py.newFileNotFoundError(path: path))
+      let error = self.py.newFileNotFoundError(path: path)
+      return .error(error.asBaseException)
     case .error(let e):
-      return .error(e)
+      return .error(e.asBaseException)
     }
   }
 
-  private func createStat(from stat: Stat) -> PyResult<PyNamespace> {
-    let dict = Py.newDict()
+  private func createStatObject(stat: Stat) -> PyResult<PyNamespace> {
+    let dict = self.py.newDict()
 
-    let modeKey = Py.intern(string: "st_mode")
-    switch dict.set(key: modeKey, to: Py.newInt(stat.st_mode)) {
+    let modeKey = self.py.intern(string: "st_mode")
+    let modeObject = self.py.newInt(stat.st_mode)
+
+    switch dict.set(self.py, key: modeKey, value: modeObject.asObject) {
     case .ok: break
     case .error(let e): return .error(e)
     }
 
     // Store mtime as 'seconds[.]nanoseconds'
+    let mtimeKey = self.py.intern(string: "st_mtime")
     let mtime = stat.st_mtimespec
     let mtimeValue = Double(mtime.tv_sec) + 1e-9 * Double(mtime.tv_nsec)
-    let mtimeKey = Py.intern(string: "st_mtime")
+    let mtimeObject = self.py.newFloat(mtimeValue)
 
-    switch dict.set(key: mtimeKey, to: Py.newFloat(mtimeValue)) {
+    switch dict.set(self.py, key: mtimeKey, value: mtimeObject.asObject) {
     case .ok: break
     case .error(let e): return .error(e)
     }
 
-    let result = Py.newNamespace(dict: dict)
+    let result = self.py.newNamespace(dict: dict)
     return .value(result)
   }
 
   // MARK: - Listdir
+
+  internal static func listdir(_ py: Py, path: PyObject?) -> PyResult<PyObject> {
+    let result = py._os.listdir(path: path)
+    return PyResult(result)
+  }
 
   /// Doc:
   /// https://docs.python.org/3/library/os.html#os.listdir
   ///
   /// static PyObject *
   /// os_listdir_impl(PyObject *module, path_t *path)
-  public func listdir(path: PyObject? = nil) -> PyResult<PyObject> {
+  public func listdir(path: PyObject?) -> PyResult<PyList> {
     switch self.parseListdirPath(path: path) {
     case let .descriptor(fd):
-      let result = Py.fileSystem.readdir(fd: fd)
-      return self.handleReaddirResult(result: result, path: nil)
+      let result = self.py.fileSystem.readdir(fd: fd)
+      return self.createObject(result: result, path: nil)
 
     case let .path(path):
-      let result = Py.fileSystem.readdir(path: path)
-      return self.handleReaddirResult(result: result, path: path)
+      let result = self.py.fileSystem.readdir(path: path)
+      return self.createObject(result: result, path: path)
 
     case let .error(e):
       return .error(e)
@@ -152,23 +171,33 @@ public final class UnderscoreOS: PyModuleImplementation {
 
   private func parseListdirPath(path: PyObject?) -> ParsePathOrDescriptorResult {
     guard let path = path else {
-      return .path(Path(string: "."))
+      let result = Path(string: ".")
+      return .path(result)
     }
 
     return self.parsePathOrDescriptor(object: path)
   }
 
-  private func handleReaddirResult(result: PyFileSystem_ReaddirResult,
-                                   path: Path?) -> PyResult<PyObject> {
+  private func createObject(result: PyFileSystemReaddirResult,
+                            path: Path?) -> PyResult<PyList> {
     switch result {
     case .entries(let entries):
-      let elements = entries.map(Py.newString(_:))
-      let list = Py.newList(elements: elements)
+      var elements = [PyObject]()
+      elements.reserveCapacity(entries.count)
+
+      for filename in entries {
+        let string = self.py.newString(filename)
+        elements.append(string.asObject)
+      }
+
+      let list = self.py.newList(elements: elements)
       return .value(list)
+
     case .enoent:
-      return .error(Py.newFileNotFoundError(path: path))
+      let error = self.py.newFileNotFoundError(path: path)
+      return .error(error.asBaseException)
     case .error(let e):
-      return .error(e)
+      return .error(e.asBaseException)
     }
   }
 
@@ -195,17 +224,18 @@ public final class UnderscoreOS: PyModuleImplementation {
   // MARK: - Helpers
 
   private func parsePath(object: PyObject) -> PyResult<PyString> {
-    switch Py.getString(object: object) {
+    switch self.py.getString(object: object, encoding: .default) {
     case .string(let pyString, _):
       return .value(pyString)
     case .bytes(_, let string):
-      let result = Py.newString(string)
+      let result = self.py.newString(string)
       return .value(result)
     case .byteDecodingError:
-      return .valueError("cannot decode byte path as string")
+      let message = "cannot decode byte path as string"
+      return .valueError(self.py, message: message)
     case .notStringOrBytes:
-      let msg = "path should be string or bytes, not \(object.typeName)"
-      return .typeError(msg)
+      let message = "path should be string or bytes, not \(object.typeName)"
+      return .typeError(self.py, message: message)
     }
   }
 
@@ -218,28 +248,28 @@ public final class UnderscoreOS: PyModuleImplementation {
   private func parsePathOrDescriptor(
     object: PyObject
   ) -> ParsePathOrDescriptorResult {
-    if let pyInt = PyCast.asInt(object) {
+    if let pyInt = self.py.cast.asInt(object) {
       if let fd = Int32(exactly: pyInt.value) {
         return .descriptor(fd)
       }
 
-      let msg = "fd is greater than maximum"
-      return .error(Py.newOverflowError(msg: msg))
+      let error = self.py.newOverflowError(message: "fd is greater than maximum")
+      return .error(error.asBaseException)
     }
 
-    switch Py.getString(object: object) {
+    switch self.py.getString(object: object, encoding: .default) {
     case .string(_, let path):
       return .path(Path(string: path))
     case .bytes(_, let path):
       return .path(Path(string: path))
     case .byteDecodingError:
-      let msg = "cannot decode byte path as string"
-      return .error(Py.newValueError(msg: msg))
+      let message = "cannot decode byte path as string"
+      let error = self.py.newValueError(message: message)
+      return .error(error.asBaseException)
     case .notStringOrBytes:
-      let msg = "path should be string, bytes or integer, not \(object.typeName)"
-      return .error(Py.newTypeError(msg: msg))
+      let message = "path should be string, bytes or integer, not \(object.typeName)"
+      let error = self.py.newTypeError(message: message)
+      return .error(error.asBaseException)
     }
   }
 }
-
-*/

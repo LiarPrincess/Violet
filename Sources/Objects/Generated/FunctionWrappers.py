@@ -7,6 +7,7 @@ from Helpers import (
 )
 
 def print_mark(name: str):
+    print()
     print('  // MARK: - ' + name)
     print()
 
@@ -48,7 +49,7 @@ if __name__ == '__main__':
 /// Technically 'TernaryFunction' is super-type of 'TernaryFunction with optional',
 /// because any function passed to 'TernaryFunction' can also be used in
 /// 'TernaryFunction with optional' (functions are contravariant on parameter type).
-public struct FunctionWrapper: CustomStringConvertible {{
+public struct FunctionWrapper: CustomStringConvertible {{\
 ''')
 
     hand_written_functions = get_hand_written_function_wrappers()
@@ -71,7 +72,6 @@ public struct FunctionWrapper: CustomStringConvertible {{
         print(f'  case {escape(fn.name_enum_case)}({fn.name_struct})')
 
     print('  }')
-    print()
 
     # ==================
     # === Properties ===
@@ -79,7 +79,6 @@ public struct FunctionWrapper: CustomStringConvertible {{
 
     print_mark('Properties')
     print('  internal let kind: Kind')
-    print()
 
     # ============
     # === Name ===
@@ -99,7 +98,6 @@ public struct FunctionWrapper: CustomStringConvertible {{
 
     print('    }')
     print('  }')
-    print()
 
     # ============
     # === Call ===
@@ -119,7 +117,6 @@ public struct FunctionWrapper: CustomStringConvertible {{
 
     print('    }')
     print('  }')
-    print()
 
     # ===================
     # === Description ===
@@ -228,9 +225,9 @@ public struct FunctionWrapper: CustomStringConvertible {{
             if fn.has_type_as_1_argument:
                 arguments[0] = 'type'
 
-            fn_call_arguments = ', '.join(arguments)
+            fn_call_arguments = '' if not arguments else ', ' + ', '.join(arguments)
             print(f'      case {case_index}:')
-            print(f'        return self.fn(py, {fn_call_arguments})')
+            print(f'        return self.fn(py{fn_call_arguments})')
 
         # === Default case ===
         error_message = f'expected {max_arg_count} arguments, got \(args.count)'
@@ -252,7 +249,6 @@ public struct FunctionWrapper: CustomStringConvertible {{
         print(f'    let wrapper = {struct_name}(name: name, fn: fn)')
         print(f'    self.kind = .{fn.name_enum_case}(wrapper)')
         print(f'  }}')
-        print()
 
     # 'struct FunctionWrapper' end
     print('}')
