@@ -92,7 +92,7 @@ public struct PyObject: PyObjectMixin {
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
 
-  // MARK: - Initialize/deitialize
+  // MARK: - Initialize/deinitialize
 
   public let ptr: RawPtr
 
@@ -120,6 +120,8 @@ public struct PyObject: PyObjectMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  // MARK: - Debug
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyObject(ptr: ptr)
