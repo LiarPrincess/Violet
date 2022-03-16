@@ -283,17 +283,12 @@ def print_type_extension(t: TypeInfo):
     # ====================
 
     print(f'  internal static func deinitialize(ptr: RawPtr) {{')
-    print(f'    // Call \'beforeDeinitialize\' starting from most-specific type.')
-
-    current_type = t
-    while current_type is not None:
-        print(f'    {current_type.swift_type_name}(ptr: ptr).beforeDeinitialize()')
-        current_type = current_type.base_type_info
+    print(f'    let zelf = {swift_type_name}(ptr: ptr)')
+    print(f'    zelf.beforeDeinitialize()')
 
     if properties_t:
         print()
         print(f'    // Call \'deinitialize\' on all of our own properties.')
-        print(f'    let zelf = {swift_type_name}(ptr: ptr)')
 
         for p in properties_t:
             print(f'    zelf.{p.pointer_property_name}.deinitialize()')
@@ -302,6 +297,7 @@ def print_type_extension(t: TypeInfo):
         print()
         base_swift_type_name = t.base_type_info.swift_type_name
         print(f'    // Call \'deinitialize\' on base type.')
+        print(f'    // This will also call base type \'beforeDeinitialize\'.')
         print(f'    {base_swift_type_name}.deinitialize(ptr: ptr)')
 
     print('  }')
