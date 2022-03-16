@@ -5,6 +5,14 @@
 OBJECTS=./Sources/Objects
 GENERATED=./Sources/Objects/Generated
 
+# First call to gather information about hand-written exceptions
+echo "Sourcery"
+sourcery \
+  --sources "$OBJECTS" \
+  --templates "$GENERATED/Sourcery/dump.stencil" \
+  --output "$GENERATED/Sourcery/dump.txt" \
+  --quiet
+
 echo "ExceptionSubclasses"
 python3 "$GENERATED/ExceptionSubclasses.py" > "$GENERATED/ExceptionSubclasses.swift"
 

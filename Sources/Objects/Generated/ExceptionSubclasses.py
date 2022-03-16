@@ -1,4 +1,8 @@
+from typing import Dict, List, Optional
 from Helpers import generated_warning, where_to_find_errors_in_cpython, exception_hierarchy
+from Sourcery import (
+    TypeInfo, SwiftInitializerInfo, get_types
+)
 
 # Some exceptions will be implemented by hand.
 MANUALLY_IMPLEMENTED = [
@@ -19,8 +23,13 @@ if __name__ == '__main__':
 // swiftlint:disable function_parameter_count
 // swiftlint:disable file_length
 
-{where_to_find_errors_in_cpython}
+{where_to_find_errors_in_cpython}\
 ''')
+
+    all_types = get_types()
+    python_name_to_type: Dict[str, TypeInfo] = {}
+    for t in all_types:
+      python_name_to_type[t.python_type_name] = t
 
     for t in exception_hierarchy:
         python_type_name = t.type_name
@@ -35,7 +44,11 @@ if __name__ == '__main__':
         doc = t.doc.replace('\n', '\\n" +\n"')
         py_memory_function_name = 'new' + python_type_name
 
-        print(f'''\
+        # ==============
+        # === Header ===
+        # ==============
+
+        print(f'''
 // MARK: - {python_type_name}
 
 // sourcery: pyerrortype = {python_type_name}, pybase = {python_base_type_name}, isDefault, isBaseType, hasGC
@@ -49,32 +62,77 @@ public struct {swift_type_name}: PyErrorMixin {{
 
   public init(ptr: RawPtr) {{
     self.ptr = ptr
-  }}
+  }}\
+''')
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {{
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
-  }}
+        # ==================
+        # === Initialize ===
+        # ==================
 
-  // Nothing to do here.
-  internal func beforeDeinitialize() {{ }}
+        # We have to copy the base class init 1:1.
+        base_type = python_name_to_type[t.base_type_name]
+        for fn in base_type.swift_initializers:
+            print()
+            print(f'  internal func initialize(', end='')
 
-  internal static func createDebugString(ptr: RawPtr) -> String {{
-    let zelf = PyStopIteration(ptr: ptr)
-    return "{swift_type_name}(type: \(zelf.typeName), flags: \(zelf.flags))"
-  }}
+            arguments: List[str] = []
+            call_arguments: List[str] = []
+            for arg in fn.arguments:
+                label = '' if arg.label is None else arg.label + ' '
+                default = '' if arg.default_value is None else ' = ' + arg.default_value
+                arguments.append(f'{label}{arg.name}: {arg.typ}{default}')
 
+                if arg.label == '_':
+                    call_label = ''
+                elif arg.label:
+                    call_label = arg.label + ': '
+                else:
+                    call_label = arg.name + ': '
+
+                call_arguments.append(f'{call_label}{arg.name}')
+
+            for index, arg in enumerate(arguments):
+                is_first = index == 0
+                is_last = index == len(arguments) - 1
+
+                indent = '' if is_first else (27 * ' ')
+                end = ') {\n' if is_last else ',\n'
+                print(f'{indent}{arg}', end=end)
+
+            print(f'    self.initializeBase(', end='')
+            for index, arg in enumerate(call_arguments):
+                is_first = index == 0
+                is_last = index == len(call_arguments) - 1
+
+                indent = '' if is_first else (24 * ' ')
+                end = ')\n' if is_last else ',\n'
+                print(f'{indent}{arg}', end=end)
+
+            print(f'  }}')
+
+        # ====================
+        # === Deinitialize ===
+        # ====================
+
+        print()
+        print('  // Nothing to do here.')
+        print('  internal func beforeDeinitialize() { }')
+
+        # =============
+        # === Debug ===
+        # =============
+
+        print()
+        print(f'  internal static func createDebugString(ptr: RawPtr) -> String {{')
+        print(f'    let zelf = PyStopIteration(ptr: ptr)')
+        print(f'    return "{swift_type_name}(type: \(zelf.typeName), flags: \(zelf.flags))"')
+        print(f'  }}')
+
+        # ===============
+        # === Methods ===
+        # ===============
+
+        print(f'''
   // sourcery: pyproperty = __class__
   internal static func __class__(_ py: Py, zelf: PyObject) -> PyType {{
     return zelf.type
@@ -96,16 +154,7 @@ public struct {swift_type_name}: PyErrorMixin {{
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {{
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.{py_memory_function_name}(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.{py_memory_function_name}(py, type: type, args: argsTuple)
     return PyResult(result)
   }}
 
@@ -121,5 +170,7 @@ public struct {swift_type_name}: PyErrorMixin {{
     let zelfAsObject = zelf.asObject
     return {swift_base_type_name}.__init__(py, zelf: zelfAsObject, args: args, kwargs: kwargs)
   }}
-}}
+}}\
 ''')
+
+    print()

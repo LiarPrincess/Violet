@@ -83,13 +83,13 @@ public struct PySyntaxError: PyErrorMixin {
     }
 
     let args = py.newTuple(elements: argsElements)
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
 
     self.msgPtr.initialize(to: msg)
     self.filenamePtr.initialize(to: filename)
@@ -107,26 +107,18 @@ public struct PySyntaxError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
-
-    // TODO: Handle 'initialize' errors!
-    let initArgs: InitArgs
-    switch Self.unpackInitArgs(py, args: args.elements) {
-    case let .value(i): initArgs = i
-    case let .error(e): trap("Unhandled 'initialize' error: \(e)")
-    }
-
-    self.msgPtr.initialize(to: initArgs.msg)
-    self.filenamePtr.initialize(to: initArgs.filename)
-    self.linenoPtr.initialize(to: initArgs.lineno)
-    self.offsetPtr.initialize(to: initArgs.offset)
-    self.textPtr.initialize(to: initArgs.text)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
+    self.msgPtr.initialize(to: nil)
+    self.filenamePtr.initialize(to: nil)
+    self.linenoPtr.initialize(to: nil)
+    self.offsetPtr.initialize(to: nil)
+    self.textPtr.initialize(to: nil)
     self.printFileAndLinePtr.initialize(to: nil)
   }
 
@@ -339,25 +331,8 @@ public struct PySyntaxError: PyErrorMixin {
                                type: PyType,
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
-    let result = py.memory.newSyntaxError(
-      py,
-      type: type,
-      msg: nil,
-      filename: nil,
-      lineno: nil,
-      offset: nil,
-      text: nil,
-      printFileAndLine: nil,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
-    // 'msg/filename/lineno/offset/text' will be filled later in '__init__'
-    // but 'args' have to be filled here.
     let argsTuple = py.newTuple(elements: args)
-    result.args = argsTuple
+    let result = py.memory.newSyntaxError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 

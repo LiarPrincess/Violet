@@ -37,13 +37,13 @@ public struct PyKeyboardInterrupt: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -75,16 +75,7 @@ public struct PyKeyboardInterrupt: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newKeyboardInterrupt(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newKeyboardInterrupt(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -124,13 +115,13 @@ public struct PyGeneratorExit: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -162,16 +153,7 @@ public struct PyGeneratorExit: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newGeneratorExit(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newGeneratorExit(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -211,13 +193,13 @@ public struct PyException: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -249,16 +231,7 @@ public struct PyException: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newException(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newException(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -298,13 +271,13 @@ public struct PyStopAsyncIteration: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -336,16 +309,7 @@ public struct PyStopAsyncIteration: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newStopAsyncIteration(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newStopAsyncIteration(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -385,13 +349,13 @@ public struct PyArithmeticError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -423,16 +387,7 @@ public struct PyArithmeticError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newArithmeticError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newArithmeticError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -472,13 +427,13 @@ public struct PyFloatingPointError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -510,16 +465,7 @@ public struct PyFloatingPointError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newFloatingPointError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newFloatingPointError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -559,13 +505,13 @@ public struct PyOverflowError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -597,16 +543,7 @@ public struct PyOverflowError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newOverflowError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newOverflowError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -646,13 +583,13 @@ public struct PyZeroDivisionError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -684,16 +621,7 @@ public struct PyZeroDivisionError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newZeroDivisionError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newZeroDivisionError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -733,13 +661,13 @@ public struct PyAssertionError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -771,16 +699,7 @@ public struct PyAssertionError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newAssertionError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newAssertionError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -820,13 +739,13 @@ public struct PyAttributeError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -858,16 +777,7 @@ public struct PyAttributeError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newAttributeError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newAttributeError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -907,13 +817,13 @@ public struct PyBufferError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -945,16 +855,7 @@ public struct PyBufferError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newBufferError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newBufferError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -994,13 +895,13 @@ public struct PyEOFError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -1032,16 +933,7 @@ public struct PyEOFError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newEOFError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newEOFError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -1076,18 +968,38 @@ public struct PyModuleNotFoundError: PyErrorMixin {
 
   internal func initialize(_ py: Py,
                            type: PyType,
+                           msg: PyObject?,
+                           moduleName: PyObject?,
+                           modulePath: PyObject?,
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    self.initializeBase(py,
+                        type: type,
+                        msg: msg,
+                        moduleName: moduleName,
+                        modulePath: modulePath,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
+  }
+
+  internal func initialize(_ py: Py,
+                           type: PyType,
                            args: PyTuple,
                            traceback: PyTraceback? = nil,
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -1119,16 +1031,7 @@ public struct PyModuleNotFoundError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newModuleNotFoundError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newModuleNotFoundError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -1168,13 +1071,13 @@ public struct PyLookupError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -1206,16 +1109,7 @@ public struct PyLookupError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newLookupError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newLookupError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -1255,13 +1149,13 @@ public struct PyIndexError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -1293,16 +1187,7 @@ public struct PyIndexError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newIndexError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newIndexError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -1342,13 +1227,13 @@ public struct PyMemoryError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -1380,16 +1265,7 @@ public struct PyMemoryError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newMemoryError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newMemoryError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -1429,13 +1305,13 @@ public struct PyNameError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -1467,16 +1343,7 @@ public struct PyNameError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newNameError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newNameError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -1516,13 +1383,13 @@ public struct PyUnboundLocalError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -1554,16 +1421,7 @@ public struct PyUnboundLocalError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newUnboundLocalError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newUnboundLocalError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -1603,13 +1461,13 @@ public struct PyOSError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -1641,16 +1499,7 @@ public struct PyOSError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newOSError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newOSError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -1690,13 +1539,13 @@ public struct PyBlockingIOError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -1728,16 +1577,7 @@ public struct PyBlockingIOError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newBlockingIOError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newBlockingIOError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -1777,13 +1617,13 @@ public struct PyChildProcessError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -1815,16 +1655,7 @@ public struct PyChildProcessError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newChildProcessError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newChildProcessError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -1864,13 +1695,13 @@ public struct PyConnectionError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -1902,16 +1733,7 @@ public struct PyConnectionError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newConnectionError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newConnectionError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -1951,13 +1773,13 @@ public struct PyBrokenPipeError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -1989,16 +1811,7 @@ public struct PyBrokenPipeError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newBrokenPipeError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newBrokenPipeError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -2038,13 +1851,13 @@ public struct PyConnectionAbortedError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -2076,16 +1889,7 @@ public struct PyConnectionAbortedError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newConnectionAbortedError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newConnectionAbortedError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -2125,13 +1929,13 @@ public struct PyConnectionRefusedError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -2163,16 +1967,7 @@ public struct PyConnectionRefusedError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newConnectionRefusedError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newConnectionRefusedError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -2212,13 +2007,13 @@ public struct PyConnectionResetError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -2250,16 +2045,7 @@ public struct PyConnectionResetError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newConnectionResetError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newConnectionResetError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -2299,13 +2085,13 @@ public struct PyFileExistsError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -2337,16 +2123,7 @@ public struct PyFileExistsError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newFileExistsError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newFileExistsError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -2386,13 +2163,13 @@ public struct PyFileNotFoundError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -2424,16 +2201,7 @@ public struct PyFileNotFoundError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newFileNotFoundError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newFileNotFoundError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -2473,13 +2241,13 @@ public struct PyInterruptedError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -2511,16 +2279,7 @@ public struct PyInterruptedError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newInterruptedError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newInterruptedError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -2560,13 +2319,13 @@ public struct PyIsADirectoryError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -2598,16 +2357,7 @@ public struct PyIsADirectoryError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newIsADirectoryError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newIsADirectoryError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -2647,13 +2397,13 @@ public struct PyNotADirectoryError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -2685,16 +2435,7 @@ public struct PyNotADirectoryError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newNotADirectoryError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newNotADirectoryError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -2734,13 +2475,13 @@ public struct PyPermissionError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -2772,16 +2513,7 @@ public struct PyPermissionError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newPermissionError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newPermissionError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -2821,13 +2553,13 @@ public struct PyProcessLookupError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -2859,16 +2591,7 @@ public struct PyProcessLookupError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newProcessLookupError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newProcessLookupError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -2908,13 +2631,13 @@ public struct PyTimeoutError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -2946,16 +2669,7 @@ public struct PyTimeoutError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newTimeoutError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newTimeoutError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -2995,13 +2709,13 @@ public struct PyReferenceError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -3033,16 +2747,7 @@ public struct PyReferenceError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newReferenceError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newReferenceError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -3082,13 +2787,13 @@ public struct PyRuntimeError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -3120,16 +2825,7 @@ public struct PyRuntimeError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newRuntimeError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newRuntimeError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -3169,13 +2865,13 @@ public struct PyNotImplementedError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -3207,16 +2903,7 @@ public struct PyNotImplementedError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newNotImplementedError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newNotImplementedError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -3256,13 +2943,13 @@ public struct PyRecursionError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -3294,16 +2981,7 @@ public struct PyRecursionError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newRecursionError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newRecursionError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -3338,18 +3016,44 @@ public struct PyIndentationError: PyErrorMixin {
 
   internal func initialize(_ py: Py,
                            type: PyType,
+                           msg: PyObject?,
+                           filename: PyObject?,
+                           lineno: PyObject?,
+                           offset: PyObject?,
+                           text: PyObject?,
+                           printFileAndLine: PyObject?,
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    self.initializeBase(py,
+                        type: type,
+                        msg: msg,
+                        filename: filename,
+                        lineno: lineno,
+                        offset: offset,
+                        text: text,
+                        printFileAndLine: printFileAndLine,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
+  }
+
+  internal func initialize(_ py: Py,
+                           type: PyType,
                            args: PyTuple,
                            traceback: PyTraceback? = nil,
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -3381,16 +3085,7 @@ public struct PyIndentationError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newIndentationError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newIndentationError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -3425,18 +3120,44 @@ public struct PyTabError: PyErrorMixin {
 
   internal func initialize(_ py: Py,
                            type: PyType,
+                           msg: PyObject?,
+                           filename: PyObject?,
+                           lineno: PyObject?,
+                           offset: PyObject?,
+                           text: PyObject?,
+                           printFileAndLine: PyObject?,
+                           traceback: PyTraceback? = nil,
+                           cause: PyBaseException? = nil,
+                           context: PyBaseException? = nil,
+                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+    self.initializeBase(py,
+                        type: type,
+                        msg: msg,
+                        filename: filename,
+                        lineno: lineno,
+                        offset: offset,
+                        text: text,
+                        printFileAndLine: printFileAndLine,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
+  }
+
+  internal func initialize(_ py: Py,
+                           type: PyType,
                            args: PyTuple,
                            traceback: PyTraceback? = nil,
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -3468,16 +3189,7 @@ public struct PyTabError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newTabError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newTabError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -3520,13 +3232,13 @@ public struct PySystemError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -3558,16 +3270,7 @@ public struct PySystemError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newSystemError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newSystemError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -3607,13 +3310,13 @@ public struct PyTypeError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -3645,16 +3348,7 @@ public struct PyTypeError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newTypeError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newTypeError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -3694,13 +3388,13 @@ public struct PyValueError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -3732,16 +3426,7 @@ public struct PyValueError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newValueError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newValueError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -3781,13 +3466,13 @@ public struct PyUnicodeError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -3819,16 +3504,7 @@ public struct PyUnicodeError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newUnicodeError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newUnicodeError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -3868,13 +3544,13 @@ public struct PyUnicodeDecodeError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -3906,16 +3582,7 @@ public struct PyUnicodeDecodeError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newUnicodeDecodeError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newUnicodeDecodeError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -3955,13 +3622,13 @@ public struct PyUnicodeEncodeError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -3993,16 +3660,7 @@ public struct PyUnicodeEncodeError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newUnicodeEncodeError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newUnicodeEncodeError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -4042,13 +3700,13 @@ public struct PyUnicodeTranslateError: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -4080,16 +3738,7 @@ public struct PyUnicodeTranslateError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newUnicodeTranslateError(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newUnicodeTranslateError(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -4129,13 +3778,13 @@ public struct PyWarning: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -4167,16 +3816,7 @@ public struct PyWarning: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newWarning(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newWarning(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -4216,13 +3856,13 @@ public struct PyDeprecationWarning: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -4254,16 +3894,7 @@ public struct PyDeprecationWarning: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newDeprecationWarning(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newDeprecationWarning(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -4304,13 +3935,13 @@ public struct PyPendingDeprecationWarning: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -4342,16 +3973,7 @@ public struct PyPendingDeprecationWarning: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newPendingDeprecationWarning(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newPendingDeprecationWarning(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -4391,13 +4013,13 @@ public struct PyRuntimeWarning: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -4429,16 +4051,7 @@ public struct PyRuntimeWarning: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newRuntimeWarning(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newRuntimeWarning(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -4478,13 +4091,13 @@ public struct PySyntaxWarning: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -4516,16 +4129,7 @@ public struct PySyntaxWarning: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newSyntaxWarning(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newSyntaxWarning(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -4565,13 +4169,13 @@ public struct PyUserWarning: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -4603,16 +4207,7 @@ public struct PyUserWarning: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newUserWarning(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newUserWarning(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -4653,13 +4248,13 @@ public struct PyFutureWarning: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -4691,16 +4286,7 @@ public struct PyFutureWarning: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newFutureWarning(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newFutureWarning(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -4740,13 +4326,13 @@ public struct PyImportWarning: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -4778,16 +4364,7 @@ public struct PyImportWarning: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newImportWarning(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newImportWarning(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -4828,13 +4405,13 @@ public struct PyUnicodeWarning: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -4866,16 +4443,7 @@ public struct PyUnicodeWarning: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newUnicodeWarning(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newUnicodeWarning(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -4916,13 +4484,13 @@ public struct PyBytesWarning: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -4954,16 +4522,7 @@ public struct PyBytesWarning: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newBytesWarning(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newBytesWarning(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -5003,13 +4562,13 @@ public struct PyResourceWarning: PyErrorMixin {
                            cause: PyBaseException? = nil,
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
-    self.errorHeader.initialize(py,
-                                type: type,
-                                args: args,
-                                traceback: traceback,
-                                cause: cause,
-                                context: context,
-                                suppressContext: suppressContext)
+    self.initializeBase(py,
+                        type: type,
+                        args: args,
+                        traceback: traceback,
+                        cause: cause,
+                        context: context,
+                        suppressContext: suppressContext)
   }
 
   // Nothing to do here.
@@ -5041,16 +4600,7 @@ public struct PyResourceWarning: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newResourceWarning(
-      py,
-      type: type,
-      args: argsTuple,
-      traceback: nil,
-      cause: nil,
-      context: nil,
-      suppressContext: PyErrorHeader.defaultSuppressContext
-    )
-
+    let result = py.memory.newResourceWarning(py, type: type, args: argsTuple)
     return PyResult(result)
   }
 
