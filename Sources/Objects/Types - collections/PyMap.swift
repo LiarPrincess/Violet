@@ -27,7 +27,7 @@ public struct PyMap: PyObjectMixin {
   }
 
   internal func initialize(_ py: Py, type: PyType, fn: PyObject, iterators: [PyObject]) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.fnPtr.initialize(to: fn)
     self.iteratorsPtr.initialize(to: iterators)
   }

@@ -36,7 +36,7 @@ public struct PyBuiltinMethod: PyObjectMixin, AbstractBuiltinFunction {
                            object: PyObject,
                            module: PyObject?,
                            doc: String?) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.functionPtr.initialize(to: function)
     self.objectPtr.initialize(to: object)
     self.modulePtr.initialize(to: module)

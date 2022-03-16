@@ -27,7 +27,7 @@ public struct PyBytesIterator: PyObjectMixin {
   }
 
   internal func initialize(_ py: Py, type: PyType, bytes: PyBytes) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.bytesPtr.initialize(to: bytes)
     self.indexPtr.initialize(to: 0)
   }

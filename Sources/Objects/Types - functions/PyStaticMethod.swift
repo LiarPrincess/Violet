@@ -41,7 +41,7 @@ public struct PyStaticMethod: PyObjectMixin {
   }
 
   internal func initialize(_ py: Py, type: PyType, callable: PyObject?) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.callablePtr.initialize(to: callable)
   }
 

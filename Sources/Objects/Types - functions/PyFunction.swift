@@ -112,7 +112,7 @@ public struct PyFunction: PyObjectMixin {
                            module: PyObject,
                            code: PyCode,
                            globals: PyDict) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.namePtr.initialize(to: name)
     self.qualnamePtr.initialize(to: qualname ?? name)
     self.modulePtr.initialize(to: module)

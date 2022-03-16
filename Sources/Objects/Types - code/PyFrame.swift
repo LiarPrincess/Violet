@@ -152,7 +152,7 @@ public struct PyFrame: PyObjectMixin {
                            locals: PyDict,
                            globals: PyDict,
                            parent: PyFrame?) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.codePtr.initialize(to: code)
     self.parentPtr.initialize(to: parent)
     self.localsPtr.initialize(to: locals)

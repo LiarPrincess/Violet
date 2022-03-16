@@ -27,7 +27,7 @@ public struct PyTupleIterator: PyObjectMixin {
   }
 
   internal func initialize(_ py: Py, type: PyType, tuple: PyTuple) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.tuplePtr.initialize(to: tuple)
     self.indexPtr.initialize(to: 0)
   }

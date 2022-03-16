@@ -74,7 +74,7 @@ public struct PyTextFile: PyObjectMixin {
                            encoding: PyString.Encoding,
                            errorHandling: PyString.ErrorHandling,
                            closeOnDealloc: Bool) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.namePtr.initialize(to: name)
     self.fdPtr.initialize(to: fd)
     self.modePtr.initialize(to: mode)

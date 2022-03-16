@@ -90,7 +90,7 @@ public struct PyString: PyObjectMixin, AbstractString {
   // MARK: - Initialize/deinitialize
 
   internal func initialize(_ py: Py, type: PyType, value: String) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.valuePtr.initialize(to: value)
     self.cachedCountPtr.initialize(to: PyString.invalidCount)
     self.cachedHashPtr.initialize(to: PyString.invalidHash)

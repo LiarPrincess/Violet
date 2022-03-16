@@ -60,7 +60,7 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
                            requestedType: PyType?,
                            object: PyObject?,
                            objectType: PyType?) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self.thisClassPtr.initialize(to: requestedType)
     self.objectPtr.initialize(to: object)
     self.objectTypePtr.initialize(to: objectType)

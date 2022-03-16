@@ -195,7 +195,7 @@ public struct PyCode: PyObjectMixin {
   // MARK: - Initialize/deinitialize
 
   internal func initialize(_ py: Py, type: PyType, code: CodeObject) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
 
     let totalArgs = PyCode.countArguments(code: code)
     assert(code.variableNames.count >= totalArgs)

@@ -89,7 +89,7 @@ public struct PyProperty: PyObjectMixin {
                            set: PyObject?,
                            del: PyObject?,
                            doc: PyObject?) {
-    self.header.initialize(py, type: type)
+    self.initializeBase(py, type: type)
     self._getPtr.initialize(to: get)
     self._setPtr.initialize(to: set)
     self._delPtr.initialize(to: del)
