@@ -24,6 +24,8 @@ public struct Sys {
 
   public func addModule(module: PyModule) -> PyBaseException? { fatalError() }
 
+  public func getBuiltinModuleNames() -> PyResult<PyTuple> { fatalError() }
+
   public enum OutputStream {
     /// `sys.__stdout__`
     case __stdout__
