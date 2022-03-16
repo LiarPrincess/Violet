@@ -30,13 +30,15 @@ public struct PyKeyboardInterrupt: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -50,7 +52,7 @@ public struct PyKeyboardInterrupt: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyKeyboardInterrupt(ptr: ptr)
     return "PyKeyboardInterrupt(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -108,13 +110,15 @@ public struct PyGeneratorExit: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -128,7 +132,7 @@ public struct PyGeneratorExit: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyGeneratorExit(ptr: ptr)
     return "PyGeneratorExit(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -186,13 +190,15 @@ public struct PyException: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -206,7 +212,7 @@ public struct PyException: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyException(ptr: ptr)
     return "PyException(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -264,13 +270,15 @@ public struct PyStopAsyncIteration: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -284,7 +292,7 @@ public struct PyStopAsyncIteration: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyStopAsyncIteration(ptr: ptr)
     return "PyStopAsyncIteration(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -342,13 +350,15 @@ public struct PyArithmeticError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -362,7 +372,7 @@ public struct PyArithmeticError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyArithmeticError(ptr: ptr)
     return "PyArithmeticError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -420,13 +430,15 @@ public struct PyFloatingPointError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -440,7 +452,7 @@ public struct PyFloatingPointError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyFloatingPointError(ptr: ptr)
     return "PyFloatingPointError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -498,13 +510,15 @@ public struct PyOverflowError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -518,7 +532,7 @@ public struct PyOverflowError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyOverflowError(ptr: ptr)
     return "PyOverflowError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -576,13 +590,15 @@ public struct PyZeroDivisionError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -596,7 +612,7 @@ public struct PyZeroDivisionError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyZeroDivisionError(ptr: ptr)
     return "PyZeroDivisionError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -654,13 +670,15 @@ public struct PyAssertionError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -674,7 +692,7 @@ public struct PyAssertionError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyAssertionError(ptr: ptr)
     return "PyAssertionError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -732,13 +750,15 @@ public struct PyAttributeError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -752,7 +772,7 @@ public struct PyAttributeError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyAttributeError(ptr: ptr)
     return "PyAttributeError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -810,13 +830,15 @@ public struct PyBufferError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -830,7 +852,7 @@ public struct PyBufferError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyBufferError(ptr: ptr)
     return "PyBufferError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -888,13 +910,15 @@ public struct PyEOFError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -908,7 +932,7 @@ public struct PyEOFError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyEOFError(ptr: ptr)
     return "PyEOFError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -966,15 +990,17 @@ public struct PyModuleNotFoundError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           msg: PyObject?,
-                           moduleName: PyObject?,
-                           modulePath: PyObject?,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    msg: PyObject?,
+    moduleName: PyObject?,
+    modulePath: PyObject?,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         msg: msg,
@@ -986,13 +1012,15 @@ public struct PyModuleNotFoundError: PyErrorMixin {
                         suppressContext: suppressContext)
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -1006,7 +1034,7 @@ public struct PyModuleNotFoundError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyModuleNotFoundError(ptr: ptr)
     return "PyModuleNotFoundError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -1064,13 +1092,15 @@ public struct PyLookupError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -1084,7 +1114,7 @@ public struct PyLookupError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyLookupError(ptr: ptr)
     return "PyLookupError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -1142,13 +1172,15 @@ public struct PyIndexError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -1162,7 +1194,7 @@ public struct PyIndexError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyIndexError(ptr: ptr)
     return "PyIndexError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -1220,13 +1252,15 @@ public struct PyMemoryError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -1240,7 +1274,7 @@ public struct PyMemoryError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyMemoryError(ptr: ptr)
     return "PyMemoryError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -1298,13 +1332,15 @@ public struct PyNameError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -1318,7 +1354,7 @@ public struct PyNameError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyNameError(ptr: ptr)
     return "PyNameError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -1376,13 +1412,15 @@ public struct PyUnboundLocalError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -1396,7 +1434,7 @@ public struct PyUnboundLocalError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyUnboundLocalError(ptr: ptr)
     return "PyUnboundLocalError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -1454,13 +1492,15 @@ public struct PyOSError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -1474,7 +1514,7 @@ public struct PyOSError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyOSError(ptr: ptr)
     return "PyOSError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -1532,13 +1572,15 @@ public struct PyBlockingIOError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -1552,7 +1594,7 @@ public struct PyBlockingIOError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyBlockingIOError(ptr: ptr)
     return "PyBlockingIOError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -1610,13 +1652,15 @@ public struct PyChildProcessError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -1630,7 +1674,7 @@ public struct PyChildProcessError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyChildProcessError(ptr: ptr)
     return "PyChildProcessError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -1688,13 +1732,15 @@ public struct PyConnectionError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -1708,7 +1754,7 @@ public struct PyConnectionError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyConnectionError(ptr: ptr)
     return "PyConnectionError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -1766,13 +1812,15 @@ public struct PyBrokenPipeError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -1786,7 +1834,7 @@ public struct PyBrokenPipeError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyBrokenPipeError(ptr: ptr)
     return "PyBrokenPipeError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -1844,13 +1892,15 @@ public struct PyConnectionAbortedError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -1864,7 +1914,7 @@ public struct PyConnectionAbortedError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyConnectionAbortedError(ptr: ptr)
     return "PyConnectionAbortedError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -1922,13 +1972,15 @@ public struct PyConnectionRefusedError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -1942,7 +1994,7 @@ public struct PyConnectionRefusedError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyConnectionRefusedError(ptr: ptr)
     return "PyConnectionRefusedError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -2000,13 +2052,15 @@ public struct PyConnectionResetError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -2020,7 +2074,7 @@ public struct PyConnectionResetError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyConnectionResetError(ptr: ptr)
     return "PyConnectionResetError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -2078,13 +2132,15 @@ public struct PyFileExistsError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -2098,7 +2154,7 @@ public struct PyFileExistsError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyFileExistsError(ptr: ptr)
     return "PyFileExistsError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -2156,13 +2212,15 @@ public struct PyFileNotFoundError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -2176,7 +2234,7 @@ public struct PyFileNotFoundError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyFileNotFoundError(ptr: ptr)
     return "PyFileNotFoundError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -2234,13 +2292,15 @@ public struct PyInterruptedError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -2254,7 +2314,7 @@ public struct PyInterruptedError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyInterruptedError(ptr: ptr)
     return "PyInterruptedError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -2312,13 +2372,15 @@ public struct PyIsADirectoryError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -2332,7 +2394,7 @@ public struct PyIsADirectoryError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyIsADirectoryError(ptr: ptr)
     return "PyIsADirectoryError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -2390,13 +2452,15 @@ public struct PyNotADirectoryError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -2410,7 +2474,7 @@ public struct PyNotADirectoryError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyNotADirectoryError(ptr: ptr)
     return "PyNotADirectoryError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -2468,13 +2532,15 @@ public struct PyPermissionError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -2488,7 +2554,7 @@ public struct PyPermissionError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyPermissionError(ptr: ptr)
     return "PyPermissionError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -2546,13 +2612,15 @@ public struct PyProcessLookupError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -2566,7 +2634,7 @@ public struct PyProcessLookupError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyProcessLookupError(ptr: ptr)
     return "PyProcessLookupError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -2624,13 +2692,15 @@ public struct PyTimeoutError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -2644,7 +2714,7 @@ public struct PyTimeoutError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyTimeoutError(ptr: ptr)
     return "PyTimeoutError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -2702,13 +2772,15 @@ public struct PyReferenceError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -2722,7 +2794,7 @@ public struct PyReferenceError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyReferenceError(ptr: ptr)
     return "PyReferenceError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -2780,13 +2852,15 @@ public struct PyRuntimeError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -2800,7 +2874,7 @@ public struct PyRuntimeError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyRuntimeError(ptr: ptr)
     return "PyRuntimeError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -2858,13 +2932,15 @@ public struct PyNotImplementedError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -2878,7 +2954,7 @@ public struct PyNotImplementedError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyNotImplementedError(ptr: ptr)
     return "PyNotImplementedError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -2936,13 +3012,15 @@ public struct PyRecursionError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -2956,7 +3034,7 @@ public struct PyRecursionError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyRecursionError(ptr: ptr)
     return "PyRecursionError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -3014,18 +3092,20 @@ public struct PyIndentationError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           msg: PyObject?,
-                           filename: PyObject?,
-                           lineno: PyObject?,
-                           offset: PyObject?,
-                           text: PyObject?,
-                           printFileAndLine: PyObject?,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    msg: PyObject?,
+    filename: PyObject?,
+    lineno: PyObject?,
+    offset: PyObject?,
+    text: PyObject?,
+    printFileAndLine: PyObject?,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         msg: msg,
@@ -3040,13 +3120,15 @@ public struct PyIndentationError: PyErrorMixin {
                         suppressContext: suppressContext)
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -3060,7 +3142,7 @@ public struct PyIndentationError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyIndentationError(ptr: ptr)
     return "PyIndentationError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -3118,18 +3200,20 @@ public struct PyTabError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           msg: PyObject?,
-                           filename: PyObject?,
-                           lineno: PyObject?,
-                           offset: PyObject?,
-                           text: PyObject?,
-                           printFileAndLine: PyObject?,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    msg: PyObject?,
+    filename: PyObject?,
+    lineno: PyObject?,
+    offset: PyObject?,
+    text: PyObject?,
+    printFileAndLine: PyObject?,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         msg: msg,
@@ -3144,13 +3228,15 @@ public struct PyTabError: PyErrorMixin {
                         suppressContext: suppressContext)
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -3164,7 +3250,7 @@ public struct PyTabError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyTabError(ptr: ptr)
     return "PyTabError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -3225,13 +3311,15 @@ public struct PySystemError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -3245,7 +3333,7 @@ public struct PySystemError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PySystemError(ptr: ptr)
     return "PySystemError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -3303,13 +3391,15 @@ public struct PyTypeError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -3323,7 +3413,7 @@ public struct PyTypeError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyTypeError(ptr: ptr)
     return "PyTypeError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -3381,13 +3471,15 @@ public struct PyValueError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -3401,7 +3493,7 @@ public struct PyValueError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyValueError(ptr: ptr)
     return "PyValueError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -3459,13 +3551,15 @@ public struct PyUnicodeError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -3479,7 +3573,7 @@ public struct PyUnicodeError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyUnicodeError(ptr: ptr)
     return "PyUnicodeError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -3537,13 +3631,15 @@ public struct PyUnicodeDecodeError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -3557,7 +3653,7 @@ public struct PyUnicodeDecodeError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyUnicodeDecodeError(ptr: ptr)
     return "PyUnicodeDecodeError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -3615,13 +3711,15 @@ public struct PyUnicodeEncodeError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -3635,7 +3733,7 @@ public struct PyUnicodeEncodeError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyUnicodeEncodeError(ptr: ptr)
     return "PyUnicodeEncodeError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -3693,13 +3791,15 @@ public struct PyUnicodeTranslateError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -3713,7 +3813,7 @@ public struct PyUnicodeTranslateError: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyUnicodeTranslateError(ptr: ptr)
     return "PyUnicodeTranslateError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -3771,13 +3871,15 @@ public struct PyWarning: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -3791,7 +3893,7 @@ public struct PyWarning: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyWarning(ptr: ptr)
     return "PyWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -3849,13 +3951,15 @@ public struct PyDeprecationWarning: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -3869,7 +3973,7 @@ public struct PyDeprecationWarning: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyDeprecationWarning(ptr: ptr)
     return "PyDeprecationWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -3928,13 +4032,15 @@ public struct PyPendingDeprecationWarning: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -3948,7 +4054,7 @@ public struct PyPendingDeprecationWarning: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyPendingDeprecationWarning(ptr: ptr)
     return "PyPendingDeprecationWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -4006,13 +4112,15 @@ public struct PyRuntimeWarning: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -4026,7 +4134,7 @@ public struct PyRuntimeWarning: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyRuntimeWarning(ptr: ptr)
     return "PyRuntimeWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -4084,13 +4192,15 @@ public struct PySyntaxWarning: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -4104,7 +4214,7 @@ public struct PySyntaxWarning: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PySyntaxWarning(ptr: ptr)
     return "PySyntaxWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -4162,13 +4272,15 @@ public struct PyUserWarning: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -4182,7 +4294,7 @@ public struct PyUserWarning: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyUserWarning(ptr: ptr)
     return "PyUserWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -4241,13 +4353,15 @@ public struct PyFutureWarning: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -4261,7 +4375,7 @@ public struct PyFutureWarning: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyFutureWarning(ptr: ptr)
     return "PyFutureWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -4319,13 +4433,15 @@ public struct PyImportWarning: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -4339,7 +4455,7 @@ public struct PyImportWarning: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyImportWarning(ptr: ptr)
     return "PyImportWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -4398,13 +4514,15 @@ public struct PyUnicodeWarning: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -4418,7 +4536,7 @@ public struct PyUnicodeWarning: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyUnicodeWarning(ptr: ptr)
     return "PyUnicodeWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -4477,13 +4595,15 @@ public struct PyBytesWarning: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -4497,7 +4617,7 @@ public struct PyBytesWarning: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyBytesWarning(ptr: ptr)
     return "PyBytesWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 
@@ -4555,13 +4675,15 @@ public struct PyResourceWarning: PyErrorMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,
@@ -4575,7 +4697,7 @@ public struct PyResourceWarning: PyErrorMixin {
   internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
-    let zelf = PyStopIteration(ptr: ptr)
+    let zelf = PyResourceWarning(ptr: ptr)
     return "PyResourceWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 

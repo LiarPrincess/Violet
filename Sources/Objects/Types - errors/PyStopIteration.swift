@@ -26,13 +26,15 @@ public struct PyStopIteration: PyErrorMixin {
   }
 
   // swiftlint:disable:next function_parameter_count
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           value: PyObject,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    value: PyObject,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     let args = py.newTuple(elements: value)
     self.initializeBase(py,
                         type: type,
@@ -46,13 +48,15 @@ public struct PyStopIteration: PyErrorMixin {
   }
 
   // swiftlint:disable:next function_parameter_count
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py,
                         type: type,
                         args: args,

@@ -73,7 +73,7 @@ public struct {swift_type_name}: PyErrorMixin {{
         base_type = python_name_to_type[t.base_type_name]
         for fn in base_type.swift_initializers:
             print()
-            print(f'  internal func initialize(', end='')
+            print(f'  internal func initialize(')
 
             arguments: List[str] = []
             call_arguments: List[str] = []
@@ -92,13 +92,11 @@ public struct {swift_type_name}: PyErrorMixin {{
                 call_arguments.append(f'{call_label}{arg.name}')
 
             for index, arg in enumerate(arguments):
-                is_first = index == 0
                 is_last = index == len(arguments) - 1
+                comma = '' if is_last else ','
+                print(f'    {arg}{comma}')
 
-                indent = '' if is_first else (27 * ' ')
-                end = ') {\n' if is_last else ',\n'
-                print(f'{indent}{arg}', end=end)
-
+            print(f'  ) {{')
             print(f'    self.initializeBase(', end='')
             for index, arg in enumerate(call_arguments):
                 is_first = index == 0
@@ -124,7 +122,7 @@ public struct {swift_type_name}: PyErrorMixin {{
 
         print()
         print(f'  internal static func createDebugString(ptr: RawPtr) -> String {{')
-        print(f'    let zelf = PyStopIteration(ptr: ptr)')
+        print(f'    let zelf = {swift_type_name}(ptr: ptr)')
         print(f'    return "{swift_type_name}(type: \(zelf.typeName), flags: \(zelf.flags))"')
         print(f'  }}')
 

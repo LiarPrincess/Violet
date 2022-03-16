@@ -69,13 +69,15 @@ public struct PyBaseException: PyErrorMixin {
   }
 
   // swiftlint:disable:next function_parameter_count
-  internal func initialize(_ py: Py,
-                           type: PyType,
-                           args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = PyErrorHeader.defaultSuppressContext) {
+  internal func initialize(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = PyBaseException.defaultSuppressContext
+  ) {
     self.initializeBase(py, type: type)
 
     self.argsPtr.initialize(to: args)
