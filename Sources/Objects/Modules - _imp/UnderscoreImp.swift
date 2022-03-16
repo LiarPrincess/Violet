@@ -1,4 +1,3 @@
-/* MARKER
 // In CPython:
 // Python -> import.c
 
@@ -19,11 +18,14 @@ public final class UnderscoreImp: PyModuleImplementation {
   // MARK: - Properties
 
   /// This dict will be used inside our `PyModule` instance.
-  public let __dict__ = Py.newDict()
+  internal let __dict__: PyDict
+  internal let py: Py
 
   // MARK: - Init
 
-  internal init() {
+  internal init(_ py: Py) {
+    self.py = py
+    self.__dict__ = self.py.newDict()
     self.fill__dict__()
   }
 
@@ -31,65 +33,35 @@ public final class UnderscoreImp: PyModuleImplementation {
 
   // swiftlint:disable:next function_body_length
   private func fill__dict__() {
-    // Note that capturing 'self' is intended.
-    // See comment at the top of 'PyModuleImplementation' for details.
-    self.setOrTrap(.lock_held,
-                   doc: UnderscoreImp.lockHeldDoc,
-                   fn: self.lockHeld)
-    self.setOrTrap(.acquire_lock,
-                   doc: UnderscoreImp.acquireLockDoc,
-                   fn: self.acquireLock)
-    self.setOrTrap(.release_lock,
-                   doc: UnderscoreImp.releaseLockDoc,
-                   fn: self.releaseLock)
-    self.setOrTrap(.is_builtin,
-                   doc: UnderscoreImp.isBuiltinDoc,
-                   fn: self.isBuiltin)
-    self.setOrTrap(.create_builtin,
-                   doc: UnderscoreImp.createBuiltinDoc,
-                   fn: self.createBuiltin)
-    self.setOrTrap(.exec_builtin,
-                   doc: UnderscoreImp.execBuiltinDoc,
-                   fn: self.execBuiltin)
-    self.setOrTrap(.is_frozen,
-                   doc: UnderscoreImp.isFrozenDoc,
-                   fn: self.isFrozen)
-    self.setOrTrap(.is_frozen_package,
-                   doc: UnderscoreImp.isFrozenPackageDoc,
-                   fn: self.isFrozenPackage)
-    self.setOrTrap(.get_frozen_object,
-                   doc: UnderscoreImp.getFrozenObjectDoc,
-                   fn: self.getFrozenObject)
-    self.setOrTrap(.init_frozen,
-                   doc: UnderscoreImp.initFrozenDoc,
-                   fn: self.initFrozen)
-    self.setOrTrap(.create_dynamic,
-                   doc: UnderscoreImp.createDynamicDoc,
-                   fn: self.createDynamic)
-    self.setOrTrap(.exec_dynamic,
-                   doc: UnderscoreImp.execDynamicDoc,
-                   fn: self.execDynamic)
-    self.setOrTrap(.source_hash,
-                   doc: UnderscoreImp.sourceHashDoc,
-                   fn: self.sourceHash)
-    self.setOrTrap(.check_hash_based_pycs,
-                   doc: UnderscoreImp.checkHashBasedPycsDoc,
-                   fn: self.checkHashBasedPycs)
-    self.setOrTrap(._fix_co_filename,
-                   doc: UnderscoreImp.fixCoFilenameDoc,
-                   fn: self.fixCoFilename)
-    self.setOrTrap(.extension_suffixes,
-                   doc: UnderscoreImp.extensionSuffixesDoc,
-                   fn: self.extensionSuffixes)
+    self.setOrTrap(.lock_held, doc: Self.lockHeldDoc, fn: Self.lock_held(_:module:))
+    self.setOrTrap(.acquire_lock, doc: Self.acquireLockDoc, fn: Self.acquire_lock(_:module:))
+    self.setOrTrap(.release_lock, doc: Self.releaseLockDoc, fn: Self.release_lock(_:module:))
+
+    self.setOrTrap(.is_builtin, doc: Self.isBuiltinDoc, fn: Self.is_builtin(_:module:name:))
+    self.setOrTrap(.create_builtin, doc: Self.createBuiltinDoc, fn: Self.create_builtin(_:module:spec:))
+    self.setOrTrap(.exec_builtin, doc: Self.execBuiltinDoc, fn: Self.exec_builtin(_:module:mod:))
+
+    self.setOrTrap(.is_frozen, doc: Self.isFrozenDoc, fn: Self.is_frozen(_:module:name:))
+    self.setOrTrap(.is_frozen_package, doc: Self.isFrozenPackageDoc, fn: Self.is_frozen_package(_:module:name:))
+    self.setOrTrap(.get_frozen_object, doc: Self.getFrozenObjectDoc, fn: Self.get_frozen_object(_:module:name:))
+    self.setOrTrap(.init_frozen, doc: Self.initFrozenDoc, fn: Self.init_frozen(_:module:name:))
+
+    self.setOrTrap(.create_dynamic, doc: Self.createDynamicDoc, fn: Self.create_dynamic(_:module:spec:file:))
+    self.setOrTrap(.exec_dynamic, doc: Self.execDynamicDoc, fn: Self.exec_dynamic(_:module:mode:))
+
+    self.setOrTrap(.source_hash, doc: Self.sourceHashDoc, fn: Self.source_hash(_:module:key:source:))
+    self.setOrTrap(.check_hash_based_pycs, doc: Self.checkHashBasedPycsDoc, fn: Self.check_hash_based_pycs(_:module:))
+    self.setOrTrap(._fix_co_filename, doc: Self.fixCoFilenameDoc, fn: Self._fix_co_filename(_:module:code:path:))
+    self.setOrTrap(.extension_suffixes, doc: Self.extensionSuffixesDoc, fn: Self.extension_suffixes(_:module:))
   }
 
   // MARK: - Spec helpers
 
   internal func getName(spec: PyObject) -> PyResult<PyString> {
-    switch Py.getAttribute(object: spec, name: .name) {
+    switch self.py.getAttribute(object: spec, name: .name) {
     case let .value(object):
-      guard let str = PyCast.asString(object) else {
-        return .typeError("Module name must be a str, not \(object.typeName)")
+      guard let str = self.py.cast.asString(object) else {
+        return .typeError(self.py, message: "Module name must be a str, not \(object.typeName)")
       }
 
       return .value(str)
@@ -100,10 +72,10 @@ public final class UnderscoreImp: PyModuleImplementation {
   }
 
   internal func getPath(spec: PyObject) -> PyResult<PyString> {
-    switch Py.getAttribute(object: spec, name: .origin) {
+    switch self.py.getAttribute(object: spec, name: .origin) {
     case let .value(object):
-      guard let str = PyCast.asString(object) else {
-        return .typeError("Module origin must be a str, not \(object.typeName)")
+      guard let str = self.py.cast.asString(object) else {
+        return .typeError(self.py, message: "Module origin must be a str, not \(object.typeName)")
       }
 
       return .value(str)
@@ -130,12 +102,9 @@ public final class UnderscoreImp: PyModuleImplementation {
     internal static let create_dynamic = Properties(value: "create_dynamic")
     internal static let exec_dynamic = Properties(value: "exec_dynamic")
     internal static let source_hash = Properties(value: "source_hash")
-    internal static let check_hash_based_pycs =
-      Properties(value: "check_hash_based_pycs")
-    internal static let _fix_co_filename =
-      Properties(value: "_fix_co_filename")
-    internal static let extension_suffixes =
-      Properties(value: "extension_suffixes")
+    internal static let check_hash_based_pycs = Properties(value: "check_hash_based_pycs")
+    internal static let _fix_co_filename = Properties(value: "_fix_co_filename")
+    internal static let extension_suffixes = Properties(value: "extension_suffixes")
 
     private let value: String
 
@@ -149,5 +118,3 @@ public final class UnderscoreImp: PyModuleImplementation {
     }
   }
 }
-
-*/

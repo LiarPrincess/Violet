@@ -1,4 +1,3 @@
-/* MARKER
 // In CPython:
 // Python -> import.c
 
@@ -10,8 +9,7 @@ extension UnderscoreImp {
 
   // MARK: - Is held
 
-  internal static var lockHeldDoc: String {
-    return """
+  internal static let lockHeldDoc = """
     lock_held($module, /)
     --
 
@@ -19,19 +17,22 @@ extension UnderscoreImp {
 
     On platforms without threads, return False.
     """
+
+  internal static func lock_held(_ py: Py, module: PyObject) -> PyResult<PyObject> {
+    let result = py._imp.lockHeld()
+    return PyResult(result)
   }
 
   /// static PyObject *
   /// _imp_lock_held_impl(PyObject *module)
   public func lockHeld() -> PyBool {
     assert(Unimplemented.weDoNotHaveThreads)
-    return Py.false
+    return self.py.false
   }
 
   // MARK: - Acquire
 
-  internal static var acquireLockDoc: String {
-    return """
+  internal static let acquireLockDoc = """
     acquire_lock($module, /)
     --
 
@@ -40,19 +41,21 @@ extension UnderscoreImp {
     This lock should be used by import hooks to ensure thread-safety when importing
     modules. On platforms without threads, this function does nothing.
     """
+
+  internal static func acquire_lock(_ py: Py, module: PyObject) -> PyResult<PyObject> {
+    py._imp.acquireLock()
+    return .none(py)
   }
 
   /// static PyObject *
   /// _imp_acquire_lock_impl(PyObject *module)
-  public func acquireLock() -> PyObject {
+  public func acquireLock() {
     assert(Unimplemented.weDoNotHaveThreads)
-    return Py.none
   }
 
   // MARK: - Release
 
-  internal static var releaseLockDoc: String {
-    return """
+  internal static let releaseLockDoc = """
     release_lock($module, /)
     --
 
@@ -60,14 +63,15 @@ extension UnderscoreImp {
 
     On platforms without threads, this function does nothing.
     """
+
+  internal static func release_lock(_ py: Py, module: PyObject) -> PyResult<PyObject> {
+    py._imp.releaseLock()
+    return .none(py)
   }
 
   /// static PyObject *
   /// _imp_release_lock_impl(PyObject *module)
-  public func releaseLock() -> PyObject {
+  public func releaseLock() {
     assert(Unimplemented.weDoNotHaveThreads)
-    return Py.none
   }
 }
-
-*/

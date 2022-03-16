@@ -32,15 +32,15 @@ public final class UnderscoreOS: PyModuleImplementation {
   // MARK: - Fill dict
 
   private func fill__dict__() {
-    self.setOrTrap(.getcwd, doc: nil, fn: Self.getcwd(_:))
-    self.setOrTrap(.fspath, doc: nil, fn: Self.fspath(_:path:))
-    self.setOrTrap(.stat, doc: nil, fn: Self.stat(_:path:))
-    self.setOrTrap(.listdir, doc: nil, fn: Self.listdir(_:path:))
+    self.setOrTrap(.getcwd, doc: nil, fn: Self.getcwd(_:module:))
+    self.setOrTrap(.fspath, doc: nil, fn: Self.fspath(_:module:path:))
+    self.setOrTrap(.stat, doc: nil, fn: Self.stat(_:module:path:))
+    self.setOrTrap(.listdir, doc: nil, fn: Self.listdir(_:module:path:))
   }
 
   // MARK: - Cwd
 
-  internal static func getcwd(_ py: Py) -> PyResult<PyObject> {
+  internal static func getcwd(_ py: Py, module: PyObject) -> PyResult<PyObject> {
     let result = py._os.getCwd()
     return PyResult(result)
   }
@@ -56,7 +56,9 @@ public final class UnderscoreOS: PyModuleImplementation {
 
   // MARK: - FSPath
 
-  internal static func fspath(_ py: Py, path: PyObject) -> PyResult<PyObject> {
+  internal static func fspath(_ py: Py,
+                              module: PyObject,
+                              path: PyObject) -> PyResult<PyObject> {
     let result = py._os.getFSPath(path: path)
     return PyResult(result)
   }
@@ -78,7 +80,9 @@ public final class UnderscoreOS: PyModuleImplementation {
 
   // MARK: - Stat
 
-  internal static func stat(_ py: Py, path: PyObject) -> PyResult<PyObject> {
+  internal static func stat(_ py: Py,
+                            module: PyObject,
+                            path: PyObject) -> PyResult<PyObject> {
     let result = py._os.getStat(path: path)
     return PyResult(result)
   }
@@ -144,7 +148,9 @@ public final class UnderscoreOS: PyModuleImplementation {
 
   // MARK: - Listdir
 
-  internal static func listdir(_ py: Py, path: PyObject?) -> PyResult<PyObject> {
+  internal static func listdir(_ py: Py,
+                               module: PyObject,
+                               path: PyObject?) -> PyResult<PyObject> {
     let result = py._os.listdir(path: path)
     return PyResult(result)
   }

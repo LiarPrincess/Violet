@@ -204,14 +204,6 @@ extension PyModuleImplementation {
     self.setOrTrap(name, to: object)
   }
 */
-  // MARK: - Set positional nullary
-
-  internal func setOrTrap(_ name: Properties,
-                          doc: String?,
-                          fn: @escaping (Py) -> PyResult<PyObject>) {
-    let wrapper = FunctionWrapper(name: name.description, fn: fn)
-    self.setOrTrap(name, doc: doc, fn: wrapper)
-  }
 
   // MARK: - Set positional unary
 
@@ -230,33 +222,19 @@ extension PyModuleImplementation {
   }
 
   // MARK: - Set positional binary
-/*
-  internal func setOrTrap(
-    _ name: Properties,
-    doc: String?,
-    fn: @escaping (PyObject, PyObject) -> PyResult<PyObject>
-  ) {
-    let object = PyBuiltinFunction.wrap(
-      name: String(describing: name),
-      doc: doc,
-      fn: fn,
-      module: self.moduleToSetInFunctions
-    )
-    self.setOrTrap(name, to: object)
+
+  internal func setOrTrap(_ name: Properties,
+                          doc: String?,
+                          fn: @escaping (Py, PyObject, PyObject) -> PyResult<PyObject>) {
+    let wrapper = FunctionWrapper(name: name.description, fn: fn)
+    self.setOrTrap(name, doc: doc, fn: wrapper)
   }
 
-  internal func setOrTrap(
-    _ name: Properties,
-    doc: String?,
-    fn: @escaping (PyObject, PyObject?) -> PyResult<PyObject>
-  ) {
-    let object = PyBuiltinFunction.wrap(
-      name: String(describing: name),
-      doc: doc,
-      fn: fn,
-      module: self.moduleToSetInFunctions
-    )
-    self.setOrTrap(name, to: object)
+  internal func setOrTrap(_ name: Properties,
+                          doc: String?,
+                          fn: @escaping (Py, PyObject, PyObject?) -> PyResult<PyObject>) {
+    let wrapper = FunctionWrapper(name: name.description, fn: fn)
+    self.setOrTrap(name, doc: doc, fn: wrapper)
   }
 
   // MARK: - Set positional ternary
@@ -264,45 +242,29 @@ extension PyModuleImplementation {
   internal func setOrTrap(
     _ name: Properties,
     doc: String?,
-    fn: @escaping (PyObject, PyObject, PyObject) -> PyResult<PyObject>
+    fn: @escaping (Py, PyObject, PyObject, PyObject) -> PyResult<PyObject>
   ) {
-    let object = PyBuiltinFunction.wrap(
-      name: String(describing: name),
-      doc: doc,
-      fn: fn,
-      module: self.moduleToSetInFunctions
-    )
-    self.setOrTrap(name, to: object)
+    let wrapper = FunctionWrapper(name: name.description, fn: fn)
+    self.setOrTrap(name, doc: doc, fn: wrapper)
   }
 
   internal func setOrTrap(
     _ name: Properties,
     doc: String?,
-    fn: @escaping (PyObject, PyObject, PyObject?) -> PyResult<PyObject>
+    fn: @escaping (Py, PyObject, PyObject, PyObject?) -> PyResult<PyObject>
   ) {
-    let object = PyBuiltinFunction.wrap(
-      name: String(describing: name),
-      doc: doc,
-      fn: fn,
-      module: self.moduleToSetInFunctions
-    )
-    self.setOrTrap(name, to: object)
+    let wrapper = FunctionWrapper(name: name.description, fn: fn)
+    self.setOrTrap(name, doc: doc, fn: wrapper)
   }
 
   internal func setOrTrap(
     _ name: Properties,
     doc: String?,
-    fn: @escaping (PyObject, PyObject?, PyObject?) -> PyResult<PyObject>
+    fn: @escaping (Py, PyObject, PyObject?, PyObject?) -> PyResult<PyObject>
   ) {
-    let object = PyBuiltinFunction.wrap(
-      name: String(describing: name),
-      doc: doc,
-      fn: fn,
-      module: self.moduleToSetInFunctions
-    )
-    self.setOrTrap(name, to: object)
+    let wrapper = FunctionWrapper(name: name.description, fn: fn)
+    self.setOrTrap(name, doc: doc, fn: wrapper)
   }
-*/
 
   // MARK: - Helpers
 
