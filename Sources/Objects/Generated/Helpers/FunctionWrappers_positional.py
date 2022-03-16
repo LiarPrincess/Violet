@@ -6,7 +6,7 @@ from typing import List, Tuple
 SIGNATURE_STRINGS: List[Tuple[str, str]] = [
 
     # Positional nullary
-    # No arguments (or an empty tuple of arguments, also known as `Void` argument).
+    ('', 'Positional nullary: no arguments (or an empty tuple of arguments, also known as `Void` argument).'),
 
     # Positional unary
     ('Object', 'Positional unary: single `self` argument.'),
@@ -134,6 +134,9 @@ class PositionalFunctionWrapper:
 
             name += arg.type_name_part
 
+        if not name:
+            name = 'Void'
+
         name = name + '_to_' + return_type.type_name_part
         self.name_struct = name
         self.name_enum_case = name[0].lower() + name[1:]
@@ -143,11 +146,9 @@ class PositionalFunctionWrapper:
         # === Signatures ===
         # ==================
 
-        self.signature = '(Py, '
+        self.signature = '(Py'
         for index, arg in enumerate(arguments):
-            if index > 0:
-                self.signature += ', '
-
+            self.signature += ', '
             self.signature += arg.swift_type
 
         self.signature += f') -> {return_type.swift_type}'
@@ -178,8 +179,12 @@ def get_positional_function_wrappers() -> List[PositionalFunctionWrapper]:
     result: List[PositionalFunctionWrapper] = []
 
     for arguments_str, doc in SIGNATURE_STRINGS:
-        arguments_str_split = arguments_str.split(',')
-        arguments = list(map(get_argument, arguments_str_split))
+        arguments: List[Argument] = []
+        for arg_str in arguments_str.split(','):
+            arg_str = arg_str.strip()
+            if arg_str:
+                arg = get_argument(arg_str)
+                arguments.append(arg)
 
         return_type = get_return_type('Result')
         fn = PositionalFunctionWrapper(doc, arguments, return_type)
