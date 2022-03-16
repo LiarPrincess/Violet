@@ -1,5 +1,9 @@
 from typing import List, Optional
-from Sourcery import ObjectHeader, get_object_header, ErrorHeader, get_error_header, TypeInfo, get_types
+from Sourcery import (
+    ObjectHeader, get_object_header,
+    ErrorHeader, get_error_header,
+    TypeInfo, SwiftInitializerInfo, get_types
+)
 from Helpers import NewTypeArguments, generated_warning
 
 HEADER_OFFSET = 'PyObjectHeader.layout.size'
@@ -235,6 +239,65 @@ def print_type_extension(t: TypeInfo):
     print_base_types_properties(properties_base)
 
     if properties_base:
+        print()
+
+    # =======================
+    # === Initialize base ===
+    # =======================
+
+    base_initializers: List[SwiftInitializerInfo] = []
+    if t.base_type_info is not None:
+        base_initializers = t.base_type_info.swift_initializers
+
+    for fn in base_initializers:
+        print(f'  internal func initializeBase(', end='')
+
+        arguments: List[str] = []
+        call_arguments: List[str] = []
+        for arg in fn.arguments:
+            label = '' if arg.label is None else arg.label + ' '
+            default = '' if arg.default_value is None else ' = ' + arg.default_value
+            arguments.append(f'{label}{arg.name}: {arg.typ}{default}')
+
+            if arg.label == '_':
+                call_label = ''
+            elif arg.label:
+                call_label = arg.label + ': '
+            else:
+                call_label = arg.name + ': '
+
+            call_arguments.append(f'{call_label}{arg.name}')
+
+        is_single_line = len(arguments) <= 3
+        for index, arg in enumerate(arguments):
+            is_first = index == 0
+            is_last = index == len(arguments) - 1
+
+            if is_single_line:
+                indent = '' if is_first else ' '
+                end = ') {\n' if is_last else ','
+            else:
+                indent = '' if is_first else (31 * ' ')
+                end = ') {\n' if is_last else ',\n'
+
+            print(f'{indent}{arg}', end=end)
+
+        print(f'    let base = {t.base_type_info.swift_type_name}(ptr: self.ptr)')
+        print(f'    base.{fn.name}(', end='')
+        for index, arg in enumerate(call_arguments):
+            is_first = index == 0
+            is_last = index == len(call_arguments) - 1
+
+            if is_single_line:
+                indent = '' if is_first else ' '
+                end = ')\n' if is_last else ','
+            else:
+                indent = '' if is_first else (20 * ' ')
+                end = ')\n' if is_last else ',\n'
+
+            print(f'{indent}{arg}', end=end)
+
+        print(f'  }}')
         print()
 
     # ====================
