@@ -21,8 +21,6 @@ public final class UnderscoreOS: PyModuleImplementation {
   internal let __dict__: PyDict
   internal let py: Py
 
-  // MARK: - Init
-
   internal init(_ py: Py) {
     self.py = py
     self.__dict__ = self.py.newDict()

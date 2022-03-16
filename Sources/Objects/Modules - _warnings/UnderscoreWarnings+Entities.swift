@@ -1,4 +1,3 @@
-/* MARKER
 // In CPython:
 // Python -> _warnings.c
 // https://docs.python.org/3/library/warnings.html
@@ -51,10 +50,9 @@ extension UnderscoreWarnings {
     let message: PyObject
     let category: PyType
 
-    let messageIsWarning = self.isWarningSubtype(type: messageArg.type)
-    if messageIsWarning {
+    if self.isWarningSubtype(type: messageArg.type) {
       // 'message' is 'Warning' subclass, as a 'text' we will just use 'str(message)'
-      switch Py.types.str.call(args: [messageArg], kwargs: nil) {
+      switch self.py.types.str.call(self.py, args: [messageArg.asObject], kwargs: nil) {
       case let .value(t): text = t
       case let .error(e): return .error(e)
       }
@@ -66,7 +64,7 @@ extension UnderscoreWarnings {
       // 'category' is probably warning type -> 'message' = its instance
       text = messageArg
 
-      switch Py.call(callable: categoryArg, arg: messageArg) {
+      switch self.py.call(callable: categoryArg.asObject, arg: messageArg) {
       case let .value(m):
         message = m
       case let .notCallable(e),
@@ -96,12 +94,12 @@ extension UnderscoreWarnings {
   /// normalize_module(PyObject *filename)
   private func createModuleName(filename: PyString) -> PyString {
     if filename.isEmpty {
-      return Py.intern(string: "<unknown>")
+      return self.py.intern(string: "<unknown>")
     }
 
     if filename.value.hasSuffix(".py") {
       let module = String(filename.value.dropLast(3))
-      return Py.intern(string: module)
+      return self.py.intern(string: module)
     }
 
     return filename
@@ -110,13 +108,6 @@ extension UnderscoreWarnings {
   // MARK: - Filter
 
   internal struct Filter {
-
-    /// What to do with this warning.
-    internal let action: Action
-    /// What to do with this warning.
-    internal let actionObject: PyString
-    /// Filter object (tuple with 5 elements).
-    internal let object: Object
 
     internal enum Action: Equatable {
       /// Print the first occurrence of matching warnings for each location
@@ -141,19 +132,19 @@ extension UnderscoreWarnings {
       case value(PyTuple)
       /// Python `None`, not `nil` from `Swift.Optional`.
       case none
-
-      internal var py: PyObject {
-        switch self {
-        case .value(let t): return t
-        case .none: return Py.none
-        }
-      }
     }
+
+    /// What to do with this warning.
+    internal let action: Action
+    /// What to do with this warning.
+    internal let actionObject: PyString
+    /// Filter object (tuple with 5 elements).
+    internal let object: Object
 
     internal init(action: PyString, object: Object) {
       // This should be detected before calling 'init'
       switch object {
-      case .value(let tuple): assert(tuple.elements.count == 5)
+      case .value(let tuple): assert(tuple.count == 5)
       case .none: break
       }
 
@@ -172,5 +163,3 @@ extension UnderscoreWarnings {
     }
   }
 }
-
-*/

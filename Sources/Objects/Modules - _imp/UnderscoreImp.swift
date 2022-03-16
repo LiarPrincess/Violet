@@ -15,13 +15,9 @@ public final class UnderscoreImp: PyModuleImplementation {
     (Extremely) low-level import machinery bits as used by importlib and imp.
     """
 
-  // MARK: - Properties
-
   /// This dict will be used inside our `PyModule` instance.
   internal let __dict__: PyDict
   internal let py: Py
-
-  // MARK: - Init
 
   internal init(_ py: Py) {
     self.py = py

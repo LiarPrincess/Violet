@@ -1,4 +1,3 @@
-/* MARKER
 // In CPython:
 // Python -> _warnings.c
 // https://docs.python.org/3/library/warnings.html
@@ -6,20 +5,20 @@
 extension UnderscoreWarnings {
 
   /// https://docs.python.org/3.8/library/warnings.html#warnings.showwarning
-  internal func show(warning: Warning) -> PyResult<PyNone> {
+  internal func show(warning: Warning) -> PyBaseException? {
     let stream: PyTextFile
-    switch Py.sys.getStderr() {
+    switch self.py.sys.getStderr() {
     case let .value(s): stream = s
-    case let .error(e): return .error(e)
+    case let .error(e): return e
     }
 
     let content: String
     switch self.format(warning: warning) {
     case let .value(c): content = c
-    case let .error(e): return .error(e)
+    case let .error(e): return e
     }
 
-    return stream.write(string: content)
+    return stream.write(self.py, string: content)
   }
 
   /// https://docs.python.org/3.8/library/warnings.html#warnings.formatwarning
@@ -42,7 +41,7 @@ extension UnderscoreWarnings {
     let category = warning.category.getNameString()
 
     let content: String
-    switch Py.strString(object: warning.text) {
+    switch self.py.strString(object: warning.text) {
     case let .value(c): content = c
     case let .error(e): return .error(e)
     }
@@ -51,5 +50,3 @@ extension UnderscoreWarnings {
     return .value(result)
   }
 }
-
-*/

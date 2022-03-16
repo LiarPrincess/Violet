@@ -1,4 +1,3 @@
-/* MARKER
 // In CPython:
 // Python -> _warnings.c
 // https://docs.python.org/3/library/warnings.html
@@ -18,24 +17,28 @@ public final class UnderscoreWarnings: PyModuleImplementation {
   // MARK: - Properties
 
   /// This dict will be used inside our `PyModule` instance.
-  public let __dict__ = Py.newDict()
+  internal let __dict__: PyDict
+  internal let py: Py
 
   // MARK: - Init
 
-  internal init() {
+  internal init(_ py: Py) {
+    self.py = py
+    self.__dict__ = self.py.newDict()
     self.fill__dict__()
   }
 
   // MARK: - Fill dict
 
   private func fill__dict__() {
-    self.setOrTrap(.filters, to: self.createInitialFilters())
-    self.setOrTrap(._defaultaction, to: Py.newString("default"))
-    self.setOrTrap(._onceregistry, to: Py.newDict())
+    let filters = self.createInitialFilters()
+    let defaultAction = self.py.newString("default")
+    let onceRegistry = self.py.newDict()
+    self.setOrTrap(.filters, value: filters.asObject)
+    self.setOrTrap(._defaultaction, value: defaultAction.asObject)
+    self.setOrTrap(._onceregistry, value: onceRegistry.asObject)
 
-    // Note that capturing 'self' is intended.
-    // See comment at the top of 'PyModuleImplementation' for details.
-    self.setOrTrap(.warn, doc: Self.warnDoc, fn: self.warn(args:kwargs:))
+    self.setOrTrap(.warn, doc: Self.warnDoc, fn: Self.warn(_:module:args:kwargs:))
   }
 
   // MARK: - Properties
@@ -59,5 +62,3 @@ public final class UnderscoreWarnings: PyModuleImplementation {
     }
   }
 }
-
-*/

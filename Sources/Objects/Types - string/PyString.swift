@@ -309,6 +309,10 @@ public struct PyString: PyObjectMixin, AbstractString {
     return Self.abstract__contains__(py, zelf: zelf, object: object)
   }
 
+  internal func contains(value: String) -> Bool {
+    return self.abstractContains(elements: value.unicodeScalars)
+  }
+
   // MARK: - Get item
 
   // sourcery: pymethod = __getitem__

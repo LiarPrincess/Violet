@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // cSpell:ignore PyMODINIT
@@ -20,7 +19,7 @@ extension UnderscoreWarnings {
   }
 
   public func setFilters(to value: PyObject) -> PyBaseException? {
-    return self.set(.filters, to: value)
+    return self.set(.filters, value: value)
   }
 
   /// static PyObject *
@@ -28,11 +27,9 @@ extension UnderscoreWarnings {
   internal func createInitialFilters() -> PyList {
     var elements = [PyObject]()
 
-    func append(category: PyWarningEnum, action: String, module: String?) {
-      let filter = self.createFilter(category: category.asPyType,
-                                     action: action,
-                                     module: module)
-      elements.append(filter)
+    func append(category: Py.WarningType, action: String, module: String?) {
+      let filter = self.createFilter(category: category, action: action, module: module)
+      elements.append(filter.asObject)
     }
 
     // python3 -b -Wd -Wignore
@@ -40,7 +37,7 @@ extension UnderscoreWarnings {
     // >>> _warnings.filters
     // [Thingies…]
 
-    switch Py.sys.flags.bytesWarning {
+    switch self.py.sys.flags.bytesWarning {
     case .ignore:
       break
     case .warning:
@@ -50,7 +47,7 @@ extension UnderscoreWarnings {
     }
 
     // We have to reverse it, because the LATER options have bigger priority.
-    for option in Py.sys.flags.warnings.reversed() {
+    for option in self.py.sys.flags.warnings.reversed() {
       let action = String(describing: option)
       append(category: .warning, action: action, module: nil)
     }
@@ -66,17 +63,30 @@ extension UnderscoreWarnings {
     append(category: .resource, action: "ignore", module: nil)
     #endif
 
-    return Py.newList(elements: elements)
+    return self.py.newList(elements: elements)
   }
 
-  private func createFilter(category: PyType,
-                            action actionArg: String,
-                            module moduleArg: String?) -> PyTuple {
-    let action = Py.intern(string: actionArg)
-    let module: PyObject = moduleArg.map(Py.intern) ?? Py.none
-    let msg = Py.none
-    let line = Py.newInt(0)
-    return Py.newTuple(action, msg, category, module, line)
+  private func createFilter(category: Py.WarningType,
+                            action: String,
+                            module: String?) -> PyTuple {
+    let _category = self.py.getPythonType(type: category)
+    let _action = self.py.intern(string: action)
+    let _msg = self.py.none
+    let _line = self.py.newInt(0)
+
+    let _module: PyObject
+    if let m = module {
+      let string = self.py.intern(string: m)
+      _module = string.asObject
+    } else {
+      _module = self.py.none.asObject
+    }
+
+    return self.py.newTuple(elements: _action.asObject,
+                                      _msg.asObject,
+                                      _category.asObject,
+                                      _module,
+                                      _line.asObject)
   }
 
   // MARK: - Default action
@@ -86,7 +96,7 @@ extension UnderscoreWarnings {
   }
 
   public func setDefaultAction(to value: PyObject) -> PyBaseException? {
-    return self.set(._defaultaction, to: value)
+    return self.set(._defaultaction, value: value)
   }
 
   // MARK: - Once registry
@@ -96,8 +106,6 @@ extension UnderscoreWarnings {
   }
 
   public func setOnceRegistry(to value: PyObject) -> PyBaseException? {
-    return self.set(._onceregistry, to: value)
+    return self.set(._onceregistry, value: value)
   }
 }
-
-*/
