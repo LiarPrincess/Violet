@@ -15,13 +15,8 @@ extension AbstractString {
 
     switch Self.getElementsForFindCountContainsIndexOf(py, object: object) {
     case .value(let value):
-      // In Python: "\u00E9" in "Cafe\u0301" -> False
-      // In Swift:  "Cafe\u{0301}".contains("\u{00E9}") -> True
-      // which is 'e with acute (as a single char)' in 'Cafe{accent}'
-      switch Self.findHelper(zelf: zelf, value: value) {
-      case .index: return PyResult(py, true)
-      case .notFound: return PyResult(py, false)
-      }
+      let result = zelf.abstractContains(elements: value)
+      return PyResult(py, result)
 
     case .invalidObjectType:
       let t = Self.pythonTypeName
@@ -31,6 +26,18 @@ extension AbstractString {
 
     case .error(let e):
       return .error(e)
+    }
+  }
+
+  internal func abstractContains(elements: Elements) -> Bool {
+    // In Python: "\u00E9" in "Cafe\u0301" -> False
+    // In Swift:  "Cafe\u{0301}".contains("\u{00E9}") -> True
+    // which is 'e with acute (as a single char)' in 'Cafe{accent}'
+    switch Self.findHelper(zelf: self, value: elements) {
+    case .index:
+      return true
+    case .notFound:
+      return false
     }
   }
 

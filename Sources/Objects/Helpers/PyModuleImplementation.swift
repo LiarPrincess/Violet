@@ -187,23 +187,17 @@ extension PyModuleImplementation {
       trap("Error when inserting '\(name)' to '\(Self.moduleName)': \(e)")
     }
   }
-/*
+
   // MARK: - Set args kwargs
 
   internal func setOrTrap(
     _ name: Properties,
     doc: String?,
-    fn: @escaping ([PyObject], PyDict?) -> PyResult<PyObject>
+    fn: @escaping (Py, PyObject, [PyObject], PyDict?) -> PyResult<PyObject>
   ) {
-    let object = PyBuiltinFunction.wrap(
-      name: String(describing: name),
-      doc: doc,
-      fn: fn,
-      module: self.moduleToSetInFunctions
-    )
-    self.setOrTrap(name, to: object)
+    let wrapper = FunctionWrapper(name: name.description, fn: fn)
+    self.setOrTrap(name, doc: doc, fn: wrapper)
   }
-*/
 
   // MARK: - Set positional unary
 

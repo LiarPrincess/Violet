@@ -194,6 +194,8 @@ extension Py {
 
   public func warn(type: PyType, message: PyString) -> PyBaseException? {
     assert(type.isSubtype(of: self.errorTypes.warning))
-    return self._warnings.warn(message: message, category: type)
+    let messageObject = message.asObject
+    let categoryObject = type.asObject
+    return self._warnings.warn(message: messageObject, category: categoryObject)
   }
 }

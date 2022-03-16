@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // In CPython:
@@ -15,7 +14,7 @@ extension UnderscoreWarnings {
                            lineNo: PyInt,
                            module: PyString?,
                            source: PyObject?,
-                           registry: WarningRegistry) -> PyResult<PyNone> {
+                           registry: WarningRegistry) -> PyBaseException? {
     // swiftlint:enable function_parameter_count
 
     let warning = self.createWarning(
@@ -31,49 +30,55 @@ extension UnderscoreWarnings {
     case let .value(w):
       return self.warnExplicit(warning: w, registry: registry)
     case let .error(e):
-      return .error(e)
+      return e
     }
   }
 
   /// static PyObject *
   /// warn_explicit(PyObject *category, PyObject *message, ...)
   internal func warnExplicit(warning: Warning,
-                             registry: WarningRegistry) -> PyResult<PyNone> {
-    let key = Py.newTuple(warning.text, warning.category, warning.lineNo)
+                             registry: WarningRegistry) -> PyBaseException? {
+    let key = self.createKey(warning: warning)
     switch self.hasAlreadyWarned(registry: registry, key: key) {
-    case .value(true): return .value(Py.none)
+    case .value(true): return nil
     case .value(false): break
-    case .error(let e): return .error(e)
+    case .error(let e): return e
     }
 
     let filter: Filter
     switch self.getFilter(warning: warning) {
     case let .value(f): filter = f
-    case let .error(e): return .error(e)
+    case let .error(e): return e
     }
 
     if filter.action == .error {
-      let e = self.createException(warning: warning)
-      return .error(e)
+      return self.createException(warning: warning)
     }
 
     if filter.action == .ignore {
-      return .value(Py.none)
+      return nil
     }
 
     // Store in the registry that we've been here,
     // except when the action is 'always'
     if filter.action != .always {
       if let e = self.storeInRegistry(registry: registry, key: key, filter: filter) {
-        return .error(e)
+        return e
       }
     }
 
     return self.show(warning: warning)
   }
 
+  private func createKey(warning: Warning) -> PyTuple {
+    let text = warning.text
+    let category = warning.category.asObject
+    let lineNo = warning.lineNo.asObject
+    return self.py.newTuple(elements: text, category, lineNo)
+  }
+
   private func createException(warning: Warning) -> PyBaseException {
-    switch Py.newException(type: warning.category, arg: warning.message) {
+    switch self.py.newException(type: warning.category, arg: warning.message) {
     case let .value(e):
       return e
     case let .error(e):
@@ -94,17 +99,21 @@ extension UnderscoreWarnings {
     }
 
     for (index, object) in filters.elements.enumerated() {
-      guard let filter = PyCast.asTuple(object), filter.elements.count == 5 else {
-        return .valueError("_warnings.filters item \(index) isn't a 5-tuple")
+      guard let filter = self.py.cast.asTuple(object), filter.elements.count == 5 else {
+        let message = "_warnings.filters item \(index) isn't a 5-tuple"
+        return .valueError(self.py, message: message)
       }
 
       switch self.isApplicable(filter: filter, warning: warning) {
       case .value(true):
         let object = filter.elements[0]
-        guard let action = PyCast.asString(object) else {
-          return .typeError("filter action must be an str, not \(object.typeName)")
+        guard let action = self.py.cast.asString(object) else {
+          let message = "filter action must be an str, not \(object.typeName)"
+          return .typeError(self.py, message: message)
         }
+
         return .value(Filter(action: action, object: .value(filter)))
+
       case .value(false):
         break // try other
       case .error(let e):
@@ -127,14 +136,15 @@ extension UnderscoreWarnings {
     }
 
     let filterCategory = filter.elements[2]
-    switch warning.category.isSubtype(of: filterCategory) {
+    switch warning.category.isSubtype(self.py, of: filterCategory) {
     case .value(true): break // move to next one
     case .value(false): return .value(false)
     case .error(let e): return .error(e)
     }
 
     let filterModule = filter.elements[3]
-    switch self.compareStringOrNone(filter: filterModule, arg: warning.module) {
+    let moduleObject = warning.module.asObject
+    switch self.compareStringOrNone(filter: filterModule, arg: moduleObject) {
     case .value(true): break // move to next one
     case .value(false): return .value(false)
     case .error(let e): return .error(e)
@@ -156,13 +166,13 @@ extension UnderscoreWarnings {
   private func compareStringOrNone(filter object: PyObject,
                                    arg: PyObject) -> PyResult<Bool> {
     // A 'None' filter always matches
-    if PyCast.isNone(object) {
+    if self.py.cast.isNone(object) {
       return .value(true)
     }
 
     // An internal plain text default filter must match exactly
-    if let str = PyCast.asString(object) {
-      return Py.isEqualBool(left: str, right: arg)
+    if self.py.cast.isString(object) {
+      return self.py.isEqualBool(left: object, right: arg)
     }
 
     // We do not support regular expressions
@@ -171,8 +181,9 @@ extension UnderscoreWarnings {
 
   private func compareLine(filter object: PyObject,
                            arg: PyInt) -> PyResult<Bool> {
-    guard let int = PyCast.asInt(object) else {
-      return .typeError("filter line must be an int, not \(object.typeName)")
+    guard let int = self.py.cast.asInt(object) else {
+      let message = "filter line must be an int, not \(object.typeName)"
+      return .typeError(self.py, message: message)
     }
 
     // Filter line = 0 -> no line requirement
@@ -193,9 +204,10 @@ extension UnderscoreWarnings {
     assert(key.elements.count == 3, "It should be: text, category, line")
     switch registry {
     case .dict(let dict):
-      switch dict.get(key: key) {
+      let keyObject = key.asObject
+      switch dict.get(self.py, key: keyObject) {
       case .value(let o):
-        return Py.isTrueBool(object: o)
+        return self.py.isTrueBool(object: o)
       case .notFound:
         return .value(false)
       case .error(let e):
@@ -222,7 +234,10 @@ extension UnderscoreWarnings {
   private func storeInRegistry(registry: PyDict,
                                key: PyTuple,
                                filter: Filter) -> PyBaseException? {
-    switch registry.set(key: key, to: Py.true) {
+    let keyObject = key.asObject
+    let trueObject = self.py.true.asObject
+
+    switch registry.set(self.py, key: keyObject, value: trueObject) {
     case .ok: break
     case .error(let e): return e
     }
@@ -245,16 +260,31 @@ extension UnderscoreWarnings {
       return nil // Nothing to do
 
     case .other:
-      let actStr = Py.reprOrGenericString(object: filter.actionObject)
-      let objStr = Py.reprOrGenericString(object: filter.object.py)
-      let msg = "Unrecognized action (\(actStr))) in warnings.filters:\n \(objStr)"
-      return Py.newRuntimeError(msg: msg)
+      let actStr = self.repr(object: filter.actionObject)
+      let objStr = self.repr(object: filter.object)
+      let message = "Unrecognized action (\(actStr))) in warnings.filters:\n \(objStr)"
+      let error = self.py.newRuntimeError(message: message)
+      return error.asBaseException
 
     case .error,
          .ignore,
          .always:
-      trap("This should never be stored!")
+      trap("'\(filter.action)' should never be stored!")
     }
+  }
+
+  private func repr(object: PyString) -> String {
+    return self.py.reprOrGenericString(object: object.asObject)
+  }
+
+  private func repr(object: Filter.Object) -> String {
+    let realObject: PyObject
+    switch object {
+    case .value(let tuple): realObject = tuple.asObject
+    case .none: realObject = self.py.none.asObject
+    }
+
+    return self.py.reprOrGenericString(object: realObject)
   }
 
   /// static int
@@ -269,12 +299,15 @@ extension UnderscoreWarnings {
 
     var elements = [text, category]
     if addZero {
-      elements.append(Py.newInt(0))
+      let zero = self.py.newInt(0)
+      elements.append(zero.asObject)
     }
 
-    let miniKey = Py.newTuple(elements: elements)
+    let actualKey = self.py.newTuple(elements: elements)
+    let actualKeyObject = actualKey.asObject
+    let trueObject = self.py.true.asObject
 
-    switch registry.set(key: miniKey, to: Py.true) {
+    switch registry.set(self.py, key: actualKeyObject, value: trueObject) {
     case .ok:
       return nil
     case .error(let e):
@@ -282,5 +315,3 @@ extension UnderscoreWarnings {
     }
   }
 }
-
-*/

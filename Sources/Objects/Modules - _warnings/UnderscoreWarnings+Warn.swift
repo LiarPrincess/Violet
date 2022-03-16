@@ -1,11 +1,10 @@
-/* MARKER
 import VioletCore
 
 // In CPython:
 // Python -> _warnings.c
 // https://docs.python.org/3/library/warnings.html#warnings.warn
 
-private let arguments = ArgumentParser.createOrTrap(
+private let arguments = ArgumentParser(
   arguments: ["message", "category", "stacklevel", "source"],
   format: "O|OOO:warn"
 )
@@ -26,8 +25,11 @@ extension UnderscoreWarnings {
   ///
   /// static PyObject *
   /// warnings_warn_impl(PyObject *module, PyObject *message, ...)
-  internal func warn(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    switch arguments.bind(args: args, kwargs: kwargs) {
+  internal static func warn(_ py: Py,
+                            module: PyObject,
+                            args: [PyObject],
+                            kwargs: PyDict?) -> PyResult<PyObject> {
+    switch arguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")
       assert(binding.optionalCount == 3, "Invalid optional argument count.")
@@ -36,10 +38,15 @@ extension UnderscoreWarnings {
       let category = binding.optional(at: 1)
       let stackLevel = binding.optional(at: 2)
       let source = binding.optional(at: 3)
-      return self.warn(message: message,
-                       category: category,
-                       stackLevel: stackLevel,
-                       source: source)
+
+      if let error = py._warnings.warn(message: message,
+                                       category: category,
+                                       stackLevel: stackLevel,
+                                       source: source) {
+        return .error(error)
+      }
+
+      return .none(py)
 
     case let .error(e):
       return .error(e)
@@ -53,13 +60,13 @@ extension UnderscoreWarnings {
     let category: PyType
     switch self.parseCategory(message: message, category: categoryArg) {
     case let .value(c): category = c
-    case let .error(e): return .error(e)
+    case let .error(e): return e
     }
 
     let stackLevel: Int
     switch self.parseStackLevel(level: stackLevelArg) {
     case let .value(l): stackLevel = l
-    case let .error(e): return .error(e)
+    case let .error(e): return e
     }
 
     let frame: PyFrame?
@@ -67,16 +74,16 @@ extension UnderscoreWarnings {
     case .value(let f): frame = f
     case .none: frame = nil
     case .levelTooBig: frame = nil
-    case .error(let e): return .error(e)
+    case .error(let e): return e
     }
 
     let globals = self.getGlobals(frame: frame)
-    let lineNo = Py.newInt(frame?.currentInstructionLine ?? SourceLocation.start.line)
+    let lineNo = self.py.newInt(frame?.currentInstructionLine ?? SourceLocation.start.line)
 
     let registry: WarningRegistry
     switch self.getWarningRegistry(globals: globals) {
     case let .value(r): registry = r
-    case let .error(e): return .error(e)
+    case let .error(e): return e
     }
 
     let module = self.getModuleName(globals: globals)
@@ -94,7 +101,11 @@ extension UnderscoreWarnings {
   }
 
   private func getGlobals(frame: PyFrame?) -> PyDict {
-    return frame?.globals ?? Py.sysModule.__dict__
+    if let result = frame?.globals {
+      return result
+    }
+
+    return self.py.builtins.__dict__
   }
 
   // MARK: - Category
@@ -108,27 +119,27 @@ extension UnderscoreWarnings {
     }
 
     // If 'category' is 'nil' or 'None' -> userWarning
-    let userWarning = Py.errorTypes.userWarning
+    let userWarning = self.py.errorTypes.userWarning
     assert(self.isWarningSubtype(type: userWarning))
 
     guard let category = category else {
       return .value(userWarning)
     }
 
-    if PyCast.isNone(category) {
+    if self.py.cast.isNone(category) {
       return .value(userWarning)
     }
 
-    if let type = PyCast.asType(category), self.isWarningSubtype(type: type) {
+    if let type = self.py.cast.asType(category), self.isWarningSubtype(type: type) {
       return .value(type)
     }
 
     let t = category.typeName
-    return .typeError("category must be a Warning subclass, not '\(t)'")
+    return .typeError(self.py, message: "category must be a Warning subclass, not '\(t)'")
   }
 
   internal func isWarningSubtype(type: PyType) -> Bool {
-    return type.isSubtype(of: Py.errorTypes.warning)
+    return type.isSubtype(of: self.py.errorTypes.warning)
   }
 
   // MARK: - Stack level
@@ -138,15 +149,16 @@ extension UnderscoreWarnings {
       return .value(1)
     }
 
-    if let pyInt = PyCast.asInt(level) {
+    if let pyInt = self.py.cast.asInt(level) {
       if let int = Int(exactly: pyInt.value) {
         return .value(int)
       }
 
-      return .typeError("warn(): stackLevel too big")
+      return .typeError(self.py, message: "warn(): stackLevel too big")
     }
 
-    return .typeError("warn(): stackLevel must be an int, not \(level.typeName)")
+    let message = "warn(): stackLevel must be an int, not \(level.typeName)"
+    return .typeError(self.py, message: message)
   }
 
   // MARK: - Get frame
@@ -159,7 +171,7 @@ extension UnderscoreWarnings {
   }
 
   private func getFrame(level levelArg: Int) -> GetFrameResult {
-    guard let topFrame = Py.delegate.frame else {
+    guard let topFrame = self.py.delegate.frame else {
       return .none
     }
 
@@ -211,47 +223,47 @@ extension UnderscoreWarnings {
   }
 
   public func getWarningRegistry(globals: PyDict) -> PyResult<WarningRegistry> {
-    if let object = globals.get(id: .__warningregistry__) {
-      if PyCast.isNone(object) {
+    if let object = globals.get(self.py, id: .__warningregistry__) {
+      if self.py.cast.isNone(object) {
         return .value(.none)
       }
 
-      if let dict = PyCast.asDict(object) {
+      if let dict = self.py.cast.asDict(object) {
         return .value(.dict(dict))
       }
 
-      let e = Py.newTypeError(msg: "'registry' must be a dict or None")
-      return .error(e)
+      let e = self.py.newTypeError(message: "'registry' must be a dict or None")
+      return .error(e.asBaseException)
     }
 
-    let registry = Py.newDict()
-    globals.set(id: .__warningregistry__, to: registry)
+    let registry = self.py.newDict()
+    globals.set(self.py, id: .__warningregistry__, value: registry.asObject)
     return .value(.dict(registry))
   }
 
   // MARK: - Module name
 
   private func getModuleName(globals: PyDict) -> PyString {
-    if let object = globals.get(id: .__name__),
-       let string = PyCast.asString(object) {
+    if let object = globals.get(self.py, id: .__name__),
+       let string = self.py.cast.asString(object) {
       return string
     }
 
-    return Py.intern(string: "<string>")
+    return self.py.intern(string: "<string>")
   }
 
   // MARK: - File name
 
   private func getFilename(globals: PyDict, module: PyString) -> PyString {
-    if let object = globals.get(id: .__file__),
-       let str = PyCast.asString(object) {
+    if let object = globals.get(self.py, id: .__file__),
+       let str = self.py.cast.asString(object) {
       return str
     }
 
     // If we are in '__main__' module, then we have to take filename
     // from arg0.
     if module.isEqual("__main__") {
-      switch Py.sys.getArgv0() {
+      switch self.py.sys.getArgv0() {
       case .value(let string) where !string.isEmpty:
         return string
       case .value,
@@ -260,8 +272,6 @@ extension UnderscoreWarnings {
       }
     }
 
-    return Py.intern(string: "__main__")
+    return self.py.intern(string: "__main__")
   }
 }
-
-*/

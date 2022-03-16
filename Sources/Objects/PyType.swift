@@ -559,12 +559,17 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
       return Self.invalidZelfArgument(py, zelf)
     }
 
-    guard let otherType = py.cast.asType(object) else {
+    let result = zelf.isSubtype(py, of: object)
+    return PyResult(py, result)
+  }
+
+  internal func isSubtype(_ py: Py, of object: PyObject) -> PyResult<Bool> {
+    guard let type = py.cast.asType(object) else {
       return .typeError(py, message: "issubclass() arg 1 must be a class")
     }
 
-    let result = zelf.isSubtype(of: otherType)
-    return PyResult(py, result)
+    let result = self.isSubtype(of: type)
+    return .value(result)
   }
 
   internal func isSubtype(of type: PyType) -> Bool {
@@ -842,8 +847,12 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
       return Self.invalidZelfArgument(py, zelf)
     }
 
+    return zelf.call(py, args: args, kwargs: kwargs)
+  }
+
+  internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
     let object: PyObject
-    switch zelf.call__new__(py, args: args, kwargs: kwargs) {
+    switch self.call__new__(py, args: args, kwargs: kwargs) {
     case let .value(o):
       object = o
     case let .error(e):
@@ -852,7 +861,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
 
     // Ugly exception: when the call was type(something),
     // don't call tp_init on the result.
-    let isTypeNotSubclass = zelf === py.types.type
+    let isTypeNotSubclass = self === py.types.type
     let hasSingleArg = args.count == 1
     let hasEmptyKwargs = kwargs?.elements.isEmpty ?? true
 
@@ -861,11 +870,11 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     }
 
     // If the returned object is not an instance of type, it won't be initialized.
-    guard object.type.isSubtype(of: zelf) else {
+    guard object.type.isSubtype(of: self) else {
       return .value(object)
     }
 
-    switch zelf.call__init__(py, object: object, args: args, kwargs: kwargs) {
+    switch self.call__init__(py, object: object, args: args, kwargs: kwargs) {
     case .value:
       return .value(object)
     case .error(let e):
