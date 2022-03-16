@@ -76,7 +76,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   // sourcery: storedProperty
   internal var deinitialize: DeinitializeFn { self.deinitializePtr.pointee }
 
-  /// `PyObjectHeader.flags` that are only available on `type` instances.
+  /// `PyObject.flags` that are only available on `type` instances.
   internal var typeFlags: TypeFlags {
     get { return TypeFlags(objectFlags: self.flags) }
     set { self.flags.setCustomFlags(from: newValue.objectFlags) }
@@ -444,7 +444,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   }
 
   internal func getDict(_ py: Py) -> PyDict {
-    guard let result = self.header.__dict__.get(py) else {
+    guard let result = self.__dict__.get(py) else {
       py.trapMissing__dict__(object: self)
     }
 
@@ -452,7 +452,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   }
 
   internal func setDict(_ value: PyDict) {
-    self.header.__dict__.set(value)
+    self.__dict__.set(value)
   }
 
   // MARK: - Class

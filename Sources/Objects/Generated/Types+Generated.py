@@ -1,15 +1,9 @@
 from typing import List, Optional
 from Helpers import NewTypeArguments, generated_warning
 from Sourcery import (
-    ObjectHeader, get_object_header,
     ErrorHeader, get_error_header,
     TypeInfo, SwiftInitializerInfo, get_types
 )
-
-HEADER_OFFSET = 'PyObjectHeader.layout.size'
-HEADER_ALIGNMENT = 'PyObjectHeader.layout.alignment'
-ERROR_HEADER_OFFSET = 'PyErrorHeader.layout.size'
-ERROR_HEADER_ALIGNMENT = 'PyErrorHeader.layout.alignment'
 
 # ===============
 # === Helpers ===
@@ -87,33 +81,33 @@ def print_pointer_properties(properties_base: List[PropertyInLayout], properties
 
 def print_base_types_properties(properties_base: List[PropertyInLayout]):
     for p in properties_base:
-        swift_type_name = p.declared_in_type.swift_type_name
-        print(f'  /// Property from base class: `{swift_type_name}.{p.swift_name}`.')
-        print(f'  internal var {p.swift_name}: {p.swift_type} {{ self.{p.pointer_property_name}.pointee }}')
+        name = p.swift_name
+        typ = p.swift_type
+        pointer_property_name = p.pointer_property_name
+
+        swift_owner_type_name = p.declared_in_type.swift_type_name
+        print(f'  /// Property from base class: `{swift_owner_type_name}.{name}`.')
+
+        if name in ('__dict__', 'flags'):
+            print(f'  internal var {name}: {typ} {{')
+            print(f'    get {{ self.{pointer_property_name}.pointee }}')
+            print(f'    nonmutating set {{ self.{pointer_property_name}.pointee = newValue }}')
+            print(f'  }}')
+        else:
+            print(f'  internal var {name}: {typ} {{ self.{pointer_property_name}.pointee }}')
 
 # ===========================
 # === Object/error header ===
 # ===========================
 
-def print_object_header_extension(h: ObjectHeader):
-    fields: List[PropertyInLayout] = []
-    for f in h.fields:
-        fields.append(PropertyInLayout(f.swift_name, f.swift_type))
-
-    print('// MARK: - PyObjectHeader')
-    print()
-    print('extension PyObjectHeader {')
-    print()
-    print_layout('PyObjectHeader', '0', '0', fields)
-    print()
-    print_pointer_properties([], fields)
-    print('}')
-    print()
-
 def print_error_header_extension(h: ErrorHeader):
     fields: List[PropertyInLayout] = []
     for f in h.fields:
         fields.append(PropertyInLayout(f.swift_name, f.swift_type))
+
+
+    HEADER_OFFSET = 'PyObject.layout.size'
+    HEADER_ALIGNMENT = 'PyObject.layout.alignment'
 
     print('// MARK: - PyErrorHeader')
     print()
@@ -319,7 +313,7 @@ def print_type_extension(t: TypeInfo):
 
     if properties_type:
         print()
-        print(f'    // Call \'deinitialize\' all of our own properties.')
+        print(f'    // Call \'deinitialize\' on all of our own properties.')
         print(f'    let zelf = {swift_type_name}(ptr: ptr)')
 
         for p in properties_type:
@@ -434,9 +428,6 @@ import VioletCompiler
 // swiftlint:disable file_length
 
 // This file contains:
-// - For 'PyObjectHeader':
-//   - PyObjectHeader.Layout - mainly field offsets
-//   - PyObjectHeader.xxxPtr - pointer properties to fields
 // - For 'PyErrorHeader':
 //   - PyErrorHeader.Layout - mainly field offsets
 //   - PyErrorHeader.xxxPtr - pointer properties to fields
@@ -449,9 +440,6 @@ import VioletCompiler
 //   - static func invalidZelfArgument<T>(py: Py, object: PyObject, fnName: String) -> PyResult<T>
 //   - PyMemory.new[TYPE_NAME] - to create new object of this type
 ''')
-
-    header = get_object_header()
-    print_object_header_extension(header)
 
     error_header = get_error_header()
     print_error_header_extension(error_header)

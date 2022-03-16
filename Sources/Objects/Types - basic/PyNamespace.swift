@@ -116,7 +116,7 @@ public struct PyNamespace: PyObjectMixin {
   }
 
   internal func getDict(_ py: Py) -> PyDict {
-    guard let result = self.header.__dict__.get(py) else {
+    guard let result = self.__dict__.get(py) else {
       py.trapMissing__dict__(object: self)
     }
 

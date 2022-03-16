@@ -42,7 +42,7 @@ extension Py {
   /// In such situation this function returns real '\_\_dict\_\_'
   /// (not the user property!).
   public func get__dict__(object: PyObject) -> PyDict? {
-    return object.header.__dict__.get(self)
+    return object.__dict__.get(self)
   }
 
   public func get__dict__(type: PyType) -> PyDict {
