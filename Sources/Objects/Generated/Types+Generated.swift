@@ -20,7 +20,10 @@ import VioletCompiler
 // - PyMemory.newTypeAndObjectTypes - because they have recursive dependency
 // - Then for each type:
 //   - static let pythonTypeName - name of the type in Python
-//   - static let layout - mainly field offsets
+//   - static let layout - field offsets for memory layout
+//   - var xxxPtr - pointer to property (with offset from layout)
+//   - var xxx - property from base class
+//   - func initializeBase(...) - call base initializer
 //   - static func deinitialize(ptr: RawPtr) - to deinitialize this object before deletion
 //   - static func downcast(py: Py, object: PyObject) -> [TYPE_NAME]?
 //   - static func invalidZelfArgument<T>(py: Py, object: PyObject, fnName: String) -> PyResult<T>
@@ -82,24 +85,9 @@ extension PyBool {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyBool` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyInt.layout.size,
-        initialAlignment: PyInt.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyBool` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyInt`.
+  internal typealias Layout = PyInt.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -189,7 +177,7 @@ extension PyBuiltinFunction {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyBuiltinFunction` fields
+  /// This type was automatically generated based on `PyBuiltinFunction` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let functionOffset: Int
@@ -317,7 +305,7 @@ extension PyBuiltinMethod {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyBuiltinMethod` fields
+  /// This type was automatically generated based on `PyBuiltinMethod` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let functionOffset: Int
@@ -453,7 +441,7 @@ extension PyByteArray {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyByteArray` fields
+  /// This type was automatically generated based on `PyByteArray` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let elementsOffset: Int
@@ -565,7 +553,7 @@ extension PyByteArrayIterator {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyByteArrayIterator` fields
+  /// This type was automatically generated based on `PyByteArrayIterator` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let bytesOffset: Int
@@ -683,7 +671,7 @@ extension PyBytes {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyBytes` fields
+  /// This type was automatically generated based on `PyBytes` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let elementsOffset: Int
@@ -795,7 +783,7 @@ extension PyBytesIterator {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyBytesIterator` fields
+  /// This type was automatically generated based on `PyBytesIterator` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let bytesOffset: Int
@@ -913,7 +901,7 @@ extension PyCallableIterator {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyCallableIterator` fields
+  /// This type was automatically generated based on `PyCallableIterator` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let callableOffset: Int
@@ -1033,7 +1021,7 @@ extension PyCell {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyCell` fields
+  /// This type was automatically generated based on `PyCell` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let contentOffset: Int
@@ -1145,7 +1133,7 @@ extension PyClassMethod {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyClassMethod` fields
+  /// This type was automatically generated based on `PyClassMethod` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let callableOffset: Int
@@ -1257,7 +1245,7 @@ extension PyCode {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyCode` fields
+  /// This type was automatically generated based on `PyCode` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let nameOffset: Int
@@ -1447,7 +1435,7 @@ extension PyComplex {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyComplex` fields
+  /// This type was automatically generated based on `PyComplex` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let realOffset: Int
@@ -1567,7 +1555,7 @@ extension PyDict {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyDict` fields
+  /// This type was automatically generated based on `PyDict` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let elementsOffset: Int
@@ -1679,7 +1667,7 @@ extension PyDictItemIterator {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyDictItemIterator` fields
+  /// This type was automatically generated based on `PyDictItemIterator` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let dictOffset: Int
@@ -1803,7 +1791,7 @@ extension PyDictItems {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyDictItems` fields
+  /// This type was automatically generated based on `PyDictItems` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let dictOffset: Int
@@ -1915,7 +1903,7 @@ extension PyDictKeyIterator {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyDictKeyIterator` fields
+  /// This type was automatically generated based on `PyDictKeyIterator` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let dictOffset: Int
@@ -2039,7 +2027,7 @@ extension PyDictKeys {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyDictKeys` fields
+  /// This type was automatically generated based on `PyDictKeys` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let dictOffset: Int
@@ -2151,7 +2139,7 @@ extension PyDictValueIterator {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyDictValueIterator` fields
+  /// This type was automatically generated based on `PyDictValueIterator` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let dictOffset: Int
@@ -2275,7 +2263,7 @@ extension PyDictValues {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyDictValues` fields
+  /// This type was automatically generated based on `PyDictValues` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let dictOffset: Int
@@ -2387,24 +2375,9 @@ extension PyEllipsis {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyEllipsis` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyObject.layout.size,
-        initialAlignment: PyObject.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyEllipsis` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyObject`.
+  internal typealias Layout = PyObject.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -2487,7 +2460,7 @@ extension PyEnumerate {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyEnumerate` fields
+  /// This type was automatically generated based on `PyEnumerate` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let iteratorOffset: Int
@@ -2607,7 +2580,7 @@ extension PyFilter {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyFilter` fields
+  /// This type was automatically generated based on `PyFilter` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let fnOffset: Int
@@ -2727,7 +2700,7 @@ extension PyFloat {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyFloat` fields
+  /// This type was automatically generated based on `PyFloat` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let valueOffset: Int
@@ -2839,7 +2812,7 @@ extension PyFrame {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyFrame` fields
+  /// This type was automatically generated based on `PyFrame` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let codeOffset: Int
@@ -3023,7 +2996,7 @@ extension PyFrozenSet {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyFrozenSet` fields
+  /// This type was automatically generated based on `PyFrozenSet` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let elementsOffset: Int
@@ -3135,7 +3108,7 @@ extension PyFunction {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyFunction` fields
+  /// This type was automatically generated based on `PyFunction` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let nameOffset: Int
@@ -3307,7 +3280,7 @@ extension PyInt {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyInt` fields
+  /// This type was automatically generated based on `PyInt` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let valueOffset: Int
@@ -3419,7 +3392,7 @@ extension PyIterator {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyIterator` fields
+  /// This type was automatically generated based on `PyIterator` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let sequenceOffset: Int
@@ -3537,7 +3510,7 @@ extension PyList {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyList` fields
+  /// This type was automatically generated based on `PyList` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let elementsOffset: Int
@@ -3649,7 +3622,7 @@ extension PyListIterator {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyListIterator` fields
+  /// This type was automatically generated based on `PyListIterator` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let listOffset: Int
@@ -3767,7 +3740,7 @@ extension PyListReverseIterator {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyListReverseIterator` fields
+  /// This type was automatically generated based on `PyListReverseIterator` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let listOffset: Int
@@ -3885,7 +3858,7 @@ extension PyMap {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyMap` fields
+  /// This type was automatically generated based on `PyMap` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let fnOffset: Int
@@ -4005,7 +3978,7 @@ extension PyMethod {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyMethod` fields
+  /// This type was automatically generated based on `PyMethod` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let functionOffset: Int
@@ -4125,24 +4098,9 @@ extension PyModule {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyModule` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyObject.layout.size,
-        initialAlignment: PyObject.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyModule` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyObject`.
+  internal typealias Layout = PyObject.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -4231,24 +4189,9 @@ extension PyNamespace {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyNamespace` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyObject.layout.size,
-        initialAlignment: PyObject.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyNamespace` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyObject`.
+  internal typealias Layout = PyObject.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -4333,24 +4276,9 @@ extension PyNone {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyNone` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyObject.layout.size,
-        initialAlignment: PyObject.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyNone` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyObject`.
+  internal typealias Layout = PyObject.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -4433,24 +4361,9 @@ extension PyNotImplemented {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyNotImplemented` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyObject.layout.size,
-        initialAlignment: PyObject.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyNotImplemented` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyObject`.
+  internal typealias Layout = PyObject.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -4533,7 +4446,7 @@ extension PyObject {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyObject` fields
+  /// This type was automatically generated based on `PyObject` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let typeOffset: Int
@@ -4615,7 +4528,7 @@ extension PyProperty {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyProperty` fields
+  /// This type was automatically generated based on `PyProperty` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let _getOffset: Int
@@ -4751,7 +4664,7 @@ extension PyRange {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyRange` fields
+  /// This type was automatically generated based on `PyRange` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let startOffset: Int
@@ -4885,7 +4798,7 @@ extension PyRangeIterator {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyRangeIterator` fields
+  /// This type was automatically generated based on `PyRangeIterator` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let startOffset: Int
@@ -5019,7 +4932,7 @@ extension PyReversed {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyReversed` fields
+  /// This type was automatically generated based on `PyReversed` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let sequenceOffset: Int
@@ -5139,7 +5052,7 @@ extension PySet {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PySet` fields
+  /// This type was automatically generated based on `PySet` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let elementsOffset: Int
@@ -5251,7 +5164,7 @@ extension PySetIterator {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PySetIterator` fields
+  /// This type was automatically generated based on `PySetIterator` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let setOffset: Int
@@ -5394,7 +5307,7 @@ extension PySlice {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PySlice` fields
+  /// This type was automatically generated based on `PySlice` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let startOffset: Int
@@ -5522,7 +5435,7 @@ extension PyStaticMethod {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyStaticMethod` fields
+  /// This type was automatically generated based on `PyStaticMethod` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let callableOffset: Int
@@ -5634,7 +5547,7 @@ extension PyString {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyString` fields
+  /// This type was automatically generated based on `PyString` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let cachedCountOffset: Int
@@ -5758,7 +5671,7 @@ extension PyStringIterator {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyStringIterator` fields
+  /// This type was automatically generated based on `PyStringIterator` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let stringOffset: Int
@@ -5876,7 +5789,7 @@ extension PySuper {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PySuper` fields
+  /// This type was automatically generated based on `PySuper` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let thisClassOffset: Int
@@ -6004,7 +5917,7 @@ extension PyTextFile {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyTextFile` fields
+  /// This type was automatically generated based on `PyTextFile` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let nameOffset: Int
@@ -6150,7 +6063,7 @@ extension PyTraceback {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyTraceback` fields
+  /// This type was automatically generated based on `PyTraceback` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let nextOffset: Int
@@ -6286,7 +6199,7 @@ extension PyTuple {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyTuple` fields
+  /// This type was automatically generated based on `PyTuple` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let elementsOffset: Int
@@ -6398,7 +6311,7 @@ extension PyTupleIterator {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyTupleIterator` fields
+  /// This type was automatically generated based on `PyTupleIterator` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let tupleOffset: Int
@@ -6516,7 +6429,7 @@ extension PyType {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyType` fields
+  /// This type was automatically generated based on `PyType` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let nameOffset: Int
@@ -6702,7 +6615,7 @@ extension PyZip {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyZip` fields
+  /// This type was automatically generated based on `PyZip` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let iteratorsOffset: Int
@@ -6814,24 +6727,9 @@ extension PyArithmeticError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyArithmeticError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyException.layout.size,
-        initialAlignment: PyException.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyArithmeticError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyException`.
+  internal typealias Layout = PyException.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -6954,24 +6852,9 @@ extension PyAssertionError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyAssertionError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyException.layout.size,
-        initialAlignment: PyException.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyAssertionError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyException`.
+  internal typealias Layout = PyException.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -7094,24 +6977,9 @@ extension PyAttributeError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyAttributeError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyException.layout.size,
-        initialAlignment: PyException.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyAttributeError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyException`.
+  internal typealias Layout = PyException.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -7234,7 +7102,7 @@ extension PyBaseException {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyBaseException` fields
+  /// This type was automatically generated based on `PyBaseException` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let argsOffset: Int
@@ -7372,24 +7240,9 @@ extension PyBlockingIOError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyBlockingIOError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyOSError.layout.size,
-        initialAlignment: PyOSError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyBlockingIOError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyOSError`.
+  internal typealias Layout = PyOSError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -7513,24 +7366,9 @@ extension PyBrokenPipeError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyBrokenPipeError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyConnectionError.layout.size,
-        initialAlignment: PyConnectionError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyBrokenPipeError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyConnectionError`.
+  internal typealias Layout = PyConnectionError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -7655,24 +7493,9 @@ extension PyBufferError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyBufferError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyException.layout.size,
-        initialAlignment: PyException.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyBufferError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyException`.
+  internal typealias Layout = PyException.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -7795,24 +7618,9 @@ extension PyBytesWarning {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyBytesWarning` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyWarning.layout.size,
-        initialAlignment: PyWarning.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyBytesWarning` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyWarning`.
+  internal typealias Layout = PyWarning.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -7936,24 +7744,9 @@ extension PyChildProcessError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyChildProcessError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyOSError.layout.size,
-        initialAlignment: PyOSError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyChildProcessError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyOSError`.
+  internal typealias Layout = PyOSError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -8077,24 +7870,9 @@ extension PyConnectionAbortedError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyConnectionAbortedError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyConnectionError.layout.size,
-        initialAlignment: PyConnectionError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyConnectionAbortedError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyConnectionError`.
+  internal typealias Layout = PyConnectionError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -8219,24 +7997,9 @@ extension PyConnectionError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyConnectionError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyOSError.layout.size,
-        initialAlignment: PyOSError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyConnectionError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyOSError`.
+  internal typealias Layout = PyOSError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -8360,24 +8123,9 @@ extension PyConnectionRefusedError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyConnectionRefusedError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyConnectionError.layout.size,
-        initialAlignment: PyConnectionError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyConnectionRefusedError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyConnectionError`.
+  internal typealias Layout = PyConnectionError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -8502,24 +8250,9 @@ extension PyConnectionResetError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyConnectionResetError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyConnectionError.layout.size,
-        initialAlignment: PyConnectionError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyConnectionResetError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyConnectionError`.
+  internal typealias Layout = PyConnectionError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -8644,24 +8377,9 @@ extension PyDeprecationWarning {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyDeprecationWarning` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyWarning.layout.size,
-        initialAlignment: PyWarning.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyDeprecationWarning` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyWarning`.
+  internal typealias Layout = PyWarning.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -8785,24 +8503,9 @@ extension PyEOFError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyEOFError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyException.layout.size,
-        initialAlignment: PyException.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyEOFError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyException`.
+  internal typealias Layout = PyException.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -8925,24 +8628,9 @@ extension PyException {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyException` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyBaseException.layout.size,
-        initialAlignment: PyBaseException.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyException` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyBaseException`.
+  internal typealias Layout = PyBaseException.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -9064,24 +8752,9 @@ extension PyFileExistsError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyFileExistsError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyOSError.layout.size,
-        initialAlignment: PyOSError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyFileExistsError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyOSError`.
+  internal typealias Layout = PyOSError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -9205,24 +8878,9 @@ extension PyFileNotFoundError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyFileNotFoundError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyOSError.layout.size,
-        initialAlignment: PyOSError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyFileNotFoundError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyOSError`.
+  internal typealias Layout = PyOSError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -9346,24 +9004,9 @@ extension PyFloatingPointError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyFloatingPointError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyArithmeticError.layout.size,
-        initialAlignment: PyArithmeticError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyFloatingPointError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyArithmeticError`.
+  internal typealias Layout = PyArithmeticError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -9487,24 +9130,9 @@ extension PyFutureWarning {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyFutureWarning` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyWarning.layout.size,
-        initialAlignment: PyWarning.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyFutureWarning` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyWarning`.
+  internal typealias Layout = PyWarning.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -9628,24 +9256,9 @@ extension PyGeneratorExit {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyGeneratorExit` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyBaseException.layout.size,
-        initialAlignment: PyBaseException.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyGeneratorExit` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyBaseException`.
+  internal typealias Layout = PyBaseException.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -9767,7 +9380,7 @@ extension PyImportError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyImportError` fields
+  /// This type was automatically generated based on `PyImportError` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let msgOffset: Int
@@ -9960,24 +9573,9 @@ extension PyImportWarning {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyImportWarning` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyWarning.layout.size,
-        initialAlignment: PyWarning.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyImportWarning` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyWarning`.
+  internal typealias Layout = PyWarning.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -10101,24 +9699,9 @@ extension PyIndentationError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyIndentationError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PySyntaxError.layout.size,
-        initialAlignment: PySyntaxError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyIndentationError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PySyntaxError`.
+  internal typealias Layout = PySyntaxError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -10330,24 +9913,9 @@ extension PyIndexError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyIndexError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyLookupError.layout.size,
-        initialAlignment: PyLookupError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyIndexError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyLookupError`.
+  internal typealias Layout = PyLookupError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -10471,24 +10039,9 @@ extension PyInterruptedError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyInterruptedError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyOSError.layout.size,
-        initialAlignment: PyOSError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyInterruptedError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyOSError`.
+  internal typealias Layout = PyOSError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -10612,24 +10165,9 @@ extension PyIsADirectoryError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyIsADirectoryError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyOSError.layout.size,
-        initialAlignment: PyOSError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyIsADirectoryError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyOSError`.
+  internal typealias Layout = PyOSError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -10753,24 +10291,9 @@ extension PyKeyError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyKeyError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyLookupError.layout.size,
-        initialAlignment: PyLookupError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyKeyError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyLookupError`.
+  internal typealias Layout = PyLookupError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -10894,24 +10417,9 @@ extension PyKeyboardInterrupt {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyKeyboardInterrupt` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyBaseException.layout.size,
-        initialAlignment: PyBaseException.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyKeyboardInterrupt` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyBaseException`.
+  internal typealias Layout = PyBaseException.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -11033,24 +10541,9 @@ extension PyLookupError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyLookupError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyException.layout.size,
-        initialAlignment: PyException.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyLookupError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyException`.
+  internal typealias Layout = PyException.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -11173,24 +10666,9 @@ extension PyMemoryError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyMemoryError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyException.layout.size,
-        initialAlignment: PyException.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyMemoryError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyException`.
+  internal typealias Layout = PyException.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -11313,24 +10791,9 @@ extension PyModuleNotFoundError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyModuleNotFoundError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyImportError.layout.size,
-        initialAlignment: PyImportError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyModuleNotFoundError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyImportError`.
+  internal typealias Layout = PyImportError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -11518,24 +10981,9 @@ extension PyNameError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyNameError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyException.layout.size,
-        initialAlignment: PyException.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyNameError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyException`.
+  internal typealias Layout = PyException.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -11658,24 +11106,9 @@ extension PyNotADirectoryError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyNotADirectoryError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyOSError.layout.size,
-        initialAlignment: PyOSError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyNotADirectoryError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyOSError`.
+  internal typealias Layout = PyOSError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -11799,24 +11232,9 @@ extension PyNotImplementedError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyNotImplementedError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyRuntimeError.layout.size,
-        initialAlignment: PyRuntimeError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyNotImplementedError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyRuntimeError`.
+  internal typealias Layout = PyRuntimeError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -11940,24 +11358,9 @@ extension PyOSError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyOSError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyException.layout.size,
-        initialAlignment: PyException.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyOSError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyException`.
+  internal typealias Layout = PyException.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -12080,24 +11483,9 @@ extension PyOverflowError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyOverflowError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyArithmeticError.layout.size,
-        initialAlignment: PyArithmeticError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyOverflowError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyArithmeticError`.
+  internal typealias Layout = PyArithmeticError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -12221,24 +11609,9 @@ extension PyPendingDeprecationWarning {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyPendingDeprecationWarning` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyWarning.layout.size,
-        initialAlignment: PyWarning.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyPendingDeprecationWarning` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyWarning`.
+  internal typealias Layout = PyWarning.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -12362,24 +11735,9 @@ extension PyPermissionError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyPermissionError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyOSError.layout.size,
-        initialAlignment: PyOSError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyPermissionError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyOSError`.
+  internal typealias Layout = PyOSError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -12503,24 +11861,9 @@ extension PyProcessLookupError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyProcessLookupError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyOSError.layout.size,
-        initialAlignment: PyOSError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyProcessLookupError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyOSError`.
+  internal typealias Layout = PyOSError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -12644,24 +11987,9 @@ extension PyRecursionError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyRecursionError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyRuntimeError.layout.size,
-        initialAlignment: PyRuntimeError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyRecursionError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyRuntimeError`.
+  internal typealias Layout = PyRuntimeError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -12785,24 +12113,9 @@ extension PyReferenceError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyReferenceError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyException.layout.size,
-        initialAlignment: PyException.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyReferenceError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyException`.
+  internal typealias Layout = PyException.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -12925,24 +12238,9 @@ extension PyResourceWarning {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyResourceWarning` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyWarning.layout.size,
-        initialAlignment: PyWarning.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyResourceWarning` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyWarning`.
+  internal typealias Layout = PyWarning.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -13066,24 +12364,9 @@ extension PyRuntimeError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyRuntimeError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyException.layout.size,
-        initialAlignment: PyException.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyRuntimeError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyException`.
+  internal typealias Layout = PyException.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -13206,24 +12489,9 @@ extension PyRuntimeWarning {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyRuntimeWarning` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyWarning.layout.size,
-        initialAlignment: PyWarning.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyRuntimeWarning` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyWarning`.
+  internal typealias Layout = PyWarning.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -13347,24 +12615,9 @@ extension PyStopAsyncIteration {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyStopAsyncIteration` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyException.layout.size,
-        initialAlignment: PyException.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyStopAsyncIteration` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyException`.
+  internal typealias Layout = PyException.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -13487,7 +12740,7 @@ extension PyStopIteration {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyStopIteration` fields
+  /// This type was automatically generated based on `PyStopIteration` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let valueOffset: Int
@@ -13664,7 +12917,7 @@ extension PySyntaxError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PySyntaxError` fields
+  /// This type was automatically generated based on `PySyntaxError` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let msgOffset: Int
@@ -13881,24 +13134,9 @@ extension PySyntaxWarning {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PySyntaxWarning` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyWarning.layout.size,
-        initialAlignment: PyWarning.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PySyntaxWarning` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyWarning`.
+  internal typealias Layout = PyWarning.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -14022,24 +13260,9 @@ extension PySystemError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PySystemError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyException.layout.size,
-        initialAlignment: PyException.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PySystemError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyException`.
+  internal typealias Layout = PyException.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -14162,7 +13385,7 @@ extension PySystemExit {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PySystemExit` fields
+  /// This type was automatically generated based on `PySystemExit` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let codeOffset: Int
@@ -14338,24 +13561,9 @@ extension PyTabError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyTabError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyIndentationError.layout.size,
-        initialAlignment: PyIndentationError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyTabError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyIndentationError`.
+  internal typealias Layout = PyIndentationError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -14568,24 +13776,9 @@ extension PyTimeoutError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyTimeoutError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyOSError.layout.size,
-        initialAlignment: PyOSError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyTimeoutError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyOSError`.
+  internal typealias Layout = PyOSError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -14709,24 +13902,9 @@ extension PyTypeError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyTypeError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyException.layout.size,
-        initialAlignment: PyException.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyTypeError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyException`.
+  internal typealias Layout = PyException.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -14849,24 +14027,9 @@ extension PyUnboundLocalError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyUnboundLocalError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyNameError.layout.size,
-        initialAlignment: PyNameError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyUnboundLocalError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyNameError`.
+  internal typealias Layout = PyNameError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -14990,24 +14153,9 @@ extension PyUnicodeDecodeError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyUnicodeDecodeError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyUnicodeError.layout.size,
-        initialAlignment: PyUnicodeError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyUnicodeDecodeError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyUnicodeError`.
+  internal typealias Layout = PyUnicodeError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -15132,24 +14280,9 @@ extension PyUnicodeEncodeError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyUnicodeEncodeError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyUnicodeError.layout.size,
-        initialAlignment: PyUnicodeError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyUnicodeEncodeError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyUnicodeError`.
+  internal typealias Layout = PyUnicodeError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -15274,24 +14407,9 @@ extension PyUnicodeError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyUnicodeError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyValueError.layout.size,
-        initialAlignment: PyValueError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyUnicodeError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyValueError`.
+  internal typealias Layout = PyValueError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -15415,24 +14533,9 @@ extension PyUnicodeTranslateError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyUnicodeTranslateError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyUnicodeError.layout.size,
-        initialAlignment: PyUnicodeError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyUnicodeTranslateError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyUnicodeError`.
+  internal typealias Layout = PyUnicodeError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -15557,24 +14660,9 @@ extension PyUnicodeWarning {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyUnicodeWarning` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyWarning.layout.size,
-        initialAlignment: PyWarning.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyUnicodeWarning` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyWarning`.
+  internal typealias Layout = PyWarning.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -15698,24 +14786,9 @@ extension PyUserWarning {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyUserWarning` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyWarning.layout.size,
-        initialAlignment: PyWarning.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyUserWarning` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyWarning`.
+  internal typealias Layout = PyWarning.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -15839,24 +14912,9 @@ extension PyValueError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyValueError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyException.layout.size,
-        initialAlignment: PyException.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyValueError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyException`.
+  internal typealias Layout = PyException.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -15979,24 +15037,9 @@ extension PyWarning {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyWarning` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyException.layout.size,
-        initialAlignment: PyException.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyWarning` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyException`.
+  internal typealias Layout = PyException.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()
@@ -16119,24 +15162,9 @@ extension PyZeroDivisionError {
 
   /// Arrangement of fields in memory.
   ///
-  /// This type was automatically generated based on `PyZeroDivisionError` fields
-  /// with `sourcery: storedProperty` annotation.
-  internal struct Layout {
-    internal let size: Int
-    internal let alignment: Int
-
-    internal init() {
-      let layout = PyMemory.GenericLayout(
-        initialOffset: PyArithmeticError.layout.size,
-        initialAlignment: PyArithmeticError.layout.alignment,
-        fields: []
-      )
-
-      assert(layout.offsets.count == 0)
-      self.size = layout.size
-      self.alignment = layout.alignment
-    }
-  }
+  /// `PyZeroDivisionError` does not have any properties with `sourcery: storedProperty` annotation,
+  /// so we will use the same layout as `PyArithmeticError`.
+  internal typealias Layout = PyArithmeticError.Layout
 
   /// Arrangement of fields in memory.
   internal static let layout = Layout()

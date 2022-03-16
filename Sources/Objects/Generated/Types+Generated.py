@@ -2,97 +2,6 @@ from typing import List, Optional
 from Helpers import NewTypeArguments, generated_warning
 from Sourcery import TypeInfo, SwiftInitializerInfo, get_types
 
-# ===============
-# === Helpers ===
-# ===============
-
-class PropertyInLayout:
-    def __init__(self, swift_name: str, swift_type: str, declared_in_type: Optional[TypeInfo] = None):
-        self.swift_name = swift_name
-        self.swift_type = swift_type
-        self.declared_in_type = declared_in_type
-        self.pointer_property_name = swift_name + 'Ptr'
-        self.layout_offset_property_name = swift_name + 'Offset'
-
-def print_layout(swift_type_name: str,
-                 initial_offset: str,
-                 initial_alignment: str,
-                 fields: List[PropertyInLayout]):
-    print(f'  /// Arrangement of fields in memory.')
-    print(f'  ///')
-    print(f'  /// This type was automatically generated based on `{swift_type_name}` fields')
-    print(f'  /// with `sourcery: storedProperty` annotation.')
-    print(f'  internal struct Layout {{')
-
-    for p in fields:
-        print(f'    internal let {p.layout_offset_property_name}: Int')
-
-    print(f'    internal let size: Int')
-    print(f'    internal let alignment: Int')
-    print()
-    print(f'    internal init() {{')
-    print(f'      let layout = PyMemory.GenericLayout(')
-    print(f'        initialOffset: {initial_offset},')
-    print(f'        initialAlignment: {initial_alignment},')
-
-    if len(fields) == 0:
-        print('        fields: []')
-    else:
-        print('        fields: [')
-
-        for index, p in enumerate(fields):
-            is_last = index == len(fields) - 1
-            comma = '' if is_last else ','
-            declared_in = '' if p.declared_in_type is None else p.declared_in_type.swift_type_name + '.'
-            print(f'          PyMemory.FieldLayout(from: {p.swift_type}.self){comma} // {declared_in}{p.swift_name}')
-
-        print('        ]')
-
-    print('      )')
-    print()
-
-    print(f'      assert(layout.offsets.count == {len(fields)})')
-
-    for index, p in enumerate(fields):
-        print(f'      self.{p.layout_offset_property_name} = layout.offsets[{index}]')
-
-    print('      self.size = layout.size')
-    print('      self.alignment = layout.alignment')
-    print('    }')
-    print('  }')
-    print()
-    print(f'  /// Arrangement of fields in memory.')
-    print('  internal static let layout = Layout()')
-
-def print_pointer_properties(properties_base: List[PropertyInLayout], properties_type: List[PropertyInLayout]):
-    for p in properties_base:
-        swift_type_name = p.declared_in_type.swift_type_name
-        print(f'  /// Property from base class: `{swift_type_name}.{p.swift_name}`.')
-        print(f'  internal var {p.pointer_property_name}: Ptr<{p.swift_type}> {{ Ptr(self.ptr, offset: {swift_type_name}.layout.{p.layout_offset_property_name}) }}')
-
-    for p in properties_type:
-        if p.declared_in_type:
-            swift_type_name = p.declared_in_type.swift_type_name
-            print(f'  /// Property: `{swift_type_name}.{p.swift_name}`.')
-        print(f'  internal var {p.pointer_property_name}: Ptr<{p.swift_type}> {{ Ptr(self.ptr, offset: Self.layout.{p.layout_offset_property_name}) }}')
-
-def print_base_types_properties(properties_base: List[PropertyInLayout]):
-    for p in properties_base:
-        name = p.swift_name
-        typ = p.swift_type
-        pointer_property_name = p.pointer_property_name
-
-        swift_owner_type_name = p.declared_in_type.swift_type_name
-        print(f'  /// Property from base class: `{swift_owner_type_name}.{name}`.')
-
-        if name in ('__dict__', 'flags'):
-            print(f'  internal var {name}: {typ} {{')
-            print(f'    get {{ self.{pointer_property_name}.pointee }}')
-            print(f'    nonmutating set {{ self.{pointer_property_name}.pointee = newValue }}')
-            print(f'  }}')
-        else:
-            print(f'  internal var {name}: {typ} {{ self.{pointer_property_name}.pointee }}')
-
 # =========================================
 # === PyMemory + type/object types init ===
 # =========================================
@@ -167,14 +76,22 @@ extension PyMemory {{
 # === Single type ===
 # ===================
 
+class PropertyInLayout:
+    def __init__(self, swift_name: str, swift_type: str, declared_in_type: Optional[TypeInfo] = None):
+        self.swift_name = swift_name
+        self.swift_type = swift_type
+        self.declared_in_type = declared_in_type
+        self.pointer_property_name = swift_name + 'Ptr'
+        self.layout_offset_property_name = swift_name + 'Offset'
+
 def print_type_extension(t: TypeInfo):
     python_type_name = t.python_type_name
     swift_type_name = t.swift_type_name
     swift_type_name_without_py = swift_type_name[2:]
 
-    properties_type: List[PropertyInLayout] = []
+    properties_t: List[PropertyInLayout] = []
     for f in t.swift_properties:
-        properties_type.append(PropertyInLayout(f.swift_name, f.swift_type, t))
+        properties_t.append(PropertyInLayout(f.swift_name, f.swift_type, t))
 
     current_base = t.base_type_info
     properties_base: List[PropertyInLayout] = []
@@ -196,20 +113,108 @@ def print_type_extension(t: TypeInfo):
     print(f'  public static let pythonTypeName = "{t.python_type_name}"')
     print()
 
-    if t.base_type_info is None:
-        assert t.python_type_name == 'object'
-        initial_offset = '0'
-        initial_alignment = '0'
-    else:
-        base_swift_type_name = t.base_type_info.swift_type_name
-        initial_offset = base_swift_type_name + '.layout.size'
-        initial_alignment = base_swift_type_name + '.layout.alignment'
+    # ==============
+    # === Layout ===
+    # ==============
 
-    print_layout(swift_type_name, initial_offset, initial_alignment, properties_type)
+    print(f'  /// Arrangement of fields in memory.')
+    print(f'  ///')
+
+    if not properties_t:
+        assert t.base_type_info is not None, 'Expected PyObject to have \'some\' properties'
+        swift_base_type_name = t.base_type_info.swift_type_name
+
+        print(f'  /// `{swift_type_name}` does not have any properties with `sourcery: storedProperty` annotation,')
+        print(f'  /// so we will use the same layout as `{swift_base_type_name}`.')
+        print(f'  internal typealias Layout = {swift_base_type_name}.Layout')
+    else:
+
+        print(f'  /// This type was automatically generated based on `{swift_type_name}` properties')
+        print(f'  /// with `sourcery: storedProperty` annotation.')
+        print(f'  internal struct Layout {{')
+
+        for p in properties_t:
+            print(f'    internal let {p.layout_offset_property_name}: Int')
+
+        print(f'    internal let size: Int')
+        print(f'    internal let alignment: Int')
+        print()
+
+        if t.base_type_info is None:
+            assert t.python_type_name == 'object'
+            initial_offset = '0'
+            initial_alignment = '0'
+        else:
+            base_swift_type_name = t.base_type_info.swift_type_name
+            initial_offset = base_swift_type_name + '.layout.size'
+            initial_alignment = base_swift_type_name + '.layout.alignment'
+
+        print(f'    internal init() {{')
+        print(f'      let layout = PyMemory.GenericLayout(')
+        print(f'        initialOffset: {initial_offset},')
+        print(f'        initialAlignment: {initial_alignment},')
+        print('        fields: [')
+
+        for index, p in enumerate(properties_t):
+            is_last = index == len(properties_t) - 1
+            comma = '' if is_last else ','
+            declared_in = '' if p.declared_in_type is None else p.declared_in_type.swift_type_name + '.'
+            print(f'          PyMemory.FieldLayout(from: {p.swift_type}.self){comma} // {declared_in}{p.swift_name}')
+
+        print('        ]')
+        print('      )')
+
+        print()
+        print(f'      assert(layout.offsets.count == {len(properties_t)})')
+
+        for index, p in enumerate(properties_t):
+            print(f'      self.{p.layout_offset_property_name} = layout.offsets[{index}]')
+
+        print('      self.size = layout.size')
+        print('      self.alignment = layout.alignment')
+        print('    }')
+        print('  }')
+
     print()
-    print_pointer_properties(properties_base, properties_type)
+    print(f'  /// Arrangement of fields in memory.')
+    print('  internal static let layout = Layout()')
     print()
-    print_base_types_properties(properties_base)
+
+    # ==========================
+    # === Pointer properties ===
+    # ==========================
+
+    for p in properties_base:
+        swift_owner_type_name = p.declared_in_type.swift_type_name
+        print(f'  /// Property from base class: `{swift_owner_type_name}.{p.swift_name}`.')
+        print(f'  internal var {p.pointer_property_name}: Ptr<{p.swift_type}> {{ Ptr(self.ptr, offset: {swift_owner_type_name}.layout.{p.layout_offset_property_name}) }}')
+
+    for p in properties_t:
+        swift_owner_type_name = p.declared_in_type.swift_type_name
+        print(f'  /// Property: `{swift_owner_type_name}.{p.swift_name}`.')
+        print(f'  internal var {p.pointer_property_name}: Ptr<{p.swift_type}> {{ Ptr(self.ptr, offset: Self.layout.{p.layout_offset_property_name}) }}')
+
+    print()
+
+    # ==================
+    # === Properties ===
+    # ==================
+
+    for p in properties_base:
+        name = p.swift_name
+        typ = p.swift_type
+        pointer_property_name = p.pointer_property_name
+
+        swift_owner_type_name = p.declared_in_type.swift_type_name
+        print(f'  /// Property from base class: `{swift_owner_type_name}.{name}`.')
+
+        if name in ('__dict__', 'flags'):
+            print(f'  internal var {name}: {typ} {{')
+            print(f'    get {{ self.{pointer_property_name}.pointee }}')
+            print(f'    nonmutating set {{ self.{pointer_property_name}.pointee = newValue }}')
+            print(f'  }}')
+        else:
+            print(f'  internal var {name}: {typ} {{ self.{pointer_property_name}.pointee }}')
 
     if properties_base:
         print()
@@ -285,12 +290,12 @@ def print_type_extension(t: TypeInfo):
         print(f'    {current_type.swift_type_name}(ptr: ptr).beforeDeinitialize()')
         current_type = current_type.base_type_info
 
-    if properties_type:
+    if properties_t:
         print()
         print(f'    // Call \'deinitialize\' on all of our own properties.')
         print(f'    let zelf = {swift_type_name}(ptr: ptr)')
 
-        for p in properties_type:
+        for p in properties_t:
             print(f'    zelf.{p.pointer_property_name}.deinitialize()')
 
     if t.base_type_info is not None:
@@ -405,7 +410,10 @@ import VioletCompiler
 // - PyMemory.newTypeAndObjectTypes - because they have recursive dependency
 // - Then for each type:
 //   - static let pythonTypeName - name of the type in Python
-//   - static let layout - mainly field offsets
+//   - static let layout - field offsets for memory layout
+//   - var xxxPtr - pointer to property (with offset from layout)
+//   - var xxx - property from base class
+//   - func initializeBase(...) - call base initializer
 //   - static func deinitialize(ptr: RawPtr) - to deinitialize this object before deletion
 //   - static func downcast(py: Py, object: PyObject) -> [TYPE_NAME]?
 //   - static func invalidZelfArgument<T>(py: Py, object: PyObject, fnName: String) -> PyResult<T>
