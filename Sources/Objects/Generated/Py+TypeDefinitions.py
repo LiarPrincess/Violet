@@ -76,7 +76,9 @@ import VioletCore
     print(f'''\
     /// Init that will only initialize properties.
     /// (see comment at the top of this file)
-    internal init(memory: PyMemory) {{
+    internal init(_ py: Py) {{
+      let memory = py.memory
+
       // Requirements for 'self.object' and 'self.type':
       // 1. 'type' inherits from 'object'
       // 2. both 'type' and 'object' are instances of 'type'

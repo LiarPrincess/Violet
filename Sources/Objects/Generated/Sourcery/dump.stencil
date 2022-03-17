@@ -64,6 +64,12 @@ PyProperty|{{python_name}}|{{has_setter}}|{{swift_static_doc_property}}
 {# === Main === #}
 {# ============ #}
 
+{% for type in types.structs where type.name == "Py" %}
+{% for field in type.allVariables|annotated:"storedProperty" %}
+PySwiftProperty|{{field.name}}|{{field.typeName}}
+{% endfor %}
+{% endfor %}
+
 {% for type in types.structs|annotated:"pytype" %}
 {% set python_name %}{{ type.annotations.pytype }}{% endset %}
 {% call print_type "Type" python_name type %}

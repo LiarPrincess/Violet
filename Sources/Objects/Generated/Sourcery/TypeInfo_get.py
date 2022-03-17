@@ -1,5 +1,5 @@
 import os.path
-from typing import List, Optional, Union
+from typing import List, Optional
 
 from Sourcery.TypeInfo import TypeInfo, SwiftProperty, SwiftInitializerInfo, PyPropertyInfo, PyFunctionInfo
 from Sourcery.validateSwiftFunctionName import validateSwiftFunctionNames
@@ -31,7 +31,10 @@ def get_types() -> List[TypeInfo]:
             assert len(split) >= 1
 
             line_type = split[0]
-            if line_type == 'Type' or line_type == 'ErrorType':
+            if line_type == 'PySwiftProperty':
+                # We are not interested in 'Py'
+                pass
+            elif line_type == 'Type' or line_type == 'ErrorType':
                 commit_current_type()  # We are starting new type
 
                 assert len(split) == 4

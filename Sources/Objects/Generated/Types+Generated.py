@@ -128,7 +128,6 @@ def print_type_extension(t: TypeInfo):
         print(f'  /// so we will use the same layout as `{swift_base_type_name}`.')
         print(f'  internal typealias Layout = {swift_base_type_name}.Layout')
     else:
-
         print(f'  /// This type was automatically generated based on `{swift_type_name}` properties')
         print(f'  /// with `sourcery: storedProperty` annotation.')
         print(f'  internal struct Layout {{')
@@ -176,7 +175,7 @@ def print_type_extension(t: TypeInfo):
         print('  }')
 
     print()
-    print(f'  /// Arrangement of fields in memory.')
+    print('  /// Arrangement of fields in memory.')
     print('  internal static let layout = Layout()')
     print()
 
