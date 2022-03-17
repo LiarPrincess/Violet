@@ -148,7 +148,12 @@ extension Py {
   internal func getString(data: Data, encoding: GetStringEncoding) -> String? {
     let _encoding: PyString.Encoding
     switch encoding {
-    case .default: _encoding = self.sys.defaultEncoding
+    case .default:
+      let sysEncoding = self.sys.defaultEncoding
+      switch PyString.Encoding.from(self, string: sysEncoding) {
+      case .value(let e): _encoding = e
+      case .error: trap("Unable to parse 'sys.defaultEncoding' (\(sysEncoding.value))?")
+      }
     case .value(let e): _encoding = e
     }
 

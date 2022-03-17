@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // cSpell:ignore ceval
@@ -85,146 +84,129 @@ public final class Sys: PyModuleImplementation {
   // MARK: - Properties
 
   /// This dict will be used inside our `PyModule` instance.
-  public let __dict__ = Py.newDict()
+  internal let __dict__: PyDict
+  internal let py: Py
 
   /// Initial value for `sys.flags`.
-  public let flags = Flags(
-    arguments: Py.config.arguments,
-    environment: Py.config.environment
-  )
-
-  /// Initial value for `sys.version_info`.
-  public var versionInfo: VersionInfo {
-    return Configure.pythonVersion
-  }
-
-  /// Initial value for `sys.hex_version`.
-  public var hexVersion: UInt32 {
-    return self.versionInfo.hexVersion
-  }
-
-  /// Initial value for `sys.implementation`.
-  public var implementation: ImplementationInfo {
-    return Configure.implementation
-  }
-
-  /// Initial value for `sys.version`.
-  public private(set) lazy var version: String = {
-    let v = self.versionInfo
-    let i = self.implementation.version
-    return "Python \(v.major).\(v.minor).\(v.micro) " +
-           "(Violet \(i.major).\(i.minor).\(i.micro))"
-  }()
-
+  public let flags: Flags
   /// Initial value for `sys.hash_info`.
   public let hashInfo = HashInfo()
 
-  /// This value will be returned in `sys.getdefaultencoding`.
-  public var defaultEncoding: PyString.Encoding {
-    return .utf8
-  }
-
+  /// Initial value for `sys.version_info`.
+  public let pythonVersion = Configure.pythonVersion
+  /// Initial value for `sys.implementation`.
+  public let implementation = Configure.implementation
+  /// Initial value for `sys.version`.
+  public let versionString: PyString
   /// Initial value for `sys.platform`.
-  private var platform: String {
-    #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
-    return "darwin"
-    #elseif os(Linux) || os(Android)
-    return "linux"
-    #elseif os(Cygwin) // Is this even a thing?
-    return "cygwin"
-    #elseif os(Windows)
-    return "win32"
-    #else
-    return "unknown"
-    #endif
-  }
-
+  public let platform: PyString
   /// Initial value for `sys.copyright`.
-  public var copyright: String {
-    return Lyrics.galavant // Very important…
-  }
+  public let copyright: PyString
 
-  /// This is not stored in `__dict__`!
+  /// sys.getdefaultencoding()
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.getdefaultencoding).
+  public let defaultEncoding: PyString
+  /// sys.getrecursionlimit()
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.getrecursionlimit).
   ///
+  /// This is not stored in `__dict__`!
   /// CPython stores it in `_PyRuntime.ceval.recursion_limit`.
-  internal var recursionLimit = Py.newInt(1_000)
+  internal var recursionLimit: PyInt
 
   // MARK: - Init
 
-  internal init() {
+  internal init(_ py: Py) {
+    self.py = py
+    self.__dict__ = py.newDict()
+
+    self.platform = py.newString(Self.platformString)
+    self.copyright = py.newString(Lyrics.galavant) // Very important…
+    self.recursionLimit = py.newInt(1000)
+
+    let config = py.config
+    self.flags = Flags(arguments: config.arguments, environment: config.environment )
+
+    let defaultEncoding = PyString.Encoding.utf8
+    self.defaultEncoding = py.newString(defaultEncoding.description)
+
+    let p = self.pythonVersion
+    let i = self.implementation
+    let iv = i.version
+    let pythonVersion = "Python \(p.major).\(p.minor).\(p.micro)"
+    let implementationVersion = "(\(i.name) \(iv.major).\(iv.minor).\(iv.micro))"
+    self.versionString = py.newString("\(pythonVersion) (\(implementationVersion))")
+
     self.fill__dict__()
+  }
+
+  private static var platformString: String {
+#if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
+    return "darwin"
+#elseif os(Linux) || os(Android)
+    return "linux"
+#elseif os(Cygwin) // Is this even a thing?
+    return "cygwin"
+#elseif os(Windows)
+    return "win32"
+#else
+    return "unknown"
+#endif
   }
 
   // MARK: - Fill dict
 
   // swiftlint:disable:next function_body_length
   private func fill__dict__() {
-    self.setOrTrap(.ps1, to: Py.newString(">>> "))
-    self.setOrTrap(.ps2, to: Py.newString("... "))
+    let ps1 = self.py.newString(">>> ")
+    let ps2 = self.py.newString("... ")
+    self.setOrTrap(.ps1, value: ps1)
+    self.setOrTrap(.ps2, value: ps2)
 
-    self.setOrTrap(.argv, to: self.createInitialArgv())
-    self.setOrTrap(.flags, to: self.createInitialFlags())
-    self.setOrTrap(.executable, to: Py.newString(Py.config.executablePath))
-    self.setOrTrap(.platform, to: Py.newString(self.platform))
-    self.setOrTrap(.copyright, to: Py.newString(self.copyright))
-    self.setOrTrap(.hash_info, to: self.createInitialHashInfo())
-    self.setOrTrap(.tracebacklimit, to: Py.newInt(1_000))
-    self.setOrTrap(.maxsize, to: Py.newInt(Int.max))
+    self.setOrTrap(.argv, value: self.createInitialArgv())
+    self.setOrTrap(.flags, value: self.createInitialFlags())
+    self.setOrTrap(.executable, value: self.createInitialExecutablePath())
+    self.setOrTrap(.platform, value: self.platform)
+    self.setOrTrap(.copyright, value: self.copyright)
+    self.setOrTrap(.hash_info, value: self.createInitialHashInfo())
+    self.setOrTrap(.tracebacklimit, value: self.py.newInt(1000))
+    self.setOrTrap(.maxsize, value: self.py.newInt(Int.max))
+    self.setOrTrap(.warnoptions, value: self.createInitialWarnOptions())
 
-    self.setOrTrap(.modules, to: Py.newDict())
-    self.setOrTrap(.builtin_module_names, to: Py.emptyTuple)
+    self.setOrTrap(.modules, value: self.py.newDict())
+    self.setOrTrap(.builtin_module_names, value: self.py.emptyTuple)
 
     let prefix = self.createInitialPrefix()
     let path = self.createInitialPath(prefix: prefix)
-    self.setOrTrap(.meta_path, to: Py.newList())
-    self.setOrTrap(.path_hooks, to: Py.newList())
-    self.setOrTrap(.path_importer_cache, to: Py.newDict())
-    self.setOrTrap(.path, to: path)
-    self.setOrTrap(.prefix, to: prefix)
+    self.setOrTrap(.prefix, value: prefix)
+    self.setOrTrap(.path, value: path)
+    self.setOrTrap(.meta_path, value: self.py.newList())
+    self.setOrTrap(.path_hooks, value: self.py.newList())
+    self.setOrTrap(.path_importer_cache, value: self.py.newDict())
 
     let stdin = self.createInitialStdin()
     let stdout = self.createInitialStdout()
     let stderr = self.createInitialStderr()
-    self.setOrTrap(.__stdin__, to: stdin)
-    self.setOrTrap(.__stdout__, to: stdout)
-    self.setOrTrap(.__stderr__, to: stderr)
-    self.setOrTrap(.stdin, to: stdin)
-    self.setOrTrap(.stdout, to: stdout)
-    self.setOrTrap(.stderr, to: stderr)
+    self.setOrTrap(.__stdin__, value: stdin)
+    self.setOrTrap(.__stdout__, value: stdout)
+    self.setOrTrap(.__stderr__, value: stderr)
+    self.setOrTrap(.stdin, value: stdin)
+    self.setOrTrap(.stdout, value: stdout)
+    self.setOrTrap(.stderr, value: stderr)
 
-    self.setOrTrap(.version, to: Py.newString(self.version))
-    self.setOrTrap(.version_info, to: self.createInitialVersionInfo())
-    self.setOrTrap(.implementation, to: self.createInitialImplementation())
-    self.setOrTrap(.hexversion, to: Py.newInt(self.hexVersion))
+    self.setOrTrap(.version, value: self.versionString)
+    self.setOrTrap(.version_info, value: self.createInitialVersionInfo())
+    self.setOrTrap(.implementation, value: self.createInitialImplementation())
+    self.setOrTrap(.hexversion, value: self.createInitialHexVersion())
 
-    self.setOrTrap(.warnoptions, to: self.createInitialWarnOptions())
+    self.setOrTrap(.displayhook, doc: Self.displayhookDoc, fn: Self.displayhook(_:module:object:))
+    self.setOrTrap(.excepthook, doc: Self.excepthookDoc, fn: Self.excepthook(_:module:type:value:traceback:))
 
-    // Note that capturing 'self' is intended.
-    // See comment at the top of 'PyModuleImplementation' for details.
-    self.setOrTrap(.exit,
-                   doc: Self.exitDoc,
-                   fn: Self.exit(status:))
-    self.setOrTrap(.intern,
-                   doc: Self.internDoc,
-                   fn: self.intern(value:))
-    self.setOrTrap(.displayhook,
-                   doc: Self.displayhookDoc,
-                   fn: self.displayhook(value:))
-    self.setOrTrap(.getdefaultencoding,
-                   doc: Self.getDefaultEncodingDoc,
-                   fn: self.getDefaultEncoding)
-    self.setOrTrap(.excepthook,
-                   doc: Self.excepthookDoc,
-                   fn: self.excepthook(type:value:traceback:))
-    self.setOrTrap(._getframe,
-                   doc: Self.getFrameDoc,
-                   fn: self._getFrame(depth:))
-    self.setOrTrap(.getrecursionlimit,
-                   doc: Self.getRecursionLimitDoc,
-                   fn: self.getRecursionLimit)
-    self.setOrTrap(.setrecursionlimit,
-                   doc: Self.setRecursionLimitDoc,
-                   fn: self.setRecursionLimit(limit:))
+    self.setOrTrap(.exit, doc: Self.exitDoc, fn: Self.exit(_:module:status:))
+    self.setOrTrap(.intern, doc: Self.internDoc, fn: Self.intern(_:module:string:))
+    self.setOrTrap(.getdefaultencoding, doc: Self.getDefaultEncodingDoc, fn: Self.getdefaultencoding(_:module:))
+    self.setOrTrap(.getrecursionlimit, doc: Self.getRecursionLimitDoc, fn: Self.getrecursionlimit(_:module:))
+    self.setOrTrap(.setrecursionlimit, doc: Self.setRecursionLimitDoc, fn: Self.setrecursionlimit(_:module:limit:))
+    self.setOrTrap(._getframe, doc: Self.getFrameDoc, fn: Self._getframe(_:module:depth:))
   }
 
   // MARK: - Properties
@@ -243,8 +225,7 @@ public final class Sys: PyModuleImplementation {
     internal static let maxsize = Properties(value: "maxsize")
 
     internal static let modules = Properties(value: "modules")
-    internal static let builtin_module_names =
-      Properties(value: "builtin_module_names")
+    internal static let builtin_module_names = Properties(value: "builtin_module_names")
 
     internal static let meta_path = Properties(value: "meta_path")
     internal static let path_hooks = Properties(value: "path_hooks")
@@ -289,5 +270,3 @@ public final class Sys: PyModuleImplementation {
     }
   }
 }
-
-*/

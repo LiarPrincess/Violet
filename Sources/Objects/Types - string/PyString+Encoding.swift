@@ -115,6 +115,10 @@ extension PyString {
         return .typeError(py, message: message)
       }
 
+      return Self.from(py, string: string)
+    }
+
+    internal static func from(_ py: Py, string: PyString) -> PyResult<Encoding> {
       return Self.from(py, string: string.value)
     }
 

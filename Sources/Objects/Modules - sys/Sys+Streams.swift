@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // In CPython:
@@ -9,20 +8,20 @@ extension Sys {
 
   // MARK: - Stdin
 
-  /// sys.__stdin__
+  /// `sys.__stdin__`
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
   public func get__stdin__() -> PyResult<PyTextFile> {
     return self.getTextFile(.__stdin__)
   }
 
-  /// sys.stdin
+  /// `sys.stdin`
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.stdin).
   public func getStdin() -> PyResult<PyTextFile> {
     return self.getTextFile(.stdin)
   }
 
   public func setStdin(to value: PyObject) -> PyBaseException? {
-    return self.set(.stdin, to: value)
+    return self.set(.stdin, value: value)
   }
 
   // MARK: - Stdout
@@ -40,7 +39,7 @@ extension Sys {
   }
 
   public func setStdout(to value: PyObject) -> PyBaseException? {
-    return self.set(.stdout, to: value)
+    return self.set(.stdout, value: value)
   }
 
   // MARK: - Stderr
@@ -58,7 +57,7 @@ extension Sys {
   }
 
   public func setStderr(to value: PyObject) -> PyBaseException? {
-    return self.set(.stderr, to: value)
+    return self.set(.stderr, value: value)
   }
 
   // MARK: - Stream or none
@@ -80,21 +79,21 @@ extension Sys {
   private func getStreamOrNone(property: Sys.Properties) -> StreamOrNone {
     switch self.get(property) {
     case .value(let object):
-      if PyCast.isNone(object) {
+      if self.py.cast.isNone(object) {
         return .none
       }
 
-      if let file = PyCast.asTextFile(object) {
+      if let file = self.py.cast.asTextFile(object) {
         return .value(file)
       }
 
-      let msg = self.createPropertyTypeError(
+      let error: PyTypeError = self.createPropertyTypeError(
         property,
         got: object,
         expectedType: "textFile"
       )
 
-      return .error(Py.newTypeError(msg: msg))
+      return .error(error.asBaseException)
 
     case let .error(e):
       return .error(e)
@@ -108,12 +107,14 @@ extension Sys {
     case __stdin__
     /// `sys.stdin`
     case stdin
+  }
 
-    public func getFile() -> PyResult<PyTextFile> {
-      switch self {
-      case .__stdin__: return Py.sys.get__stdin__()
-      case .stdin: return Py.sys.getStdin()
-      }
+  public func getFile(stream: InputStream) -> PyResult<PyTextFile> {
+    switch stream {
+    case .__stdin__:
+      return self.get__stdin__()
+    case .stdin:
+      return self.getStdin()
     }
   }
 
@@ -126,35 +127,36 @@ extension Sys {
     case __stderr__
     /// `sys.stderr`
     case stderr
+  }
 
-    public func getFile() -> PyResult<PyTextFile> {
-      switch self {
-      case .__stdout__: return Py.sys.get__stdout__()
-      case .stdout: return Py.sys.getStdout()
-      case .__stderr__: return Py.sys.get__stderr__()
-      case .stderr: return Py.sys.getStderr()
-      }
+  public func getFile(stream: OutputStream) -> PyResult<PyTextFile> {
+    switch stream {
+    case .__stdout__:
+      return self.get__stdout__()
+    case .stdout:
+      return self.getStdout()
+    case .__stderr__:
+      return self.get__stderr__()
+    case .stderr:
+      return self.getStderr()
     }
   }
 
   // MARK: - Initial
 
   internal func createInitialStdin() -> PyTextFile {
-    return self.createStdio(name: "<stdin>",
-                            fd: Py.config.standardInput,
-                            mode: .read)
+    let fd = self.py.config.standardInput
+    return self.createStdio(name: "<stdin>", fd: fd, mode: .read)
   }
 
   internal func createInitialStdout() -> PyTextFile {
-    return self.createStdio(name: "<stdout>",
-                            fd: Py.config.standardOutput,
-                            mode: .write)
+    let fd = self.py.config.standardOutput
+    return self.createStdio(name: "<stdout>", fd: fd, mode: .write)
   }
 
   internal func createInitialStderr() -> PyTextFile {
-    return self.createStdio(name: "<stderr>",
-                            fd: Py.config.standardError,
-                            mode: .write)
+    let fd = self.py.config.standardError
+    return self.createStdio(name: "<stderr>", fd: fd, mode: .write)
   }
 
   /// static PyObject*
@@ -162,13 +164,11 @@ extension Sys {
   private func createStdio(name: String,
                            fd: FileDescriptorType,
                            mode: FileMode) -> PyTextFile {
-    return PyMemory.newTextFile(name: name,
-                                fd: fd,
-                                mode: mode,
-                                encoding: Unimplemented.stdioEncoding,
-                                errorHandling: Unimplemented.stdioErrors,
-                                closeOnDealloc: false)
+    return self.py.newTextFile(name: name,
+                               fd: fd,
+                               mode: mode,
+                               encoding: Unimplemented.stdioEncoding,
+                               errorHandling: Unimplemented.stdioErrors,
+                               closeOnDealloc: false)
   }
 }
-
-*/

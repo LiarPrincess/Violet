@@ -30,6 +30,7 @@ public struct Py {
 
   public var delegate: PyDelegate { fatalError() }
   public var fileSystem: PyFileSystem { fatalError() }
+  public var config: PyConfig { fatalError() }
 
   internal var builtins: Builtins { fatalError() }
   internal var sys: Sys { fatalError() }

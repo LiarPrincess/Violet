@@ -1,11 +1,8 @@
-/* MARKER
 import VioletCore
 
 // In CPython:
 // Python -> sysmodule.c
 // https://docs.python.org/3.7/library/sys.html
-
-// MARK: - Builtin module names
 
 extension Sys {
 
@@ -18,14 +15,16 @@ extension Sys {
     return self.getTuple(.builtin_module_names)
   }
 
-  public func setBuiltinModuleNames(to value: PyObject) -> PyBaseException? {
-    return self.set(.builtin_module_names, to: value)
+  public func setBuiltinModuleNames(_ value: PyObject) -> PyBaseException? {
+    return self.set(.builtin_module_names, value: value)
   }
-}
 
-// MARK: - Modules
+  // MARK: - Modules
 
-extension Sys {
+  internal static func modules(_ py: Py, module: PyObject) -> PyResult<PyObject> {
+    let result = py.sys.getModules()
+    return PyResult(result)
+  }
 
   /// sys.modules
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.modules).
@@ -36,8 +35,8 @@ extension Sys {
     return self.getDict(.modules)
   }
 
-  public func setModules(to value: PyObject) -> PyBaseException? {
-    return self.set(.modules, to: value)
+  public func setModules(_ value: PyObject) -> PyBaseException? {
+    return self.set(.modules, value: value)
   }
 
   public enum GetModuleResult {
@@ -48,6 +47,10 @@ extension Sys {
     case error(PyBaseException)
   }
 
+  public func getModule(name: PyString) -> GetModuleResult {
+    return self.getModule(name: name.asObject)
+  }
+
   public func getModule(name: PyObject) -> GetModuleResult {
     let modules: PyDict
     switch self.getModules() {
@@ -55,18 +58,17 @@ extension Sys {
     case let .error(e): return .error(e)
     }
 
-    switch modules.get(key: name) {
+    switch modules.get(self.py, key: name) {
     case .value(let o):
-      if let m = PyCast.asModule(o) {
+      if let m = self.py.cast.asModule(o) {
         return .module(m)
       }
 
       return .notModule(o)
 
     case .notFound:
-      let e = Py.newKeyError(key: name)
-      return .notFound(e)
-
+      let error = self.py.newKeyError(key: name)
+      return .notFound(error.asBaseException)
     case .error(let e):
       return .error(e)
     }
@@ -74,7 +76,7 @@ extension Sys {
 
   public func addModule(module: PyModule) -> PyBaseException? {
     let name: PyObject
-    switch module.getName() {
+    switch module.getName(self.py) {
     case let .value(n): name = n
     case let .error(e): return e
     }
@@ -89,7 +91,8 @@ extension Sys {
     case let .error(e): return e
     }
 
-    switch modulesDict.set(key: name, to: module) {
+    let moduleObject = module.asObject
+    switch modulesDict.set(self.py, key: name, value: moduleObject) {
     case .ok: return nil
     case .error(let e): return e
     }
@@ -103,7 +106,7 @@ extension Sys {
     var builtinModuleNames = [PyObject]()
     for module in modules {
       let name: PyObject
-      switch module.getName() {
+      switch module.getName(self.py) {
       case let .value(n): name = n
       case let .error(e):
         trap("Error when inserting '\(module)' to 'sys.builtin_module_names': " +
@@ -118,8 +121,8 @@ extension Sys {
       }
     }
 
-    let tuple = Py.newTuple(elements: builtinModuleNames)
-    if let e = self.setBuiltinModuleNames(to: tuple) {
+    let tuple = self.py.newTuple(elements: builtinModuleNames)
+    if let e = self.setBuiltinModuleNames(tuple.asObject) {
       trap("Error when setting 'sys.builtin_module_names': \(e)")
     }
   }
@@ -133,6 +136,12 @@ extension Sys {
       trap("Error when checking if 'builtin_module_names' was already filled: \(e)")
     }
   }
-}
 
-*/
+  // MARK: - Builtin module names
+
+  internal static func builtin_module_names(_ py: Py,
+                                            module: PyObject) -> PyResult<PyObject> {
+    let result = py.sys.getBuiltinModuleNames()
+    return PyResult(result)
+  }
+}

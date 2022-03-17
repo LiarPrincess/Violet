@@ -164,9 +164,13 @@ public struct PyModule: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
 
+    return zelf.getAttribute(py, name: name)
+  }
+
+  internal func getAttribute(_ py: Py, name: PyObject) -> PyResult<PyObject> {
     switch AttributeHelper.extractName(py, name: name) {
     case let .value(n):
-      return Self.getAttribute(py, zelf: zelf, name: n)
+      return self.getAttribute(py, name: n)
     case let .error(e):
       return .error(e)
     }
@@ -174,11 +178,9 @@ public struct PyModule: PyObjectMixin {
 
   /// static PyObject*
   /// module_getattro(PyModuleObject *m, PyObject *name)
-  private static func getAttribute(_ py: Py,
-                                   zelf: PyModule,
-                                   name: PyString) -> PyResult<PyObject> {
-    let zelfObject = zelf.asObject
-    let attribute = AttributeHelper.getAttribute(py, object: zelfObject, name: name)
+  internal func getAttribute(_ py: Py, name: PyString) -> PyResult<PyObject> {
+    let selfObject = self.asObject
+    let attribute = AttributeHelper.getAttribute(py, object: selfObject, name: name)
 
     switch attribute {
     case let .value(v):
@@ -191,9 +193,9 @@ public struct PyModule: PyObjectMixin {
       return .error(e)
     }
 
-    let dict = zelf.getDict(py)
+    let dict = self.getDict(py)
     if let getAttr = dict.get(py, id: .__getattr__) {
-      switch py.call(callable: getAttr, args: [zelfObject, name.asObject]) {
+      switch py.call(callable: getAttr, args: [selfObject, name.asObject]) {
       case .value(let r):
         return .value(r)
       case .error(let e),
@@ -206,7 +208,7 @@ public struct PyModule: PyObjectMixin {
     let attributeName = attributeNameRepr.quoted
 
     var moduleName = "<unknown module name>"
-    switch zelf.getNameString(py) {
+    switch self.getNameString(py) {
     case .string(let s): moduleName = s
     case .stringConversionFailed,
          .namelessModule: break
@@ -227,7 +229,28 @@ public struct PyModule: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "__setattr__")
     }
 
-    return AttributeHelper.setAttribute(py, object: zelf.asObject, name: name, value: value)
+    return zelf.setAttribute(py, name: name, value: value)
+  }
+
+  internal func setAttribute(_ py: Py,
+                             name: PyObject,
+                             value: PyObject?) -> PyResult<PyObject> {
+    switch AttributeHelper.extractName(py, name: name) {
+    case let .value(n):
+      return self.setAttribute(py, name: n, value: value)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  internal func setAttribute(_ py: Py,
+                             name: PyString,
+                             value: PyObject?) -> PyResult<PyObject> {
+    let selfObject = self.asObject
+    return AttributeHelper.setAttribute(py,
+                                        object: selfObject,
+                                        name: name,
+                                        value: value)
   }
 
   // MARK: - Del attribute
