@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // In CPython:
@@ -15,21 +14,13 @@ public final class Builtins: PyModuleImplementation {
     Noteworthy: None is the `nil' object; Ellipsis represents `...' in slices.
     """
 
-  public var none: PyNone { return Py.none }
-  public var ellipsis: PyEllipsis { return Py.ellipsis }
-  public var notImplemented: PyNotImplemented { return Py.notImplemented }
-
-  public var `true`: PyBool { return Py.true }
-  public var `false`: PyBool { return Py.false }
-
-  // MARK: - Dict
-
   /// This dict will be used inside our `PyModule` instance.
-  internal private(set) lazy var __dict__ = Py.newDict()
+  internal let __dict__: PyDict
+  internal let py: Py
 
-  // MARK: - Init
-
-  internal init() {
+  internal init(_ py: Py) {
+    self.py = py
+    self.__dict__ = self.py.newDict()
     self.fill__dict__()
   }
 
@@ -193,5 +184,3 @@ public final class Builtins: PyModuleImplementation {
     }
   }
 }
-
-*/

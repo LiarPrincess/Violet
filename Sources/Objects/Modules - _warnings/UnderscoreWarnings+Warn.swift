@@ -11,14 +11,12 @@ private let arguments = ArgumentParser(
 
 extension UnderscoreWarnings {
 
-  internal static var warnDoc: String {
-    return """
+  internal static let warnDoc = """
       warn($module, /, message, category=None, stacklevel=1, source=None)
       --
 
       Issue a warning, or maybe ignore it or raise an exception.
       """
-  }
 
   /// Doc:
   /// https://docs.python.org/3/library/warnings.html#warnings.warn
