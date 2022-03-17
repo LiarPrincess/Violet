@@ -65,7 +65,9 @@ import VioletCore
     print('    // MARK: - Stage 1 - init')
     print()
     print('    /// Init that will only initialize properties.')
-    print('    internal init(memory: PyMemory, typeType: PyType, objectType: PyType) {')
+    print('    internal init(_ py: Py, typeType: PyType, objectType: PyType) {')
+    print('      let memory = py.memory')
+    print()
 
     for t in types:
         python_type_name = t.python_type_name

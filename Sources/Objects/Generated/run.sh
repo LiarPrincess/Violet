@@ -23,6 +23,8 @@ sourcery \
   --output "$GENERATED/Sourcery/dump.txt" \
   --quiet
 
+echo "Py+Generated"
+python3 "$GENERATED/Py+Generated.py" > "$GENERATED/Py+Generated.swift"
 echo "Types+Generated"
 python3 "$GENERATED/Types+Generated.py" > "$GENERATED/Types+Generated.swift"
 echo "PyStaticCall"

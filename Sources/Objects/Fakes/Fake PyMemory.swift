@@ -5,9 +5,24 @@ public struct PyMemory {
 
   // MARK: - Allocate
 
+  internal func allocatePy() -> RawPtr {
+    let size = Py.layout.size
+    let alignment = Py.layout.alignment
+    return RawPtr.allocate(byteCount: size, alignment: alignment)
+  }
+
   public func allocate(size: Int, alignment: Int) -> RawPtr {
     assert(size >= PyObject.layout.size)
     return RawPtr.allocate(byteCount: size, alignment: alignment)
+  }
+
+  // MARK: - Destroy
+
+  internal func destroyPy(_ py: Py) {
+    // 1. allObjects.deinitialize
+    // 2. py.deinitializeNonObjectProperties (but not memory - this one in 'py')
+    // 3. allObjects.deallocate()
+    // 4. py.deallocate()
   }
 
   // MARK: - Generic layout
