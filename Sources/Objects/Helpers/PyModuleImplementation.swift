@@ -149,13 +149,24 @@ extension PyModuleImplementation {
     return self.createPropertyTypeError(name, got: object, expectedType: "textFile")
   }
 
-  internal func createPropertyTypeError<T>(_ name: Properties,
-                                           got object: PyObject,
-                                           expectedType: String) -> PyResult<T> {
+  internal func createPropertyTypeError(_ name: Properties,
+                                        got object: PyObject,
+                                        expectedType: String) -> PyTypeError {
     let module = Self.moduleName
     let objectType = object.typeName
     let message = "expected '\(module).\(name)' to be \(expectedType) not \(objectType)"
-    return .typeError(self.py, message: message)
+    return self.py.newTypeError(message: message)
+  }
+
+
+  internal func createPropertyTypeError<T>(_ name: Properties,
+                                           got object: PyObject,
+                                           expectedType: String) -> PyResult<T> {
+    let error: PyTypeError = self.createPropertyTypeError(name,
+                                                          got: object,
+                                                          expectedType: expectedType)
+
+    return .error(error.asBaseException)
   }
 
   // MARK: - Set
@@ -173,8 +184,9 @@ extension PyModuleImplementation {
     }
   }
 
-  internal func setOrTrap(_ name: Properties, value: PyObject) {
-    if let e = self.set(name, value: value) {
+  internal func setOrTrap<T: PyObjectMixin>(_ name: Properties, value: T) {
+    let valueObject = value.asObject
+    if let e = self.set(name, value: valueObject) {
       trap("Error when inserting '\(name)' to '\(Self.moduleName)': \(e)")
     }
   }
@@ -255,6 +267,26 @@ extension PyModuleImplementation {
     _ name: Properties,
     doc: String?,
     fn: @escaping (Py, PyObject, PyObject?, PyObject?) -> PyResult<PyObject>
+  ) {
+    let wrapper = FunctionWrapper(name: name.description, fn: fn)
+    self.setOrTrap(name, doc: doc, fn: wrapper)
+  }
+
+  // MARK: - Set positional quartary
+
+  internal func setOrTrap(
+    _ name: Properties,
+    doc: String?,
+    fn: @escaping (Py, PyObject, PyObject, PyObject, PyObject) -> PyResult<PyObject>
+  ) {
+    let wrapper = FunctionWrapper(name: name.description, fn: fn)
+    self.setOrTrap(name, doc: doc, fn: wrapper)
+  }
+
+  internal func setOrTrap(
+    _ name: Properties,
+    doc: String?,
+    fn: @escaping (Py, PyObject, PyObject, PyObject, PyObject?) -> PyResult<PyObject>
   ) {
     let wrapper = FunctionWrapper(name: name.description, fn: fn)
     self.setOrTrap(name, doc: doc, fn: wrapper)

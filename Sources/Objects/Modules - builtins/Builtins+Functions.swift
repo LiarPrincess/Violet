@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // swiftlint:disable file_length
@@ -25,62 +24,64 @@ import VioletCore
 // MARK: - any, all, sum
 
 // CPython does this differently.
-private let sumArguments = ArgumentParser.createOrTrap(
+private let sumArguments = ArgumentParser(
   arguments: ["", "start"],
   format: "O|O:sum"
 )
 
 extension Builtins {
 
-  internal static var anyDoc: String {
-    return """
+  internal static let anyDoc = """
     Return True if bool(x) is True for any x in the iterable.
 
     If the iterable is empty, return False.
     """
-  }
 
   /// any(iterable)
   /// See [this](https://docs.python.org/3/library/functions.html#any)
-  internal static func any(iterable: PyObject) -> PyResult<Bool> {
-    return Py.any(iterable: iterable)
+  internal static func any(_ py: Py,
+                           module: PyObject,
+                           iterable: PyObject) -> PyResult<PyObject> {
+    let result = py.any(iterable: iterable)
+    return PyResult(py, result)
   }
 
-  internal static var allDoc: String {
-    return """
+  internal static let allDoc = """
     Return True if bool(x) is True for all values x in the iterable.
 
     If the iterable is empty, return True.
     """
-  }
 
   /// all(iterable)
   /// See [this](https://docs.python.org/3/library/functions.html#all)
-  internal static func all(iterable: PyObject) -> PyResult<Bool> {
-    return Py.all(iterable: iterable)
+  internal static func all(_ py: Py,
+                           module: PyObject,
+                           iterable: PyObject) -> PyResult<PyObject> {
+    let result = py.all(iterable: iterable)
+    return PyResult(py, result)
   }
 
-  internal static var sumDoc: String {
-    return """
+  internal static let sumDoc = """
     Return the sum of a 'start' value (default: 0) plus an iterable of numbers
 
     When the iterable is empty, return the start value.
     This function is intended specifically for use with numeric values and may
     reject non-numeric types.
     """
-  }
 
   /// sum(iterable, /, start=0)
   /// See [this](https://docs.python.org/3/library/functions.html#sum)
-  internal static func sum(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
-    switch sumArguments.bind(args: args, kwargs: kwargs) {
+  internal static func sum(_ py: Py,
+                           module: PyObject,
+                           args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    switch sumArguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")
       assert(binding.optionalCount == 1, "Invalid optional argument count.")
 
       let iterable = binding.required(at: 0)
       let start = binding.optional(at: 1)
-      return Py.sum(iterable: iterable, start: start)
+      return py.sum(iterable: iterable, start: start)
     case let .error(e):
       return .error(e)
     }
@@ -91,70 +92,69 @@ extension Builtins {
 
 extension Builtins {
 
-  internal static var getattrDoc: String {
-    return """
+  internal static let getattrDoc = """
     getattr(object, name[, default]) -> value
 
     Get a named attribute from an object; getattr(x, 'y') is equivalent to x.y.
     When a default argument is given, it is returned when the attribute doesn't
     exist; without it, an exception is raised in that case.
     """
-  }
 
   /// getattr(object, name[, default])
   /// See [this](https://docs.python.org/3/library/functions.html#getattr)
-  internal static func getattr(object: PyObject,
+  internal static func getattr(_ py: Py,
+                               module: PyObject,
+                               object: PyObject,
                                name: PyObject,
                                default: PyObject? = nil) -> PyResult<PyObject> {
-    return Py.getAttribute(object: object,
-                           name: name,
-                           default: `default`)
+    return py.getAttribute(object: object, name: name, default: `default`)
   }
 
-  internal static var hasattrDoc: String {
-    return """
+  internal static let hasattrDoc = """
     Return whether the object has an attribute with the given name.
 
     This is done by calling getattr(obj, name) and catching AttributeError.
     """
-  }
 
   /// hasattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#hasattr)
-  internal static func hasattr(object: PyObject,
-                               name: PyObject) -> PyResult<Bool> {
-    return Py.hasAttribute(object: object, name: name)
+  internal static func hasattr(_ py: Py,
+                               module: PyObject,
+                               object: PyObject,
+                               name: PyObject) -> PyResult<PyObject> {
+    let result = py.hasAttribute(object: object, name: name)
+    return PyResult(py, result)
   }
 
-  internal static var setattrDoc: String {
-    return """
+  internal static let setattrDoc = """
     Sets the named attribute on the given object to the specified value.
 
     setattr(x, 'y', v) is equivalent to ``x.y = v''
     """
-  }
 
   /// setattr(object, name, value)
   /// See [this](https://docs.python.org/3/library/functions.html#setattr)
-  internal static func setattr(object: PyObject,
+  internal static func setattr(_ py: Py,
+                               module: PyObject,
+                               object: PyObject,
                                name: PyObject,
-                               value: PyObject) -> PyResult<PyNone> {
-    return Py.setAttribute(object: object, name: name, value: value)
+                               value: PyObject) -> PyResult<PyObject> {
+    return py.setAttribute(object: object, name: name, value: value)
   }
 
-  internal static var delattrDoc: String {
-    return """
+  internal static let delattrDoc = """
     Deletes the named attribute from the given object.
 
     delattr(x, 'y') is equivalent to ``del x.y''
     """
-  }
 
   /// delattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#delattr)
-  internal static func delattr(object: PyObject,
-                               name: PyObject) -> PyResult<PyNone> {
-    return Py.delAttribute(object: object, name: name)
+  internal static func delattr(_ py: Py,
+                               module: PyObject,
+                               object: PyObject,
+                               name: PyObject) -> PyResult<PyObject> {
+    return py.delAttribute(object: object, name: name)
   }
 }
 
@@ -162,19 +162,20 @@ extension Builtins {
 
 extension Builtins {
 
-  internal static var idDoc: String {
-    return """
+  internal static let idDoc = """
     Return the identity of an object.
 
     This is guaranteed to be unique among simultaneously existing objects.
     (CPython uses the object's memory address.)
     """
-  }
 
   /// id(object)
   /// See [this](https://docs.python.org/3/library/functions.html#id)
-  internal static func id(object: PyObject) -> PyInt {
-    return Py.id(object: object)
+  internal static func id(_ py: Py,
+                          module: PyObject,
+                          object: PyObject) -> PyResult<PyObject> {
+    let result = py.id(object: object)
+    return PyResult(result)
   }
 }
 
@@ -182,8 +183,7 @@ extension Builtins {
 
 extension Builtins {
 
-  internal static var dirDoc: String {
-    return """
+  internal static let dirDoc = """
     dir([object]) -> list of strings
 
     If called without an argument, return the names in the current scope.
@@ -197,12 +197,13 @@ extension Builtins {
     for any other object: its attributes, its class's attributes, and
     recursively the attributes of its class's base classes.
     """
-  }
 
   /// dir([object])
   /// See [this](https://docs.python.org/3/library/functions.html#dir)
-  internal static func dir(object: PyObject?) -> PyResult<PyObject> {
-    return Py.dir(object: object)
+  internal static func dir(_ py: Py,
+                           module: PyObject,
+                           object: PyObject?) -> PyResult<PyObject> {
+    return py.dir(object: object)
   }
 }
 
@@ -210,49 +211,52 @@ extension Builtins {
 
 extension Builtins {
 
-  internal static var binDoc: String {
-    return """
+  internal static let binDoc = """
     Return the binary representation of an integer.
 
     >>> bin(2796202)
     '0b1010101010101010101010'
     """
-  }
 
   /// bin(x)
   /// See [this](https://docs.python.org/3/library/functions.html#bin)
-  internal static func bin(object: PyObject) -> PyResult<PyObject> {
-    return Py.bin(object: object)
+  internal static func bin(_ py: Py,
+                           module: PyObject,
+                           object: PyObject) -> PyResult<PyObject> {
+    let result = py.bin(object: object)
+    return PyResult(result)
   }
 
-  internal static var octDoc: String {
-    return """
+  internal static let octDoc = """
     Return the octal representation of an integer.
 
     >>> oct(342391)
     '0o1234567'
     """
-  }
 
   /// oct(x)
   /// See [this](https://docs.python.org/3/library/functions.html#oct)
-  internal static func oct(object: PyObject) -> PyResult<PyObject> {
-    return Py.oct(object: object)
+  internal static func oct(_ py: Py,
+                           module: PyObject,
+                           object: PyObject) -> PyResult<PyObject> {
+    let result = py.oct(object: object)
+    return PyResult(result)
   }
 
-  internal static var hexDoc: String {
-    return """
+  internal static let hexDoc = """
     Return the hexadecimal representation of an integer.
 
     >>> hex(12648430)
     '0xc0ffee'
     """
-  }
 
   /// hex(x)
   /// See [this](https://docs.python.org/3/library/functions.html#hex)
-  internal static func hex(object: PyObject) -> PyResult<PyObject> {
-    return Py.hex(object: object)
+  internal static func hex(_ py: Py,
+                           module: PyObject,
+                           object: PyObject) -> PyResult<PyObject> {
+    let result = py.hex(object: object)
+    return PyResult(result)
   }
 }
 
@@ -260,28 +264,30 @@ extension Builtins {
 
 extension Builtins {
 
-  internal static var chrDoc: String {
-    return """
+  internal static let chrDoc = """
     Return a Unicode string of one character with ordinal i; 0 <= i <= 0x10ffff.
     """
-  }
 
   /// chr(i)
   /// See [this](https://docs.python.org/3/library/functions.html#chr)
-  internal static func chr(object: PyObject) -> PyResult<PyString> {
-    return Py.chr(object: object)
+  internal static func chr(_ py: Py,
+                           module: PyObject,
+                           object: PyObject) -> PyResult<PyObject> {
+    let result = py.chr(object: object)
+    return PyResult(result)
   }
 
-  internal static var ordDoc: String {
-    return """
+  internal static let ordDoc = """
     Return the Unicode code point for a one-character string.
     """
-  }
 
   /// ord(c)
   /// See [this](https://docs.python.org/3/library/functions.html#ord)
-  internal static func ord(object: PyObject) -> PyResult<PyInt> {
-    return Py.ord(object: object)
+  internal static func ord(_ py: Py,
+                           module: PyObject,
+                           object: PyObject) -> PyResult<PyObject> {
+    let result = py.ord(object: object)
+    return PyResult(result)
   }
 }
 
@@ -289,19 +295,20 @@ extension Builtins {
 
 extension Builtins {
 
-  internal static var callableDoc: String {
-    return """
+  internal static let callableDoc = """
     Return whether the object is callable (i.e., some kind of function).
 
     Note that classes are callable, as are instances of classes with a
     __call__() method.
     """
-  }
 
   /// callable(object)
   /// See [this](https://docs.python.org/3/library/functions.html#callable)
-  internal static func callable(object: PyObject) -> Bool {
-    return Py.isCallable(object: object)
+  internal static func callable(_ py: Py,
+                                module: PyObject,
+                                object: PyObject) -> PyResult<PyObject> {
+    let result = py.isCallable(object: object)
+    return PyResult(py, result)
   }
 }
 
@@ -309,20 +316,19 @@ extension Builtins {
 
 extension Builtins {
 
-  internal static var lenDoc: String {
-    return """
+  internal static let lenDoc = """
     Return the number of items in a container.
     """
-  }
 
   /// len(s)
   /// See [this](https://docs.python.org/3/library/functions.html#len)
-  internal static func len(iterable: PyObject) -> PyResult<PyObject> {
-    return Py.len(iterable: iterable)
+  internal static func len(_ py: Py,
+                           module: PyObject,
+                           iterable: PyObject) -> PyResult<PyObject> {
+    return py.length(iterable: iterable)
   }
 
-  internal static var sortedDoc: String {
-    return """
+  internal static let sortedDoc = """
     sorted($module, iterable, /, *, key=None, reverse=False)
     --
 
@@ -331,21 +337,24 @@ extension Builtins {
     A custom key function can be supplied to customize the sort order, and the
     reverse flag can be set to request the result in descending order.
     """
-  }
 
   /// sorted(iterable, *, key=None, reverse=False)
   /// See [this](https://docs.python.org/3/library/functions.html#sorted)
-  internal static func sorted(args: [PyObject],
-                              kwargs: PyDict?) -> PyResult<PyList> {
-    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "sorted",
+  internal static func sorted(_ py: Py,
+                              module: PyObject,
+                              args: [PyObject],
+                              kwargs: PyDict?) -> PyResult<PyObject> {
+    if let e = ArgumentParser.guaranteeArgsCountOrError(py,
+                                                        fnName: "sorted",
                                                         args: args,
                                                         min: 1,
                                                         max: 1) {
-      return .error(e)
+      return .error(e.asBaseException)
     }
 
     let iterable = args[0]
-    return Py.sorted(iterable: iterable, kwargs: kwargs)
+    let result = py.sorted(iterable: iterable, kwargs: kwargs)
+    return PyResult(result)
   }
 }
 
@@ -353,33 +362,33 @@ extension Builtins {
 
 extension Builtins {
 
-  internal static var hashDoc: String {
-    return """
+  internal static let hashDoc = """
     Return the hash value for the given object.
 
     Two objects that compare equal must also have the same hash value, but the
     reverse is not necessarily true.
     """
-  }
 
   /// hash(object)
   /// See [this](https://docs.python.org/3/library/functions.html#hash)
-  internal static func hash(object: PyObject) -> PyResult<PyHash> {
-    return Py.hash(object: object)
+  internal static func hash(_ py: Py,
+                            module: PyObject,
+                            object: PyObject) -> PyResult<PyObject> {
+    let result = py.hash(object: object)
+    return PyResult(py, result)
   }
 }
 
 // MARK: - print
 
-private let printArguments = ArgumentParser.createOrTrap(
+private let printArguments = ArgumentParser(
   arguments: ["sep", "end", "file", "flush"],
   format: "|OOOO:print"
 )
 
 extension Builtins {
 
-  internal static var printDoc: String {
-    return """
+  internal static let printDoc = """
     print(value, ..., sep=' ', end='\n', file=sys.stdout, flush=False)
 
     Prints the values to a stream, or to sys.stdout by default.
@@ -389,7 +398,6 @@ extension Builtins {
     end:   string appended after the last value, default a newline.
     flush: whether to forcibly flush the stream.
     """
-  }
 
   /// print(*objects, sep=' ', end='\n', file=sys.stdout, flush=False)
   /// See [this](https://docs.python.org/3/library/functions.html#print)
@@ -397,9 +405,11 @@ extension Builtins {
   /// - Parameters:
   ///   - args: Objects to print
   ///   - kwargs: Options
-  internal static func print(args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    switch printArguments.bind(args: [], kwargs: kwargs) {
+  internal static func print(_ py: Py,
+                             module: PyObject,
+                             args: [PyObject],
+                             kwargs: PyDict?) -> PyResult<PyObject> {
+    switch printArguments.bind(py, args: [], kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
       assert(binding.optionalCount == 4, "Invalid optional argument count.")
@@ -408,11 +418,16 @@ extension Builtins {
       let end = binding.optional(at: 1)
       let file = binding.optional(at: 2)
       let flush = binding.optional(at: 3)
-      return Py.print(args: args,
-                      file: file,
-                      separator: separator,
-                      end: end,
-                      flush: flush)
+
+      if let error = py.print(file: file,
+                              args: args,
+                              separator: separator,
+                              end: end,
+                              flush: flush) {
+        return .error(error)
+      }
+
+      return.none(py)
 
     case let .error(e):
       return .error(e)
@@ -422,7 +437,7 @@ extension Builtins {
 
 // MARK: - open
 
-private let openArguments = ArgumentParser.createOrTrap(
+private let openArguments = ArgumentParser(
   arguments: [
     "file", "mode", "buffering",
     "encoding", "errors", "newline",
@@ -433,8 +448,7 @@ private let openArguments = ArgumentParser.createOrTrap(
 
 extension Builtins {
 
-  internal static var openDoc: String {
-    return """
+  internal static let openDoc = """
     Open file and return a stream.  Raise OSError upon failure.
 
     file is either a text or byte string giving the name (and the path
@@ -554,14 +568,15 @@ extension Builtins {
     opened in a text mode, and for bytes a BytesIO can be used like a file
     opened in a binary mode.
     """
-  }
 
   /// open(file, mode='r', buffering=-1, encoding=None, errors=None, newline=None,
   ///            closefd=True, opener=None)
   /// See [this](https://docs.python.org/3/library/functions.html#open)
-  internal static func open(args: [PyObject],
+  internal static func open(_ py: Py,
+                            module: PyObject,
+                            args: [PyObject],
                             kwargs: PyDict?) -> PyResult<PyObject> {
-    switch openArguments.bind(args: args, kwargs: kwargs) {
+    switch openArguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")
       assert(binding.optionalCount == 7, "Invalid optional argument count.")
@@ -575,14 +590,17 @@ extension Builtins {
       let closefd = binding.optional(at: 6)
       let opener = binding.optional(at: 7)
 
-      return Py.open(file: file,
-                     mode: mode,
-                     buffering: buffering,
-                     encoding: encoding,
-                     errors: errors,
-                     newline: newline,
-                     closefd: closefd,
-                     opener: opener)
+      let result = py.open(file: file,
+                           mode: mode,
+                           buffering: buffering,
+                           encoding: encoding,
+                           errors: errors,
+                           newline: newline,
+                           closefd: closefd,
+                           opener: opener)
+
+      return PyResult(result)
+
     case let .error(e):
       return .error(e)
     }
@@ -593,30 +611,30 @@ extension Builtins {
 
 extension Builtins {
 
-  internal static var __build_class__Doc: String {
-    return """
+  internal static let __build_class__Doc = """
     __build_class__(func, name, *bases, metaclass=None, **kwds) -> class
 
     Internal helper function used by the class statement.
     """
-  }
 
-  internal static func __build_class__(args: [PyObject],
+  internal static func __build_class__(_ py: Py,
+                                       module: PyObject,
+                                       args: [PyObject],
                                        kwargs: PyDict?) -> PyResult<PyObject> {
     if args.count < 2 {
-      return .typeError("__build_class__: not enough arguments")
+      return .typeError(py, message: "__build_class__: not enough arguments")
     }
 
-    guard let fn = PyCast.asFunction(args[0]) else {
-      return .typeError("__build_class__: func must be a function")
+    guard let fn = py.cast.asFunction(args[0]) else {
+      return .typeError(py, message: "__build_class__: func must be a function")
     }
 
-    guard let name = PyCast.asString(args[1]) else {
-      return .typeError("__build_class__: name is not a string")
+    guard let name = py.cast.asString(args[1]) else {
+      return .typeError(py, message: "__build_class__: name is not a string")
     }
 
-    let bases = Py.newTuple(elements: Array(args[2...]))
-    return Py.__build_class__(name: name,
+    let bases = py.newTuple(elements: Array(args[2...]))
+    return py.__build_class__(name: name,
                               bases: bases,
                               bodyFn: fn,
                               kwargs: kwargs)
@@ -625,15 +643,14 @@ extension Builtins {
 
 // MARK: - __import__
 
-private let importArguments = ArgumentParser.createOrTrap(
+private let importArguments = ArgumentParser(
   arguments: ["name", "globals", "locals", "fromlist", "level"],
   format: "U|OOOi:__import__"
 )
 
 extension Builtins {
 
-  internal static var __import__Doc: String {
-    return """
+  internal static let __import__Doc = """
     __import__(name, globals=None, locals=None, fromlist=(), level=0) -> module
 
     Import a module. Because this function is meant for use by the Python
@@ -650,13 +667,14 @@ extension Builtins {
     perform absolute or relative imports: 0 is absolute, while a positive number
     is the number of parent directories to search relative to the current module.
     """
-  }
 
   /// __import__(name, globals=None, locals=None, fromlist=(), level=0)
   /// See [this](https://docs.python.org/3/library/functions.html#__import__)
-  internal static func __import__(args: [PyObject],
+  internal static func __import__(_ py: Py,
+                                  module: PyObject,
+                                  args: [PyObject],
                                   kwargs: PyDict?) -> PyResult<PyObject> {
-    switch importArguments.bind(args: args, kwargs: kwargs) {
+    switch importArguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")
       assert(binding.optionalCount == 4, "Invalid optional argument count.")
@@ -667,7 +685,7 @@ extension Builtins {
       let fromList = binding.optional(at: 3)
       let level = binding.optional(at: 4)
 
-      return Py.__import__(name: name,
+      return py.__import__(name: name,
                            globals: globals,
                            locals: locals,
                            fromList: fromList,
@@ -683,35 +701,33 @@ extension Builtins {
 
 extension Builtins {
 
-  internal static var globalsDoc: String {
-    return """
+  internal static let globalsDoc = """
     Return the dictionary containing the current scope's global variables.
 
     NOTE: Updates to this dictionary *will* affect name lookups in the current
     global scope and vice-versa.
     """
-  }
 
   /// globals()
   /// See [this](https://docs.python.org/3/library/functions.html#globals)
-  internal static func globals() -> PyResult<PyDict> {
-    return Py.globals()
+  internal static func globals(_ py: Py, module: PyObject) -> PyResult<PyObject> {
+    let result = py.globals()
+    return PyResult(result)
   }
 
-  internal static var localsDoc: String {
-    return """
+  internal static let localsDoc = """
     Return a dictionary containing the current scope's local variables.
 
     NOTE: Whether or not updates to this dictionary will affect name lookups in
     the local scope and vice-versa is *implementation dependent* and not
     covered by any backwards compatibility guarantees.
     """
-  }
 
   /// locals()
   /// See [this](https://docs.python.org/3/library/functions.html#locals)
-  internal static func locals() -> PyResult<PyDict> {
-    return Py.locals()
+  internal static func locals(_ py: Py, module: PyObject) -> PyResult<PyObject> {
+    let result = py.locals()
+    return PyResult(result)
   }
 }
 
@@ -719,8 +735,7 @@ extension Builtins {
 
 extension Builtins {
 
-  internal static var minDoc: String {
-    return """
+  internal static let minDoc = """
     min(iterable, *[, default=obj, key=func]) -> value
     min(arg1, arg2, *args, *[, key=func]) -> value
 
@@ -729,17 +744,17 @@ extension Builtins {
     the provided iterable is empty.
     With two or more arguments, return the smallest argument.
     """
-  }
 
   /// min(iterable, *[, key, default])
   /// See [this](https://docs.python.org/3/library/functions.html#min)
-  internal static func min(args: [PyObject],
+  internal static func min(_ py: Py,
+                           module: PyObject,
+                           args: [PyObject],
                            kwargs: PyDict?) -> PyResult<PyObject> {
-    return Py.min(args: args, kwargs: kwargs)
+    return py.min(args: args, kwargs: kwargs)
   }
 
-  internal static var maxDoc: String {
-    return """
+  internal static let maxDoc = """
     max(iterable, *[, default=obj, key=func]) -> value
     max(arg1, arg2, *args, *[, key=func]) -> value
 
@@ -748,13 +763,14 @@ extension Builtins {
     the provided iterable is empty.
     With two or more arguments, return the largest argument.
     """
-  }
 
   /// max(iterable, *[, key, default])
   /// See [this](https://docs.python.org/3/library/functions.html#max)
-  internal static func max(args: [PyObject],
+  internal static func max(_ py: Py,
+                           module: PyObject,
+                           args: [PyObject],
                            kwargs: PyDict?) -> PyResult<PyObject> {
-    return Py.max(args: args, kwargs: kwargs)
+    return py.max(args: args, kwargs: kwargs)
   }
 }
 
@@ -762,24 +778,23 @@ extension Builtins {
 
 extension Builtins {
 
-  internal static var nextDoc: String {
-    return """
+  internal static let nextDoc = """
     next(iterator[, default])
 
     Return the next item from the iterator. If default is given and the iterator
     is exhausted, it is returned instead of raising StopIteration.
     """
-  }
 
   /// next(iterator[, default])
   /// See [this](https://docs.python.org/3/library/functions.html#next)
-  internal static func next(iterator: PyObject,
+  internal static func next(_ py: Py,
+                            module: PyObject,
+                            iterator: PyObject,
                             default: PyObject?) -> PyResult<PyObject> {
-    return Py.next(iterator: iterator, default: `default`)
+    return py.next(iterator: iterator, default: `default`)
   }
 
-  internal static var iterDoc: String {
-    return """
+  internal static let iterDoc = """
     iter(iterable) -> iterator
     iter(callable, sentinel) -> iterator
 
@@ -787,13 +802,14 @@ extension Builtins {
     supply its own iterator, or be a sequence.
     In the second form, the callable is called until it returns the sentinel.
     """
-  }
 
   /// iter(object[, sentinel])
   /// See [this](https://docs.python.org/3/library/functions.html#iter)
-  internal static func iter(object: PyObject,
+  internal static func iter(_ py: Py,
+                            module: PyObject,
+                            object: PyObject,
                             sentinel: PyObject?) -> PyResult<PyObject> {
-    return Py.iter(object: object, sentinel: sentinel)
+    return py.iter(object: object, sentinel: sentinel)
   }
 }
 
@@ -801,62 +817,62 @@ extension Builtins {
 
 extension Builtins {
 
-  internal static var roundDoc: String {
-    return """
+  internal static let roundDoc = """
     Round a number to a given precision in decimal digits.
 
     The return value is an integer if ndigits is omitted or None.  Otherwise
     the return value has the same type as the number.  ndigits may be negative.
     """
-  }
 
   /// round(number[, ndigits])
   /// See [this](https://docs.python.org/3/library/functions.html#round)
-  internal static func round(number: PyObject,
+  internal static func round(_ py: Py,
+                             module: PyObject,
+                             number: PyObject,
                              nDigits: PyObject?) -> PyResult<PyObject> {
-    return Py.round(number: number, nDigits: nDigits)
+    return py.round(number: number, nDigits: nDigits)
   }
 
-  internal static var divmodDoc: String {
-    return """
+  internal static let divmodDoc = """
     Return the tuple (x//y, x%y).  Invariant: div*y + mod == x.
     """
-  }
 
   /// divmod(a, b)
   /// See [this](https://docs.python.org/3/library/functions.html#divmod)
-  internal static func divmod(left: PyObject,
+  internal static func divmod(_ py: Py,
+                              module: PyObject,
+                              left: PyObject,
                               right: PyObject) -> PyResult<PyObject> {
-    return Py.divmod(left: left, right: right)
+    return py.divmod(left: left, right: right)
   }
 
-  internal static var absDoc: String {
-    return """
+  internal static let absDoc = """
     Return the absolute value of the argument.
     """
-  }
 
   /// abs(x)
   /// See [this](https://docs.python.org/3/library/functions.html#abs)
-  internal static func abs(object: PyObject) -> PyResult<PyObject> {
-    return Py.abs(object: object)
+  internal static func abs(_ py: Py,
+                           module: PyObject,
+                           object: PyObject) -> PyResult<PyObject> {
+    return py.abs(object: object)
   }
 
-  internal static var powDoc: String {
-    return """
+  internal static let powDoc = """
     Equivalent to x**y (with two arguments) or x**y % z (with three arguments)
 
     Some types, such as ints, are able to use a more efficient algorithm when
     invoked using the three argument form.
     """
-  }
 
   /// pow(base, exp[, mod])
   /// See [this](https://docs.python.org/3/library/functions.html#pow)
-  internal static func pow(base: PyObject,
+  internal static func pow(_ py: Py,
+                           module: PyObject,
+                           base: PyObject,
                            exp: PyObject,
                            mod: PyObject?) -> PyResult<PyObject> {
-    return Py.pow(base: base, exp: exp, mod: mod)
+    return py.pow(base: base, exp: exp, mod: mod)
   }
 }
 
@@ -864,22 +880,22 @@ extension Builtins {
 
 extension Builtins {
 
-  internal static var reprDoc: String {
-    return """
+  internal static let reprDoc = """
     Return the canonical string representation of the object.
 
     For many object types, including most builtins, eval(repr(obj)) == obj.
     """
-  }
 
   /// repr(object)
   /// See [this](https://docs.python.org/3/library/functions.html#repr)
-  internal static func repr(object: PyObject) -> PyResult<PyString> {
-    return Py.repr(object: object)
+  internal static func repr(_ py: Py,
+                            module: PyObject,
+                            object: PyObject) -> PyResult<PyObject> {
+    let result = py.repr(object: object)
+    return PyResult(result)
   }
 
-  internal static var asciiDoc: String {
-    return """
+  internal static let asciiDoc = """
     Return an ASCII-only representation of an object.
 
     As repr(), return a string containing a printable representation of an
@@ -887,12 +903,14 @@ extension Builtins {
     repr() using \\x, \\u or \\U escapes. This generates a string similar
     to that returned by repr() in Python 2.
     """
-  }
 
   /// ascii(object)
   /// See [this](https://docs.python.org/3/library/functions.html#ascii)
-  internal static func ascii(object: PyObject) -> PyResult<PyString> {
-    return Py.ascii(object: object)
+  internal static func ascii(_ py: Py,
+                             module: PyObject,
+                             object: PyObject) -> PyResult<PyObject> {
+    let result = py.ascii(object: object)
+    return PyResult(result)
   }
 }
 
@@ -900,52 +918,53 @@ extension Builtins {
 
 extension Builtins {
 
-  internal static var isinstanceDoc: String {
-    return """
+  internal static let isinstanceDoc = """
     Return whether an object is an instance of a class or of a subclass thereof.
 
     A tuple, as in ``isinstance(x, (A, B, ...))``, may be given as the target to
     check against. This is equivalent to ``isinstance(x, A) or isinstance(x, B)
     or ...`` etc.
     """
-  }
 
   /// isinstance(object, classinfo)
   /// See [this](https://docs.python.org/3/library/functions.html#isinstance)
-  internal static func isinstance(object: PyObject,
-                                  of typeOrTuple: PyObject) -> PyResult<Bool> {
-    return Py.isInstance(object: object, of: typeOrTuple)
+  internal static func isinstance(_ py: Py,
+                                  module: PyObject,
+                                  object: PyObject,
+                                  of typeOrTuple: PyObject) -> PyResult<PyObject> {
+    let result = py.isInstance(object: object, of: typeOrTuple)
+    return PyResult(py, result)
   }
 
-  internal static var issubclassDoc: String {
-    return """
+  internal static let issubclassDoc = """
     Return whether 'cls' is a derived from another class or is the same class.
 
     A tuple, as in ``issubclass(x, (A, B, ...))``, may be given as the target to
     check against. This is equivalent to ``issubclass(x, A) or issubclass(x, B)
     or ...`` etc.
     """
-  }
 
   /// issubclass(class, classinfo)
   /// See [this](https://docs.python.org/3/library/functions.html#issubclass)
-  internal static func issubclass(object: PyObject,
-                                  of typeOrTuple: PyObject) -> PyResult<Bool> {
-    return Py.isSubclass(object: object, of: typeOrTuple)
+  internal static func issubclass(_ py: Py,
+                                  module: PyObject,
+                                  object: PyObject,
+                                  of typeOrTuple: PyObject) -> PyResult<PyObject> {
+    let result = py.isSubclass(object: object, of: typeOrTuple)
+    return PyResult(py, result)
   }
 }
 
 // MARK: - compile
 
-private let compileArguments = ArgumentParser.createOrTrap(
+private let compileArguments = ArgumentParser(
   arguments: ["source", "filename", "mode", "flags", "dont_inherit", "optimize"],
   format: "OOO|OOO:compile"
 )
 
 extension Builtins {
 
-  internal static var compileDoc: String {
-    return """
+  internal static let compileDoc = """
     Compile source into a code object that can be executed by exec() or eval().
 
     The source code may represent a Python module, statement or expression.
@@ -959,13 +978,14 @@ extension Builtins {
     compile; if absent or false these statements do influence the compilation,
     in addition to any features explicitly specified.
     """
-  }
 
   /// compile(source, filename, mode, flags=0, dont_inherit=False, optimize=-1)
   /// See [this](https://docs.python.org/3/library/functions.html#compile)
-  internal static func compile(args: [PyObject],
-                               kwargs: PyDict?) -> PyResult<PyCode> {
-    switch compileArguments.bind(args: args, kwargs: kwargs) {
+  internal static func compile(_ py: Py,
+                               module: PyObject,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyObject> {
+    switch compileArguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 3, "Invalid required argument count.")
       assert(binding.optionalCount == 3, "Invalid optional argument count.")
@@ -977,14 +997,15 @@ extension Builtins {
       let dontInherit = binding.optional(at: 4)
       let optimize = binding.optional(at: 5)
 
-      let compileResult = Py.compile(source: source,
+      let compileResult = py.compile(source: source,
                                      filename: filename,
                                      mode: mode,
                                      flags: flags,
                                      dontInherit: dontInherit,
                                      optimize: optimize)
 
-      return compileResult.asResult()
+      let result = compileResult.asResult()
+      return PyResult(result)
 
     case let .error(e):
       return .error(e)
@@ -994,20 +1015,19 @@ extension Builtins {
 
 // MARK: - exec, eval
 
-private let execArguments = ArgumentParser.createOrTrap(
+private let execArguments = ArgumentParser(
   arguments: ["source", "globals", "locals"],
   format: "O|OO:exec"
 )
 
-private let evalArguments = ArgumentParser.createOrTrap(
+private let evalArguments = ArgumentParser(
   arguments: ["source", "globals", "locals"],
   format: "O|OO:exec"
 )
 
 extension Builtins {
 
-  internal static var execDoc: String {
-    return """
+  internal static let execDoc = """
     Execute the given source in the context of globals and locals.
 
     The source may be a string representing one or more Python statements
@@ -1016,13 +1036,14 @@ extension Builtins {
     defaulting to the current globals and locals.
     If only globals is given, locals defaults to it.
     """
-  }
 
   /// exec(object[, globals[, locals]])
   /// See [this](https://docs.python.org/3/library/functions.html#exec)
-  internal static func exec(args: [PyObject],
-                            kwargs: PyDict?) -> PyResult<PyNone> {
-    switch execArguments.bind(args: args, kwargs: kwargs) {
+  internal static func exec(_ py: Py,
+                            module: PyObject,
+                            args: [PyObject],
+                            kwargs: PyDict?) -> PyResult<PyObject> {
+    switch execArguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")
       assert(binding.optionalCount == 2, "Invalid optional argument count.")
@@ -1030,15 +1051,19 @@ extension Builtins {
       let source = binding.required(at: 0)
       let globals = binding.optional(at: 1)
       let locals = binding.optional(at: 2)
-      return Py.exec(source: source, globals: globals, locals: locals)
+
+      if let error = py.exec(source: source, globals: globals, locals: locals) {
+        return .error(error)
+      }
+
+      return .none(py)
 
     case let .error(e):
       return .error(e)
     }
   }
 
-  internal static var evalDoc: String {
-    return """
+  internal static let evalDoc = """
     Evaluate the given source in the context of globals and locals.
 
     The source may be a string representing a Python expression
@@ -1047,13 +1072,14 @@ extension Builtins {
     defaulting to the current globals and locals.
     If only globals is given, locals defaults to it.
     """
-  }
 
   /// eval(expression[, globals[, locals]])
   /// See [this](https://docs.python.org/3/library/functions.html#eval)
-  internal static func eval(args: [PyObject],
+  internal static func eval(_ py: Py,
+                            module: PyObject,
+                            args: [PyObject],
                             kwargs: PyDict?) -> PyResult<PyObject> {
-    switch execArguments.bind(args: args, kwargs: kwargs) {
+    switch execArguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")
       assert(binding.optionalCount == 2, "Invalid optional argument count.")
@@ -1061,12 +1087,10 @@ extension Builtins {
       let source = binding.required(at: 0)
       let globals = binding.optional(at: 1)
       let locals = binding.optional(at: 2)
-      return Py.eval(source: source, globals: globals, locals: locals)
+      return py.eval(source: source, globals: globals, locals: locals)
 
     case let .error(e):
       return .error(e)
     }
   }
 }
-
-*/
