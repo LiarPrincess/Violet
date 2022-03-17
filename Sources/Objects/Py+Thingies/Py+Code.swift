@@ -184,7 +184,7 @@ extension Py {
     let _get = self.createPropertyFn(name: "__get__", fn: get)
     let _set = self.createPropertyFnOptional(name: "__set__", fn: set)
     let _del = self.createPropertyFnOptional(name: "__del__", fn: del)
-    let _doc = doc.map(self.intern(string:))
+    let _doc = doc.map(self.newString(_:))
 
     let type = self.types.property
     return self.memory.newProperty(self,

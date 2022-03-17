@@ -10,46 +10,7 @@ import VioletParser
 import VioletBytecode
 import VioletCompiler
 
-public struct Py {
-
-  public var `true`: PyBool { fatalError() }
-  public var `false`: PyBool { fatalError() }
-  public var none: PyNone { fatalError() }
-  public var ellipsis: PyEllipsis { fatalError() }
-  public var notImplemented: PyNotImplemented { fatalError() }
-  public var emptyTuple: PyTuple { fatalError() }
-  public var emptyString: PyString { fatalError() }
-  public var emptyBytes: PyBytes { fatalError() }
-  public var emptyFrozenSet: PyFrozenSet { fatalError() }
-
-  public let memory = PyMemory()
-  public var types: Py.Types { fatalError() }
-  public var errorTypes: Py.ErrorTypes { fatalError() }
-  public var cast: PyCast { fatalError() }
-  internal var hasher: Hasher { fatalError() }
-
-  public var delegate: PyDelegate { fatalError() }
-  public var fileSystem: PyFileSystem { fatalError() }
-  public var config: PyConfig { fatalError() }
-
-  internal var builtins: Builtins { fatalError() }
-  internal var sys: Sys { fatalError() }
-  internal var _warnings: UnderscoreWarnings { fatalError() }
-  internal var _imp: UnderscoreImp { fatalError() }
-  internal var _os: UnderscoreOS { fatalError() }
-
-  internal var sysModule: PyModule { fatalError() }
-  internal var _impModule: PyModule { fatalError() }
-  internal var builtinsModule: PyModule { fatalError() }
-
-  // MARK: - Intern
-
-  internal func getInterned(int: Int) -> PyInt? { fatalError() }
-  internal func getInterned(int: BigInt) -> PyInt? { fatalError() }
-
-  public func intern(scalar: UnicodeScalar) -> PyString { fatalError() }
-  public func intern(string: String) -> PyString { fatalError() }
-  public func intern(path: Path) -> PyString { fatalError() }
+extension Py {
 
   // MARK: - Errors
 

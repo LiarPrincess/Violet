@@ -94,9 +94,7 @@ extension Py {
     // MARK: - Stage 1 - init
 
     /// Init that will only initialize properties.
-    internal init(_ py: Py, typeType: PyType, objectType: PyType) {
-      let memory = py.memory
-
+    internal init(memory: PyMemory, typeType: PyType, objectType: PyType) {
       self.baseException = memory.newType(
         py,
         type: typeType,

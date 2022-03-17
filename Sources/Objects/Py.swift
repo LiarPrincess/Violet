@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import BigInt
 import FileSystem
@@ -12,340 +11,158 @@ import VioletCore
 /// You can use it to interact with `Python` objects.
 /// For example: to call `getattr` function on `elsa` object you call
 /// `Py.getAttribute(object: elsa, name: "let_it_go")`.
-///
-/// # Global variable
-/// `Py` is a global variable .
-/// Yes, we know it is bad (at least that's what they say in every programming
-/// book/manual).
-/// The thing is that it is way easier to use than alternative.
-///
-/// And the alternative would be to pass an additional `context` parameter to
-/// every function.
-/// The thing is: 95% of our functions (in `Objects` module) need to call some
-/// `Python` function (directly on indirectly).
-/// And having this artificial parameter would be a pure boilerplate
-/// (in addition to our usual error handling boilerplate).
-///
-/// One could argue that at this point just making it global is an acceptable
-/// trade-off/simplification.
-///
-/// Btw. in some early version of `Objects` we actually had `PyContext` type
-/// that we passed to every function (or injected in `init`).
-/// The user/programmer experience was… not that great.
-/// As an example let's use: `elsa = 1 + 2`
-/// Should `elsa` be allocated in the context that owns `1` or `2`?
-/// In theory they should point to exactly the same object (mixing object from
-/// different context should be an error), but as a programmers we still have to
-/// choose one or the other.
-///
-/// In current approach we just use implicit global `Py`  context.
-///
-/// # Instance vs static
-/// `Py` is heap-allocated instance of `PyInstance` class.
-/// There is an interesting alternative of making `Py` static:
-/// ```Swift
-/// public enum Py {
-///   public static func getAttribute() { thingies… }
-/// ).
-/// ```
-///
-/// So, lets talk about this  (spoiler: both models are 'ok', we use instance
-/// because we started this way, we may transition to `static` at some point).
-///
-/// ## Instance (current model)
-/// Pros:
-/// - we can have multiple `PyInstances` at the same time (for example 1 per thread):
-///    ```Swift
-///    public var Py: PyInstance {
-///      // get `PyInstance` from thread local storage (TLS) or something, idk…
-///    }
-///    ```
-///
-///    That would allow us to have `Py` per thread.
-///    Not really sure what we would use this for, but we can.
-///    (Maybe multi-threaded testing? What we would need is something like app
-///    domains from `.Net`.)
-///
-/// - encapsulation? object-orientation fetish? (because we need to have dem
-///   instances?)
-///
-/// We use it mostly because in early days we had `PyContext` instance passed
-/// to every function (or injected in `init`).
-/// Then we moved to global `Py`, so naturally we made `Py` also an instance.
-/// Making it static would require more work.
-///
-/// ## Static
-/// Pros:
-/// - easier mental model
-/// - faster? - but we don't care about this
-///
-/// That would require us to make some code changes.
-/// Not only in `Py` but also in other types.
-///
-/// For example we would have to make `BuiltinTypes` an `enum` a with static
-/// property for each type. Then, we would make `Py.types` property an `typealias`.
-/// Note that, even though `BuiltinTypes` will be `static`, the types itself will
-/// still be allocated on a heap (although semantic-wise types are reference types,
-/// so it kind of makes sense).
-///
-/// ** Note about 'heap types' **
-/// (this is partially connected to 'Instance vs static' debate)
-///
-/// Heap type is a type created by user with 'class' statement.
-///
-/// This name comes from `CPython`.
-/// Opposite of 'heap type' is 'builtin type' that uses static allocation
-/// (I'm talking about core `CPython` and not about extensions).
-/// Example (for `int` type defined in 'Objects/longobject.c'):
-/// ```C
-/// PyTypeObject PyLong_Type = {
-///   PyVarObject_HEAD_INIT(&PyType_Type, 0)
-///   "int",                                      /* tp_name */
-///   … (and so on…)
-/// }
-/// ```
-///
-/// In `Violet` all of the types are heap-allocated (even builtin ones).
-/// But, we will still use 'heap-type' name with the same meaning as in `CPython`.
-/// Partially because they leak 'heap-type' implementation-detail in error
-/// messages, so we assume that this is a part of the domain.
-public private(set) var Py = PyInstance()
-
-/// Read `Py` documentation.
-public final class PyInstance {
+public final class Py {
 
   // MARK: - Builtins
 
   /// Interned `true` value.
-  public private(set) lazy var `true` = PyMemory.newBool(value: true)
+  public private(set) var `true`: PyBool!
   /// Interned `false` value.
-  public private(set) lazy var `false` = PyMemory.newBool(value: false)
+  public private(set) var `false`: PyBool!
   /// Interned `None` value.
-  public private(set) lazy var none = PyMemory.newNone()
-  /// Interned `ellipsis (...)` value.
-  public private(set) lazy var ellipsis = PyMemory.newEllipsis()
-  /// Interned empty `tuple` value (because `tuple` is immutable).
-  public private(set) lazy var emptyTuple = PyMemory.newTuple(elements: [])
-  /// Interned empty `str` value (because `str` is immutable).
-  public private(set) lazy var emptyString = PyMemory.newString(value: "")
-  /// Interned empty `bytes` value (because `bytes` are immutable).
-  public private(set) lazy var emptyBytes = PyMemory.newBytes(elements: Data())
-  /// Interned empty `frozenset` value (because `frozenset` is immutable).
-  public private(set) lazy var emptyFrozenSet =
-    PyMemory.newFrozenSet(elements: PySet.OrderedSet())
+  public private(set) var none: PyNone!
   /// Interned `NotImplemented` value.
-  public private(set) lazy var notImplemented = PyMemory.newNotImplemented()
+  public private(set) var notImplemented: PyNotImplemented!
+  /// Interned `ellipsis (...)` value.
+  public private(set) var ellipsis: PyEllipsis!
+  /// Interned empty `tuple` value (because `tuple` is immutable).
+  public private(set) var emptyTuple: PyTuple!
+  /// Interned empty `str` value (because `str` is immutable).
+  public private(set) var emptyString: PyString!
+  /// Interned empty `bytes` value (because `bytes` are immutable).
+  public private(set) var emptyBytes: PyBytes!
+  /// Interned empty `frozenset` value (because `frozenset` is immutable).
+  public private(set) var emptyFrozenSet: PyFrozenSet!
+
+  /// Cached `int` instances, so that we don't create `0/1/2` etc. multiple times.
+  private var internedInts: [PyInt]!
+  /// Cached `str` instances, so that we don't create common instances multiple times.
+  private var internedStrings = [UseScalarsToHashString: PyString]()
 
   // MARK: - Modules
 
   /// Python `builtins` module.
-  public private(set) lazy var builtins: Builtins = {
-    self.ensureInitialized()
-    return Builtins()
-  }()
-
+  public private(set) var builtins: Builtins!
   /// Python `sys` module.
-  public private(set) lazy var sys: Sys = {
-    self.ensureInitialized()
-    return Sys()
-  }()
-
+  public private(set) var sys: Sys!
   /// Python `_imp` module.
-  public private(set) lazy var _imp: UnderscoreImp = {
-    self.ensureInitialized()
-    return UnderscoreImp()
-  }()
-
+  public private(set) var _imp: UnderscoreImp!
   /// Python `_warnings` module.
-  public private(set) lazy var _warnings: UnderscoreWarnings = {
-    self.ensureInitialized()
-    return UnderscoreWarnings()
-  }()
-
+  public private(set) var _warnings: UnderscoreWarnings!
   /// Python `_os` module.
-  public private(set) lazy var _os: UnderscoreOS = {
-    self.ensureInitialized()
-    return UnderscoreOS()
-  }()
+  public private(set) var _os: UnderscoreOS!
 
   /// `self.builtins` but as a Python module (`PyModule`).
-  public private(set) lazy var builtinsModule = self.builtins.createModule()
-
+  public private(set) var builtinsModule: PyModule!
   /// `self.sys` but as a Python module (`PyModule`).
-  public private(set) lazy var sysModule = self.sys.createModule()
-
+  public private(set) var sysModule: PyModule!
   /// `self._imp` but as a Python module (`PyModule`).
-  public private(set) lazy var _impModule = self._imp.createModule()
-
+  public private(set) var _impModule: PyModule!
   /// `self._warnings` but as a Python module (`PyModule`).
-  public private(set) lazy var _warningsModule = self._warnings.createModule()
-
+  public private(set) var _warningsModule: PyModule!
   /// `self._os` but as a Python module (`PyModule`).
-  public private(set) lazy var _osModule = self._os.createModule()
+  public private(set) var _osModule: PyModule!
 
   // MARK: - Types
 
   /// Container for all of the non-error Python types (as `PyType` instances).
-  public private(set) lazy var types: BuiltinTypes = {
-    self.ensureInitialized()
-    return BuiltinTypes()
-  }()
-
+  public private(set) var types: Py.Types
   /// Container for all of the error Python types (as `PyType` instances).
-  public private(set) lazy var errorTypes: BuiltinErrorTypes = {
-    self.ensureInitialized()
-    return BuiltinErrorTypes()
-  }()
+  public private(set) var errorTypes: Py.ErrorTypes
 
-  // MARK: - Hasher
+  // MARK: - Config, delegate, hasher
 
-  internal lazy var hasher = Hasher(key0: self.config.hashKey0,
-                                    key1: self.config.hashKey1)
+  public let config: PyConfig
+  public let delegate: PyDelegate
+  public let fileSystem: PyFileSystem
 
-  // MARK: - Config & delegate
-
-  private var _config: PyConfig?
-  public var config: PyConfig {
-    if let c = self._config { return c }
-    self.trapUninitialized()
-  }
-
-  private weak var _delegate: PyDelegate?
-  public var delegate: PyDelegate {
-    if let d = self._delegate { return d }
-    if self.isInitialized { trap("Py.delegate was deallocated!") }
-    self.trapUninitialized()
-  }
-
-  private weak var _fileSystem: PyFileSystem?
-  public var fileSystem: PyFileSystem {
-    if let f = self._fileSystem { return f }
-    if self.isInitialized { trap("Py.fileSystem was deallocated!") }
-    self.trapUninitialized()
-  }
+  public let memory: PyMemory
+  internal let hasher: Hasher
+  public private(set) var cast: PyCast!
 
   // MARK: - Init
 
-  fileprivate init() {}
-
-  // MARK: - Initialize
-
-  public var isInitialized: Bool {
-    return self._config != nil
-  }
-
-  /// Configure `Py` instance.
-  ///
-  /// This function **has** to be called before any other call!
-  public func initialize(
-    config: PyConfig,
-    delegate: PyDelegate,
-    fileSystem: PyFileSystem
-  ) {
+  public init(config: PyConfig,
+              delegate: PyDelegate,
+              fileSystem: PyFileSystem) {
     checkInvariants()
-    precondition(!self.isInitialized, "Py was already initialized.")
+    self.config = config
+    self.delegate = delegate
+    self.fileSystem = fileSystem
 
-    self._config = config
-    self._delegate = delegate
-    self._fileSystem = fileSystem
-    assert(self.isInitialized)
+    self.memory = PyMemory()
+    self.hasher = Hasher(key0: config.hashKey0, key1: config.hashKey1)
 
     // At this point everything should be initialized,
     // which means that from now on we are able to create PyObjects.
-    // So let start with creating our type hierarchy
+    // Since every object contains a pointer to its 'type',
+    // the first thing that we have to do is to create a type hierarchy
     // (but only hierarchy, we will fill '__dict__' later):
-    _ = self.types
-    _ = self.errorTypes
+    self.types = Types(memory: self.memory)
+    self.errorTypes = ErrorTypes(memory: self.memory,
+                                 typeType: self.types.type,
+                                 objectType: self.types.object)
 
-    // Now we have 'Py.types.str' which means that we can create 'IdStrings'
-    IdString.initialize()
+    // Now since we have all types in place we can start creating some more
+    // interesting instances, for example docs/methods/properties on those types:
+    self.types.fill__dict__(self)
+    self.errorTypes.fill__dict__(self)
 
-    // Filling '__dict__' may use 'IdString', so there may be a dependency here
-    // (probably, I don't know, it is safer to do it in this order).
-    self.types.fill__dict__()
-    self.errorTypes.fill__dict__()
+    // Since we have types we can start doing unholy things to them:
+    self.cast = PyCast(types: self.types, errorTypes: self.errorTypes)
 
-    // And now modules.
-    // Note that property getter will create module which will also fill '__dict__'
-    // (because we now can - we have basic types).
-    let builtinModules = [
+    // Predefined commonly used '__dict__' keys:
+//    IdString.initialize()
+
+    let types = self.types
+    self.true = self.memory.newBool(self, type: types.bool, value: true)
+    self.false = self.memory.newBool(self, type: types.bool, value: false)
+    self.none = self.memory.newNone(self, type: types.none)
+    self.notImplemented = self.memory.newNotImplemented(self, type: types.notImplemented)
+    self.ellipsis = self.memory.newEllipsis(self, type: types.ellipsis)
+    self.emptyTuple = self.memory.newTuple(self, type: types.tuple, elements: [])
+    self.emptyString = self.memory.newString(self, type: types.str, value: "")
+    self.emptyBytes = self.memory.newBytes(self, type: types.bytes, elements: .init())
+    self.emptyFrozenSet = self.memory.newFrozenSet(self, type: types.frozenset, elements: .init())
+
+    self.internedInts = Self.internedIntRange.map { int in
+      self.memory.newInt(self, type: types.int, value: BigInt(int))
+    }
+
+    self.builtins = Builtins(self)
+    self.sys = Sys(self)
+    self._imp = UnderscoreImp(self)
+    self._warnings = UnderscoreWarnings(self)
+    self._os = UnderscoreOS(self)
+
+    self.builtinsModule = self.builtins.createModule()
+    self.sysModule = self.sys.createModule()
+    self._impModule = self._imp.createModule()
+    self._warningsModule = self._warnings.createModule()
+    self._osModule = self._os.createModule()
+
+    self.sys.setBuiltinModules(modules: [
       self.builtinsModule,
       self.sysModule,
       self._impModule,
       self._warningsModule,
       self._osModule
-    ]
-
-    self.sys.setBuiltinModules(modules: builtinModules)
-  }
-
-  private func ensureInitialized() {
-    if !self.isInitialized {
-      self.trapUninitialized()
-    }
-  }
-
-  private func trapUninitialized() -> Never {
-    let fn = "Py.initialize(config:delegate:fileSystem:)"
-    trap("Python context must first be initialized with '\(fn)'.")
+    ])
   }
 
   // MARK: - Destroy
 
-  /// Destroy `Py` instance.
+  /// Destroy a `Py` instance.
   ///
-  /// You don't actually need to call this method.
-  /// `Py` will be destroyed when the program exists.
-  ///
-  /// But…
-  /// You can use this to reinitialize `Py` (note that you will have to call
-  /// `Py.initialize(config:,delegate:)` again).
-  public func destroy() {
-    // Clean circular references.
-    // This is VERY IMPORTANT because:
-    // 1. 'type' inherits from 'object'
-    //     both 'type' and 'object' are instances of 'type'
-    // 2. 'Type' type has 'BuiltinFunction' attributes which reference 'Type'.
-    for type in self.types.all {
-      type.gcClean()
-    }
-
-    for type in self.errorTypes.all {
-      type.gcClean()
-    }
-
-    // And also modules:
-    self.builtinsModule.gcClean()
-    self.sysModule.gcClean()
-    self._impModule.gcClean()
-    self._warningsModule.gcClean()
-    self._osModule.gcClean()
-
-    // Ids:
-    IdString.gcClean()
-
-    // TODO: Uncomment this when we have GC.
-    // weak var old = Py
-    // weak var builtins = Py.builtinsModule
-    // weak var sys = Py.sysModule
-
-    // We always need an instance (even if uninitialized)
-    Py = PyInstance()
-
-    // assert(old == nil, "Memory leak!")
-    // assert(builtins == nil, "Memory leak!")
-    // assert(sys == nil, "Memory leak!")
-  }
+  /// After calling this method nothing will work! (And that 'ok'.)
+  public func destroy() { }
 
   // MARK: - Intern integers
 
-  private static let smallIntRange = -10...255
-
-  private lazy var smallInts = PyInstance.smallIntRange.map {
-    PyMemory.newInt(value: BigInt($0))
-  }
+  private static let internedIntRange = -10...255
 
   /// Get cached `int`.
+  ///
   /// Note that not all of the `ints` are interned.
   /// Only some of them, from a very narrow range.
   internal func getInterned(int: BigInt) -> PyInt? {
@@ -357,20 +174,19 @@ public final class PyInstance {
   }
 
   /// Get cached `int`.
+  ///
   /// Note that not all of the `ints` are interned.
   /// Only some of them, from a very narrow range.
   internal func getInterned(int: Int) -> PyInt? {
-    guard PyInstance.smallIntRange.contains(int) else {
+    guard Self.internedIntRange.contains(int) else {
       return nil
     }
 
-    let index = int + Swift.abs(PyInstance.smallIntRange.lowerBound)
-    return self.smallInts[index]
+    let index = int + Swift.abs(Self.internedIntRange.lowerBound)
+    return self.internedInts[index]
   }
 
   // MARK: - Intern strings
-
-  private var internedStrings = [UseScalarsToHashString: PyString]()
 
   /// Get cached `PySString` value for given `String`.
   public func getInterned(string: String) -> PyString? {
@@ -395,6 +211,9 @@ public final class PyInstance {
     return self.intern(string: String(scalar))
   }
 
+  /// Cache given string and return it.
+  ///
+  /// If it is already in cache then it will return interned value.
   public func intern(path: Path) -> PyString {
     self.intern(string: path.string)
   }
@@ -414,5 +233,3 @@ public final class PyInstance {
     return str
   }
 }
-
-*/
