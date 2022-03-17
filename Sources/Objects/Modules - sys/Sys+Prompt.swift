@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // In CPython:
@@ -18,7 +17,7 @@ extension Sys {
   }
 
   public func setPS1(to value: PyObject) -> PyBaseException? {
-    return self.set(.ps1, to: value)
+    return self.set(.ps1, value: value)
   }
 
   // MARK: - PS2
@@ -32,8 +31,6 @@ extension Sys {
   }
 
   public func setPS2(to value: PyObject) -> PyBaseException? {
-    return self.set(.ps2, to: value)
+    return self.set(.ps2, value: value)
   }
 }
-
-*/

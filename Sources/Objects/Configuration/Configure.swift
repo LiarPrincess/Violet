@@ -11,19 +11,17 @@ internal enum Configure {
     return []
   }
 
-/* MARKER
-  internal static var prefix: Path {
-    let executable = Py.config.executablePath
-    let dirname = Py.fileSystem.dirname(path: executable)
+  internal static func createPrefix(_ py: Py) -> Path {
+    let executable = py.config.executablePath
+    let dirname = py.fileSystem.dirname(path: executable)
     return dirname.path
   }
 
-  internal static var execPrefix: Path {
-    return Configure.prefix
+  internal static func createExecPrefix(_ py: Py) -> Path {
+    return Self.createPrefix(py)
   }
-*/
 
-  internal static var pythonVersion = VersionInfo(
+  internal static let pythonVersion = Sys.VersionInfo(
     major: 3,
     minor: 7,
     micro: 2,
@@ -31,7 +29,7 @@ internal enum Configure {
     serial: 0
   )
 
-  internal static var implementation = ImplementationInfo(
+  internal static let implementation = Sys.ImplementationInfo(
     name: "Violet",
     abstract: "Violet - Python VM written in Swift",
     discussion: """
@@ -39,7 +37,7 @@ If a client requests it, we shall go anywhere.
 Representing the Auto Memoir Doll service,
 I am Violet Evergarden.
 """,
-    version: VersionInfo(
+    version: Sys.VersionInfo(
       major: 0,
       minor: 0,
       micro: 1,

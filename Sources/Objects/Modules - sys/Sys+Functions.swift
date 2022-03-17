@@ -1,4 +1,3 @@
-/* MARKER
 import BigInt
 import VioletCore
 
@@ -10,8 +9,7 @@ extension Sys {
 
   // MARK: - Intern
 
-  internal static var internDoc: String {
-    return """
+  internal static let internDoc = """
     intern(string) -> string
 
     ``Intern'' the given string.  This enters the string in the (global)
@@ -19,97 +17,36 @@ extension Sys {
     Return the string itself or the previously interned string object with the
     same value."
     """
+  internal static func intern(_ py: Py,
+                              module: PyObject,
+                              string: PyObject) -> PyResult<PyObject> {
+    let result = py.sys.intern(string)
+    return PyResult(result)
   }
 
   /// sys.intern(string)
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.intern).
-  public func intern(value: PyObject) -> PyResult<PyString> {
-    guard let str = PyCast.asString(value) else {
-      let t = value.typeName
-      return .typeError("intern() argument 1 must be str, not \(t)")
+  public func intern(_ value: PyObject) -> PyResult<PyString> {
+    guard let str = self.py.cast.asString(value) else {
+      let message = "intern() argument 1 must be str, not \(value.typeName)"
+      return .typeError(self.py, message: message)
     }
 
-    let result = self.intern(value: str)
+    let result = self.intern(str)
     return .value(result)
   }
 
-  public func intern(value: PyString) -> PyString {
-    return Py.intern(string: value.value)
+  public func intern(_ value: PyString) -> PyString {
+    return self.py.intern(string: value.value)
   }
 
-  public func intern(value: String) -> PyString {
-    return Py.intern(string: value)
-  }
-
-  // MARK: - Displayhook
-
-  internal static var displayhookDoc: String {
-    return """
-    displayhook(object) -> None
-
-    Print an object to sys.stdout and also save it in builtins._
-    """
-  }
-
-  public func getDisplayhook() -> PyResult<PyObject> {
-    return self.get(.displayhook)
-  }
-
-  /// sys.displayhook(value)
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.displayhook).
-  ///
-  /// static PyObject *
-  /// sys_displayhook(PyObject *self, PyObject *o)
-  public func displayhook(value: PyObject) -> PyResult<PyNone> {
-    // Print value except if None
-    // After printing, also assign to '_'
-    // Before, set '_' to None to avoid recursion
-    if PyCast.isNone(value) {
-      return .value(Py.none)
-    }
-
-    let builtins = Py.builtinsModule
-    let underscore = Py.intern(string: "_")
-
-    switch builtins.setAttribute(name: underscore, value: Py.none) {
-    case .value: break
-    case .error(let e): return .error(e)
-    }
-
-    let stdout: PyTextFile
-    switch self.getStdout() {
-    case let .value(s): stdout = s
-    case let .error(e): return .error(e)
-    }
-
-    // We are using 'print', so '\n' will be added automatically.
-    switch Py.print(arg: value, file: stdout) {
-    case .value: break
-    case .error(let e): return .error(e)
-    }
-
-    switch builtins.setAttribute(name: underscore, value: value) {
-    case .value: break
-    case .error(let e): return .error(e)
-    }
-
-    return .value(Py.none)
-  }
-
-  public func callDisplayhook(value: PyObject) -> PyResult<PyObject> {
-    switch self.getDisplayhook() {
-    case let .value(hook):
-      let callResult = Py.call(callable: hook, arg: value)
-      return callResult.asResult
-    case let .error(e):
-      return .error(e)
-    }
+  public func intern(_ value: String) -> PyString {
+    return self.py.intern(string: value)
   }
 
   // MARK: - Exit
 
-  internal static var exitDoc: String {
-    return """
+  internal static let exitDoc = """
     exit([status])
 
     Exit the interpreter by raising SystemExit(status).
@@ -118,40 +55,113 @@ extension Sys {
     If it is another kind of object, it will be printed and the system
     exit status will be one (i.e., failure).
     """
+
+  internal static func exit(_ py: Py,
+                            module: PyObject,
+                            status: PyObject?) -> PyResult<PyObject> {
+    let error = py.sys.exit(status: status)
+    return .error(error)
   }
 
   /// sys.exit([arg])
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.exit).
-  public static func exit(status: PyObject? = nil) -> PyResult<PyNone> {
-    let e = Py.newSystemExit(code: status)
-    return .error(e)
+  public func exit(status: PyObject?) -> PyBaseException {
+    let error = self.py.newSystemExit(code: status)
+    return error.asBaseException
   }
 
   public func getExit() -> PyResult<PyObject> {
     return self.get(.exit)
   }
 
-  // MARK: - Get default encoding
+  // MARK: - Default encoding
 
-  internal static var getDefaultEncodingDoc: String {
-    return """
+  internal static let getDefaultEncodingDoc = """
     getdefaultencoding() -> string
 
     Return the current default string encoding used by the Unicode
     implementation.
     """
+
+  internal static func getdefaultencoding(_ py: Py,
+                                          module: PyObject) -> PyResult<PyObject> {
+    let result = py.sys.defaultEncoding
+    return PyResult(result)
   }
 
-  /// sys.getdefaultencoding()
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.getdefaultencoding).
-  public func getDefaultEncoding() -> PyObject {
-    return Py.newString(self.defaultEncoding)
+  // MARK: - Recursion limit
+
+  internal static let getRecursionLimitDoc = """
+    getrecursionlimit()
+
+    Return the current value of the recursion limit, the maximum depth
+    of the Python interpreter stack.  This limit prevents infinite
+    recursion from causing an overflow of the C stack and crashing Python.
+    """
+
+  internal static func getrecursionlimit(_ py: Py,
+                                         module: PyObject) -> PyResult<PyObject> {
+    let result = py.sys.recursionLimit
+    return PyResult(result)
+  }
+
+  internal static let setRecursionLimitDoc = """
+    setrecursionlimit(n)
+
+    Set the maximum depth of the Python interpreter stack to n.  This
+    limit prevents infinite recursion from causing an overflow of the C
+    stack and crashing Python.  The highest possible limit is platform-
+    dependent."
+    """
+
+  internal static func setrecursionlimit(_ py: Py,
+                                         module: PyObject,
+                                         limit: PyObject) -> PyResult<PyObject> {
+    if let error = py.sys.setRecursionLimit(limit) {
+      return .error(error)
+    }
+
+    return .none(py)
+  }
+
+  /// sys.setrecursionlimit(limit)
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.setrecursionlimit).
+  ///
+  /// static PyObject *
+  /// sys_setrecursionlimit(PyObject *self, PyObject *args)
+  public func setRecursionLimit(_ limit: PyObject) -> PyBaseException? {
+    guard let int = self.py.cast.asInt(limit) else {
+      let message = "recursion limit must be an int, not \(limit.typeName)"
+      let error = self.py.newTypeError(message: message)
+      return error.asBaseException
+    }
+
+    guard int.value >= 1 else {
+      let message = "recursion limit must be greater or equal than 1"
+      let error = self.py.newValueError(message: message)
+      return error.asBaseException
+    }
+
+    self.recursionLimit = int
+    return nil
+  }
+
+  // MARK: - Traceback limit
+
+  internal static func tracebacklimit(_ py: Py, module: PyObject) -> PyResult<PyObject> {
+    let result = py.sys.getTracebackLimit()
+    return PyResult(result)
+  }
+
+  /// sys.tracebacklimit
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.tracebacklimit).
+  public func getTracebackLimit() -> PyResult<PyInt> {
+    return self.getInt(.tracebacklimit)
   }
 
   // MARK: - Get frame
 
-  internal static var getFrameDoc: String {
-    return """
+  internal static let getFrameDoc = """
     _getframe([depth]) -> frameobject
 
     Return a frame object from the call stack.  If optional integer depth is
@@ -162,21 +172,30 @@ extension Sys {
     This function should be used for internal and specialized
     purposes only."
     """
+
+  internal static func _getframe(_ py: Py,
+                                 module: PyObject,
+                                 depth: PyObject?) -> PyResult<PyObject> {
+    let result = py.sys.getFrame(depth: depth)
+    return PyResult(result)
   }
+
 
   /// sys._getframe([depth])
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys._getframe).
-  internal func _getFrame(depth depthObject: PyObject?) -> PyResult<PyFrame> {
-    var depth: BigInt
-    switch self.parseFrameDepth(object: depthObject) {
-    case let .value(d): depth = d
+  internal func getFrame(depth: PyObject?) -> PyResult<PyFrame> {
+    switch self.parseFrameDepth(object: depth) {
+    case let .value(d): return self.getFrame(depth: d)
     case let .error(e): return .error(e)
     }
+  }
 
-    guard let initialFrame = Py.delegate.frame else {
-      return .runtimeError("_getFrame(): no current frame")
+  internal func getFrame(depth: BigInt) -> PyResult<PyFrame> {
+    guard let initialFrame = self.py.delegate.frame else {
+      return .runtimeError(self.py, message: "_getFrame(): no current frame")
     }
 
+    var depth = depth
     var frame: PyFrame? = initialFrame
     while let f = frame, depth > 0 {
       frame = f.parent
@@ -184,7 +203,7 @@ extension Sys {
     }
 
     guard let result = frame else {
-      return .valueError("call stack is not deep enough")
+      return .valueError(self.py, message: "call stack is not deep enough")
     }
 
     return .value(result)
@@ -195,12 +214,11 @@ extension Sys {
       return .value(-1)
     }
 
-    guard let depth = PyCast.asInt(object) else {
-      return .typeError("an integer is required (got type \(object.typeName))")
+    guard let depth = self.py.cast.asInt(object) else {
+      let message = "an integer is required (got type \(object.typeName))"
+      return .typeError(self.py, message: message)
     }
 
     return .value(depth.value)
   }
 }
-
-*/

@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // In CPython:
@@ -28,12 +27,26 @@ extension Sys {
     return self.get(.version_info)
   }
 
+  internal func createInitialVersionInfo() -> PyNamespace {
+    return self.createVersionObject(
+      property: "version_info",
+      versionInfo: self.pythonVersion
+    )
+  }
+
   // MARK: - Implementation
 
   /// sys.implementation
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.implementation).
   public func getImplementation() -> PyResult<PyObject> {
     return self.get(.implementation)
+  }
+
+  internal func createInitialImplementation() -> PyNamespace {
+    return self.createImplementationObject(
+      property: "implementation",
+      implementation: self.implementation
+    )
   }
 
   // MARK: - Hex version
@@ -44,85 +57,70 @@ extension Sys {
     return self.get(.hexversion)
   }
 
-  // MARK: - Initial
-
-  internal func createInitialVersionInfo() -> PyObject {
-    return self.createVersionObject(
-      property: "version_info",
-      versionInfo: self.versionInfo
-    )
+  internal func createInitialHexVersion() -> PyInt {
+    let hexVersion = self.pythonVersion.hexVersion
+    return self.py.newInt(hexVersion)
   }
 
-  internal func createInitialImplementation() -> PyObject {
-    return self.createImplementationObject(
-      property: "implementation",
-      implementation: self.implementation
-    )
-  }
+  // MARK: - Create object
 
-  private func createVersionObject(
-    property: String,
-    versionInfo: VersionInfo
-  ) -> PyNamespace {
-    let dict = Py.newDict()
+  private func createVersionObject(property: String,
+                                   versionInfo: VersionInfo) -> PyNamespace {
+    let dict = self.py.newDict()
 
-    func insertOrTrap(name: String, value: PyObject) {
+    func insertOrTrap<T: PyObjectMixin>(name: String, value: T) {
       self.insertOrTrap(dict: dict, name: name, value: value, for: property)
     }
 
     let releaseLevel = versionInfo.releaseLevel.description
 
-    insertOrTrap(name: "major", value: Py.newInt(versionInfo.major))
-    insertOrTrap(name: "minor", value: Py.newInt(versionInfo.minor))
-    insertOrTrap(name: "micro", value: Py.newInt(versionInfo.micro))
-    insertOrTrap(name: "releaseLevel", value: Py.newString(releaseLevel))
-    insertOrTrap(name: "serial", value: Py.newInt(versionInfo.serial))
+    insertOrTrap(name: "major", value: self.py.newInt(versionInfo.major))
+    insertOrTrap(name: "minor", value: self.py.newInt(versionInfo.minor))
+    insertOrTrap(name: "micro", value: self.py.newInt(versionInfo.micro))
+    insertOrTrap(name: "releaseLevel", value: self.py.newString(releaseLevel))
+    insertOrTrap(name: "serial", value: self.py.newInt(versionInfo.serial))
 
-    return Py.newNamespace(dict: dict)
+    return self.py.newNamespace(dict: dict)
   }
 
-  private func createImplementationObject(
-    property: String,
-    implementation: ImplementationInfo
-  ) -> PyNamespace {
-    let dict = Py.newDict()
+  private func createImplementationObject(property: String,
+                                          implementation: ImplementationInfo) -> PyNamespace {
+    let dict = self.py.newDict()
 
-    func insertOrTrap(name: String, value: PyObject) {
+    func insertOrTrap<T: PyObjectMixin>(name: String, value: T) {
       self.insertOrTrap(dict: dict, name: name, value: value, for: property)
     }
 
-    let name = Py.intern(string: implementation.name)
-    let hexversion = Py.newInt(implementation.version.hexVersion)
+    let name = self.py.intern(string: implementation.name)
+    let hexversion = self.py.newInt(implementation.version.hexVersion)
 
     let version = self.createVersionObject(
       property: property,
       versionInfo: implementation.version
     )
 
-    let cacheTag: PyObject = {
-      if let c = implementation.cacheTag {
-        return Py.newString(c)
-      }
-
-      return Py.none
-    }()
+    let cacheTag: PyObject
+    if let c = implementation.cacheTag {
+      let string = self.py.newString(c)
+      cacheTag = string.asObject
+    } else {
+      cacheTag = self.py.none.asObject
+    }
 
     insertOrTrap(name: "name", value: name)
     insertOrTrap(name: "version", value: version)
     insertOrTrap(name: "hexversion", value: hexversion)
     insertOrTrap(name: "cache_tag", value: cacheTag)
 
-    return Py.newNamespace(dict: dict)
+    return self.py.newNamespace(dict: dict)
   }
 
-  private func insertOrTrap(
-    dict: PyDict,
-    name: String,
-    value: PyObject,
-    for property: String
-  ) {
-    let key = Py.newString(name)
-    switch dict.set(key: key, to: value) {
+  private func insertOrTrap<T: PyObjectMixin>(dict: PyDict,
+                                              name: String,
+                                              value: T,
+                                              for property: String) {
+    let key = self.py.newString(name)
+    switch dict.set(self.py, key: key, value: value.asObject) {
     case .ok:
       break
     case .error(let e):
@@ -130,5 +128,3 @@ extension Sys {
     }
   }
 }
-
-*/

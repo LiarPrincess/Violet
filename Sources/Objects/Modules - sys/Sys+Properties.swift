@@ -1,4 +1,3 @@
-/* MARKER
 import FileSystem
 import VioletCore
 
@@ -23,8 +22,8 @@ extension Sys {
     return self.getList(.argv)
   }
 
-  public func setArgv(to value: PyObject) -> PyBaseException? {
-    return self.set(.argv, to: value)
+  public func setArgv(_ value: PyObject) -> PyBaseException? {
+    return self.set(.argv, value: value)
   }
 
   /// pymain_init_core_argv(_PyMain *pymain, _PyCoreConfig *config, ...)
@@ -33,18 +32,22 @@ extension Sys {
   ///
   /// Please note that `VM` will also modify `argv` using `setArgv0`.
   internal func createInitialArgv() -> PyList {
-    let arguments = Py.config.arguments
+    let arguments = self.py.config.arguments
     let argumentsWithoutProgramName = arguments.raw.dropFirst()
 
-    var result = Array(argumentsWithoutProgramName)
+    var elements = [PyObject]()
 
-    if result.isEmpty {
-      result = [""]
+    if argumentsWithoutProgramName.isEmpty {
+      let empty = self.py.emptyString
+      elements.append(empty.asObject)
+    } else {
+      for arg in argumentsWithoutProgramName {
+        let string = py.newString(arg)
+        elements.append(string.asObject)
+      }
     }
 
-    assert(result.any)
-    let objects = result.map(Py.newString(_:))
-    return Py.newList(elements: objects)
+    return self.py.newList(elements: elements)
   }
 
   // MARK: - Argv0
@@ -57,38 +60,42 @@ extension Sys {
     }
 
     guard let first = list.elements.first else {
-      let msg = "'sys.argv' is empty"
-      return .valueError(msg)
+      return .valueError(self.py, message: "'sys.argv' is empty")
     }
 
-    guard let result = PyCast.asString(first) else {
-      let t = first.typeName
-      let msg = "Expected first element of 'sys.argv' to be a str, but got \(t)"
-      return .typeError(msg)
+    guard let result = self.py.cast.asString(first) else {
+      let msg = "Expected first element of 'sys.argv' to be a str, but got \(first.typeName)"
+      return .typeError(self.py, message: msg)
     }
 
     return .value(result)
   }
 
-  public func setArgv0(value: Path) -> PyResult<PyNone> {
+  public func setArgv0(value: Path) -> PyBaseException? {
     return self.setArgv0(value: value.string)
   }
 
-  public func setArgv0(value: String) -> PyResult<PyNone> {
+  public func setArgv0(value: String) -> PyBaseException? {
     let list: PyList
     switch self.getArgv() {
     case let .value(l): list = l
-    case let .error(e): return .error(e)
+    case let .error(e): return e
     }
 
-    let object = Py.newString(value)
+    let string = self.py.newString(value)
+    let object = string.asObject
 
     if list.isEmpty {
       list.append(object: object)
-      return .value(Py.none)
+      return nil
     }
 
-    return list.setItem(index: 0, object: object)
+    switch list.setItem(self.py, index: 0, value: object) {
+    case .value:
+      return nil
+    case .error(let e):
+      return e
+    }
   }
 
   // MARK: - Flags
@@ -103,11 +110,11 @@ extension Sys {
   }
 
   internal func createInitialFlags() -> PyNamespace {
-    let dict = Py.newDict()
+    let dict = self.py.newDict()
 
-    func insertOrTrap(name: String, value: PyObject) {
-      let key = Py.newString(name)
-      switch dict.set(key: key, to: value) {
+    func insertOrTrap<T: PyObjectMixin>(name: String, value: T) {
+      let key = self.py.newString(name)
+      switch dict.set(self.py, key: key, value: value.asObject) {
       case .ok:
         break
       case .error(let e):
@@ -115,35 +122,31 @@ extension Sys {
       }
     }
 
-    let ignoreEnvironment = Py.newBool(self.flags.ignoreEnvironment)
+    let optimize: Int
+    switch self.flags.optimize {
+    case .none: optimize = 0
+    case .O: optimize = 1
+    case .OO: optimize = 2
+    }
 
-    let optimize: PyInt = {
-      switch self.flags.optimize {
-      case .none: return Py.newInt(0)
-      case .O: return Py.newInt(1)
-      case .OO: return Py.newInt(2)
-      }
-    }()
+    let bytesWarning: Int
+    switch self.flags.bytesWarning {
+    case .ignore: bytesWarning = 0
+    case .warning: bytesWarning = 1
+    case .error: bytesWarning = 2
+    }
 
-    let bytesWarning: PyInt = {
-      switch self.flags.bytesWarning {
-      case .ignore: return Py.newInt(0)
-      case .warning: return Py.newInt(1)
-      case .error: return Py.newInt(2)
-      }
-    }()
+    insertOrTrap(name: "debug", value: self.py.newBool(self.flags.debug))
+    insertOrTrap(name: "inspect", value: self.py.newBool(self.flags.inspect))
+    insertOrTrap(name: "interactive", value: self.py.newBool(self.flags.interactive))
+    insertOrTrap(name: "optimize", value: self.py.newInt(optimize))
+    insertOrTrap(name: "ignore_environment", value: self.py.newBool(self.flags.ignoreEnvironment))
+    insertOrTrap(name: "verbose", value: self.py.newInt(self.flags.verbose))
+    insertOrTrap(name: "bytes_warning", value: self.py.newInt(bytesWarning))
+    insertOrTrap(name: "quiet", value: self.py.newBool(self.flags.quiet))
+    insertOrTrap(name: "isolated", value: self.py.newBool(self.flags.isolated))
 
-    insertOrTrap(name: "debug", value: Py.newBool(self.flags.debug))
-    insertOrTrap(name: "inspect", value: Py.newBool(self.flags.inspect))
-    insertOrTrap(name: "interactive", value: Py.newBool(self.flags.interactive))
-    insertOrTrap(name: "optimize", value: optimize)
-    insertOrTrap(name: "ignore_environment", value: ignoreEnvironment)
-    insertOrTrap(name: "verbose", value: Py.newInt(self.flags.verbose))
-    insertOrTrap(name: "bytes_warning", value: bytesWarning)
-    insertOrTrap(name: "quiet", value: Py.newBool(self.flags.quiet))
-    insertOrTrap(name: "isolated", value: Py.newBool(self.flags.isolated))
-
-    return Py.newNamespace(dict: dict)
+    return self.py.newNamespace(dict: dict)
   }
 
   // MARK: - Warn options
@@ -161,23 +164,25 @@ extension Sys {
   /// 1. It is moved to '_PyMainInterpreterConfig' (in '_PyMainInterpreterConfig_Read')
   /// 2. Set as 'sys.warnoptions' (in _PySys_EndInit)
   internal func createInitialWarnOptions() -> PyList {
-    var result = [String]()
+    var elements = [PyObject]()
 
-    let options = self.flags.warnings
-    let filters = options.map(String.init(describing:))
-    result.append(contentsOf: filters)
+    for option in self.flags.warnings {
+      let string = self.py.newString(option.description)
+      elements.append(string.asObject)
+    }
 
     switch self.flags.bytesWarning {
     case .ignore:
       break
     case .warning:
-      result.append("default::BytesWarning")
+      let string = py.newString("default::BytesWarning")
+      elements.append(string.asObject)
     case .error:
-      result.append("error::BytesWarning")
+      let string = py.newString("error::BytesWarning")
+      elements.append(string.asObject)
     }
 
-    let strings = result.map(Py.newString(_:))
-    return Py.newList(elements: strings)
+    return self.py.newList(elements: elements)
   }
 
   // MARK: - Executable
@@ -191,6 +196,11 @@ extension Sys {
   /// `sys.executable` will be an empty string or `None`.
   public func getExecutable() -> PyResult<PyString> {
     return self.getString(.executable)
+  }
+
+  internal func createInitialExecutablePath() -> PyString {
+    let executablePath = self.py.config.executablePath
+    return self.py.newString(executablePath)
   }
 
   // MARK: - Platform
@@ -223,11 +233,11 @@ extension Sys {
   }
 
   internal func createInitialHashInfo() -> PyNamespace {
-    let dict = Py.newDict()
+    let dict = self.py.newDict()
 
-    func set(name: String, value: PyObject) {
-      let interned = Py.intern(string: name)
-      switch dict.set(key: interned, to: value) {
+    func set<T: PyObjectMixin>(name: String, value: T) {
+      let interned = self.py.intern(string: name)
+      switch dict.set(self.py, key: interned, value: value.asObject) {
       case .ok:
         break
       case .error(let e):
@@ -235,16 +245,16 @@ extension Sys {
       }
     }
 
-    set(name: "width", value: Py.newInt(self.hashInfo.width))
-    set(name: "modulus", value: Py.newInt(self.hashInfo.modulus))
-    set(name: "inf", value: Py.newInt(self.hashInfo.inf))
-    set(name: "nan", value: Py.newInt(self.hashInfo.nan))
-    set(name: "imag", value: Py.newInt(self.hashInfo.imag))
-    set(name: "algorithm", value: Py.newString(self.hashInfo.algorithm))
-    set(name: "hash_bits", value: Py.newInt(self.hashInfo.hashBits))
-    set(name: "seed_bits", value: Py.newInt(self.hashInfo.seedBits))
+    set(name: "width", value: self.py.newInt(self.hashInfo.width))
+    set(name: "modulus", value: self.py.newInt(self.hashInfo.modulus))
+    set(name: "inf", value: self.py.newInt(self.hashInfo.inf))
+    set(name: "nan", value: self.py.newInt(self.hashInfo.nan))
+    set(name: "imag", value: self.py.newInt(self.hashInfo.imag))
+    set(name: "algorithm", value: self.py.newString(self.hashInfo.algorithm))
+    set(name: "hash_bits", value: self.py.newInt(self.hashInfo.hashBits))
+    set(name: "seed_bits", value: self.py.newInt(self.hashInfo.seedBits))
 
-    return Py.newNamespace(dict: dict)
+    return self.py.newNamespace(dict: dict)
   }
 
   // MARK: - Maxsize
@@ -260,5 +270,3 @@ extension Sys {
     return self.getInt(.maxsize)
   }
 }
-
-*/

@@ -92,8 +92,7 @@ internal enum AttributeHelper {
     let descriptor = SetDescriptor(py, object: object, attributeName: name)
 
     if let desc = descriptor {
-      let result = desc.call(value: value)
-      return result
+      return desc.call(value: value)
     }
 
     if let dict = py.get__dict__(object: object) {

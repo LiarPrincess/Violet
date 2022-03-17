@@ -258,8 +258,19 @@ public struct PyList: PyObjectMixin, AbstractSequence {
       return Self.invalidZelfArgument(py, zelf, "__setitem__")
     }
 
+    return zelf.setItem(py, index: index, value: value)
+  }
+
+  internal func setItem(_ py: Py, index: PyObject, value: PyObject) -> PyResult<PyObject> {
     return SetItemImpl.setItem(py,
-                               target: &zelf.elements,
+                               target: &self.elements,
+                               index: index,
+                               value: value)
+  }
+
+  internal func setItem(_ py: Py, index: Int, value: PyObject) -> PyResult<PyObject> {
+    return SetItemImpl.setItem(py,
+                               target: &self.elements,
                                index: index,
                                value: value)
   }

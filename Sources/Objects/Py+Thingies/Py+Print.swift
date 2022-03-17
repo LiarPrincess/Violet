@@ -93,7 +93,7 @@ extension Py {
                     flush: PyObject? = nil) -> PyBaseException? {
     let stream = stream ?? defaultStream
 
-    switch stream.getFile() {
+    switch self.sys.getFile(stream: stream) {
     case let .value(file):
       return self.printCommon(file: file,
                               args: args,
@@ -173,7 +173,7 @@ extension Py {
 
   private func getTextFile(file: PyObject?) -> PyResult<PyTextFile> {
     guard let file = file, !self.cast.isNone(file) else {
-      return defaultStream.getFile()
+      return self.sys.getFile(stream: defaultStream)
     }
 
     guard let textFile = self.cast.asTextFile(file) else {
