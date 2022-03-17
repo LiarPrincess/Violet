@@ -6,11 +6,11 @@ OBJECTS=./Sources/Objects
 GENERATED=./Sources/Objects/Generated
 
 # First call to gather information about hand-written exceptions
-echo "Sourcery"
+echo "Sourcery - exceptions by hand"
 sourcery \
-  --sources "$OBJECTS" \
-  --templates "$GENERATED/Sourcery/dump.stencil" \
-  --output "$GENERATED/Sourcery/dump.txt" \
+  --sources "$OBJECTS/Types - errors" \
+  --templates "$GENERATED/Sourcery/exceptions-by-hand.stencil" \
+  --output "$GENERATED/Sourcery/exceptions-by-hand.txt" \
   --quiet
 
 echo "ExceptionSubclasses"

@@ -114,6 +114,7 @@ class PyFunctionInfo:
         # For example: foo(bar:)
         self.swift_selector = _create_selector(signature)
 
+
 def _create_selector(signature: SignatureInfo) -> str:
     result = signature.name
     if signature.arguments:
