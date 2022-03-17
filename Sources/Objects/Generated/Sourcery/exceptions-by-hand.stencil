@@ -1,0 +1,19 @@
+
+{% for type in types.structs|annotated:"pyerrortype" %}
+{% set python_name %}{{ type.annotations.pyerrortype }}{% endset %}
+
+{% set swift_name %}{{ type.name }}{% endset %}
+{% set python_base_name %}{{ type.annotations.pybase }}{% endset %}
+
+############
+# {{python_name}}
+############
+
+ErrorType|{{swift_name}}|{{python_name}}|{{python_base_name}}
+
+{% for method in type.allMethods where method.shortName == "initialize" %}
+{% set swift_selector_with_types %}{{ method.name }}{% endset %}
+SwiftInit|{{swift_selector_with_types}}
+{% endfor %}
+
+{% endfor %}

@@ -1,18 +1,44 @@
 from typing import Dict, List, Optional
+from Sourcery import ExceptionByHand, get_error_types_implemented_by_hand
 from Helpers import generated_warning, where_to_find_errors_in_cpython, exception_hierarchy
-from Sourcery import (
-    TypeInfo, SwiftInitializerInfo, get_types
-)
 
-# Some exceptions will be implemented by hand.
-MANUALLY_IMPLEMENTED = [
-    'BaseException',
-    'KeyError',  # Custom '__str__' method
-    'StopIteration',  # 'value' property
-    'SystemExit',  # 'code' property
-    'ImportError',  # tons of customization (msg, name, path)
-    'SyntaxError',  # another ton of customization (msg, filename, lineno, offset, text, print_file_and_line)
-]
+class ErrorInfo:
+    def __init__(self,
+                type_name: str,
+                base_info: Optional[object], # Optional[ErrorInfo]
+                implementation_by_hand: Optional[ExceptionByHand],
+                doc: str):
+        self.type_name = type_name
+        self.base_info = base_info
+        self.implementation_by_hand = implementation_by_hand
+        self.doc = doc
+
+def get_error_types() -> List[ErrorInfo]:
+    result = []
+    name_to_info: Dict[str: ErrorInfo] = {}
+
+    exceptions_by_hand = get_error_types_implemented_by_hand()
+    for e in exception_hierarchy:
+        name = e.type_name
+        base_name = e.base_type_name
+
+        # Errors in 'exception_hierarchy' are sorted: base -> subclasses
+        if base_name == 'Object':
+            base_info = None
+        else:
+            base_info = name_to_info[base_name]
+
+        by_hand: Optional[ExceptionByHand] = None
+        for h in exceptions_by_hand:
+            if h.python_type_name == name:
+                by_hand = h
+                break
+
+        info = ErrorInfo(name, base_info, by_hand, e.doc)
+        result.append(info)
+        name_to_info[name] = info
+
+    return result
 
 if __name__ == '__main__':
     print(f'''\
@@ -26,17 +52,13 @@ if __name__ == '__main__':
 {where_to_find_errors_in_cpython}\
 ''')
 
-    all_types = get_types()
-    python_name_to_type: Dict[str, TypeInfo] = {}
-    for t in all_types:
-      python_name_to_type[t.python_type_name] = t
-
-    for t in exception_hierarchy:
-        python_type_name = t.type_name
-        python_base_type_name = t.base_type_name
-
-        if python_type_name in MANUALLY_IMPLEMENTED:
+    for t in get_error_types():
+        is_implemented_by_hand = t.implementation_by_hand is not None
+        if is_implemented_by_hand:
             continue
+
+        python_type_name = t.type_name
+        python_base_type_name = t.base_info.type_name
 
         swift_type_name = 'Py' + python_type_name
         swift_base_type_name = 'Py' + python_base_type_name
@@ -69,9 +91,17 @@ public struct {swift_type_name}: PyErrorMixin {{
         # === Initialize ===
         # ==================
 
-        # We have to copy the base class init 1:1.
-        base_type = python_name_to_type[t.base_type_name]
-        for fn in base_type.swift_initializers:
+        # We have to copy the base class initializers 1:1.
+
+        base_with_initializers = t
+        while True:
+            if base_with_initializers.implementation_by_hand is not None:
+                break
+
+            base_with_initializers = base_with_initializers.base_info
+
+        swift_initializers = base_with_initializers.implementation_by_hand.swift_initializers
+        for fn in swift_initializers:
             print()
             print(f'  internal func initialize(')
 
