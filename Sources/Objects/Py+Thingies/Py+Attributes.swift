@@ -23,7 +23,7 @@ extension Py {
   public func getAttribute(object: PyObject,
                            name: IdString,
                            default: PyObject? = nil) -> PyResult<PyObject> {
-    let n = name.value.asObject
+    let n = self.resolve(id: name).asObject
     return self.getAttribute(object: object, name: n, default: `default`)
   }
 
@@ -176,7 +176,7 @@ extension Py {
   /// hasattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#hasattr)
   public func hasAttribute(object: PyObject, name: IdString) -> PyResult<Bool> {
-    let n = name.value.asObject
+    let n = self.resolve(id: name).asObject
     return self.hasAttribute(object: object, name: n)
   }
 
@@ -223,7 +223,7 @@ extension Py {
   public func setAttribute(object: PyObject,
                            name: IdString,
                            value: PyObject) -> PyResult<PyObject> {
-    let n = name.value.asObject
+    let n = self.resolve(id: name).asObject
     return self.setAttribute(object: object, name: n, value: value)
   }
 
@@ -311,7 +311,7 @@ extension Py {
   /// delattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#delattr)
   public func delAttribute(object: PyObject, name: IdString) -> PyResult<PyObject> {
-    let n = name.value.asObject
+    let n = self.resolve(id: name).asObject
     return self.delAttribute(object: object, name: n)
   }
 

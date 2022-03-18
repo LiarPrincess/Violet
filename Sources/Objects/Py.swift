@@ -44,12 +44,15 @@ public struct Py {
   public var emptyFrozenSet: PyFrozenSet { self.emptyFrozenSetPtr.pointee }
 
   // sourcery: storedProperty
+  // Predefined commonly used '__dict__' keys:
+  private var idStrings: IdString.Collection { self.idStringsPtr.pointee }
+  // sourcery: storedProperty
   /// Cached `int` instances, so that we don't create `0/1/2` etc. multiple times.
   private var internedInts: [PyInt] { self.internedIntsPtr.pointee }
   // sourcery: storedProperty
-  /// Cached `str` instances, so that we don't create common instances multiple times.
+  /// Cached `str` instances, so that we don't create common values multiple times.
   private var internedStrings: [UseScalarsToHashString: PyString] {
-    // We could go with the usual 'nonmutating _modify/set',
+    // We could go with the usual 'nonmutating _modify/set' dance,
     // but we will going to mutate it in only 1 place, so it is not worth it.
     self.internedStringsPtr.pointee
   }
@@ -153,9 +156,6 @@ public struct Py {
     let cast = PyCast(types: self.types, errorTypes: self.errorTypes)
     self.castPtr.initialize(to: cast)
 
-    // Predefined commonly used '__dict__' keys:
-//    IdString.initialize()
-
     // Basic instances:
     self.truePtr.initialize(to: memory.newBool(self, type: types.bool, value: true))
     self.falsePtr.initialize(to: memory.newBool(self, type: types.bool, value: false))
@@ -173,6 +173,10 @@ public struct Py {
 
     self.internedIntsPtr.initialize(to: internedInts)
     self.internedStringsPtr.initialize(to: [:])
+
+    // Predefined commonly used '__dict__' keys:
+    let idStrings = IdString.Collection(self)
+    self.idStringsPtr.initialize(to: idStrings)
 
     // Modules:
     self.builtinsPtr.initialize(to: Builtins(self))
@@ -203,6 +207,12 @@ public struct Py {
   /// After calling this method nothing will work! (And that's 'ok'.)
   public func destroy() {
     PyMemory.destroyPy(self) // Bye!
+  }
+
+  // MARK: - Id strings
+
+  public func resolve(id: IdString) -> PyString {
+    return self.idStrings[id]
   }
 
   // MARK: - Intern integers

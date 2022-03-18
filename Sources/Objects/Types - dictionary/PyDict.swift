@@ -234,7 +234,7 @@ public struct PyDict: PyObjectMixin {
 
   /// Get value from a dictionary. Will trap on fail.
   public func get(_ py: Py, id: IdString) -> PyObject? {
-    let key = Key(id: id)
+    let key = Key(py, id: id)
 
     switch self.get(py, key: key) {
     case .value(let o):
@@ -294,7 +294,7 @@ public struct PyDict: PyObjectMixin {
 
   /// Set value in a dictionary. Will trap on fail.
   public func set(_ py: Py, id: IdString, value: PyObject) {
-    let key = Key(id: id)
+    let key = Key(py, id: id)
 
     switch self.set(py, key: key, value: value) {
     case .ok:
@@ -337,7 +337,7 @@ public struct PyDict: PyObjectMixin {
 
   /// Delete value from a dictionary. Will trap on fail.
   public func del(_ py: Py, id: IdString) -> PyObject? {
-    let key = Key(id: id)
+    let key = Key(py, id: id)
 
     switch self.del(py, key: key) {
     case .value(let o):

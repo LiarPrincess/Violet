@@ -109,7 +109,8 @@ extension Py {
 
   public func hasMethod(object: PyObject,
                         selector: IdString) -> PyResult<Bool> {
-    return self.hasMethod(object: object, selector: selector.value)
+    let selectorString = self.resolve(id: selector)
+    return self.hasMethod(object: object, selector: selectorString)
   }
 
   public func hasMethod(object: PyObject,
@@ -271,8 +272,9 @@ extension Py {
                          selector: IdString,
                          args: PyObject,
                          kwargs: PyObject?) -> CallMethodResult {
+    let selectorString = self.resolve(id: selector)
     return self.callMethod(object: object,
-                           selector: selector.value,
+                           selector: selectorString,
                            args: args,
                            kwargs: kwargs)
   }
@@ -317,8 +319,9 @@ extension Py {
                          args: [PyObject] = [],
                          kwargs: PyDict? = nil,
                          allowsCallableFromDict: Bool = false) -> CallMethodResult {
+    let selectorString = self.resolve(id: selector)
     return self.callMethod(object: object,
-                           selector: selector.value,
+                           selector: selectorString,
                            args: args,
                            kwargs: kwargs,
                            allowsCallableFromDict: allowsCallableFromDict)

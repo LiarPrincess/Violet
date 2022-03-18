@@ -27,7 +27,7 @@ public struct OrderedDictionary<Value> {
 
   public struct Key: CustomStringConvertible {
 
-    /// The hash value.
+    /// The hash value. 
     ///
     /// - Warning:
     /// Value should be either immutable or mutation should not change hash.
@@ -38,9 +38,10 @@ public struct OrderedDictionary<Value> {
       return "OrderedDictionary.Key(hash: \(self.hash), object: \(self.object))"
     }
 
-    internal init(id: IdString) {
-      self.hash = id.hash
-      self.object = id.value.asObject
+    internal init(_ py: Py, id: IdString) {
+      let string = py.resolve(id: id)
+      self.hash = string.getHash(py)
+      self.object = string.asObject
     }
 
     internal init(hash: PyHash, object: PyObject) {

@@ -28,6 +28,7 @@ extension Py {
     internal let emptyStringOffset: Int
     internal let emptyBytesOffset: Int
     internal let emptyFrozenSetOffset: Int
+    internal let idStringsOffset: Int
     internal let internedIntsOffset: Int
     internal let internedStringsOffset: Int
     internal let builtinsOffset: Int
@@ -66,6 +67,7 @@ extension Py {
           PyMemory.FieldLayout(from: PyString.self), // emptyString
           PyMemory.FieldLayout(from: PyBytes.self), // emptyBytes
           PyMemory.FieldLayout(from: PyFrozenSet.self), // emptyFrozenSet
+          PyMemory.FieldLayout(from: IdString.Collection.self), // idStrings
           PyMemory.FieldLayout(from: [PyInt].self), // internedInts
           PyMemory.FieldLayout(from: [UseScalarsToHashString: PyString].self), // internedStrings
           PyMemory.FieldLayout(from: Builtins.self), // builtins
@@ -89,7 +91,7 @@ extension Py {
         ]
       )
 
-      assert(layout.offsets.count == 29)
+      assert(layout.offsets.count == 30)
       self.trueOffset = layout.offsets[0]
       self.falseOffset = layout.offsets[1]
       self.noneOffset = layout.offsets[2]
@@ -99,26 +101,27 @@ extension Py {
       self.emptyStringOffset = layout.offsets[6]
       self.emptyBytesOffset = layout.offsets[7]
       self.emptyFrozenSetOffset = layout.offsets[8]
-      self.internedIntsOffset = layout.offsets[9]
-      self.internedStringsOffset = layout.offsets[10]
-      self.builtinsOffset = layout.offsets[11]
-      self.sysOffset = layout.offsets[12]
-      self._impOffset = layout.offsets[13]
-      self._warningsOffset = layout.offsets[14]
-      self._osOffset = layout.offsets[15]
-      self.builtinsModuleOffset = layout.offsets[16]
-      self.sysModuleOffset = layout.offsets[17]
-      self._impModuleOffset = layout.offsets[18]
-      self._warningsModuleOffset = layout.offsets[19]
-      self._osModuleOffset = layout.offsets[20]
-      self.typesOffset = layout.offsets[21]
-      self.errorTypesOffset = layout.offsets[22]
-      self.configOffset = layout.offsets[23]
-      self.delegateOffset = layout.offsets[24]
-      self.fileSystemOffset = layout.offsets[25]
-      self.memoryOffset = layout.offsets[26]
-      self.castOffset = layout.offsets[27]
-      self.hasherOffset = layout.offsets[28]
+      self.idStringsOffset = layout.offsets[9]
+      self.internedIntsOffset = layout.offsets[10]
+      self.internedStringsOffset = layout.offsets[11]
+      self.builtinsOffset = layout.offsets[12]
+      self.sysOffset = layout.offsets[13]
+      self._impOffset = layout.offsets[14]
+      self._warningsOffset = layout.offsets[15]
+      self._osOffset = layout.offsets[16]
+      self.builtinsModuleOffset = layout.offsets[17]
+      self.sysModuleOffset = layout.offsets[18]
+      self._impModuleOffset = layout.offsets[19]
+      self._warningsModuleOffset = layout.offsets[20]
+      self._osModuleOffset = layout.offsets[21]
+      self.typesOffset = layout.offsets[22]
+      self.errorTypesOffset = layout.offsets[23]
+      self.configOffset = layout.offsets[24]
+      self.delegateOffset = layout.offsets[25]
+      self.fileSystemOffset = layout.offsets[26]
+      self.memoryOffset = layout.offsets[27]
+      self.castOffset = layout.offsets[28]
+      self.hasherOffset = layout.offsets[29]
       self.size = layout.size
       self.alignment = layout.alignment
     }
@@ -145,6 +148,8 @@ extension Py {
   internal var emptyBytesPtr: Ptr<PyBytes> { Ptr(self.ptr, offset: Self.layout.emptyBytesOffset) }
   /// Property: `Py.emptyFrozenSet`.
   internal var emptyFrozenSetPtr: Ptr<PyFrozenSet> { Ptr(self.ptr, offset: Self.layout.emptyFrozenSetOffset) }
+  /// Property: `Py.idStrings`.
+  internal var idStringsPtr: Ptr<IdString.Collection> { Ptr(self.ptr, offset: Self.layout.idStringsOffset) }
   /// Property: `Py.internedInts`.
   internal var internedIntsPtr: Ptr<[PyInt]> { Ptr(self.ptr, offset: Self.layout.internedIntsOffset) }
   /// Property: `Py.internedStrings`.
@@ -196,6 +201,7 @@ extension Py {
     self.emptyStringPtr.deinitialize()
     self.emptyBytesPtr.deinitialize()
     self.emptyFrozenSetPtr.deinitialize()
+    self.idStringsPtr.deinitialize()
     self.internedIntsPtr.deinitialize()
     self.internedStringsPtr.deinitialize()
     self.builtinsPtr.deinitialize()

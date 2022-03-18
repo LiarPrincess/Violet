@@ -1,4 +1,4 @@
-from Common.strings import generated_warning
+from Helpers import generated_warning, escape_swift_keyword
 
 # Use: grep -r "_Py_IDENTIFIER".
 # We also added unary, binary and ternary operators.
@@ -190,22 +190,11 @@ ids = [
     # 'write'
 ]
 
-# ----
-# Main
-# ----
-
-
-def field_name(s):
-    return '_' + s
-
-
-def escaped(s):
-    return '`throw`' if id == 'throw' else id
-
-
 if __name__ == '__main__':
     print(f'''\
 {generated_warning(__file__)}
+
+import VioletCore
 
 // swiftlint:disable force_unwrapping
 // swiftlint:disable implicitly_unwrapped_optional
@@ -219,75 +208,67 @@ if __name__ == '__main__':
 /// is crucial for overall performance.
 /// Even using a dictionary (with its `O(1) + massive constants` access)
 /// may be too slow.
-/// We will do it in a bit different way with approximate complexity between
-/// 'it will be inlined anyway' and 'hello cache, my old friend'.
 ///
-/// We also need to support cleaning for when `Py` gets destroyed.
-public struct IdString {{
+/// Use `py.resolve(id:)` to convert to `PyString`.
+public struct IdString: CustomStringConvertible {{
 
-  internal let value: PyString
-  // 'hash' is cached on 'str', but by storing it on 'IdString' we can avoid
-  // memory fetch.
-  internal let hash: PyHash
+  private let index: Int
 
-  fileprivate init(value: String) {{
-    self.value = Py.newString(value)
-    self.hash = self.value.hash()
-  }}\
+  private init(index: Int) {{
+    self.index = index
+  }}
 ''')
 
-    # ==================
-    # === Initialize ===
-    # ==================
+    # ==========================
+    # === Static properties ====
+    # ==========================
 
-    print('''
-  // MARK: - Initialize
+    for index, id in enumerate(ids):
+        print(f'  public static let {id} = IdString(index: {index})')
 
-  /// Create new set of `ids`.
-  internal static func initialize() {\
-''')
+    print()
 
-    for id in ids:
-        print(f'    Self.{field_name(id)} = IdString(value: "{id}")')
+    # ====================
+    # === Description ====
+    # ====================
 
+    print('  public var description: String {')
+    print('    switch self.index{')
+
+    for index, id in enumerate(ids):
+        print(f'   case {index}: return "{id}"')
+
+    print(f'   default: trap("Unexpected IdString index: \(self.index).")')
+    print('    }')
+    print('  }')
+    print()
+
+    # ==========================
+    # === Static properties ====
+    # ==========================
+
+    print('  internal struct Collection {')
+    print()
+    print('    private let objects: [PyString]')
+    print()
+    print('    internal subscript(id: IdString) -> PyString {')
+    print('      return self.objects[id.index]')
+    print('    }')
+    print()
+    print('    internal init(_ py: Py) {')
+    print('      self.objects = [')
+
+    for index, id in enumerate(ids):
+        is_last = index == len(ids) - 1
+        comma = '' if is_last else ','
+        print(f'        py.intern(string: "{id}"){comma}')
+
+    print('      ]')
+    print('    }')
     print('  }')
 
-    # ==========
-    # === GC ===
-    # ==========
-
-    print('''
-  // MARK: - GC
-
-  /// Clean when `Py` gets destroyed.
-  internal static func gcClean() {\
-''')
-
-    for id in ids:
-        print(f'    Self.{field_name(id)} = nil')
-
-    print('  }')
-
-    # ===========
-    # === Ids ===
-    # ===========
-
-    print('''
-  private static func nilPropertyMessage(id: String) -> String {
-    return "Missing 'IdString.\(id)' " +
-           "Are you trying to use IdStrings without initializing 'Py'?"
-  }\
-''')
-
-    for id in ids:
-        print(f'''
-  // MARK: - {id}
-
-  private static var {field_name(id)}: IdString!
-  public static var {escaped(id)}: IdString {{
-    precondition(Self.{field_name(id)} != nil, nilPropertyMessage(id: "{id})"))
-    return Self.{field_name(id)}!
-  }}\
-''')
+    # ============
+    # === End ====
+    # ============
 
     print('}')

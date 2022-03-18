@@ -944,14 +944,12 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   private func checkSetSpecialAttribute(_ py: Py,
                                         name: IdString,
                                         value: PyObject?) -> PyResult<PyObject> {
-    let string = name.value.value
-
     guard self.typeFlags.isHeapType else {
-      return .typeError(py, message: "can't set \(self.name).\(string)")
+      return .typeError(py, message: "can't set \(self.name).\(name)")
     }
 
     guard let value = value else {
-      return .typeError(py, message: "can't delete \(self.name).\(string)")
+      return .typeError(py, message: "can't delete \(self.name).\(name)")
     }
 
     return .value(value)
