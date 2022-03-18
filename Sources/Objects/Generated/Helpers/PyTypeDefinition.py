@@ -1,4 +1,5 @@
-from typing import List
+from typing import List, Dict
+
 from Sourcery import TypeInfo, PyFunctionInfo
 from Helpers.NewTypeArguments import NewTypeArguments
 from Helpers.StaticMethod import ALL_STATIC_METHODS
@@ -263,5 +264,41 @@ class PyTypeDefinition:
     # ======================
 
     def print_static_methods(self):
-        property_name = get_static_methods_property_name(self.t.swift_type_name)
-        print(f'    internal static let {property_name} = PyStaticCall.KnownNotOverriddenMethods()')
+        t = self.t
+        property_name = get_static_methods_property_name(t.swift_type_name)
+
+        python_name_to_static_method: Dict[str, PyFunctionInfo] = {}
+        for m in t.python_methods:
+            name = m.python_name
+            if name in STATIC_METHOD_NAMES:
+                python_name_to_static_method[name] = m
+
+        has_no_static_methods = len(python_name_to_static_method) == 0
+        if has_no_static_methods:
+            base_type = t.base_type_info
+            base_container = 'Py.ErrorTypes' if base_type.is_error else 'Py.Types'
+            base_property_name = get_static_methods_property_name(base_type.swift_type_name)
+            print(f"    // '{t.python_type_name}' does not add any interesting methods to '{base_type.python_type_name}'.")
+            print(f'    internal static let {property_name} = {base_container}.{base_property_name}.copy()')
+            return
+
+        print(f'    internal static var {property_name}: PyStaticCall.KnownNotOverriddenMethods = {{')
+
+        if t.base_type_info is None:
+            assert t.python_type_name == 'object'
+            print(f'      var result = PyStaticCall.KnownNotOverriddenMethods()')
+        else:
+            base_type = t.base_type_info
+            base_container = 'Py.ErrorTypes' if base_type.is_error else 'Py.Types'
+            base_property_name = get_static_methods_property_name(base_type.swift_type_name)
+            print(f'      var result = {base_container}.{base_property_name}.copy()')
+
+        for static_method in ALL_STATIC_METHODS:
+            python_name = static_method.name
+            fn = python_name_to_static_method.get(python_name)
+            if fn is not None:
+                print(f'      result.{python_name} = .init({t.swift_type_name}.{fn.swift_selector})')
+
+        print('      return result')
+        print('    }()')
+

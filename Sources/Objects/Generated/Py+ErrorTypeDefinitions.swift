@@ -1295,7 +1295,15 @@ extension Py {
       self.add(py, type: type, name: "with_traceback", method: with_traceback, doc: PyBaseException.withTracebackDoc)
     }
 
-    internal static let baseExceptionStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var baseExceptionStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyBaseException.__repr__(_:zelf:))
+      result.__str__ = .init(PyBaseException.__str__(_:zelf:))
+      result.__getattribute__ = .init(PyBaseException.__getattribute__(_:zelf:name:))
+      result.__setattr__ = .init(PyBaseException.__setattr__(_:zelf:name:value:))
+      result.__delattr__ = .init(PyBaseException.__delattr__(_:zelf:name:))
+      return result
+    }()
 
     // MARK: - SystemExit
 
@@ -1317,7 +1325,8 @@ extension Py {
       self.add(py, type: type, name: "code", property: codeGet, setter: codeSet, doc: nil)
     }
 
-    internal static let systemExitStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'SystemExit' does not add any interesting methods to 'BaseException'.
+    internal static let systemExitStaticMethods = Py.ErrorTypes.baseExceptionStaticMethods.copy()
 
     // MARK: - KeyboardInterrupt
 
@@ -1336,7 +1345,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let keyboardInterruptStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'KeyboardInterrupt' does not add any interesting methods to 'BaseException'.
+    internal static let keyboardInterruptStaticMethods = Py.ErrorTypes.baseExceptionStaticMethods.copy()
 
     // MARK: - GeneratorExit
 
@@ -1355,7 +1365,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let generatorExitStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'GeneratorExit' does not add any interesting methods to 'BaseException'.
+    internal static let generatorExitStaticMethods = Py.ErrorTypes.baseExceptionStaticMethods.copy()
 
     // MARK: - Exception
 
@@ -1374,7 +1385,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let exceptionStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'Exception' does not add any interesting methods to 'BaseException'.
+    internal static let exceptionStaticMethods = Py.ErrorTypes.baseExceptionStaticMethods.copy()
 
     // MARK: - StopIteration
 
@@ -1396,7 +1408,8 @@ extension Py {
       self.add(py, type: type, name: "value", property: valueGet, setter: valueSet, doc: nil)
     }
 
-    internal static let stopIterationStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'StopIteration' does not add any interesting methods to 'Exception'.
+    internal static let stopIterationStaticMethods = Py.ErrorTypes.exceptionStaticMethods.copy()
 
     // MARK: - StopAsyncIteration
 
@@ -1415,7 +1428,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let stopAsyncIterationStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'StopAsyncIteration' does not add any interesting methods to 'Exception'.
+    internal static let stopAsyncIterationStaticMethods = Py.ErrorTypes.exceptionStaticMethods.copy()
 
     // MARK: - ArithmeticError
 
@@ -1434,7 +1448,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let arithmeticErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'ArithmeticError' does not add any interesting methods to 'Exception'.
+    internal static let arithmeticErrorStaticMethods = Py.ErrorTypes.exceptionStaticMethods.copy()
 
     // MARK: - FloatingPointError
 
@@ -1453,7 +1468,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let floatingPointErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'FloatingPointError' does not add any interesting methods to 'ArithmeticError'.
+    internal static let floatingPointErrorStaticMethods = Py.ErrorTypes.arithmeticErrorStaticMethods.copy()
 
     // MARK: - OverflowError
 
@@ -1472,7 +1488,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let overflowErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'OverflowError' does not add any interesting methods to 'ArithmeticError'.
+    internal static let overflowErrorStaticMethods = Py.ErrorTypes.arithmeticErrorStaticMethods.copy()
 
     // MARK: - ZeroDivisionError
 
@@ -1491,7 +1508,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let zeroDivisionErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'ZeroDivisionError' does not add any interesting methods to 'ArithmeticError'.
+    internal static let zeroDivisionErrorStaticMethods = Py.ErrorTypes.arithmeticErrorStaticMethods.copy()
 
     // MARK: - AssertionError
 
@@ -1510,7 +1528,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let assertionErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'AssertionError' does not add any interesting methods to 'Exception'.
+    internal static let assertionErrorStaticMethods = Py.ErrorTypes.exceptionStaticMethods.copy()
 
     // MARK: - AttributeError
 
@@ -1529,7 +1548,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let attributeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'AttributeError' does not add any interesting methods to 'Exception'.
+    internal static let attributeErrorStaticMethods = Py.ErrorTypes.exceptionStaticMethods.copy()
 
     // MARK: - BufferError
 
@@ -1548,7 +1568,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let bufferErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'BufferError' does not add any interesting methods to 'Exception'.
+    internal static let bufferErrorStaticMethods = Py.ErrorTypes.exceptionStaticMethods.copy()
 
     // MARK: - EOFError
 
@@ -1567,7 +1588,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let eOFErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'EOFError' does not add any interesting methods to 'Exception'.
+    internal static let eOFErrorStaticMethods = Py.ErrorTypes.exceptionStaticMethods.copy()
 
     // MARK: - ImportError
 
@@ -1598,7 +1620,11 @@ extension Py {
       self.add(py, type: type, name: "__str__", method: __str__, doc: nil)
     }
 
-    internal static let importErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var importErrorStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.ErrorTypes.exceptionStaticMethods.copy()
+      result.__str__ = .init(PyImportError.__str__(_:zelf:))
+      return result
+    }()
 
     // MARK: - ModuleNotFoundError
 
@@ -1617,7 +1643,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let moduleNotFoundErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'ModuleNotFoundError' does not add any interesting methods to 'ImportError'.
+    internal static let moduleNotFoundErrorStaticMethods = Py.ErrorTypes.importErrorStaticMethods.copy()
 
     // MARK: - LookupError
 
@@ -1636,7 +1663,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let lookupErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'LookupError' does not add any interesting methods to 'Exception'.
+    internal static let lookupErrorStaticMethods = Py.ErrorTypes.exceptionStaticMethods.copy()
 
     // MARK: - IndexError
 
@@ -1655,7 +1683,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let indexErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'IndexError' does not add any interesting methods to 'LookupError'.
+    internal static let indexErrorStaticMethods = Py.ErrorTypes.lookupErrorStaticMethods.copy()
 
     // MARK: - KeyError
 
@@ -1677,7 +1706,11 @@ extension Py {
       self.add(py, type: type, name: "__str__", method: __str__, doc: nil)
     }
 
-    internal static let keyErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var keyErrorStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.ErrorTypes.lookupErrorStaticMethods.copy()
+      result.__str__ = .init(PyKeyError.__str__(_:zelf:))
+      return result
+    }()
 
     // MARK: - MemoryError
 
@@ -1696,7 +1729,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let memoryErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'MemoryError' does not add any interesting methods to 'Exception'.
+    internal static let memoryErrorStaticMethods = Py.ErrorTypes.exceptionStaticMethods.copy()
 
     // MARK: - NameError
 
@@ -1715,7 +1749,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let nameErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'NameError' does not add any interesting methods to 'Exception'.
+    internal static let nameErrorStaticMethods = Py.ErrorTypes.exceptionStaticMethods.copy()
 
     // MARK: - UnboundLocalError
 
@@ -1734,7 +1769,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let unboundLocalErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'UnboundLocalError' does not add any interesting methods to 'NameError'.
+    internal static let unboundLocalErrorStaticMethods = Py.ErrorTypes.nameErrorStaticMethods.copy()
 
     // MARK: - OSError
 
@@ -1753,7 +1789,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let oSErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'OSError' does not add any interesting methods to 'Exception'.
+    internal static let oSErrorStaticMethods = Py.ErrorTypes.exceptionStaticMethods.copy()
 
     // MARK: - BlockingIOError
 
@@ -1772,7 +1809,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let blockingIOErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'BlockingIOError' does not add any interesting methods to 'OSError'.
+    internal static let blockingIOErrorStaticMethods = Py.ErrorTypes.oSErrorStaticMethods.copy()
 
     // MARK: - ChildProcessError
 
@@ -1791,7 +1829,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let childProcessErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'ChildProcessError' does not add any interesting methods to 'OSError'.
+    internal static let childProcessErrorStaticMethods = Py.ErrorTypes.oSErrorStaticMethods.copy()
 
     // MARK: - ConnectionError
 
@@ -1810,7 +1849,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let connectionErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'ConnectionError' does not add any interesting methods to 'OSError'.
+    internal static let connectionErrorStaticMethods = Py.ErrorTypes.oSErrorStaticMethods.copy()
 
     // MARK: - BrokenPipeError
 
@@ -1829,7 +1869,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let brokenPipeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'BrokenPipeError' does not add any interesting methods to 'ConnectionError'.
+    internal static let brokenPipeErrorStaticMethods = Py.ErrorTypes.connectionErrorStaticMethods.copy()
 
     // MARK: - ConnectionAbortedError
 
@@ -1848,7 +1889,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let connectionAbortedErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'ConnectionAbortedError' does not add any interesting methods to 'ConnectionError'.
+    internal static let connectionAbortedErrorStaticMethods = Py.ErrorTypes.connectionErrorStaticMethods.copy()
 
     // MARK: - ConnectionRefusedError
 
@@ -1867,7 +1909,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let connectionRefusedErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'ConnectionRefusedError' does not add any interesting methods to 'ConnectionError'.
+    internal static let connectionRefusedErrorStaticMethods = Py.ErrorTypes.connectionErrorStaticMethods.copy()
 
     // MARK: - ConnectionResetError
 
@@ -1886,7 +1929,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let connectionResetErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'ConnectionResetError' does not add any interesting methods to 'ConnectionError'.
+    internal static let connectionResetErrorStaticMethods = Py.ErrorTypes.connectionErrorStaticMethods.copy()
 
     // MARK: - FileExistsError
 
@@ -1905,7 +1949,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let fileExistsErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'FileExistsError' does not add any interesting methods to 'OSError'.
+    internal static let fileExistsErrorStaticMethods = Py.ErrorTypes.oSErrorStaticMethods.copy()
 
     // MARK: - FileNotFoundError
 
@@ -1924,7 +1969,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let fileNotFoundErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'FileNotFoundError' does not add any interesting methods to 'OSError'.
+    internal static let fileNotFoundErrorStaticMethods = Py.ErrorTypes.oSErrorStaticMethods.copy()
 
     // MARK: - InterruptedError
 
@@ -1943,7 +1989,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let interruptedErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'InterruptedError' does not add any interesting methods to 'OSError'.
+    internal static let interruptedErrorStaticMethods = Py.ErrorTypes.oSErrorStaticMethods.copy()
 
     // MARK: - IsADirectoryError
 
@@ -1962,7 +2009,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let isADirectoryErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'IsADirectoryError' does not add any interesting methods to 'OSError'.
+    internal static let isADirectoryErrorStaticMethods = Py.ErrorTypes.oSErrorStaticMethods.copy()
 
     // MARK: - NotADirectoryError
 
@@ -1981,7 +2029,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let notADirectoryErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'NotADirectoryError' does not add any interesting methods to 'OSError'.
+    internal static let notADirectoryErrorStaticMethods = Py.ErrorTypes.oSErrorStaticMethods.copy()
 
     // MARK: - PermissionError
 
@@ -2000,7 +2049,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let permissionErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'PermissionError' does not add any interesting methods to 'OSError'.
+    internal static let permissionErrorStaticMethods = Py.ErrorTypes.oSErrorStaticMethods.copy()
 
     // MARK: - ProcessLookupError
 
@@ -2019,7 +2069,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let processLookupErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'ProcessLookupError' does not add any interesting methods to 'OSError'.
+    internal static let processLookupErrorStaticMethods = Py.ErrorTypes.oSErrorStaticMethods.copy()
 
     // MARK: - TimeoutError
 
@@ -2038,7 +2089,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let timeoutErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'TimeoutError' does not add any interesting methods to 'OSError'.
+    internal static let timeoutErrorStaticMethods = Py.ErrorTypes.oSErrorStaticMethods.copy()
 
     // MARK: - ReferenceError
 
@@ -2057,7 +2109,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let referenceErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'ReferenceError' does not add any interesting methods to 'Exception'.
+    internal static let referenceErrorStaticMethods = Py.ErrorTypes.exceptionStaticMethods.copy()
 
     // MARK: - RuntimeError
 
@@ -2076,7 +2129,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let runtimeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'RuntimeError' does not add any interesting methods to 'Exception'.
+    internal static let runtimeErrorStaticMethods = Py.ErrorTypes.exceptionStaticMethods.copy()
 
     // MARK: - NotImplementedError
 
@@ -2095,7 +2149,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let notImplementedErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'NotImplementedError' does not add any interesting methods to 'RuntimeError'.
+    internal static let notImplementedErrorStaticMethods = Py.ErrorTypes.runtimeErrorStaticMethods.copy()
 
     // MARK: - RecursionError
 
@@ -2114,7 +2169,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let recursionErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'RecursionError' does not add any interesting methods to 'RuntimeError'.
+    internal static let recursionErrorStaticMethods = Py.ErrorTypes.runtimeErrorStaticMethods.copy()
 
     // MARK: - SyntaxError
 
@@ -2154,7 +2210,11 @@ extension Py {
       self.add(py, type: type, name: "__str__", method: __str__, doc: nil)
     }
 
-    internal static let syntaxErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var syntaxErrorStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.ErrorTypes.exceptionStaticMethods.copy()
+      result.__str__ = .init(PySyntaxError.__str__(_:zelf:))
+      return result
+    }()
 
     // MARK: - IndentationError
 
@@ -2173,7 +2233,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let indentationErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'IndentationError' does not add any interesting methods to 'SyntaxError'.
+    internal static let indentationErrorStaticMethods = Py.ErrorTypes.syntaxErrorStaticMethods.copy()
 
     // MARK: - TabError
 
@@ -2192,7 +2253,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let tabErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'TabError' does not add any interesting methods to 'IndentationError'.
+    internal static let tabErrorStaticMethods = Py.ErrorTypes.indentationErrorStaticMethods.copy()
 
     // MARK: - SystemError
 
@@ -2211,7 +2273,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let systemErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'SystemError' does not add any interesting methods to 'Exception'.
+    internal static let systemErrorStaticMethods = Py.ErrorTypes.exceptionStaticMethods.copy()
 
     // MARK: - TypeError
 
@@ -2230,7 +2293,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let typeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'TypeError' does not add any interesting methods to 'Exception'.
+    internal static let typeErrorStaticMethods = Py.ErrorTypes.exceptionStaticMethods.copy()
 
     // MARK: - ValueError
 
@@ -2249,7 +2313,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let valueErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'ValueError' does not add any interesting methods to 'Exception'.
+    internal static let valueErrorStaticMethods = Py.ErrorTypes.exceptionStaticMethods.copy()
 
     // MARK: - UnicodeError
 
@@ -2268,7 +2333,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let unicodeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'UnicodeError' does not add any interesting methods to 'ValueError'.
+    internal static let unicodeErrorStaticMethods = Py.ErrorTypes.valueErrorStaticMethods.copy()
 
     // MARK: - UnicodeDecodeError
 
@@ -2287,7 +2353,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let unicodeDecodeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'UnicodeDecodeError' does not add any interesting methods to 'UnicodeError'.
+    internal static let unicodeDecodeErrorStaticMethods = Py.ErrorTypes.unicodeErrorStaticMethods.copy()
 
     // MARK: - UnicodeEncodeError
 
@@ -2306,7 +2373,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let unicodeEncodeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'UnicodeEncodeError' does not add any interesting methods to 'UnicodeError'.
+    internal static let unicodeEncodeErrorStaticMethods = Py.ErrorTypes.unicodeErrorStaticMethods.copy()
 
     // MARK: - UnicodeTranslateError
 
@@ -2325,7 +2393,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let unicodeTranslateErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'UnicodeTranslateError' does not add any interesting methods to 'UnicodeError'.
+    internal static let unicodeTranslateErrorStaticMethods = Py.ErrorTypes.unicodeErrorStaticMethods.copy()
 
     // MARK: - Warning
 
@@ -2344,7 +2413,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let warningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'Warning' does not add any interesting methods to 'Exception'.
+    internal static let warningStaticMethods = Py.ErrorTypes.exceptionStaticMethods.copy()
 
     // MARK: - DeprecationWarning
 
@@ -2363,7 +2433,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let deprecationWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'DeprecationWarning' does not add any interesting methods to 'Warning'.
+    internal static let deprecationWarningStaticMethods = Py.ErrorTypes.warningStaticMethods.copy()
 
     // MARK: - PendingDeprecationWarning
 
@@ -2382,7 +2453,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let pendingDeprecationWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'PendingDeprecationWarning' does not add any interesting methods to 'Warning'.
+    internal static let pendingDeprecationWarningStaticMethods = Py.ErrorTypes.warningStaticMethods.copy()
 
     // MARK: - RuntimeWarning
 
@@ -2401,7 +2473,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let runtimeWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'RuntimeWarning' does not add any interesting methods to 'Warning'.
+    internal static let runtimeWarningStaticMethods = Py.ErrorTypes.warningStaticMethods.copy()
 
     // MARK: - SyntaxWarning
 
@@ -2420,7 +2493,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let syntaxWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'SyntaxWarning' does not add any interesting methods to 'Warning'.
+    internal static let syntaxWarningStaticMethods = Py.ErrorTypes.warningStaticMethods.copy()
 
     // MARK: - UserWarning
 
@@ -2439,7 +2513,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let userWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'UserWarning' does not add any interesting methods to 'Warning'.
+    internal static let userWarningStaticMethods = Py.ErrorTypes.warningStaticMethods.copy()
 
     // MARK: - FutureWarning
 
@@ -2458,7 +2533,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let futureWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'FutureWarning' does not add any interesting methods to 'Warning'.
+    internal static let futureWarningStaticMethods = Py.ErrorTypes.warningStaticMethods.copy()
 
     // MARK: - ImportWarning
 
@@ -2477,7 +2553,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let importWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'ImportWarning' does not add any interesting methods to 'Warning'.
+    internal static let importWarningStaticMethods = Py.ErrorTypes.warningStaticMethods.copy()
 
     // MARK: - UnicodeWarning
 
@@ -2496,7 +2573,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let unicodeWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'UnicodeWarning' does not add any interesting methods to 'Warning'.
+    internal static let unicodeWarningStaticMethods = Py.ErrorTypes.warningStaticMethods.copy()
 
     // MARK: - BytesWarning
 
@@ -2515,7 +2593,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let bytesWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'BytesWarning' does not add any interesting methods to 'Warning'.
+    internal static let bytesWarningStaticMethods = Py.ErrorTypes.warningStaticMethods.copy()
 
     // MARK: - ResourceWarning
 
@@ -2534,7 +2613,8 @@ extension Py {
       self.add(py, type: type, name: "__dict__", property: __dict__, doc: nil)
     }
 
-    internal static let resourceWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    // 'ResourceWarning' does not add any interesting methods to 'Warning'.
+    internal static let resourceWarningStaticMethods = Py.ErrorTypes.warningStaticMethods.copy()
 
   }
 }

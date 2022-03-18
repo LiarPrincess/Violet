@@ -1103,7 +1103,18 @@ extension Py {
       self.add(py, type: type, name: "__rxor__", method: __rxor__, doc: nil)
     }
 
-    internal static let boolStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var boolStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.intStaticMethods.copy()
+      result.__repr__ = .init(PyBool.__repr__(_:zelf:))
+      result.__str__ = .init(PyBool.__str__(_:zelf:))
+      result.__and__ = .init(PyBool.__and__(_:zelf:other:))
+      result.__or__ = .init(PyBool.__or__(_:zelf:other:))
+      result.__xor__ = .init(PyBool.__xor__(_:zelf:other:))
+      result.__rand__ = .init(PyBool.__rand__(_:zelf:other:))
+      result.__ror__ = .init(PyBool.__ror__(_:zelf:other:))
+      result.__rxor__ = .init(PyBool.__rxor__(_:zelf:other:))
+      return result
+    }()
 
     // MARK: - BuiltinFunction
 
@@ -1148,7 +1159,19 @@ extension Py {
       self.add(py, type: type, name: "__call__", method: __call__, doc: nil)
     }
 
-    internal static let builtinFunctionStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var builtinFunctionStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyBuiltinFunction.__repr__(_:zelf:))
+      result.__eq__ = .init(PyBuiltinFunction.__eq__(_:zelf:other:))
+      result.__ne__ = .init(PyBuiltinFunction.__ne__(_:zelf:other:))
+      result.__lt__ = .init(PyBuiltinFunction.__lt__(_:zelf:other:))
+      result.__le__ = .init(PyBuiltinFunction.__le__(_:zelf:other:))
+      result.__gt__ = .init(PyBuiltinFunction.__gt__(_:zelf:other:))
+      result.__ge__ = .init(PyBuiltinFunction.__ge__(_:zelf:other:))
+      result.__getattribute__ = .init(PyBuiltinFunction.__getattribute__(_:zelf:name:))
+      result.__call__ = .init(PyBuiltinFunction.__call__(_:zelf:args:kwargs:))
+      return result
+    }()
 
     // MARK: - BuiltinMethod
 
@@ -1193,7 +1216,19 @@ extension Py {
       self.add(py, type: type, name: "__call__", method: __call__, doc: nil)
     }
 
-    internal static let builtinMethodStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var builtinMethodStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyBuiltinMethod.__repr__(_:zelf:))
+      result.__eq__ = .init(PyBuiltinMethod.__eq__(_:zelf:other:))
+      result.__ne__ = .init(PyBuiltinMethod.__ne__(_:zelf:other:))
+      result.__lt__ = .init(PyBuiltinMethod.__lt__(_:zelf:other:))
+      result.__le__ = .init(PyBuiltinMethod.__le__(_:zelf:other:))
+      result.__gt__ = .init(PyBuiltinMethod.__gt__(_:zelf:other:))
+      result.__ge__ = .init(PyBuiltinMethod.__ge__(_:zelf:other:))
+      result.__getattribute__ = .init(PyBuiltinMethod.__getattribute__(_:zelf:name:))
+      result.__call__ = .init(PyBuiltinMethod.__call__(_:zelf:args:kwargs:))
+      return result
+    }()
 
     // MARK: - ByteArray
 
@@ -1327,7 +1362,28 @@ extension Py {
       self.add(py, type: type, name: "copy", method: copy, doc: PyByteArray.copyDoc)
     }
 
-    internal static let byteArrayStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var byteArrayStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__str__ = .init(PyByteArray.__str__(_:zelf:))
+      result.__hash__ = .init(PyByteArray.__hash__(_:zelf:))
+      result.__eq__ = .init(PyByteArray.__eq__(_:zelf:other:))
+      result.__ne__ = .init(PyByteArray.__ne__(_:zelf:other:))
+      result.__lt__ = .init(PyByteArray.__lt__(_:zelf:other:))
+      result.__le__ = .init(PyByteArray.__le__(_:zelf:other:))
+      result.__gt__ = .init(PyByteArray.__gt__(_:zelf:other:))
+      result.__ge__ = .init(PyByteArray.__ge__(_:zelf:other:))
+      result.__getattribute__ = .init(PyByteArray.__getattribute__(_:zelf:name:))
+      result.__getitem__ = .init(PyByteArray.__getitem__(_:zelf:index:))
+      result.__iter__ = .init(PyByteArray.__iter__(_:zelf:))
+      result.__len__ = .init(PyByteArray.__len__(_:zelf:))
+      result.__contains__ = .init(PyByteArray.__contains__(_:zelf:object:))
+      result.__add__ = .init(PyByteArray.__add__(_:zelf:other:))
+      result.__mul__ = .init(PyByteArray.__mul__(_:zelf:other:))
+      result.__rmul__ = .init(PyByteArray.__rmul__(_:zelf:other:))
+      result.__iadd__ = .init(PyByteArray.__iadd__(_:zelf:other:))
+      result.__imul__ = .init(PyByteArray.__imul__(_:zelf:other:))
+      return result
+    }()
 
     // MARK: - ByteArrayIterator
 
@@ -1351,7 +1407,13 @@ extension Py {
       self.add(py, type: type, name: "__length_hint__", method: __length_hint__, doc: nil)
     }
 
-    internal static let byteArrayIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var byteArrayIteratorStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__getattribute__ = .init(PyByteArrayIterator.__getattribute__(_:zelf:name:))
+      result.__iter__ = .init(PyByteArrayIterator.__iter__(_:zelf:))
+      result.__next__ = .init(PyByteArrayIterator.__next__(_:zelf:))
+      return result
+    }()
 
     // MARK: - Bytes
 
@@ -1467,7 +1529,27 @@ extension Py {
       self.add(py, type: type, name: "__iter__", method: __iter__, doc: nil)
     }
 
-    internal static let bytesStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var bytesStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyBytes.__repr__(_:zelf:))
+      result.__str__ = .init(PyBytes.__str__(_:zelf:))
+      result.__hash__ = .init(PyBytes.__hash__(_:zelf:))
+      result.__eq__ = .init(PyBytes.__eq__(_:zelf:other:))
+      result.__ne__ = .init(PyBytes.__ne__(_:zelf:other:))
+      result.__lt__ = .init(PyBytes.__lt__(_:zelf:other:))
+      result.__le__ = .init(PyBytes.__le__(_:zelf:other:))
+      result.__gt__ = .init(PyBytes.__gt__(_:zelf:other:))
+      result.__ge__ = .init(PyBytes.__ge__(_:zelf:other:))
+      result.__getattribute__ = .init(PyBytes.__getattribute__(_:zelf:name:))
+      result.__getitem__ = .init(PyBytes.__getitem__(_:zelf:index:))
+      result.__iter__ = .init(PyBytes.__iter__(_:zelf:))
+      result.__len__ = .init(PyBytes.__len__(_:zelf:))
+      result.__contains__ = .init(PyBytes.__contains__(_:zelf:object:))
+      result.__add__ = .init(PyBytes.__add__(_:zelf:other:))
+      result.__mul__ = .init(PyBytes.__mul__(_:zelf:other:))
+      result.__rmul__ = .init(PyBytes.__rmul__(_:zelf:other:))
+      return result
+    }()
 
     // MARK: - BytesIterator
 
@@ -1491,7 +1573,13 @@ extension Py {
       self.add(py, type: type, name: "__length_hint__", method: __length_hint__, doc: nil)
     }
 
-    internal static let bytesIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var bytesIteratorStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__getattribute__ = .init(PyBytesIterator.__getattribute__(_:zelf:name:))
+      result.__iter__ = .init(PyBytesIterator.__iter__(_:zelf:))
+      result.__next__ = .init(PyBytesIterator.__next__(_:zelf:))
+      return result
+    }()
 
     // MARK: - CallableIterator
 
@@ -1510,7 +1598,13 @@ extension Py {
       self.add(py, type: type, name: "__next__", method: __next__, doc: nil)
     }
 
-    internal static let callableIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var callableIteratorStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__getattribute__ = .init(PyCallableIterator.__getattribute__(_:zelf:name:))
+      result.__iter__ = .init(PyCallableIterator.__iter__(_:zelf:))
+      result.__next__ = .init(PyCallableIterator.__next__(_:zelf:))
+      return result
+    }()
 
     // MARK: - Cell
 
@@ -1536,7 +1630,18 @@ extension Py {
       self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
     }
 
-    internal static let cellStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var cellStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyCell.__repr__(_:zelf:))
+      result.__eq__ = .init(PyCell.__eq__(_:zelf:other:))
+      result.__ne__ = .init(PyCell.__ne__(_:zelf:other:))
+      result.__lt__ = .init(PyCell.__lt__(_:zelf:other:))
+      result.__le__ = .init(PyCell.__le__(_:zelf:other:))
+      result.__gt__ = .init(PyCell.__gt__(_:zelf:other:))
+      result.__ge__ = .init(PyCell.__ge__(_:zelf:other:))
+      result.__getattribute__ = .init(PyCell.__getattribute__(_:zelf:name:))
+      return result
+    }()
 
     // MARK: - ClassMethod
 
@@ -1562,7 +1667,11 @@ extension Py {
       self.add(py, type: type, name: "__isabstractmethod__", method: __isabstractmethod__, doc: nil)
     }
 
-    internal static let classMethodStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var classMethodStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__isabstractmethod__ = .init(PyClassMethod.__isabstractmethod__(_:zelf:))
+      return result
+    }()
 
     // MARK: - Code
 
@@ -1605,7 +1714,19 @@ extension Py {
       self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
     }
 
-    internal static let codeStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var codeStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyCode.__repr__(_:zelf:))
+      result.__hash__ = .init(PyCode.__hash__(_:zelf:))
+      result.__eq__ = .init(PyCode.__eq__(_:zelf:other:))
+      result.__ne__ = .init(PyCode.__ne__(_:zelf:other:))
+      result.__lt__ = .init(PyCode.__lt__(_:zelf:other:))
+      result.__le__ = .init(PyCode.__le__(_:zelf:other:))
+      result.__gt__ = .init(PyCode.__gt__(_:zelf:other:))
+      result.__ge__ = .init(PyCode.__ge__(_:zelf:other:))
+      result.__getattribute__ = .init(PyCode.__getattribute__(_:zelf:name:))
+      return result
+    }()
 
     // MARK: - Complex
 
@@ -1693,7 +1814,42 @@ extension Py {
       self.add(py, type: type, name: "__getnewargs__", method: __getnewargs__, doc: nil)
     }
 
-    internal static let complexStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var complexStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyComplex.__repr__(_:zelf:))
+      result.__str__ = .init(PyComplex.__str__(_:zelf:))
+      result.__hash__ = .init(PyComplex.__hash__(_:zelf:))
+      result.__eq__ = .init(PyComplex.__eq__(_:zelf:other:))
+      result.__ne__ = .init(PyComplex.__ne__(_:zelf:other:))
+      result.__lt__ = .init(PyComplex.__lt__(_:zelf:other:))
+      result.__le__ = .init(PyComplex.__le__(_:zelf:other:))
+      result.__gt__ = .init(PyComplex.__gt__(_:zelf:other:))
+      result.__ge__ = .init(PyComplex.__ge__(_:zelf:other:))
+      result.__bool__ = .init(PyComplex.__bool__(_:zelf:))
+      result.__int__ = .init(PyComplex.__int__(_:zelf:))
+      result.__float__ = .init(PyComplex.__float__(_:zelf:))
+      result.__getattribute__ = .init(PyComplex.__getattribute__(_:zelf:name:))
+      result.__pos__ = .init(PyComplex.__pos__(_:zelf:))
+      result.__neg__ = .init(PyComplex.__neg__(_:zelf:))
+      result.__abs__ = .init(PyComplex.__abs__(_:zelf:))
+      result.__add__ = .init(PyComplex.__add__(_:zelf:other:))
+      result.__divmod__ = .init(PyComplex.__divmod__(_:zelf:other:))
+      result.__floordiv__ = .init(PyComplex.__floordiv__(_:zelf:other:))
+      result.__mod__ = .init(PyComplex.__mod__(_:zelf:other:))
+      result.__mul__ = .init(PyComplex.__mul__(_:zelf:other:))
+      result.__sub__ = .init(PyComplex.__sub__(_:zelf:other:))
+      result.__truediv__ = .init(PyComplex.__truediv__(_:zelf:other:))
+      result.__radd__ = .init(PyComplex.__radd__(_:zelf:other:))
+      result.__rdivmod__ = .init(PyComplex.__rdivmod__(_:zelf:other:))
+      result.__rfloordiv__ = .init(PyComplex.__rfloordiv__(_:zelf:other:))
+      result.__rmod__ = .init(PyComplex.__rmod__(_:zelf:other:))
+      result.__rmul__ = .init(PyComplex.__rmul__(_:zelf:other:))
+      result.__rsub__ = .init(PyComplex.__rsub__(_:zelf:other:))
+      result.__rtruediv__ = .init(PyComplex.__rtruediv__(_:zelf:other:))
+      result.__pow__ = .init(PyComplex.__pow__(_:zelf:exp:mod:))
+      result.__rpow__ = .init(PyComplex.__rpow__(_:zelf:base:mod:))
+      return result
+    }()
 
     // MARK: - Dict
 
@@ -1762,7 +1918,26 @@ extension Py {
       self.add(py, type: type, name: "values", method: values, doc: nil)
     }
 
-    internal static let dictStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var dictStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyDict.__repr__(_:zelf:))
+      result.__hash__ = .init(PyDict.__hash__(_:zelf:))
+      result.__eq__ = .init(PyDict.__eq__(_:zelf:other:))
+      result.__ne__ = .init(PyDict.__ne__(_:zelf:other:))
+      result.__lt__ = .init(PyDict.__lt__(_:zelf:other:))
+      result.__le__ = .init(PyDict.__le__(_:zelf:other:))
+      result.__gt__ = .init(PyDict.__gt__(_:zelf:other:))
+      result.__ge__ = .init(PyDict.__ge__(_:zelf:other:))
+      result.__getattribute__ = .init(PyDict.__getattribute__(_:zelf:name:))
+      result.__getitem__ = .init(PyDict.__getitem__(_:zelf:index:))
+      result.__setitem__ = .init(PyDict.__setitem__(_:zelf:index:value:))
+      result.__delitem__ = .init(PyDict.__delitem__(_:zelf:index:))
+      result.__iter__ = .init(PyDict.__iter__(_:zelf:))
+      result.__len__ = .init(PyDict.__len__(_:zelf:))
+      result.__contains__ = .init(PyDict.__contains__(_:zelf:object:))
+      result.keys = .init(PyDict.keys(_:zelf:))
+      return result
+    }()
 
     // MARK: - DictItemIterator
 
@@ -1786,7 +1961,13 @@ extension Py {
       self.add(py, type: type, name: "__length_hint__", method: __length_hint__, doc: nil)
     }
 
-    internal static let dictItemIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var dictItemIteratorStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__getattribute__ = .init(PyDictItemIterator.__getattribute__(_:zelf:name:))
+      result.__iter__ = .init(PyDictItemIterator.__iter__(_:zelf:))
+      result.__next__ = .init(PyDictItemIterator.__next__(_:zelf:))
+      return result
+    }()
 
     // MARK: - DictItems
 
@@ -1826,7 +2007,22 @@ extension Py {
       self.add(py, type: type, name: "__iter__", method: __iter__, doc: nil)
     }
 
-    internal static let dictItemsStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var dictItemsStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyDictItems.__repr__(_:zelf:))
+      result.__hash__ = .init(PyDictItems.__hash__(_:zelf:))
+      result.__eq__ = .init(PyDictItems.__eq__(_:zelf:other:))
+      result.__ne__ = .init(PyDictItems.__ne__(_:zelf:other:))
+      result.__lt__ = .init(PyDictItems.__lt__(_:zelf:other:))
+      result.__le__ = .init(PyDictItems.__le__(_:zelf:other:))
+      result.__gt__ = .init(PyDictItems.__gt__(_:zelf:other:))
+      result.__ge__ = .init(PyDictItems.__ge__(_:zelf:other:))
+      result.__getattribute__ = .init(PyDictItems.__getattribute__(_:zelf:name:))
+      result.__iter__ = .init(PyDictItems.__iter__(_:zelf:))
+      result.__len__ = .init(PyDictItems.__len__(_:zelf:))
+      result.__contains__ = .init(PyDictItems.__contains__(_:zelf:object:))
+      return result
+    }()
 
     // MARK: - DictKeyIterator
 
@@ -1850,7 +2046,13 @@ extension Py {
       self.add(py, type: type, name: "__length_hint__", method: __length_hint__, doc: nil)
     }
 
-    internal static let dictKeyIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var dictKeyIteratorStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__getattribute__ = .init(PyDictKeyIterator.__getattribute__(_:zelf:name:))
+      result.__iter__ = .init(PyDictKeyIterator.__iter__(_:zelf:))
+      result.__next__ = .init(PyDictKeyIterator.__next__(_:zelf:))
+      return result
+    }()
 
     // MARK: - DictKeys
 
@@ -1890,7 +2092,22 @@ extension Py {
       self.add(py, type: type, name: "__iter__", method: __iter__, doc: nil)
     }
 
-    internal static let dictKeysStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var dictKeysStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyDictKeys.__repr__(_:zelf:))
+      result.__hash__ = .init(PyDictKeys.__hash__(_:zelf:))
+      result.__eq__ = .init(PyDictKeys.__eq__(_:zelf:other:))
+      result.__ne__ = .init(PyDictKeys.__ne__(_:zelf:other:))
+      result.__lt__ = .init(PyDictKeys.__lt__(_:zelf:other:))
+      result.__le__ = .init(PyDictKeys.__le__(_:zelf:other:))
+      result.__gt__ = .init(PyDictKeys.__gt__(_:zelf:other:))
+      result.__ge__ = .init(PyDictKeys.__ge__(_:zelf:other:))
+      result.__getattribute__ = .init(PyDictKeys.__getattribute__(_:zelf:name:))
+      result.__iter__ = .init(PyDictKeys.__iter__(_:zelf:))
+      result.__len__ = .init(PyDictKeys.__len__(_:zelf:))
+      result.__contains__ = .init(PyDictKeys.__contains__(_:zelf:object:))
+      return result
+    }()
 
     // MARK: - DictValueIterator
 
@@ -1914,7 +2131,13 @@ extension Py {
       self.add(py, type: type, name: "__length_hint__", method: __length_hint__, doc: nil)
     }
 
-    internal static let dictValueIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var dictValueIteratorStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__getattribute__ = .init(PyDictValueIterator.__getattribute__(_:zelf:name:))
+      result.__iter__ = .init(PyDictValueIterator.__iter__(_:zelf:))
+      result.__next__ = .init(PyDictValueIterator.__next__(_:zelf:))
+      return result
+    }()
 
     // MARK: - DictValues
 
@@ -1935,7 +2158,14 @@ extension Py {
       self.add(py, type: type, name: "__iter__", method: __iter__, doc: nil)
     }
 
-    internal static let dictValuesStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var dictValuesStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyDictValues.__repr__(_:zelf:))
+      result.__getattribute__ = .init(PyDictValues.__getattribute__(_:zelf:name:))
+      result.__iter__ = .init(PyDictValues.__iter__(_:zelf:))
+      result.__len__ = .init(PyDictValues.__len__(_:zelf:))
+      return result
+    }()
 
     // MARK: - Ellipsis
 
@@ -1957,7 +2187,12 @@ extension Py {
       self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
     }
 
-    internal static let ellipsisStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var ellipsisStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyEllipsis.__repr__(_:zelf:))
+      result.__getattribute__ = .init(PyEllipsis.__getattribute__(_:zelf:name:))
+      return result
+    }()
 
     // MARK: - Enumerate
 
@@ -1979,7 +2214,13 @@ extension Py {
       self.add(py, type: type, name: "__next__", method: __next__, doc: nil)
     }
 
-    internal static let enumerateStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var enumerateStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__getattribute__ = .init(PyEnumerate.__getattribute__(_:zelf:name:))
+      result.__iter__ = .init(PyEnumerate.__iter__(_:zelf:))
+      result.__next__ = .init(PyEnumerate.__next__(_:zelf:))
+      return result
+    }()
 
     // MARK: - Filter
 
@@ -2001,7 +2242,13 @@ extension Py {
       self.add(py, type: type, name: "__next__", method: __next__, doc: nil)
     }
 
-    internal static let filterStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var filterStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__getattribute__ = .init(PyFilter.__getattribute__(_:zelf:name:))
+      result.__iter__ = .init(PyFilter.__iter__(_:zelf:))
+      result.__next__ = .init(PyFilter.__next__(_:zelf:))
+      return result
+    }()
 
     // MARK: - Float
 
@@ -2100,7 +2347,44 @@ extension Py {
       self.add(py, type: type, name: "hex", method: hex, doc: PyFloat.hexDoc)
     }
 
-    internal static let floatStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var floatStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyFloat.__repr__(_:zelf:))
+      result.__str__ = .init(PyFloat.__str__(_:zelf:))
+      result.__hash__ = .init(PyFloat.__hash__(_:zelf:))
+      result.__eq__ = .init(PyFloat.__eq__(_:zelf:other:))
+      result.__ne__ = .init(PyFloat.__ne__(_:zelf:other:))
+      result.__lt__ = .init(PyFloat.__lt__(_:zelf:other:))
+      result.__le__ = .init(PyFloat.__le__(_:zelf:other:))
+      result.__gt__ = .init(PyFloat.__gt__(_:zelf:other:))
+      result.__ge__ = .init(PyFloat.__ge__(_:zelf:other:))
+      result.__bool__ = .init(PyFloat.__bool__(_:zelf:))
+      result.__int__ = .init(PyFloat.__int__(_:zelf:))
+      result.__float__ = .init(PyFloat.__float__(_:zelf:))
+      result.__getattribute__ = .init(PyFloat.__getattribute__(_:zelf:name:))
+      result.__pos__ = .init(PyFloat.__pos__(_:zelf:))
+      result.__neg__ = .init(PyFloat.__neg__(_:zelf:))
+      result.__abs__ = .init(PyFloat.__abs__(_:zelf:))
+      result.__trunc__ = .init(PyFloat.__trunc__(_:zelf:))
+      result.__round__ = .init(PyFloat.__round__(_:zelf:nDigits:))
+      result.__add__ = .init(PyFloat.__add__(_:zelf:other:))
+      result.__divmod__ = .init(PyFloat.__divmod__(_:zelf:other:))
+      result.__floordiv__ = .init(PyFloat.__floordiv__(_:zelf:other:))
+      result.__mod__ = .init(PyFloat.__mod__(_:zelf:other:))
+      result.__mul__ = .init(PyFloat.__mul__(_:zelf:other:))
+      result.__sub__ = .init(PyFloat.__sub__(_:zelf:other:))
+      result.__truediv__ = .init(PyFloat.__truediv__(_:zelf:other:))
+      result.__radd__ = .init(PyFloat.__radd__(_:zelf:other:))
+      result.__rdivmod__ = .init(PyFloat.__rdivmod__(_:zelf:other:))
+      result.__rfloordiv__ = .init(PyFloat.__rfloordiv__(_:zelf:other:))
+      result.__rmod__ = .init(PyFloat.__rmod__(_:zelf:other:))
+      result.__rmul__ = .init(PyFloat.__rmul__(_:zelf:other:))
+      result.__rsub__ = .init(PyFloat.__rsub__(_:zelf:other:))
+      result.__rtruediv__ = .init(PyFloat.__rtruediv__(_:zelf:other:))
+      result.__pow__ = .init(PyFloat.__pow__(_:zelf:exp:mod:))
+      result.__rpow__ = .init(PyFloat.__rpow__(_:zelf:base:mod:))
+      return result
+    }()
 
     // MARK: - Frame
 
@@ -2135,7 +2419,14 @@ extension Py {
       self.add(py, type: type, name: "__delattr__", method: __delattr__, doc: nil)
     }
 
-    internal static let frameStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var frameStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyFrame.__repr__(_:zelf:))
+      result.__getattribute__ = .init(PyFrame.__getattribute__(_:zelf:name:))
+      result.__setattr__ = .init(PyFrame.__setattr__(_:zelf:name:value:))
+      result.__delattr__ = .init(PyFrame.__delattr__(_:zelf:name:))
+      return result
+    }()
 
     // MARK: - FrozenSet
 
@@ -2207,7 +2498,30 @@ extension Py {
       self.add(py, type: type, name: "__iter__", method: __iter__, doc: nil)
     }
 
-    internal static let frozenSetStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var frozenSetStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyFrozenSet.__repr__(_:zelf:))
+      result.__hash__ = .init(PyFrozenSet.__hash__(_:zelf:))
+      result.__eq__ = .init(PyFrozenSet.__eq__(_:zelf:other:))
+      result.__ne__ = .init(PyFrozenSet.__ne__(_:zelf:other:))
+      result.__lt__ = .init(PyFrozenSet.__lt__(_:zelf:other:))
+      result.__le__ = .init(PyFrozenSet.__le__(_:zelf:other:))
+      result.__gt__ = .init(PyFrozenSet.__gt__(_:zelf:other:))
+      result.__ge__ = .init(PyFrozenSet.__ge__(_:zelf:other:))
+      result.__getattribute__ = .init(PyFrozenSet.__getattribute__(_:zelf:name:))
+      result.__iter__ = .init(PyFrozenSet.__iter__(_:zelf:))
+      result.__len__ = .init(PyFrozenSet.__len__(_:zelf:))
+      result.__contains__ = .init(PyFrozenSet.__contains__(_:zelf:object:))
+      result.__and__ = .init(PyFrozenSet.__and__(_:zelf:other:))
+      result.__or__ = .init(PyFrozenSet.__or__(_:zelf:other:))
+      result.__sub__ = .init(PyFrozenSet.__sub__(_:zelf:other:))
+      result.__xor__ = .init(PyFrozenSet.__xor__(_:zelf:other:))
+      result.__rand__ = .init(PyFrozenSet.__rand__(_:zelf:other:))
+      result.__ror__ = .init(PyFrozenSet.__ror__(_:zelf:other:))
+      result.__rsub__ = .init(PyFrozenSet.__rsub__(_:zelf:other:))
+      result.__rxor__ = .init(PyFrozenSet.__rxor__(_:zelf:other:))
+      return result
+    }()
 
     // MARK: - Function
 
@@ -2258,7 +2572,12 @@ extension Py {
       self.add(py, type: type, name: "__call__", method: __call__, doc: nil)
     }
 
-    internal static let functionStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var functionStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyFunction.__repr__(_:zelf:))
+      result.__call__ = .init(PyFunction.__call__(_:zelf:args:kwargs:))
+      return result
+    }()
 
     // MARK: - Int
 
@@ -2382,7 +2701,56 @@ extension Py {
       self.add(py, type: type, name: "__round__", method: __round__, doc: nil)
     }
 
-    internal static let intStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var intStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyInt.__repr__(_:zelf:))
+      result.__str__ = .init(PyInt.__str__(_:zelf:))
+      result.__hash__ = .init(PyInt.__hash__(_:zelf:))
+      result.__eq__ = .init(PyInt.__eq__(_:zelf:other:))
+      result.__ne__ = .init(PyInt.__ne__(_:zelf:other:))
+      result.__lt__ = .init(PyInt.__lt__(_:zelf:other:))
+      result.__le__ = .init(PyInt.__le__(_:zelf:other:))
+      result.__gt__ = .init(PyInt.__gt__(_:zelf:other:))
+      result.__ge__ = .init(PyInt.__ge__(_:zelf:other:))
+      result.__bool__ = .init(PyInt.__bool__(_:zelf:))
+      result.__int__ = .init(PyInt.__int__(_:zelf:))
+      result.__float__ = .init(PyInt.__float__(_:zelf:))
+      result.__index__ = .init(PyInt.__index__(_:zelf:))
+      result.__getattribute__ = .init(PyInt.__getattribute__(_:zelf:name:))
+      result.__pos__ = .init(PyInt.__pos__(_:zelf:))
+      result.__neg__ = .init(PyInt.__neg__(_:zelf:))
+      result.__invert__ = .init(PyInt.__invert__(_:zelf:))
+      result.__abs__ = .init(PyInt.__abs__(_:zelf:))
+      result.__trunc__ = .init(PyInt.__trunc__(_:zelf:))
+      result.__round__ = .init(PyInt.__round__(_:zelf:nDigits:))
+      result.__add__ = .init(PyInt.__add__(_:zelf:other:))
+      result.__and__ = .init(PyInt.__and__(_:zelf:other:))
+      result.__divmod__ = .init(PyInt.__divmod__(_:zelf:other:))
+      result.__floordiv__ = .init(PyInt.__floordiv__(_:zelf:other:))
+      result.__lshift__ = .init(PyInt.__lshift__(_:zelf:other:))
+      result.__mod__ = .init(PyInt.__mod__(_:zelf:other:))
+      result.__mul__ = .init(PyInt.__mul__(_:zelf:other:))
+      result.__or__ = .init(PyInt.__or__(_:zelf:other:))
+      result.__rshift__ = .init(PyInt.__rshift__(_:zelf:other:))
+      result.__sub__ = .init(PyInt.__sub__(_:zelf:other:))
+      result.__truediv__ = .init(PyInt.__truediv__(_:zelf:other:))
+      result.__xor__ = .init(PyInt.__xor__(_:zelf:other:))
+      result.__radd__ = .init(PyInt.__radd__(_:zelf:other:))
+      result.__rand__ = .init(PyInt.__rand__(_:zelf:other:))
+      result.__rdivmod__ = .init(PyInt.__rdivmod__(_:zelf:other:))
+      result.__rfloordiv__ = .init(PyInt.__rfloordiv__(_:zelf:other:))
+      result.__rlshift__ = .init(PyInt.__rlshift__(_:zelf:other:))
+      result.__rmod__ = .init(PyInt.__rmod__(_:zelf:other:))
+      result.__rmul__ = .init(PyInt.__rmul__(_:zelf:other:))
+      result.__ror__ = .init(PyInt.__ror__(_:zelf:other:))
+      result.__rrshift__ = .init(PyInt.__rrshift__(_:zelf:other:))
+      result.__rsub__ = .init(PyInt.__rsub__(_:zelf:other:))
+      result.__rtruediv__ = .init(PyInt.__rtruediv__(_:zelf:other:))
+      result.__rxor__ = .init(PyInt.__rxor__(_:zelf:other:))
+      result.__pow__ = .init(PyInt.__pow__(_:zelf:exp:mod:))
+      result.__rpow__ = .init(PyInt.__rpow__(_:zelf:base:mod:))
+      return result
+    }()
 
     // MARK: - Iterator
 
@@ -2403,7 +2771,13 @@ extension Py {
       self.add(py, type: type, name: "__length_hint__", method: __length_hint__, doc: nil)
     }
 
-    internal static let iteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var iteratorStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__getattribute__ = .init(PyIterator.__getattribute__(_:zelf:name:))
+      result.__iter__ = .init(PyIterator.__iter__(_:zelf:))
+      result.__next__ = .init(PyIterator.__next__(_:zelf:))
+      return result
+    }()
 
     // MARK: - List
 
@@ -2483,7 +2857,30 @@ extension Py {
       self.add(py, type: type, name: "__rmul__", method: __rmul__, doc: nil)
     }
 
-    internal static let listStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var listStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyList.__repr__(_:zelf:))
+      result.__hash__ = .init(PyList.__hash__(_:zelf:))
+      result.__eq__ = .init(PyList.__eq__(_:zelf:other:))
+      result.__ne__ = .init(PyList.__ne__(_:zelf:other:))
+      result.__lt__ = .init(PyList.__lt__(_:zelf:other:))
+      result.__le__ = .init(PyList.__le__(_:zelf:other:))
+      result.__gt__ = .init(PyList.__gt__(_:zelf:other:))
+      result.__ge__ = .init(PyList.__ge__(_:zelf:other:))
+      result.__getattribute__ = .init(PyList.__getattribute__(_:zelf:name:))
+      result.__getitem__ = .init(PyList.__getitem__(_:zelf:index:))
+      result.__setitem__ = .init(PyList.__setitem__(_:zelf:index:value:))
+      result.__delitem__ = .init(PyList.__delitem__(_:zelf:index:))
+      result.__iter__ = .init(PyList.__iter__(_:zelf:))
+      result.__len__ = .init(PyList.__len__(_:zelf:))
+      result.__contains__ = .init(PyList.__contains__(_:zelf:object:))
+      result.__reversed__ = .init(PyList.__reversed__(_:zelf:))
+      result.__add__ = .init(PyList.__add__(_:zelf:other:))
+      result.__mul__ = .init(PyList.__mul__(_:zelf:other:))
+      result.__rmul__ = .init(PyList.__rmul__(_:zelf:other:))
+      result.__iadd__ = .init(PyList.__iadd__(_:zelf:other:))
+      return result
+    }()
 
     // MARK: - ListIterator
 
@@ -2507,7 +2904,13 @@ extension Py {
       self.add(py, type: type, name: "__length_hint__", method: __length_hint__, doc: nil)
     }
 
-    internal static let listIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var listIteratorStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__getattribute__ = .init(PyListIterator.__getattribute__(_:zelf:name:))
+      result.__iter__ = .init(PyListIterator.__iter__(_:zelf:))
+      result.__next__ = .init(PyListIterator.__next__(_:zelf:))
+      return result
+    }()
 
     // MARK: - ListReverseIterator
 
@@ -2531,7 +2934,13 @@ extension Py {
       self.add(py, type: type, name: "__length_hint__", method: __length_hint__, doc: nil)
     }
 
-    internal static let listReverseIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var listReverseIteratorStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__getattribute__ = .init(PyListReverseIterator.__getattribute__(_:zelf:name:))
+      result.__iter__ = .init(PyListReverseIterator.__iter__(_:zelf:))
+      result.__next__ = .init(PyListReverseIterator.__next__(_:zelf:))
+      return result
+    }()
 
     // MARK: - Map
 
@@ -2553,7 +2962,13 @@ extension Py {
       self.add(py, type: type, name: "__next__", method: __next__, doc: nil)
     }
 
-    internal static let mapStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var mapStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__getattribute__ = .init(PyMap.__getattribute__(_:zelf:name:))
+      result.__iter__ = .init(PyMap.__iter__(_:zelf:))
+      result.__next__ = .init(PyMap.__next__(_:zelf:))
+      return result
+    }()
 
     // MARK: - Method
 
@@ -2590,7 +3005,18 @@ extension Py {
       self.add(py, type: type, name: "__call__", method: __call__, doc: nil)
     }
 
-    internal static let methodStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var methodStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyMethod.__repr__(_:zelf:))
+      result.__hash__ = .init(PyMethod.__hash__(_:zelf:))
+      result.__eq__ = .init(PyMethod.__eq__(_:zelf:other:))
+      result.__ne__ = .init(PyMethod.__ne__(_:zelf:other:))
+      result.__getattribute__ = .init(PyMethod.__getattribute__(_:zelf:name:))
+      result.__setattr__ = .init(PyMethod.__setattr__(_:zelf:name:value:))
+      result.__delattr__ = .init(PyMethod.__delattr__(_:zelf:name:))
+      result.__call__ = .init(PyMethod.__call__(_:zelf:args:kwargs:))
+      return result
+    }()
 
     // MARK: - Module
 
@@ -2620,7 +3046,15 @@ extension Py {
       self.add(py, type: type, name: "__dir__", method: __dir__, doc: nil)
     }
 
-    internal static let moduleStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var moduleStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyModule.__repr__(_:zelf:))
+      result.__dir__ = .init(PyModule.__dir__(_:zelf:))
+      result.__getattribute__ = .init(PyModule.__getattribute__(_:zelf:name:))
+      result.__setattr__ = .init(PyModule.__setattr__(_:zelf:name:value:))
+      result.__delattr__ = .init(PyModule.__delattr__(_:zelf:name:))
+      return result
+    }()
 
     // MARK: - Namespace
 
@@ -2660,7 +3094,20 @@ extension Py {
       self.add(py, type: type, name: "__delattr__", method: __delattr__, doc: nil)
     }
 
-    internal static let namespaceStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var namespaceStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyNamespace.__repr__(_:zelf:))
+      result.__eq__ = .init(PyNamespace.__eq__(_:zelf:other:))
+      result.__ne__ = .init(PyNamespace.__ne__(_:zelf:other:))
+      result.__lt__ = .init(PyNamespace.__lt__(_:zelf:other:))
+      result.__le__ = .init(PyNamespace.__le__(_:zelf:other:))
+      result.__gt__ = .init(PyNamespace.__gt__(_:zelf:other:))
+      result.__ge__ = .init(PyNamespace.__ge__(_:zelf:other:))
+      result.__getattribute__ = .init(PyNamespace.__getattribute__(_:zelf:name:))
+      result.__setattr__ = .init(PyNamespace.__setattr__(_:zelf:name:value:))
+      result.__delattr__ = .init(PyNamespace.__delattr__(_:zelf:name:))
+      return result
+    }()
 
     // MARK: - None
 
@@ -2682,7 +3129,13 @@ extension Py {
       self.add(py, type: type, name: "__getattribute__", method: __getattribute__, doc: nil)
     }
 
-    internal static let noneStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var noneStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyNone.__repr__(_:zelf:))
+      result.__bool__ = .init(PyNone.__bool__(_:zelf:))
+      result.__getattribute__ = .init(PyNone.__getattribute__(_:zelf:name:))
+      return result
+    }()
 
     // MARK: - NotImplemented
 
@@ -2700,7 +3153,11 @@ extension Py {
       self.add(py, type: type, name: "__repr__", method: __repr__, doc: nil)
     }
 
-    internal static let notImplementedStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var notImplementedStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyNotImplemented.__repr__(_:zelf:))
+      return result
+    }()
 
     // MARK: - Object
 
@@ -2751,7 +3208,23 @@ extension Py {
       self.add(py, type: type, name: "__init_subclass__", method: __init_subclass__, doc: nil)
     }
 
-    internal static let objectStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var objectStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = PyStaticCall.KnownNotOverriddenMethods()
+      result.__repr__ = .init(PyObject.__repr__(_:zelf:))
+      result.__str__ = .init(PyObject.__str__(_:zelf:))
+      result.__hash__ = .init(PyObject.__hash__(_:zelf:))
+      result.__dir__ = .init(PyObject.__dir__(_:zelf:))
+      result.__eq__ = .init(PyObject.__eq__(_:zelf:other:))
+      result.__ne__ = .init(PyObject.__ne__(_:zelf:other:))
+      result.__lt__ = .init(PyObject.__lt__(_:zelf:other:))
+      result.__le__ = .init(PyObject.__le__(_:zelf:other:))
+      result.__gt__ = .init(PyObject.__gt__(_:zelf:other:))
+      result.__ge__ = .init(PyObject.__ge__(_:zelf:other:))
+      result.__getattribute__ = .init(PyObject.__getattribute__(_:zelf:name:))
+      result.__setattr__ = .init(PyObject.__setattr__(_:zelf:name:value:))
+      result.__delattr__ = .init(PyObject.__delattr__(_:zelf:name:))
+      return result
+    }()
 
     // MARK: - Property
 
@@ -2792,7 +3265,11 @@ extension Py {
       self.add(py, type: type, name: "deleter", method: deleter, doc: nil)
     }
 
-    internal static let propertyStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var propertyStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__getattribute__ = .init(PyProperty.__getattribute__(_:zelf:name:))
+      return result
+    }()
 
     // MARK: - Range
 
@@ -2850,7 +3327,25 @@ extension Py {
       self.add(py, type: type, name: "__reduce__", method: __reduce__, doc: nil)
     }
 
-    internal static let rangeStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var rangeStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyRange.__repr__(_:zelf:))
+      result.__hash__ = .init(PyRange.__hash__(_:zelf:))
+      result.__eq__ = .init(PyRange.__eq__(_:zelf:other:))
+      result.__ne__ = .init(PyRange.__ne__(_:zelf:other:))
+      result.__lt__ = .init(PyRange.__lt__(_:zelf:other:))
+      result.__le__ = .init(PyRange.__le__(_:zelf:other:))
+      result.__gt__ = .init(PyRange.__gt__(_:zelf:other:))
+      result.__ge__ = .init(PyRange.__ge__(_:zelf:other:))
+      result.__bool__ = .init(PyRange.__bool__(_:zelf:))
+      result.__getattribute__ = .init(PyRange.__getattribute__(_:zelf:name:))
+      result.__getitem__ = .init(PyRange.__getitem__(_:zelf:index:))
+      result.__iter__ = .init(PyRange.__iter__(_:zelf:))
+      result.__len__ = .init(PyRange.__len__(_:zelf:))
+      result.__contains__ = .init(PyRange.__contains__(_:zelf:object:))
+      result.__reversed__ = .init(PyRange.__reversed__(_:zelf:))
+      return result
+    }()
 
     // MARK: - RangeIterator
 
@@ -2874,7 +3369,13 @@ extension Py {
       self.add(py, type: type, name: "__length_hint__", method: __length_hint__, doc: nil)
     }
 
-    internal static let rangeIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var rangeIteratorStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__getattribute__ = .init(PyRangeIterator.__getattribute__(_:zelf:name:))
+      result.__iter__ = .init(PyRangeIterator.__iter__(_:zelf:))
+      result.__next__ = .init(PyRangeIterator.__next__(_:zelf:))
+      return result
+    }()
 
     // MARK: - Reversed
 
@@ -2898,7 +3399,13 @@ extension Py {
       self.add(py, type: type, name: "__length_hint__", method: __length_hint__, doc: nil)
     }
 
-    internal static let reversedStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var reversedStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__getattribute__ = .init(PyReversed.__getattribute__(_:zelf:name:))
+      result.__iter__ = .init(PyReversed.__iter__(_:zelf:))
+      result.__next__ = .init(PyReversed.__next__(_:zelf:))
+      return result
+    }()
 
     // MARK: - Set
 
@@ -2984,7 +3491,30 @@ extension Py {
       self.add(py, type: type, name: "__iter__", method: __iter__, doc: nil)
     }
 
-    internal static let setStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var setStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PySet.__repr__(_:zelf:))
+      result.__hash__ = .init(PySet.__hash__(_:zelf:))
+      result.__eq__ = .init(PySet.__eq__(_:zelf:other:))
+      result.__ne__ = .init(PySet.__ne__(_:zelf:other:))
+      result.__lt__ = .init(PySet.__lt__(_:zelf:other:))
+      result.__le__ = .init(PySet.__le__(_:zelf:other:))
+      result.__gt__ = .init(PySet.__gt__(_:zelf:other:))
+      result.__ge__ = .init(PySet.__ge__(_:zelf:other:))
+      result.__getattribute__ = .init(PySet.__getattribute__(_:zelf:name:))
+      result.__iter__ = .init(PySet.__iter__(_:zelf:))
+      result.__len__ = .init(PySet.__len__(_:zelf:))
+      result.__contains__ = .init(PySet.__contains__(_:zelf:object:))
+      result.__and__ = .init(PySet.__and__(_:zelf:other:))
+      result.__or__ = .init(PySet.__or__(_:zelf:other:))
+      result.__sub__ = .init(PySet.__sub__(_:zelf:other:))
+      result.__xor__ = .init(PySet.__xor__(_:zelf:other:))
+      result.__rand__ = .init(PySet.__rand__(_:zelf:other:))
+      result.__ror__ = .init(PySet.__ror__(_:zelf:other:))
+      result.__rsub__ = .init(PySet.__rsub__(_:zelf:other:))
+      result.__rxor__ = .init(PySet.__rxor__(_:zelf:other:))
+      return result
+    }()
 
     // MARK: - SetIterator
 
@@ -3008,7 +3538,13 @@ extension Py {
       self.add(py, type: type, name: "__length_hint__", method: __length_hint__, doc: nil)
     }
 
-    internal static let setIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var setIteratorStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__getattribute__ = .init(PySetIterator.__getattribute__(_:zelf:name:))
+      result.__iter__ = .init(PySetIterator.__iter__(_:zelf:))
+      result.__next__ = .init(PySetIterator.__next__(_:zelf:))
+      return result
+    }()
 
     // MARK: - Slice
 
@@ -3050,7 +3586,19 @@ extension Py {
       self.add(py, type: type, name: "indices", method: indices, doc: nil)
     }
 
-    internal static let sliceStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var sliceStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PySlice.__repr__(_:zelf:))
+      result.__hash__ = .init(PySlice.__hash__(_:zelf:))
+      result.__eq__ = .init(PySlice.__eq__(_:zelf:other:))
+      result.__ne__ = .init(PySlice.__ne__(_:zelf:other:))
+      result.__lt__ = .init(PySlice.__lt__(_:zelf:other:))
+      result.__le__ = .init(PySlice.__le__(_:zelf:other:))
+      result.__gt__ = .init(PySlice.__gt__(_:zelf:other:))
+      result.__ge__ = .init(PySlice.__ge__(_:zelf:other:))
+      result.__getattribute__ = .init(PySlice.__getattribute__(_:zelf:name:))
+      return result
+    }()
 
     // MARK: - StaticMethod
 
@@ -3076,7 +3624,11 @@ extension Py {
       self.add(py, type: type, name: "__isabstractmethod__", method: __isabstractmethod__, doc: nil)
     }
 
-    internal static let staticMethodStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var staticMethodStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__isabstractmethod__ = .init(PyStaticMethod.__isabstractmethod__(_:zelf:))
+      return result
+    }()
 
     // MARK: - String
 
@@ -3202,7 +3754,27 @@ extension Py {
       self.add(py, type: type, name: "__iter__", method: __iter__, doc: nil)
     }
 
-    internal static let stringStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var stringStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyString.__repr__(_:zelf:))
+      result.__str__ = .init(PyString.__str__(_:zelf:))
+      result.__hash__ = .init(PyString.__hash__(_:zelf:))
+      result.__eq__ = .init(PyString.__eq__(_:zelf:other:))
+      result.__ne__ = .init(PyString.__ne__(_:zelf:other:))
+      result.__lt__ = .init(PyString.__lt__(_:zelf:other:))
+      result.__le__ = .init(PyString.__le__(_:zelf:other:))
+      result.__gt__ = .init(PyString.__gt__(_:zelf:other:))
+      result.__ge__ = .init(PyString.__ge__(_:zelf:other:))
+      result.__getattribute__ = .init(PyString.__getattribute__(_:zelf:name:))
+      result.__getitem__ = .init(PyString.__getitem__(_:zelf:index:))
+      result.__iter__ = .init(PyString.__iter__(_:zelf:))
+      result.__len__ = .init(PyString.__len__(_:zelf:))
+      result.__contains__ = .init(PyString.__contains__(_:zelf:object:))
+      result.__add__ = .init(PyString.__add__(_:zelf:other:))
+      result.__mul__ = .init(PyString.__mul__(_:zelf:other:))
+      result.__rmul__ = .init(PyString.__rmul__(_:zelf:other:))
+      return result
+    }()
 
     // MARK: - StringIterator
 
@@ -3226,7 +3798,13 @@ extension Py {
       self.add(py, type: type, name: "__length_hint__", method: __length_hint__, doc: nil)
     }
 
-    internal static let stringIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var stringIteratorStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__getattribute__ = .init(PyStringIterator.__getattribute__(_:zelf:name:))
+      result.__iter__ = .init(PyStringIterator.__iter__(_:zelf:))
+      result.__next__ = .init(PyStringIterator.__next__(_:zelf:))
+      return result
+    }()
 
     // MARK: - Super
 
@@ -3256,7 +3834,12 @@ extension Py {
       self.add(py, type: type, name: "__get__", method: __get__, doc: nil)
     }
 
-    internal static let superStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var superStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PySuper.__repr__(_:zelf:))
+      result.__getattribute__ = .init(PySuper.__getattribute__(_:zelf:name:))
+      return result
+    }()
 
     // MARK: - TextFile
 
@@ -3291,7 +3874,12 @@ extension Py {
       self.add(py, type: type, name: "__exit__", method: __exit__, doc: nil)
     }
 
-    internal static let textFileStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var textFileStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyTextFile.__repr__(_:zelf:))
+      result.__del__ = .init(PyTextFile.__del__(_:zelf:))
+      return result
+    }()
 
     // MARK: - Traceback
 
@@ -3320,7 +3908,12 @@ extension Py {
       self.add(py, type: type, name: "__dir__", method: __dir__, doc: nil)
     }
 
-    internal static let tracebackStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var tracebackStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__dir__ = .init(PyTraceback.__dir__(_:zelf:))
+      result.__getattribute__ = .init(PyTraceback.__getattribute__(_:zelf:name:))
+      return result
+    }()
 
     // MARK: - Tuple
 
@@ -3372,7 +3965,26 @@ extension Py {
       self.add(py, type: type, name: "__rmul__", method: __rmul__, doc: nil)
     }
 
-    internal static let tupleStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var tupleStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyTuple.__repr__(_:zelf:))
+      result.__hash__ = .init(PyTuple.__hash__(_:zelf:))
+      result.__eq__ = .init(PyTuple.__eq__(_:zelf:other:))
+      result.__ne__ = .init(PyTuple.__ne__(_:zelf:other:))
+      result.__lt__ = .init(PyTuple.__lt__(_:zelf:other:))
+      result.__le__ = .init(PyTuple.__le__(_:zelf:other:))
+      result.__gt__ = .init(PyTuple.__gt__(_:zelf:other:))
+      result.__ge__ = .init(PyTuple.__ge__(_:zelf:other:))
+      result.__getattribute__ = .init(PyTuple.__getattribute__(_:zelf:name:))
+      result.__getitem__ = .init(PyTuple.__getitem__(_:zelf:index:))
+      result.__iter__ = .init(PyTuple.__iter__(_:zelf:))
+      result.__len__ = .init(PyTuple.__len__(_:zelf:))
+      result.__contains__ = .init(PyTuple.__contains__(_:zelf:object:))
+      result.__add__ = .init(PyTuple.__add__(_:zelf:other:))
+      result.__mul__ = .init(PyTuple.__mul__(_:zelf:other:))
+      result.__rmul__ = .init(PyTuple.__rmul__(_:zelf:other:))
+      return result
+    }()
 
     // MARK: - TupleIterator
 
@@ -3396,7 +4008,13 @@ extension Py {
       self.add(py, type: type, name: "__length_hint__", method: __length_hint__, doc: nil)
     }
 
-    internal static let tupleIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var tupleIteratorStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__getattribute__ = .init(PyTupleIterator.__getattribute__(_:zelf:name:))
+      result.__iter__ = .init(PyTupleIterator.__iter__(_:zelf:))
+      result.__next__ = .init(PyTupleIterator.__next__(_:zelf:))
+      return result
+    }()
 
     // MARK: - Type
 
@@ -3455,7 +4073,18 @@ extension Py {
       self.add(py, type: type, name: "__call__", method: __call__, doc: nil)
     }
 
-    internal static let typeStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var typeStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__repr__ = .init(PyType.__repr__(_:zelf:))
+      result.__dir__ = .init(PyType.__dir__(_:zelf:))
+      result.__getattribute__ = .init(PyType.__getattribute__(_:zelf:name:))
+      result.__setattr__ = .init(PyType.__setattr__(_:zelf:name:value:))
+      result.__delattr__ = .init(PyType.__delattr__(_:zelf:name:))
+      result.__call__ = .init(PyType.__call__(_:zelf:args:kwargs:))
+      result.__instancecheck__ = .init(PyType.__instancecheck__(_:zelf:object:))
+      result.__subclasscheck__ = .init(PyType.__subclasscheck__(_:zelf:object:))
+      return result
+    }()
 
     // MARK: - Zip
 
@@ -3477,7 +4106,13 @@ extension Py {
       self.add(py, type: type, name: "__next__", method: __next__, doc: nil)
     }
 
-    internal static let zipStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static var zipStaticMethods: PyStaticCall.KnownNotOverriddenMethods = {
+      var result = Py.Types.objectStaticMethods.copy()
+      result.__getattribute__ = .init(PyZip.__getattribute__(_:zelf:name:))
+      result.__iter__ = .init(PyZip.__iter__(_:zelf:))
+      result.__next__ = .init(PyZip.__next__(_:zelf:))
+      return result
+    }()
 
   }
 }
