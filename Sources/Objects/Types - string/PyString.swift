@@ -154,12 +154,16 @@ public struct PyString: PyObjectMixin, AbstractString {
       return .invalidSelfArgument(zelf, Self.pythonTypeName)
     }
 
-    if zelf.cachedHash == Self.invalidHash {
-      zelf.cachedHash = py.hasher.hash(zelf.value)
+    let result = zelf.getHash(py)
+    return .value(result)
+  }
+
+  internal func getHash(_ py: Py) -> PyHash {
+    if self.cachedHash == Self.invalidHash {
+      self.cachedHash = py.hasher.hash(self.value)
     }
 
-    let result = zelf.cachedHash
-    return .value(result)
+    return self.cachedHash
   }
 
   // MARK: - String

@@ -253,7 +253,7 @@ extension Py {
   }
 
   public func add(dict: PyObject, key: IdString, value: PyObject) -> PyBaseException? {
-    let keyObject = key.value
+    let keyObject = self.resolve(id: key).asObject
     return self.add(dict: dict, key: keyObject, value: value)
   }
 

@@ -276,8 +276,9 @@ extension Py {
     // PyModule method, but our own 'def'.
 
     let importlibObject = importlib.asObject
+    let selectorString = self.resolve(id: selector)
     switch self.getMethod(object: importlibObject,
-                          selector: selector.value,
+                          selector: selectorString,
                           allowsCallableFromDict: true) {
     case let .value(method):
       return self.call(callable: method, args: args, kwargs: nil)
