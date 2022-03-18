@@ -1,6 +1,6 @@
 from typing import List, Optional
 from Helpers import NewTypeArguments, generated_warning
-from Sourcery import TypeInfo, SwiftInitializerInfo, get_types
+from Sourcery import TypeInfo, SwiftStoredProperty, SwiftInitializerInfo, get_types
 
 # =========================================
 # === PyMemory + type/object types init ===
@@ -33,8 +33,8 @@ extension PyMemory {{
   /// - `type` type has `type` type (self reference) and `object` type as base
   public func newTypeAndObjectTypes(_ py: Py) -> (objectType: PyType, typeType: PyType) {{
     let layout = PyType.layout
-    let objectTypePtr = self.allocate(size: layout.size, alignment: layout.alignment)
-    let typeTypePtr = self.allocate(size: layout.size, alignment: layout.alignment)
+    let objectTypePtr = self.allocateObject(size: layout.size, alignment: layout.alignment)
+    let typeTypePtr = self.allocateObject(size: layout.size, alignment: layout.alignment)
 
     let objectType = PyType(ptr: objectTypePtr)
     let typeType = PyType(ptr: typeTypePtr)
@@ -77,12 +77,14 @@ extension PyMemory {{
 # ===================
 
 class PropertyInLayout:
-    def __init__(self, swift_name: str, swift_type: str, declared_in_type: Optional[TypeInfo] = None):
-        self.swift_name = swift_name
-        self.swift_type = swift_type
-        self.declared_in_type = declared_in_type
-        self.pointer_property_name = swift_name + 'Ptr'
-        self.layout_offset_property_name = swift_name + 'Offset'
+    def __init__(self, type: TypeInfo, prop: SwiftStoredProperty):
+        self.declared_in_type = type
+        self.swift_name = prop.swift_name
+        self.swift_type = prop.swift_type
+        self.has_setter = prop.has_setter
+        self.is_visible_only_on_object = prop.is_visible_only_on_object
+        self.pointer_property_name = self.swift_name + 'Ptr'
+        self.layout_offset_property_name = self.swift_name + 'Offset'
 
 def print_type_extension(t: TypeInfo):
     python_type_name = t.python_type_name
@@ -90,15 +92,15 @@ def print_type_extension(t: TypeInfo):
     swift_type_name_without_py = swift_type_name[2:]
 
     properties_t: List[PropertyInLayout] = []
-    for f in t.swift_properties:
-        properties_t.append(PropertyInLayout(f.swift_name, f.swift_type, t))
+    for p in t.swift_properties:
+        properties_t.append(PropertyInLayout(t, p))
 
     current_base = t.base_type_info
     properties_base: List[PropertyInLayout] = []
     while current_base != None:
         current_base_properties: List[PropertyInLayout] = []
         for p in current_base.swift_properties:
-            current_base_properties.append(PropertyInLayout(p.swift_name, p.swift_type, current_base))
+            current_base_properties.append(PropertyInLayout(current_base, p))
 
         # Sort base properties: 'object' -> 'base_base' -> 'base'
         properties_base = current_base_properties + properties_base
@@ -184,6 +186,9 @@ def print_type_extension(t: TypeInfo):
     # ==========================
 
     for p in properties_base:
+        if p.is_visible_only_on_object:
+            continue
+
         swift_owner_type_name = p.declared_in_type.swift_type_name
         print(f'  /// Property from base class: `{swift_owner_type_name}.{p.swift_name}`.')
         print(f'  internal var {p.pointer_property_name}: Ptr<{p.swift_type}> {{ Ptr(self.ptr, offset: {swift_owner_type_name}.layout.{p.layout_offset_property_name}) }}')
@@ -200,6 +205,9 @@ def print_type_extension(t: TypeInfo):
     # ==================
 
     for p in properties_base:
+        if p.is_visible_only_on_object:
+            continue
+
         name = p.swift_name
         typ = p.swift_type
         pointer_property_name = p.pointer_property_name
@@ -372,7 +380,7 @@ def print_type_extension(t: TypeInfo):
 
         print(f') -> {swift_type_name} {{')
         print(f'    let typeLayout = {swift_type_name}.layout')
-        print(f'    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)')
+        print(f'    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)')
         print()
         print(f'    let result = {swift_type_name}(ptr: ptr)')
         print(f'    result.initialize(', end='')

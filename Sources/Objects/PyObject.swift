@@ -5,6 +5,7 @@ import VioletCore
 // swiftlint:disable file_length
 
 // In CPython:
+// Objects -> object.c
 // Objects -> typeobject.c
 
 // sourcery: pytype = object, isDefault, isBaseType
@@ -81,6 +82,18 @@ public struct PyObject: PyObjectMixin {
     }
   }
 
+  // MARK: - Property - memory info
+
+  // sourcery: storedProperty, visibleOnlyOnPyObject
+  /// Things that `PyMemory` asked us to hold.
+  ///
+  /// This is only visible on `PyObject`, the subclasses will have it (obviously)
+  /// but the property will not be generated.
+  internal var memoryInfo: PyMemory.ObjectHeader {
+    get { return self.memoryInfoPtr.pointee }
+    nonmutating set { self.memoryInfoPtr.pointee = newValue }
+  }
+
   // MARK: - Property - flags
 
   // sourcery: storedProperty
@@ -88,7 +101,7 @@ public struct PyObject: PyObjectMixin {
   ///
   /// It can also be used to store `Bool` properties (via `custom` flags).
   public var flags: PyObject.Flags {
-    get { self.flagsPtr.pointee }
+    get { return self.flagsPtr.pointee }
     nonmutating set { self.flagsPtr.pointee = newValue }
   }
 
@@ -115,6 +128,8 @@ public struct PyObject: PyObjectMixin {
       lazy__dict__ = .noDict
     }
 
+    // 'memoryInfo' was already initialized (all of the objects are allocated by
+    // PyMemory which also is responsible for 'memoryInfo').
     self.__dict__Ptr.initialize(to: lazy__dict__)
   }
 

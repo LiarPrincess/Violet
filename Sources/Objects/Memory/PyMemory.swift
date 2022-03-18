@@ -3,20 +3,60 @@
 
 public final class PyMemory {
 
+  private var firstAllocatedObject: PyObject?
+  private var lastAllocatedObject: PyObject?
+
   // MARK: - Object
 
-  public func allocate(size: Int, alignment: Int) -> RawPtr {
+  /// Things that `PyMemory` stores in every object.
+  internal struct ObjectHeader {
+    /// Object allocated before this object (doubly linked list).
+    internal var previous: PyObject?
+    /// Object allocated after this object (doubly linked list).
+    internal var next: PyObject?
+  }
+
+  /// Allocates and starts tracking an python object.
+  public func allocateObject(size: Int, alignment: Int) -> RawPtr {
     assert(size >= PyObject.layout.size)
-    return RawPtr.allocate(byteCount: size, alignment: alignment)
+    let ptr = Self.allocate(byteCount: size, alignment: alignment)
+    let object = PyObject(ptr: ptr)
+
+    if self.firstAllocatedObject == nil {
+      self.firstAllocatedObject = object
+    }
+
+    let lastAllocatedObject = self.lastAllocatedObject
+    self.lastAllocatedObject = object
+
+    let memoryInfo = ObjectHeader(previous: lastAllocatedObject, next: nil)
+    object.memoryInfoPtr.initialize(to: memoryInfo)
+
+    return ptr
+  }
+
+  private static func allocate(byteCount: Int, alignment: Int) -> RawPtr {
+    return RawPtr.allocate(byteCount: byteCount, alignment: alignment)
   }
 
   public func destroy(object: PyObject) {
     let ptr = object.ptr
+    let previous = object.memoryInfo.previous
+    let next = object.memoryInfo.next
 
-    let deinitialize = object.type.deinitialize
-    deinitialize(ptr)
-
+    object.type.deinitialize(ptr)
     object.ptr.deallocate()
+
+    previous?.memoryInfo.next = next
+    next?.memoryInfo.previous = previous
+
+    if let first = self.firstAllocatedObject, first.ptr === ptr {
+      self.firstAllocatedObject = next
+    }
+
+    if let last = self.lastAllocatedObject, last.ptr === ptr {
+      self.lastAllocatedObject = previous
+    }
   }
 
   // MARK: - Py
@@ -24,12 +64,18 @@ public final class PyMemory {
   internal static func allocatePy() -> RawPtr {
     let size = Py.layout.size
     let alignment = Py.layout.alignment
-    return RawPtr.allocate(byteCount: size, alignment: alignment)
+    return Self.allocate(byteCount: size, alignment: alignment)
   }
 
   internal static func destroyPy(_ py: Py) {
-    // 1. allObjects.deinitialize
-    // 2. allObjects.deallocate()
+    let memory = py.memory
+
+    var object = memory.lastAllocatedObject
+    while let o = object {
+      let previous = o.memoryInfo.previous
+      memory.destroy(object: o)
+      object = previous
+    }
 
     py.deinitialize()
     py.ptr.deallocate()
@@ -82,7 +128,7 @@ public final class PyMemory {
       // In C they would align. This is because of 'taking-pointers-to-nested-structs'
       // and 'other-complicated-things'.
       // In Swift they would not align (afaik) - just like we do. This makes
-      // certaing operations illegal, but potentially saves memory.
+      // certain operations illegal, but potentially saves memory.
     }
 
     private static func round(_ value: Int, alignment: Int) -> Int {

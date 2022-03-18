@@ -29,12 +29,13 @@ Doc|{{variable.name}}
 {% endfor %}
 
 {% for field in type.allVariables|annotated:"storedProperty" %}
-SwiftProperty|{{field.name}}|{{field.typeName}}
+{% set visible_only_on_object %}{{ field.annotations.visibleOnlyOnPyObject }}{% endset %}
+SwiftStoredProperty|{{field.name}}|{{field.typeName}}|{{field.isMutable}}|{{visible_only_on_object}}
 {% endfor %}
 
 {% for method in type.allMethods where method.shortName == "initialize" %}
 {% set swift_selector_with_types %}{{ method.name }}{% endset %}
-SwiftInit|{{swift_selector_with_types}}
+SwiftInitializer|{{swift_selector_with_types}}
 {% endfor %}
 
 {% for prop in type.staticMethods|annotated:"pyproperty" %}
@@ -66,7 +67,7 @@ PyProperty|{{python_name}}|{{has_setter}}|{{swift_static_doc_property}}
 
 {% for type in types.structs where type.name == "Py" %}
 {% for field in type.allVariables|annotated:"storedProperty" %}
-PySwiftProperty|{{field.name}}|{{field.typeName}}
+SwiftStoredPropertyOnPy|{{field.name}}|{{field.typeName}}
 {% endfor %}
 {% endfor %}
 
