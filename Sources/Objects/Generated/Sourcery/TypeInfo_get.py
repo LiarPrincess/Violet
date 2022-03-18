@@ -1,7 +1,7 @@
 import os.path
 from typing import List, Optional
 
-from Sourcery.TypeInfo import TypeInfo, SwiftProperty, SwiftInitializerInfo, PyPropertyInfo, PyFunctionInfo
+from Sourcery.TypeInfo import TypeInfo, SwiftStoredProperty, SwiftInitializerInfo, PyPropertyInfo, PyFunctionInfo
 from Sourcery.validateSwiftFunctionName import validateSwiftFunctionNames
 
 def get_types() -> List[TypeInfo]:
@@ -31,7 +31,7 @@ def get_types() -> List[TypeInfo]:
             assert len(split) >= 1
 
             line_type = split[0]
-            if line_type == 'PySwiftProperty':
+            if line_type == 'SwiftStoredPropertyOnPy':
                 # We are not interested in 'Py'
                 pass
             elif line_type == 'Type' or line_type == 'ErrorType':
@@ -65,17 +65,19 @@ def get_types() -> List[TypeInfo]:
                 assert len(split) == 2
                 current_type.swift_static_doc_property = split[1]
 
-            elif line_type == 'SwiftProperty':
+            elif line_type == 'SwiftStoredProperty':
                 assert current_type
-                assert len(split) == 3
+                assert len(split) == 5
 
-                property_name = split[1]
-                property_type = split[2]
+                swift_name = split[1]
+                swift_type = split[2]
+                has_setter = split[3] == '1'
+                is_visible_only_on_object = split[4] == '1'
 
-                property = SwiftProperty(property_name, property_type)
+                property = SwiftStoredProperty(swift_name, swift_type, has_setter, is_visible_only_on_object)
                 current_type.swift_properties.append(property)
 
-            elif line_type == 'SwiftInit':
+            elif line_type == 'SwiftInitializer':
                 assert current_type
                 assert len(split) == 2
 

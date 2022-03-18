@@ -1,7 +1,7 @@
 import os.path
 from typing import List
 
-class SwiftProperty:
+class SwiftStoredPropertyOnPy:
     def __init__(self, swift_name: str, swift_type: str):
         self.swift_name = swift_name
         self.swift_type = swift_type
@@ -9,7 +9,7 @@ class SwiftProperty:
 class PyInfo:
     pass
     def __init__(self):
-        self.swift_properties: List[SwiftProperty] = []
+        self.swift_properties: List[SwiftStoredPropertyOnPy] = []
 
 def get_py_info() -> PyInfo:
     dir_path = os.path.dirname(__file__)
@@ -27,13 +27,13 @@ def get_py_info() -> PyInfo:
             assert len(split) >= 1
 
             line_type = split[0]
-            if line_type == 'PySwiftProperty':
+            if line_type == 'SwiftStoredPropertyOnPy':
                 assert len(split) == 3
 
                 property_name = split[1]
                 property_type = split[2]
 
-                property = SwiftProperty(property_name, property_type)
+                property = SwiftStoredPropertyOnPy(property_name, property_type)
                 result.swift_properties.append(property)
 
     return result

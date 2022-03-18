@@ -22,7 +22,7 @@ class TypeInfo:
         self.sourcery_flags: SourceryFlags = SourceryFlags()
 
         # Properties, methods - to be filled later
-        self.swift_properties: List[SwiftProperty] = []
+        self.swift_properties: List[SwiftStoredProperty] = []
         self.swift_initializers: List[SwiftInitializerInfo] = []
         self.python_properties: List[PyPropertyInfo] = []
         self.python_methods: List[PyFunctionInfo] = []
@@ -48,10 +48,16 @@ class SourceryFlags:
         self.values.sort()
 
 
-class SwiftProperty:
-    def __init__(self, swift_name: str, swift_type: str):
+class SwiftStoredProperty:
+    def __init__(self,
+                 swift_name: str,
+                 swift_type: str,
+                 has_setter: bool,
+                 is_visible_only_on_object: bool):
         self.swift_name = swift_name
         self.swift_type = swift_type
+        self.has_setter = has_setter
+        self.is_visible_only_on_object = is_visible_only_on_object
 
 
 class SwiftInitializerInfo:

@@ -38,8 +38,8 @@ extension PyMemory {
   /// - `type` type has `type` type (self reference) and `object` type as base
   public func newTypeAndObjectTypes(_ py: Py) -> (objectType: PyType, typeType: PyType) {
     let layout = PyType.layout
-    let objectTypePtr = self.allocate(size: layout.size, alignment: layout.alignment)
-    let typeTypePtr = self.allocate(size: layout.size, alignment: layout.alignment)
+    let objectTypePtr = self.allocateObject(size: layout.size, alignment: layout.alignment)
+    let typeTypePtr = self.allocateObject(size: layout.size, alignment: layout.alignment)
 
     let objectType = PyType(ptr: objectTypePtr)
     let typeType = PyType(ptr: typeTypePtr)
@@ -150,7 +150,7 @@ extension PyMemory {
   /// Allocate a new instance of `bool` type.
   public func newBool(_ py: Py, type: PyType, value: Bool) -> PyBool {
     let typeLayout = PyBool.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyBool(ptr: ptr)
     result.initialize(py, type: type, value: value)
@@ -269,7 +269,7 @@ extension PyMemory {
                                  module: PyObject?,
                                  doc: String?) -> PyBuiltinFunction {
     let typeLayout = PyBuiltinFunction.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyBuiltinFunction(ptr: ptr)
     result.initialize(py,
@@ -399,7 +399,7 @@ extension PyMemory {
                                module: PyObject?,
                                doc: String?) -> PyBuiltinMethod {
     let typeLayout = PyBuiltinMethod.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyBuiltinMethod(ptr: ptr)
     result.initialize(py,
@@ -507,7 +507,7 @@ extension PyMemory {
   /// Allocate a new instance of `bytearray` type.
   public func newByteArray(_ py: Py, type: PyType, elements: Data) -> PyByteArray {
     let typeLayout = PyByteArray.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyByteArray(ptr: ptr)
     result.initialize(py, type: type, elements: elements)
@@ -616,7 +616,7 @@ extension PyMemory {
   /// Allocate a new instance of `bytearray_iterator` type.
   public func newByteArrayIterator(_ py: Py, type: PyType, bytes: PyByteArray) -> PyByteArrayIterator {
     let typeLayout = PyByteArrayIterator.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyByteArrayIterator(ptr: ptr)
     result.initialize(py, type: type, bytes: bytes)
@@ -719,7 +719,7 @@ extension PyMemory {
   /// Allocate a new instance of `bytes` type.
   public func newBytes(_ py: Py, type: PyType, elements: Data) -> PyBytes {
     let typeLayout = PyBytes.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyBytes(ptr: ptr)
     result.initialize(py, type: type, elements: elements)
@@ -828,7 +828,7 @@ extension PyMemory {
   /// Allocate a new instance of `bytes_iterator` type.
   public func newBytesIterator(_ py: Py, type: PyType, bytes: PyBytes) -> PyBytesIterator {
     let typeLayout = PyBytesIterator.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyBytesIterator(ptr: ptr)
     result.initialize(py, type: type, bytes: bytes)
@@ -940,7 +940,7 @@ extension PyMemory {
                                   callable: PyObject,
                                   sentinel: PyObject) -> PyCallableIterator {
     let typeLayout = PyCallableIterator.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyCallableIterator(ptr: ptr)
     result.initialize(py,
@@ -1046,7 +1046,7 @@ extension PyMemory {
   /// Allocate a new instance of `cell` type.
   public func newCell(_ py: Py, type: PyType, content: PyObject?) -> PyCell {
     let typeLayout = PyCell.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyCell(ptr: ptr)
     result.initialize(py, type: type, content: content)
@@ -1149,7 +1149,7 @@ extension PyMemory {
   /// Allocate a new instance of `classmethod` type.
   public func newClassMethod(_ py: Py, type: PyType, callable: PyObject?) -> PyClassMethod {
     let typeLayout = PyClassMethod.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyClassMethod(ptr: ptr)
     result.initialize(py, type: type, callable: callable)
@@ -1330,7 +1330,7 @@ extension PyMemory {
   /// Allocate a new instance of `code` type.
   public func newCode(_ py: Py, type: PyType, code: CodeObject) -> PyCode {
     let typeLayout = PyCode.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyCode(ptr: ptr)
     result.initialize(py, type: type, code: code)
@@ -1442,7 +1442,7 @@ extension PyMemory {
                          real: Double,
                          imag: Double) -> PyComplex {
     let typeLayout = PyComplex.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyComplex(ptr: ptr)
     result.initialize(py,
@@ -1548,7 +1548,7 @@ extension PyMemory {
   /// Allocate a new instance of `dict` type.
   public func newDict(_ py: Py, type: PyType, elements: PyDict.OrderedDictionary) -> PyDict {
     let typeLayout = PyDict.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyDict(ptr: ptr)
     result.initialize(py, type: type, elements: elements)
@@ -1663,7 +1663,7 @@ extension PyMemory {
   /// Allocate a new instance of `dict_itemiterator` type.
   public func newDictItemIterator(_ py: Py, type: PyType, dict: PyDict) -> PyDictItemIterator {
     let typeLayout = PyDictItemIterator.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyDictItemIterator(ptr: ptr)
     result.initialize(py, type: type, dict: dict)
@@ -1766,7 +1766,7 @@ extension PyMemory {
   /// Allocate a new instance of `dict_items` type.
   public func newDictItems(_ py: Py, type: PyType, dict: PyDict) -> PyDictItems {
     let typeLayout = PyDictItems.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyDictItems(ptr: ptr)
     result.initialize(py, type: type, dict: dict)
@@ -1881,7 +1881,7 @@ extension PyMemory {
   /// Allocate a new instance of `dict_keyiterator` type.
   public func newDictKeyIterator(_ py: Py, type: PyType, dict: PyDict) -> PyDictKeyIterator {
     let typeLayout = PyDictKeyIterator.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyDictKeyIterator(ptr: ptr)
     result.initialize(py, type: type, dict: dict)
@@ -1984,7 +1984,7 @@ extension PyMemory {
   /// Allocate a new instance of `dict_keys` type.
   public func newDictKeys(_ py: Py, type: PyType, dict: PyDict) -> PyDictKeys {
     let typeLayout = PyDictKeys.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyDictKeys(ptr: ptr)
     result.initialize(py, type: type, dict: dict)
@@ -2099,7 +2099,7 @@ extension PyMemory {
   /// Allocate a new instance of `dict_valueiterator` type.
   public func newDictValueIterator(_ py: Py, type: PyType, dict: PyDict) -> PyDictValueIterator {
     let typeLayout = PyDictValueIterator.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyDictValueIterator(ptr: ptr)
     result.initialize(py, type: type, dict: dict)
@@ -2202,7 +2202,7 @@ extension PyMemory {
   /// Allocate a new instance of `dict_values` type.
   public func newDictValues(_ py: Py, type: PyType, dict: PyDict) -> PyDictValues {
     let typeLayout = PyDictValues.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyDictValues(ptr: ptr)
     result.initialize(py, type: type, dict: dict)
@@ -2281,7 +2281,7 @@ extension PyMemory {
   /// Allocate a new instance of `ellipsis` type.
   public func newEllipsis(_ py: Py, type: PyType) -> PyEllipsis {
     let typeLayout = PyEllipsis.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyEllipsis(ptr: ptr)
     result.initialize(py, type: type)
@@ -2393,7 +2393,7 @@ extension PyMemory {
                            iterator: PyObject,
                            initialIndex: BigInt) -> PyEnumerate {
     let typeLayout = PyEnumerate.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyEnumerate(ptr: ptr)
     result.initialize(py,
@@ -2508,7 +2508,7 @@ extension PyMemory {
                         fn: PyObject,
                         iterator: PyObject) -> PyFilter {
     let typeLayout = PyFilter.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyFilter(ptr: ptr)
     result.initialize(py,
@@ -2614,7 +2614,7 @@ extension PyMemory {
   /// Allocate a new instance of `float` type.
   public func newFloat(_ py: Py, type: PyType, value: Double) -> PyFloat {
     let typeLayout = PyFloat.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyFloat(ptr: ptr)
     result.initialize(py, type: type, value: value)
@@ -2788,7 +2788,7 @@ extension PyMemory {
                        globals: PyDict,
                        parent: PyFrame?) -> PyFrame {
     let typeLayout = PyFrame.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyFrame(ptr: ptr)
     result.initialize(py,
@@ -2896,7 +2896,7 @@ extension PyMemory {
   /// Allocate a new instance of `frozenset` type.
   public func newFrozenSet(_ py: Py, type: PyType, elements: OrderedSet) -> PyFrozenSet {
     let typeLayout = PyFrozenSet.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyFrozenSet(ptr: ptr)
     result.initialize(py, type: type, elements: elements)
@@ -3058,7 +3058,7 @@ extension PyMemory {
                           code: PyCode,
                           globals: PyDict) -> PyFunction {
     let typeLayout = PyFunction.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyFunction(ptr: ptr)
     result.initialize(py,
@@ -3166,7 +3166,7 @@ extension PyMemory {
   /// Allocate a new instance of `int` type.
   public func newInt(_ py: Py, type: PyType, value: BigInt) -> PyInt {
     let typeLayout = PyInt.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyInt(ptr: ptr)
     result.initialize(py, type: type, value: value)
@@ -3275,7 +3275,7 @@ extension PyMemory {
   /// Allocate a new instance of `iterator` type.
   public func newIterator(_ py: Py, type: PyType, sequence: PyObject) -> PyIterator {
     let typeLayout = PyIterator.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyIterator(ptr: ptr)
     result.initialize(py, type: type, sequence: sequence)
@@ -3378,7 +3378,7 @@ extension PyMemory {
   /// Allocate a new instance of `list` type.
   public func newList(_ py: Py, type: PyType, elements: [PyObject]) -> PyList {
     let typeLayout = PyList.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyList(ptr: ptr)
     result.initialize(py, type: type, elements: elements)
@@ -3487,7 +3487,7 @@ extension PyMemory {
   /// Allocate a new instance of `list_iterator` type.
   public func newListIterator(_ py: Py, type: PyType, list: PyList) -> PyListIterator {
     let typeLayout = PyListIterator.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyListIterator(ptr: ptr)
     result.initialize(py, type: type, list: list)
@@ -3596,7 +3596,7 @@ extension PyMemory {
   /// Allocate a new instance of `list_reverseiterator` type.
   public func newListReverseIterator(_ py: Py, type: PyType, list: PyList) -> PyListReverseIterator {
     let typeLayout = PyListReverseIterator.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyListReverseIterator(ptr: ptr)
     result.initialize(py, type: type, list: list)
@@ -3708,7 +3708,7 @@ extension PyMemory {
                      fn: PyObject,
                      iterators: [PyObject]) -> PyMap {
     let typeLayout = PyMap.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyMap(ptr: ptr)
     result.initialize(py,
@@ -3823,7 +3823,7 @@ extension PyMemory {
                         function: PyFunction,
                         object: PyObject) -> PyMethod {
     let typeLayout = PyMethod.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyMethod(ptr: ptr)
     result.initialize(py,
@@ -3909,7 +3909,7 @@ extension PyMemory {
                         doc: PyObject?,
                         __dict__: PyDict? = nil) -> PyModule {
     let typeLayout = PyModule.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyModule(ptr: ptr)
     result.initialize(py,
@@ -3992,7 +3992,7 @@ extension PyMemory {
   /// Allocate a new instance of `SimpleNamespace` type.
   public func newNamespace(_ py: Py, type: PyType, __dict__: PyDict?) -> PyNamespace {
     let typeLayout = PyNamespace.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyNamespace(ptr: ptr)
     result.initialize(py, type: type, __dict__: __dict__)
@@ -4071,7 +4071,7 @@ extension PyMemory {
   /// Allocate a new instance of `NoneType` type.
   public func newNone(_ py: Py, type: PyType) -> PyNone {
     let typeLayout = PyNone.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyNone(ptr: ptr)
     result.initialize(py, type: type)
@@ -4150,7 +4150,7 @@ extension PyMemory {
   /// Allocate a new instance of `NotImplementedType` type.
   public func newNotImplemented(_ py: Py, type: PyType) -> PyNotImplemented {
     let typeLayout = PyNotImplemented.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyNotImplemented(ptr: ptr)
     result.initialize(py, type: type)
@@ -4173,6 +4173,7 @@ extension PyObject {
   internal struct Layout {
     internal let typeOffset: Int
     internal let __dict__Offset: Int
+    internal let memoryInfoOffset: Int
     internal let flagsOffset: Int
     internal let size: Int
     internal let alignment: Int
@@ -4184,14 +4185,16 @@ extension PyObject {
         fields: [
           PyMemory.FieldLayout(from: PyType.self), // PyObject.type
           PyMemory.FieldLayout(from: PyObject.Lazy__dict__.self), // PyObject.__dict__
+          PyMemory.FieldLayout(from: PyMemory.ObjectHeader.self), // PyObject.memoryInfo
           PyMemory.FieldLayout(from: PyObject.Flags.self) // PyObject.flags
         ]
       )
 
-      assert(layout.offsets.count == 3)
+      assert(layout.offsets.count == 4)
       self.typeOffset = layout.offsets[0]
       self.__dict__Offset = layout.offsets[1]
-      self.flagsOffset = layout.offsets[2]
+      self.memoryInfoOffset = layout.offsets[2]
+      self.flagsOffset = layout.offsets[3]
       self.size = layout.size
       self.alignment = layout.alignment
     }
@@ -4204,6 +4207,8 @@ extension PyObject {
   internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: Self.layout.typeOffset) }
   /// Property: `PyObject.__dict__`.
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: Self.layout.__dict__Offset) }
+  /// Property: `PyObject.memoryInfo`.
+  internal var memoryInfoPtr: Ptr<PyMemory.ObjectHeader> { Ptr(self.ptr, offset: Self.layout.memoryInfoOffset) }
   /// Property: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: Self.layout.flagsOffset) }
 
@@ -4214,6 +4219,7 @@ extension PyObject {
     // Call 'deinitialize' on all of our own properties.
     zelf.typePtr.deinitialize()
     zelf.__dict__Ptr.deinitialize()
+    zelf.memoryInfoPtr.deinitialize()
     zelf.flagsPtr.deinitialize()
   }
 }
@@ -4223,7 +4229,7 @@ extension PyMemory {
   /// Allocate a new instance of `object` type.
   public func newObject(_ py: Py, type: PyType, __dict__: PyDict? = nil) -> PyObject {
     let typeLayout = PyObject.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyObject(ptr: ptr)
     result.initialize(py, type: type, __dict__: __dict__)
@@ -4349,7 +4355,7 @@ extension PyMemory {
                           del: PyObject?,
                           doc: PyObject?) -> PyProperty {
     let typeLayout = PyProperty.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyProperty(ptr: ptr)
     result.initialize(py,
@@ -4479,7 +4485,7 @@ extension PyMemory {
                        stop: PyInt,
                        step: PyInt?) -> PyRange {
     let typeLayout = PyRange.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyRange(ptr: ptr)
     result.initialize(py,
@@ -4608,7 +4614,7 @@ extension PyMemory {
                                step: BigInt,
                                length: BigInt) -> PyRangeIterator {
     let typeLayout = PyRangeIterator.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyRangeIterator(ptr: ptr)
     result.initialize(py,
@@ -4724,7 +4730,7 @@ extension PyMemory {
                           sequence: PyObject,
                           count: Int) -> PyReversed {
     let typeLayout = PyReversed.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyReversed(ptr: ptr)
     result.initialize(py,
@@ -4830,7 +4836,7 @@ extension PyMemory {
   /// Allocate a new instance of `set` type.
   public func newSet(_ py: Py, type: PyType, elements: OrderedSet) -> PySet {
     let typeLayout = PySet.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PySet(ptr: ptr)
     result.initialize(py, type: type, elements: elements)
@@ -4945,7 +4951,7 @@ extension PyMemory {
   /// Allocate a new instance of `set_iterator` type.
   public func newSetIterator(_ py: Py, type: PyType, set: PySet) -> PySetIterator {
     let typeLayout = PySetIterator.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PySetIterator(ptr: ptr)
     result.initialize(py, type: type, set: set)
@@ -4956,7 +4962,7 @@ extension PyMemory {
   /// Allocate a new instance of `set_iterator` type.
   public func newSetIterator(_ py: Py, type: PyType, frozenSet: PyFrozenSet) -> PySetIterator {
     let typeLayout = PySetIterator.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PySetIterator(ptr: ptr)
     result.initialize(py, type: type, frozenSet: frozenSet)
@@ -5075,7 +5081,7 @@ extension PyMemory {
                        stop: PyObject,
                        step: PyObject) -> PySlice {
     let typeLayout = PySlice.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PySlice(ptr: ptr)
     result.initialize(py,
@@ -5182,7 +5188,7 @@ extension PyMemory {
   /// Allocate a new instance of `staticmethod` type.
   public func newStaticMethod(_ py: Py, type: PyType, callable: PyObject?) -> PyStaticMethod {
     let typeLayout = PyStaticMethod.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyStaticMethod(ptr: ptr)
     result.initialize(py, type: type, callable: callable)
@@ -5297,7 +5303,7 @@ extension PyMemory {
   /// Allocate a new instance of `str` type.
   public func newString(_ py: Py, type: PyType, value: String) -> PyString {
     let typeLayout = PyString.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyString(ptr: ptr)
     result.initialize(py, type: type, value: value)
@@ -5406,7 +5412,7 @@ extension PyMemory {
   /// Allocate a new instance of `str_iterator` type.
   public func newStringIterator(_ py: Py, type: PyType, string: PyString) -> PyStringIterator {
     let typeLayout = PyStringIterator.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyStringIterator(ptr: ptr)
     result.initialize(py, type: type, string: string)
@@ -5525,7 +5531,7 @@ extension PyMemory {
                        object: PyObject?,
                        objectType: PyType?) -> PySuper {
     let typeLayout = PySuper.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PySuper(ptr: ptr)
     result.initialize(py,
@@ -5663,7 +5669,7 @@ extension PyMemory {
                           errorHandling: PyString.ErrorHandling,
                           closeOnDealloc: Bool) -> PyTextFile {
     let typeLayout = PyTextFile.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyTextFile(ptr: ptr)
     result.initialize(py,
@@ -5796,7 +5802,7 @@ extension PyMemory {
                            lastInstruction: PyInt,
                            lineNo: PyInt) -> PyTraceback {
     let typeLayout = PyTraceback.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyTraceback(ptr: ptr)
     result.initialize(py,
@@ -5904,7 +5910,7 @@ extension PyMemory {
   /// Allocate a new instance of `tuple` type.
   public func newTuple(_ py: Py, type: PyType, elements: [PyObject]) -> PyTuple {
     let typeLayout = PyTuple.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyTuple(ptr: ptr)
     result.initialize(py, type: type, elements: elements)
@@ -6013,7 +6019,7 @@ extension PyMemory {
   /// Allocate a new instance of `tuple_iterator` type.
   public func newTupleIterator(_ py: Py, type: PyType, tuple: PyTuple) -> PyTupleIterator {
     let typeLayout = PyTupleIterator.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyTupleIterator(ptr: ptr)
     result.initialize(py, type: type, tuple: tuple)
@@ -6182,7 +6188,7 @@ extension PyMemory {
                       debugFn: @escaping PyType.DebugFn,
                       deinitialize: @escaping PyType.DeinitializeFn) -> PyType {
     let typeLayout = PyType.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyType(ptr: ptr)
     result.initialize(py,
@@ -6297,7 +6303,7 @@ extension PyMemory {
   /// Allocate a new instance of `zip` type.
   public func newZip(_ py: Py, type: PyType, iterators: [PyObject]) -> PyZip {
     let typeLayout = PyZip.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyZip(ptr: ptr)
     result.initialize(py, type: type, iterators: iterators)
@@ -6410,7 +6416,7 @@ extension PyMemory {
                                  context: PyBaseException? = nil,
                                  suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyArithmeticError {
     let typeLayout = PyArithmeticError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyArithmeticError(ptr: ptr)
     result.initialize(py,
@@ -6529,7 +6535,7 @@ extension PyMemory {
                                 context: PyBaseException? = nil,
                                 suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyAssertionError {
     let typeLayout = PyAssertionError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyAssertionError(ptr: ptr)
     result.initialize(py,
@@ -6648,7 +6654,7 @@ extension PyMemory {
                                 context: PyBaseException? = nil,
                                 suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyAttributeError {
     let typeLayout = PyAttributeError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyAttributeError(ptr: ptr)
     result.initialize(py,
@@ -6781,7 +6787,7 @@ extension PyMemory {
                                context: PyBaseException? = nil,
                                suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyBaseException {
     let typeLayout = PyBaseException.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyBaseException(ptr: ptr)
     result.initialize(py,
@@ -6900,7 +6906,7 @@ extension PyMemory {
                                  context: PyBaseException? = nil,
                                  suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyBlockingIOError {
     let typeLayout = PyBlockingIOError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyBlockingIOError(ptr: ptr)
     result.initialize(py,
@@ -7019,7 +7025,7 @@ extension PyMemory {
                                  context: PyBaseException? = nil,
                                  suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyBrokenPipeError {
     let typeLayout = PyBrokenPipeError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyBrokenPipeError(ptr: ptr)
     result.initialize(py,
@@ -7138,7 +7144,7 @@ extension PyMemory {
                              context: PyBaseException? = nil,
                              suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyBufferError {
     let typeLayout = PyBufferError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyBufferError(ptr: ptr)
     result.initialize(py,
@@ -7257,7 +7263,7 @@ extension PyMemory {
                               context: PyBaseException? = nil,
                               suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyBytesWarning {
     let typeLayout = PyBytesWarning.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyBytesWarning(ptr: ptr)
     result.initialize(py,
@@ -7376,7 +7382,7 @@ extension PyMemory {
                                    context: PyBaseException? = nil,
                                    suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyChildProcessError {
     let typeLayout = PyChildProcessError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyChildProcessError(ptr: ptr)
     result.initialize(py,
@@ -7495,7 +7501,7 @@ extension PyMemory {
                                         context: PyBaseException? = nil,
                                         suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyConnectionAbortedError {
     let typeLayout = PyConnectionAbortedError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyConnectionAbortedError(ptr: ptr)
     result.initialize(py,
@@ -7614,7 +7620,7 @@ extension PyMemory {
                                  context: PyBaseException? = nil,
                                  suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyConnectionError {
     let typeLayout = PyConnectionError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyConnectionError(ptr: ptr)
     result.initialize(py,
@@ -7733,7 +7739,7 @@ extension PyMemory {
                                         context: PyBaseException? = nil,
                                         suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyConnectionRefusedError {
     let typeLayout = PyConnectionRefusedError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyConnectionRefusedError(ptr: ptr)
     result.initialize(py,
@@ -7852,7 +7858,7 @@ extension PyMemory {
                                       context: PyBaseException? = nil,
                                       suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyConnectionResetError {
     let typeLayout = PyConnectionResetError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyConnectionResetError(ptr: ptr)
     result.initialize(py,
@@ -7971,7 +7977,7 @@ extension PyMemory {
                                     context: PyBaseException? = nil,
                                     suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyDeprecationWarning {
     let typeLayout = PyDeprecationWarning.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyDeprecationWarning(ptr: ptr)
     result.initialize(py,
@@ -8090,7 +8096,7 @@ extension PyMemory {
                           context: PyBaseException? = nil,
                           suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyEOFError {
     let typeLayout = PyEOFError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyEOFError(ptr: ptr)
     result.initialize(py,
@@ -8209,7 +8215,7 @@ extension PyMemory {
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyException {
     let typeLayout = PyException.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyException(ptr: ptr)
     result.initialize(py,
@@ -8328,7 +8334,7 @@ extension PyMemory {
                                  context: PyBaseException? = nil,
                                  suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyFileExistsError {
     let typeLayout = PyFileExistsError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyFileExistsError(ptr: ptr)
     result.initialize(py,
@@ -8447,7 +8453,7 @@ extension PyMemory {
                                    context: PyBaseException? = nil,
                                    suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyFileNotFoundError {
     let typeLayout = PyFileNotFoundError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyFileNotFoundError(ptr: ptr)
     result.initialize(py,
@@ -8566,7 +8572,7 @@ extension PyMemory {
                                     context: PyBaseException? = nil,
                                     suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyFloatingPointError {
     let typeLayout = PyFloatingPointError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyFloatingPointError(ptr: ptr)
     result.initialize(py,
@@ -8685,7 +8691,7 @@ extension PyMemory {
                                context: PyBaseException? = nil,
                                suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyFutureWarning {
     let typeLayout = PyFutureWarning.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyFutureWarning(ptr: ptr)
     result.initialize(py,
@@ -8804,7 +8810,7 @@ extension PyMemory {
                                context: PyBaseException? = nil,
                                suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyGeneratorExit {
     let typeLayout = PyGeneratorExit.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyGeneratorExit(ptr: ptr)
     result.initialize(py,
@@ -8961,7 +8967,7 @@ extension PyMemory {
                              context: PyBaseException? = nil,
                              suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyImportError {
     let typeLayout = PyImportError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyImportError(ptr: ptr)
     result.initialize(py,
@@ -8986,7 +8992,7 @@ extension PyMemory {
                              context: PyBaseException? = nil,
                              suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyImportError {
     let typeLayout = PyImportError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyImportError(ptr: ptr)
     result.initialize(py,
@@ -9105,7 +9111,7 @@ extension PyMemory {
                                context: PyBaseException? = nil,
                                suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyImportWarning {
     let typeLayout = PyImportWarning.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyImportWarning(ptr: ptr)
     result.initialize(py,
@@ -9280,7 +9286,7 @@ extension PyMemory {
                                   context: PyBaseException? = nil,
                                   suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyIndentationError {
     let typeLayout = PyIndentationError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyIndentationError(ptr: ptr)
     result.initialize(py,
@@ -9308,7 +9314,7 @@ extension PyMemory {
                                   context: PyBaseException? = nil,
                                   suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyIndentationError {
     let typeLayout = PyIndentationError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyIndentationError(ptr: ptr)
     result.initialize(py,
@@ -9427,7 +9433,7 @@ extension PyMemory {
                             context: PyBaseException? = nil,
                             suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyIndexError {
     let typeLayout = PyIndexError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyIndexError(ptr: ptr)
     result.initialize(py,
@@ -9546,7 +9552,7 @@ extension PyMemory {
                                   context: PyBaseException? = nil,
                                   suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyInterruptedError {
     let typeLayout = PyInterruptedError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyInterruptedError(ptr: ptr)
     result.initialize(py,
@@ -9665,7 +9671,7 @@ extension PyMemory {
                                    context: PyBaseException? = nil,
                                    suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyIsADirectoryError {
     let typeLayout = PyIsADirectoryError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyIsADirectoryError(ptr: ptr)
     result.initialize(py,
@@ -9784,7 +9790,7 @@ extension PyMemory {
                           context: PyBaseException? = nil,
                           suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyKeyError {
     let typeLayout = PyKeyError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyKeyError(ptr: ptr)
     result.initialize(py,
@@ -9903,7 +9909,7 @@ extension PyMemory {
                                    context: PyBaseException? = nil,
                                    suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyKeyboardInterrupt {
     let typeLayout = PyKeyboardInterrupt.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyKeyboardInterrupt(ptr: ptr)
     result.initialize(py,
@@ -10022,7 +10028,7 @@ extension PyMemory {
                              context: PyBaseException? = nil,
                              suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyLookupError {
     let typeLayout = PyLookupError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyLookupError(ptr: ptr)
     result.initialize(py,
@@ -10141,7 +10147,7 @@ extension PyMemory {
                              context: PyBaseException? = nil,
                              suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyMemoryError {
     let typeLayout = PyMemoryError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyMemoryError(ptr: ptr)
     result.initialize(py,
@@ -10295,7 +10301,7 @@ extension PyMemory {
                                      context: PyBaseException? = nil,
                                      suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyModuleNotFoundError {
     let typeLayout = PyModuleNotFoundError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyModuleNotFoundError(ptr: ptr)
     result.initialize(py,
@@ -10320,7 +10326,7 @@ extension PyMemory {
                                      context: PyBaseException? = nil,
                                      suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyModuleNotFoundError {
     let typeLayout = PyModuleNotFoundError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyModuleNotFoundError(ptr: ptr)
     result.initialize(py,
@@ -10439,7 +10445,7 @@ extension PyMemory {
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyNameError {
     let typeLayout = PyNameError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyNameError(ptr: ptr)
     result.initialize(py,
@@ -10558,7 +10564,7 @@ extension PyMemory {
                                     context: PyBaseException? = nil,
                                     suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyNotADirectoryError {
     let typeLayout = PyNotADirectoryError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyNotADirectoryError(ptr: ptr)
     result.initialize(py,
@@ -10677,7 +10683,7 @@ extension PyMemory {
                                      context: PyBaseException? = nil,
                                      suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyNotImplementedError {
     let typeLayout = PyNotImplementedError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyNotImplementedError(ptr: ptr)
     result.initialize(py,
@@ -10796,7 +10802,7 @@ extension PyMemory {
                          context: PyBaseException? = nil,
                          suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyOSError {
     let typeLayout = PyOSError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyOSError(ptr: ptr)
     result.initialize(py,
@@ -10915,7 +10921,7 @@ extension PyMemory {
                                context: PyBaseException? = nil,
                                suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyOverflowError {
     let typeLayout = PyOverflowError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyOverflowError(ptr: ptr)
     result.initialize(py,
@@ -11034,7 +11040,7 @@ extension PyMemory {
                                            context: PyBaseException? = nil,
                                            suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyPendingDeprecationWarning {
     let typeLayout = PyPendingDeprecationWarning.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyPendingDeprecationWarning(ptr: ptr)
     result.initialize(py,
@@ -11153,7 +11159,7 @@ extension PyMemory {
                                  context: PyBaseException? = nil,
                                  suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyPermissionError {
     let typeLayout = PyPermissionError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyPermissionError(ptr: ptr)
     result.initialize(py,
@@ -11272,7 +11278,7 @@ extension PyMemory {
                                     context: PyBaseException? = nil,
                                     suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyProcessLookupError {
     let typeLayout = PyProcessLookupError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyProcessLookupError(ptr: ptr)
     result.initialize(py,
@@ -11391,7 +11397,7 @@ extension PyMemory {
                                 context: PyBaseException? = nil,
                                 suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyRecursionError {
     let typeLayout = PyRecursionError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyRecursionError(ptr: ptr)
     result.initialize(py,
@@ -11510,7 +11516,7 @@ extension PyMemory {
                                 context: PyBaseException? = nil,
                                 suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyReferenceError {
     let typeLayout = PyReferenceError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyReferenceError(ptr: ptr)
     result.initialize(py,
@@ -11629,7 +11635,7 @@ extension PyMemory {
                                  context: PyBaseException? = nil,
                                  suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyResourceWarning {
     let typeLayout = PyResourceWarning.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyResourceWarning(ptr: ptr)
     result.initialize(py,
@@ -11748,7 +11754,7 @@ extension PyMemory {
                               context: PyBaseException? = nil,
                               suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyRuntimeError {
     let typeLayout = PyRuntimeError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyRuntimeError(ptr: ptr)
     result.initialize(py,
@@ -11867,7 +11873,7 @@ extension PyMemory {
                                 context: PyBaseException? = nil,
                                 suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyRuntimeWarning {
     let typeLayout = PyRuntimeWarning.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyRuntimeWarning(ptr: ptr)
     result.initialize(py,
@@ -11986,7 +11992,7 @@ extension PyMemory {
                                     context: PyBaseException? = nil,
                                     suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyStopAsyncIteration {
     let typeLayout = PyStopAsyncIteration.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyStopAsyncIteration(ptr: ptr)
     result.initialize(py,
@@ -12129,7 +12135,7 @@ extension PyMemory {
                                context: PyBaseException? = nil,
                                suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyStopIteration {
     let typeLayout = PyStopIteration.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyStopIteration(ptr: ptr)
     result.initialize(py,
@@ -12152,7 +12158,7 @@ extension PyMemory {
                                context: PyBaseException? = nil,
                                suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyStopIteration {
     let typeLayout = PyStopIteration.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyStopIteration(ptr: ptr)
     result.initialize(py,
@@ -12330,7 +12336,7 @@ extension PyMemory {
                              context: PyBaseException? = nil,
                              suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PySyntaxError {
     let typeLayout = PySyntaxError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PySyntaxError(ptr: ptr)
     result.initialize(py,
@@ -12358,7 +12364,7 @@ extension PyMemory {
                              context: PyBaseException? = nil,
                              suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PySyntaxError {
     let typeLayout = PySyntaxError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PySyntaxError(ptr: ptr)
     result.initialize(py,
@@ -12477,7 +12483,7 @@ extension PyMemory {
                                context: PyBaseException? = nil,
                                suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PySyntaxWarning {
     let typeLayout = PySyntaxWarning.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PySyntaxWarning(ptr: ptr)
     result.initialize(py,
@@ -12596,7 +12602,7 @@ extension PyMemory {
                              context: PyBaseException? = nil,
                              suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PySystemError {
     let typeLayout = PySystemError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PySystemError(ptr: ptr)
     result.initialize(py,
@@ -12739,7 +12745,7 @@ extension PyMemory {
                             context: PyBaseException? = nil,
                             suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PySystemExit {
     let typeLayout = PySystemExit.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PySystemExit(ptr: ptr)
     result.initialize(py,
@@ -12762,7 +12768,7 @@ extension PyMemory {
                             context: PyBaseException? = nil,
                             suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PySystemExit {
     let typeLayout = PySystemExit.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PySystemExit(ptr: ptr)
     result.initialize(py,
@@ -12937,7 +12943,7 @@ extension PyMemory {
                           context: PyBaseException? = nil,
                           suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyTabError {
     let typeLayout = PyTabError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyTabError(ptr: ptr)
     result.initialize(py,
@@ -12965,7 +12971,7 @@ extension PyMemory {
                           context: PyBaseException? = nil,
                           suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyTabError {
     let typeLayout = PyTabError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyTabError(ptr: ptr)
     result.initialize(py,
@@ -13084,7 +13090,7 @@ extension PyMemory {
                               context: PyBaseException? = nil,
                               suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyTimeoutError {
     let typeLayout = PyTimeoutError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyTimeoutError(ptr: ptr)
     result.initialize(py,
@@ -13203,7 +13209,7 @@ extension PyMemory {
                            context: PyBaseException? = nil,
                            suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyTypeError {
     let typeLayout = PyTypeError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyTypeError(ptr: ptr)
     result.initialize(py,
@@ -13322,7 +13328,7 @@ extension PyMemory {
                                    context: PyBaseException? = nil,
                                    suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyUnboundLocalError {
     let typeLayout = PyUnboundLocalError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyUnboundLocalError(ptr: ptr)
     result.initialize(py,
@@ -13441,7 +13447,7 @@ extension PyMemory {
                                     context: PyBaseException? = nil,
                                     suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyUnicodeDecodeError {
     let typeLayout = PyUnicodeDecodeError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyUnicodeDecodeError(ptr: ptr)
     result.initialize(py,
@@ -13560,7 +13566,7 @@ extension PyMemory {
                                     context: PyBaseException? = nil,
                                     suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyUnicodeEncodeError {
     let typeLayout = PyUnicodeEncodeError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyUnicodeEncodeError(ptr: ptr)
     result.initialize(py,
@@ -13679,7 +13685,7 @@ extension PyMemory {
                               context: PyBaseException? = nil,
                               suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyUnicodeError {
     let typeLayout = PyUnicodeError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyUnicodeError(ptr: ptr)
     result.initialize(py,
@@ -13798,7 +13804,7 @@ extension PyMemory {
                                        context: PyBaseException? = nil,
                                        suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyUnicodeTranslateError {
     let typeLayout = PyUnicodeTranslateError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyUnicodeTranslateError(ptr: ptr)
     result.initialize(py,
@@ -13917,7 +13923,7 @@ extension PyMemory {
                                 context: PyBaseException? = nil,
                                 suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyUnicodeWarning {
     let typeLayout = PyUnicodeWarning.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyUnicodeWarning(ptr: ptr)
     result.initialize(py,
@@ -14036,7 +14042,7 @@ extension PyMemory {
                              context: PyBaseException? = nil,
                              suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyUserWarning {
     let typeLayout = PyUserWarning.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyUserWarning(ptr: ptr)
     result.initialize(py,
@@ -14155,7 +14161,7 @@ extension PyMemory {
                             context: PyBaseException? = nil,
                             suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyValueError {
     let typeLayout = PyValueError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyValueError(ptr: ptr)
     result.initialize(py,
@@ -14274,7 +14280,7 @@ extension PyMemory {
                          context: PyBaseException? = nil,
                          suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyWarning {
     let typeLayout = PyWarning.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyWarning(ptr: ptr)
     result.initialize(py,
@@ -14393,7 +14399,7 @@ extension PyMemory {
                                    context: PyBaseException? = nil,
                                    suppressContext: Bool = PyBaseException.defaultSuppressContext) -> PyZeroDivisionError {
     let typeLayout = PyZeroDivisionError.layout
-    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 
     let result = PyZeroDivisionError(ptr: ptr)
     result.initialize(py,
