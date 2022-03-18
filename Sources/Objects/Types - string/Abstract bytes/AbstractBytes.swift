@@ -178,11 +178,7 @@ extension AbstractBytes {
     }
 
     var result = Data()
-
-    // If we can easily get the '__len__' then use it.
-    // If not, then we can't call python method, because it may side-effect.
-    if let pyInt = PyStaticCall.__len__(py, object: iterable),
-       let int = Int(exactly: pyInt.value) {
+    if let int = Self.abstractApproximateCount(py, iterable: iterable) {
       result.reserveCapacity(int)
     }
 

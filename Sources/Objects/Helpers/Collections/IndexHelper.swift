@@ -147,37 +147,42 @@ internal enum IndexHelper {
     }
 
     if let result = PyStaticCall.__index__(py, object: object) {
-      return .value(result)
+      switch result {
+      case let .value(o): return Self.interpret__index__(py, object: o)
+      case let .error(e): return .error(e)
+      }
     }
 
     switch py.callMethod(object: object, selector: .__index__) {
-    case .value(let object):
-      guard let int = py.cast.asInt(object) else {
-        let message = "__index__ returned non-int (type \(object.typeName)"
-        let error = py.newTypeError(message: message)
-        return .error(error.asBaseException)
-      }
-
-      let isIntSubclass = !py.cast.isExactlyInt(int.asObject)
-      if isIntSubclass {
-        let message = "__index__ returned non-int (type \(int.typeName)).  " +
-          "The ability to return an instance of a strict subclass of int " +
-          "is deprecated, and may be removed in a future version of Python."
-
-        if let e = py.warn(type: .deprecation, message: message) {
-          return .error(e)
-        }
-      }
-
-      return .value(int)
-
+    case .value(let o):
+      return Self.interpret__index__(py, object: o)
     case .missingMethod:
       let e = LazyNotIndexError(typeName: object.typeName)
       return .notIndex(e)
-
     case .error(let e),
          .notCallable(let e):
       return .error(e)
     }
+  }
+
+  private static func interpret__index__(_ py: Py, object: PyObject) -> PyIntIndex {
+    guard let int = py.cast.asInt(object) else {
+      let message = "__index__ returned non-int (type \(object.typeName)"
+      let error = py.newTypeError(message: message)
+      return .error(error.asBaseException)
+    }
+
+    let isIntSubclass = !py.cast.isExactlyInt(int.asObject)
+    if isIntSubclass {
+      let message = "__index__ returned non-int (type \(int.typeName)).  " +
+        "The ability to return an instance of a strict subclass of int " +
+        "is deprecated, and may be removed in a future version of Python."
+
+      if let e = py.warn(type: .deprecation, message: message) {
+        return .error(e)
+      }
+    }
+
+    return .value(int)
   }
 }

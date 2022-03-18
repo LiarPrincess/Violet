@@ -315,14 +315,17 @@ extension Py {
 
   public enum GetKeysResult {
     case value(PyObject)
-    case error(PyBaseException)
     case missingMethod(PyBaseException)
+    case error(PyBaseException)
   }
 
   /// Call the `keys` method on object.
   public func getKeys(object: PyObject) -> GetKeysResult {
     if let result = PyStaticCall.keys(self, object: object) {
-      return .value(result)
+      switch result {
+      case let .value(o): return .value(o)
+      case let .error(e): return .error(e)
+      }
     }
 
     switch self.callMethod(object: object, selector: .keys) {
