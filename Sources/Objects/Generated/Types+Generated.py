@@ -48,7 +48,7 @@ extension PyMemory {{
                           bases: [],
                           mroWithoutSelf: [],
                           subclasses: [],
-                          layout: {object_args.layout_property},
+                          instanceSizeWithoutTail: {object_args.size_without_tail},
                           staticMethods: {object_args.static_methods_property},
                           debugFn: {object_args.debugFn},
                           deinitialize: {object_args.deinitialize})
@@ -62,7 +62,7 @@ extension PyMemory {{
                         bases: [objectType],
                         mroWithoutSelf: [objectType],
                         subclasses: [],
-                        layout: {type_args.layout_property},
+                        instanceSizeWithoutTail: {type_args.size_without_tail},
                         staticMethods: {type_args.static_methods_property},
                         debugFn: {type_args.debugFn},
                         deinitialize: {type_args.deinitialize})

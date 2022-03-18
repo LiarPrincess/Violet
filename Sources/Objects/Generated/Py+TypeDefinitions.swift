@@ -114,7 +114,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.builtinFunctionMemoryLayout,
+        instanceSizeWithoutTail: PyBuiltinFunction.layout.size,
         staticMethods: Py.Types.builtinFunctionStaticMethods,
         debugFn: PyBuiltinFunction.createDebugString(ptr:),
         deinitialize: PyBuiltinFunction.deinitialize(ptr:)
@@ -130,7 +130,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.builtinMethodMemoryLayout,
+        instanceSizeWithoutTail: PyBuiltinMethod.layout.size,
         staticMethods: Py.Types.builtinMethodStaticMethods,
         debugFn: PyBuiltinMethod.createDebugString(ptr:),
         deinitialize: PyBuiltinMethod.deinitialize(ptr:)
@@ -146,7 +146,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.byteArrayMemoryLayout,
+        instanceSizeWithoutTail: PyByteArray.layout.size,
         staticMethods: Py.Types.byteArrayStaticMethods,
         debugFn: PyByteArray.createDebugString(ptr:),
         deinitialize: PyByteArray.deinitialize(ptr:)
@@ -162,7 +162,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.byteArrayIteratorMemoryLayout,
+        instanceSizeWithoutTail: PyByteArrayIterator.layout.size,
         staticMethods: Py.Types.byteArrayIteratorStaticMethods,
         debugFn: PyByteArrayIterator.createDebugString(ptr:),
         deinitialize: PyByteArrayIterator.deinitialize(ptr:)
@@ -178,7 +178,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.bytesMemoryLayout,
+        instanceSizeWithoutTail: PyBytes.layout.size,
         staticMethods: Py.Types.bytesStaticMethods,
         debugFn: PyBytes.createDebugString(ptr:),
         deinitialize: PyBytes.deinitialize(ptr:)
@@ -194,7 +194,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.bytesIteratorMemoryLayout,
+        instanceSizeWithoutTail: PyBytesIterator.layout.size,
         staticMethods: Py.Types.bytesIteratorStaticMethods,
         debugFn: PyBytesIterator.createDebugString(ptr:),
         deinitialize: PyBytesIterator.deinitialize(ptr:)
@@ -210,7 +210,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.callableIteratorMemoryLayout,
+        instanceSizeWithoutTail: PyCallableIterator.layout.size,
         staticMethods: Py.Types.callableIteratorStaticMethods,
         debugFn: PyCallableIterator.createDebugString(ptr:),
         deinitialize: PyCallableIterator.deinitialize(ptr:)
@@ -226,7 +226,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.cellMemoryLayout,
+        instanceSizeWithoutTail: PyCell.layout.size,
         staticMethods: Py.Types.cellStaticMethods,
         debugFn: PyCell.createDebugString(ptr:),
         deinitialize: PyCell.deinitialize(ptr:)
@@ -242,7 +242,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.classMethodMemoryLayout,
+        instanceSizeWithoutTail: PyClassMethod.layout.size,
         staticMethods: Py.Types.classMethodStaticMethods,
         debugFn: PyClassMethod.createDebugString(ptr:),
         deinitialize: PyClassMethod.deinitialize(ptr:)
@@ -258,7 +258,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.codeMemoryLayout,
+        instanceSizeWithoutTail: PyCode.layout.size,
         staticMethods: Py.Types.codeStaticMethods,
         debugFn: PyCode.createDebugString(ptr:),
         deinitialize: PyCode.deinitialize(ptr:)
@@ -274,7 +274,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.complexMemoryLayout,
+        instanceSizeWithoutTail: PyComplex.layout.size,
         staticMethods: Py.Types.complexStaticMethods,
         debugFn: PyComplex.createDebugString(ptr:),
         deinitialize: PyComplex.deinitialize(ptr:)
@@ -290,7 +290,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.dictMemoryLayout,
+        instanceSizeWithoutTail: PyDict.layout.size,
         staticMethods: Py.Types.dictStaticMethods,
         debugFn: PyDict.createDebugString(ptr:),
         deinitialize: PyDict.deinitialize(ptr:)
@@ -306,7 +306,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.dictItemIteratorMemoryLayout,
+        instanceSizeWithoutTail: PyDictItemIterator.layout.size,
         staticMethods: Py.Types.dictItemIteratorStaticMethods,
         debugFn: PyDictItemIterator.createDebugString(ptr:),
         deinitialize: PyDictItemIterator.deinitialize(ptr:)
@@ -322,7 +322,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.dictItemsMemoryLayout,
+        instanceSizeWithoutTail: PyDictItems.layout.size,
         staticMethods: Py.Types.dictItemsStaticMethods,
         debugFn: PyDictItems.createDebugString(ptr:),
         deinitialize: PyDictItems.deinitialize(ptr:)
@@ -338,7 +338,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.dictKeyIteratorMemoryLayout,
+        instanceSizeWithoutTail: PyDictKeyIterator.layout.size,
         staticMethods: Py.Types.dictKeyIteratorStaticMethods,
         debugFn: PyDictKeyIterator.createDebugString(ptr:),
         deinitialize: PyDictKeyIterator.deinitialize(ptr:)
@@ -354,7 +354,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.dictKeysMemoryLayout,
+        instanceSizeWithoutTail: PyDictKeys.layout.size,
         staticMethods: Py.Types.dictKeysStaticMethods,
         debugFn: PyDictKeys.createDebugString(ptr:),
         deinitialize: PyDictKeys.deinitialize(ptr:)
@@ -370,7 +370,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.dictValueIteratorMemoryLayout,
+        instanceSizeWithoutTail: PyDictValueIterator.layout.size,
         staticMethods: Py.Types.dictValueIteratorStaticMethods,
         debugFn: PyDictValueIterator.createDebugString(ptr:),
         deinitialize: PyDictValueIterator.deinitialize(ptr:)
@@ -386,7 +386,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.dictValuesMemoryLayout,
+        instanceSizeWithoutTail: PyDictValues.layout.size,
         staticMethods: Py.Types.dictValuesStaticMethods,
         debugFn: PyDictValues.createDebugString(ptr:),
         deinitialize: PyDictValues.deinitialize(ptr:)
@@ -402,7 +402,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.ellipsisMemoryLayout,
+        instanceSizeWithoutTail: PyEllipsis.layout.size,
         staticMethods: Py.Types.ellipsisStaticMethods,
         debugFn: PyEllipsis.createDebugString(ptr:),
         deinitialize: PyEllipsis.deinitialize(ptr:)
@@ -418,7 +418,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.enumerateMemoryLayout,
+        instanceSizeWithoutTail: PyEnumerate.layout.size,
         staticMethods: Py.Types.enumerateStaticMethods,
         debugFn: PyEnumerate.createDebugString(ptr:),
         deinitialize: PyEnumerate.deinitialize(ptr:)
@@ -434,7 +434,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.filterMemoryLayout,
+        instanceSizeWithoutTail: PyFilter.layout.size,
         staticMethods: Py.Types.filterStaticMethods,
         debugFn: PyFilter.createDebugString(ptr:),
         deinitialize: PyFilter.deinitialize(ptr:)
@@ -450,7 +450,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.floatMemoryLayout,
+        instanceSizeWithoutTail: PyFloat.layout.size,
         staticMethods: Py.Types.floatStaticMethods,
         debugFn: PyFloat.createDebugString(ptr:),
         deinitialize: PyFloat.deinitialize(ptr:)
@@ -466,7 +466,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.frameMemoryLayout,
+        instanceSizeWithoutTail: PyFrame.layout.size,
         staticMethods: Py.Types.frameStaticMethods,
         debugFn: PyFrame.createDebugString(ptr:),
         deinitialize: PyFrame.deinitialize(ptr:)
@@ -482,7 +482,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.frozenSetMemoryLayout,
+        instanceSizeWithoutTail: PyFrozenSet.layout.size,
         staticMethods: Py.Types.frozenSetStaticMethods,
         debugFn: PyFrozenSet.createDebugString(ptr:),
         deinitialize: PyFrozenSet.deinitialize(ptr:)
@@ -498,7 +498,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.functionMemoryLayout,
+        instanceSizeWithoutTail: PyFunction.layout.size,
         staticMethods: Py.Types.functionStaticMethods,
         debugFn: PyFunction.createDebugString(ptr:),
         deinitialize: PyFunction.deinitialize(ptr:)
@@ -514,7 +514,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.intMemoryLayout,
+        instanceSizeWithoutTail: PyInt.layout.size,
         staticMethods: Py.Types.intStaticMethods,
         debugFn: PyInt.createDebugString(ptr:),
         deinitialize: PyInt.deinitialize(ptr:)
@@ -530,7 +530,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.iteratorMemoryLayout,
+        instanceSizeWithoutTail: PyIterator.layout.size,
         staticMethods: Py.Types.iteratorStaticMethods,
         debugFn: PyIterator.createDebugString(ptr:),
         deinitialize: PyIterator.deinitialize(ptr:)
@@ -546,7 +546,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.listMemoryLayout,
+        instanceSizeWithoutTail: PyList.layout.size,
         staticMethods: Py.Types.listStaticMethods,
         debugFn: PyList.createDebugString(ptr:),
         deinitialize: PyList.deinitialize(ptr:)
@@ -562,7 +562,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.listIteratorMemoryLayout,
+        instanceSizeWithoutTail: PyListIterator.layout.size,
         staticMethods: Py.Types.listIteratorStaticMethods,
         debugFn: PyListIterator.createDebugString(ptr:),
         deinitialize: PyListIterator.deinitialize(ptr:)
@@ -578,7 +578,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.listReverseIteratorMemoryLayout,
+        instanceSizeWithoutTail: PyListReverseIterator.layout.size,
         staticMethods: Py.Types.listReverseIteratorStaticMethods,
         debugFn: PyListReverseIterator.createDebugString(ptr:),
         deinitialize: PyListReverseIterator.deinitialize(ptr:)
@@ -594,7 +594,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.mapMemoryLayout,
+        instanceSizeWithoutTail: PyMap.layout.size,
         staticMethods: Py.Types.mapStaticMethods,
         debugFn: PyMap.createDebugString(ptr:),
         deinitialize: PyMap.deinitialize(ptr:)
@@ -610,7 +610,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.methodMemoryLayout,
+        instanceSizeWithoutTail: PyMethod.layout.size,
         staticMethods: Py.Types.methodStaticMethods,
         debugFn: PyMethod.createDebugString(ptr:),
         deinitialize: PyMethod.deinitialize(ptr:)
@@ -626,7 +626,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.moduleMemoryLayout,
+        instanceSizeWithoutTail: PyModule.layout.size,
         staticMethods: Py.Types.moduleStaticMethods,
         debugFn: PyModule.createDebugString(ptr:),
         deinitialize: PyModule.deinitialize(ptr:)
@@ -642,7 +642,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.namespaceMemoryLayout,
+        instanceSizeWithoutTail: PyNamespace.layout.size,
         staticMethods: Py.Types.namespaceStaticMethods,
         debugFn: PyNamespace.createDebugString(ptr:),
         deinitialize: PyNamespace.deinitialize(ptr:)
@@ -658,7 +658,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.noneMemoryLayout,
+        instanceSizeWithoutTail: PyNone.layout.size,
         staticMethods: Py.Types.noneStaticMethods,
         debugFn: PyNone.createDebugString(ptr:),
         deinitialize: PyNone.deinitialize(ptr:)
@@ -674,7 +674,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.notImplementedMemoryLayout,
+        instanceSizeWithoutTail: PyNotImplemented.layout.size,
         staticMethods: Py.Types.notImplementedStaticMethods,
         debugFn: PyNotImplemented.createDebugString(ptr:),
         deinitialize: PyNotImplemented.deinitialize(ptr:)
@@ -690,7 +690,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.propertyMemoryLayout,
+        instanceSizeWithoutTail: PyProperty.layout.size,
         staticMethods: Py.Types.propertyStaticMethods,
         debugFn: PyProperty.createDebugString(ptr:),
         deinitialize: PyProperty.deinitialize(ptr:)
@@ -706,7 +706,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.rangeMemoryLayout,
+        instanceSizeWithoutTail: PyRange.layout.size,
         staticMethods: Py.Types.rangeStaticMethods,
         debugFn: PyRange.createDebugString(ptr:),
         deinitialize: PyRange.deinitialize(ptr:)
@@ -722,7 +722,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.rangeIteratorMemoryLayout,
+        instanceSizeWithoutTail: PyRangeIterator.layout.size,
         staticMethods: Py.Types.rangeIteratorStaticMethods,
         debugFn: PyRangeIterator.createDebugString(ptr:),
         deinitialize: PyRangeIterator.deinitialize(ptr:)
@@ -738,7 +738,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.reversedMemoryLayout,
+        instanceSizeWithoutTail: PyReversed.layout.size,
         staticMethods: Py.Types.reversedStaticMethods,
         debugFn: PyReversed.createDebugString(ptr:),
         deinitialize: PyReversed.deinitialize(ptr:)
@@ -754,7 +754,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.setMemoryLayout,
+        instanceSizeWithoutTail: PySet.layout.size,
         staticMethods: Py.Types.setStaticMethods,
         debugFn: PySet.createDebugString(ptr:),
         deinitialize: PySet.deinitialize(ptr:)
@@ -770,7 +770,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.setIteratorMemoryLayout,
+        instanceSizeWithoutTail: PySetIterator.layout.size,
         staticMethods: Py.Types.setIteratorStaticMethods,
         debugFn: PySetIterator.createDebugString(ptr:),
         deinitialize: PySetIterator.deinitialize(ptr:)
@@ -786,7 +786,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.sliceMemoryLayout,
+        instanceSizeWithoutTail: PySlice.layout.size,
         staticMethods: Py.Types.sliceStaticMethods,
         debugFn: PySlice.createDebugString(ptr:),
         deinitialize: PySlice.deinitialize(ptr:)
@@ -802,7 +802,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.staticMethodMemoryLayout,
+        instanceSizeWithoutTail: PyStaticMethod.layout.size,
         staticMethods: Py.Types.staticMethodStaticMethods,
         debugFn: PyStaticMethod.createDebugString(ptr:),
         deinitialize: PyStaticMethod.deinitialize(ptr:)
@@ -818,7 +818,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.stringMemoryLayout,
+        instanceSizeWithoutTail: PyString.layout.size,
         staticMethods: Py.Types.stringStaticMethods,
         debugFn: PyString.createDebugString(ptr:),
         deinitialize: PyString.deinitialize(ptr:)
@@ -834,7 +834,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.stringIteratorMemoryLayout,
+        instanceSizeWithoutTail: PyStringIterator.layout.size,
         staticMethods: Py.Types.stringIteratorStaticMethods,
         debugFn: PyStringIterator.createDebugString(ptr:),
         deinitialize: PyStringIterator.deinitialize(ptr:)
@@ -850,7 +850,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.superMemoryLayout,
+        instanceSizeWithoutTail: PySuper.layout.size,
         staticMethods: Py.Types.superStaticMethods,
         debugFn: PySuper.createDebugString(ptr:),
         deinitialize: PySuper.deinitialize(ptr:)
@@ -866,7 +866,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.textFileMemoryLayout,
+        instanceSizeWithoutTail: PyTextFile.layout.size,
         staticMethods: Py.Types.textFileStaticMethods,
         debugFn: PyTextFile.createDebugString(ptr:),
         deinitialize: PyTextFile.deinitialize(ptr:)
@@ -882,7 +882,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.tracebackMemoryLayout,
+        instanceSizeWithoutTail: PyTraceback.layout.size,
         staticMethods: Py.Types.tracebackStaticMethods,
         debugFn: PyTraceback.createDebugString(ptr:),
         deinitialize: PyTraceback.deinitialize(ptr:)
@@ -898,7 +898,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.tupleMemoryLayout,
+        instanceSizeWithoutTail: PyTuple.layout.size,
         staticMethods: Py.Types.tupleStaticMethods,
         debugFn: PyTuple.createDebugString(ptr:),
         deinitialize: PyTuple.deinitialize(ptr:)
@@ -914,7 +914,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.tupleIteratorMemoryLayout,
+        instanceSizeWithoutTail: PyTupleIterator.layout.size,
         staticMethods: Py.Types.tupleIteratorStaticMethods,
         debugFn: PyTupleIterator.createDebugString(ptr:),
         deinitialize: PyTupleIterator.deinitialize(ptr:)
@@ -930,7 +930,7 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: Py.Types.zipMemoryLayout,
+        instanceSizeWithoutTail: PyZip.layout.size,
         staticMethods: Py.Types.zipStaticMethods,
         debugFn: PyZip.createDebugString(ptr:),
         deinitialize: PyZip.deinitialize(ptr:)
@@ -947,7 +947,7 @@ extension Py {
         bases: [self.int],
         mroWithoutSelf: [self.int, self.object],
         subclasses: [],
-        layout: Py.Types.boolMemoryLayout,
+        instanceSizeWithoutTail: PyBool.layout.size,
         staticMethods: Py.Types.boolStaticMethods,
         debugFn: PyBool.createDebugString(ptr:),
         deinitialize: PyBool.deinitialize(ptr:)
@@ -1104,7 +1104,6 @@ extension Py {
     }
 
     internal static let boolStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let boolMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - BuiltinFunction
 
@@ -1150,7 +1149,6 @@ extension Py {
     }
 
     internal static let builtinFunctionStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let builtinFunctionMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - BuiltinMethod
 
@@ -1196,7 +1194,6 @@ extension Py {
     }
 
     internal static let builtinMethodStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let builtinMethodMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - ByteArray
 
@@ -1331,7 +1328,6 @@ extension Py {
     }
 
     internal static let byteArrayStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let byteArrayMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - ByteArrayIterator
 
@@ -1356,7 +1352,6 @@ extension Py {
     }
 
     internal static let byteArrayIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let byteArrayIteratorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Bytes
 
@@ -1473,7 +1468,6 @@ extension Py {
     }
 
     internal static let bytesStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let bytesMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - BytesIterator
 
@@ -1498,7 +1492,6 @@ extension Py {
     }
 
     internal static let bytesIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let bytesIteratorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - CallableIterator
 
@@ -1518,7 +1511,6 @@ extension Py {
     }
 
     internal static let callableIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let callableIteratorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Cell
 
@@ -1545,7 +1537,6 @@ extension Py {
     }
 
     internal static let cellStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let cellMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - ClassMethod
 
@@ -1572,7 +1563,6 @@ extension Py {
     }
 
     internal static let classMethodStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let classMethodMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Code
 
@@ -1616,7 +1606,6 @@ extension Py {
     }
 
     internal static let codeStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let codeMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Complex
 
@@ -1705,7 +1694,6 @@ extension Py {
     }
 
     internal static let complexStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let complexMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Dict
 
@@ -1775,7 +1763,6 @@ extension Py {
     }
 
     internal static let dictStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let dictMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - DictItemIterator
 
@@ -1800,7 +1787,6 @@ extension Py {
     }
 
     internal static let dictItemIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let dictItemIteratorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - DictItems
 
@@ -1841,7 +1827,6 @@ extension Py {
     }
 
     internal static let dictItemsStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let dictItemsMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - DictKeyIterator
 
@@ -1866,7 +1851,6 @@ extension Py {
     }
 
     internal static let dictKeyIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let dictKeyIteratorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - DictKeys
 
@@ -1907,7 +1891,6 @@ extension Py {
     }
 
     internal static let dictKeysStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let dictKeysMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - DictValueIterator
 
@@ -1932,7 +1915,6 @@ extension Py {
     }
 
     internal static let dictValueIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let dictValueIteratorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - DictValues
 
@@ -1954,7 +1936,6 @@ extension Py {
     }
 
     internal static let dictValuesStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let dictValuesMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Ellipsis
 
@@ -1977,7 +1958,6 @@ extension Py {
     }
 
     internal static let ellipsisStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let ellipsisMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Enumerate
 
@@ -2000,7 +1980,6 @@ extension Py {
     }
 
     internal static let enumerateStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let enumerateMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Filter
 
@@ -2023,7 +2002,6 @@ extension Py {
     }
 
     internal static let filterStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let filterMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Float
 
@@ -2123,7 +2101,6 @@ extension Py {
     }
 
     internal static let floatStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let floatMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Frame
 
@@ -2159,7 +2136,6 @@ extension Py {
     }
 
     internal static let frameStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let frameMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - FrozenSet
 
@@ -2232,7 +2208,6 @@ extension Py {
     }
 
     internal static let frozenSetStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let frozenSetMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Function
 
@@ -2284,7 +2259,6 @@ extension Py {
     }
 
     internal static let functionStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let functionMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Int
 
@@ -2409,7 +2383,6 @@ extension Py {
     }
 
     internal static let intStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let intMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Iterator
 
@@ -2431,7 +2404,6 @@ extension Py {
     }
 
     internal static let iteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let iteratorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - List
 
@@ -2512,7 +2484,6 @@ extension Py {
     }
 
     internal static let listStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let listMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - ListIterator
 
@@ -2537,7 +2508,6 @@ extension Py {
     }
 
     internal static let listIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let listIteratorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - ListReverseIterator
 
@@ -2562,7 +2532,6 @@ extension Py {
     }
 
     internal static let listReverseIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let listReverseIteratorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Map
 
@@ -2585,7 +2554,6 @@ extension Py {
     }
 
     internal static let mapStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let mapMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Method
 
@@ -2623,7 +2591,6 @@ extension Py {
     }
 
     internal static let methodStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let methodMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Module
 
@@ -2654,7 +2621,6 @@ extension Py {
     }
 
     internal static let moduleStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let moduleMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Namespace
 
@@ -2695,7 +2661,6 @@ extension Py {
     }
 
     internal static let namespaceStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let namespaceMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - None
 
@@ -2718,7 +2683,6 @@ extension Py {
     }
 
     internal static let noneStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let noneMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - NotImplemented
 
@@ -2737,7 +2701,6 @@ extension Py {
     }
 
     internal static let notImplementedStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let notImplementedMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Object
 
@@ -2789,7 +2752,6 @@ extension Py {
     }
 
     internal static let objectStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let objectMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Property
 
@@ -2831,7 +2793,6 @@ extension Py {
     }
 
     internal static let propertyStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let propertyMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Range
 
@@ -2890,7 +2851,6 @@ extension Py {
     }
 
     internal static let rangeStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let rangeMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - RangeIterator
 
@@ -2915,7 +2875,6 @@ extension Py {
     }
 
     internal static let rangeIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let rangeIteratorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Reversed
 
@@ -2940,7 +2899,6 @@ extension Py {
     }
 
     internal static let reversedStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let reversedMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Set
 
@@ -3027,7 +2985,6 @@ extension Py {
     }
 
     internal static let setStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let setMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - SetIterator
 
@@ -3052,7 +3009,6 @@ extension Py {
     }
 
     internal static let setIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let setIteratorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Slice
 
@@ -3095,7 +3051,6 @@ extension Py {
     }
 
     internal static let sliceStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let sliceMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - StaticMethod
 
@@ -3122,7 +3077,6 @@ extension Py {
     }
 
     internal static let staticMethodStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let staticMethodMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - String
 
@@ -3249,7 +3203,6 @@ extension Py {
     }
 
     internal static let stringStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let stringMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - StringIterator
 
@@ -3274,7 +3227,6 @@ extension Py {
     }
 
     internal static let stringIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let stringIteratorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Super
 
@@ -3305,7 +3257,6 @@ extension Py {
     }
 
     internal static let superStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let superMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - TextFile
 
@@ -3341,7 +3292,6 @@ extension Py {
     }
 
     internal static let textFileStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let textFileMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Traceback
 
@@ -3371,7 +3321,6 @@ extension Py {
     }
 
     internal static let tracebackStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let tracebackMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Tuple
 
@@ -3424,7 +3373,6 @@ extension Py {
     }
 
     internal static let tupleStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let tupleMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - TupleIterator
 
@@ -3449,7 +3397,6 @@ extension Py {
     }
 
     internal static let tupleIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let tupleIteratorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Type
 
@@ -3509,7 +3456,6 @@ extension Py {
     }
 
     internal static let typeStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let typeMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Zip
 
@@ -3532,7 +3478,6 @@ extension Py {
     }
 
     internal static let zipStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let zipMemoryLayout = PyType.MemoryLayout()
 
   }
 }

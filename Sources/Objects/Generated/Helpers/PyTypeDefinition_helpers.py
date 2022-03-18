@@ -29,16 +29,6 @@ def get_property_name_escaped(python_type_name: str) -> str:
 
     return name
 
-
-def get_layout_property_name(swift_type_name: str) -> str:
-    "Camel cased 'swift_type_name' without 'Py'."
-
-    assert swift_type_name.startswith('Py'), swift_type_name
-    type_prefix = swift_type_name[2:]
-    type_prefix = type_prefix[0].lower() + type_prefix[1:]
-    return type_prefix + 'MemoryLayout'
-
-
 def get_static_methods_property_name(swift_type_name: str) -> str:
     "Camel cased 'swift_type_name' without 'Py'."
 

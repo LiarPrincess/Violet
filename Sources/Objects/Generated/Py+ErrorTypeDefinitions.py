@@ -112,7 +112,6 @@ import VioletCore
         t.print_mark()
         t.print_fill_function()
         t.print_static_methods()
-        t.print_memory_layout()
         print()
 
     print('  }')

@@ -107,7 +107,7 @@ extension Py {
         bases: [objectType],
         mroWithoutSelf: [objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.baseExceptionMemoryLayout,
+        instanceSizeWithoutTail: PyBaseException.layout.size,
         staticMethods: Py.ErrorTypes.baseExceptionStaticMethods,
         debugFn: PyBaseException.createDebugString(ptr:),
         deinitialize: PyBaseException.deinitialize(ptr:)
@@ -123,7 +123,7 @@ extension Py {
         bases: [self.baseException],
         mroWithoutSelf: [self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.systemExitMemoryLayout,
+        instanceSizeWithoutTail: PySystemExit.layout.size,
         staticMethods: Py.ErrorTypes.systemExitStaticMethods,
         debugFn: PySystemExit.createDebugString(ptr:),
         deinitialize: PySystemExit.deinitialize(ptr:)
@@ -139,7 +139,7 @@ extension Py {
         bases: [self.baseException],
         mroWithoutSelf: [self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.keyboardInterruptMemoryLayout,
+        instanceSizeWithoutTail: PyKeyboardInterrupt.layout.size,
         staticMethods: Py.ErrorTypes.keyboardInterruptStaticMethods,
         debugFn: PyKeyboardInterrupt.createDebugString(ptr:),
         deinitialize: PyKeyboardInterrupt.deinitialize(ptr:)
@@ -155,7 +155,7 @@ extension Py {
         bases: [self.baseException],
         mroWithoutSelf: [self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.generatorExitMemoryLayout,
+        instanceSizeWithoutTail: PyGeneratorExit.layout.size,
         staticMethods: Py.ErrorTypes.generatorExitStaticMethods,
         debugFn: PyGeneratorExit.createDebugString(ptr:),
         deinitialize: PyGeneratorExit.deinitialize(ptr:)
@@ -171,7 +171,7 @@ extension Py {
         bases: [self.baseException],
         mroWithoutSelf: [self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.exceptionMemoryLayout,
+        instanceSizeWithoutTail: PyException.layout.size,
         staticMethods: Py.ErrorTypes.exceptionStaticMethods,
         debugFn: PyException.createDebugString(ptr:),
         deinitialize: PyException.deinitialize(ptr:)
@@ -187,7 +187,7 @@ extension Py {
         bases: [self.exception],
         mroWithoutSelf: [self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.stopIterationMemoryLayout,
+        instanceSizeWithoutTail: PyStopIteration.layout.size,
         staticMethods: Py.ErrorTypes.stopIterationStaticMethods,
         debugFn: PyStopIteration.createDebugString(ptr:),
         deinitialize: PyStopIteration.deinitialize(ptr:)
@@ -203,7 +203,7 @@ extension Py {
         bases: [self.exception],
         mroWithoutSelf: [self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.stopAsyncIterationMemoryLayout,
+        instanceSizeWithoutTail: PyStopAsyncIteration.layout.size,
         staticMethods: Py.ErrorTypes.stopAsyncIterationStaticMethods,
         debugFn: PyStopAsyncIteration.createDebugString(ptr:),
         deinitialize: PyStopAsyncIteration.deinitialize(ptr:)
@@ -219,7 +219,7 @@ extension Py {
         bases: [self.exception],
         mroWithoutSelf: [self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.arithmeticErrorMemoryLayout,
+        instanceSizeWithoutTail: PyArithmeticError.layout.size,
         staticMethods: Py.ErrorTypes.arithmeticErrorStaticMethods,
         debugFn: PyArithmeticError.createDebugString(ptr:),
         deinitialize: PyArithmeticError.deinitialize(ptr:)
@@ -235,7 +235,7 @@ extension Py {
         bases: [self.arithmeticError],
         mroWithoutSelf: [self.arithmeticError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.floatingPointErrorMemoryLayout,
+        instanceSizeWithoutTail: PyFloatingPointError.layout.size,
         staticMethods: Py.ErrorTypes.floatingPointErrorStaticMethods,
         debugFn: PyFloatingPointError.createDebugString(ptr:),
         deinitialize: PyFloatingPointError.deinitialize(ptr:)
@@ -251,7 +251,7 @@ extension Py {
         bases: [self.arithmeticError],
         mroWithoutSelf: [self.arithmeticError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.overflowErrorMemoryLayout,
+        instanceSizeWithoutTail: PyOverflowError.layout.size,
         staticMethods: Py.ErrorTypes.overflowErrorStaticMethods,
         debugFn: PyOverflowError.createDebugString(ptr:),
         deinitialize: PyOverflowError.deinitialize(ptr:)
@@ -267,7 +267,7 @@ extension Py {
         bases: [self.arithmeticError],
         mroWithoutSelf: [self.arithmeticError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.zeroDivisionErrorMemoryLayout,
+        instanceSizeWithoutTail: PyZeroDivisionError.layout.size,
         staticMethods: Py.ErrorTypes.zeroDivisionErrorStaticMethods,
         debugFn: PyZeroDivisionError.createDebugString(ptr:),
         deinitialize: PyZeroDivisionError.deinitialize(ptr:)
@@ -283,7 +283,7 @@ extension Py {
         bases: [self.exception],
         mroWithoutSelf: [self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.assertionErrorMemoryLayout,
+        instanceSizeWithoutTail: PyAssertionError.layout.size,
         staticMethods: Py.ErrorTypes.assertionErrorStaticMethods,
         debugFn: PyAssertionError.createDebugString(ptr:),
         deinitialize: PyAssertionError.deinitialize(ptr:)
@@ -299,7 +299,7 @@ extension Py {
         bases: [self.exception],
         mroWithoutSelf: [self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.attributeErrorMemoryLayout,
+        instanceSizeWithoutTail: PyAttributeError.layout.size,
         staticMethods: Py.ErrorTypes.attributeErrorStaticMethods,
         debugFn: PyAttributeError.createDebugString(ptr:),
         deinitialize: PyAttributeError.deinitialize(ptr:)
@@ -315,7 +315,7 @@ extension Py {
         bases: [self.exception],
         mroWithoutSelf: [self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.bufferErrorMemoryLayout,
+        instanceSizeWithoutTail: PyBufferError.layout.size,
         staticMethods: Py.ErrorTypes.bufferErrorStaticMethods,
         debugFn: PyBufferError.createDebugString(ptr:),
         deinitialize: PyBufferError.deinitialize(ptr:)
@@ -331,7 +331,7 @@ extension Py {
         bases: [self.exception],
         mroWithoutSelf: [self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.eOFErrorMemoryLayout,
+        instanceSizeWithoutTail: PyEOFError.layout.size,
         staticMethods: Py.ErrorTypes.eOFErrorStaticMethods,
         debugFn: PyEOFError.createDebugString(ptr:),
         deinitialize: PyEOFError.deinitialize(ptr:)
@@ -347,7 +347,7 @@ extension Py {
         bases: [self.exception],
         mroWithoutSelf: [self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.importErrorMemoryLayout,
+        instanceSizeWithoutTail: PyImportError.layout.size,
         staticMethods: Py.ErrorTypes.importErrorStaticMethods,
         debugFn: PyImportError.createDebugString(ptr:),
         deinitialize: PyImportError.deinitialize(ptr:)
@@ -363,7 +363,7 @@ extension Py {
         bases: [self.importError],
         mroWithoutSelf: [self.importError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.moduleNotFoundErrorMemoryLayout,
+        instanceSizeWithoutTail: PyModuleNotFoundError.layout.size,
         staticMethods: Py.ErrorTypes.moduleNotFoundErrorStaticMethods,
         debugFn: PyModuleNotFoundError.createDebugString(ptr:),
         deinitialize: PyModuleNotFoundError.deinitialize(ptr:)
@@ -379,7 +379,7 @@ extension Py {
         bases: [self.exception],
         mroWithoutSelf: [self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.lookupErrorMemoryLayout,
+        instanceSizeWithoutTail: PyLookupError.layout.size,
         staticMethods: Py.ErrorTypes.lookupErrorStaticMethods,
         debugFn: PyLookupError.createDebugString(ptr:),
         deinitialize: PyLookupError.deinitialize(ptr:)
@@ -395,7 +395,7 @@ extension Py {
         bases: [self.lookupError],
         mroWithoutSelf: [self.lookupError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.indexErrorMemoryLayout,
+        instanceSizeWithoutTail: PyIndexError.layout.size,
         staticMethods: Py.ErrorTypes.indexErrorStaticMethods,
         debugFn: PyIndexError.createDebugString(ptr:),
         deinitialize: PyIndexError.deinitialize(ptr:)
@@ -411,7 +411,7 @@ extension Py {
         bases: [self.lookupError],
         mroWithoutSelf: [self.lookupError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.keyErrorMemoryLayout,
+        instanceSizeWithoutTail: PyKeyError.layout.size,
         staticMethods: Py.ErrorTypes.keyErrorStaticMethods,
         debugFn: PyKeyError.createDebugString(ptr:),
         deinitialize: PyKeyError.deinitialize(ptr:)
@@ -427,7 +427,7 @@ extension Py {
         bases: [self.exception],
         mroWithoutSelf: [self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.memoryErrorMemoryLayout,
+        instanceSizeWithoutTail: PyMemoryError.layout.size,
         staticMethods: Py.ErrorTypes.memoryErrorStaticMethods,
         debugFn: PyMemoryError.createDebugString(ptr:),
         deinitialize: PyMemoryError.deinitialize(ptr:)
@@ -443,7 +443,7 @@ extension Py {
         bases: [self.exception],
         mroWithoutSelf: [self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.nameErrorMemoryLayout,
+        instanceSizeWithoutTail: PyNameError.layout.size,
         staticMethods: Py.ErrorTypes.nameErrorStaticMethods,
         debugFn: PyNameError.createDebugString(ptr:),
         deinitialize: PyNameError.deinitialize(ptr:)
@@ -459,7 +459,7 @@ extension Py {
         bases: [self.nameError],
         mroWithoutSelf: [self.nameError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.unboundLocalErrorMemoryLayout,
+        instanceSizeWithoutTail: PyUnboundLocalError.layout.size,
         staticMethods: Py.ErrorTypes.unboundLocalErrorStaticMethods,
         debugFn: PyUnboundLocalError.createDebugString(ptr:),
         deinitialize: PyUnboundLocalError.deinitialize(ptr:)
@@ -475,7 +475,7 @@ extension Py {
         bases: [self.exception],
         mroWithoutSelf: [self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.oSErrorMemoryLayout,
+        instanceSizeWithoutTail: PyOSError.layout.size,
         staticMethods: Py.ErrorTypes.oSErrorStaticMethods,
         debugFn: PyOSError.createDebugString(ptr:),
         deinitialize: PyOSError.deinitialize(ptr:)
@@ -491,7 +491,7 @@ extension Py {
         bases: [self.osError],
         mroWithoutSelf: [self.osError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.blockingIOErrorMemoryLayout,
+        instanceSizeWithoutTail: PyBlockingIOError.layout.size,
         staticMethods: Py.ErrorTypes.blockingIOErrorStaticMethods,
         debugFn: PyBlockingIOError.createDebugString(ptr:),
         deinitialize: PyBlockingIOError.deinitialize(ptr:)
@@ -507,7 +507,7 @@ extension Py {
         bases: [self.osError],
         mroWithoutSelf: [self.osError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.childProcessErrorMemoryLayout,
+        instanceSizeWithoutTail: PyChildProcessError.layout.size,
         staticMethods: Py.ErrorTypes.childProcessErrorStaticMethods,
         debugFn: PyChildProcessError.createDebugString(ptr:),
         deinitialize: PyChildProcessError.deinitialize(ptr:)
@@ -523,7 +523,7 @@ extension Py {
         bases: [self.osError],
         mroWithoutSelf: [self.osError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.connectionErrorMemoryLayout,
+        instanceSizeWithoutTail: PyConnectionError.layout.size,
         staticMethods: Py.ErrorTypes.connectionErrorStaticMethods,
         debugFn: PyConnectionError.createDebugString(ptr:),
         deinitialize: PyConnectionError.deinitialize(ptr:)
@@ -539,7 +539,7 @@ extension Py {
         bases: [self.connectionError],
         mroWithoutSelf: [self.connectionError, self.osError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.brokenPipeErrorMemoryLayout,
+        instanceSizeWithoutTail: PyBrokenPipeError.layout.size,
         staticMethods: Py.ErrorTypes.brokenPipeErrorStaticMethods,
         debugFn: PyBrokenPipeError.createDebugString(ptr:),
         deinitialize: PyBrokenPipeError.deinitialize(ptr:)
@@ -555,7 +555,7 @@ extension Py {
         bases: [self.connectionError],
         mroWithoutSelf: [self.connectionError, self.osError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.connectionAbortedErrorMemoryLayout,
+        instanceSizeWithoutTail: PyConnectionAbortedError.layout.size,
         staticMethods: Py.ErrorTypes.connectionAbortedErrorStaticMethods,
         debugFn: PyConnectionAbortedError.createDebugString(ptr:),
         deinitialize: PyConnectionAbortedError.deinitialize(ptr:)
@@ -571,7 +571,7 @@ extension Py {
         bases: [self.connectionError],
         mroWithoutSelf: [self.connectionError, self.osError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.connectionRefusedErrorMemoryLayout,
+        instanceSizeWithoutTail: PyConnectionRefusedError.layout.size,
         staticMethods: Py.ErrorTypes.connectionRefusedErrorStaticMethods,
         debugFn: PyConnectionRefusedError.createDebugString(ptr:),
         deinitialize: PyConnectionRefusedError.deinitialize(ptr:)
@@ -587,7 +587,7 @@ extension Py {
         bases: [self.connectionError],
         mroWithoutSelf: [self.connectionError, self.osError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.connectionResetErrorMemoryLayout,
+        instanceSizeWithoutTail: PyConnectionResetError.layout.size,
         staticMethods: Py.ErrorTypes.connectionResetErrorStaticMethods,
         debugFn: PyConnectionResetError.createDebugString(ptr:),
         deinitialize: PyConnectionResetError.deinitialize(ptr:)
@@ -603,7 +603,7 @@ extension Py {
         bases: [self.osError],
         mroWithoutSelf: [self.osError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.fileExistsErrorMemoryLayout,
+        instanceSizeWithoutTail: PyFileExistsError.layout.size,
         staticMethods: Py.ErrorTypes.fileExistsErrorStaticMethods,
         debugFn: PyFileExistsError.createDebugString(ptr:),
         deinitialize: PyFileExistsError.deinitialize(ptr:)
@@ -619,7 +619,7 @@ extension Py {
         bases: [self.osError],
         mroWithoutSelf: [self.osError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.fileNotFoundErrorMemoryLayout,
+        instanceSizeWithoutTail: PyFileNotFoundError.layout.size,
         staticMethods: Py.ErrorTypes.fileNotFoundErrorStaticMethods,
         debugFn: PyFileNotFoundError.createDebugString(ptr:),
         deinitialize: PyFileNotFoundError.deinitialize(ptr:)
@@ -635,7 +635,7 @@ extension Py {
         bases: [self.osError],
         mroWithoutSelf: [self.osError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.interruptedErrorMemoryLayout,
+        instanceSizeWithoutTail: PyInterruptedError.layout.size,
         staticMethods: Py.ErrorTypes.interruptedErrorStaticMethods,
         debugFn: PyInterruptedError.createDebugString(ptr:),
         deinitialize: PyInterruptedError.deinitialize(ptr:)
@@ -651,7 +651,7 @@ extension Py {
         bases: [self.osError],
         mroWithoutSelf: [self.osError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.isADirectoryErrorMemoryLayout,
+        instanceSizeWithoutTail: PyIsADirectoryError.layout.size,
         staticMethods: Py.ErrorTypes.isADirectoryErrorStaticMethods,
         debugFn: PyIsADirectoryError.createDebugString(ptr:),
         deinitialize: PyIsADirectoryError.deinitialize(ptr:)
@@ -667,7 +667,7 @@ extension Py {
         bases: [self.osError],
         mroWithoutSelf: [self.osError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.notADirectoryErrorMemoryLayout,
+        instanceSizeWithoutTail: PyNotADirectoryError.layout.size,
         staticMethods: Py.ErrorTypes.notADirectoryErrorStaticMethods,
         debugFn: PyNotADirectoryError.createDebugString(ptr:),
         deinitialize: PyNotADirectoryError.deinitialize(ptr:)
@@ -683,7 +683,7 @@ extension Py {
         bases: [self.osError],
         mroWithoutSelf: [self.osError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.permissionErrorMemoryLayout,
+        instanceSizeWithoutTail: PyPermissionError.layout.size,
         staticMethods: Py.ErrorTypes.permissionErrorStaticMethods,
         debugFn: PyPermissionError.createDebugString(ptr:),
         deinitialize: PyPermissionError.deinitialize(ptr:)
@@ -699,7 +699,7 @@ extension Py {
         bases: [self.osError],
         mroWithoutSelf: [self.osError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.processLookupErrorMemoryLayout,
+        instanceSizeWithoutTail: PyProcessLookupError.layout.size,
         staticMethods: Py.ErrorTypes.processLookupErrorStaticMethods,
         debugFn: PyProcessLookupError.createDebugString(ptr:),
         deinitialize: PyProcessLookupError.deinitialize(ptr:)
@@ -715,7 +715,7 @@ extension Py {
         bases: [self.osError],
         mroWithoutSelf: [self.osError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.timeoutErrorMemoryLayout,
+        instanceSizeWithoutTail: PyTimeoutError.layout.size,
         staticMethods: Py.ErrorTypes.timeoutErrorStaticMethods,
         debugFn: PyTimeoutError.createDebugString(ptr:),
         deinitialize: PyTimeoutError.deinitialize(ptr:)
@@ -731,7 +731,7 @@ extension Py {
         bases: [self.exception],
         mroWithoutSelf: [self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.referenceErrorMemoryLayout,
+        instanceSizeWithoutTail: PyReferenceError.layout.size,
         staticMethods: Py.ErrorTypes.referenceErrorStaticMethods,
         debugFn: PyReferenceError.createDebugString(ptr:),
         deinitialize: PyReferenceError.deinitialize(ptr:)
@@ -747,7 +747,7 @@ extension Py {
         bases: [self.exception],
         mroWithoutSelf: [self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.runtimeErrorMemoryLayout,
+        instanceSizeWithoutTail: PyRuntimeError.layout.size,
         staticMethods: Py.ErrorTypes.runtimeErrorStaticMethods,
         debugFn: PyRuntimeError.createDebugString(ptr:),
         deinitialize: PyRuntimeError.deinitialize(ptr:)
@@ -763,7 +763,7 @@ extension Py {
         bases: [self.runtimeError],
         mroWithoutSelf: [self.runtimeError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.notImplementedErrorMemoryLayout,
+        instanceSizeWithoutTail: PyNotImplementedError.layout.size,
         staticMethods: Py.ErrorTypes.notImplementedErrorStaticMethods,
         debugFn: PyNotImplementedError.createDebugString(ptr:),
         deinitialize: PyNotImplementedError.deinitialize(ptr:)
@@ -779,7 +779,7 @@ extension Py {
         bases: [self.runtimeError],
         mroWithoutSelf: [self.runtimeError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.recursionErrorMemoryLayout,
+        instanceSizeWithoutTail: PyRecursionError.layout.size,
         staticMethods: Py.ErrorTypes.recursionErrorStaticMethods,
         debugFn: PyRecursionError.createDebugString(ptr:),
         deinitialize: PyRecursionError.deinitialize(ptr:)
@@ -795,7 +795,7 @@ extension Py {
         bases: [self.exception],
         mroWithoutSelf: [self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.syntaxErrorMemoryLayout,
+        instanceSizeWithoutTail: PySyntaxError.layout.size,
         staticMethods: Py.ErrorTypes.syntaxErrorStaticMethods,
         debugFn: PySyntaxError.createDebugString(ptr:),
         deinitialize: PySyntaxError.deinitialize(ptr:)
@@ -811,7 +811,7 @@ extension Py {
         bases: [self.syntaxError],
         mroWithoutSelf: [self.syntaxError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.indentationErrorMemoryLayout,
+        instanceSizeWithoutTail: PyIndentationError.layout.size,
         staticMethods: Py.ErrorTypes.indentationErrorStaticMethods,
         debugFn: PyIndentationError.createDebugString(ptr:),
         deinitialize: PyIndentationError.deinitialize(ptr:)
@@ -827,7 +827,7 @@ extension Py {
         bases: [self.indentationError],
         mroWithoutSelf: [self.indentationError, self.syntaxError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.tabErrorMemoryLayout,
+        instanceSizeWithoutTail: PyTabError.layout.size,
         staticMethods: Py.ErrorTypes.tabErrorStaticMethods,
         debugFn: PyTabError.createDebugString(ptr:),
         deinitialize: PyTabError.deinitialize(ptr:)
@@ -843,7 +843,7 @@ extension Py {
         bases: [self.exception],
         mroWithoutSelf: [self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.systemErrorMemoryLayout,
+        instanceSizeWithoutTail: PySystemError.layout.size,
         staticMethods: Py.ErrorTypes.systemErrorStaticMethods,
         debugFn: PySystemError.createDebugString(ptr:),
         deinitialize: PySystemError.deinitialize(ptr:)
@@ -859,7 +859,7 @@ extension Py {
         bases: [self.exception],
         mroWithoutSelf: [self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.typeErrorMemoryLayout,
+        instanceSizeWithoutTail: PyTypeError.layout.size,
         staticMethods: Py.ErrorTypes.typeErrorStaticMethods,
         debugFn: PyTypeError.createDebugString(ptr:),
         deinitialize: PyTypeError.deinitialize(ptr:)
@@ -875,7 +875,7 @@ extension Py {
         bases: [self.exception],
         mroWithoutSelf: [self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.valueErrorMemoryLayout,
+        instanceSizeWithoutTail: PyValueError.layout.size,
         staticMethods: Py.ErrorTypes.valueErrorStaticMethods,
         debugFn: PyValueError.createDebugString(ptr:),
         deinitialize: PyValueError.deinitialize(ptr:)
@@ -891,7 +891,7 @@ extension Py {
         bases: [self.valueError],
         mroWithoutSelf: [self.valueError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.unicodeErrorMemoryLayout,
+        instanceSizeWithoutTail: PyUnicodeError.layout.size,
         staticMethods: Py.ErrorTypes.unicodeErrorStaticMethods,
         debugFn: PyUnicodeError.createDebugString(ptr:),
         deinitialize: PyUnicodeError.deinitialize(ptr:)
@@ -907,7 +907,7 @@ extension Py {
         bases: [self.unicodeError],
         mroWithoutSelf: [self.unicodeError, self.valueError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.unicodeDecodeErrorMemoryLayout,
+        instanceSizeWithoutTail: PyUnicodeDecodeError.layout.size,
         staticMethods: Py.ErrorTypes.unicodeDecodeErrorStaticMethods,
         debugFn: PyUnicodeDecodeError.createDebugString(ptr:),
         deinitialize: PyUnicodeDecodeError.deinitialize(ptr:)
@@ -923,7 +923,7 @@ extension Py {
         bases: [self.unicodeError],
         mroWithoutSelf: [self.unicodeError, self.valueError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.unicodeEncodeErrorMemoryLayout,
+        instanceSizeWithoutTail: PyUnicodeEncodeError.layout.size,
         staticMethods: Py.ErrorTypes.unicodeEncodeErrorStaticMethods,
         debugFn: PyUnicodeEncodeError.createDebugString(ptr:),
         deinitialize: PyUnicodeEncodeError.deinitialize(ptr:)
@@ -939,7 +939,7 @@ extension Py {
         bases: [self.unicodeError],
         mroWithoutSelf: [self.unicodeError, self.valueError, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.unicodeTranslateErrorMemoryLayout,
+        instanceSizeWithoutTail: PyUnicodeTranslateError.layout.size,
         staticMethods: Py.ErrorTypes.unicodeTranslateErrorStaticMethods,
         debugFn: PyUnicodeTranslateError.createDebugString(ptr:),
         deinitialize: PyUnicodeTranslateError.deinitialize(ptr:)
@@ -955,7 +955,7 @@ extension Py {
         bases: [self.exception],
         mroWithoutSelf: [self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.warningMemoryLayout,
+        instanceSizeWithoutTail: PyWarning.layout.size,
         staticMethods: Py.ErrorTypes.warningStaticMethods,
         debugFn: PyWarning.createDebugString(ptr:),
         deinitialize: PyWarning.deinitialize(ptr:)
@@ -971,7 +971,7 @@ extension Py {
         bases: [self.warning],
         mroWithoutSelf: [self.warning, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.deprecationWarningMemoryLayout,
+        instanceSizeWithoutTail: PyDeprecationWarning.layout.size,
         staticMethods: Py.ErrorTypes.deprecationWarningStaticMethods,
         debugFn: PyDeprecationWarning.createDebugString(ptr:),
         deinitialize: PyDeprecationWarning.deinitialize(ptr:)
@@ -987,7 +987,7 @@ extension Py {
         bases: [self.warning],
         mroWithoutSelf: [self.warning, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.pendingDeprecationWarningMemoryLayout,
+        instanceSizeWithoutTail: PyPendingDeprecationWarning.layout.size,
         staticMethods: Py.ErrorTypes.pendingDeprecationWarningStaticMethods,
         debugFn: PyPendingDeprecationWarning.createDebugString(ptr:),
         deinitialize: PyPendingDeprecationWarning.deinitialize(ptr:)
@@ -1003,7 +1003,7 @@ extension Py {
         bases: [self.warning],
         mroWithoutSelf: [self.warning, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.runtimeWarningMemoryLayout,
+        instanceSizeWithoutTail: PyRuntimeWarning.layout.size,
         staticMethods: Py.ErrorTypes.runtimeWarningStaticMethods,
         debugFn: PyRuntimeWarning.createDebugString(ptr:),
         deinitialize: PyRuntimeWarning.deinitialize(ptr:)
@@ -1019,7 +1019,7 @@ extension Py {
         bases: [self.warning],
         mroWithoutSelf: [self.warning, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.syntaxWarningMemoryLayout,
+        instanceSizeWithoutTail: PySyntaxWarning.layout.size,
         staticMethods: Py.ErrorTypes.syntaxWarningStaticMethods,
         debugFn: PySyntaxWarning.createDebugString(ptr:),
         deinitialize: PySyntaxWarning.deinitialize(ptr:)
@@ -1035,7 +1035,7 @@ extension Py {
         bases: [self.warning],
         mroWithoutSelf: [self.warning, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.userWarningMemoryLayout,
+        instanceSizeWithoutTail: PyUserWarning.layout.size,
         staticMethods: Py.ErrorTypes.userWarningStaticMethods,
         debugFn: PyUserWarning.createDebugString(ptr:),
         deinitialize: PyUserWarning.deinitialize(ptr:)
@@ -1051,7 +1051,7 @@ extension Py {
         bases: [self.warning],
         mroWithoutSelf: [self.warning, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.futureWarningMemoryLayout,
+        instanceSizeWithoutTail: PyFutureWarning.layout.size,
         staticMethods: Py.ErrorTypes.futureWarningStaticMethods,
         debugFn: PyFutureWarning.createDebugString(ptr:),
         deinitialize: PyFutureWarning.deinitialize(ptr:)
@@ -1067,7 +1067,7 @@ extension Py {
         bases: [self.warning],
         mroWithoutSelf: [self.warning, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.importWarningMemoryLayout,
+        instanceSizeWithoutTail: PyImportWarning.layout.size,
         staticMethods: Py.ErrorTypes.importWarningStaticMethods,
         debugFn: PyImportWarning.createDebugString(ptr:),
         deinitialize: PyImportWarning.deinitialize(ptr:)
@@ -1083,7 +1083,7 @@ extension Py {
         bases: [self.warning],
         mroWithoutSelf: [self.warning, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.unicodeWarningMemoryLayout,
+        instanceSizeWithoutTail: PyUnicodeWarning.layout.size,
         staticMethods: Py.ErrorTypes.unicodeWarningStaticMethods,
         debugFn: PyUnicodeWarning.createDebugString(ptr:),
         deinitialize: PyUnicodeWarning.deinitialize(ptr:)
@@ -1099,7 +1099,7 @@ extension Py {
         bases: [self.warning],
         mroWithoutSelf: [self.warning, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.bytesWarningMemoryLayout,
+        instanceSizeWithoutTail: PyBytesWarning.layout.size,
         staticMethods: Py.ErrorTypes.bytesWarningStaticMethods,
         debugFn: PyBytesWarning.createDebugString(ptr:),
         deinitialize: PyBytesWarning.deinitialize(ptr:)
@@ -1115,7 +1115,7 @@ extension Py {
         bases: [self.warning],
         mroWithoutSelf: [self.warning, self.exception, self.baseException, objectType],
         subclasses: [],
-        layout: Py.ErrorTypes.resourceWarningMemoryLayout,
+        instanceSizeWithoutTail: PyResourceWarning.layout.size,
         staticMethods: Py.ErrorTypes.resourceWarningStaticMethods,
         debugFn: PyResourceWarning.createDebugString(ptr:),
         deinitialize: PyResourceWarning.deinitialize(ptr:)
@@ -1296,7 +1296,6 @@ extension Py {
     }
 
     internal static let baseExceptionStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let baseExceptionMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - SystemExit
 
@@ -1319,7 +1318,6 @@ extension Py {
     }
 
     internal static let systemExitStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let systemExitMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - KeyboardInterrupt
 
@@ -1339,7 +1337,6 @@ extension Py {
     }
 
     internal static let keyboardInterruptStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let keyboardInterruptMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - GeneratorExit
 
@@ -1359,7 +1356,6 @@ extension Py {
     }
 
     internal static let generatorExitStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let generatorExitMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Exception
 
@@ -1379,7 +1375,6 @@ extension Py {
     }
 
     internal static let exceptionStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let exceptionMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - StopIteration
 
@@ -1402,7 +1397,6 @@ extension Py {
     }
 
     internal static let stopIterationStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let stopIterationMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - StopAsyncIteration
 
@@ -1422,7 +1416,6 @@ extension Py {
     }
 
     internal static let stopAsyncIterationStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let stopAsyncIterationMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - ArithmeticError
 
@@ -1442,7 +1435,6 @@ extension Py {
     }
 
     internal static let arithmeticErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let arithmeticErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - FloatingPointError
 
@@ -1462,7 +1454,6 @@ extension Py {
     }
 
     internal static let floatingPointErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let floatingPointErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - OverflowError
 
@@ -1482,7 +1473,6 @@ extension Py {
     }
 
     internal static let overflowErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let overflowErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - ZeroDivisionError
 
@@ -1502,7 +1492,6 @@ extension Py {
     }
 
     internal static let zeroDivisionErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let zeroDivisionErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - AssertionError
 
@@ -1522,7 +1511,6 @@ extension Py {
     }
 
     internal static let assertionErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let assertionErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - AttributeError
 
@@ -1542,7 +1530,6 @@ extension Py {
     }
 
     internal static let attributeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let attributeErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - BufferError
 
@@ -1562,7 +1549,6 @@ extension Py {
     }
 
     internal static let bufferErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let bufferErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - EOFError
 
@@ -1582,7 +1568,6 @@ extension Py {
     }
 
     internal static let eOFErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let eOFErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - ImportError
 
@@ -1614,7 +1599,6 @@ extension Py {
     }
 
     internal static let importErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let importErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - ModuleNotFoundError
 
@@ -1634,7 +1618,6 @@ extension Py {
     }
 
     internal static let moduleNotFoundErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let moduleNotFoundErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - LookupError
 
@@ -1654,7 +1637,6 @@ extension Py {
     }
 
     internal static let lookupErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let lookupErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - IndexError
 
@@ -1674,7 +1656,6 @@ extension Py {
     }
 
     internal static let indexErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let indexErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - KeyError
 
@@ -1697,7 +1678,6 @@ extension Py {
     }
 
     internal static let keyErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let keyErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - MemoryError
 
@@ -1717,7 +1697,6 @@ extension Py {
     }
 
     internal static let memoryErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let memoryErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - NameError
 
@@ -1737,7 +1716,6 @@ extension Py {
     }
 
     internal static let nameErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let nameErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - UnboundLocalError
 
@@ -1757,7 +1735,6 @@ extension Py {
     }
 
     internal static let unboundLocalErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let unboundLocalErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - OSError
 
@@ -1777,7 +1754,6 @@ extension Py {
     }
 
     internal static let oSErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let oSErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - BlockingIOError
 
@@ -1797,7 +1773,6 @@ extension Py {
     }
 
     internal static let blockingIOErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let blockingIOErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - ChildProcessError
 
@@ -1817,7 +1792,6 @@ extension Py {
     }
 
     internal static let childProcessErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let childProcessErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - ConnectionError
 
@@ -1837,7 +1811,6 @@ extension Py {
     }
 
     internal static let connectionErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let connectionErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - BrokenPipeError
 
@@ -1857,7 +1830,6 @@ extension Py {
     }
 
     internal static let brokenPipeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let brokenPipeErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - ConnectionAbortedError
 
@@ -1877,7 +1849,6 @@ extension Py {
     }
 
     internal static let connectionAbortedErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let connectionAbortedErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - ConnectionRefusedError
 
@@ -1897,7 +1868,6 @@ extension Py {
     }
 
     internal static let connectionRefusedErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let connectionRefusedErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - ConnectionResetError
 
@@ -1917,7 +1887,6 @@ extension Py {
     }
 
     internal static let connectionResetErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let connectionResetErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - FileExistsError
 
@@ -1937,7 +1906,6 @@ extension Py {
     }
 
     internal static let fileExistsErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let fileExistsErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - FileNotFoundError
 
@@ -1957,7 +1925,6 @@ extension Py {
     }
 
     internal static let fileNotFoundErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let fileNotFoundErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - InterruptedError
 
@@ -1977,7 +1944,6 @@ extension Py {
     }
 
     internal static let interruptedErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let interruptedErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - IsADirectoryError
 
@@ -1997,7 +1963,6 @@ extension Py {
     }
 
     internal static let isADirectoryErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let isADirectoryErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - NotADirectoryError
 
@@ -2017,7 +1982,6 @@ extension Py {
     }
 
     internal static let notADirectoryErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let notADirectoryErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - PermissionError
 
@@ -2037,7 +2001,6 @@ extension Py {
     }
 
     internal static let permissionErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let permissionErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - ProcessLookupError
 
@@ -2057,7 +2020,6 @@ extension Py {
     }
 
     internal static let processLookupErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let processLookupErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - TimeoutError
 
@@ -2077,7 +2039,6 @@ extension Py {
     }
 
     internal static let timeoutErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let timeoutErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - ReferenceError
 
@@ -2097,7 +2058,6 @@ extension Py {
     }
 
     internal static let referenceErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let referenceErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - RuntimeError
 
@@ -2117,7 +2077,6 @@ extension Py {
     }
 
     internal static let runtimeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let runtimeErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - NotImplementedError
 
@@ -2137,7 +2096,6 @@ extension Py {
     }
 
     internal static let notImplementedErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let notImplementedErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - RecursionError
 
@@ -2157,7 +2115,6 @@ extension Py {
     }
 
     internal static let recursionErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let recursionErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - SyntaxError
 
@@ -2198,7 +2155,6 @@ extension Py {
     }
 
     internal static let syntaxErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let syntaxErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - IndentationError
 
@@ -2218,7 +2174,6 @@ extension Py {
     }
 
     internal static let indentationErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let indentationErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - TabError
 
@@ -2238,7 +2193,6 @@ extension Py {
     }
 
     internal static let tabErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let tabErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - SystemError
 
@@ -2258,7 +2212,6 @@ extension Py {
     }
 
     internal static let systemErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let systemErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - TypeError
 
@@ -2278,7 +2231,6 @@ extension Py {
     }
 
     internal static let typeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let typeErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - ValueError
 
@@ -2298,7 +2250,6 @@ extension Py {
     }
 
     internal static let valueErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let valueErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - UnicodeError
 
@@ -2318,7 +2269,6 @@ extension Py {
     }
 
     internal static let unicodeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let unicodeErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - UnicodeDecodeError
 
@@ -2338,7 +2288,6 @@ extension Py {
     }
 
     internal static let unicodeDecodeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let unicodeDecodeErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - UnicodeEncodeError
 
@@ -2358,7 +2307,6 @@ extension Py {
     }
 
     internal static let unicodeEncodeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let unicodeEncodeErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - UnicodeTranslateError
 
@@ -2378,7 +2326,6 @@ extension Py {
     }
 
     internal static let unicodeTranslateErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let unicodeTranslateErrorMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Warning
 
@@ -2398,7 +2345,6 @@ extension Py {
     }
 
     internal static let warningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let warningMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - DeprecationWarning
 
@@ -2418,7 +2364,6 @@ extension Py {
     }
 
     internal static let deprecationWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let deprecationWarningMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - PendingDeprecationWarning
 
@@ -2438,7 +2383,6 @@ extension Py {
     }
 
     internal static let pendingDeprecationWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let pendingDeprecationWarningMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - RuntimeWarning
 
@@ -2458,7 +2402,6 @@ extension Py {
     }
 
     internal static let runtimeWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let runtimeWarningMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - SyntaxWarning
 
@@ -2478,7 +2421,6 @@ extension Py {
     }
 
     internal static let syntaxWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let syntaxWarningMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - UserWarning
 
@@ -2498,7 +2440,6 @@ extension Py {
     }
 
     internal static let userWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let userWarningMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - FutureWarning
 
@@ -2518,7 +2459,6 @@ extension Py {
     }
 
     internal static let futureWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let futureWarningMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - ImportWarning
 
@@ -2538,7 +2478,6 @@ extension Py {
     }
 
     internal static let importWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let importWarningMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - UnicodeWarning
 
@@ -2558,7 +2497,6 @@ extension Py {
     }
 
     internal static let unicodeWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let unicodeWarningMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - BytesWarning
 
@@ -2578,7 +2516,6 @@ extension Py {
     }
 
     internal static let bytesWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let bytesWarningMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - ResourceWarning
 
@@ -2598,7 +2535,6 @@ extension Py {
     }
 
     internal static let resourceWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    internal static let resourceWarningMemoryLayout = PyType.MemoryLayout()
 
   }
 }
