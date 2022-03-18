@@ -183,7 +183,10 @@ public struct PyReversed: PyObjectMixin {
 
   private static func call__reversed__(_ py: Py, object: PyObject) -> Py.CallMethodResult {
     if let result = PyStaticCall.__reversed__(py, object: object) {
-      return .value(result)
+      switch result {
+      case let .value(o): return .value(o)
+      case let .error(e): return .error(e)
+      }
     }
 
     return py.callMethod(object: object, selector: .__reversed__)

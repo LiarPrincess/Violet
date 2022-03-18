@@ -48,13 +48,32 @@ extension AbstractString {
 
     // If we can easily get the '__len__' then use it.
     // If not, then we can't call python method, because it may side-effect.
-    if let pyInt = PyStaticCall.__len__(py, object: iterable),
-       let int = Int(exactly: pyInt.value) {
+    if let int = Self.abstractApproximateCount(py, iterable: iterable) {
       iterableCount = int
     }
 
     let ourCount = zelf.count
     let iterableElementExpectedCount = 2 // Again, 2 is our guess.
     return iterableCount * (ourCount + iterableElementExpectedCount)
+  }
+
+  internal static func abstractApproximateCount(_ py: Py, iterable: PyObject) -> Int? {
+    // If we can easily get the '__len__' then use it.
+    // If not, then we can't call python method, because it may side-effect.
+    guard let result = PyStaticCall.__len__(py, object: iterable) else {
+      return nil
+    }
+
+    let object: PyObject
+    switch result {
+    case .value(let o): object = o
+    case .error: return nil
+    }
+
+    guard let int = py.cast.asInt(object) else {
+      return nil
+    }
+
+    return Int(exactly: int.value)
   }
 }

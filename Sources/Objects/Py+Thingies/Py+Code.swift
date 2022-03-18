@@ -328,7 +328,10 @@ extension Py {
 
   public func isAbstractMethod(object: PyObject) -> PyResult<Bool> {
     if let result = PyStaticCall.__isabstractmethod__(self, object: object) {
-      return result.map(self.isTrueBool(object:))
+      switch result {
+      case let .value(o): return self.isTrueBool(object: o)
+      case let .error(e): return .error(e)
+      }
     }
 
     switch self.getAttribute(object: object, name: .__isabstractmethod__) {

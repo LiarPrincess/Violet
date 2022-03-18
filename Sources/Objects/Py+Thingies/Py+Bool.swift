@@ -55,7 +55,7 @@ extension Py {
   }
 
   public func isTrueBool(object: PyBool) -> Bool {
-    return object.value.isTrue
+    return object.isTrue
   }
 
   /// PyObject_IsTrue(PyObject *v)
@@ -66,23 +66,17 @@ extension Py {
     }
 
     if let bool = self.cast.asBool(object) {
-       let result = self.isTrueBool(object: bool)
-      return .value(result)
+      return .value(bool.isTrue)
     }
 
     // Try __bool__
-    if let result = PyStaticCall.__bool__(self, object: object) {
-      return .value(result.isTrue)
+    if let bool = PyStaticCall.__bool__(self, object: object) {
+      return self.interpret__bool__(bool: bool)
     }
 
     switch self.callMethod(object: object, selector: .__bool__) {
-    case .value(let result):
-      if let pyBool = self.cast.asBool(result) {
-        return .value(pyBool.value.isTrue)
-      }
-
-      let message = "__bool__ should return bool, returned '\(result.typeName)'"
-      return .typeError(self, message: message)
+    case .value(let bool):
+      return self.interpret__bool__(bool: bool)
     case .missingMethod:
       break // Try other methods
     case .error(let e),
@@ -92,7 +86,7 @@ extension Py {
 
     // Try __len__
     if let len = PyStaticCall.__len__(self, object: object) {
-      return .value(len.value.isTrue)
+      return self.interpret__len__asBool(len: len)
     }
 
     switch self.callMethod(object: object, selector: .__len__) {
@@ -102,6 +96,33 @@ extension Py {
       return .value(true) // If we don't have '__bool__' or '__len__' -> True
     case .error(let e),
          .notCallable(let e):
+      return .error(e)
+    }
+  }
+
+  private func interpret__bool__(bool: PyResult<PyObject>) -> PyResult<Bool> {
+    switch bool {
+    case let .value(b):
+      return self.interpret__bool__(bool: b)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  private func interpret__bool__(bool object: PyObject) -> PyResult<Bool> {
+    if let pyBool = self.cast.asBool(object) {
+      return .value(pyBool.isTrue)
+    }
+
+    let message = "__bool__ should return bool, returned '\(object.typeName)'"
+    return .typeError(self, message: message)
+  }
+
+  private func interpret__len__asBool(len: PyResult<PyObject>) -> PyResult<Bool> {
+    switch len {
+    case let .value(l):
+      return self.interpret__len__asBool(len: l)
+    case let .error(e):
       return .error(e)
     }
   }

@@ -9,7 +9,7 @@ extension Py {
   /// PyObject * PyNumber_Positive(PyObject *o)
   public func positive(object: PyObject) -> PyResult<PyObject> {
     if let result = PyStaticCall.__pos__(self, object: object) {
-      return .value(result)
+      return result
     }
 
     return self.callUnaryMethod(object: object,
@@ -22,7 +22,7 @@ extension Py {
   /// PyObject * PyNumber_Negative(PyObject *o)
   public func negative(object: PyObject) -> PyResult<PyObject> {
     if let result = PyStaticCall.__neg__(self, object: object) {
-      return .value(result)
+      return result
     }
 
     return self.callUnaryMethod(object: object,
@@ -35,7 +35,7 @@ extension Py {
   /// PyObject * PyNumber_Invert(PyObject *o)
   public func invert(object: PyObject) -> PyResult<PyObject> {
     if let result = PyStaticCall.__invert__(self, object: object) {
-      return .value(result)
+      return result
     }
 
     return self.callUnaryMethod(object: object,
@@ -51,7 +51,7 @@ extension Py {
   /// PyObject * PyNumber_Absolute(PyObject *o)
   public func abs(object: PyObject) -> PyResult<PyObject> {
     if let result = PyStaticCall.__abs__(self, object: object) {
-      return .value(result)
+      return result
     }
 
     return self.callUnaryMethod(object: object,

@@ -885,7 +885,10 @@ public struct PyComplex: PyObjectMixin {
 
   private static func callComplex(_ py: Py, object: PyObject) -> Py.CallMethodResult {
     if let result = PyStaticCall.__complex__(py, object: object) {
-      return .value(result)
+      switch result {
+      case let .value(o): return .value(o)
+      case let .error(e): return .error(e)
+      }
     }
 
     return py.callMethod(object: object, selector: .__complex__)

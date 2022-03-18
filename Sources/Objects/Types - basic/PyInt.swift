@@ -1220,21 +1220,14 @@ public struct PyInt: PyObjectMixin {
                                   object: PyObject) -> NumberConverterResult {
     if let result = PyStaticCall.__int__(py, object: object) {
       switch result {
-      case let .value(int): return .value(int)
+      case let .value(o): return Self.interpret__int__(py, object: o)
       case let .error(e): return .error(e)
       }
     }
 
     switch py.callMethod(object: object, selector: .__int__) {
     case .value(let o):
-      guard let int = py.cast.asInt(o) else {
-        let message = "__int__ returned non-int (type \(o.typeName)"
-        let error = py.newTypeError(message: message)
-        return .error(error.asBaseException)
-      }
-
-      return .value(int)
-
+      return Self.interpret__int__(py, object: o)
     case .missingMethod:
       return .missingMethod
     case .error(let e),
@@ -1243,31 +1236,46 @@ public struct PyInt: PyObjectMixin {
     }
   }
 
+  private static func interpret__int__(_ py: Py,
+                                       object: PyObject) -> NumberConverterResult {
+    guard let int = py.cast.asInt(object) else {
+      let message = "__int__ returned non-int (type \(object.typeName)"
+      let error = py.newTypeError(message: message)
+      return .error(error.asBaseException)
+    }
+
+    return .value(int)
+  }
+
   private static func call__trunc__(_ py: Py,
                                     object: PyObject) -> NumberConverterResult {
     if let result = PyStaticCall.__trunc__(py, object: object) {
       switch result {
-      case let .value(int): return .value(int)
+      case let .value(o): return Self.interpret__trunc__(py, object: o)
       case let .error(e): return .error(e)
       }
     }
 
     switch py.callMethod(object: object, selector: .__trunc__) {
     case .value(let o):
-      if let int = py.cast.asInt(o) {
-        return .value(int)
-      }
-
-      let message = "__trunc__ returned non-Integral (type \(o.typeName))"
-      let error = py.newTypeError(message: message)
-      return .error(error.asBaseException)
-
+      return Self.interpret__trunc__(py, object: o)
     case .missingMethod:
       return .missingMethod
     case .error(let e),
          .notCallable(let e):
       return .error(e)
     }
+  }
+
+  private static func interpret__trunc__(_ py: Py,
+                                         object: PyObject) -> NumberConverterResult {
+    guard let int = py.cast.asInt(object) else {
+      let message = "__trunc__ returned non-Integral (type \(object.typeName))"
+      let error = py.newTypeError(message: message)
+      return .error(error.asBaseException)
+    }
+
+    return .value(int)
   }
 
   private enum NewFromStringResult {
