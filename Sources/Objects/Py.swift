@@ -49,8 +49,9 @@ public struct Py {
   // sourcery: storedProperty
   /// Cached `str` instances, so that we don't create common instances multiple times.
   private var internedStrings: [UseScalarsToHashString: PyString] {
-    get { self.internedStringsPtr.pointee }
-    nonmutating set { self.internedStringsPtr.pointee = newValue }
+    // We could go with the usual 'nonmutating _modify/set',
+    // but we will going to mutate it in only 1 place, so it is not worth it.
+    self.internedStringsPtr.pointee
   }
 
   // MARK: - Modules
@@ -121,13 +122,13 @@ public struct Py {
               fileSystem: PyFileSystem) {
     checkInvariants()
 
-    let memory = PyMemory()
-    self.ptr = memory.allocatePy()
+    self.ptr = PyMemory.allocatePy()
     
     self.configPtr.initialize(to: config)
     self.delegatePtr.initialize(to: delegate)
     self.fileSystemPtr.initialize(to: fileSystem)
 
+    let memory = PyMemory()
     let hasher = Hasher(key0: config.hashKey0, key1: config.hashKey1)
     self.memoryPtr.initialize(to: memory)
     self.hasherPtr.initialize(to: hasher)
@@ -169,7 +170,9 @@ public struct Py {
     let internedInts = Self.internedIntRange.map { int in
       memory.newInt(self, type: types.int, value: BigInt(int))
     }
+
     self.internedIntsPtr.initialize(to: internedInts)
+    self.internedStringsPtr.initialize(to: [:])
 
     // Modules:
     self.builtinsPtr.initialize(to: Builtins(self))
@@ -197,10 +200,9 @@ public struct Py {
 
   /// Destroy a `Py` instance.
   ///
-  /// After calling this method nothing will work! (And that 'ok'.)
+  /// After calling this method nothing will work! (And that's 'ok'.)
   public func destroy() {
-    let memory = self.memory
-    memory.destroyPy(self) // Bye!
+    PyMemory.destroyPy(self) // Bye!
   }
 
   // MARK: - Intern integers
@@ -275,7 +277,7 @@ public struct Py {
     }
 
     let str = self.newString(string)
-    self.internedStrings[key] = str
+    self.internedStringsPtr.pointee[key] = str
     return str
   }
 }

@@ -1,28 +1,38 @@
 // swiftlint:disable fatal_error_message
 // swiftlint:disable unavailable_function
 
-public struct PyMemory {
+public final class PyMemory {
 
-  // MARK: - Allocate
-
-  internal func allocatePy() -> RawPtr {
-    let size = Py.layout.size
-    let alignment = Py.layout.alignment
-    return RawPtr.allocate(byteCount: size, alignment: alignment)
-  }
+  // MARK: - Object
 
   public func allocate(size: Int, alignment: Int) -> RawPtr {
     assert(size >= PyObject.layout.size)
     return RawPtr.allocate(byteCount: size, alignment: alignment)
   }
 
-  // MARK: - Destroy
+  public func destroy(object: PyObject) {
+    let ptr = object.ptr
 
-  internal func destroyPy(_ py: Py) {
+    let deinitialize = object.type.deinitialize
+    deinitialize(ptr)
+
+    object.ptr.deallocate()
+  }
+
+  // MARK: - Py
+
+  internal static func allocatePy() -> RawPtr {
+    let size = Py.layout.size
+    let alignment = Py.layout.alignment
+    return RawPtr.allocate(byteCount: size, alignment: alignment)
+  }
+
+  internal static func destroyPy(_ py: Py) {
     // 1. allObjects.deinitialize
-    // 2. py.deinitializeNonObjectProperties (but not memory - this one in 'py')
-    // 3. allObjects.deallocate()
-    // 4. py.deallocate()
+    // 2. allObjects.deallocate()
+
+    py.deinitialize()
+    py.ptr.deallocate()
   }
 
   // MARK: - Generic layout
