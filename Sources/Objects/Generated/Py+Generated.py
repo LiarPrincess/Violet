@@ -1,6 +1,6 @@
-from typing import List, Optional
-from Helpers import NewTypeArguments, generated_warning
-from Sourcery import PyInfo, get_py_info
+from typing import List
+from Helpers import generated_warning
+from Sourcery import get_py_info
 
 class PropertyInLayout:
     def __init__(self, swift_name: str, swift_type: str):
@@ -91,5 +91,21 @@ if __name__ == '__main__':
         print(f'  /// Property: `Py.{p.swift_name}`.')
         print(f'  internal var {p.pointer_property_name}: Ptr<{p.swift_type}> {{ Ptr(self.ptr, offset: Self.layout.{p.layout_offset_property_name}) }}')
 
-    print('}')
     print()
+
+    # ====================
+    # === Deinitialize ===
+    # ====================
+
+    print(f'  internal func deinitialize() {{')
+
+    for p in layout_properties:
+        print(f'    self.{p.pointer_property_name}.deinitialize()')
+
+    print('  }')
+
+    # ===========
+    # === End ===
+    # ===========
+
+    print('}')

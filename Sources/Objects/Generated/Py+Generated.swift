@@ -185,5 +185,36 @@ extension Py {
   internal var castPtr: Ptr<PyCast> { Ptr(self.ptr, offset: Self.layout.castOffset) }
   /// Property: `Py.hasher`.
   internal var hasherPtr: Ptr<Hasher> { Ptr(self.ptr, offset: Self.layout.hasherOffset) }
-}
 
+  internal func deinitialize() {
+    self.truePtr.deinitialize()
+    self.falsePtr.deinitialize()
+    self.nonePtr.deinitialize()
+    self.notImplementedPtr.deinitialize()
+    self.ellipsisPtr.deinitialize()
+    self.emptyTuplePtr.deinitialize()
+    self.emptyStringPtr.deinitialize()
+    self.emptyBytesPtr.deinitialize()
+    self.emptyFrozenSetPtr.deinitialize()
+    self.internedIntsPtr.deinitialize()
+    self.internedStringsPtr.deinitialize()
+    self.builtinsPtr.deinitialize()
+    self.sysPtr.deinitialize()
+    self._impPtr.deinitialize()
+    self._warningsPtr.deinitialize()
+    self._osPtr.deinitialize()
+    self.builtinsModulePtr.deinitialize()
+    self.sysModulePtr.deinitialize()
+    self._impModulePtr.deinitialize()
+    self._warningsModulePtr.deinitialize()
+    self._osModulePtr.deinitialize()
+    self.typesPtr.deinitialize()
+    self.errorTypesPtr.deinitialize()
+    self.configPtr.deinitialize()
+    self.delegatePtr.deinitialize()
+    self.fileSystemPtr.deinitialize()
+    self.memoryPtr.deinitialize()
+    self.castPtr.deinitialize()
+    self.hasherPtr.deinitialize()
+  }
+}
