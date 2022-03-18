@@ -5,8 +5,7 @@ from Helpers.StaticMethod import ALL_STATIC_METHODS
 from Helpers.PyTypeDefinition_helpers import (
     get_property_name,
     get_property_name_escaped,
-    get_static_methods_property_name,
-    get_layout_property_name
+    get_static_methods_property_name
 )
 
 STATIC_METHOD_NAMES = map(lambda m: m.name, ALL_STATIC_METHODS)
@@ -76,7 +75,7 @@ class PyTypeDefinition:
         bases: {bases},
         mroWithoutSelf: {mro},
         subclasses: [],
-        layout: {args.layout_property},
+        instanceSizeWithoutTail: {args.size_without_tail},
         staticMethods: {args.static_methods_property},
         debugFn: {args.debugFn},
         deinitialize: {args.deinitialize}
@@ -266,11 +265,3 @@ class PyTypeDefinition:
     def print_static_methods(self):
         property_name = get_static_methods_property_name(self.t.swift_type_name)
         print(f'    internal static let {property_name} = PyStaticCall.KnownNotOverriddenMethods()')
-
-    # ==============
-    # === Layout ===
-    # ==============
-
-    def print_memory_layout(self):
-        property_name = get_layout_property_name(self.t.swift_type_name)
-        print(f'    internal static let {property_name} = PyType.MemoryLayout()')

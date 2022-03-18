@@ -59,9 +59,22 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   internal var subclasses: [PyType] { self.subclassesPtr.pointee }
 
   // sourcery: storedProperty
-  /// Swift storage (layout).
-  /// See `PyType.MemoryLayout` documentation for details.
-  internal var layout: MemoryLayout { self.layoutPtr.pointee }
+  /// Amount of memory taken by a single instance not counting any (optional)
+  /// tail allocation.
+  ///
+  /// This is needed when looking for `solid base` when creating a new type.
+  ///
+  /// Example for `SystemExit`:
+  /// - base class `object` has: `type`, `__dict__` and `flags` stored properties.
+  /// - base class `BaseException` has `args` (and other) stored properties.
+  /// - `SystemExit` has `code` stored property.
+  ///
+  /// If we want to create `MyException(BaseException, SystemExit, object)`
+  /// we have to use `SystemExit` because it adds new properties to `BaseException`
+  /// and `object` (in other words: it has the biggest size).
+  internal var instanceSizeWithoutTail: Int {
+    self.instanceSizeWithoutTailPtr.pointee
+  }
 
   // sourcery: storedProperty
   /// Methods needed to make `PyStaticCall` work.
@@ -102,7 +115,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
                            bases: [PyType],
                            mroWithoutSelf: [PyType],
                            subclasses: [PyType],
-                           layout: PyType.MemoryLayout,
+                           instanceSizeWithoutTail: Int,
                            staticMethods: PyStaticCall.KnownNotOverriddenMethods,
                            debugFn: @escaping PyType.DebugFn,
                            deinitialize: @escaping PyType.DeinitializeFn) {
@@ -118,7 +131,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     self.basesPtr.initialize(to: bases)
     self.mroPtr.initialize(to: mro)
     self.subclassesPtr.initialize(to: subclasses)
-    self.layoutPtr.initialize(to: layout)
+    self.instanceSizeWithoutTailPtr.initialize(to: instanceSizeWithoutTail)
     self.staticMethodsPtr.initialize(to: staticMethods)
     self.debugFnPtr.initialize(to: debugFn)
     self.deinitializePtr.initialize(to: deinitialize)

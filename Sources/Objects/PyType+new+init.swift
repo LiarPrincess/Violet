@@ -195,7 +195,7 @@ extension PyType {
       bases: mro.baseClasses,
       mroWithoutSelf: mro.resolutionOrder,
       subclasses: [],
-      layout: base.layout,
+      instanceSizeWithoutTail: base.instanceSizeWithoutTail,
       staticMethods: staticMethods,
       debugFn: base.debugFn,
       deinitialize: base.deinitialize
@@ -295,11 +295,15 @@ extension PyType {
   /// Solid base - traverse class hierarchy (from derived to base)
   /// until we reach something with defined layout.
   ///
-  /// For example:
-  ///   Given:   Bool -> Int -> Object
-  ///   Returns: Int layout
-  ///   Reason: 'Bool' and 'Int' have the same layout (single BigInt property),
-  ///            but 'Int' and 'Object' have different layouts.
+  /// Example for `bool`:
+  /// - base class `object` has: `type`, `__dict__` and `flags` stored properties.
+  /// - base class `int` has `value` stored property.
+  /// - `bool` has no stored properties.
+  ///
+  /// Result: `int`.
+  /// `bool` and `int` have the same layout (`bool` does not add any new
+  /// properties to `int`).
+  /// `Int` and `Object` have different layouts, and `int` is the most specific one.
   ///
   /// static PyTypeObject *
   /// best_base(PyObject *bases)
@@ -307,28 +311,41 @@ extension PyType {
     assert(bases.any)
 
     var result: PyType?
-
     for candidate in bases {
       guard let currentResult = result else {
         result = candidate
         continue
       }
 
-      let layout = candidate.layout
-      if layout.isEqual(to: currentResult.layout) {
-        // do nothing…
-        // class A(int): pass
-        // class B(int): pass
-        // class C(A, B): pass <- equal layout of A and B
-      } else if layout.isAddingNewProperties(to: currentResult.layout) {
-        result = candidate
-      } else if currentResult.layout.isAddingNewProperties(to: layout) {
-        // nothing, 'currentResult' has already more fields
-      } else {
-        // we are in different 'branches' of layout hierarchy
-        let message = "multiple bases have instance lay-out conflict"
-        return .typeError(py, message: message)
+      if candidate.isSubtype(of: currentResult) {
+        let candidateSize = candidate.instanceSizeWithoutTail
+        let resultSize = currentResult.instanceSizeWithoutTail
+
+        if candidateSize == resultSize {
+          // Do nothing…
+          // class A(int): pass
+          // class B(int): pass
+          // class C(A, B): pass <- equal layout of A and B
+        } else if candidateSize > resultSize {
+          // 'candidate' has more fields.
+          result = candidate
+        } else { // resultSize > candidateSize
+          let candidateName = candidate.name
+          let resultName = currentResult.name
+          trap("'\(candidateName)' is a subclass of '\(resultName)' but it is smaller?")
+        }
+
+        continue
       }
+
+      if currentResult.isSubtype(of: candidate) {
+        // Nothing, 'result' has already more fields
+        continue
+      }
+
+      // We are in different 'branches' of layout hierarchy
+      let message = "multiple bases have instance lay-out conflict"
+      return .typeError(py, message: message)
     }
 
     // We can force unwrap because we checked 'bases.any' at the top.

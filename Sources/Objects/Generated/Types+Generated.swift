@@ -53,7 +53,7 @@ extension PyMemory {
                           bases: [],
                           mroWithoutSelf: [],
                           subclasses: [],
-                          layout: Py.Types.objectMemoryLayout,
+                          instanceSizeWithoutTail: PyObject.layout.size,
                           staticMethods: Py.Types.objectStaticMethods,
                           debugFn: PyObject.createDebugString(ptr:),
                           deinitialize: PyObject.deinitialize(ptr:))
@@ -67,7 +67,7 @@ extension PyMemory {
                         bases: [objectType],
                         mroWithoutSelf: [objectType],
                         subclasses: [],
-                        layout: Py.Types.typeMemoryLayout,
+                        instanceSizeWithoutTail: PyType.layout.size,
                         staticMethods: Py.Types.typeStaticMethods,
                         debugFn: PyType.createDebugString(ptr:),
                         deinitialize: PyType.deinitialize(ptr:))
@@ -6040,7 +6040,7 @@ extension PyType {
     internal let basesOffset: Int
     internal let mroOffset: Int
     internal let subclassesOffset: Int
-    internal let layoutOffset: Int
+    internal let instanceSizeWithoutTailOffset: Int
     internal let staticMethodsOffset: Int
     internal let debugFnOffset: Int
     internal let deinitializeOffset: Int
@@ -6058,7 +6058,7 @@ extension PyType {
           PyMemory.FieldLayout(from: [PyType].self), // PyType.bases
           PyMemory.FieldLayout(from: [PyType].self), // PyType.mro
           PyMemory.FieldLayout(from: [PyType].self), // PyType.subclasses
-          PyMemory.FieldLayout(from: MemoryLayout.self), // PyType.layout
+          PyMemory.FieldLayout(from: Int.self), // PyType.instanceSizeWithoutTail
           PyMemory.FieldLayout(from: PyStaticCall.KnownNotOverriddenMethods.self), // PyType.staticMethods
           PyMemory.FieldLayout(from: DebugFn.self), // PyType.debugFn
           PyMemory.FieldLayout(from: DeinitializeFn.self) // PyType.deinitialize
@@ -6072,7 +6072,7 @@ extension PyType {
       self.basesOffset = layout.offsets[3]
       self.mroOffset = layout.offsets[4]
       self.subclassesOffset = layout.offsets[5]
-      self.layoutOffset = layout.offsets[6]
+      self.instanceSizeWithoutTailOffset = layout.offsets[6]
       self.staticMethodsOffset = layout.offsets[7]
       self.debugFnOffset = layout.offsets[8]
       self.deinitializeOffset = layout.offsets[9]
@@ -6102,8 +6102,8 @@ extension PyType {
   internal var mroPtr: Ptr<[PyType]> { Ptr(self.ptr, offset: Self.layout.mroOffset) }
   /// Property: `PyType.subclasses`.
   internal var subclassesPtr: Ptr<[PyType]> { Ptr(self.ptr, offset: Self.layout.subclassesOffset) }
-  /// Property: `PyType.layout`.
-  internal var layoutPtr: Ptr<MemoryLayout> { Ptr(self.ptr, offset: Self.layout.layoutOffset) }
+  /// Property: `PyType.instanceSizeWithoutTail`.
+  internal var instanceSizeWithoutTailPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.instanceSizeWithoutTailOffset) }
   /// Property: `PyType.staticMethods`.
   internal var staticMethodsPtr: Ptr<PyStaticCall.KnownNotOverriddenMethods> { Ptr(self.ptr, offset: Self.layout.staticMethodsOffset) }
   /// Property: `PyType.debugFn`.
@@ -6140,7 +6140,7 @@ extension PyType {
     zelf.basesPtr.deinitialize()
     zelf.mroPtr.deinitialize()
     zelf.subclassesPtr.deinitialize()
-    zelf.layoutPtr.deinitialize()
+    zelf.instanceSizeWithoutTailPtr.deinitialize()
     zelf.staticMethodsPtr.deinitialize()
     zelf.debugFnPtr.deinitialize()
     zelf.deinitializePtr.deinitialize()
@@ -6177,7 +6177,7 @@ extension PyMemory {
                       bases: [PyType],
                       mroWithoutSelf: [PyType],
                       subclasses: [PyType],
-                      layout: PyType.MemoryLayout,
+                      instanceSizeWithoutTail: Int,
                       staticMethods: PyStaticCall.KnownNotOverriddenMethods,
                       debugFn: @escaping PyType.DebugFn,
                       deinitialize: @escaping PyType.DeinitializeFn) -> PyType {
@@ -6194,7 +6194,7 @@ extension PyMemory {
                       bases: bases,
                       mroWithoutSelf: mroWithoutSelf,
                       subclasses: subclasses,
-                      layout: layout,
+                      instanceSizeWithoutTail: instanceSizeWithoutTail,
                       staticMethods: staticMethods,
                       debugFn: debugFn,
                       deinitialize: deinitialize)

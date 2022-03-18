@@ -11,7 +11,7 @@ extension Py {
                       flags: PyType.TypeFlags,
                       base: PyType,
                       mro: MethodResolutionOrder,
-                      layout: PyType.MemoryLayout,
+                      instanceSizeWithoutTail: Int,
                       staticMethods: PyStaticCall.KnownNotOverriddenMethods,
                       debugFn: @escaping PyType.DebugFn,
                       deinitialize: @escaping PyType.DeinitializeFn) -> PyType {
@@ -25,7 +25,7 @@ extension Py {
                                bases: mro.baseClasses,
                                mroWithoutSelf: mro.resolutionOrder,
                                subclasses: [],
-                               layout: layout,
+                               instanceSizeWithoutTail: instanceSizeWithoutTail,
                                staticMethods: staticMethods,
                                debugFn: debugFn,
                                deinitialize: deinitialize)

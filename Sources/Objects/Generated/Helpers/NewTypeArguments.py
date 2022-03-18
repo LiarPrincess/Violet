@@ -1,6 +1,6 @@
 from typing import List, Optional
 from Sourcery import TypeInfo
-from Helpers.PyTypeDefinition_helpers import get_layout_property_name, get_static_methods_property_name
+from Helpers.PyTypeDefinition_helpers import get_static_methods_property_name
 
 class NewTypeArguments:
     'Arguments to provide when calling py.memory.newType(THIS)'
@@ -22,11 +22,9 @@ class NewTypeArguments:
             self.base = self.mro_without_self[0]
 
         swift_name = t.swift_type_name
+        self.size_without_tail: str = f'{swift_name}.layout.size'
+
         container_type = 'Py.ErrorTypes' if t.is_error else 'Py.Types'
-
-        layout_property = get_layout_property_name(swift_name)
-        self.layout_property: str = f'{container_type}.{layout_property}'
-
         static_methods_property = get_static_methods_property_name(swift_name)
         self.static_methods_property: str = f'{container_type}.{static_methods_property}'
 
