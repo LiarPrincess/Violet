@@ -37,6 +37,7 @@ public final class PyMemory {
 
   // MARK: - Generic layout
 
+  /// Input for `GenericLayout.init`.``
   public struct FieldLayout {
     public let size: Int
     public let alignment: Int
@@ -50,12 +51,45 @@ public final class PyMemory {
   /// See this:
   /// https://belkadan.com/blog/2020/09/Swift-Runtime-Type-Layout/
   public struct GenericLayout {
-    public let size: Int
-    public let alignment: Int
-    public let offsets: [Int]
+    public private(set) var size: Int
+    public private(set) var alignment: Int
+    public private(set) var offsets: [Int]
 
     public init(initialOffset: Int, initialAlignment: Int, fields: [FieldLayout]) {
-      fatalError()
+      self.size = initialOffset
+      self.alignment = initialAlignment
+
+      self.offsets = [Int]()
+      offsets.reserveCapacity(fields.count)
+
+      for field in fields {
+        self.size += Self.round(self.size, alignment: field.alignment)
+        self.offsets.append(self.size)
+        self.size += field.size
+        self.alignment = Swift.max(self.alignment, field.alignment)
+      }
+
+      // Technically we could round up the 'self.size' to 'self.alignment',
+      // but by not doing so we can safe some memory (maybe).
+      //
+      // Example for 'PyObject' on 64-bit:
+      // - alignment: 8
+      // - last field size: 4 (flags: UInt32, other fields are 8)
+      //
+      // If we align the 'PyObject' then we will get a hole with size 4 after last
+      // field. But what if the next field has size 4? We could have used this hole!
+      //
+      // In C they would align. This is because of 'taking-pointers-to-nested-structs'
+      // and 'other-complicated-things'.
+      // In Swift they would not align (afaik) - just like we do. This makes
+      // certaing operations illegal, but potentially saves memory.
+    }
+
+    private static func round(_ value: Int, alignment: Int) -> Int {
+      var result = value
+      result += alignment &- 1
+      result &-= result % alignment
+      return result
     }
   }
 }
