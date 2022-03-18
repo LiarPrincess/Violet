@@ -671,7 +671,7 @@ extension PyType {
                                  args: [PyObject],
                                  kwargs: PyDict?) -> PyResult<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf)
+      return Self.invalidZelfArgument(py, zelf, "__init__")
     }
 
     if let kwargs = kwargs {

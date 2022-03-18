@@ -666,20 +666,26 @@ extension Py {
   }
 
   // MARK: - Indentation error
-/*
+
   // swiftlint:disable:next function_parameter_count
   public func newIndentationError(message: String?,
                                   filename: String?,
                                   lineno: BigInt?,
                                   offset: BigInt?,
                                   text: String?,
-                                  printFileAndLine: PyObject?) -> PyIndentationError {
-    return PyMemory.newIndentationError(msg: msg,
-                                        filename: filename,
-                                        lineno: lineno,
-                                        offset: offset,
-                                        text: text,
-                                        printFileAndLine: printFileAndLine)
+                                  printFileAndLine: Bool?) -> PyIndentationError {
+    let _message = message.map(self.newString(_:))
+    let _filename = filename.map(self.newString(_:))
+    let _lineno = lineno.map(self.newInt(_:))
+    let _offset = offset.map(self.newInt(_:))
+    let _text = text.map(self.newString(_:))
+    let _printFileAndLine = printFileAndLine.map(self.newBool(_:))
+    return self.newIndentationError(message: _message,
+                                    filename: _filename,
+                                    lineno: _lineno,
+                                    offset: _offset,
+                                    text: _text,
+                                    printFileAndLine: _printFileAndLine)
   }
 
   // swiftlint:disable:next function_parameter_count
@@ -688,15 +694,18 @@ extension Py {
                                   lineno: PyInt?,
                                   offset: PyInt?,
                                   text: PyString?,
-                                  printFileAndLine: PyObject?) -> PyIndentationError {
-    return PyMemory.newIndentationError(msg: msg,
-                                        filename: filename,
-                                        lineno: lineno,
-                                        offset: offset,
-                                        text: text,
-                                        printFileAndLine: printFileAndLine)
+                                  printFileAndLine: PyBool?) -> PyIndentationError {
+    let type = self.errorTypes.indentationError
+    return self.memory.newIndentationError(self,
+                                           type: type,
+                                           msg: message?.asObject,
+                                           filename: filename?.asObject,
+                                           lineno: lineno?.asObject,
+                                           offset: offset?.asObject,
+                                           text: text?.asObject,
+                                           printFileAndLine: printFileAndLine?.asObject)
   }
-*/
+
   // MARK: - Keyboard interrupt
 
   public func newKeyboardInterrupt() -> PyKeyboardInterrupt {
