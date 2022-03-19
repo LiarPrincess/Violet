@@ -229,7 +229,7 @@ public struct PyTraceback: PyObjectMixin {
 
   // MARK: - Python new
 
-  private static let newArguments = ArgumentParser(
+  private static let newArguments = ArgumentParser.createOrTrap(
     arguments: ["tb_next", "tb_frame", "tb_lasti", "tb_lineno"],
     format: "OOii:TracebackType"
   )

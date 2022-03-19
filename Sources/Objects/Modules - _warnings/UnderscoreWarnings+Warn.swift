@@ -4,7 +4,7 @@ import VioletCore
 // Python -> _warnings.c
 // https://docs.python.org/3/library/warnings.html#warnings.warn
 
-private let arguments = ArgumentParser(
+private let arguments = ArgumentParser.createOrTrap(
   arguments: ["message", "category", "stacklevel", "source"],
   format: "O|OOO:warn"
 )

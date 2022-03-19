@@ -218,7 +218,7 @@ public struct PyImportError: PyErrorMixin {
 
   // MARK: - Python init
 
-  private static let initArguments = ArgumentParser(
+  private static let initArguments = ArgumentParser.createOrTrap(
     arguments: ["name", "path"],
     format: "|$OO:ImportError"
   )

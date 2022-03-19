@@ -521,7 +521,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
     Stable sort *IN PLACE*.
     """
 
-  private static let sortArguments = ArgumentParser(
+  private static let sortArguments = ArgumentParser.createOrTrap(
     arguments: ["key", "reverse"],
     format: "|$OO:sort"
   )

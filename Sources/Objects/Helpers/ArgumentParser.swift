@@ -75,13 +75,31 @@ internal struct ArgumentParser {
     return self.positionalOnlyArgCount + self.keywordArgNames.count
   }
 
-  internal init(arguments: [String], format: String) {
+  private init(fnName: String,
+               requiredArgCount: Int,
+               positionalOnlyArgCount: Int,
+               maxPositionalArgCount: Int,
+               keywordArgNames: [String]) {
+    self.fnName = fnName
+    self.requiredArgCount = requiredArgCount
+    self.positionalOnlyArgCount = positionalOnlyArgCount
+    self.maxPositionalArgCount = maxPositionalArgCount
+    self.keywordArgNames = keywordArgNames
+  }
+
+  internal enum CreateResult {
+    case value(ArgumentParser)
+    case error(String)
+  }
+
+  internal static func create(arguments: [String],
+                              format: String) -> CreateResult {
     let name: String
     switch ArgumentParser.extractFunctionName(format: format) {
     case let .value(n):
       name = n
     case let .error(message):
-      trap("\(format): \(message)")
+      return .error(message)
     }
 
     let firstKeywordArgIndex = arguments.firstIndex { !$0.isEmpty }
@@ -92,7 +110,7 @@ internal struct ArgumentParser {
       keywordArgumentNames = Array(arguments[keywordStart...])
       let hasKeywordWithoutName = keywordArgumentNames.contains { $0.isEmpty }
       if hasKeywordWithoutName {
-        trap("\(format): Empty keyword parameter name")
+        return .error("Empty keyword parameter name")
       }
     }
 
@@ -105,14 +123,28 @@ internal struct ArgumentParser {
       minArgCount = min
       maxPositionalArgCount = max
     case let .error(message):
-      trap("\(format): \(message)")
+      return .error(message)
     }
 
-    self.fnName = name
-    self.requiredArgCount = min(minArgCount, arguments.count)
-    self.positionalOnlyArgCount = positionalArgCount
-    self.maxPositionalArgCount = min(maxPositionalArgCount, arguments.count)
-    self.keywordArgNames = keywordArgumentNames
+    let result = ArgumentParser(
+      fnName: name,
+      requiredArgCount: min(minArgCount, arguments.count),
+      positionalOnlyArgCount: positionalArgCount,
+      maxPositionalArgCount: min(maxPositionalArgCount, arguments.count),
+      keywordArgNames: keywordArgumentNames
+    )
+
+    return .value(result)
+  }
+
+  internal static func createOrTrap(arguments: [String],
+                                    format: String) -> ArgumentParser {
+    switch Self.create(arguments: arguments, format: format) {
+    case let .value(parser):
+      return parser
+    case let .error(message):
+      trap(message)
+    }
   }
 
   private enum FunctionNameResult {

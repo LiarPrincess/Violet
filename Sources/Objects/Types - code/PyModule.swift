@@ -322,7 +322,7 @@ public struct PyModule: PyObjectMixin {
 
   // MARK: - Python init
 
-  private static let initArguments = ArgumentParser(
+  private static let initArguments = ArgumentParser.createOrTrap(
     arguments: ["name", "doc"],
     format: "U|O:module"
   )

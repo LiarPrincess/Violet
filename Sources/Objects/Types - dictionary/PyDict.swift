@@ -478,7 +478,7 @@ public struct PyDict: PyObjectMixin {
     Return the value for key if key is in the dictionary, else default.
     """
 
-  private static let getWithDefaultArguments = ArgumentParser(
+  private static let getWithDefaultArguments = ArgumentParser.createOrTrap(
     arguments: ["", "default"],
     format: "O|O:get"
   )
@@ -539,7 +539,7 @@ public struct PyDict: PyObjectMixin {
     Return the value for key if key is in the dictionary, else default.
     """
 
-  private static let setWithDefaultArguments = ArgumentParser(
+  private static let setWithDefaultArguments = ArgumentParser.createOrTrap(
     arguments: ["", "default"],
     format: "O|O:get"
   )

@@ -675,7 +675,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
 
   // MARK: - Python new
 
-  private static let newArguments = ArgumentParser(
+  private static let newArguments = ArgumentParser.createOrTrap(
     arguments: ["source", "encoding", "errors"],
     format: "|Oss:bytes"
   )

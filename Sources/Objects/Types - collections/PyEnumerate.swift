@@ -133,7 +133,7 @@ public struct PyEnumerate: PyObjectMixin {
         (0, seq[0]), (1, seq[1]), (2, seq[2]), ...
     """
 
-  private static let newArguments = ArgumentParser(
+  private static let newArguments = ArgumentParser.createOrTrap(
     arguments: ["iterable", "start"],
     format: "O|O:enumerate"
   )
