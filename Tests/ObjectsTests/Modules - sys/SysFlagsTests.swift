@@ -38,7 +38,7 @@ class SysFlagsTests: XCTestCase {
   }
 
   func test_bytesWarning() {
-    let presets: [BytesWarningOption] = [.ignore, .warning, .error]
+    let presets: [Arguments.BytesWarningOption] = [.ignore, .warning, .error]
 
     for value in presets {
       var args = Arguments()
