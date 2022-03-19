@@ -95,9 +95,15 @@ public struct PyTextFile: PyObjectMixin {
 
   // MARK: - Debug
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyTextFile(ptr: ptr)
-    return "PyTextFile(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "name", value: zelf.name as Any)
+    result.append(name: "fd", value: zelf.fd.raw)
+    result.append(name: "mode", value: zelf.mode)
+    result.append(name: "encoding", value: zelf.encoding)
+    result.append(name: "errorHandling", value: zelf.errorHandling)
+    return result
   }
 
   // MARK: - String

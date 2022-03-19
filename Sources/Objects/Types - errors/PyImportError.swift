@@ -95,9 +95,14 @@ public struct PyImportError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyImportError(ptr: ptr)
-    return "PyImportError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    result.append(name: "msg", value: zelf.msg as Any)
+    result.append(name: "moduleName", value: zelf.moduleName as Any)
+    result.append(name: "modulePath", value: zelf.modulePath as Any)
+    return result
   }
 
   // MARK: - Class

@@ -34,9 +34,11 @@ public struct PyZip: PyObjectMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyZip(ptr: ptr)
-    return "PyZip(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "iterators", value: zelf.iterators)
+    return result
   }
 
   // MARK: - Class

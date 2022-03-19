@@ -43,10 +43,12 @@ public struct PyList: PyObjectMixin, AbstractSequence {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyList(ptr: ptr)
-    let count = zelf.count
-    return "PyList(type: \(zelf.typeName), flags: \(zelf.flags), count: \(count))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "count", value: zelf.count, includeInShortDescription: true)
+    result.append(name: "elements", value: zelf.elements)
+    return result
   }
 
   // MARK: - AbstractSequence

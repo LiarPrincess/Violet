@@ -55,11 +55,13 @@ public struct PyEnumerate: PyObjectMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyEnumerate(ptr: ptr)
-    return "PyEnumerate(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "nextIndex", value: zelf.nextIndex, includeInShortDescription: true)
+    result.append(name: "iterator", value: zelf.iterator)
+    return result
   }
-
 
   // MARK: - Class
 

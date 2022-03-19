@@ -37,10 +37,12 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyTuple(ptr: ptr)
-    let count = zelf.count
-    return "PyTuple(type: \(zelf.typeName), flags: \(zelf.flags), count: \(count))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "count", value: zelf.count, includeInShortDescription: true)
+    result.append(name: "elements", value: zelf.elements)
+    return result
   }
 
   // MARK: - AbstractSequence

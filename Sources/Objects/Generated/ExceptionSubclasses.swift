@@ -51,9 +51,11 @@ public struct PyKeyboardInterrupt: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyKeyboardInterrupt(ptr: ptr)
-    return "PyKeyboardInterrupt(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -131,9 +133,11 @@ public struct PyGeneratorExit: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyGeneratorExit(ptr: ptr)
-    return "PyGeneratorExit(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -211,9 +215,11 @@ public struct PyException: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyException(ptr: ptr)
-    return "PyException(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -291,9 +297,11 @@ public struct PyStopAsyncIteration: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyStopAsyncIteration(ptr: ptr)
-    return "PyStopAsyncIteration(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -371,9 +379,11 @@ public struct PyArithmeticError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyArithmeticError(ptr: ptr)
-    return "PyArithmeticError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -451,9 +461,11 @@ public struct PyFloatingPointError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyFloatingPointError(ptr: ptr)
-    return "PyFloatingPointError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -531,9 +543,11 @@ public struct PyOverflowError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyOverflowError(ptr: ptr)
-    return "PyOverflowError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -611,9 +625,11 @@ public struct PyZeroDivisionError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyZeroDivisionError(ptr: ptr)
-    return "PyZeroDivisionError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -691,9 +707,11 @@ public struct PyAssertionError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyAssertionError(ptr: ptr)
-    return "PyAssertionError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -771,9 +789,11 @@ public struct PyAttributeError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyAttributeError(ptr: ptr)
-    return "PyAttributeError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -851,9 +871,11 @@ public struct PyBufferError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyBufferError(ptr: ptr)
-    return "PyBufferError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -931,9 +953,11 @@ public struct PyEOFError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyEOFError(ptr: ptr)
-    return "PyEOFError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -1033,9 +1057,11 @@ public struct PyModuleNotFoundError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyModuleNotFoundError(ptr: ptr)
-    return "PyModuleNotFoundError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -1113,9 +1139,11 @@ public struct PyLookupError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyLookupError(ptr: ptr)
-    return "PyLookupError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -1193,9 +1221,11 @@ public struct PyIndexError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyIndexError(ptr: ptr)
-    return "PyIndexError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -1273,9 +1303,11 @@ public struct PyMemoryError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyMemoryError(ptr: ptr)
-    return "PyMemoryError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -1353,9 +1385,11 @@ public struct PyNameError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyNameError(ptr: ptr)
-    return "PyNameError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -1433,9 +1467,11 @@ public struct PyUnboundLocalError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyUnboundLocalError(ptr: ptr)
-    return "PyUnboundLocalError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -1513,9 +1549,11 @@ public struct PyOSError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyOSError(ptr: ptr)
-    return "PyOSError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -1593,9 +1631,11 @@ public struct PyBlockingIOError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyBlockingIOError(ptr: ptr)
-    return "PyBlockingIOError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -1673,9 +1713,11 @@ public struct PyChildProcessError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyChildProcessError(ptr: ptr)
-    return "PyChildProcessError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -1753,9 +1795,11 @@ public struct PyConnectionError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyConnectionError(ptr: ptr)
-    return "PyConnectionError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -1833,9 +1877,11 @@ public struct PyBrokenPipeError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyBrokenPipeError(ptr: ptr)
-    return "PyBrokenPipeError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -1913,9 +1959,11 @@ public struct PyConnectionAbortedError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyConnectionAbortedError(ptr: ptr)
-    return "PyConnectionAbortedError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -1993,9 +2041,11 @@ public struct PyConnectionRefusedError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyConnectionRefusedError(ptr: ptr)
-    return "PyConnectionRefusedError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -2073,9 +2123,11 @@ public struct PyConnectionResetError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyConnectionResetError(ptr: ptr)
-    return "PyConnectionResetError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -2153,9 +2205,11 @@ public struct PyFileExistsError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyFileExistsError(ptr: ptr)
-    return "PyFileExistsError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -2233,9 +2287,11 @@ public struct PyFileNotFoundError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyFileNotFoundError(ptr: ptr)
-    return "PyFileNotFoundError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -2313,9 +2369,11 @@ public struct PyInterruptedError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyInterruptedError(ptr: ptr)
-    return "PyInterruptedError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -2393,9 +2451,11 @@ public struct PyIsADirectoryError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyIsADirectoryError(ptr: ptr)
-    return "PyIsADirectoryError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -2473,9 +2533,11 @@ public struct PyNotADirectoryError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyNotADirectoryError(ptr: ptr)
-    return "PyNotADirectoryError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -2553,9 +2615,11 @@ public struct PyPermissionError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyPermissionError(ptr: ptr)
-    return "PyPermissionError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -2633,9 +2697,11 @@ public struct PyProcessLookupError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyProcessLookupError(ptr: ptr)
-    return "PyProcessLookupError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -2713,9 +2779,11 @@ public struct PyTimeoutError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyTimeoutError(ptr: ptr)
-    return "PyTimeoutError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -2793,9 +2861,11 @@ public struct PyReferenceError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyReferenceError(ptr: ptr)
-    return "PyReferenceError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -2873,9 +2943,11 @@ public struct PyRuntimeError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyRuntimeError(ptr: ptr)
-    return "PyRuntimeError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -2953,9 +3025,11 @@ public struct PyNotImplementedError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyNotImplementedError(ptr: ptr)
-    return "PyNotImplementedError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -3033,9 +3107,11 @@ public struct PyRecursionError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyRecursionError(ptr: ptr)
-    return "PyRecursionError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -3141,9 +3217,11 @@ public struct PyIndentationError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyIndentationError(ptr: ptr)
-    return "PyIndentationError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -3249,9 +3327,11 @@ public struct PyTabError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyTabError(ptr: ptr)
-    return "PyTabError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -3332,9 +3412,11 @@ public struct PySystemError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PySystemError(ptr: ptr)
-    return "PySystemError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -3412,9 +3494,11 @@ public struct PyTypeError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyTypeError(ptr: ptr)
-    return "PyTypeError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -3492,9 +3576,11 @@ public struct PyValueError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyValueError(ptr: ptr)
-    return "PyValueError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -3572,9 +3658,11 @@ public struct PyUnicodeError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyUnicodeError(ptr: ptr)
-    return "PyUnicodeError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -3652,9 +3740,11 @@ public struct PyUnicodeDecodeError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyUnicodeDecodeError(ptr: ptr)
-    return "PyUnicodeDecodeError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -3732,9 +3822,11 @@ public struct PyUnicodeEncodeError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyUnicodeEncodeError(ptr: ptr)
-    return "PyUnicodeEncodeError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -3812,9 +3904,11 @@ public struct PyUnicodeTranslateError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyUnicodeTranslateError(ptr: ptr)
-    return "PyUnicodeTranslateError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -3892,9 +3986,11 @@ public struct PyWarning: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyWarning(ptr: ptr)
-    return "PyWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -3972,9 +4068,11 @@ public struct PyDeprecationWarning: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyDeprecationWarning(ptr: ptr)
-    return "PyDeprecationWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -4053,9 +4151,11 @@ public struct PyPendingDeprecationWarning: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyPendingDeprecationWarning(ptr: ptr)
-    return "PyPendingDeprecationWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -4133,9 +4233,11 @@ public struct PyRuntimeWarning: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyRuntimeWarning(ptr: ptr)
-    return "PyRuntimeWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -4213,9 +4315,11 @@ public struct PySyntaxWarning: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PySyntaxWarning(ptr: ptr)
-    return "PySyntaxWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -4293,9 +4397,11 @@ public struct PyUserWarning: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyUserWarning(ptr: ptr)
-    return "PyUserWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -4374,9 +4480,11 @@ public struct PyFutureWarning: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyFutureWarning(ptr: ptr)
-    return "PyFutureWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -4454,9 +4562,11 @@ public struct PyImportWarning: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyImportWarning(ptr: ptr)
-    return "PyImportWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -4535,9 +4645,11 @@ public struct PyUnicodeWarning: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyUnicodeWarning(ptr: ptr)
-    return "PyUnicodeWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -4616,9 +4728,11 @@ public struct PyBytesWarning: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyBytesWarning(ptr: ptr)
-    return "PyBytesWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__
@@ -4696,9 +4810,11 @@ public struct PyResourceWarning: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyResourceWarning(ptr: ptr)
-    return "PyResourceWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    return result
   }
 
   // sourcery: pyproperty = __class__

@@ -35,9 +35,12 @@ public struct PyMap: PyObjectMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyMap(ptr: ptr)
-    return "PyMap(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "iterators", value: zelf.iterators)
+    result.append(name: "fn", value: zelf.fn)
+    return result
   }
 
   // MARK: - Class

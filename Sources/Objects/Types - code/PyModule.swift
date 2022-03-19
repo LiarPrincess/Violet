@@ -49,29 +49,20 @@ public struct PyModule: PyObjectMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyModule(ptr: ptr)
-    return "PyModule(type: \(zelf.typeName), flags: \(zelf.flags))"
-  }
+    var result = PyObject.DebugMirror(object: zelf)
 
-//  public var customMirror: Mirror {
-//    let name = self.__dict__.get(id: .__name__)
-//    let doc = self.__dict__.get(id: .__doc__)
-//    let package = self.__dict__.get(id: .__package__)
-//    let loader = self.__dict__.get(id: .__loader__)
-//    let spec = self.__dict__.get(id: .__spec__)
-//
-//    return Mirror(
-//      self,
-//      children: [
-//        "name": name as Any,
-//        "doc": doc as Any,
-//        "package": package as Any,
-//        "loader": loader as Any,
-//        "spec": spec as Any
-//      ]
-//    )
-//  }
+    // We don't have 'py' to get all of the fancy stuff:
+    // let name = self.__dict__.get(id: .__name__)
+    // let doc = self.__dict__.get(id: .__doc__)
+    // let package = self.__dict__.get(id: .__package__)
+    // let loader = self.__dict__.get(id: .__loader__)
+    // let spec = self.__dict__.get(id: .__spec__)
+
+    result.append(name: "__dict__", value: zelf.__dict__)
+    return result
+  }
 
   // MARK: - Dict
 

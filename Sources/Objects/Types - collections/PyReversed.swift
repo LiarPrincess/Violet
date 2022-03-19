@@ -46,9 +46,12 @@ public struct PyReversed: PyObjectMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyReversed(ptr: ptr)
-    return "PyReversed(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "index", value: zelf.index)
+    result.append(name: "sequence", value: zelf.sequence)
+    return result
   }
 
   // MARK: - Class

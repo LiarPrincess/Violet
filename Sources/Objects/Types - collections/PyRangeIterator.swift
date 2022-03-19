@@ -42,9 +42,13 @@ public struct PyRangeIterator: PyObjectMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyRangeIterator(ptr: ptr)
-    return "PyRangeIterator(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "index", value: zelf.index, includeInShortDescription: true)
+    result.append(name: "start", value: zelf.start, includeInShortDescription: true)
+    result.append(name: "step", value: zelf.step, includeInShortDescription: true)
+    return result
   }
 
   // MARK: - Class

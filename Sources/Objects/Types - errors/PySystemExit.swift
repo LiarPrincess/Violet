@@ -76,9 +76,12 @@ public struct PySystemExit: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PySystemExit(ptr: ptr)
-    return "PySystemExit(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    result.append(name: "code", value: zelf.code as Any)
+    return result
   }
 
   // MARK: - Class

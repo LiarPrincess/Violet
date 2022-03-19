@@ -24,9 +24,9 @@ public struct PyNone: PyObjectMixin, HasCustomGetMethod {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyNone(ptr: ptr)
-    return "PyNone(type: \(zelf.typeName), flags: \(zelf.flags))"
+    return PyObject.DebugMirror(object: zelf)
   }
 
   // MARK: - String

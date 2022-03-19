@@ -129,9 +129,17 @@ public struct PySyntaxError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PySyntaxError(ptr: ptr)
-    return "PySyntaxError(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    result.append(name: "msg", value: zelf.msg as Any)
+    result.append(name: "filename", value: zelf.filename as Any)
+    result.append(name: "lineno", value: zelf.lineno as Any)
+    result.append(name: "offset", value: zelf.offset as Any)
+    result.append(name: "text", value: zelf.text as Any)
+    result.append(name: "printFileAndLine", value: zelf.printFileAndLine as Any)
+    return result
   }
 
   // MARK: - Class

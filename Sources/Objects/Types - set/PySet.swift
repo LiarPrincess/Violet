@@ -42,10 +42,12 @@ public struct PySet: PyObjectMixin, AbstractSet {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PySet(ptr: ptr)
-    let count = zelf.elements.count
-    return "PySet(type: \(zelf.typeName), flags: \(zelf.flags), count: \(count))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "count", value: zelf.count, includeInShortDescription: true)
+    result.append(name: "elements", value: zelf.elements)
+    return result
   }
 
   // MARK: - AbstractSet

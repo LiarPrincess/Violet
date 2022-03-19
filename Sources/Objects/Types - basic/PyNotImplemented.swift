@@ -24,9 +24,9 @@ public struct PyNotImplemented: PyObjectMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyNotImplemented(ptr: ptr)
-    return "PyNotImplemented(type: \(zelf.typeName), flags: \(zelf.flags))"
+    return PyObject.DebugMirror(object: zelf)
   }
 
   // MARK: - String

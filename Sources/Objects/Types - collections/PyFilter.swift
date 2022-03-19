@@ -35,9 +35,12 @@ public struct PyFilter: PyObjectMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyFilter(ptr: ptr)
-    return "PyFilter(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "iterator", value: zelf.iterator)
+    result.append(name: "fn", value: zelf.fn)
+    return result
   }
 
   // MARK: - Class

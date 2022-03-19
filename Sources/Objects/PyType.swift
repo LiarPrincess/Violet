@@ -28,7 +28,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
 
   // MARK: - Properties
 
-  public typealias DebugFn = (RawPtr) -> String
+  public typealias DebugFn = (RawPtr) -> PyObject.DebugMirror
   public typealias DeinitializeFn = (RawPtr) -> Void
 
   // sourcery: storedProperty
@@ -161,7 +161,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
                                   subclasses: [],
                                   instanceSizeWithoutTail: PyType.layout.size,
                                   staticMethods: Py.Types.typeStaticMethods,
-                                  debugFn: PyType.createDebugString(ptr:),
+                                  debugFn: PyType.createDebugInfo(ptr:),
                                   deinitialize: PyType.deinitialize(ptr:))
 
     objectType.initializeProperties(name: "object",
@@ -173,7 +173,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
                                     subclasses: [],
                                     instanceSizeWithoutTail: PyObject.layout.size,
                                     staticMethods: Py.Types.objectStaticMethods,
-                                    debugFn: PyObject.createDebugString(ptr:),
+                                    debugFn: PyObject.createDebugInfo(ptr:),
                                     deinitialize: PyObject.deinitialize(ptr:))
 
     objectType.subclassesPtr.pointee.append(typeType)
@@ -212,29 +212,18 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
 
   // MARK: - Debug
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyType(ptr: ptr)
-    return "PyType(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "name", value: zelf.name, includeInShortDescription: true)
+    result.append(name: "qualname", value: zelf.qualname, includeInShortDescription: true)
+    result.append(name: "typeFlags", value: zelf.typeFlags)
+    result.append(name: "base", value: zelf.base as Any)
+    result.append(name: "bases", value: zelf.bases)
+    result.append(name: "mro", value: zelf.mro)
+    result.append(name: "instanceSizeWithoutTail", value: zelf.instanceSizeWithoutTail)
+    return result
   }
-
-  // We use mirrors to create description.
-  //  public var customMirror: Mirror {
-  //    let base = self.base?.name ?? "nil"
-  //    let bases = self.bases.map { $0.name }
-  //    let mro = self.mro.map { $0.name }
-  //
-  //    return Mirror(
-  //      self,
-  //      children: [
-  //        "name": self.name,
-  //        "qualname": self.qualname,
-  //        "typeFlags": self.typeFlags,
-  //        "base": base,
-  //        "bases": bases,
-  //        "mro": mro
-  //      ]
-  //    )
-  //  }
 
   // MARK: - Name
 

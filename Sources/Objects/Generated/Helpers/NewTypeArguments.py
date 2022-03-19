@@ -28,7 +28,7 @@ class NewTypeArguments:
         static_methods_property = get_static_methods_property_name(swift_name)
         self.static_methods_property: str = f'{container_type}.{static_methods_property}'
 
-        self.debugFn: str = f'{swift_name}.createDebugString(ptr:)'
+        self.debugFn: str = f'{swift_name}.createDebugInfo(ptr:)'
         self.deinitialize: str = f'{swift_name}.deinitialize(ptr:)'
 
 def get_mro_without_self(type: TypeInfo) -> List[TypeInfo]:

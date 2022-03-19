@@ -40,9 +40,13 @@ public struct PyDictValueIterator: PyObjectMixin, AbstractDictViewIterator {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyDictValueIterator(ptr: ptr)
-    return "PyDictValueIterator(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "index", value: zelf.index, includeInShortDescription: true)
+    result.append(name: "count", value: zelf.dict.count, includeInShortDescription: true)
+    result.append(name: "dict", value: zelf.dict)
+    return result
   }
 
   // MARK: - Class

@@ -35,7 +35,7 @@ public struct OrderedDictionary<Value> {
     public let object: PyObject
 
     public var description: String {
-      return "OrderedDictionary.Key(hash: \(self.hash), object: \(self.object))"
+      return "Key(\(self.object))"
     }
 
     internal init(_ py: Py, id: IdString) {

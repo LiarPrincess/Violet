@@ -29,9 +29,12 @@ public struct PyDictItems: PyObjectMixin, AbstractDictView {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyDictItems(ptr: ptr)
-    return "PyDictItems(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "count", value: zelf.dict.count, includeInShortDescription: true)
+    result.append(name: "dict", value: zelf.dict)
+    return result
   }
 
   // MARK: - Equatable

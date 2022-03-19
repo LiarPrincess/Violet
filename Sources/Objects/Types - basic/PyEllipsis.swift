@@ -27,9 +27,9 @@ public struct PyEllipsis: PyObjectMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyEllipsis(ptr: ptr)
-    return "PyEllipsis(type: \(zelf.typeName), flags: \(zelf.flags))"
+    return PyObject.DebugMirror(object: zelf)
   }
 
   // MARK: - String
