@@ -706,9 +706,9 @@ public struct PyComplex: PyObjectMixin {
         return .typeError(py, message: "complex() can't take second arg if first is a string")
       }
 
-      switch Self.new(py, fromString: str.value) {
+      switch Self.new(fromString: str.value) {
       case let .value(raw): return Self.allocate(py, type: type, value: raw)
-      case let .error(e): return .error(e)
+      case let .valueError(message): return .valueError(py, message: message)
       }
     }
 
@@ -761,6 +761,11 @@ public struct PyComplex: PyObjectMixin {
     return PyResult(result)
   }
 
+  internal enum ParseStringResult {
+    case value(Raw)
+    case valueError(String)
+  }
+
   /// A valid complex string usually takes one of the three forms:
   /// - `<float>`                  - real part only
   /// - `<float>j`                 - imaginary part only
@@ -771,12 +776,12 @@ public struct PyComplex: PyObjectMixin {
   ///
   /// `<signed-float>` is any string of the form `<float>` whose first
   /// character is '+' or '-'
-  internal static func new(_ py: Py, fromString arg: String) -> PyResult<Raw> {
+  internal static func new(fromString arg: String) -> ParseStringResult {
     // swiftlint:disable:previous cyclomatic_complexity
 
     let s = arg.trimmingCharacters(in: .whitespacesAndNewlines)
     if s.isEmpty {
-      return .valueError(py, message: "complex() arg is a malformed string")
+      return .valueError("complex() arg is a malformed string")
     }
 
     var index = s.startIndex
@@ -790,12 +795,12 @@ public struct PyComplex: PyObjectMixin {
     }
 
     // Move to next '+-' (which would be end of real part)
-    while index != s.endIndex, !isAny(of: "+=j") {
+    while index != s.endIndex, !isAny(of: "+-j") {
       s.formIndex(after: &index)
     }
 
     guard let real = Double(s[..<index]) else {
-      return .valueError(py, message: "complex() '\(s)' cannot be interpreted as complex")
+      return .valueError("complex() '\(s)' cannot be interpreted as complex")
     }
 
     // complex('123') -> (123+0j)
@@ -807,7 +812,7 @@ public struct PyComplex: PyObjectMixin {
     if s[index] == "j" {
       s.formIndex(after: &index) // consume 'j'
       guard index == s.endIndex else {
-        return .valueError(py, message: "complex() arg is a malformed string")
+        return .valueError("complex() arg is a malformed string")
       }
 
       return .value(Raw(real: 0.0, imag: real))
@@ -821,16 +826,16 @@ public struct PyComplex: PyObjectMixin {
 
     // Missing 'j'
     if index == s.endIndex {
-      return .valueError(py, message: "complex() arg is a malformed string")
+      return .valueError("complex() arg is a malformed string")
     }
 
     guard let imag = Double(s[imagStart..<index]) else {
-      return .valueError(py, message: "complex() '\(s)' cannot be interpreted as complex")
+      return .valueError("complex() '\(s)' cannot be interpreted as complex")
     }
 
     s.formIndex(after: &index) // consume 'j'
     guard index == s.endIndex else {
-      return .valueError(py, message: "complex() arg is a malformed string")
+      return .valueError("complex() arg is a malformed string")
     }
 
     return .value(Raw(real: real, imag: imag))

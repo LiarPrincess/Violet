@@ -80,7 +80,7 @@ extension BinaryOp {
       if py.cast.isNotImplemented(result) {
         let leftType = left.typeName
         let rightType = right.typeName
-        var msg = "unsupported operand type(s) for \(op): \(leftType) and \(rightType)."
+        var msg = "unsupported operand type(s) for \(op): '\(leftType)' and '\(rightType)'"
 
         // For C++ programmers who try to `print << 'Elsa'`:
         if let fn = py.cast.asBuiltinFunction(left),
