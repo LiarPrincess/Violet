@@ -22,11 +22,11 @@ class FakeReadFileDescriptor: FileDescriptorType {
     shouldNotBeCalled()
   }
 
-  func write<T>(contentsOf data: T) -> PyResult<PyNone> where T: DataProtocol {
+  func write<T: DataProtocol>(contentsOf data: T) -> PyBaseException? {
     shouldNotBeCalled()
   }
 
-  func flush() -> PyResult<PyNone> {
+  func flush() -> PyBaseException? {
     shouldNotBeCalled()
   }
 
@@ -38,11 +38,11 @@ class FakeReadFileDescriptor: FileDescriptorType {
     shouldNotBeCalled()
   }
 
-  func seek(toOffset offset: UInt64) -> PyResult<PyNone> {
+  func seek(toOffset offset: UInt64) -> PyBaseException? {
     shouldNotBeCalled()
   }
 
-  func close() -> PyResult<PyNone> {
+  func close() -> PyBaseException? {
     shouldNotBeCalled()
   }
 }
