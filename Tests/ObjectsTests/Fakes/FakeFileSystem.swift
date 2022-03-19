@@ -15,19 +15,19 @@ class FakeFileSystem: PyFileSystem {
     shouldNotBeCalled()
   }
 
-  func stat(fd: Int32) -> PyFileSystem_StatResult {
+  func stat(fd: Int32) -> PyFileSystemStatResult {
     shouldNotBeCalled()
   }
 
-  func stat(path: Path) -> PyFileSystem_StatResult {
+  func stat(path: Path) -> PyFileSystemStatResult {
     shouldNotBeCalled()
   }
 
-  func readdir(fd: Int32) -> PyFileSystem_ReaddirResult {
+  func readdir(fd: Int32) -> PyFileSystemReaddirResult {
     shouldNotBeCalled()
   }
 
-  func readdir(path: Path) -> PyFileSystem_ReaddirResult {
+  func readdir(path: Path) -> PyFileSystemReaddirResult {
     shouldNotBeCalled()
   }
 
