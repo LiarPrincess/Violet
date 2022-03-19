@@ -6,6 +6,11 @@ public final class PyMemory {
   private var firstAllocatedObject: PyObject?
   private var lastAllocatedObject: PyObject?
 
+  #if DEBUG
+  private var allocatedObjectCount = 0
+  private var destroyedObjectCount = 0
+  #endif
+
   // MARK: - Object
 
   /// Things that `PyMemory` stores in every object.
@@ -32,6 +37,10 @@ public final class PyMemory {
     let memoryInfo = ObjectHeader(previous: lastAllocatedObject, next: nil)
     object.memoryInfoPtr.initialize(to: memoryInfo)
 
+#if DEBUG
+    self.allocatedObjectCount += 1
+#endif
+
     return ptr
   }
 
@@ -57,6 +66,10 @@ public final class PyMemory {
     if let last = self.lastAllocatedObject, last.ptr === ptr {
       self.lastAllocatedObject = previous
     }
+
+#if DEBUG
+    self.destroyedObjectCount += 1
+#endif
   }
 
   // MARK: - Py
@@ -109,7 +122,7 @@ public final class PyMemory {
       offsets.reserveCapacity(fields.count)
 
       for field in fields {
-        self.size += Self.round(self.size, alignment: field.alignment)
+        Self.round(&self.size, alignment: field.alignment)
         self.offsets.append(self.size)
         self.size += field.size
         self.alignment = Swift.max(self.alignment, field.alignment)
@@ -131,11 +144,9 @@ public final class PyMemory {
       // certain operations illegal, but potentially saves memory.
     }
 
-    private static func round(_ value: Int, alignment: Int) -> Int {
-      var result = value
-      result += alignment &- 1
-      result &-= result % alignment
-      return result
+    private static func round(_ value: inout Int, alignment: Int) {
+      value += alignment &- 1
+      value &-= value % alignment
     }
   }
 }

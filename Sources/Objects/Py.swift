@@ -11,7 +11,7 @@ import VioletCore
 /// You can use it to interact with `Python` objects.
 /// For example: to call `getattr` function on `elsa` object you call
 /// `Py.getAttribute(object: elsa, name: "let_it_go")`.
-public struct Py {
+public struct Py: CustomStringConvertible {
 
   // MARK: - Builtins
 
@@ -116,6 +116,11 @@ public struct Py {
   // sourcery: storedProperty
   internal var hasher: Hasher { self.hasherPtr.pointee }
 
+  public var description: String {
+    let version = self.sys.versionString
+    return version.value
+  }
+
   // MARK: - Init
 
   public let ptr: RawPtr
@@ -136,10 +141,12 @@ public struct Py {
     self.memoryPtr.initialize(to: memory)
     self.hasherPtr.initialize(to: hasher)
 
-    // At this point everything should be initialized,
-    // which means that from now on we are able to create PyObjects.
-    // Since every object contains a pointer to its 'type',
-    // the first thing that we have to do is to create a type hierarchy
+    // =======================
+    // === Basic instances ===
+    // =======================
+
+    // Every object contains a pointer to its 'type', so the first thing that
+    // we have to do is to create a type hierarchy
     // (but only hierarchy, we will fill '__dict__' later):
     let types = Types(self)
     self.typesPtr.initialize(to: types)
@@ -147,16 +154,13 @@ public struct Py {
     let errorTypes = ErrorTypes(self, typeType: types.type, objectType: types.object)
     self.errorTypesPtr.initialize(to: errorTypes)
 
-    // Now since we have all types in place we can start creating some more
-    // interesting instances, for example docs/methods/properties on those types:
-    self.types.fill__dict__(self)
-    self.errorTypes.fill__dict__(self)
-
     // Since we have types we can start doing unholy things to them:
     let cast = PyCast(types: self.types, errorTypes: self.errorTypes)
     self.castPtr.initialize(to: cast)
 
-    // Basic instances:
+    // Common objects.
+    // We will create those objects with valid 'type' pointers, but the type
+    // itself is not currently filled (no methods in '__dict__' etc).
     self.truePtr.initialize(to: memory.newBool(self, type: types.bool, value: true))
     self.falsePtr.initialize(to: memory.newBool(self, type: types.bool, value: false))
     self.nonePtr.initialize(to: memory.newNone(self, type: types.none))
@@ -167,6 +171,11 @@ public struct Py {
     self.emptyBytesPtr.initialize(to: memory.newBytes(self, type: types.bytes, elements: Data()))
     self.emptyFrozenSetPtr.initialize(to: memory.newFrozenSet(self, type: types.frozenset, elements: .init()))
 
+    // Predefined commonly used '__dict__' keys:
+    let idStrings = IdString.Collection(self)
+    self.idStringsPtr.initialize(to: idStrings)
+
+    // When filling 'type.__dict__' we will also start interning values:
     let internedInts = Self.internedIntRange.map { int in
       memory.newInt(self, type: types.int, value: BigInt(int))
     }
@@ -174,11 +183,23 @@ public struct Py {
     self.internedIntsPtr.initialize(to: internedInts)
     self.internedStringsPtr.initialize(to: [:])
 
-    // Predefined commonly used '__dict__' keys:
-    let idStrings = IdString.Collection(self)
-    self.idStringsPtr.initialize(to: idStrings)
+    for id in self.idStrings {
+      let str = self.resolve(id: id)
+      _ = self.intern(string: str)
+    }
 
-    // Modules:
+    // ===========================
+    // === Fill types __dict__ ===
+    // ===========================
+
+    // And finally we can add docs/methods/properties on types:
+    self.types.fill__dict__(self)
+    self.errorTypes.fill__dict__(self)
+
+    // ===============
+    // === Modules ===
+    // ===============
+
     self.builtinsPtr.initialize(to: Builtins(self))
     self.sysPtr.initialize(to: Sys(self))
     self._impPtr.initialize(to: UnderscoreImp(self))
@@ -289,5 +310,19 @@ public struct Py {
     let str = self.newString(string)
     self.internedStringsPtr.pointee[key] = str
     return str
+  }
+
+  /// Cache given string and return it.
+  ///
+  /// If it is already in cache then it will return interned value.
+  public func intern(string: PyString) -> PyString {
+    let key = UseScalarsToHashString(string.value)
+
+    if let interned = self.getInterned(key: key) {
+      return interned
+    }
+
+    self.internedStringsPtr.pointee[key] = string
+    return string
   }
 }

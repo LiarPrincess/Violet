@@ -29,6 +29,18 @@ public struct PyObject: PyObjectMixin {
     return self.typePtr.pointee
   }
 
+  // MARK: - Property - memory info
+
+  // sourcery: storedProperty, visibleOnlyOnPyObject
+  /// Things that `PyMemory` asked us to hold.
+  ///
+  /// This is only visible on `PyObject`, the subclasses will have it (obviously)
+  /// but the property will not be generated.
+  internal var memoryInfo: PyMemory.ObjectHeader {
+    get { return self.memoryInfoPtr.pointee }
+    nonmutating set { self.memoryInfoPtr.pointee = newValue }
+  }
+
   // MARK: - Property - __dict__
 
   /// Lazy property written by hand.
@@ -82,18 +94,6 @@ public struct PyObject: PyObjectMixin {
     }
   }
 
-  // MARK: - Property - memory info
-
-  // sourcery: storedProperty, visibleOnlyOnPyObject
-  /// Things that `PyMemory` asked us to hold.
-  ///
-  /// This is only visible on `PyObject`, the subclasses will have it (obviously)
-  /// but the property will not be generated.
-  internal var memoryInfo: PyMemory.ObjectHeader {
-    get { return self.memoryInfoPtr.pointee }
-    nonmutating set { self.memoryInfoPtr.pointee = newValue }
-  }
-
   // MARK: - Property - flags
 
   // sourcery: storedProperty
@@ -115,9 +115,7 @@ public struct PyObject: PyObjectMixin {
 
   internal func initialize(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     self.typePtr.initialize(to: type)
-
-    let flags = Flags()
-    self.flagsPtr.initialize(to: flags)
+    self.flagsPtr.initialize(to: .default)
 
     let lazy__dict__: Lazy__dict__
     if let value = __dict__ {
@@ -131,6 +129,28 @@ public struct PyObject: PyObjectMixin {
     // 'memoryInfo' was already initialized (all of the objects are allocated by
     // PyMemory which also is responsible for 'memoryInfo').
     self.__dict__Ptr.initialize(to: lazy__dict__)
+  }
+
+  /// `type type` (type of all of the types) and `object type` are a bit special.
+  ///
+  /// They are the 1st python objects that we allocate and at the point of calling
+  /// this methods they are UNINITIALIZED!
+  internal static func initialize(typeType: PyType, objectType: PyType) {
+    // Just a reminder:
+    //             | Type     | Base       | MRO
+    // object type | typeType | nil        | [self]
+    // type type   | typeType | objectType | [self, objectType]
+    // normal type | typeType | objectType | [self, (...), objectType]
+
+    let type = PyObject(ptr: typeType.ptr)
+    type.typePtr.initialize(to: typeType)
+    type.flagsPtr.initialize(to: .default)
+    type.__dict__Ptr.initialize(to: .notCreated)
+
+    let object = PyObject(ptr: objectType.ptr)
+    object.typePtr.initialize(to: typeType)
+    object.flagsPtr.initialize(to: .default)
+    object.__dict__Ptr.initialize(to: .notCreated)
   }
 
   // Nothing to do here.

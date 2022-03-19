@@ -33,41 +33,20 @@ extension PyMemory {{
   /// - `type` type has `type` type (self reference) and `object` type as base
   public func newTypeAndObjectTypes(_ py: Py) -> (objectType: PyType, typeType: PyType) {{
     let layout = PyType.layout
-    let objectTypePtr = self.allocateObject(size: layout.size, alignment: layout.alignment)
     let typeTypePtr = self.allocateObject(size: layout.size, alignment: layout.alignment)
+    let objectTypePtr = self.allocateObject(size: layout.size, alignment: layout.alignment)
 
-    let objectType = PyType(ptr: objectTypePtr)
     let typeType = PyType(ptr: typeTypePtr)
+    let objectType = PyType(ptr: objectTypePtr)
 
-    objectType.initialize(py,
-                          type: typeType,
-                          name: "{object_args.name}",
-                          qualname: "{object_args.qualname}",
-                          flags: [{object_flags}],
-                          base: nil,
-                          bases: [],
-                          mroWithoutSelf: [],
-                          subclasses: [],
-                          instanceSizeWithoutTail: {object_args.size_without_tail},
-                          staticMethods: {object_args.static_methods_property},
-                          debugFn: {object_args.debugFn},
-                          deinitialize: {object_args.deinitialize})
+    PyType.initialize(
+      typeType: typeType,
+      typeTypeFlags: [{type_flags}],
+      objectType: objectType,
+      objectTypeFlags: [{object_flags}]
+    )
 
-    typeType.initialize(py,
-                        type: typeType,
-                        name: "{type_args.name}",
-                        qualname: "{type_args.qualname}",
-                        flags: [{type_flags}],
-                        base: objectType,
-                        bases: [objectType],
-                        mroWithoutSelf: [objectType],
-                        subclasses: [],
-                        instanceSizeWithoutTail: {type_args.size_without_tail},
-                        staticMethods: {type_args.static_methods_property},
-                        debugFn: {type_args.debugFn},
-                        deinitialize: {type_args.deinitialize})
-
-   return (objectType, typeType)
+    return (objectType, typeType)
   }}
 }}
 ''')

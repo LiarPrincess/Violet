@@ -6,18 +6,26 @@ import VioletParser
 import VioletBytecode
 import VioletCompiler
 
+// MARK: - Assert size
+
 /// Check the memory footprint of a given type.
 ///
 /// Technically `stride` would be better, but the same `stride` may describe
 /// multiple `sizes` and in this test we are more interested in the fact
 /// that the value has changed and not in the value itself.
-private func checkMemorySize<T>(of type: T.Type, expectedSize: Int) {
+private func assertSize<T>(type: T.Type, expected: Int) {
   let size = MemoryLayout<T>.size
-  if size != expectedSize {
-    let typeName = String(describing: type)
-    trap("[Invariant] \(typeName) has size \(size) instead of expected \(expectedSize)")
+  let typeName = String(describing: type)
+  assertSize(typeName: typeName, size: size, expected: expected)
+}
+
+private func assertSize(typeName: String, size: Int, expected: Int) {
+  if size != expected {
+    trap("[Invariant] \(typeName) has size \(size) instead of expected \(expected)")
   }
 }
+
+// MARK: - Dump
 
 /// Print the memory representation of a given value.
 private func dumpMemory<T>(of value: T) {
@@ -40,24 +48,32 @@ private func dumpMemory<T>(of value: T) {
   print()
 }
 
+// MARK: - Check invariants
+
 /// Static checks, at runtime because YOLO.
 internal func checkInvariants() {
   // 1 ptr (it should use tagged pointer internally)
-  checkMemorySize(of: BigInt.self, expectedSize: 8)
+  assertSize(type: BigInt.self, expected: 8)
 
   // 1 opcode + 1 argument = 2
-  checkMemorySize(of: Instruction.self, expectedSize: 2)
+  assertSize(type: Instruction.self, expected: 2)
 
   // 4 line + 4 column = 8
-  checkMemorySize(of: SourceLocation.self, expectedSize: 8)
+  assertSize(type: SourceLocation.self, expected: 8)
 
   // Token: 17 kind + 3 padding (?) + 8 start + 8 end = 36
   // Token.Kind: 16 string payload + 1 tag = 17
   // Tokens are quite big, but we have only 2 or 3 of them at the same time
   // (not a whole array etc.).
-  checkMemorySize(of: Token.self, expectedSize: 36)
-  checkMemorySize(of: Token.Kind.self, expectedSize: 17)
+  assertSize(type: Token.self, expected: 36)
+  assertSize(type: Token.Kind.self, expected: 17)
 
-  // Stored on every object, so kind of important.
-  checkMemorySize(of: PyObject.Lazy__dict__.self, expectedSize: 8)
+  //            | size alignment | offset | object_size object_alignment
+  // type       |    8         8 |      0 |           8                8
+  // memoryInfo |   16         8 |      8 |          24                8
+  // __dict__   |(!) 9         8 |     24 |          33                8
+  // flags      |    4         4 |     36 |          40                8
+  //                                                 ^^ THIS
+  let objectSize = PyObject.layout.size
+  assertSize(typeName: "PyObject", size: objectSize, expected: 40)
 }
