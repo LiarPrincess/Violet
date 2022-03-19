@@ -158,9 +158,40 @@ public struct PyObject: PyObjectMixin {
 
   // MARK: - Debug
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  /// Custom `Mirror` with debug information.
+  public struct DebugMirror {
+
+    public struct Property {
+      public let name: String
+      public let value: Any
+      public let includeInShortDescription: Bool
+    }
+
+    public let object: PyObject
+    public let swiftType: String
+    public private(set) var properties = [Property]()
+
+    public init<T: PyObjectMixin>(object: T) {
+      self.object = object.asObject
+      self.swiftType = String(describing: T.self)
+    }
+
+    public mutating func append(name: String,
+                                value: Any,
+                                includeInShortDescription: Bool = false) {
+      let property = Property(
+        name: name,
+        value: value,
+        includeInShortDescription: includeInShortDescription
+      )
+
+      self.properties.append(property)
+    }
+  }
+
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyObject(ptr: ptr)
-    return "PyObject(type: \(zelf.typeName), flags: \(zelf.flags))"
+    return DebugMirror(object: zelf)
   }
 
   // MARK: - Equatable, Comparable

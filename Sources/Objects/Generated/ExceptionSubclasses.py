@@ -151,9 +151,11 @@ public struct {swift_type_name}: PyErrorMixin {{
         # =============
 
         print()
-        print(f'  internal static func createDebugString(ptr: RawPtr) -> String {{')
+        print(f'  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {{')
         print(f'    let zelf = {swift_type_name}(ptr: ptr)')
-        print(f'    return "{swift_type_name}(type: \(zelf.typeName), flags: \(zelf.flags))"')
+        print(f'    var result = PyObject.DebugMirror(object: zelf)')
+        print(f'    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)')
+        print(f'    return result')
         print(f'  }}')
 
         # ===============

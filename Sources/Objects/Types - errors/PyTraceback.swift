@@ -64,9 +64,9 @@ public struct PyTraceback: PyObjectMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyType(ptr: ptr)
-    return "PyTraceback(type: \(zelf.typeName), flags: \(zelf.flags))"
+    return PyObject.DebugMirror(object: zelf)
   }
 
   // MARK: - Class

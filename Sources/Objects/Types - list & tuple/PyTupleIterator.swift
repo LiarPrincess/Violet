@@ -35,9 +35,13 @@ public struct PyTupleIterator: PyObjectMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyTupleIterator(ptr: ptr)
-    return "PyTupleIterator(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "index", value: zelf.index, includeInShortDescription: true)
+    result.append(name: "count", value: zelf.tuple.count, includeInShortDescription: true)
+    result.append(name: "tuple", value: zelf.tuple)
+    return result
   }
 
   // MARK: - Class

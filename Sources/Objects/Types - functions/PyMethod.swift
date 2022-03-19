@@ -42,9 +42,12 @@ public struct PyMethod: PyObjectMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyMethod(ptr: ptr)
-    return "PyMethod(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyFunction.fillDebug(zelf: zelf.function, debug: &result)
+    result.append(name: "object", value: zelf.object, includeInShortDescription: true)
+    return result
   }
 
   // MARK: - Equatable, comparable

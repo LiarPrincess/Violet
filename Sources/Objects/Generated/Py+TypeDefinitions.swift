@@ -116,7 +116,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyBuiltinFunction.layout.size,
         staticMethods: Py.Types.builtinFunctionStaticMethods,
-        debugFn: PyBuiltinFunction.createDebugString(ptr:),
+        debugFn: PyBuiltinFunction.createDebugInfo(ptr:),
         deinitialize: PyBuiltinFunction.deinitialize(ptr:)
       )
 
@@ -132,7 +132,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyBuiltinMethod.layout.size,
         staticMethods: Py.Types.builtinMethodStaticMethods,
-        debugFn: PyBuiltinMethod.createDebugString(ptr:),
+        debugFn: PyBuiltinMethod.createDebugInfo(ptr:),
         deinitialize: PyBuiltinMethod.deinitialize(ptr:)
       )
 
@@ -148,7 +148,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyByteArray.layout.size,
         staticMethods: Py.Types.byteArrayStaticMethods,
-        debugFn: PyByteArray.createDebugString(ptr:),
+        debugFn: PyByteArray.createDebugInfo(ptr:),
         deinitialize: PyByteArray.deinitialize(ptr:)
       )
 
@@ -164,7 +164,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyByteArrayIterator.layout.size,
         staticMethods: Py.Types.byteArrayIteratorStaticMethods,
-        debugFn: PyByteArrayIterator.createDebugString(ptr:),
+        debugFn: PyByteArrayIterator.createDebugInfo(ptr:),
         deinitialize: PyByteArrayIterator.deinitialize(ptr:)
       )
 
@@ -180,7 +180,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyBytes.layout.size,
         staticMethods: Py.Types.bytesStaticMethods,
-        debugFn: PyBytes.createDebugString(ptr:),
+        debugFn: PyBytes.createDebugInfo(ptr:),
         deinitialize: PyBytes.deinitialize(ptr:)
       )
 
@@ -196,7 +196,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyBytesIterator.layout.size,
         staticMethods: Py.Types.bytesIteratorStaticMethods,
-        debugFn: PyBytesIterator.createDebugString(ptr:),
+        debugFn: PyBytesIterator.createDebugInfo(ptr:),
         deinitialize: PyBytesIterator.deinitialize(ptr:)
       )
 
@@ -212,7 +212,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyCallableIterator.layout.size,
         staticMethods: Py.Types.callableIteratorStaticMethods,
-        debugFn: PyCallableIterator.createDebugString(ptr:),
+        debugFn: PyCallableIterator.createDebugInfo(ptr:),
         deinitialize: PyCallableIterator.deinitialize(ptr:)
       )
 
@@ -228,7 +228,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyCell.layout.size,
         staticMethods: Py.Types.cellStaticMethods,
-        debugFn: PyCell.createDebugString(ptr:),
+        debugFn: PyCell.createDebugInfo(ptr:),
         deinitialize: PyCell.deinitialize(ptr:)
       )
 
@@ -244,7 +244,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyClassMethod.layout.size,
         staticMethods: Py.Types.classMethodStaticMethods,
-        debugFn: PyClassMethod.createDebugString(ptr:),
+        debugFn: PyClassMethod.createDebugInfo(ptr:),
         deinitialize: PyClassMethod.deinitialize(ptr:)
       )
 
@@ -260,7 +260,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyCode.layout.size,
         staticMethods: Py.Types.codeStaticMethods,
-        debugFn: PyCode.createDebugString(ptr:),
+        debugFn: PyCode.createDebugInfo(ptr:),
         deinitialize: PyCode.deinitialize(ptr:)
       )
 
@@ -276,7 +276,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyComplex.layout.size,
         staticMethods: Py.Types.complexStaticMethods,
-        debugFn: PyComplex.createDebugString(ptr:),
+        debugFn: PyComplex.createDebugInfo(ptr:),
         deinitialize: PyComplex.deinitialize(ptr:)
       )
 
@@ -292,7 +292,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyDict.layout.size,
         staticMethods: Py.Types.dictStaticMethods,
-        debugFn: PyDict.createDebugString(ptr:),
+        debugFn: PyDict.createDebugInfo(ptr:),
         deinitialize: PyDict.deinitialize(ptr:)
       )
 
@@ -308,7 +308,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyDictItemIterator.layout.size,
         staticMethods: Py.Types.dictItemIteratorStaticMethods,
-        debugFn: PyDictItemIterator.createDebugString(ptr:),
+        debugFn: PyDictItemIterator.createDebugInfo(ptr:),
         deinitialize: PyDictItemIterator.deinitialize(ptr:)
       )
 
@@ -324,7 +324,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyDictItems.layout.size,
         staticMethods: Py.Types.dictItemsStaticMethods,
-        debugFn: PyDictItems.createDebugString(ptr:),
+        debugFn: PyDictItems.createDebugInfo(ptr:),
         deinitialize: PyDictItems.deinitialize(ptr:)
       )
 
@@ -340,7 +340,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyDictKeyIterator.layout.size,
         staticMethods: Py.Types.dictKeyIteratorStaticMethods,
-        debugFn: PyDictKeyIterator.createDebugString(ptr:),
+        debugFn: PyDictKeyIterator.createDebugInfo(ptr:),
         deinitialize: PyDictKeyIterator.deinitialize(ptr:)
       )
 
@@ -356,7 +356,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyDictKeys.layout.size,
         staticMethods: Py.Types.dictKeysStaticMethods,
-        debugFn: PyDictKeys.createDebugString(ptr:),
+        debugFn: PyDictKeys.createDebugInfo(ptr:),
         deinitialize: PyDictKeys.deinitialize(ptr:)
       )
 
@@ -372,7 +372,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyDictValueIterator.layout.size,
         staticMethods: Py.Types.dictValueIteratorStaticMethods,
-        debugFn: PyDictValueIterator.createDebugString(ptr:),
+        debugFn: PyDictValueIterator.createDebugInfo(ptr:),
         deinitialize: PyDictValueIterator.deinitialize(ptr:)
       )
 
@@ -388,7 +388,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyDictValues.layout.size,
         staticMethods: Py.Types.dictValuesStaticMethods,
-        debugFn: PyDictValues.createDebugString(ptr:),
+        debugFn: PyDictValues.createDebugInfo(ptr:),
         deinitialize: PyDictValues.deinitialize(ptr:)
       )
 
@@ -404,7 +404,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyEllipsis.layout.size,
         staticMethods: Py.Types.ellipsisStaticMethods,
-        debugFn: PyEllipsis.createDebugString(ptr:),
+        debugFn: PyEllipsis.createDebugInfo(ptr:),
         deinitialize: PyEllipsis.deinitialize(ptr:)
       )
 
@@ -420,7 +420,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyEnumerate.layout.size,
         staticMethods: Py.Types.enumerateStaticMethods,
-        debugFn: PyEnumerate.createDebugString(ptr:),
+        debugFn: PyEnumerate.createDebugInfo(ptr:),
         deinitialize: PyEnumerate.deinitialize(ptr:)
       )
 
@@ -436,7 +436,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyFilter.layout.size,
         staticMethods: Py.Types.filterStaticMethods,
-        debugFn: PyFilter.createDebugString(ptr:),
+        debugFn: PyFilter.createDebugInfo(ptr:),
         deinitialize: PyFilter.deinitialize(ptr:)
       )
 
@@ -452,7 +452,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyFloat.layout.size,
         staticMethods: Py.Types.floatStaticMethods,
-        debugFn: PyFloat.createDebugString(ptr:),
+        debugFn: PyFloat.createDebugInfo(ptr:),
         deinitialize: PyFloat.deinitialize(ptr:)
       )
 
@@ -468,7 +468,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyFrame.layout.size,
         staticMethods: Py.Types.frameStaticMethods,
-        debugFn: PyFrame.createDebugString(ptr:),
+        debugFn: PyFrame.createDebugInfo(ptr:),
         deinitialize: PyFrame.deinitialize(ptr:)
       )
 
@@ -484,7 +484,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyFrozenSet.layout.size,
         staticMethods: Py.Types.frozenSetStaticMethods,
-        debugFn: PyFrozenSet.createDebugString(ptr:),
+        debugFn: PyFrozenSet.createDebugInfo(ptr:),
         deinitialize: PyFrozenSet.deinitialize(ptr:)
       )
 
@@ -500,7 +500,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyFunction.layout.size,
         staticMethods: Py.Types.functionStaticMethods,
-        debugFn: PyFunction.createDebugString(ptr:),
+        debugFn: PyFunction.createDebugInfo(ptr:),
         deinitialize: PyFunction.deinitialize(ptr:)
       )
 
@@ -516,7 +516,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyInt.layout.size,
         staticMethods: Py.Types.intStaticMethods,
-        debugFn: PyInt.createDebugString(ptr:),
+        debugFn: PyInt.createDebugInfo(ptr:),
         deinitialize: PyInt.deinitialize(ptr:)
       )
 
@@ -532,7 +532,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyIterator.layout.size,
         staticMethods: Py.Types.iteratorStaticMethods,
-        debugFn: PyIterator.createDebugString(ptr:),
+        debugFn: PyIterator.createDebugInfo(ptr:),
         deinitialize: PyIterator.deinitialize(ptr:)
       )
 
@@ -548,7 +548,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyList.layout.size,
         staticMethods: Py.Types.listStaticMethods,
-        debugFn: PyList.createDebugString(ptr:),
+        debugFn: PyList.createDebugInfo(ptr:),
         deinitialize: PyList.deinitialize(ptr:)
       )
 
@@ -564,7 +564,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyListIterator.layout.size,
         staticMethods: Py.Types.listIteratorStaticMethods,
-        debugFn: PyListIterator.createDebugString(ptr:),
+        debugFn: PyListIterator.createDebugInfo(ptr:),
         deinitialize: PyListIterator.deinitialize(ptr:)
       )
 
@@ -580,7 +580,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyListReverseIterator.layout.size,
         staticMethods: Py.Types.listReverseIteratorStaticMethods,
-        debugFn: PyListReverseIterator.createDebugString(ptr:),
+        debugFn: PyListReverseIterator.createDebugInfo(ptr:),
         deinitialize: PyListReverseIterator.deinitialize(ptr:)
       )
 
@@ -596,7 +596,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyMap.layout.size,
         staticMethods: Py.Types.mapStaticMethods,
-        debugFn: PyMap.createDebugString(ptr:),
+        debugFn: PyMap.createDebugInfo(ptr:),
         deinitialize: PyMap.deinitialize(ptr:)
       )
 
@@ -612,7 +612,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyMethod.layout.size,
         staticMethods: Py.Types.methodStaticMethods,
-        debugFn: PyMethod.createDebugString(ptr:),
+        debugFn: PyMethod.createDebugInfo(ptr:),
         deinitialize: PyMethod.deinitialize(ptr:)
       )
 
@@ -628,7 +628,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyModule.layout.size,
         staticMethods: Py.Types.moduleStaticMethods,
-        debugFn: PyModule.createDebugString(ptr:),
+        debugFn: PyModule.createDebugInfo(ptr:),
         deinitialize: PyModule.deinitialize(ptr:)
       )
 
@@ -644,7 +644,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyNamespace.layout.size,
         staticMethods: Py.Types.namespaceStaticMethods,
-        debugFn: PyNamespace.createDebugString(ptr:),
+        debugFn: PyNamespace.createDebugInfo(ptr:),
         deinitialize: PyNamespace.deinitialize(ptr:)
       )
 
@@ -660,7 +660,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyNone.layout.size,
         staticMethods: Py.Types.noneStaticMethods,
-        debugFn: PyNone.createDebugString(ptr:),
+        debugFn: PyNone.createDebugInfo(ptr:),
         deinitialize: PyNone.deinitialize(ptr:)
       )
 
@@ -676,7 +676,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyNotImplemented.layout.size,
         staticMethods: Py.Types.notImplementedStaticMethods,
-        debugFn: PyNotImplemented.createDebugString(ptr:),
+        debugFn: PyNotImplemented.createDebugInfo(ptr:),
         deinitialize: PyNotImplemented.deinitialize(ptr:)
       )
 
@@ -692,7 +692,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyProperty.layout.size,
         staticMethods: Py.Types.propertyStaticMethods,
-        debugFn: PyProperty.createDebugString(ptr:),
+        debugFn: PyProperty.createDebugInfo(ptr:),
         deinitialize: PyProperty.deinitialize(ptr:)
       )
 
@@ -708,7 +708,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyRange.layout.size,
         staticMethods: Py.Types.rangeStaticMethods,
-        debugFn: PyRange.createDebugString(ptr:),
+        debugFn: PyRange.createDebugInfo(ptr:),
         deinitialize: PyRange.deinitialize(ptr:)
       )
 
@@ -724,7 +724,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyRangeIterator.layout.size,
         staticMethods: Py.Types.rangeIteratorStaticMethods,
-        debugFn: PyRangeIterator.createDebugString(ptr:),
+        debugFn: PyRangeIterator.createDebugInfo(ptr:),
         deinitialize: PyRangeIterator.deinitialize(ptr:)
       )
 
@@ -740,7 +740,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyReversed.layout.size,
         staticMethods: Py.Types.reversedStaticMethods,
-        debugFn: PyReversed.createDebugString(ptr:),
+        debugFn: PyReversed.createDebugInfo(ptr:),
         deinitialize: PyReversed.deinitialize(ptr:)
       )
 
@@ -756,7 +756,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PySet.layout.size,
         staticMethods: Py.Types.setStaticMethods,
-        debugFn: PySet.createDebugString(ptr:),
+        debugFn: PySet.createDebugInfo(ptr:),
         deinitialize: PySet.deinitialize(ptr:)
       )
 
@@ -772,7 +772,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PySetIterator.layout.size,
         staticMethods: Py.Types.setIteratorStaticMethods,
-        debugFn: PySetIterator.createDebugString(ptr:),
+        debugFn: PySetIterator.createDebugInfo(ptr:),
         deinitialize: PySetIterator.deinitialize(ptr:)
       )
 
@@ -788,7 +788,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PySlice.layout.size,
         staticMethods: Py.Types.sliceStaticMethods,
-        debugFn: PySlice.createDebugString(ptr:),
+        debugFn: PySlice.createDebugInfo(ptr:),
         deinitialize: PySlice.deinitialize(ptr:)
       )
 
@@ -804,7 +804,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyStaticMethod.layout.size,
         staticMethods: Py.Types.staticMethodStaticMethods,
-        debugFn: PyStaticMethod.createDebugString(ptr:),
+        debugFn: PyStaticMethod.createDebugInfo(ptr:),
         deinitialize: PyStaticMethod.deinitialize(ptr:)
       )
 
@@ -820,7 +820,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyString.layout.size,
         staticMethods: Py.Types.stringStaticMethods,
-        debugFn: PyString.createDebugString(ptr:),
+        debugFn: PyString.createDebugInfo(ptr:),
         deinitialize: PyString.deinitialize(ptr:)
       )
 
@@ -836,7 +836,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyStringIterator.layout.size,
         staticMethods: Py.Types.stringIteratorStaticMethods,
-        debugFn: PyStringIterator.createDebugString(ptr:),
+        debugFn: PyStringIterator.createDebugInfo(ptr:),
         deinitialize: PyStringIterator.deinitialize(ptr:)
       )
 
@@ -852,7 +852,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PySuper.layout.size,
         staticMethods: Py.Types.superStaticMethods,
-        debugFn: PySuper.createDebugString(ptr:),
+        debugFn: PySuper.createDebugInfo(ptr:),
         deinitialize: PySuper.deinitialize(ptr:)
       )
 
@@ -868,7 +868,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyTextFile.layout.size,
         staticMethods: Py.Types.textFileStaticMethods,
-        debugFn: PyTextFile.createDebugString(ptr:),
+        debugFn: PyTextFile.createDebugInfo(ptr:),
         deinitialize: PyTextFile.deinitialize(ptr:)
       )
 
@@ -884,7 +884,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyTraceback.layout.size,
         staticMethods: Py.Types.tracebackStaticMethods,
-        debugFn: PyTraceback.createDebugString(ptr:),
+        debugFn: PyTraceback.createDebugInfo(ptr:),
         deinitialize: PyTraceback.deinitialize(ptr:)
       )
 
@@ -900,7 +900,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyTuple.layout.size,
         staticMethods: Py.Types.tupleStaticMethods,
-        debugFn: PyTuple.createDebugString(ptr:),
+        debugFn: PyTuple.createDebugInfo(ptr:),
         deinitialize: PyTuple.deinitialize(ptr:)
       )
 
@@ -916,7 +916,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyTupleIterator.layout.size,
         staticMethods: Py.Types.tupleIteratorStaticMethods,
-        debugFn: PyTupleIterator.createDebugString(ptr:),
+        debugFn: PyTupleIterator.createDebugInfo(ptr:),
         deinitialize: PyTupleIterator.deinitialize(ptr:)
       )
 
@@ -932,7 +932,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyZip.layout.size,
         staticMethods: Py.Types.zipStaticMethods,
-        debugFn: PyZip.createDebugString(ptr:),
+        debugFn: PyZip.createDebugInfo(ptr:),
         deinitialize: PyZip.deinitialize(ptr:)
       )
 
@@ -949,7 +949,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyBool.layout.size,
         staticMethods: Py.Types.boolStaticMethods,
-        debugFn: PyBool.createDebugString(ptr:),
+        debugFn: PyBool.createDebugInfo(ptr:),
         deinitialize: PyBool.deinitialize(ptr:)
       )
     }

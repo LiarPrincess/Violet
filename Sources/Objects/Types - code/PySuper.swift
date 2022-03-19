@@ -69,9 +69,13 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PySuper(ptr: ptr)
-    return "PySuper(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "thisClass", value: zelf.thisClass as Any)
+    result.append(name: "object", value: zelf.object as Any)
+    result.append(name: "objectType", value: zelf.objectType as Any)
+    return result
   }
 
   // MARK: - String

@@ -210,23 +210,16 @@ public struct PyFrame: PyObjectMixin {
 
   // MARK: - Debug
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyFrame(ptr: ptr)
-    return "PyFrame(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "code", value: zelf.code)
+    result.append(name: "currentInstructionIndex", value: zelf.currentInstructionIndex as Any)
+    result.append(name: "nextInstructionIndex", value: zelf.nextInstructionIndex)
+    result.append(name: "currentInstructionLine", value: zelf.currentInstructionLine)
+    result.append(name: "parent", value: zelf.parent as Any)
+    return result
   }
-
-//  public var customMirror: Mirror {
-//    return Mirror(
-//      self,
-//      children: [
-//        "code": self.code,
-//        "currentInstructionIndex": self.currentInstructionIndex as Any,
-//        "nextInstructionIndex": self.nextInstructionIndex,
-//        "currentInstructionLine": self.currentInstructionLine,
-//        "parent": self.parent as Any
-//      ]
-//    )
-//  }
 
   // MARK: - String
 

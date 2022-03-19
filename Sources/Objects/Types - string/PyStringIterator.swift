@@ -35,9 +35,12 @@ public struct PyStringIterator: PyObjectMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyStringIterator(ptr: ptr)
-    return "PyStringIterator(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "index", value: zelf.index)
+    result.append(name: "string", value: zelf.string)
+    return result
   }
 
   // MARK: - Class

@@ -48,9 +48,15 @@ public struct PySetIterator: PyObjectMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PySetIterator(ptr: ptr)
-    return "PySetIterator(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    let count = zelf.set.elements.count
+    result.append(name: "index", value: zelf.index, includeInShortDescription: true)
+    result.append(name: "count", value: count, includeInShortDescription: true)
+    result.append(name: "initialCount", value: zelf.initialCount, includeInShortDescription: true)
+    result.append(name: "set", value: zelf.set)
+    return result
   }
 
   // MARK: - Class

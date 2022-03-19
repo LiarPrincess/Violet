@@ -101,9 +101,14 @@ public struct PyProperty: PyObjectMixin {
 
   // MARK: - Debug
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyProperty(ptr: ptr)
-    return "PyProperty(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "get", value: zelf._get as Any)
+    result.append(name: "set", value: zelf._set as Any)
+    result.append(name: "del", value: zelf._del as Any)
+    result.append(name: "doc", value: zelf.doc as Any)
+    return result
   }
 
   // MARK: - Class

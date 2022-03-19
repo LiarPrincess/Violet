@@ -35,6 +35,10 @@ public struct PyDict: PyObjectMixin {
     nonmutating _modify { yield &self.elementsPtr.pointee }
   }
 
+  internal var count: Int {
+    return self.elements.count
+  }
+
   public let ptr: RawPtr
 
   public init(ptr: RawPtr) {
@@ -51,10 +55,12 @@ public struct PyDict: PyObjectMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyDict(ptr: ptr)
-    let count = zelf.elements.count
-    return "PyDict(type: \(zelf.typeName), flags: \(zelf.flags), count: \(count)"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "count", value: zelf.count, includeInShortDescription: true)
+    result.append(name: "elements", value: zelf.elements)
+    return result
   }
 
   // MARK: - Equatable, comparable
@@ -88,7 +94,7 @@ public struct PyDict: PyObjectMixin {
   }
 
   internal func isEqual(_ py: Py, other: PyDict) -> PyResult<Bool> {
-    guard self.elements.count == other.elements.count else {
+    guard self.count == other.count else {
       return .value(false)
     }
 
@@ -220,7 +226,7 @@ public struct PyDict: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "__len__")
     }
 
-    let result = zelf.elements.count
+    let result = zelf.count
     return PyResult(py, result)
   }
 

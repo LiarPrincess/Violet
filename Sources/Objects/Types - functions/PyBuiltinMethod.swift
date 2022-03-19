@@ -46,9 +46,15 @@ public struct PyBuiltinMethod: PyObjectMixin, AbstractBuiltinFunction {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyBuiltinMethod(ptr: ptr)
-    return "PyBuiltinMethod(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    let name = zelf.function.name
+    result.append(name: "name", value: name, includeInShortDescription: true)
+    result.append(name: "object", value: zelf.object)
+    result.append(name: "module", value: zelf.module as Any)
+    result.append(name: "doc", value: zelf.doc as Any)
+    return result
   }
 
   // MARK: - Equatable, comparable

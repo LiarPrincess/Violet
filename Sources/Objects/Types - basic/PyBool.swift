@@ -48,10 +48,11 @@ public struct PyBool: PyObjectMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyBool(ptr: ptr)
-    let value = zelf.value
-    return "PyBool(type: \(zelf.typeName), flags: \(zelf.flags), value: \(value))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "isTrue", value: zelf.isTrue, includeInShortDescription: true)
+    return result
   }
 
   // MARK: - String

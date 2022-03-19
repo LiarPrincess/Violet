@@ -52,9 +52,11 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyByteArray(ptr: ptr)
-    return "PyByteArray(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "elements", value: zelf.elements)
+    return result
   }
 
   // MARK: - AbstractBytes

@@ -52,10 +52,11 @@ public struct PyInt: PyObjectMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyInt(ptr: ptr)
-    let value = zelf.value
-    return "PyInt(type: \(zelf.typeName), flags: \(zelf.flags), value: \(value))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "value", value: zelf.value, includeInShortDescription: true)
+    return result
   }
 
   // MARK: - Equatable, comparable

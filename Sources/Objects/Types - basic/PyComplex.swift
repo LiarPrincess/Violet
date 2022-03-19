@@ -42,13 +42,12 @@ public struct PyComplex: PyObjectMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyComplex(ptr: ptr)
-    let typeName = zelf.typeName
-    let flags = zelf.flags
-    let real = zelf.real
-    let imag = zelf.imag
-    return "PyComplex(type: \(typeName), flags: \(flags), real: \(real), imag: \(imag))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "real", value: zelf.real, includeInShortDescription: true)
+    result.append(name: "imag", value: zelf.imag, includeInShortDescription: true)
+    return result
   }
 
   // MARK: - Equatable, comparable

@@ -109,7 +109,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyBaseException.layout.size,
         staticMethods: Py.ErrorTypes.baseExceptionStaticMethods,
-        debugFn: PyBaseException.createDebugString(ptr:),
+        debugFn: PyBaseException.createDebugInfo(ptr:),
         deinitialize: PyBaseException.deinitialize(ptr:)
       )
 
@@ -125,7 +125,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PySystemExit.layout.size,
         staticMethods: Py.ErrorTypes.systemExitStaticMethods,
-        debugFn: PySystemExit.createDebugString(ptr:),
+        debugFn: PySystemExit.createDebugInfo(ptr:),
         deinitialize: PySystemExit.deinitialize(ptr:)
       )
 
@@ -141,7 +141,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyKeyboardInterrupt.layout.size,
         staticMethods: Py.ErrorTypes.keyboardInterruptStaticMethods,
-        debugFn: PyKeyboardInterrupt.createDebugString(ptr:),
+        debugFn: PyKeyboardInterrupt.createDebugInfo(ptr:),
         deinitialize: PyKeyboardInterrupt.deinitialize(ptr:)
       )
 
@@ -157,7 +157,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyGeneratorExit.layout.size,
         staticMethods: Py.ErrorTypes.generatorExitStaticMethods,
-        debugFn: PyGeneratorExit.createDebugString(ptr:),
+        debugFn: PyGeneratorExit.createDebugInfo(ptr:),
         deinitialize: PyGeneratorExit.deinitialize(ptr:)
       )
 
@@ -173,7 +173,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyException.layout.size,
         staticMethods: Py.ErrorTypes.exceptionStaticMethods,
-        debugFn: PyException.createDebugString(ptr:),
+        debugFn: PyException.createDebugInfo(ptr:),
         deinitialize: PyException.deinitialize(ptr:)
       )
 
@@ -189,7 +189,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyStopIteration.layout.size,
         staticMethods: Py.ErrorTypes.stopIterationStaticMethods,
-        debugFn: PyStopIteration.createDebugString(ptr:),
+        debugFn: PyStopIteration.createDebugInfo(ptr:),
         deinitialize: PyStopIteration.deinitialize(ptr:)
       )
 
@@ -205,7 +205,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyStopAsyncIteration.layout.size,
         staticMethods: Py.ErrorTypes.stopAsyncIterationStaticMethods,
-        debugFn: PyStopAsyncIteration.createDebugString(ptr:),
+        debugFn: PyStopAsyncIteration.createDebugInfo(ptr:),
         deinitialize: PyStopAsyncIteration.deinitialize(ptr:)
       )
 
@@ -221,7 +221,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyArithmeticError.layout.size,
         staticMethods: Py.ErrorTypes.arithmeticErrorStaticMethods,
-        debugFn: PyArithmeticError.createDebugString(ptr:),
+        debugFn: PyArithmeticError.createDebugInfo(ptr:),
         deinitialize: PyArithmeticError.deinitialize(ptr:)
       )
 
@@ -237,7 +237,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyFloatingPointError.layout.size,
         staticMethods: Py.ErrorTypes.floatingPointErrorStaticMethods,
-        debugFn: PyFloatingPointError.createDebugString(ptr:),
+        debugFn: PyFloatingPointError.createDebugInfo(ptr:),
         deinitialize: PyFloatingPointError.deinitialize(ptr:)
       )
 
@@ -253,7 +253,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyOverflowError.layout.size,
         staticMethods: Py.ErrorTypes.overflowErrorStaticMethods,
-        debugFn: PyOverflowError.createDebugString(ptr:),
+        debugFn: PyOverflowError.createDebugInfo(ptr:),
         deinitialize: PyOverflowError.deinitialize(ptr:)
       )
 
@@ -269,7 +269,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyZeroDivisionError.layout.size,
         staticMethods: Py.ErrorTypes.zeroDivisionErrorStaticMethods,
-        debugFn: PyZeroDivisionError.createDebugString(ptr:),
+        debugFn: PyZeroDivisionError.createDebugInfo(ptr:),
         deinitialize: PyZeroDivisionError.deinitialize(ptr:)
       )
 
@@ -285,7 +285,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyAssertionError.layout.size,
         staticMethods: Py.ErrorTypes.assertionErrorStaticMethods,
-        debugFn: PyAssertionError.createDebugString(ptr:),
+        debugFn: PyAssertionError.createDebugInfo(ptr:),
         deinitialize: PyAssertionError.deinitialize(ptr:)
       )
 
@@ -301,7 +301,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyAttributeError.layout.size,
         staticMethods: Py.ErrorTypes.attributeErrorStaticMethods,
-        debugFn: PyAttributeError.createDebugString(ptr:),
+        debugFn: PyAttributeError.createDebugInfo(ptr:),
         deinitialize: PyAttributeError.deinitialize(ptr:)
       )
 
@@ -317,7 +317,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyBufferError.layout.size,
         staticMethods: Py.ErrorTypes.bufferErrorStaticMethods,
-        debugFn: PyBufferError.createDebugString(ptr:),
+        debugFn: PyBufferError.createDebugInfo(ptr:),
         deinitialize: PyBufferError.deinitialize(ptr:)
       )
 
@@ -333,7 +333,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyEOFError.layout.size,
         staticMethods: Py.ErrorTypes.eOFErrorStaticMethods,
-        debugFn: PyEOFError.createDebugString(ptr:),
+        debugFn: PyEOFError.createDebugInfo(ptr:),
         deinitialize: PyEOFError.deinitialize(ptr:)
       )
 
@@ -349,7 +349,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyImportError.layout.size,
         staticMethods: Py.ErrorTypes.importErrorStaticMethods,
-        debugFn: PyImportError.createDebugString(ptr:),
+        debugFn: PyImportError.createDebugInfo(ptr:),
         deinitialize: PyImportError.deinitialize(ptr:)
       )
 
@@ -365,7 +365,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyModuleNotFoundError.layout.size,
         staticMethods: Py.ErrorTypes.moduleNotFoundErrorStaticMethods,
-        debugFn: PyModuleNotFoundError.createDebugString(ptr:),
+        debugFn: PyModuleNotFoundError.createDebugInfo(ptr:),
         deinitialize: PyModuleNotFoundError.deinitialize(ptr:)
       )
 
@@ -381,7 +381,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyLookupError.layout.size,
         staticMethods: Py.ErrorTypes.lookupErrorStaticMethods,
-        debugFn: PyLookupError.createDebugString(ptr:),
+        debugFn: PyLookupError.createDebugInfo(ptr:),
         deinitialize: PyLookupError.deinitialize(ptr:)
       )
 
@@ -397,7 +397,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyIndexError.layout.size,
         staticMethods: Py.ErrorTypes.indexErrorStaticMethods,
-        debugFn: PyIndexError.createDebugString(ptr:),
+        debugFn: PyIndexError.createDebugInfo(ptr:),
         deinitialize: PyIndexError.deinitialize(ptr:)
       )
 
@@ -413,7 +413,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyKeyError.layout.size,
         staticMethods: Py.ErrorTypes.keyErrorStaticMethods,
-        debugFn: PyKeyError.createDebugString(ptr:),
+        debugFn: PyKeyError.createDebugInfo(ptr:),
         deinitialize: PyKeyError.deinitialize(ptr:)
       )
 
@@ -429,7 +429,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyMemoryError.layout.size,
         staticMethods: Py.ErrorTypes.memoryErrorStaticMethods,
-        debugFn: PyMemoryError.createDebugString(ptr:),
+        debugFn: PyMemoryError.createDebugInfo(ptr:),
         deinitialize: PyMemoryError.deinitialize(ptr:)
       )
 
@@ -445,7 +445,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyNameError.layout.size,
         staticMethods: Py.ErrorTypes.nameErrorStaticMethods,
-        debugFn: PyNameError.createDebugString(ptr:),
+        debugFn: PyNameError.createDebugInfo(ptr:),
         deinitialize: PyNameError.deinitialize(ptr:)
       )
 
@@ -461,7 +461,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyUnboundLocalError.layout.size,
         staticMethods: Py.ErrorTypes.unboundLocalErrorStaticMethods,
-        debugFn: PyUnboundLocalError.createDebugString(ptr:),
+        debugFn: PyUnboundLocalError.createDebugInfo(ptr:),
         deinitialize: PyUnboundLocalError.deinitialize(ptr:)
       )
 
@@ -477,7 +477,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyOSError.layout.size,
         staticMethods: Py.ErrorTypes.oSErrorStaticMethods,
-        debugFn: PyOSError.createDebugString(ptr:),
+        debugFn: PyOSError.createDebugInfo(ptr:),
         deinitialize: PyOSError.deinitialize(ptr:)
       )
 
@@ -493,7 +493,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyBlockingIOError.layout.size,
         staticMethods: Py.ErrorTypes.blockingIOErrorStaticMethods,
-        debugFn: PyBlockingIOError.createDebugString(ptr:),
+        debugFn: PyBlockingIOError.createDebugInfo(ptr:),
         deinitialize: PyBlockingIOError.deinitialize(ptr:)
       )
 
@@ -509,7 +509,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyChildProcessError.layout.size,
         staticMethods: Py.ErrorTypes.childProcessErrorStaticMethods,
-        debugFn: PyChildProcessError.createDebugString(ptr:),
+        debugFn: PyChildProcessError.createDebugInfo(ptr:),
         deinitialize: PyChildProcessError.deinitialize(ptr:)
       )
 
@@ -525,7 +525,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyConnectionError.layout.size,
         staticMethods: Py.ErrorTypes.connectionErrorStaticMethods,
-        debugFn: PyConnectionError.createDebugString(ptr:),
+        debugFn: PyConnectionError.createDebugInfo(ptr:),
         deinitialize: PyConnectionError.deinitialize(ptr:)
       )
 
@@ -541,7 +541,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyBrokenPipeError.layout.size,
         staticMethods: Py.ErrorTypes.brokenPipeErrorStaticMethods,
-        debugFn: PyBrokenPipeError.createDebugString(ptr:),
+        debugFn: PyBrokenPipeError.createDebugInfo(ptr:),
         deinitialize: PyBrokenPipeError.deinitialize(ptr:)
       )
 
@@ -557,7 +557,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyConnectionAbortedError.layout.size,
         staticMethods: Py.ErrorTypes.connectionAbortedErrorStaticMethods,
-        debugFn: PyConnectionAbortedError.createDebugString(ptr:),
+        debugFn: PyConnectionAbortedError.createDebugInfo(ptr:),
         deinitialize: PyConnectionAbortedError.deinitialize(ptr:)
       )
 
@@ -573,7 +573,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyConnectionRefusedError.layout.size,
         staticMethods: Py.ErrorTypes.connectionRefusedErrorStaticMethods,
-        debugFn: PyConnectionRefusedError.createDebugString(ptr:),
+        debugFn: PyConnectionRefusedError.createDebugInfo(ptr:),
         deinitialize: PyConnectionRefusedError.deinitialize(ptr:)
       )
 
@@ -589,7 +589,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyConnectionResetError.layout.size,
         staticMethods: Py.ErrorTypes.connectionResetErrorStaticMethods,
-        debugFn: PyConnectionResetError.createDebugString(ptr:),
+        debugFn: PyConnectionResetError.createDebugInfo(ptr:),
         deinitialize: PyConnectionResetError.deinitialize(ptr:)
       )
 
@@ -605,7 +605,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyFileExistsError.layout.size,
         staticMethods: Py.ErrorTypes.fileExistsErrorStaticMethods,
-        debugFn: PyFileExistsError.createDebugString(ptr:),
+        debugFn: PyFileExistsError.createDebugInfo(ptr:),
         deinitialize: PyFileExistsError.deinitialize(ptr:)
       )
 
@@ -621,7 +621,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyFileNotFoundError.layout.size,
         staticMethods: Py.ErrorTypes.fileNotFoundErrorStaticMethods,
-        debugFn: PyFileNotFoundError.createDebugString(ptr:),
+        debugFn: PyFileNotFoundError.createDebugInfo(ptr:),
         deinitialize: PyFileNotFoundError.deinitialize(ptr:)
       )
 
@@ -637,7 +637,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyInterruptedError.layout.size,
         staticMethods: Py.ErrorTypes.interruptedErrorStaticMethods,
-        debugFn: PyInterruptedError.createDebugString(ptr:),
+        debugFn: PyInterruptedError.createDebugInfo(ptr:),
         deinitialize: PyInterruptedError.deinitialize(ptr:)
       )
 
@@ -653,7 +653,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyIsADirectoryError.layout.size,
         staticMethods: Py.ErrorTypes.isADirectoryErrorStaticMethods,
-        debugFn: PyIsADirectoryError.createDebugString(ptr:),
+        debugFn: PyIsADirectoryError.createDebugInfo(ptr:),
         deinitialize: PyIsADirectoryError.deinitialize(ptr:)
       )
 
@@ -669,7 +669,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyNotADirectoryError.layout.size,
         staticMethods: Py.ErrorTypes.notADirectoryErrorStaticMethods,
-        debugFn: PyNotADirectoryError.createDebugString(ptr:),
+        debugFn: PyNotADirectoryError.createDebugInfo(ptr:),
         deinitialize: PyNotADirectoryError.deinitialize(ptr:)
       )
 
@@ -685,7 +685,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyPermissionError.layout.size,
         staticMethods: Py.ErrorTypes.permissionErrorStaticMethods,
-        debugFn: PyPermissionError.createDebugString(ptr:),
+        debugFn: PyPermissionError.createDebugInfo(ptr:),
         deinitialize: PyPermissionError.deinitialize(ptr:)
       )
 
@@ -701,7 +701,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyProcessLookupError.layout.size,
         staticMethods: Py.ErrorTypes.processLookupErrorStaticMethods,
-        debugFn: PyProcessLookupError.createDebugString(ptr:),
+        debugFn: PyProcessLookupError.createDebugInfo(ptr:),
         deinitialize: PyProcessLookupError.deinitialize(ptr:)
       )
 
@@ -717,7 +717,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyTimeoutError.layout.size,
         staticMethods: Py.ErrorTypes.timeoutErrorStaticMethods,
-        debugFn: PyTimeoutError.createDebugString(ptr:),
+        debugFn: PyTimeoutError.createDebugInfo(ptr:),
         deinitialize: PyTimeoutError.deinitialize(ptr:)
       )
 
@@ -733,7 +733,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyReferenceError.layout.size,
         staticMethods: Py.ErrorTypes.referenceErrorStaticMethods,
-        debugFn: PyReferenceError.createDebugString(ptr:),
+        debugFn: PyReferenceError.createDebugInfo(ptr:),
         deinitialize: PyReferenceError.deinitialize(ptr:)
       )
 
@@ -749,7 +749,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyRuntimeError.layout.size,
         staticMethods: Py.ErrorTypes.runtimeErrorStaticMethods,
-        debugFn: PyRuntimeError.createDebugString(ptr:),
+        debugFn: PyRuntimeError.createDebugInfo(ptr:),
         deinitialize: PyRuntimeError.deinitialize(ptr:)
       )
 
@@ -765,7 +765,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyNotImplementedError.layout.size,
         staticMethods: Py.ErrorTypes.notImplementedErrorStaticMethods,
-        debugFn: PyNotImplementedError.createDebugString(ptr:),
+        debugFn: PyNotImplementedError.createDebugInfo(ptr:),
         deinitialize: PyNotImplementedError.deinitialize(ptr:)
       )
 
@@ -781,7 +781,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyRecursionError.layout.size,
         staticMethods: Py.ErrorTypes.recursionErrorStaticMethods,
-        debugFn: PyRecursionError.createDebugString(ptr:),
+        debugFn: PyRecursionError.createDebugInfo(ptr:),
         deinitialize: PyRecursionError.deinitialize(ptr:)
       )
 
@@ -797,7 +797,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PySyntaxError.layout.size,
         staticMethods: Py.ErrorTypes.syntaxErrorStaticMethods,
-        debugFn: PySyntaxError.createDebugString(ptr:),
+        debugFn: PySyntaxError.createDebugInfo(ptr:),
         deinitialize: PySyntaxError.deinitialize(ptr:)
       )
 
@@ -813,7 +813,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyIndentationError.layout.size,
         staticMethods: Py.ErrorTypes.indentationErrorStaticMethods,
-        debugFn: PyIndentationError.createDebugString(ptr:),
+        debugFn: PyIndentationError.createDebugInfo(ptr:),
         deinitialize: PyIndentationError.deinitialize(ptr:)
       )
 
@@ -829,7 +829,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyTabError.layout.size,
         staticMethods: Py.ErrorTypes.tabErrorStaticMethods,
-        debugFn: PyTabError.createDebugString(ptr:),
+        debugFn: PyTabError.createDebugInfo(ptr:),
         deinitialize: PyTabError.deinitialize(ptr:)
       )
 
@@ -845,7 +845,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PySystemError.layout.size,
         staticMethods: Py.ErrorTypes.systemErrorStaticMethods,
-        debugFn: PySystemError.createDebugString(ptr:),
+        debugFn: PySystemError.createDebugInfo(ptr:),
         deinitialize: PySystemError.deinitialize(ptr:)
       )
 
@@ -861,7 +861,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyTypeError.layout.size,
         staticMethods: Py.ErrorTypes.typeErrorStaticMethods,
-        debugFn: PyTypeError.createDebugString(ptr:),
+        debugFn: PyTypeError.createDebugInfo(ptr:),
         deinitialize: PyTypeError.deinitialize(ptr:)
       )
 
@@ -877,7 +877,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyValueError.layout.size,
         staticMethods: Py.ErrorTypes.valueErrorStaticMethods,
-        debugFn: PyValueError.createDebugString(ptr:),
+        debugFn: PyValueError.createDebugInfo(ptr:),
         deinitialize: PyValueError.deinitialize(ptr:)
       )
 
@@ -893,7 +893,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyUnicodeError.layout.size,
         staticMethods: Py.ErrorTypes.unicodeErrorStaticMethods,
-        debugFn: PyUnicodeError.createDebugString(ptr:),
+        debugFn: PyUnicodeError.createDebugInfo(ptr:),
         deinitialize: PyUnicodeError.deinitialize(ptr:)
       )
 
@@ -909,7 +909,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyUnicodeDecodeError.layout.size,
         staticMethods: Py.ErrorTypes.unicodeDecodeErrorStaticMethods,
-        debugFn: PyUnicodeDecodeError.createDebugString(ptr:),
+        debugFn: PyUnicodeDecodeError.createDebugInfo(ptr:),
         deinitialize: PyUnicodeDecodeError.deinitialize(ptr:)
       )
 
@@ -925,7 +925,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyUnicodeEncodeError.layout.size,
         staticMethods: Py.ErrorTypes.unicodeEncodeErrorStaticMethods,
-        debugFn: PyUnicodeEncodeError.createDebugString(ptr:),
+        debugFn: PyUnicodeEncodeError.createDebugInfo(ptr:),
         deinitialize: PyUnicodeEncodeError.deinitialize(ptr:)
       )
 
@@ -941,7 +941,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyUnicodeTranslateError.layout.size,
         staticMethods: Py.ErrorTypes.unicodeTranslateErrorStaticMethods,
-        debugFn: PyUnicodeTranslateError.createDebugString(ptr:),
+        debugFn: PyUnicodeTranslateError.createDebugInfo(ptr:),
         deinitialize: PyUnicodeTranslateError.deinitialize(ptr:)
       )
 
@@ -957,7 +957,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyWarning.layout.size,
         staticMethods: Py.ErrorTypes.warningStaticMethods,
-        debugFn: PyWarning.createDebugString(ptr:),
+        debugFn: PyWarning.createDebugInfo(ptr:),
         deinitialize: PyWarning.deinitialize(ptr:)
       )
 
@@ -973,7 +973,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyDeprecationWarning.layout.size,
         staticMethods: Py.ErrorTypes.deprecationWarningStaticMethods,
-        debugFn: PyDeprecationWarning.createDebugString(ptr:),
+        debugFn: PyDeprecationWarning.createDebugInfo(ptr:),
         deinitialize: PyDeprecationWarning.deinitialize(ptr:)
       )
 
@@ -989,7 +989,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyPendingDeprecationWarning.layout.size,
         staticMethods: Py.ErrorTypes.pendingDeprecationWarningStaticMethods,
-        debugFn: PyPendingDeprecationWarning.createDebugString(ptr:),
+        debugFn: PyPendingDeprecationWarning.createDebugInfo(ptr:),
         deinitialize: PyPendingDeprecationWarning.deinitialize(ptr:)
       )
 
@@ -1005,7 +1005,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyRuntimeWarning.layout.size,
         staticMethods: Py.ErrorTypes.runtimeWarningStaticMethods,
-        debugFn: PyRuntimeWarning.createDebugString(ptr:),
+        debugFn: PyRuntimeWarning.createDebugInfo(ptr:),
         deinitialize: PyRuntimeWarning.deinitialize(ptr:)
       )
 
@@ -1021,7 +1021,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PySyntaxWarning.layout.size,
         staticMethods: Py.ErrorTypes.syntaxWarningStaticMethods,
-        debugFn: PySyntaxWarning.createDebugString(ptr:),
+        debugFn: PySyntaxWarning.createDebugInfo(ptr:),
         deinitialize: PySyntaxWarning.deinitialize(ptr:)
       )
 
@@ -1037,7 +1037,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyUserWarning.layout.size,
         staticMethods: Py.ErrorTypes.userWarningStaticMethods,
-        debugFn: PyUserWarning.createDebugString(ptr:),
+        debugFn: PyUserWarning.createDebugInfo(ptr:),
         deinitialize: PyUserWarning.deinitialize(ptr:)
       )
 
@@ -1053,7 +1053,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyFutureWarning.layout.size,
         staticMethods: Py.ErrorTypes.futureWarningStaticMethods,
-        debugFn: PyFutureWarning.createDebugString(ptr:),
+        debugFn: PyFutureWarning.createDebugInfo(ptr:),
         deinitialize: PyFutureWarning.deinitialize(ptr:)
       )
 
@@ -1069,7 +1069,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyImportWarning.layout.size,
         staticMethods: Py.ErrorTypes.importWarningStaticMethods,
-        debugFn: PyImportWarning.createDebugString(ptr:),
+        debugFn: PyImportWarning.createDebugInfo(ptr:),
         deinitialize: PyImportWarning.deinitialize(ptr:)
       )
 
@@ -1085,7 +1085,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyUnicodeWarning.layout.size,
         staticMethods: Py.ErrorTypes.unicodeWarningStaticMethods,
-        debugFn: PyUnicodeWarning.createDebugString(ptr:),
+        debugFn: PyUnicodeWarning.createDebugInfo(ptr:),
         deinitialize: PyUnicodeWarning.deinitialize(ptr:)
       )
 
@@ -1101,7 +1101,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyBytesWarning.layout.size,
         staticMethods: Py.ErrorTypes.bytesWarningStaticMethods,
-        debugFn: PyBytesWarning.createDebugString(ptr:),
+        debugFn: PyBytesWarning.createDebugInfo(ptr:),
         deinitialize: PyBytesWarning.deinitialize(ptr:)
       )
 
@@ -1117,7 +1117,7 @@ extension Py {
         subclasses: [],
         instanceSizeWithoutTail: PyResourceWarning.layout.size,
         staticMethods: Py.ErrorTypes.resourceWarningStaticMethods,
-        debugFn: PyResourceWarning.createDebugString(ptr:),
+        debugFn: PyResourceWarning.createDebugInfo(ptr:),
         deinitialize: PyResourceWarning.deinitialize(ptr:)
       )
 

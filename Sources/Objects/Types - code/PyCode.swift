@@ -277,27 +277,16 @@ public struct PyCode: PyObjectMixin {
 
   // MARK: - Debug
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyCode(ptr: ptr)
-    return "PyCode(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "name", value: zelf.name, includeInShortDescription: true)
+    result.append(name: "qualifiedName", value: zelf.qualifiedName, includeInShortDescription: true)
+    result.append(name: "filename", value: zelf.filename)
+    result.append(name: "codeFlags", value: zelf.codeFlags)
+    result.append(name: "instructionCount", value: zelf.instructions.count)
+    return result
   }
-
-//  public var customMirror: Mirror {
-//    let name = self.name.value
-//    let qualifiedName = self.qualifiedName.value
-//    let filename = self.filename.value
-//
-//    return Mirror(
-//      self,
-//      children: [
-//        "name": name,
-//        "qualifiedName": qualifiedName,
-//        "codeFlags": self.codeFlags,
-//        "instructionCount": self.instructions.count,
-//        "filename": filename
-//      ]
-//    )
-//  }
 
   // MARK: - Equatable, comparable
 

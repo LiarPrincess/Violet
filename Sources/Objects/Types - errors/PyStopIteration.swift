@@ -72,9 +72,12 @@ public struct PyStopIteration: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyStopIteration(ptr: ptr)
-    return "PyStopIteration(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    PyBaseException.fillDebug(zelf: zelf.asBaseException, debug: &result)
+    result.append(name: "value", value: zelf.value)
+    return result
   }
 
   // MARK: - Class

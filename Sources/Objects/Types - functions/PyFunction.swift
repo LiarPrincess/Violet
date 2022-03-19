@@ -135,9 +135,18 @@ public struct PyFunction: PyObjectMixin {
 
   // MARK: - Debug
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyFunction(ptr: ptr)
-    return "PyFunction(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    Self.fillDebug(zelf: zelf, debug: &result)
+    return result
+  }
+
+  internal static func fillDebug(zelf: PyFunction, debug: inout PyObject.DebugMirror) {
+    debug.append(name: "name", value: zelf.name, includeInShortDescription: true)
+    debug.append(name: "qualname", value: zelf.qualname, includeInShortDescription: true)
+    debug.append(name: "module", value: zelf.module)
+    debug.append(name: "doc", value: zelf.doc as Any)
   }
 
   // MARK: - String

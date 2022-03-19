@@ -101,9 +101,13 @@ public struct PyString: PyObjectMixin, AbstractString {
 
   // MARK: - Debug
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyString(ptr: ptr)
-    return "PyString(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "cachedCount", value: zelf.cachedCount, includeInShortDescription: true)
+    result.append(name: "cachedHash", value: zelf.cachedHash, includeInShortDescription: true)
+    result.append(name: "value", value: zelf.value, includeInShortDescription: true)
+    return result
   }
 
   // MARK: - Equatable, comparable

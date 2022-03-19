@@ -35,9 +35,12 @@ public struct PyByteArrayIterator: PyObjectMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyByteArrayIterator(ptr: ptr)
-    return "PyByteArrayIterator(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "index", value: zelf.index)
+    result.append(name: "bytes", value: zelf.bytes)
+    return result
   }
 
   // MARK: - Class

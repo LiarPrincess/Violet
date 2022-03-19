@@ -55,9 +55,11 @@ public struct PyClassMethod: PyObjectMixin {
 
   // MARK: - Debug
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyClassMethod(ptr: ptr)
-    return "PyClassMethod(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "callable", value: zelf.callable as Any)
+    return result
   }
 
   // MARK: - Class

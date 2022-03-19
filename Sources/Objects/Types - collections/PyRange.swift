@@ -120,9 +120,14 @@ public struct PyRange: PyObjectMixin {
 
   // MARK: - Debug
 
-  internal static func createDebugString(ptr: RawPtr) -> String {
+  internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyRange(ptr: ptr)
-    return "PyRange(type: \(zelf.typeName), flags: \(zelf.flags))"
+    var result = PyObject.DebugMirror(object: zelf)
+    result.append(name: "start", value: zelf.start, includeInShortDescription: true)
+    result.append(name: "stop", value: zelf.stop, includeInShortDescription: true)
+    result.append(name: "step", value: zelf.step, includeInShortDescription: true)
+    result.append(name: "stepType", value: zelf.stepType)
+    return result
   }
 
   // MARK: - Equatable, comparable
