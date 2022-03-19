@@ -2,7 +2,7 @@ import XCTest
 import Foundation
 import BigInt
 import FileSystem
-@testable import VioletObjects
+import VioletObjects // Do not add '@testable'! We want to do everything 'by the book'.
 
 extension PyTestCase {
 
@@ -63,6 +63,19 @@ extension PyTestCase {
   // MARK: - Equal
 
   func assertEqual<L: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
+                                                       left: L?,
+                                                       right: R,
+                                                       file: StaticString = #file,
+                                                       line: UInt = #line) {
+    guard let left = left else {
+      XCTFail("Left is '.none'", file: file, line: line)
+      return
+    }
+
+    self.assertEqual(py, left: left, right: right, file: file, line: line)
+  }
+
+  func assertEqual<L: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
                                                        left: L,
                                                        right: R,
                                                        file: StaticString = #file,
@@ -91,7 +104,7 @@ extension PyTestCase {
     }
   }
 
-  // MARK: - Error
+  // MARK: - Type error
 
   func assertTypeError<T>(_ py: Py,
                           error: PyResult<T>,
@@ -119,31 +132,88 @@ extension PyTestCase {
               line: line)
 
     if let expectedMessage = message {
-      if let message = self.getMessageFromFirstArg(py, error: error) {
-        XCTAssertEqual(message.value, expectedMessage, "Message", file: file, line: line)
+      if let message = self.getMessageString(py, error: error) {
+        XCTAssertEqual(message, expectedMessage, "Message", file: file, line: line)
       } else {
         XCTFail("No message", file: file, line: line)
       }
     }
   }
 
-  private func toString<T: PyErrorMixin>(_ py: Py, error: T) -> String {
-    let message = self.getMessageFromFirstArg(py, error: error)
-    return message?.value ?? error.typeName
+  // MARK: - Invalid 'self'
+
+  func assertInvalidSelfArgumentMessage(_ py: Py,
+                                        type: PyType,
+                                        argumentCount: Int,
+                                        fnName: StaticString = #function,
+                                        file: StaticString = #file,
+                                        line: UInt = #line) {
+    // Method name will be taken from test name.
+    guard let selector = self.getInvalidSelfArgumentFunctionName(fnName: fnName) else {
+      XCTFail("Unable to get function name from '\(fnName)'.", file: file, line: line)
+      return
+    }
+
+    let typeName = py.getName(type: type)
+    let typeObject = type.asObject
+    let selectorStr = py.newString(selector)
+
+    let fn: PyObject
+    switch py.getMethod(object: typeObject, selector: selectorStr, allowsCallableFromDict: true) {
+    case .value(let o):
+      fn = o
+    case .notFound:
+      XCTFail("'\(typeName).\(selector)': does not exist.", file: file, line: line)
+      return
+    case .error(let e):
+      let reason = self.toString(py, error: e)
+      XCTFail("'\(typeName).\(selector)': \(reason)", file: file, line: line)
+      return
+    }
+
+    let arg = py.none.asObject
+    let args = (0..<argumentCount).map { _ in arg }
+
+    let error: PyBaseException
+    switch py.call(callable: fn, args: args, kwargs: nil) {
+    case .value(let o):
+      XCTFail("'\(typeName).\(selector)': returned '\(o)'.", file: file, line: line)
+      return
+    case .notCallable:
+      XCTFail("'\(typeName).\(selector)': not callable.", file: file, line: line)
+      return
+    case .error(let e):
+      self.assertTypeError(py, error: e, message: nil)
+      error = e
+    }
+
+    guard let message = self.getMessageString(py, error: error) else {
+      XCTFail("'\(typeName).\(selector)': no message.", file: file, line: line)
+      return
+    }
+
+    // descriptor '__add__' requires a 'int' object but received a 'NoneType'
+    XCTAssert(message.contains(typeName), "Missing '\(typeName)'", file: file, line: line)
+    XCTAssert(message.contains(selector), "Missing '\(selector)'", file: file, line: line)
   }
 
-  func getMessageFromFirstArg<T: PyErrorMixin>(_ py: Py, error: T) -> PyString? {
-    let args = error.asBaseException.getArgs()
+  /// `test__add__()` -> `__add__`.
+  private func getInvalidSelfArgumentFunctionName(fnName: StaticString) -> String? {
+    let fnString = String(describing: fnName)
 
-    guard let firstArg = args.elements.first else {
+    let prefix = "test"
+    guard fnString.hasPrefix(prefix) else {
       return nil
     }
 
-    guard let message = py.cast.asString(firstArg) else {
+    let nameStartIndex = fnString.index(fnString.startIndex, offsetBy: prefix.count)
+
+    guard let parenOpenIndex = fnString.firstIndex(of: "(") else {
       return nil
     }
 
-    return message
+    let result = fnString[nameStartIndex..<parenOpenIndex]
+    return String(result)
   }
 
   // MARK: - Helpers
@@ -172,5 +242,49 @@ extension PyTestCase {
     case let .error(e):
       return e
     }
+  }
+
+  func toString<T: PyErrorMixin>(_ py: Py, error: T) -> String {
+    let typeName = error.typeName
+
+    guard let message = self.getMessage(py, error: error) else {
+      return typeName
+    }
+
+    switch py.strString(object: message.asObject) {
+    case .value(let s):
+      return s
+    case .error:
+      return typeName
+    }
+  }
+
+  func getMessageString<T: PyErrorMixin>(_ py: Py, error: T) -> String? {
+    guard let message = self.getMessage(py, error: error) else {
+      return nil
+    }
+
+    switch py.strString(object: message.asObject) {
+    case .value(let s):
+      return s
+    case .error:
+      return nil
+    }
+  }
+
+  func getMessage<T: PyErrorMixin>(_ py: Py, error: T) -> PyString? {
+    let args = py.getArgs(exception: error.asBaseException)
+
+    let firstArg: PyObject
+    switch py.getItem(object: args.asObject, index: 0) {
+    case .value(let o): firstArg = o
+    case .error: return nil
+    }
+
+    guard let message = py.cast.asString(firstArg) else {
+      return nil
+    }
+
+    return message
   }
 }

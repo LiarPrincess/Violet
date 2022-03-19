@@ -31,6 +31,39 @@ extension Py {
                                deinitialize: deinitialize)
   }
 
+  // MARK: - Properties
+
+  public func getName(type: PyType) -> String {
+    return type.getNameString()
+  }
+
+  // MARK: - MRO
+
+  public enum LookupResult {
+    case value(PyObject)
+    case notFound
+    case error(PyBaseException)
+  }
+
+  /// Look for a name through `object.type` MRO.
+  ///
+  /// _PyObject_LookupSpecial(PyObject *self, _Py_Identifier *attrid)
+  public func mroLookup(object: PyObject, name: IdString) -> LookupResult {
+    let type = object.type
+    guard let lookup = type.mroLookup(self, name: name) else {
+      return .notFound
+    }
+
+    if let descr = GetDescriptor(self, object: object, attribute: lookup.object) {
+      switch descr.call() {
+      case let .value(o): return .value(o)
+      case let .error(e): return .error(e)
+      }
+    }
+
+    return .value(lookup.object)
+  }
+
   // MARK: - Is instance
 
   /// isinstance(object, classinfo)

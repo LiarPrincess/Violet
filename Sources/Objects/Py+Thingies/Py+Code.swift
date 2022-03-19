@@ -212,7 +212,7 @@ extension Py {
 
   // MARK: - Function name
 
-  public func getFunctionName(object: PyObject) -> PyString? {
+  public func getName(function object: PyObject) -> PyString? {
     if let fn = self.cast.asBuiltinFunction(object) {
       return fn.getName(self)
     }
@@ -231,11 +231,11 @@ extension Py {
     }
 
     if let method = self.cast.asStaticMethod(object), let fn = method.getFunction() {
-      return self.getFunctionName(object: fn)
+      return self.getName(function: fn)
     }
 
     if let method = self.cast.asClassMethod(object), let fn = method.getFunction() {
-      return self.getFunctionName(object: fn)
+      return self.getName(function: fn)
     }
 
     return nil
@@ -265,7 +265,7 @@ extension Py {
     case namelessModule
   }
 
-  public func getModuleName(object: PyObject) -> ModuleName {
+  public func getName(module object: PyObject) -> ModuleName {
     guard let module = self.cast.asModule(object) else {
       return .notModule
     }

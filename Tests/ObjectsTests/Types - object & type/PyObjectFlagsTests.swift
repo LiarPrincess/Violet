@@ -8,8 +8,8 @@ private typealias Flags = PyObject.Flags
 
 private let allEveryObjectFlags: [Flags] = [
   .reprLock,
-  .descriptionLock,
-  .has__dict__
+  .descriptionLock
+//  .reserved2,
 //  .reserved3,
 //  .reserved4,
 //  .reserved5,
