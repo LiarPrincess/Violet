@@ -150,7 +150,7 @@ class ArgumentsTests: XCTestCase {
   // MARK: - Byte compare
 
   func test_bytes() {
-    let values: [String: BytesWarningOption] = [
+    let values: [String: Arguments.BytesWarningOption] = [
       "-b": .warning,
       "-bb": .error
     ]
@@ -200,7 +200,7 @@ class ArgumentsTests: XCTestCase {
   // MARK: - Warnings
 
   func test_warnings() {
-    let values: [String: WarningOption] = [
+    let values: [String: Arguments.WarningOption] = [
       "-Wdefault": .default,
       "-Werror": .error,
       "-Walways": .always,
@@ -220,7 +220,7 @@ class ArgumentsTests: XCTestCase {
 
   func test_warnings_multiple() {
     let cmd = "-Wdefault -Werror -Walways -Wmodule -Wonce -Wignore"
-    let warnings: [WarningOption] = [
+    let warnings: [Arguments.WarningOption] = [
       .default, .error, .always, .module, .once, .ignore
     ]
 

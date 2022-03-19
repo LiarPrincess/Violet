@@ -111,7 +111,7 @@ class EnvironmentTests: XCTestCase {
   // MARK: - Warning
 
   func test_warnings_single() {
-    let presets: [String: WarningOption] = [
+    let presets: [String: Arguments.WarningOption] = [
       "default": .default,
       "error": .error,
       "always": .always,
