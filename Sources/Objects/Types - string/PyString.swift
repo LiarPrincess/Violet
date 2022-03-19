@@ -904,7 +904,7 @@ public struct PyString: PyObjectMixin, AbstractString {
 
   // MARK: - Python new
 
-  private static let newArguments = ArgumentParser(
+  private static let newArguments = ArgumentParser.createOrTrap(
     arguments: ["object", "encoding", "errors"],
     format: "|Oss:str"
   )

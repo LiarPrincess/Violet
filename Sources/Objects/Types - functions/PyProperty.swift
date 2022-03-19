@@ -358,7 +358,7 @@ public struct PyProperty: PyObjectMixin {
 
   // MARK: - Python init
 
-  private static let initArguments = ArgumentParser(
+  private static let initArguments = ArgumentParser.createOrTrap(
     arguments: ["fget", "fset", "fdel", "doc"],
     format: "|OOOO:property"
   )

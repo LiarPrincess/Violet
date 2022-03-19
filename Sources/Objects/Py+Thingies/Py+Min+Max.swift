@@ -23,7 +23,7 @@ private protocol MinMaxImpl {
 extension MinMaxImpl {
 
   fileprivate static func createParser() -> ArgumentParser {
-     return ArgumentParser(
+    return ArgumentParser.createOrTrap(
       arguments: ["key", "default"],
       format: "|$OO:\(Self.fnName)"
     )

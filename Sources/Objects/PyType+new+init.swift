@@ -27,7 +27,7 @@ extension PyType {
 
   // MARK: - Python new
 
-  private static let newArguments = ArgumentParser(
+  private static let newArguments = ArgumentParser.createOrTrap(
     arguments: ["name", "bases", "dict"],
     format: "OOO:type.__new__"
   )

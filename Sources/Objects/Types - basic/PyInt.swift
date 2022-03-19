@@ -1057,7 +1057,7 @@ public struct PyInt: PyObjectMixin {
 
   // MARK: - Python new
 
-  private static let newArguments = ArgumentParser(
+  private static let newArguments = ArgumentParser.createOrTrap(
     arguments: ["", "base"],
     format: "|OO:int"
   )

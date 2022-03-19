@@ -24,7 +24,7 @@ import VioletCore
 // MARK: - any, all, sum
 
 // CPython does this differently.
-private let sumArguments = ArgumentParser(
+private let sumArguments = ArgumentParser.createOrTrap(
   arguments: ["", "start"],
   format: "O|O:sum"
 )
@@ -381,7 +381,7 @@ extension Builtins {
 
 // MARK: - print
 
-private let printArguments = ArgumentParser(
+private let printArguments = ArgumentParser.createOrTrap(
   arguments: ["sep", "end", "file", "flush"],
   format: "|OOOO:print"
 )
@@ -437,7 +437,7 @@ extension Builtins {
 
 // MARK: - open
 
-private let openArguments = ArgumentParser(
+private let openArguments = ArgumentParser.createOrTrap(
   arguments: [
     "file", "mode", "buffering",
     "encoding", "errors", "newline",
@@ -643,7 +643,7 @@ extension Builtins {
 
 // MARK: - __import__
 
-private let importArguments = ArgumentParser(
+private let importArguments = ArgumentParser.createOrTrap(
   arguments: ["name", "globals", "locals", "fromlist", "level"],
   format: "U|OOOi:__import__"
 )
@@ -957,7 +957,7 @@ extension Builtins {
 
 // MARK: - compile
 
-private let compileArguments = ArgumentParser(
+private let compileArguments = ArgumentParser.createOrTrap(
   arguments: ["source", "filename", "mode", "flags", "dont_inherit", "optimize"],
   format: "OOO|OOO:compile"
 )
@@ -1015,12 +1015,12 @@ extension Builtins {
 
 // MARK: - exec, eval
 
-private let execArguments = ArgumentParser(
+private let execArguments = ArgumentParser.createOrTrap(
   arguments: ["source", "globals", "locals"],
   format: "O|OO:exec"
 )
 
-private let evalArguments = ArgumentParser(
+private let evalArguments = ArgumentParser.createOrTrap(
   arguments: ["source", "globals", "locals"],
   format: "O|OO:exec"
 )

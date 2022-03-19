@@ -1094,7 +1094,7 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
 
   // MARK: - Python init
 
-  private static let initArguments = ArgumentParser(
+  private static let initArguments = ArgumentParser.createOrTrap(
     arguments: ["source", "encoding", "errors"],
     format: "|Oss:bytearray"
   )

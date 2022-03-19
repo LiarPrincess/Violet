@@ -83,7 +83,7 @@ private enum SplitSeparator<T> {
 
 // MARK: - Arguments
 
-private let splitArguments = ArgumentParser(
+private let splitArguments = ArgumentParser.createOrTrap(
   arguments: ["sep", "maxsplit"],
   format: "|OO:split"
 )

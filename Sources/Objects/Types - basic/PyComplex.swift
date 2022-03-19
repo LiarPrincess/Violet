@@ -667,7 +667,7 @@ public struct PyComplex: PyObjectMixin {
 
   // MARK: - Python new
 
-  private static let newArguments = ArgumentParser(
+  private static let newArguments = ArgumentParser.createOrTrap(
     arguments: ["real", "imag"],
     format: "|OO:complex"
   )

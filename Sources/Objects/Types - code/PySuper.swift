@@ -294,7 +294,7 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
 
   // MARK: - Python init
 
-  private static let initArguments = ArgumentParser(
+  private static let initArguments = ArgumentParser.createOrTrap(
     arguments: ["", ""],
     format: "|OO:super"
   )

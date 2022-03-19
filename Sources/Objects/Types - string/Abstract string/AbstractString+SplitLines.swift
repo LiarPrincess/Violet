@@ -1,4 +1,4 @@
-private let splitLinesArguments = ArgumentParser(
+private let splitLinesArguments = ArgumentParser.createOrTrap(
   arguments: ["keepends"],
   format: "|O:splitlines"
 )
