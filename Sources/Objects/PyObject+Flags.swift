@@ -9,6 +9,8 @@ extension PyObject {
   /// Btw. it does not implement 'OptionSet', its interface is a bit awkward.
   public struct Flags: Equatable, CustomStringConvertible {
 
+    public static let `default` = Flags()
+
     // swiftlint:disable:next nesting
     private typealias Storage = UInt32
 

@@ -243,11 +243,13 @@ public struct IdString: CustomStringConvertible {{
     print('  }')
     print()
 
-    # ==========================
-    # === Static properties ====
-    # ==========================
+    # ===================
+    # === Collection ====
+    # ===================
 
-    print('  internal struct Collection {')
+    print('  internal struct Collection: Sequence {')
+    print()
+    print('    internal typealias Element = IdString')
     print()
     print('    private let objects: [PyString]')
     print()
@@ -261,11 +263,29 @@ public struct IdString: CustomStringConvertible {{
     for index, id in enumerate(ids):
         is_last = index == len(ids) - 1
         comma = '' if is_last else ','
-        print(f'        py.intern(string: "{id}"){comma}')
+        print(f'        py.newString("{id}"){comma}')
 
-    print('      ]')
-    print('    }')
-    print('  }')
+    print(f'      ]')
+    print(f'    }}')
+    print()
+    print(f'    internal struct Iterator: IteratorProtocol {{')
+    print()
+    print(f'      private var index = -1')
+    print()
+    print(f'      mutating func next() -> IdString? {{')
+    print(f'        if self.index == {len(ids) - 1} {{')
+    print(f'          return nil')
+    print(f'        }}')
+    print()
+    print(f'        self.index += 1')
+    print(f'        return IdString(index: self.index)')
+    print(f'      }}')
+    print(f'    }}') # ITerator
+    print()
+    print(f'    internal func makeIterator() -> Iterator {{')
+    print(f'      return Iterator()')
+    print(f'    }}')
+    print(f'  }}')
 
     # ============
     # === End ====

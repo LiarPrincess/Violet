@@ -38,41 +38,20 @@ extension PyMemory {
   /// - `type` type has `type` type (self reference) and `object` type as base
   public func newTypeAndObjectTypes(_ py: Py) -> (objectType: PyType, typeType: PyType) {
     let layout = PyType.layout
-    let objectTypePtr = self.allocateObject(size: layout.size, alignment: layout.alignment)
     let typeTypePtr = self.allocateObject(size: layout.size, alignment: layout.alignment)
+    let objectTypePtr = self.allocateObject(size: layout.size, alignment: layout.alignment)
 
-    let objectType = PyType(ptr: objectTypePtr)
     let typeType = PyType(ptr: typeTypePtr)
+    let objectType = PyType(ptr: objectTypePtr)
 
-    objectType.initialize(py,
-                          type: typeType,
-                          name: "object",
-                          qualname: "object",
-                          flags: [.isBaseTypeFlag, .isDefaultFlag, .subclassInstancesHave__dict__Flag],
-                          base: nil,
-                          bases: [],
-                          mroWithoutSelf: [],
-                          subclasses: [],
-                          instanceSizeWithoutTail: PyObject.layout.size,
-                          staticMethods: Py.Types.objectStaticMethods,
-                          debugFn: PyObject.createDebugString(ptr:),
-                          deinitialize: PyObject.deinitialize(ptr:))
+    PyType.initialize(
+      typeType: typeType,
+      typeTypeFlags: [.hasGCFlag, .instancesHave__dict__Flag, .isBaseTypeFlag, .isDefaultFlag, .isTypeSubclassFlag],
+      objectType: objectType,
+      objectTypeFlags: [.isBaseTypeFlag, .isDefaultFlag, .subclassInstancesHave__dict__Flag]
+    )
 
-    typeType.initialize(py,
-                        type: typeType,
-                        name: "type",
-                        qualname: "type",
-                        flags: [.hasGCFlag, .instancesHave__dict__Flag, .isBaseTypeFlag, .isDefaultFlag, .isTypeSubclassFlag],
-                        base: objectType,
-                        bases: [objectType],
-                        mroWithoutSelf: [objectType],
-                        subclasses: [],
-                        instanceSizeWithoutTail: PyType.layout.size,
-                        staticMethods: Py.Types.typeStaticMethods,
-                        debugFn: PyType.createDebugString(ptr:),
-                        deinitialize: PyType.deinitialize(ptr:))
-
-   return (objectType, typeType)
+    return (objectType, typeType)
   }
 }
 
@@ -4172,8 +4151,8 @@ extension PyObject {
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
     internal let typeOffset: Int
-    internal let __dict__Offset: Int
     internal let memoryInfoOffset: Int
+    internal let __dict__Offset: Int
     internal let flagsOffset: Int
     internal let size: Int
     internal let alignment: Int
@@ -4184,16 +4163,16 @@ extension PyObject {
         initialAlignment: 0,
         fields: [
           PyMemory.FieldLayout(from: PyType.self), // PyObject.type
-          PyMemory.FieldLayout(from: PyObject.Lazy__dict__.self), // PyObject.__dict__
           PyMemory.FieldLayout(from: PyMemory.ObjectHeader.self), // PyObject.memoryInfo
+          PyMemory.FieldLayout(from: PyObject.Lazy__dict__.self), // PyObject.__dict__
           PyMemory.FieldLayout(from: PyObject.Flags.self) // PyObject.flags
         ]
       )
 
       assert(layout.offsets.count == 4)
       self.typeOffset = layout.offsets[0]
-      self.__dict__Offset = layout.offsets[1]
-      self.memoryInfoOffset = layout.offsets[2]
+      self.memoryInfoOffset = layout.offsets[1]
+      self.__dict__Offset = layout.offsets[2]
       self.flagsOffset = layout.offsets[3]
       self.size = layout.size
       self.alignment = layout.alignment
@@ -4205,10 +4184,10 @@ extension PyObject {
 
   /// Property: `PyObject.type`.
   internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: Self.layout.typeOffset) }
-  /// Property: `PyObject.__dict__`.
-  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: Self.layout.__dict__Offset) }
   /// Property: `PyObject.memoryInfo`.
   internal var memoryInfoPtr: Ptr<PyMemory.ObjectHeader> { Ptr(self.ptr, offset: Self.layout.memoryInfoOffset) }
+  /// Property: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: Self.layout.__dict__Offset) }
   /// Property: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: Self.layout.flagsOffset) }
 
@@ -4218,8 +4197,8 @@ extension PyObject {
 
     // Call 'deinitialize' on all of our own properties.
     zelf.typePtr.deinitialize()
-    zelf.__dict__Ptr.deinitialize()
     zelf.memoryInfoPtr.deinitialize()
+    zelf.__dict__Ptr.deinitialize()
     zelf.flagsPtr.deinitialize()
   }
 }

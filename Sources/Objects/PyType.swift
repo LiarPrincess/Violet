@@ -26,12 +26,6 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     type(name, bases, dict) -> a new type
     """
 
-  // Just a reminder:
-  //             | Type     | Base       | MRO
-  // object type | typeType | nil        | [self]
-  // type type   | typeType | objectType | [self, objectType]
-  // normal type | typeType | objectType | [self, (...), objectType]
-
   // MARK: - Properties
 
   public typealias DebugFn = (RawPtr) -> String
@@ -120,11 +114,85 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
                            debugFn: @escaping PyType.DebugFn,
                            deinitialize: @escaping PyType.DeinitializeFn) {
     if let b = base {
-      assert(mro.contains { $0 === b })
+      assert(bases.contains { $0 === b })
+      assert(mroWithoutSelf.contains { $0 === b })
     }
 
-    let mro = [self] + mroWithoutSelf
     self.initializeBase(py, type: type)
+    self.initializeProperties(name: name,
+                              qualname: qualname,
+                              flags: flags,
+                              base: base,
+                              bases: bases,
+                              mroWithoutSelf: mroWithoutSelf,
+                              subclasses: subclasses,
+                              instanceSizeWithoutTail: instanceSizeWithoutTail,
+                              staticMethods: staticMethods,
+                              debugFn: debugFn,
+                              deinitialize: deinitialize)
+
+    for base in bases {
+      base.subclassesPtr.pointee.append(self)
+    }
+  }
+
+  /// `type type` (type of all of the types) and `object type` are a bit special.
+  ///
+  /// They are the 1st python objects that we allocate and at the point of calling
+  /// this methods they are UNINITIALIZED!
+  internal static func initialize(typeType: PyType,
+                                  typeTypeFlags: PyType.TypeFlags,
+                                  objectType: PyType,
+                                  objectTypeFlags: PyType.TypeFlags) {
+    // Just a reminder:
+    //             | Type     | Base       | MRO
+    // object type | typeType | nil        | [self]
+    // type type   | typeType | objectType | [self, objectType]
+    // normal type | typeType | objectType | [self, (...), objectType]
+
+    PyObject.initialize(typeType: typeType, objectType: objectType)
+
+    typeType.initializeProperties(name: "type",
+                                  qualname: "type",
+                                  flags: typeTypeFlags,
+                                  base: objectType,
+                                  bases: [objectType],
+                                  mroWithoutSelf: [objectType],
+                                  subclasses: [],
+                                  instanceSizeWithoutTail: PyType.layout.size,
+                                  staticMethods: Py.Types.typeStaticMethods,
+                                  debugFn: PyType.createDebugString(ptr:),
+                                  deinitialize: PyType.deinitialize(ptr:))
+
+    objectType.initializeProperties(name: "object",
+                                    qualname: "object",
+                                    flags: objectTypeFlags,
+                                    base: nil,
+                                    bases: [],
+                                    mroWithoutSelf: [],
+                                    subclasses: [],
+                                    instanceSizeWithoutTail: PyObject.layout.size,
+                                    staticMethods: Py.Types.objectStaticMethods,
+                                    debugFn: PyObject.createDebugString(ptr:),
+                                    deinitialize: PyObject.deinitialize(ptr:))
+
+    objectType.subclassesPtr.pointee.append(typeType)
+  }
+
+  /// Initialize type properties.
+  /// It assumes that base properties are already initialized.
+  private func initializeProperties(name: String,
+                                    qualname: String,
+                                    flags: PyType.TypeFlags,
+                                    base: PyType?,
+                                    bases: [PyType],
+                                    mroWithoutSelf: [PyType],
+                                    subclasses: [PyType],
+                                    instanceSizeWithoutTail: Int,
+                                    staticMethods: PyStaticCall.KnownNotOverriddenMethods,
+                                    debugFn: @escaping PyType.DebugFn,
+                                    deinitialize: @escaping PyType.DeinitializeFn) {
+    let mro = [self] + mroWithoutSelf
     self.namePtr.initialize(to: name)
     self.qualnamePtr.initialize(to: qualname)
     self.basePtr.initialize(to: base)
@@ -136,11 +204,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     self.debugFnPtr.initialize(to: debugFn)
     self.deinitializePtr.initialize(to: deinitialize)
 
-    self.flags.setCustomFlags(from: typeFlags.objectFlags)
-
-    for base in bases {
-      base.subclassesPtr.pointee.append(self)
-    }
+    self.flags.setCustomFlags(from: flags.objectFlags)
   }
 
   // Nothing to do here.

@@ -273,7 +273,9 @@ public struct IdString: CustomStringConvertible {
     }
   }
 
-  internal struct Collection {
+  internal struct Collection: Sequence {
+
+    internal typealias Element = IdString
 
     private let objects: [PyString]
 
@@ -403,6 +405,24 @@ public struct IdString: CustomStringConvertible {
         py.newString("object"),
         py.newString("origin")
       ]
+    }
+
+    internal struct Iterator: IteratorProtocol {
+
+      private var index = -1
+
+      mutating func next() -> IdString? {
+        if self.index == 118 {
+          return nil
+        }
+
+        self.index += 1
+        return IdString(index: self.index)
+      }
+    }
+
+    internal func makeIterator() -> Iterator {
+      return Iterator()
     }
   }
 }

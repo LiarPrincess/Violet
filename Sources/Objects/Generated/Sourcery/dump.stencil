@@ -28,12 +28,12 @@ Annotation|{{name}}
 Doc|{{variable.name}}
 {% endfor %}
 
-{% for field in type.allVariables|annotated:"storedProperty" %}
+{% for field in type.instanceVariables|annotated:"storedProperty" %}
 {% set visible_only_on_object %}{{ field.annotations.visibleOnlyOnPyObject }}{% endset %}
 SwiftStoredProperty|{{field.name}}|{{field.typeName}}|{{field.isMutable}}|{{visible_only_on_object}}
 {% endfor %}
 
-{% for method in type.allMethods where method.shortName == "initialize" %}
+{% for method in type.instanceMethods where method.shortName == "initialize" %}
 {% set swift_selector_with_types %}{{ method.name }}{% endset %}
 SwiftInitializer|{{swift_selector_with_types}}
 {% endfor %}
