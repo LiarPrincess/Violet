@@ -23,8 +23,8 @@ extension PyIntTests {
     let py = self.createPy()
 
     let i3 = py.newInt(3).asObject
-    let result = self.get(py, object: i3, propertyName: "real")
-    self.assertIsEqual(py, left: result, right: i3)
+    let r3 = self.get(py, object: i3, propertyName: "real")
+    self.assertIsEqual(py, left: r3, right: i3)
   }
 
   func test_imag() {
@@ -33,8 +33,8 @@ extension PyIntTests {
     let i3 = py.newInt(3).asObject
     let i0 = py.newInt(0).asObject
 
-    let result = self.get(py, object: i3, propertyName: "imag")
-    self.assertIsEqual(py, left: result, right: i0)
+    let r3 = self.get(py, object: i3, propertyName: "imag")
+    self.assertIsEqual(py, left: r3, right: i0)
   }
 
   func test_conjugate() {
