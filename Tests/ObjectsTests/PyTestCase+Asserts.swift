@@ -6,112 +6,6 @@ import VioletObjects // Do not add '@testable'! We want to do everything 'by the
 
 extension PyTestCase {
 
-  // MARK: - Not implemented
-
-  func assertNotImplemented(_ py: Py,
-                            object: PyResult<PyObject>,
-                            file: StaticString = #file,
-                            line: UInt = #line) {
-    if let object = self.unwrapResult(py, result: object, file: file, line: line) {
-      self.assertNotImplemented(py, object: object, file: file, line: line)
-    }
-  }
-
-  func assertNotImplemented(_ py: Py,
-                            object: PyObject,
-                            file: StaticString = #file,
-                            line: UInt = #line) {
-    let fromCast = py.cast.isNotImplemented(object)
-    XCTAssertTrue(fromCast,
-                  "py.cast.isNotImplemented",
-                  file: file,
-                  line: line)
-
-    let pointerEquality = object.ptr === py.notImplemented.ptr
-    XCTAssertTrue(pointerEquality,
-                  "object.ptr === py.notImplemented.ptr",
-                  file: file,
-                  line: line)
-  }
-
-  // MARK: - Int
-
-  func assertInt(_ py: Py,
-                 object: PyResult<PyObject>,
-                 value: BigInt,
-                 file: StaticString = #file,
-                 line: UInt = #line) {
-    if let object = self.unwrapResult(py, result: object, file: file, line: line) {
-      self.assertInt(py, object: object, value: value, file: file, line: line)
-    }
-  }
-
-  func assertInt(_ py: Py,
-                 object: PyObject,
-                 value: BigInt,
-                 file: StaticString = #file,
-                 line: UInt = #line) {
-    guard py.cast.isInt(object) else {
-      XCTFail("Got '\(object.typeName)' instead of 'int'.", file: file, line: line)
-      return
-    }
-
-    let expected = py.newInt(value).asObject
-    self.assertIsEqual(py, left: object, right: expected, file: file, line: line)
-  }
-
-  // MARK: - Float
-
-  func assertFloat(_ py: Py,
-                   object: PyResult<PyObject>,
-                   value: Double,
-                   file: StaticString = #file,
-                   line: UInt = #line) {
-    if let object = self.unwrapResult(py, result: object, file: file, line: line) {
-      self.assertFloat(py, object: object, value: value, file: file, line: line)
-    }
-  }
-
-  func assertFloat(_ py: Py,
-                   object: PyObject,
-                   value: Double,
-                   file: StaticString = #file,
-                   line: UInt = #line) {
-    guard py.cast.isFloat(object) else {
-      XCTFail("Got '\(object.typeName)' instead of 'float'.", file: file, line: line)
-      return
-    }
-
-    let expected = py.newFloat(value).asObject
-    self.assertIsEqual(py, left: object, right: expected, file: file, line: line)
-  }
-
-  // MARK: - Tuple
-
-  func assertTuple(_ py: Py,
-                   object: PyResult<PyObject>,
-                   elements: [PyObject],
-                   file: StaticString = #file,
-                   line: UInt = #line) {
-    if let object = self.unwrapResult(py, result: object, file: file, line: line) {
-      self.assertTuple(py, object: object, elements: elements, file: file, line: line)
-    }
-  }
-
-  func assertTuple(_ py: Py,
-                   object: PyObject,
-                   elements: [PyObject],
-                   file: StaticString = #file,
-                   line: UInt = #line) {
-    guard py.cast.isTuple(object) else {
-      XCTFail("Got '\(object.typeName)' instead of 'tuple'.", file: file, line: line)
-      return
-    }
-
-    let expected = py.newTuple(elements: elements)
-    self.assertIsEqual(py, left: object, right: expected, file: file, line: line)
-  }
-
   // MARK: - Repr, str
 
   func assertRepr<T: PyObjectMixin>(_ py: Py,
@@ -172,8 +66,6 @@ extension PyTestCase {
                                                          expected: Bool = true,
                                                          file: StaticString = #file,
                                                          line: UInt = #line) {
-
-
     switch py.isEqualBool(left: left.asObject, right: right.asObject) {
     case let .value(bool):
       // Doing 'if' gives better error messages than 'XCTAssertEqual'.
@@ -184,7 +76,7 @@ extension PyTestCase {
       }
     case let .error(e):
       let reason = self.toString(py, error: e)
-      XCTFail("Not equal error: \(reason)", file: file, line: line)
+      XCTFail("Is equal error: \(reason)", file: file, line: line)
     }
   }
 
@@ -201,7 +93,7 @@ extension PyTestCase {
       self.assertIsTrue(py, object: o, expected: expected, file: file, line: line)
     case let .error(e):
       let reason = self.toString(py, error: e)
-      XCTFail("Not equal error: \(reason)", file: file, line: line)
+      XCTFail("Is not equal error: \(reason)", file: file, line: line)
     }
   }
 

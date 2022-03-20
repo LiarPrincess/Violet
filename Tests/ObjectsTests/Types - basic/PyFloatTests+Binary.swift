@@ -176,8 +176,8 @@ extension PyFloatTests {
 
     let divObject = py.newFloat(div).asObject
     let modObject = py.newFloat(mod).asObject
-    let tuple = [divObject, modObject]
-    self.assertTuple(py, object: result, elements: tuple, file: file, line: line)
+    let tuple = py.newTuple(elements: divObject, modObject)
+    self.assertIsEqual(py, left: result, right: tuple, file: file, line: line)
   }
 
   // MARK: - Helpers
