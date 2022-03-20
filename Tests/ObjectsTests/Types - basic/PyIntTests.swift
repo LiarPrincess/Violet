@@ -10,63 +10,64 @@ class PyIntTests: PyTestCase {
   func test__pow__() {
     let py = self.createPy()
 
-    let i3 = py.newInt(3).asObject
-    let i27 = py.newInt(27).asObject
-    let none = py.none.asObject
+    self.assertPow(py, base: 3, exp: 27, mod: .none, expected: 7_625_597_484_987)
+    self.assertPow(py, base: 27, exp: 3, mod: .none, expected: 19683)
 
-    // >>> pow(3, 27) -> 7625597484987
-    let r3_27 = py.pow(base: i3, exp: i27)
-    self.assertInt(py, object: r3_27, value: 7_625_597_484_987)
+    let messageE = "unsupported operand type(s) for ** or pow(): 'int' and 'NoneType'"
+    self.assertPowTypeError(py, base: 3, exp: .none, mod: .none, message: messageE)
+    self.assertPowTypeError(py, base: 27, exp: .none, mod: .none, message: messageE)
 
-    // >>> pow(27, 3) -> 19683
-    let r27_3 = py.pow(base: i27, exp: i3)
-    self.assertInt(py, object: r27_3, value: 19683)
-
-    let intNone = py.pow(base: i3, exp: none)
-    self.assertTypeError(
-      py,
-      error: intNone,
-      message: "unsupported operand type(s) for ** or pow(): 'int' and 'NoneType'"
-    )
-
-    let noneInt = py.pow(base: none, exp: i27)
-    self.assertTypeError(
-      py,
-      error: noneInt,
-      message: "unsupported operand type(s) for ** or pow(): 'NoneType' and 'int'"
-    )
+    let messageB = "unsupported operand type(s) for ** or pow(): 'NoneType' and 'int'"
+    self.assertPowTypeError(py, base: .none, exp: 3, mod: .none, message: messageB)
+    self.assertPowTypeError(py, base: .none, exp: 27, mod: .none, message: messageB)
   }
 
   func test__pow__mod() {
     let py = self.createPy()
 
+    self.assertPow(py, base: 3, exp: 27, mod: 987, expected: 363)
+    self.assertPow(py, base: 27, exp: 3, mod: 987, expected: 930)
+
     let i3 = py.newInt(3).asObject
     let i27 = py.newInt(27).asObject
-    let i987 = py.newInt(987).asObject
-    let str = py.newString("A").asObject
-    let none = py.none.asObject
+    let sA = py.newString("A").asObject
 
-    // >>> pow(3, 27, 987) -> 363
-    let r3_27_987 = py.pow(base: i3, exp: i27, mod: i987)
-    self.assertInt(py, object: r3_27_987, value: 363)
-
-    // >>> pow(27, 3, 987) -> 930
-    let r27_3_987 = py.pow(base: i27, exp: i3, mod: i987)
-    self.assertInt(py, object: r27_3_987, value: 930)
-
-    // >>> pow(3, 27, None) -> 7625597484987
-    let r3_27_none = py.pow(base: i3, exp: i27, mod: none)
-    self.assertInt(py, object: r3_27_none, value: 7_625_597_484_987)
-
-    // >>> pow(27, 3, None) -> 19683
-    let r27_3_none = py.pow(base: i27, exp: i3, mod: none)
-    self.assertInt(py, object: r27_3_none, value: 19_683)
-
-    let intIntStr = py.pow(base: i3, exp: i27, mod: str)
+    let intIntStr = py.pow(base: i3, exp: i27, mod: sA)
     self.assertTypeError(
       py,
       error: intIntStr,
       message: "unsupported operand type(s) for pow(): 'int', 'int', 'str'"
     )
+  }
+
+  private func assertPow(_ py: Py,
+                         base: Int,
+                         exp: Int,
+                         mod: Int?,
+                         expected: Int,
+                         file: StaticString = #file,
+                         line: UInt = #line) {
+    let baseObject = py.newInt(base).asObject
+    let expObject = py.newInt(exp).asObject
+    let modObject = mod.map { py.newInt($0).asObject } ?? py.none.asObject
+    let result = py.pow(base: baseObject, exp: expObject, mod: modObject)
+
+    let expectedObject = py.newInt(expected).asObject
+    self.assertIsEqual(py, left: result, right: expectedObject, file: file, line: line)
+  }
+
+  private func assertPowTypeError(_ py: Py,
+                                  base: Int?,
+                                  exp: Int?,
+                                  mod: Int?,
+                                  message: String,
+                                  file: StaticString = #file,
+                                  line: UInt = #line) {
+    let baseObject = base.map { py.newInt($0).asObject } ?? py.none.asObject
+    let expObject = exp.map { py.newInt($0).asObject } ?? py.none.asObject
+    let modObject = mod.map { py.newInt($0).asObject } ?? py.none.asObject
+
+    let result = py.pow(base: baseObject, exp: expObject, mod: modObject)
+    self.assertTypeError(py, error: result, message: message, file: file, line: line)
   }
 }
