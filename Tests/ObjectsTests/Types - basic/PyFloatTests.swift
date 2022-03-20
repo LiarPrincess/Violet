@@ -31,8 +31,8 @@ class PyFloatTests: PyTestCase {
 
     let tuple0Object = py.newInt(tuple0).asObject
     let tuple1Object = py.newInt(tuple1).asObject
-    let tuple = [tuple0Object, tuple1Object]
-    self.assertTuple(py, object: result, elements: tuple, file: file, line: line)
+    let tuple = py.newTuple(elements: tuple0Object, tuple1Object)
+    self.assertIsEqual(py, left: result, right: tuple, file: file, line: line)
   }
 
   // MARK: - Round
