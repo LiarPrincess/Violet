@@ -4,7 +4,7 @@
 
 extension Py {
 
-  // MARK: - Pos
+  // MARK: - Positive
 
   /// PyObject * PyNumber_Positive(PyObject *o)
   public func positive(object: PyObject) -> PyResult<PyObject> {
@@ -17,7 +17,7 @@ extension Py {
                                 operation: "unary +")
   }
 
-  // MARK: - Neg
+  // MARK: - Negative
 
   /// PyObject * PyNumber_Negative(PyObject *o)
   public func negative(object: PyObject) -> PyResult<PyObject> {
@@ -43,13 +43,13 @@ extension Py {
                                 operation: "unary ~")
   }
 
-  // MARK: - Abs
+  // MARK: - Absolute
 
   /// abs(x)
   /// See [this](https://docs.python.org/3/library/functions.html#abs)
   ///
   /// PyObject * PyNumber_Absolute(PyObject *o)
-  public func abs(object: PyObject) -> PyResult<PyObject> {
+  public func absolute(object: PyObject) -> PyResult<PyObject> {
     if let result = PyStaticCall.__abs__(self, object: object) {
       return result
     }

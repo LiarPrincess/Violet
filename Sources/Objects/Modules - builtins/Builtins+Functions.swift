@@ -843,7 +843,7 @@ extension Builtins {
                               module: PyObject,
                               left: PyObject,
                               right: PyObject) -> PyResult<PyObject> {
-    return py.divmod(left: left, right: right)
+    return py.divMod(left: left, right: right)
   }
 
   internal static let absDoc = """
@@ -855,7 +855,7 @@ extension Builtins {
   internal static func abs(_ py: Py,
                            module: PyObject,
                            object: PyObject) -> PyResult<PyObject> {
-    return py.abs(object: object)
+    return py.absolute(object: object)
   }
 
   internal static let powDoc = """

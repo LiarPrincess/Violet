@@ -108,10 +108,11 @@ extension PyObjectMixin {
     if let types = property.value as? Array<PyType> {
       string.append("[")
       for (index, type) in types.enumerated() {
-        append(type: type)
-        if index != types.count - 1 {
+        if index != 0 {
           string.append(", ")
         }
+
+        append(type: type)
       }
 
       string.append("]")
@@ -159,6 +160,31 @@ extension PyObjectMixin {
 
     if let s = property.value as? PyString {
       append(string: s.value)
+      return
+    }
+
+    // =============
+    // === Array ===
+    // =============
+
+    if let array = property.value as? [PyObject] {
+      let maxCount = 5
+
+      string.append("[")
+      for (index, object) in array.prefix(maxCount).enumerated() {
+        if index != 0 {
+          string.append(", ")
+        }
+
+        let objectString = String(describing: object)
+        string.append(objectString)
+      }
+
+      if array.count >= maxCount {
+        string.append("...")
+      }
+
+      string.append("]")
       return
     }
 

@@ -440,7 +440,7 @@ extension Py {
 
 // MARK: - Truediv
 
-private struct TruedivOp: BinaryOp {
+private struct TrueDivOp: BinaryOp {
 
   fileprivate static let op = "/"
   fileprivate static let inPlaceOp = "/="
@@ -472,18 +472,18 @@ private struct TruedivOp: BinaryOp {
 
 extension Py {
 
-  public func truediv(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return TruedivOp.call(self, left: left, right: right)
+  public func trueDiv(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    return TrueDivOp.call(self, left: left, right: right)
   }
 
-  public func truedivInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return TruedivOp.callInPlace(self, left: left, right: right)
+  public func trueDivInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    return TrueDivOp.callInPlace(self, left: left, right: right)
   }
 }
 
 // MARK: - Floordiv
 
-private struct FloordivOp: BinaryOp {
+private struct FloorDivOp: BinaryOp {
 
   fileprivate static let op = "//"
   fileprivate static let inPlaceOp = "//="
@@ -515,12 +515,12 @@ private struct FloordivOp: BinaryOp {
 
 extension Py {
 
-  public func floordiv(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return FloordivOp.call(self, left: left, right: right)
+  public func floorDiv(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    return FloorDivOp.call(self, left: left, right: right)
   }
 
-  public func floordivInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return FloordivOp.callInPlace(self, left: left, right: right)
+  public func floorDivInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    return FloorDivOp.callInPlace(self, left: left, right: right)
   }
 }
 
@@ -569,7 +569,7 @@ extension Py {
 
 // MARK: - Divmod
 
-private struct DivmodOp: BinaryOp {
+private struct DivModOp: BinaryOp {
 
   fileprivate static let op = "divmod()"
   fileprivate static let inPlaceOp = "divmod()="
@@ -603,8 +603,8 @@ extension Py {
 
   /// divmod(a, b)
   /// See [this](https://docs.python.org/3/library/functions.html#divmod)
-  public func divmod(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return DivmodOp.call(self, left: left, right: right)
+  public func divMod(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    return DivModOp.call(self, left: left, right: right)
   }
 
   // `divmod` in place does not make sense
