@@ -149,7 +149,7 @@ class ArgumentParserTests: PyTestCase {
     XCTAssertEqual(binding.optionalCount, 0)
 
     let required0 = binding.required(at: 0)
-    self.assertEqual(py, left: required0, right: value)
+    self.assertIsEqual(py, left: required0, right: value)
   }
 
   func test_bind_required_kwarg() {
@@ -168,7 +168,7 @@ class ArgumentParserTests: PyTestCase {
     XCTAssertEqual(binding.requiredCount, 1)
     XCTAssertEqual(binding.optionalCount, 0)
 
-    self.assertEqual(py, left: binding.required(at: 0), right: value)
+    self.assertIsEqual(py, left: binding.required(at: 0), right: value)
   }
 
   func test_bind_required_arg_kwarg() {
@@ -189,10 +189,10 @@ class ArgumentParserTests: PyTestCase {
     XCTAssertEqual(binding.optionalCount, 0)
 
     let required0 = binding.required(at: 0)
-    self.assertEqual(py, left: required0, right: value0)
+    self.assertIsEqual(py, left: required0, right: value0)
 
     let required1 = binding.required(at: 1)
-    self.assertEqual(py, left: required1, right: value1)
+    self.assertIsEqual(py, left: required1, right: value1)
   }
 
   // MARK: - Bind - optional to value
@@ -214,7 +214,7 @@ class ArgumentParserTests: PyTestCase {
     XCTAssertEqual(binding.optionalCount, 1)
 
     let optional0 = binding.optional(at: 0)
-    self.assertEqual(py, left: optional0, right: value)
+    self.assertIsEqual(py, left: optional0, right: value)
   }
 
   func test_bind_optional_kwarg() {
@@ -234,7 +234,7 @@ class ArgumentParserTests: PyTestCase {
     XCTAssertEqual(binding.optionalCount, 1)
 
     let optional0 = binding.optional(at: 0)
-    self.assertEqual(py, left: optional0, right: value)
+    self.assertIsEqual(py, left: optional0, right: value)
   }
 
   func test_bind_optional_arg_kwarg() {
@@ -255,10 +255,10 @@ class ArgumentParserTests: PyTestCase {
     XCTAssertEqual(binding.optionalCount, 2)
 
     let optional0 = binding.optional(at: 0)
-    self.assertEqual(py, left: optional0, right: value0)
+    self.assertIsEqual(py, left: optional0, right: value0)
 
     let optional1 = binding.optional(at: 1)
-    self.assertEqual(py, left: optional1, right: value1)
+    self.assertIsEqual(py, left: optional1, right: value1)
   }
 
   func test_bind_optional_notProvided() {
@@ -302,7 +302,7 @@ class ArgumentParserTests: PyTestCase {
     XCTAssertNil(optional0)
 
     let optional1 = binding.optional(at: 1)
-    self.assertEqual(py, left: optional1, right: value)
+    self.assertIsEqual(py, left: optional1, right: value)
   }
 
   // MARK: - Bind - errors

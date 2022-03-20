@@ -56,48 +56,234 @@ extension PyTestCase {
       return
     }
 
-    let expectedObject = py.newInt(value).asObject
-    self.assertEqual(py, left: object, right: expectedObject, file: file, line: line)
+    let expected = py.newInt(value).asObject
+    self.assertIsEqual(py, left: object, right: expected, file: file, line: line)
+  }
+
+  // MARK: - Float
+
+  func assertFloat(_ py: Py,
+                   object: PyResult<PyObject>,
+                   value: Double,
+                   file: StaticString = #file,
+                   line: UInt = #line) {
+    if let object = self.unwrapResult(py, result: object, file: file, line: line) {
+      self.assertFloat(py, object: object, value: value, file: file, line: line)
+    }
+  }
+
+  func assertFloat(_ py: Py,
+                 object: PyObject,
+                 value: Double,
+                 file: StaticString = #file,
+                 line: UInt = #line) {
+    guard py.cast.isFloat(object) else {
+      XCTFail("Got '\(object.typeName)' instead of 'float'.", file: file, line: line)
+      return
+    }
+
+    let expected = py.newFloat(value).asObject
+    self.assertIsEqual(py, left: object, right: expected, file: file, line: line)
+  }
+
+  // MARK: - Tuple
+
+  func assertTuple(_ py: Py,
+                   object: PyResult<PyObject>,
+                   elements: [PyObject],
+                   file: StaticString = #file,
+                   line: UInt = #line) {
+    if let object = self.unwrapResult(py, result: object, file: file, line: line) {
+      self.assertTuple(py, object: object, elements: elements, file: file, line: line)
+    }
+  }
+
+  func assertTuple(_ py: Py,
+                   object: PyObject,
+                   elements: [PyObject],
+                   file: StaticString = #file,
+                   line: UInt = #line) {
+    guard py.cast.isTuple(object) else {
+      XCTFail("Got '\(object.typeName)' instead of 'tuple'.", file: file, line: line)
+      return
+    }
+
+    let expected = py.newTuple(elements: elements)
+    self.assertIsEqual(py, left: object, right: expected, file: file, line: line)
   }
 
   // MARK: - Equal
 
-  func assertEqual<L: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
-                                                       left: L?,
-                                                       right: R,
-                                                       file: StaticString = #file,
-                                                       line: UInt = #line) {
+  func assertIsEqual<L: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
+                                                         left: L?,
+                                                         right: R,
+                                                         expected: Bool = true,
+                                                         file: StaticString = #file,
+                                                         line: UInt = #line) {
     guard let left = left else {
       XCTFail("Left is '.none'", file: file, line: line)
       return
     }
 
-    self.assertEqual(py, left: left, right: right, file: file, line: line)
+    self.assertIsEqual(py, left: left, right: right, expected: expected, file: file, line: line)
   }
 
-  func assertEqual<L: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
-                                                       left: L,
-                                                       right: R,
-                                                       file: StaticString = #file,
-                                                       line: UInt = #line) {
-    switch py.isEqual(left: left.asObject, right: right.asObject) {
+  func assertIsEqual<L: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
+                                                         left: PyResult<L>,
+                                                         right: R,
+                                                         expected: Bool = true,
+                                                         file: StaticString = #file,
+                                                         line: UInt = #line) {
+    switch left {
     case let .value(o):
-      self.assertIsTrue(py, object: o, file: file, line: line)
+      self.assertIsEqual(py, left: o, right: right, expected: expected, file: file, line: line)
+    case let .error(e):
+      let reason = self.toString(py, error: e)
+      XCTFail("Left is error: \(reason)", file: file, line: line)
+      return
+    }
+  }
+
+  func assertIsEqual<L: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
+                                                         left: L,
+                                                         right: R,
+                                                         expected: Bool = true,
+                                                         file: StaticString = #file,
+                                                         line: UInt = #line) {
+
+
+    switch py.isEqualBool(left: left.asObject, right: right.asObject) {
+    case let .value(bool):
+      // Doing 'if' gives better error messages than 'XCTAssertEqual'.
+      if expected {
+        XCTAssertTrue(bool, "\(left) == \(right)", file: file, line: line)
+      } else {
+        XCTAssertFalse(bool, "\(left) != \(right)", file: file, line: line)
+      }
     case let .error(e):
       let reason = self.toString(py, error: e)
       XCTFail("Not equal error: \(reason)", file: file, line: line)
     }
   }
 
+  // MARK: - Not equal
+
+  func assertIsNotEqual<L: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
+                                                            left: L,
+                                                            right: R,
+                                                            expected: Bool = true,
+                                                            file: StaticString = #file,
+                                                            line: UInt = #line) {
+    switch py.isNotEqual(left: left.asObject, right: right.asObject) {
+    case let .value(o):
+      self.assertIsTrue(py, object: o, expected: expected, file: file, line: line)
+    case let .error(e):
+      let reason = self.toString(py, error: e)
+      XCTFail("Not equal error: \(reason)", file: file, line: line)
+    }
+  }
+
+  // MARK: - Compare
+
+  func assertIsLess<L: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
+                                                        left: L,
+                                                        right: R,
+                                                        expected: Bool = true,
+                                                        file: StaticString = #file,
+                                                        line: UInt = #line) {
+    switch py.isLess(left: left.asObject, right: right.asObject) {
+    case let .value(o):
+      self.assertIsTrue(py, object: o, expected: expected, file: file, line: line)
+    case let .error(e):
+      let reason = self.toString(py, error: e)
+      XCTFail("Is less error: \(reason)", file: file, line: line)
+    }
+  }
+
+  func assertIsLessEqual<L: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
+                                                             left: L,
+                                                             right: R,
+                                                             expected: Bool = true,
+                                                             file: StaticString = #file,
+                                                             line: UInt = #line) {
+    switch py.isLessEqual(left: left.asObject, right: right.asObject) {
+    case let .value(o):
+      self.assertIsTrue(py, object: o, expected: expected, file: file, line: line)
+    case let .error(e):
+      let reason = self.toString(py, error: e)
+      XCTFail("Is less equal error: \(reason)", file: file, line: line)
+    }
+  }
+
+  func assertIsGreater<L: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
+                                                           left: L,
+                                                           right: R,
+                                                           expected: Bool = true,
+                                                           file: StaticString = #file,
+                                                           line: UInt = #line) {
+    switch py.isGreater(left: left.asObject, right: right.asObject) {
+    case let .value(o):
+      self.assertIsTrue(py, object: o, expected: expected, file: file, line: line)
+    case let .error(e):
+      let reason = self.toString(py, error: e)
+      XCTFail("Is greater error: \(reason)", file: file, line: line)
+    }
+  }
+
+  func assertIsGreaterEqual<L: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
+                                                                left: L,
+                                                                right: R,
+                                                                expected: Bool = true,
+                                                                file: StaticString = #file,
+                                                                line: UInt = #line) {
+    switch py.isGreaterEqual(left: left.asObject, right: right.asObject) {
+    case let .value(o):
+      self.assertIsTrue(py, object: o, expected: expected, file: file, line: line)
+    case let .error(e):
+      let reason = self.toString(py, error: e)
+      XCTFail("Is greater equal error: \(reason)", file: file, line: line)
+    }
+  }
+
+  // MARK: - Pos/neg/abs
+
+  func assertPositive<T: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
+                                                          object: T,
+                                                          expected: R,
+                                                          file: StaticString = #file,
+                                                          line: UInt = #line) {
+    let result = py.positive(object: object.asObject)
+    self.assertIsEqual(py, left: result, right: expected.asObject)
+  }
+
+  func assertNegative<T: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
+                                                          object: T,
+                                                          expected: R,
+                                                          file: StaticString = #file,
+                                                          line: UInt = #line) {
+    let result = py.negative(object: object.asObject)
+    self.assertIsEqual(py, left: result, right: expected.asObject)
+  }
+
+  func assertAbsolute<T: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
+                                                          object: T,
+                                                          expected: R,
+                                                          file: StaticString = #file,
+                                                          line: UInt = #line) {
+    let result = py.absolute(object: object.asObject)
+    self.assertIsEqual(py, left: result, right: expected.asObject)
+  }
+
   // MARK: - Is true
 
   func assertIsTrue<T: PyObjectMixin>(_ py: Py,
                                       object: T,
+                                      expected: Bool = true,
                                       file: StaticString = #file,
                                       line: UInt = #line) {
     switch py.isTrueBool(object: object.asObject) {
     case let .value(bool):
-      XCTAssertTrue(bool, "Is true", file: file, line: line)
+      XCTAssertEqual(bool, expected, "Is true", file: file, line: line)
     case let .error(e):
       let reason = self.toString(py, error: e)
       XCTFail("Is true error: \(reason)", file: file, line: line)
@@ -214,77 +400,5 @@ extension PyTestCase {
 
     let result = fnString[nameStartIndex..<parenOpenIndex]
     return String(result)
-  }
-
-  // MARK: - Helpers
-
-  private func unwrapResult<T>(_ py: Py,
-                               result: PyResult<T>,
-                               file: StaticString = #file,
-                               line: UInt = #line) -> T? {
-    switch result {
-    case let .value(o):
-      return o
-    case let .error(e):
-      let reason = self.toString(py, error: e)
-      XCTFail("Result is error: \(reason)", file: file, line: line)
-      return nil
-    }
-  }
-
-  private func unwrapError<T>(result: PyResult<T>,
-                              file: StaticString = #file,
-                              line: UInt = #line) -> PyBaseException? {
-    switch result {
-    case let .value(o):
-      XCTFail("Result is value: \(o)", file: file, line: line)
-      return nil
-    case let .error(e):
-      return e
-    }
-  }
-
-  func toString<T: PyErrorMixin>(_ py: Py, error: T) -> String {
-    let typeName = error.typeName
-
-    guard let message = self.getMessage(py, error: error) else {
-      return typeName
-    }
-
-    switch py.strString(object: message.asObject) {
-    case .value(let s):
-      return s
-    case .error:
-      return typeName
-    }
-  }
-
-  func getMessageString<T: PyErrorMixin>(_ py: Py, error: T) -> String? {
-    guard let message = self.getMessage(py, error: error) else {
-      return nil
-    }
-
-    switch py.strString(object: message.asObject) {
-    case .value(let s):
-      return s
-    case .error:
-      return nil
-    }
-  }
-
-  func getMessage<T: PyErrorMixin>(_ py: Py, error: T) -> PyString? {
-    let args = py.getArgs(exception: error.asBaseException)
-
-    let firstArg: PyObject
-    switch py.getItem(object: args.asObject, index: 0) {
-    case .value(let o): firstArg = o
-    case .error: return nil
-    }
-
-    guard let message = py.cast.asString(firstArg) else {
-      return nil
-    }
-
-    return message
   }
 }
