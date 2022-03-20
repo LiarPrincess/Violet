@@ -112,6 +112,28 @@ extension PyTestCase {
     self.assertIsEqual(py, left: object, right: expected, file: file, line: line)
   }
 
+  // MARK: - Repr, str
+
+  func assertRepr<T: PyObjectMixin>(_ py: Py,
+                                    object: T,
+                                    expected: String,
+                                    file: StaticString = #file,
+                                    line: UInt = #line) {
+    let result = py.repr(object: object.asObject)
+    let expectedObject = py.newString(expected)
+    self.assertIsEqual(py, left: result, right: expectedObject, file: file, line: line)
+  }
+
+  func assertStr<T: PyObjectMixin>(_ py: Py,
+                                   object: T,
+                                   expected: String,
+                                   file: StaticString = #file,
+                                   line: UInt = #line) {
+    let result = py.str(object: object.asObject)
+    let expectedObject = py.newString(expected)
+    self.assertIsEqual(py, left: result, right: expectedObject, file: file, line: line)
+  }
+
   // MARK: - Equal
 
   func assertIsEqual<L: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
@@ -180,68 +202,6 @@ extension PyTestCase {
     case let .error(e):
       let reason = self.toString(py, error: e)
       XCTFail("Not equal error: \(reason)", file: file, line: line)
-    }
-  }
-
-  // MARK: - Compare
-
-  func assertIsLess<L: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
-                                                        left: L,
-                                                        right: R,
-                                                        expected: Bool = true,
-                                                        file: StaticString = #file,
-                                                        line: UInt = #line) {
-    switch py.isLess(left: left.asObject, right: right.asObject) {
-    case let .value(o):
-      self.assertIsTrue(py, object: o, expected: expected, file: file, line: line)
-    case let .error(e):
-      let reason = self.toString(py, error: e)
-      XCTFail("Is less error: \(reason)", file: file, line: line)
-    }
-  }
-
-  func assertIsLessEqual<L: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
-                                                             left: L,
-                                                             right: R,
-                                                             expected: Bool = true,
-                                                             file: StaticString = #file,
-                                                             line: UInt = #line) {
-    switch py.isLessEqual(left: left.asObject, right: right.asObject) {
-    case let .value(o):
-      self.assertIsTrue(py, object: o, expected: expected, file: file, line: line)
-    case let .error(e):
-      let reason = self.toString(py, error: e)
-      XCTFail("Is less equal error: \(reason)", file: file, line: line)
-    }
-  }
-
-  func assertIsGreater<L: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
-                                                           left: L,
-                                                           right: R,
-                                                           expected: Bool = true,
-                                                           file: StaticString = #file,
-                                                           line: UInt = #line) {
-    switch py.isGreater(left: left.asObject, right: right.asObject) {
-    case let .value(o):
-      self.assertIsTrue(py, object: o, expected: expected, file: file, line: line)
-    case let .error(e):
-      let reason = self.toString(py, error: e)
-      XCTFail("Is greater error: \(reason)", file: file, line: line)
-    }
-  }
-
-  func assertIsGreaterEqual<L: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
-                                                                left: L,
-                                                                right: R,
-                                                                expected: Bool = true,
-                                                                file: StaticString = #file,
-                                                                line: UInt = #line) {
-    switch py.isGreaterEqual(left: left.asObject, right: right.asObject) {
-    case let .value(o):
-      self.assertIsTrue(py, object: o, expected: expected, file: file, line: line)
-    case let .error(e):
-      let reason = self.toString(py, error: e)
-      XCTFail("Is greater equal error: \(reason)", file: file, line: line)
     }
   }
 
