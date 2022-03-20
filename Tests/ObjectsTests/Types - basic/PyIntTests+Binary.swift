@@ -125,14 +125,36 @@ extension PyIntTests {
     let py = self.createPy()
 
     let i3 = py.newInt(3).asObject
+    let i_3 = py.newInt(-3).asObject
     let i7 = py.newInt(7).asObject
+    let i_7 = py.newInt(-7).asObject
     let none = py.none.asObject
 
+    // 3 // 7 -> 0
     let r37 = py.floorDiv(left: i3, right: i7)
     self.assertInt(py, object: r37, value: 0)
+    // -3 // 7 -> -1
+    let r_37 = py.floorDiv(left: i_3, right: i7)
+    self.assertInt(py, object: r_37, value: -1)
+    // 3 // -7 -> -1
+    let r3_7 = py.floorDiv(left: i3, right: i_7)
+    self.assertInt(py, object: r3_7, value: -1)
+    // -3 // -7 -> 0
+    let r_3_7 = py.floorDiv(left: i_3, right: i_7)
+    self.assertInt(py, object: r_3_7, value: 0)
 
+    // 7 // 3 -> 2
     let r73 = py.floorDiv(left: i7, right: i3)
     self.assertInt(py, object: r73, value: 2)
+    // -7 // 3 -> -3
+    let r_73 = py.floorDiv(left: i_7, right: i3)
+    self.assertInt(py, object: r_73, value: -3)
+    // 7 // -3 -> -3
+    let r7_3 = py.floorDiv(left: i7, right: i_3)
+    self.assertInt(py, object: r7_3, value: -3)
+    // -7 // -3 -> 2
+    let r_7_3 = py.floorDiv(left: i_7, right: i_3)
+    self.assertInt(py, object: r_7_3, value: 2)
 
     let intNone = py.floorDiv(left: i3, right: none)
     self.assertTypeError(

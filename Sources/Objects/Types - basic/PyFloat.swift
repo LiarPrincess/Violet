@@ -44,7 +44,6 @@ public struct PyFloat: PyObjectMixin {
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyFloat(ptr: ptr)
-    let value = zelf.value
     var result = PyObject.DebugMirror(object: zelf)
     result.append(name: "value", value: zelf.value, includeInShortDescription: true)
     return result
@@ -324,7 +323,6 @@ public struct PyFloat: PyObjectMixin {
 
     let value = zelf.value
 
-
     if value.isInfinite {
       return .overflowError(py, message: "cannot convert Infinity to integer ratio")
     }
@@ -567,18 +565,14 @@ public struct PyFloat: PyObjectMixin {
         return .zeroDivisionError(py, message: "float floor division by zero")
       }
 
-      let result = self.floordivUncheckedZero(left: left, right: right)
-      return PyResult(py, result)
+      let divMod = Self.divmodWithUncheckedZero(left: left, right: right)
+      return PyResult(py, divMod.div)
 
     case let .intOverflow(_, e):
       return .error(e)
     case .notDouble:
       return .notImplemented(py)
     }
-  }
-
-  private static func floordivUncheckedZero(left: Double, right: Double) -> Double {
-    return Foundation.floor(left / right)
   }
 
   // MARK: - Mod
@@ -623,8 +617,8 @@ public struct PyFloat: PyObjectMixin {
         return .zeroDivisionError(py, message: "float modulo by zero")
       }
 
-      let result = Self.modUncheckedZero(left: left, right: right)
-      return PyResult(py, result)
+      let divMod = Self.divmodWithUncheckedZero(left: left, right: right)
+      return PyResult(py, divMod.mod)
 
     case let .intOverflow(_, e):
       return .error(e)
@@ -633,17 +627,13 @@ public struct PyFloat: PyObjectMixin {
     }
   }
 
-  private static func modUncheckedZero(left: Double, right: Double) -> Double {
-    return left.remainder(dividingBy: right)
-  }
-
   // MARK: - Div mod
 
   // sourcery: pymethod = __divmod__
   internal static func __divmod__(_ py: Py,
                                   zelf: PyObject,
                                   other: PyObject) -> PyResult<PyObject> {
-    return Self.divmodOperation(py,
+    return Self.divModOperation(py,
                                 zelf: zelf,
                                 other: other,
                                 fnName: "__divmod__",
@@ -654,14 +644,14 @@ public struct PyFloat: PyObjectMixin {
   internal static func __rdivmod__(_ py: Py,
                                    zelf: PyObject,
                                    other: PyObject) -> PyResult<PyObject> {
-    return Self.divmodOperation(py,
+    return Self.divModOperation(py,
                                 zelf: zelf,
                                 other: other,
                                 fnName: "__rdivmod__",
                                 isZelfLeft: false)
   }
 
-  private static func divmodOperation(_ py: Py,
+  private static func divModOperation(_ py: Py,
                                       zelf: PyObject,
                                       other: PyObject,
                                       fnName: String,
@@ -676,14 +666,13 @@ public struct PyFloat: PyObjectMixin {
       let right = isZelfLeft ? other : zelf.value
 
       if right.isZero {
-        return .zeroDivisionError(py, message: "float divmod() by zero")
+        return .zeroDivisionError(py, message: "float divmod()")
       }
 
-      let div = self.floordivUncheckedZero(left: left, right: right)
-      let mod = self.modUncheckedZero(left: left, right: right)
+      let divMod = Self.divmodWithUncheckedZero(left: left, right: right)
 
-      let element0 = py.newFloat(div)
-      let element1 = py.newFloat(mod)
+      let element0 = py.newFloat(divMod.div)
+      let element1 = py.newFloat(divMod.mod)
       return PyResult(py, tuple: element0.asObject, element1.asObject)
 
     case let .intOverflow(_, e):
@@ -692,6 +681,48 @@ public struct PyFloat: PyObjectMixin {
       return .notImplemented(py)
     }
   }
+
+  private struct DivMod {
+    fileprivate var div: Double
+    fileprivate var mod: Double
+  }
+
+  // This is the exact copy of (damn this is complicated):
+  // static PyObject *
+  // float_divmod(PyObject *v, PyObject *w)
+  private static func divmodWithUncheckedZero(left: Double, right: Double) -> DivMod {
+    var mod = Foundation.fmod(left, right)
+    var div = (left - mod) / right
+
+    if !mod.isZero {
+      // Ensure the 'div' has the same sign as the 'right'
+      let isRightNegative = right < 0
+      let isModNegaitve = mod < 0
+
+      if isRightNegative != isModNegaitve {
+        mod += right
+        div -= 1.0
+      }
+    } else {
+      // Ensure the 'mod' has the same sign as the 'right'
+      mod = Double(signOf: right, magnitudeOf: 0.0)
+    }
+
+    // Snap quotient to nearest integral value
+    var floordiv: Double
+    if !div.isZero {
+      floordiv = Foundation.floor(div);
+      if div - floordiv > 0.5 {
+        floordiv += 1.0
+      }
+    } else {
+      // 'div' is zero - get the same sign as the true quotient
+      floordiv = Double(signOf: left / right, magnitudeOf: 0.0)
+    }
+
+    return DivMod(div: floordiv, mod: mod)
+  }
+
   // MARK: - Round
 
   /// See comment in `round(_:zelf:nDigits: PyObject?)`.

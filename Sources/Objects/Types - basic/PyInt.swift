@@ -678,7 +678,7 @@ public struct PyInt: PyObjectMixin {
   internal static func __divmod__(_ py: Py,
                                   zelf: PyObject,
                                   other: PyObject) -> PyResult<PyObject> {
-    return Self.divmodOperation(py,
+    return Self.divModOperation(py,
                                 zelf: zelf,
                                 other: other,
                                 fnName: "__divmod__",
@@ -689,14 +689,14 @@ public struct PyInt: PyObjectMixin {
   internal static func __rdivmod__(_ py: Py,
                                    zelf: PyObject,
                                    other: PyObject) -> PyResult<PyObject> {
-    return Self.divmodOperation(py,
+    return Self.divModOperation(py,
                                 zelf: zelf,
                                 other: other,
                                 fnName: "__rdivmod__",
                                 isZelfLeft: false)
   }
 
-  private static func divmodOperation(_ py: Py,
+  private static func divModOperation(_ py: Py,
                                       zelf: PyObject,
                                       other: PyObject,
                                       fnName: String,
@@ -716,7 +716,7 @@ public struct PyInt: PyObjectMixin {
       return .zeroDivisionError(py, message: "divmod() by zero")
     }
 
-    let divModResult = Self.divmod(py, left: left, right: right)
+    let divModResult = Self.divMod(py, left: left, right: right)
     switch divModResult {
     case let .value(divMod):
       let d = py.newInt(divMod.div)
@@ -727,12 +727,12 @@ public struct PyInt: PyObjectMixin {
     }
   }
 
-  private struct Divmod {
+  private struct DivMod {
     fileprivate var div: BigInt
     fileprivate var mod: BigInt
   }
 
-  private static func divmod(_ py: Py, left: BigInt, right: BigInt) -> PyResult<Divmod> {
+  private static func divMod(_ py: Py, left: BigInt, right: BigInt) -> PyResult<DivMod> {
     if right.isZero {
       return .zeroDivisionError(py, message: "divmod() by zero")
     }
@@ -762,7 +762,7 @@ public struct PyInt: PyObjectMixin {
   ///
   /// This is different than what Swift does
   /// (even the method is named `quotientAndRemainder` not `quotientAndModulo`).
-  private static func divmodWithUncheckedZero(left: BigInt, right: BigInt) -> Divmod {
+  private static func divmodWithUncheckedZero(left: BigInt, right: BigInt) -> DivMod {
     assert(
       !right.isZero,
       "div by 0 should be handled before calling 'PyInt.divmodWithUncheckedZero'"
@@ -777,7 +777,7 @@ public struct PyInt: PyObjectMixin {
       quotient -= 1
     }
 
-    return Divmod(div: quotient, mod: remainder)
+    return DivMod(div: quotient, mod: remainder)
   }
 
   // MARK: - LShift
@@ -1007,7 +1007,7 @@ public struct PyInt: PyObjectMixin {
   /// _PyLong_DivmodNear(PyObject *a, PyObject *b)
   private static func divmodNear(_ py: Py,
                                  left a: BigInt,
-                                 right b: BigInt) -> PyResult<Divmod> {
+                                 right b: BigInt) -> PyResult<DivMod> {
     // Equivalent Python code:
     //
     // def divmod_near(a, b):
@@ -1025,8 +1025,8 @@ public struct PyInt: PyObjectMixin {
 
     let quotientIsNegative = a.isNegative != b.isNegative
 
-    var result: Divmod
-    switch Self.divmod(py, left: a, right: b) {
+    var result: DivMod
+    switch Self.divMod(py, left: a, right: b) {
     case let .value(d):
       result = d
     case let .error(e):
