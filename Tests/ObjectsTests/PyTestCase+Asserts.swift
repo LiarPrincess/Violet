@@ -73,10 +73,10 @@ extension PyTestCase {
   }
 
   func assertFloat(_ py: Py,
-                 object: PyObject,
-                 value: Double,
-                 file: StaticString = #file,
-                 line: UInt = #line) {
+                   object: PyObject,
+                   value: Double,
+                   file: StaticString = #file,
+                   line: UInt = #line) {
     guard py.cast.isFloat(object) else {
       XCTFail("Got '\(object.typeName)' instead of 'float'.", file: file, line: line)
       return
@@ -243,35 +243,6 @@ extension PyTestCase {
       let reason = self.toString(py, error: e)
       XCTFail("Is greater equal error: \(reason)", file: file, line: line)
     }
-  }
-
-  // MARK: - Pos/neg/abs
-
-  func assertPositive<T: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
-                                                          object: T,
-                                                          expected: R,
-                                                          file: StaticString = #file,
-                                                          line: UInt = #line) {
-    let result = py.positive(object: object.asObject)
-    self.assertIsEqual(py, left: result, right: expected.asObject)
-  }
-
-  func assertNegative<T: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
-                                                          object: T,
-                                                          expected: R,
-                                                          file: StaticString = #file,
-                                                          line: UInt = #line) {
-    let result = py.negative(object: object.asObject)
-    self.assertIsEqual(py, left: result, right: expected.asObject)
-  }
-
-  func assertAbsolute<T: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
-                                                          object: T,
-                                                          expected: R,
-                                                          file: StaticString = #file,
-                                                          line: UInt = #line) {
-    let result = py.absolute(object: object.asObject)
-    self.assertIsEqual(py, left: result, right: expected.asObject)
   }
 
   // MARK: - Is true

@@ -10,85 +10,67 @@ extension PyIntTests {
   func test__add__() {
     let py = self.createPy()
 
-    let i3 = py.newInt(3).asObject
-    let i7 = py.newInt(7).asObject
-    let none = py.none.asObject
+    self.assertAdd(py, left: 3, right: 7, expected: 10)
+    self.assertAdd(py, left: 3, right: -7, expected: -4)
+    self.assertAdd(py, left: -3, right: 7, expected: 4)
+    self.assertAdd(py, left: -3, right: -7, expected: -10)
 
-    let r37 = py.add(left: i3, right: i7)
-    self.assertInt(py, object: r37, value: 10)
+    self.assertAdd(py, left: 7, right: 3, expected: 10)
+    self.assertAdd(py, left: 7, right: -3, expected: 4)
+    self.assertAdd(py, left: -7, right: 3, expected: -4)
+    self.assertAdd(py, left: -7, right: -3, expected: -10)
 
-    let r73 = py.add(left: i7, right: i3)
-    self.assertInt(py, object: r73, value: 10)
+    let messageR = "unsupported operand type(s) for +: 'int' and 'NoneType'"
+    self.assertAddTypeError(py, left: 3, right: .none, message: messageR)
+    self.assertAddTypeError(py, left: 7, right: .none, message: messageR)
 
-    let intNone = py.add(left: i3, right: none)
-    self.assertTypeError(
-      py,
-      error: intNone,
-      message: "unsupported operand type(s) for +: 'int' and 'NoneType'"
-    )
-
-    let noneInt = py.add(left: none, right: i7)
-    self.assertTypeError(
-      py,
-      error: noneInt,
-      message: "unsupported operand type(s) for +: 'NoneType' and 'int'"
-    )
+    let messageL = "unsupported operand type(s) for +: 'NoneType' and 'int'"
+    self.assertAddTypeError(py, left: .none, right: 3, message: messageL)
+    self.assertAddTypeError(py, left: .none, right: 7, message: messageL)
   }
 
   func test__sub__() {
     let py = self.createPy()
 
-    let i3 = py.newInt(3).asObject
-    let i7 = py.newInt(7).asObject
-    let none = py.none.asObject
+    self.assertSub(py, left: 3, right: 7, expected: -4)
+    self.assertSub(py, left: 3, right: -7, expected: 10)
+    self.assertSub(py, left: -3, right: 7, expected: -10)
+    self.assertSub(py, left: -3, right: -7, expected: 4)
 
-    let r37 = py.sub(left: i3, right: i7)
-    self.assertInt(py, object: r37, value: -4)
+    self.assertSub(py, left: 7, right: 3, expected: 4)
+    self.assertSub(py, left: 7, right: -3, expected: 10)
+    self.assertSub(py, left: -7, right: 3, expected: -10)
+    self.assertSub(py, left: -7, right: -3, expected: -4)
 
-    let r73 = py.sub(left: i7, right: i3)
-    self.assertInt(py, object: r73, value: 4)
+    let messageR = "unsupported operand type(s) for -: 'int' and 'NoneType'"
+    self.assertSubTypeError(py, left: 3, right: .none, message: messageR)
+    self.assertSubTypeError(py, left: 7, right: .none, message: messageR)
 
-    let intNone = py.sub(left: i3, right: none)
-    self.assertTypeError(
-      py,
-      error: intNone,
-      message: "unsupported operand type(s) for -: 'int' and 'NoneType'"
-    )
-
-    let noneInt = py.sub(left: none, right: i7)
-    self.assertTypeError(
-      py,
-      error: noneInt,
-      message: "unsupported operand type(s) for -: 'NoneType' and 'int'"
-    )
+    let messageL = "unsupported operand type(s) for -: 'NoneType' and 'int'"
+    self.assertSubTypeError(py, left: .none, right: 3, message: messageL)
+    self.assertSubTypeError(py, left: .none, right: 7, message: messageL)
   }
 
   func test__mul__() {
     let py = self.createPy()
 
-    let i3 = py.newInt(3).asObject
-    let i7 = py.newInt(7).asObject
-    let none = py.none.asObject
+    self.assertMul(py, left: 3, right: 7, expected: 21)
+    self.assertMul(py, left: 3, right: -7, expected: -21)
+    self.assertMul(py, left: -3, right: 7, expected: -21)
+    self.assertMul(py, left: -3, right: -7, expected: 21)
 
-    let r37 = py.mul(left: i3, right: i7)
-    self.assertInt(py, object: r37, value: 21)
+    self.assertMul(py, left: 7, right: 3, expected: 21)
+    self.assertMul(py, left: 7, right: -3, expected: -21)
+    self.assertMul(py, left: -7, right: 3, expected: -21)
+    self.assertMul(py, left: -7, right: -3, expected: 21)
 
-    let r73 = py.mul(left: i7, right: i3)
-    self.assertInt(py, object: r73, value: 21)
+    let messageR = "unsupported operand type(s) for *: 'int' and 'NoneType'"
+    self.assertMulTypeError(py, left: 3, right: .none, message: messageR)
+    self.assertMulTypeError(py, left: 7, right: .none, message: messageR)
 
-    let intNone = py.mul(left: i3, right: none)
-    self.assertTypeError(
-      py,
-      error: intNone,
-      message: "unsupported operand type(s) for *: 'int' and 'NoneType'"
-    )
-
-    let noneInt = py.mul(left: none, right: i7)
-    self.assertTypeError(
-      py,
-      error: noneInt,
-      message: "unsupported operand type(s) for *: 'NoneType' and 'int'"
-    )
+    let messageL = "unsupported operand type(s) for *: 'NoneType' and 'int'"
+    self.assertMulTypeError(py, left: .none, right: 3, message: messageL)
+    self.assertMulTypeError(py, left: .none, right: 7, message: messageL)
   }
 
   // MARK: - Div
@@ -96,191 +78,120 @@ extension PyIntTests {
   func test__truediv__() {
     let py = self.createPy()
 
-    let i3 = py.newInt(3).asObject
-    let i7 = py.newInt(7).asObject
-    let none = py.none.asObject
+    self.assertTrueDiv(py, left: 3, right: 7, expected: 3.0 / 7.0)
+    self.assertTrueDiv(py, left: -3, right: 7, expected: -3.0 / 7.0)
+    self.assertTrueDiv(py, left: 3, right: -7, expected: 3.0 / -7.0)
+    self.assertTrueDiv(py, left: -3, right: -7, expected: -3.0 / -7.0)
 
-    let r37 = py.trueDiv(left: i3, right: i7)
-    self.assertFloat(py, object: r37, value: 3.0 / 7.0)
+    self.assertTrueDiv(py, left: 7, right: 3, expected: 7.0 / 3.0)
+    self.assertTrueDiv(py, left: -7, right: 3, expected: -7.0 / 3.0)
+    self.assertTrueDiv(py, left: 7, right: -3, expected: 7.0 / -3.0)
+    self.assertTrueDiv(py, left: -7, right: -3, expected: -7.0 / -3.0)
 
-    let r73 = py.trueDiv(left: i7, right: i3)
-    self.assertFloat(py, object: r73, value: 7.0 / 3.0)
+    let messageR = "unsupported operand type(s) for /: 'int' and 'NoneType'"
+    self.assertTrueDivTypeError(py, left: 3, right: .none, message: messageR)
+    self.assertTrueDivTypeError(py, left: 7, right: .none, message: messageR)
 
-    let intNone = py.trueDiv(left: i3, right: none)
-    self.assertTypeError(
-      py,
-      error: intNone,
-      message: "unsupported operand type(s) for /: 'int' and 'NoneType'"
-    )
+    let messageL = "unsupported operand type(s) for /: 'NoneType' and 'int'"
+    self.assertTrueDivTypeError(py, left: .none, right: 3, message: messageL)
+    self.assertTrueDivTypeError(py, left: .none, right: 7, message: messageL)
+  }
 
-    let noneInt = py.trueDiv(left: none, right: i7)
-    self.assertTypeError(
-      py,
-      error: noneInt,
-      message: "unsupported operand type(s) for /: 'NoneType' and 'int'"
-    )
+  private func assertTrueDiv(_ py: Py,
+                             left: Int,
+                             right: Int,
+                             expected: Double,
+                             file: StaticString = #file,
+                             line: UInt = #line) {
+    let leftObject = py.newInt(left).asObject
+    let rightObject = py.newInt(right).asObject
+    let result = py.trueDiv(left: leftObject, right: rightObject)
+
+    let expectedObject = py.newFloat(expected)
+    self.assertIsEqual(py, left: result, right: expectedObject, file: file, line: line)
   }
 
   func test__floordiv__() {
     let py = self.createPy()
 
-    let i3 = py.newInt(3).asObject
-    let i_3 = py.newInt(-3).asObject
-    let i7 = py.newInt(7).asObject
-    let i_7 = py.newInt(-7).asObject
-    let none = py.none.asObject
+    self.assertFloorDiv(py, left: 3, right: 7, expected: 0)
+    self.assertFloorDiv(py, left: -3, right: 7, expected: -1)
+    self.assertFloorDiv(py, left: 3, right: -7, expected: -1)
+    self.assertFloorDiv(py, left: -3, right: -7, expected: 0)
 
-    // 3 // 7 -> 0
-    let r37 = py.floorDiv(left: i3, right: i7)
-    self.assertInt(py, object: r37, value: 0)
-    // -3 // 7 -> -1
-    let r_37 = py.floorDiv(left: i_3, right: i7)
-    self.assertInt(py, object: r_37, value: -1)
-    // 3 // -7 -> -1
-    let r3_7 = py.floorDiv(left: i3, right: i_7)
-    self.assertInt(py, object: r3_7, value: -1)
-    // -3 // -7 -> 0
-    let r_3_7 = py.floorDiv(left: i_3, right: i_7)
-    self.assertInt(py, object: r_3_7, value: 0)
+    self.assertFloorDiv(py, left: 7, right: 3, expected: 2)
+    self.assertFloorDiv(py, left: -7, right: 3, expected: -3)
+    self.assertFloorDiv(py, left: 7, right: -3, expected: -3)
+    self.assertFloorDiv(py, left: -7, right: -3, expected: 2)
 
-    // 7 // 3 -> 2
-    let r73 = py.floorDiv(left: i7, right: i3)
-    self.assertInt(py, object: r73, value: 2)
-    // -7 // 3 -> -3
-    let r_73 = py.floorDiv(left: i_7, right: i3)
-    self.assertInt(py, object: r_73, value: -3)
-    // 7 // -3 -> -3
-    let r7_3 = py.floorDiv(left: i7, right: i_3)
-    self.assertInt(py, object: r7_3, value: -3)
-    // -7 // -3 -> 2
-    let r_7_3 = py.floorDiv(left: i_7, right: i_3)
-    self.assertInt(py, object: r_7_3, value: 2)
+    let messageR = "unsupported operand type(s) for //: 'int' and 'NoneType'"
+    self.assertFloorDivTypeError(py, left: 3, right: .none, message: messageR)
+    self.assertFloorDivTypeError(py, left: 7, right: .none, message: messageR)
 
-    let intNone = py.floorDiv(left: i3, right: none)
-    self.assertTypeError(
-      py,
-      error: intNone,
-      message: "unsupported operand type(s) for //: 'int' and 'NoneType'"
-    )
-
-    let noneInt = py.floorDiv(left: none, right: i7)
-    self.assertTypeError(
-      py,
-      error: noneInt,
-      message: "unsupported operand type(s) for //: 'NoneType' and 'int'"
-    )
+    let messageL = "unsupported operand type(s) for //: 'NoneType' and 'int'"
+    self.assertFloorDivTypeError(py, left: .none, right: 3, message: messageL)
+    self.assertFloorDivTypeError(py, left: .none, right: 7, message: messageL)
   }
 
   func test__mod__() {
     let py = self.createPy()
 
-    let i3 = py.newInt(3).asObject
-    let i_3 = py.newInt(-3).asObject
-    let i7 = py.newInt(7).asObject
-    let i_7 = py.newInt(-7).asObject
-    let none = py.none.asObject
+    self.assertMod(py, left: 3, right: 7, expected: 3)
+    self.assertMod(py, left: -3, right: 7, expected: 4)
+    self.assertMod(py, left: 3, right: -7, expected: -4)
+    self.assertMod(py, left: -3, right: -7, expected: -3)
 
-    // >>> 3 % 7 -> 3
-    let r37 = py.mod(left: i3, right: i7)
-    self.assertInt(py, object: r37, value: 3)
-    // >>> -3 % 7 -> 4
-    let r_37 = py.mod(left: i_3, right: i7)
-    self.assertInt(py, object: r_37, value: 4)
-    // >>> 3 % -7 -> -4
-    let r3_7 = py.mod(left: i3, right: i_7)
-    self.assertInt(py, object: r3_7, value: -4)
-    // >>> -3 % -7 -> -3
-    let r_3_7 = py.mod(left: i_3, right: i_7)
-    self.assertInt(py, object: r_3_7, value: -3)
+    self.assertMod(py, left: 7, right: 3, expected: 1)
+    self.assertMod(py, left: -7, right: 3, expected: 2)
+    self.assertMod(py, left: 7, right: -3, expected: -2)
+    self.assertMod(py, left: -7, right: -3, expected: -1)
 
-    // >>> 7 % 3 -> 1
-    let r73 = py.mod(left: i7, right: i3)
-    self.assertInt(py, object: r73, value: 1)
-    // >>> -7 % 3 -> 2
-    let r_73 = py.mod(left: i_7, right: i3)
-    self.assertInt(py, object: r_73, value: 2)
-    // >>> 7 % -3 -> -2
-    let r7_3 = py.mod(left: i7, right: i_3)
-    self.assertInt(py, object: r7_3, value: -2)
-    // >>> -7 % -3 -> -1
-    let r_7_3 = py.mod(left: i_7, right: i_3)
-    self.assertInt(py, object: r_7_3, value: -1)
+    let messageR = "unsupported operand type(s) for %: 'int' and 'NoneType'"
+    self.assertModTypeError(py, left: 3, right: .none, message: messageR)
+    self.assertModTypeError(py, left: 7, right: .none, message: messageR)
 
-    let intNone = py.mod(left: i3, right: none)
-    self.assertTypeError(
-      py,
-      error: intNone,
-      message: "unsupported operand type(s) for %: 'int' and 'NoneType'"
-    )
-
-    let noneInt = py.mod(left: none, right: i7)
-    self.assertTypeError(
-      py,
-      error: noneInt,
-      message: "unsupported operand type(s) for %: 'NoneType' and 'int'"
-    )
+    let messageL = "unsupported operand type(s) for %: 'NoneType' and 'int'"
+    self.assertModTypeError(py, left: .none, right: 3, message: messageL)
+    self.assertModTypeError(py, left: .none, right: 7, message: messageL)
   }
 
   func test__divmod__() {
     let py = self.createPy()
 
-    let i3 = py.newInt(3).asObject
-    let i_3 = py.newInt(-3).asObject
-    let i7 = py.newInt(7).asObject
-    let i_7 = py.newInt(-7).asObject
-    let none = py.none.asObject
+    self.assertDivMod(py, left: 3, right: 7, div: 0, mod: 3)
+    self.assertDivMod(py, left: -3, right: 7, div: -1, mod: 4)
+    self.assertDivMod(py, left: 3, right: -7, div: -1, mod: -4)
+    self.assertDivMod(py, left: -3, right: -7, div: 0, mod: -3)
 
-    // >>> divmod(3, 7) -> (0, 3)
-    let r37 = py.divMod(left: i3, right: i7)
-    self.assertTuple(py, object: r37, elements: 0, 3)
-    // >>> divmod(-3, 7) -> (-1, 4)
-    let r_37 = py.divMod(left: i_3, right: i7)
-    self.assertTuple(py, object: r_37, elements: -1, 4)
-    // >>> divmod(3, -7) -> (-1, -4)
-    let r3_7 = py.divMod(left: i3, right: i_7)
-    self.assertTuple(py, object: r3_7, elements: -1, -4)
-    // >>> divmod(-3, -7) -> (0, -3)
-    let r_3_7 = py.divMod(left: i_3, right: i_7)
-    self.assertTuple(py, object: r_3_7, elements: 0, -3)
+    self.assertDivMod(py, left: 7, right: 3, div: 2, mod: 1)
+    self.assertDivMod(py, left: -7, right: 3, div: -3, mod: 2)
+    self.assertDivMod(py, left: 7, right: -3, div: -3, mod: -2)
+    self.assertDivMod(py, left: -7, right: -3, div: 2, mod: -1)
 
-    // >>> divmod(7, 3) -> (2, 1)
-    let r73 = py.divMod(left: i7, right: i3)
-    self.assertTuple(py, object: r73, elements: 2, 1)
-    // >>> divmod(-7, 3) -> (-3, 2)
-    let r_73 = py.divMod(left: i_7, right: i3)
-    self.assertTuple(py, object: r_73, elements: -3, 2)
-    // >>> divmod(7, -3) -> (-3, -2)
-    let r7_3 = py.divMod(left: i7, right: i_3)
-    self.assertTuple(py, object: r7_3, elements: -3, -2)
-    // >>> divmod(-7, -3) -> (2, -1)
-    let r_7_3 = py.divMod(left: i_7, right: i_3)
-    self.assertTuple(py, object: r_7_3, elements: 2, -1)
+    let messageR = "unsupported operand type(s) for divmod(): 'int' and 'NoneType'"
+    self.assertDivModTypeError(py, left: 3, right: .none, message: messageR)
+    self.assertDivModTypeError(py, left: 7, right: .none, message: messageR)
 
-    let intNone = py.divMod(left: i3, right: none)
-    self.assertTypeError(
-      py,
-      error: intNone,
-      message: "unsupported operand type(s) for divmod(): 'int' and 'NoneType'"
-    )
-
-    let noneInt = py.divMod(left: none, right: i7)
-    self.assertTypeError(
-      py,
-      error: noneInt,
-      message: "unsupported operand type(s) for divmod(): 'NoneType' and 'int'"
-    )
+    let messageL = "unsupported operand type(s) for divmod(): 'NoneType' and 'int'"
+    self.assertDivModTypeError(py, left: .none, right: 3, message: messageL)
+    self.assertDivModTypeError(py, left: .none, right: 7, message: messageL)
   }
 
-  private func assertTuple(_ py: Py,
-                           object: PyResult<PyObject>,
-                           elements: Int...,
-                           file: StaticString = #file,
-                           line: UInt = #line) {
-    let tuple = elements.map { int in
-      return py.newInt(int).asObject
-    }
+  private func assertDivMod(_ py: Py,
+                            left: Int,
+                            right: Int,
+                            div: Int,
+                            mod: Int,
+                            file: StaticString = #file,
+                            line: UInt = #line) {
+    let leftObject = py.newInt(left).asObject
+    let rightObject = py.newInt(right).asObject
+    let result = py.divMod(left: leftObject, right: rightObject)
 
-    self.assertTuple(py, object: object, elements: tuple, file: file, line: line)
+    let divObject = py.newInt(div).asObject
+    let modObject = py.newInt(mod).asObject
+    let tuple = [divObject, modObject]
+    self.assertTuple(py, object: result, elements: tuple, file: file, line: line)
   }
 
   // MARK: - Shift
@@ -288,61 +199,31 @@ extension PyIntTests {
   func test__lshift__() {
     let py = self.createPy()
 
-    let i3 = py.newInt(3).asObject
-    let i7 = py.newInt(7).asObject
-    let none = py.none.asObject
+    self.assertLshift(py, left: 3, right: 7, expected: 384)
+    self.assertLshift(py, left: 7, right: 3, expected: 56)
 
-    // >>> 3 << 7 -> 384
-    let r37 = py.lshift(left: i3, right: i7)
-    self.assertInt(py, object: r37, value: 384)
+    let messageR = "unsupported operand type(s) for <<: 'int' and 'NoneType'"
+    self.assertLshiftTypeError(py, left: 3, right: .none, message: messageR)
+    self.assertLshiftTypeError(py, left: 7, right: .none, message: messageR)
 
-    // >>> 7 << 3 -> 56
-    let r73 = py.lshift(left: i7, right: i3)
-    self.assertInt(py, object: r73, value: 56)
-
-    let intNone = py.lshift(left: i3, right: none)
-    self.assertTypeError(
-      py,
-      error: intNone,
-      message: "unsupported operand type(s) for <<: 'int' and 'NoneType'"
-    )
-
-    let noneInt = py.lshift(left: none, right: i7)
-    self.assertTypeError(
-      py,
-      error: noneInt,
-      message: "unsupported operand type(s) for <<: 'NoneType' and 'int'"
-    )
+    let messageL = "unsupported operand type(s) for <<: 'NoneType' and 'int'"
+    self.assertLshiftTypeError(py, left: .none, right: 3, message: messageL)
+    self.assertLshiftTypeError(py, left: .none, right: 7, message: messageL)
   }
 
   func test__rshift__() {
     let py = self.createPy()
 
-    let i3 = py.newInt(3).asObject
-    let i103 = py.newInt(103).asObject
-    let none = py.none.asObject
+    self.assertRshift(py, left: 3, right: 103, expected: 0)
+    self.assertRshift(py, left: 103, right: 3, expected: 12)
 
-    // >>> 3 >> 103 -> 0
-    let r3103 = py.rshift(left: i3, right: i103)
-    self.assertInt(py, object: r3103, value: 0)
+    let messageR = "unsupported operand type(s) for >>: 'int' and 'NoneType'"
+    self.assertRshiftTypeError(py, left: 3, right: .none, message: messageR)
+    self.assertRshiftTypeError(py, left: 7, right: .none, message: messageR)
 
-    // >>> 103 >> 3 -> 12
-    let r1033 = py.rshift(left: i103, right: i3)
-    self.assertInt(py, object: r1033, value: 12)
-
-    let intNone = py.rshift(left: i3, right: none)
-    self.assertTypeError(
-      py,
-      error: intNone,
-      message: "unsupported operand type(s) for >>: 'int' and 'NoneType'"
-    )
-
-    let noneInt = py.rshift(left: none, right: i103)
-    self.assertTypeError(
-      py,
-      error: noneInt,
-      message: "unsupported operand type(s) for >>: 'NoneType' and 'int'"
-    )
+    let messageL = "unsupported operand type(s) for >>: 'NoneType' and 'int'"
+    self.assertRshiftTypeError(py, left: .none, right: 3, message: messageL)
+    self.assertRshiftTypeError(py, left: .none, right: 7, message: messageL)
   }
 
   // MARK: - Bit
@@ -352,29 +233,16 @@ extension PyIntTests {
 
     //  5 = 0b0101
     // 12 = 0b1100
-    let i5 = py.newInt(5).asObject
-    let i12 = py.newInt(12).asObject
-    let none = py.none.asObject
+    self.assertAnd(py, left: 12, right: 5, expected: 4)
+    self.assertAnd(py, left: 5, right: 12, expected: 4)
 
-    let r125 = py.and(left: i12, right: i5)
-    self.assertInt(py, object: r125, value: 4)
+    let messageR = "unsupported operand type(s) for &: 'int' and 'NoneType'"
+    self.assertAndTypeError(py, left: 3, right: .none, message: messageR)
+    self.assertAndTypeError(py, left: 7, right: .none, message: messageR)
 
-    let r512 = py.and(left: i5, right: i12)
-    self.assertInt(py, object: r512, value: 4)
-
-    let intNone = py.and(left: i12, right: none)
-    self.assertTypeError(
-      py,
-      error: intNone,
-      message: "unsupported operand type(s) for &: 'int' and 'NoneType'"
-    )
-
-    let noneInt = py.and(left: none, right: i5)
-    self.assertTypeError(
-      py,
-      error: noneInt,
-      message: "unsupported operand type(s) for &: 'NoneType' and 'int'"
-    )
+    let messageL = "unsupported operand type(s) for &: 'NoneType' and 'int'"
+    self.assertAndTypeError(py, left: .none, right: 3, message: messageL)
+    self.assertAndTypeError(py, left: .none, right: 7, message: messageL)
   }
 
   func test__or__() {
@@ -382,29 +250,16 @@ extension PyIntTests {
 
     //  5 = 0b0101
     // 12 = 0b1100
-    let i5 = py.newInt(5).asObject
-    let i12 = py.newInt(12).asObject
-    let none = py.none.asObject
+    self.assertOr(py, left: 12, right: 5, expected: 13)
+    self.assertOr(py, left: 5, right: 12, expected: 13)
 
-    let r125 = py.or(left: i12, right: i5)
-    self.assertInt(py, object: r125, value: 13)
+    let messageR = "unsupported operand type(s) for |: 'int' and 'NoneType'"
+    self.assertOrTypeError(py, left: 3, right: .none, message: messageR)
+    self.assertOrTypeError(py, left: 7, right: .none, message: messageR)
 
-    let r512 = py.or(left: i5, right: i12)
-    self.assertInt(py, object: r512, value: 13)
-
-    let intNone = py.or(left: i12, right: none)
-    self.assertTypeError(
-      py,
-      error: intNone,
-      message: "unsupported operand type(s) for |: 'int' and 'NoneType'"
-    )
-
-    let noneInt = py.or(left: none, right: i5)
-    self.assertTypeError(
-      py,
-      error: noneInt,
-      message: "unsupported operand type(s) for |: 'NoneType' and 'int'"
-    )
+    let messageL = "unsupported operand type(s) for |: 'NoneType' and 'int'"
+    self.assertOrTypeError(py, left: .none, right: 3, message: messageL)
+    self.assertOrTypeError(py, left: .none, right: 7, message: messageL)
   }
 
   func test__xor__() {
@@ -412,28 +267,136 @@ extension PyIntTests {
 
     //  5 = 0b0101
     // 12 = 0b1100
-    let i5 = py.newInt(5).asObject
-    let i12 = py.newInt(12).asObject
-    let none = py.none.asObject
+    self.assertXor(py, left: 12, right: 5, expected: 9)
+    self.assertXor(py, left: 5, right: 12, expected: 9)
 
-    let r125 = py.xor(left: i12, right: i5)
-    self.assertInt(py, object: r125, value: 9)
+    let messageR = "unsupported operand type(s) for ^: 'int' and 'NoneType'"
+    self.assertXorTypeError(py, left: 3, right: .none, message: messageR)
+    self.assertXorTypeError(py, left: 7, right: .none, message: messageR)
 
-    let r512 = py.xor(left: i5, right: i12)
-    self.assertInt(py, object: r512, value: 9)
+    let messageL = "unsupported operand type(s) for ^: 'NoneType' and 'int'"
+    self.assertXorTypeError(py, left: .none, right: 3, message: messageL)
+    self.assertXorTypeError(py, left: .none, right: 7, message: messageL)
+  }
 
-    let intNone = py.xor(left: i12, right: none)
-    self.assertTypeError(
-      py,
-      error: intNone,
-      message: "unsupported operand type(s) for ^: 'int' and 'NoneType'"
-    )
+  // MARK: - Helpers
 
-    let noneInt = py.xor(left: none, right: i5)
-    self.assertTypeError(
-      py,
-      error: noneInt,
-      message: "unsupported operand type(s) for ^: 'NoneType' and 'int'"
-    )
+  private func assertAdd(_ py: Py, left: Int, right: Int, expected: Int, file: StaticString = #file, line: UInt = #line) {
+    self.assertBinaryOperation(py, left: left, right: right, expected: expected, fn: Py.add, file: file, line: line)
+  }
+
+  private func assertAddTypeError(_ py: Py, left: Int?, right: Int?, message: String, file: StaticString = #file, line: UInt = #line) {
+    self.assertBinaryOperationTypeError(py, left: left, right: right, message: message, fn: Py.add, file: file, line: line)
+  }
+
+  private func assertSub(_ py: Py, left: Int, right: Int, expected: Int, file: StaticString = #file, line: UInt = #line) {
+    self.assertBinaryOperation(py, left: left, right: right, expected: expected, fn: Py.sub, file: file, line: line)
+  }
+
+  private func assertSubTypeError(_ py: Py, left: Int?, right: Int?, message: String, file: StaticString = #file, line: UInt = #line) {
+    self.assertBinaryOperationTypeError(py, left: left, right: right, message: message, fn: Py.sub, file: file, line: line)
+  }
+
+  private func assertMul(_ py: Py, left: Int, right: Int, expected: Int, file: StaticString = #file, line: UInt = #line) {
+    self.assertBinaryOperation(py, left: left, right: right, expected: expected, fn: Py.mul, file: file, line: line)
+  }
+
+  private func assertMulTypeError(_ py: Py, left: Int?, right: Int?, message: String, file: StaticString = #file, line: UInt = #line) {
+    self.assertBinaryOperationTypeError(py, left: left, right: right, message: message, fn: Py.mul, file: file, line: line)
+  }
+
+  private func assertTrueDivTypeError(_ py: Py, left: Int?, right: Int?, message: String, file: StaticString = #file, line: UInt = #line) {
+    self.assertBinaryOperationTypeError(py, left: left, right: right, message: message, fn: Py.trueDiv, file: file, line: line)
+  }
+
+  private func assertFloorDiv(_ py: Py, left: Int, right: Int, expected: Int, file: StaticString = #file, line: UInt = #line) {
+    self.assertBinaryOperation(py, left: left, right: right, expected: expected, fn: Py.floorDiv, file: file, line: line)
+  }
+
+  private func assertFloorDivTypeError(_ py: Py, left: Int?, right: Int?, message: String, file: StaticString = #file, line: UInt = #line) {
+    self.assertBinaryOperationTypeError(py, left: left, right: right, message: message, fn: Py.floorDiv, file: file, line: line)
+  }
+
+  private func assertMod(_ py: Py, left: Int, right: Int, expected: Int, file: StaticString = #file, line: UInt = #line) {
+    self.assertBinaryOperation(py, left: left, right: right, expected: expected, fn: Py.mod, file: file, line: line)
+  }
+
+  private func assertModTypeError(_ py: Py, left: Int?, right: Int?, message: String, file: StaticString = #file, line: UInt = #line) {
+    self.assertBinaryOperationTypeError(py, left: left, right: right, message: message, fn: Py.mod, file: file, line: line)
+  }
+
+  private func assertDivModTypeError(_ py: Py, left: Int?, right: Int?, message: String, file: StaticString = #file, line: UInt = #line) {
+    self.assertBinaryOperationTypeError(py, left: left, right: right, message: message, fn: Py.divMod, file: file, line: line)
+  }
+
+  private func assertLshift(_ py: Py, left: Int, right: Int, expected: Int, file: StaticString = #file, line: UInt = #line) {
+    self.assertBinaryOperation(py, left: left, right: right, expected: expected, fn: Py.lshift, file: file, line: line)
+  }
+
+  private func assertLshiftTypeError(_ py: Py, left: Int?, right: Int?, message: String, file: StaticString = #file, line: UInt = #line) {
+    self.assertBinaryOperationTypeError(py, left: left, right: right, message: message, fn: Py.lshift, file: file, line: line)
+  }
+
+  private func assertRshift(_ py: Py, left: Int, right: Int, expected: Int, file: StaticString = #file, line: UInt = #line) {
+    self.assertBinaryOperation(py, left: left, right: right, expected: expected, fn: Py.rshift, file: file, line: line)
+  }
+
+  private func assertRshiftTypeError(_ py: Py, left: Int?, right: Int?, message: String, file: StaticString = #file, line: UInt = #line) {
+    self.assertBinaryOperationTypeError(py, left: left, right: right, message: message, fn: Py.rshift, file: file, line: line)
+  }
+
+  private func assertAnd(_ py: Py, left: Int, right: Int, expected: Int, file: StaticString = #file, line: UInt = #line) {
+    self.assertBinaryOperation(py, left: left, right: right, expected: expected, fn: Py.and, file: file, line: line)
+  }
+
+  private func assertAndTypeError(_ py: Py, left: Int?, right: Int?, message: String, file: StaticString = #file, line: UInt = #line) {
+    self.assertBinaryOperationTypeError(py, left: left, right: right, message: message, fn: Py.and, file: file, line: line)
+  }
+
+  private func assertOr(_ py: Py, left: Int, right: Int, expected: Int, file: StaticString = #file, line: UInt = #line) {
+    self.assertBinaryOperation(py, left: left, right: right, expected: expected, fn: Py.or, file: file, line: line)
+  }
+
+  private func assertOrTypeError(_ py: Py, left: Int?, right: Int?, message: String, file: StaticString = #file, line: UInt = #line) {
+    self.assertBinaryOperationTypeError(py, left: left, right: right, message: message, fn: Py.or, file: file, line: line)
+  }
+
+  private func assertXor(_ py: Py, left: Int, right: Int, expected: Int, file: StaticString = #file, line: UInt = #line) {
+    self.assertBinaryOperation(py, left: left, right: right, expected: expected, fn: Py.xor, file: file, line: line)
+  }
+
+  private func assertXorTypeError(_ py: Py, left: Int?, right: Int?, message: String, file: StaticString = #file, line: UInt = #line) {
+    self.assertBinaryOperationTypeError(py, left: left, right: right, message: message, fn: Py.xor, file: file, line: line)
+  }
+
+  typealias BinaryOperation = (Py) -> (PyObject, PyObject) -> PyResult<PyObject>
+
+  func assertBinaryOperation(_ py: Py,
+                             left: Int,
+                             right: Int,
+                             expected: Int,
+                             fn: BinaryOperation,
+                             file: StaticString,
+                             line: UInt) {
+    let leftObject = py.newInt(left).asObject
+    let rightObject = py.newInt(right).asObject
+    let result = fn(py)(leftObject, rightObject)
+
+    let expectedObject = py.newInt(expected)
+    self.assertIsEqual(py, left: result, right: expectedObject, file: file, line: line)
+  }
+
+  func assertBinaryOperationTypeError(_ py: Py,
+                                      left: Int?,
+                                      right: Int?,
+                                      message: String,
+                                      fn: BinaryOperation,
+                                      file: StaticString,
+                                      line: UInt) {
+    let leftObject = left.map { py.newInt($0).asObject } ?? py.none.asObject
+    let rightObject = right.map { py.newInt($0).asObject } ?? py.none.asObject
+
+    let result = fn(py)(leftObject, rightObject)
+    self.assertTypeError(py, error: result, message: message, file: file, line: line)
   }
 }
