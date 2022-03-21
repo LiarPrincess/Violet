@@ -246,7 +246,7 @@ public struct PyInt: PyObjectMixin {
 
   // sourcery: pyproperty = denominator
   internal static func denominator(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    return Self.intOperation(py, zelf: zelf, fnName: "imag") { _ in 1 }
+    return Self.intOperation(py, zelf: zelf, fnName: "denominator") { _ in 1 }
   }
 
   // MARK: - Attributes
