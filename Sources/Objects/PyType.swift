@@ -7,11 +7,11 @@ import VioletCore
 // Objects -> typeobject.c
 // https://docs.python.org/3/c-api/typeobj.html
 
-internal func ===(lhs: PyType, rhs: PyType) -> Bool {
+public func ===(lhs: PyType, rhs: PyType) -> Bool {
   return lhs.ptr === rhs.ptr
 }
 
-internal func !==(lhs: PyType, rhs: PyType) -> Bool {
+public func !==(lhs: PyType, rhs: PyType) -> Bool {
   return lhs.ptr !== rhs.ptr
 }
 
@@ -510,7 +510,9 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   }
 
   internal func getDict(_ py: Py) -> PyDict {
-    guard let result = self.__dict__.get(py) else {
+    let object = self.asObject
+
+    guard let result = object.get__dict__(py) else {
       py.trapMissing__dict__(object: self)
     }
 
@@ -518,7 +520,8 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   }
 
   internal func setDict(_ value: PyDict) {
-    self.__dict__.set(value)
+    let object = self.asObject
+    object.set__dict__(value)
   }
 
   // MARK: - Class
