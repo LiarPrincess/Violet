@@ -138,13 +138,15 @@ extension Py {
       return false
     }
 
-    let code = current.getFrame().code
-    let previousCode = previous.getFrame().code
-
     // Start with line, because it has the biggest probability to be different
     // (and also 'int' is easier to compare than 'str').
-    return current.getLineNo().isEqual(previous.getLineNo())
-        && code.filename.isEqual(previousCode.filename)
+    guard current.getLineNo() == previous.getLineNo() else {
+      return false
+    }
+
+    let code = current.getFrame().code
+    let previousCode = previous.getFrame().code
+    return code.filename.isEqual(previousCode.filename)
         && code.name.isEqual(previousCode.name)
   }
 

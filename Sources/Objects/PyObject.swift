@@ -50,23 +50,6 @@ public struct PyObject: PyObjectMixin {
     /// `__dict__` is available, but not yet created
     case notCreated
     case created(PyDict)
-
-    internal mutating func get(_ py: Py) -> PyDict? {
-      switch self {
-      case .noDict:
-        return nil
-      case .notCreated:
-        let value = py.newDict()
-        self = .created(value)
-        return value
-      case .created(let value):
-        return value
-      }
-    }
-
-    internal mutating func set(_ value: PyDict) {
-      self = .created(value)
-    }
   }
 
   // sourcery: storedProperty
@@ -85,13 +68,34 @@ public struct PyObject: PyObjectMixin {
   /// `has__dict__` flag on type.
   ///
   /// - Important:
-  /// Use `Py.get__dict__` instead.
+  /// Use `PyObject.get__dict__` or `Py.get__dict__` instead.
   internal var __dict__: PyObject.Lazy__dict__ {
-    get { return self.__dict__Ptr.pointee }
-    nonmutating set {
-      assert(self.type.typeFlags.instancesHave__dict__)
-      self.__dict__Ptr.pointee = newValue
+    // We don't want 'nonmutating set' on this field!
+    // See the comment above 'get__dict__' for details.
+    return self.__dict__Ptr.pointee
+  }
+
+  // If we tried to be fancy and addeed 'mutating Lazy__dict__.get(_:Py)' then
+  // every 'self.__dict__.get(py)' would also call 'SET self.__dict__' since
+  // it would be a possible mutation because we are lazy-creating 'dict()'.
+  // But Swift does not care about the 'possible' part, it would just call
+  // 'SET' on every access (which is not optimal for performance).
+  internal func get__dict__(_ py: Py) -> PyDict? {
+    switch self.__dict__ {
+    case .noDict:
+      return nil
+    case .notCreated:
+      let value = py.newDict()
+      self.__dict__Ptr.pointee = .created(value)
+      return value
+    case .created(let value):
+      return value
     }
+  }
+
+  internal func set__dict__(_ value: PyDict) {
+    assert(self.type.typeFlags.instancesHave__dict__)
+    self.__dict__Ptr.pointee = .created(value)
   }
 
   // MARK: - Property - flags

@@ -82,7 +82,9 @@ public struct PyClassMethod: PyObjectMixin {
   }
 
   internal func getDict(_ py: Py) -> PyDict {
-    guard let result = self.__dict__.get(py) else {
+    let object = PyObject(ptr: self.ptr)
+
+    guard let result = object.get__dict__(py) else {
       py.trapMissing__dict__(object: self)
     }
 
