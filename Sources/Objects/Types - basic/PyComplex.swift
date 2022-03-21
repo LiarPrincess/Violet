@@ -246,7 +246,7 @@ public struct PyComplex: PyObjectMixin {
   // sourcery: pyproperty = imag
   internal static func imag(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "real")
+      return Self.invalidZelfArgument(py, zelf, "imag")
     }
 
     let result = zelf.imag
