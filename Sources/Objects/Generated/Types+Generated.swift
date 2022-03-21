@@ -6021,6 +6021,7 @@ extension PyType {
   internal struct Layout {
     internal let nameOffset: Int
     internal let qualnameOffset: Int
+    internal let docOffset: Int
     internal let baseOffset: Int
     internal let basesOffset: Int
     internal let mroOffset: Int
@@ -6039,6 +6040,7 @@ extension PyType {
         fields: [
           PyMemory.FieldLayout(from: String.self), // PyType.name
           PyMemory.FieldLayout(from: String.self), // PyType.qualname
+          PyMemory.FieldLayout(from: PyObject?.self), // PyType.doc
           PyMemory.FieldLayout(from: PyType?.self), // PyType.base
           PyMemory.FieldLayout(from: [PyType].self), // PyType.bases
           PyMemory.FieldLayout(from: [PyType].self), // PyType.mro
@@ -6050,17 +6052,18 @@ extension PyType {
         ]
       )
 
-      assert(layout.offsets.count == 10)
+      assert(layout.offsets.count == 11)
       self.nameOffset = layout.offsets[0]
       self.qualnameOffset = layout.offsets[1]
-      self.baseOffset = layout.offsets[2]
-      self.basesOffset = layout.offsets[3]
-      self.mroOffset = layout.offsets[4]
-      self.subclassesOffset = layout.offsets[5]
-      self.instanceSizeWithoutTailOffset = layout.offsets[6]
-      self.staticMethodsOffset = layout.offsets[7]
-      self.debugFnOffset = layout.offsets[8]
-      self.deinitializeOffset = layout.offsets[9]
+      self.docOffset = layout.offsets[2]
+      self.baseOffset = layout.offsets[3]
+      self.basesOffset = layout.offsets[4]
+      self.mroOffset = layout.offsets[5]
+      self.subclassesOffset = layout.offsets[6]
+      self.instanceSizeWithoutTailOffset = layout.offsets[7]
+      self.staticMethodsOffset = layout.offsets[8]
+      self.debugFnOffset = layout.offsets[9]
+      self.deinitializeOffset = layout.offsets[10]
       self.size = layout.size
       self.alignment = layout.alignment
     }
@@ -6079,6 +6082,8 @@ extension PyType {
   internal var namePtr: Ptr<String> { Ptr(self.ptr, offset: Self.layout.nameOffset) }
   /// Property: `PyType.qualname`.
   internal var qualnamePtr: Ptr<String> { Ptr(self.ptr, offset: Self.layout.qualnameOffset) }
+  /// Property: `PyType.doc`.
+  internal var docPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.docOffset) }
   /// Property: `PyType.base`.
   internal var basePtr: Ptr<PyType?> { Ptr(self.ptr, offset: Self.layout.baseOffset) }
   /// Property: `PyType.bases`.
@@ -6121,6 +6126,7 @@ extension PyType {
     // Call 'deinitialize' on all of our own properties.
     zelf.namePtr.deinitialize()
     zelf.qualnamePtr.deinitialize()
+    zelf.docPtr.deinitialize()
     zelf.basePtr.deinitialize()
     zelf.basesPtr.deinitialize()
     zelf.mroPtr.deinitialize()
