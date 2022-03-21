@@ -77,7 +77,9 @@ public struct PyModule: PyObjectMixin {
   }
 
   internal func getDict(_ py: Py) -> PyDict {
-    guard let result = self.__dict__.get(py) else {
+    let object = self.asObject
+
+    guard let result = object.get__dict__(py) else {
       py.trapMissing__dict__(object: self)
     }
 
@@ -269,7 +271,7 @@ public struct PyModule: PyObjectMixin {
   // sourcery: pymethod = __dir__
   internal static func __dir__(_ py: Py, zelf: PyObject) -> PyResult<DirResult> {
     guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, Self.pythonTypeName)
+      return Self.invalidZelfArgument(py, zelf, "__dir__")
     }
 
     // Do not add 'self.type' dir!

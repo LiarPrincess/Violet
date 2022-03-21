@@ -391,7 +391,7 @@ public struct PyFloat: PyObjectMixin {
                                 zelf: PyObject,
                                 other: PyObject) -> PyResult<PyObject> {
     // Important: OTHER - ZELF (not zelf - other)
-    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__sub__") { $1 - $0 }
+    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__rsub__") { $1 - $0 }
   }
 
   // sourcery: pymethod = __mul__
@@ -405,7 +405,7 @@ public struct PyFloat: PyObjectMixin {
   internal static func __rmul__(_ py: Py,
                                 zelf: PyObject,
                                 other: PyObject) -> PyResult<PyObject> {
-    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__mul__") { $1 * $0 }
+    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__rmul__") { $1 * $0 }
   }
 
   // MARK: - Pow

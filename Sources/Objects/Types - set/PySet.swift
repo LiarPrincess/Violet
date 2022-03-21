@@ -92,6 +92,10 @@ public struct PySet: PyObjectMixin, AbstractSet {
 
   // sourcery: pymethod = __hash__
   internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
+    guard Self.downcast(py, zelf) != nil else {
+      return .invalidSelfArgument(zelf, Self.pythonTypeName)
+    }
+
     return .unhashable(zelf)
   }
 

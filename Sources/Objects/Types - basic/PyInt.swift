@@ -12,6 +12,26 @@ import VioletCore
 internal let LONG_MAX = Int.max // 9223372036854775807
 internal let LONG_MIN = Int.min // -9223372036854775808
 
+// Ints are very common, so we will define those:
+internal func == (lhs: PyInt, rhs: PyInt) -> Bool { lhs.value == rhs.value }
+internal func == (lhs: PyInt, rhs: BigInt) -> Bool { lhs.value == rhs }
+internal func == (lhs: BigInt, rhs: PyInt) -> Bool { lhs == rhs.value }
+internal func != (lhs: PyInt, rhs: PyInt) -> Bool { lhs.value != rhs.value }
+internal func != (lhs: PyInt, rhs: BigInt) -> Bool { lhs.value != rhs }
+internal func != (lhs: BigInt, rhs: PyInt) -> Bool { lhs != rhs.value }
+internal func < (lhs: PyInt, rhs: PyInt) -> Bool { lhs.value < rhs.value }
+internal func < (lhs: PyInt, rhs: BigInt) -> Bool { lhs.value < rhs }
+internal func < (lhs: BigInt, rhs: PyInt) -> Bool { lhs < rhs.value }
+internal func <= (lhs: PyInt, rhs: PyInt) -> Bool { lhs.value <= rhs.value }
+internal func <= (lhs: PyInt, rhs: BigInt) -> Bool { lhs.value <= rhs }
+internal func <= (lhs: BigInt, rhs: PyInt) -> Bool { lhs <= rhs.value }
+internal func > (lhs: PyInt, rhs: PyInt) -> Bool { lhs.value > rhs.value }
+internal func > (lhs: PyInt, rhs: BigInt) -> Bool { lhs.value > rhs }
+internal func > (lhs: BigInt, rhs: PyInt) -> Bool { lhs > rhs.value }
+internal func >= (lhs: PyInt, rhs: PyInt) -> Bool { lhs.value >= rhs.value }
+internal func >= (lhs: PyInt, rhs: BigInt) -> Bool { lhs.value >= rhs }
+internal func >= (lhs: BigInt, rhs: PyInt) -> Bool { lhs >= rhs.value }
+
 // sourcery: pytype = int, isDefault, isBaseType, isLongSubclass
 // sourcery: subclassInstancesHave__dict__
 public struct PyInt: PyObjectMixin {
@@ -89,10 +109,6 @@ public struct PyInt: PyObjectMixin {
   // sourcery: pymethod = __ge__
   internal static func __ge__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     return Self.compareOperation(py, zelf: zelf, other: other, op: .__ge__) { $0 >= $1 }
-  }
-
-  internal func isEqual(_ other: PyInt) -> Bool {
-    return self.value == other.value
   }
 
   private static func compareOperation(_ py: Py,
@@ -293,14 +309,14 @@ public struct PyInt: PyObjectMixin {
 
   // sourcery: pymethod = __floor__, doc = floorDoc
   internal static func __floor__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    return Self.identityOperation(py, zelf: zelf, fnName: "__trunc__")
+    return Self.identityOperation(py, zelf: zelf, fnName: "__floor__")
   }
 
   internal static let ceilDoc = "Ceiling of an Integral returns itself."
 
   // sourcery: pymethod = __ceil__, doc = ceilDoc
   internal static func __ceil__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
-    return Self.identityOperation(py, zelf: zelf, fnName: "__trunc__")
+    return Self.identityOperation(py, zelf: zelf, fnName: "__ceil__")
   }
 
   // MARK: - Add, sub, mul
@@ -331,7 +347,7 @@ public struct PyInt: PyObjectMixin {
                                 zelf: PyObject,
                                 other: PyObject) -> PyResult<PyObject> {
     // Important: OTHER - ZELF (not zelf - other)
-    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__sub__") { $1 - $0 }
+    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__rsub__") { $1 - $0 }
   }
 
   // sourcery: pymethod = __mul__
@@ -345,7 +361,7 @@ public struct PyInt: PyObjectMixin {
   internal static func __rmul__(_ py: Py,
                                 zelf: PyObject,
                                 other: PyObject) -> PyResult<PyObject> {
-    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__mul__") { $1 * $0 }
+    return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__rmul__") { $1 * $0 }
   }
 
   // MARK: - bit_length
@@ -1375,28 +1391,6 @@ public struct PyInt: PyObjectMixin {
     let result = fn(zelf.value, other.value)
     return PyResult(py, result)
   }
-
-  // MARK: - Operators
-
-  // Ints are very common, so we will define those:
-  internal static func == (lhs: PyInt, rhs: PyInt) -> Bool { lhs.value == rhs.value }
-  internal static func == (lhs: PyInt, rhs: BigInt) -> Bool { lhs.value == rhs }
-  internal static func == (lhs: BigInt, rhs: PyInt) -> Bool { lhs == rhs.value }
-  internal static func != (lhs: PyInt, rhs: PyInt) -> Bool { lhs.value != rhs.value }
-  internal static func != (lhs: PyInt, rhs: BigInt) -> Bool { lhs.value != rhs }
-  internal static func != (lhs: BigInt, rhs: PyInt) -> Bool { lhs != rhs.value }
-  internal static func < (lhs: PyInt, rhs: PyInt) -> Bool { lhs.value < rhs.value }
-  internal static func < (lhs: PyInt, rhs: BigInt) -> Bool { lhs.value < rhs }
-  internal static func < (lhs: BigInt, rhs: PyInt) -> Bool { lhs < rhs.value }
-  internal static func <= (lhs: PyInt, rhs: PyInt) -> Bool { lhs.value <= rhs.value }
-  internal static func <= (lhs: PyInt, rhs: BigInt) -> Bool { lhs.value <= rhs }
-  internal static func <= (lhs: BigInt, rhs: PyInt) -> Bool { lhs <= rhs.value }
-  internal static func > (lhs: PyInt, rhs: PyInt) -> Bool { lhs.value > rhs.value }
-  internal static func > (lhs: PyInt, rhs: BigInt) -> Bool { lhs.value > rhs }
-  internal static func > (lhs: BigInt, rhs: PyInt) -> Bool { lhs > rhs.value }
-  internal static func >= (lhs: PyInt, rhs: PyInt) -> Bool { lhs.value >= rhs.value }
-  internal static func >= (lhs: PyInt, rhs: BigInt) -> Bool { lhs.value >= rhs }
-  internal static func >= (lhs: BigInt, rhs: PyInt) -> Bool { lhs >= rhs.value }
 
   // MARK: - Helpers
 
