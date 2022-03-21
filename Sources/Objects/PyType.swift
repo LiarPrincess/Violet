@@ -44,6 +44,8 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   }
 
   // sourcery: storedProperty
+  internal var doc: PyObject? { self.docPtr.pointee }
+  // sourcery: storedProperty
   internal var base: PyType? { self.basePtr.pointee }
   // sourcery: storedProperty
   internal var bases: [PyType] { self.basesPtr.pointee }
@@ -195,6 +197,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     let mro = [self] + mroWithoutSelf
     self.namePtr.initialize(to: name)
     self.qualnamePtr.initialize(to: qualname)
+    self.docPtr.initialize(to: nil)
     self.basePtr.initialize(to: base)
     self.basesPtr.initialize(to: bases)
     self.mroPtr.initialize(to: mro)
@@ -331,6 +334,17 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
       return Self.invalidZelfArgument(py, zelf, "__doc__")
     }
 
+    // If we are a builtin type then we have our 'doc' stored:
+    if let doc = zelf.doc {
+      return PyResult(py, doc)
+    }
+
+    // Otherwise we get it from '__doc__', possible cases:
+    // - if the type allows its instances to have '__doc__' then the object that
+    //   we get from '__dict__' is a 'property'. In this case we will call 'fget'
+    //   of this property and maybe get something usefull (or an TypeError).
+    // - if the type does not permit '__doc__' then the thing stored in '__dict__'
+    //   is an 'str' that describes this type.
     let dict = zelf.getDict(py)
     guard let doc = dict.get(py, id: .__doc__) else {
       return .none(py)
@@ -366,17 +380,15 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   /// We can't do it in init because we are not allowed to use other types in init.
   /// (Which means that we would not be able to create PyString to put in dict)
   internal func setBuiltinTypeDoc(_ py: Py, value: String?) {
-    let string = value.map(DocHelper.getDocWithoutSignature)
-
     let object: PyObject
-    if let string = string {
-      object = py.newString(string).asObject
+    if let v = value {
+      let withoutSignature = DocHelper.getDocWithoutSignature(v)
+      object = py.newString(withoutSignature).asObject
     } else {
       object = py.none.asObject
     }
 
-    let dict = self.getDict(py)
-    dict.set(py, id: .__doc__, value: object)
+    self.docPtr.pointee = object
   }
 
   // MARK: - Module

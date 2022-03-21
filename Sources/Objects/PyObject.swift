@@ -65,7 +65,7 @@ public struct PyObject: PyObjectMixin {
   /// ```
   ///
   /// Whether the object has access to `__dict__` or not is controlled by
-  /// `has__dict__` flag on type.
+  /// `instancesHave__dict__` flag on type.
   ///
   /// - Important:
   /// Use `PyObject.get__dict__` or `Py.get__dict__` instead.
@@ -130,9 +130,10 @@ public struct PyObject: PyObjectMixin {
       lazy__dict__ = .noDict
     }
 
+    self.__dict__Ptr.initialize(to: lazy__dict__)
+
     // 'memoryInfo' was already initialized (all of the objects are allocated by
     // PyMemory which also is responsible for 'memoryInfo').
-    self.__dict__Ptr.initialize(to: lazy__dict__)
   }
 
   /// `type type` (type of all of the types) and `object type` are a bit special.

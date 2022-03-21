@@ -25,7 +25,7 @@ public struct PyBool: PyObjectMixin {
 
     Returns True when the argument x is true, False otherwise.
     The builtins True and False are the only two instances of the class bool.
-    The class bool is a subclass of the class int, and cannot be subclassed
+    The class bool is a subclass of the class int, and cannot be subclassed.
     """
 
   // 'self.value' property will be automatically generated from 'PyInt' properties.
