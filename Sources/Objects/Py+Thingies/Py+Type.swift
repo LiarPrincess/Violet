@@ -69,7 +69,7 @@ extension Py {
   /// isinstance(object, classinfo)
   /// See [this](https://docs.python.org/3/library/functions.html#isinstance)
   public func isInstance(object: PyObject,
-                         of typeOrTuple: PyObject) -> PyResult<Bool> {
+                         of typeOrTuple: PyObject) -> PyResultGen<Bool> {
     let objectType = object.type
     if objectType.ptr === typeOrTuple.ptr {
       return .value(true)
@@ -101,14 +101,14 @@ extension Py {
   }
 
   private func call__instancecheck__(instance: PyObject,
-                                     type: PyObject) -> PyResult<PyObject> {
+                                     type: PyObject) -> PyResultGen<PyObject> {
     if let result = PyStaticCall.__instancecheck__(self, type: type, object: instance) {
-      return PyResult(result)
+      return PyResultGen(result)
     }
 
     switch self.callMethod(object: type, selector: .__instancecheck__, arg: instance) {
     case .value(let o):
-      return PyResult(o)
+      return PyResultGen(o)
     case .missingMethod:
       let message = "isinstance() arg 2 must be a type or tuple of types"
       return .typeError(self, message: message)
@@ -123,7 +123,7 @@ extension Py {
   /// issubclass(class, classinfo)
   /// See [this](https://docs.python.org/3/library/functions.html#issubclass)
   public func isSubclass(object: PyObject,
-                         of typeOrTuple: PyObject) -> PyResult<Bool> {
+                         of typeOrTuple: PyObject) -> PyResultGen<Bool> {
     if let `super` = self.cast.asExactlyType(typeOrTuple) {
       guard let type = self.cast.asType(object) else {
         return .typeError(self, message: "issubclass() arg 1 must be a class")
@@ -154,17 +154,17 @@ extension Py {
   }
 
   private func call__subclasscheck__(type: PyObject,
-                                     super: PyObject) -> PyResult<PyObject> {
+                                     super: PyObject) -> PyResultGen<PyObject> {
     // This method is called on 'super'! Not on object!
     if let result = PyStaticCall.__subclasscheck__(self, type: `super`, base: type) {
-      return PyResult(result)
+      return PyResultGen(result)
     }
 
     switch self.callMethod(object: `super`,
                            selector: .__subclasscheck__,
                            arg: type) {
     case .value(let o):
-      return PyResult(o)
+      return PyResultGen(o)
     case .missingMethod:
       let message = "issubclass() arg 2 must be a class or tuple of classes"
       return .typeError(self, message: message)

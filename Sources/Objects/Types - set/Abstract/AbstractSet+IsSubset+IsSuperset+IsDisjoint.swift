@@ -4,7 +4,7 @@ extension AbstractSet {
 
   internal static func abstractIsSubset(_ py: Py,
                                         zelf: PyObject,
-                                        other: PyObject) -> PyResult<PyObject> {
+                                        other: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "issubset")
     }
@@ -12,7 +12,7 @@ extension AbstractSet {
     switch Self.getElements(py, iterable: other) {
     case let .value(elements):
       let result = Self.abstractIsSubset(py, zelf: zelf, other: elements)
-      return PyResult(py, result)
+      return PyResultGen(py, result)
     case let .error(e):
       return .error(e)
     }
@@ -20,7 +20,7 @@ extension AbstractSet {
 
   internal static func abstractIsSubset(_ py: Py,
                                         zelf: Self,
-                                        other: OrderedSet) -> PyResult<Bool> {
+                                        other: OrderedSet) -> PyResultGen<Bool> {
     guard zelf.count <= other.count else {
       return .value(false)
     }
@@ -40,7 +40,7 @@ extension AbstractSet {
 
   internal static func abstractIsSuperset(_ py: Py,
                                           zelf: PyObject,
-                                          other: PyObject) -> PyResult<PyObject> {
+                                          other: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "issuperset")
     }
@@ -48,7 +48,7 @@ extension AbstractSet {
     switch Self.getElements(py, iterable: other) {
     case let .value(elements):
       let result = Self.abstractIsSuperset(py, zelf: zelf, other: elements)
-      return PyResult(py, result)
+      return PyResultGen(py, result)
     case let .error(e):
       return .error(e)
     }
@@ -56,7 +56,7 @@ extension AbstractSet {
 
   internal static func abstractIsSuperset(_ py: Py,
                                           zelf: Self,
-                                          other: OrderedSet) -> PyResult<Bool> {
+                                          other: OrderedSet) -> PyResultGen<Bool> {
     guard zelf.count >= other.count else {
       return .value(false)
     }
@@ -76,7 +76,7 @@ extension AbstractSet {
 
   internal static func abstractIsDisjoint(_ py: Py,
                                           zelf: PyObject,
-                                          other: PyObject) -> PyResult<PyObject> {
+                                          other: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "isdisjoint")
     }
@@ -84,7 +84,7 @@ extension AbstractSet {
     switch Self.getElements(py, iterable: other) {
     case let .value(elements):
       let result = Self.abstractIsDisjoint(py, zelf: zelf, other: elements)
-      return PyResult(py, result)
+      return PyResultGen(py, result)
     case let .error(e):
       return .error(e)
     }
@@ -92,7 +92,7 @@ extension AbstractSet {
 
   private static func abstractIsDisjoint(_ py: Py,
                                          zelf: Self,
-                                         other: OrderedSet) -> PyResult<Bool> {
+                                         other: OrderedSet) -> PyResultGen<Bool> {
     let isSelfSmaller = zelf.count < other.count
     let smaller = isSelfSmaller ? zelf.elements : other
     let bigger = isSelfSmaller ? other : zelf.elements

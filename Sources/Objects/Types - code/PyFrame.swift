@@ -224,7 +224,7 @@ public struct PyFrame: PyObjectMixin {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
@@ -234,7 +234,7 @@ public struct PyFrame: PyObjectMixin {
     let line = zelf.currentInstructionLine
     let name = zelf.code.name
     let result = "<frame at \(ptr), file \(file), line \(line), code \(name)>"
-    return PyResult(py, interned: result)
+    return PyResultGen(py, interned: result)
   }
 
   // MARK: - Class
@@ -249,7 +249,7 @@ public struct PyFrame: PyObjectMixin {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResult<PyObject> {
+                                        name: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -261,7 +261,7 @@ public struct PyFrame: PyObjectMixin {
   internal static func __setattr__(_ py: Py,
                                    zelf: PyObject,
                                    name: PyObject,
-                                   value: PyObject?) -> PyResult<PyObject> {
+                                   value: PyObject?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__setattr__")
     }
@@ -272,7 +272,7 @@ public struct PyFrame: PyObjectMixin {
   // sourcery: pymethod = __delattr__
   internal static func __delattr__(_ py: Py,
                                    zelf: PyObject,
-                                   name: PyObject) -> PyResult<PyObject> {
+                                   name: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__delattr__")
     }
@@ -283,38 +283,38 @@ public struct PyFrame: PyObjectMixin {
   // MARK: - Properties
 
   // sourcery: pyproperty = f_back
-  internal static func f_back(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func f_back(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "f_back")
     }
 
     if let parent = zelf.parent {
-      return PyResult(parent)
+      return PyResultGen(parent)
     }
 
     return .none(py)
   }
 
   // sourcery: pyproperty = f_builtins
-  internal static func f_builtins(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func f_builtins(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "f_builtins")
     }
 
-    return PyResult(zelf.builtins)
+    return PyResultGen(zelf.builtins)
   }
 
   // sourcery: pyproperty = f_globals
-  internal static func f_globals(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func f_globals(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "f_globals")
     }
 
-    return PyResult(zelf.globals)
+    return PyResultGen(zelf.globals)
   }
 
   // sourcery: pyproperty = f_locals
-  internal static func f_locals(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func f_locals(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "f_locals")
     }
@@ -323,35 +323,35 @@ public struct PyFrame: PyObjectMixin {
       return .error(e)
     }
 
-    return PyResult(zelf.locals)
+    return PyResultGen(zelf.locals)
   }
 
   // sourcery: pyproperty = f_code
-  internal static func f_code(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func f_code(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "f_code")
     }
 
-    return PyResult(zelf.code)
+    return PyResultGen(zelf.code)
   }
 
   // sourcery: pyproperty = f_lasti
-  internal static func f_lasti(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func f_lasti(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "f_lasti")
     }
 
     let result = zelf.currentInstructionIndex ?? 0
-    return PyResult(py, result)
+    return PyResultGen(py, result)
   }
 
   // sourcery: pyproperty = f_lineno
-  internal static func f_lineno(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func f_lineno(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "f_lineno")
     }
 
     let result = Int(zelf.currentInstructionLine)
-    return PyResult(py, result)
+    return PyResultGen(py, result)
   }
 }

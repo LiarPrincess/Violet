@@ -21,7 +21,7 @@ extension Py {
                    errors errorsArg: PyObject? = nil,
                    newline: PyObject? = nil,
                    closefd closefdArg: PyObject? = nil,
-                   opener: PyObject? = nil) -> PyResult<PyTextFile> {
+                   opener: PyObject? = nil) -> PyResultGen<PyTextFile> {
     // We will ignore 'buffering', 'newline', and 'opener' because we are lazy.
 
     let source: Source
@@ -73,7 +73,7 @@ extension Py {
                     type: FileType,
                     encoding: PyString.Encoding,
                     errorHandling: PyString.ErrorHandling,
-                    closeOnDealloc: Bool) -> PyResult<PyTextFile> {
+                    closeOnDealloc: Bool) -> PyResultGen<PyTextFile> {
     switch type {
     case .binary:
       return .valueError(self, message: "only text mode is currently supported in Violet")
@@ -120,8 +120,8 @@ extension Py {
   private func openFileDescriptor(
     source: Source,
     mode: FileMode
-  ) -> PyResult<OpenedFileDescriptor> {
-    func _open(string: String) -> PyResult<OpenedFileDescriptor> {
+  ) -> PyResultGen<OpenedFileDescriptor> {
+    func _open(string: String) -> PyResultGen<OpenedFileDescriptor> {
       let path = Path(string: string)
       let fd = self.fileSystem.open(path: path, mode: mode)
       return fd.map { OpenedFileDescriptor(path: path, value: $0) }
@@ -156,7 +156,7 @@ extension Py {
     case bytes(Data)
   }
 
-  private func parseFileSource(object: PyObject) -> PyResult<Source> {
+  private func parseFileSource(object: PyObject) -> PyResultGen<Source> {
     if let int = self.cast.asInt(object),
        let fd = Int32(exactly: int.value) {
       return .value(.fileDescriptor(fd))
@@ -230,7 +230,7 @@ extension Py {
   }
 
   /// Parser for `xrwa+tb` string (2nd argument of `open`).
-  private func parseModeAndType(object: PyObject?) -> PyResult<ModeAndType> {
+  private func parseModeAndType(object: PyObject?) -> PyResultGen<ModeAndType> {
     guard let object = object else {
       let result = ModeAndType(self)
       return .value(result)
@@ -244,7 +244,7 @@ extension Py {
   }
 
   /// Parser for `xrwa+tb` string (2nd argument of `open`).
-  private func parseModeAndType(string: String) -> PyResult<ModeAndType> {
+  private func parseModeAndType(string: String) -> PyResultGen<ModeAndType> {
     var result = ModeAndType(self)
     var preventDuplicates = Set<UnicodeScalar>()
 

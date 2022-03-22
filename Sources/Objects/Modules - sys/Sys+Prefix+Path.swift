@@ -28,7 +28,7 @@ extension Sys {
 
   // MARK: - Prefix
 
-  public func getPrefix() -> PyResult<PyString> {
+  public func getPrefix() -> PyResultGen<PyString> {
     return self.getString(.prefix)
   }
 
@@ -96,7 +96,7 @@ extension Sys {
   /// the Python interpreter.
   /// If the script directory is not available, `path[0]` is the empty string,
   /// which directs Python to search modules in the current directory first.
-  public func getPath() -> PyResult<PyList> {
+  public func getPath() -> PyResultGen<PyList> {
     return self.getList(.path)
   }
 
@@ -165,7 +165,7 @@ extension Sys {
 
   // MARK: - Meta path
 
-  public func getMetaPath() -> PyResult<PyList> {
+  public func getMetaPath() -> PyResultGen<PyList> {
     return self.getList(.meta_path)
   }
 
@@ -175,7 +175,7 @@ extension Sys {
 
   // MARK: - Path hooks
 
-  public func getPathHooks() -> PyResult<PyList> {
+  public func getPathHooks() -> PyResultGen<PyList> {
     return self.getList(.path_hooks)
   }
 
@@ -185,7 +185,7 @@ extension Sys {
 
   // MARK: - Path importer cache
 
-  public func getPathImporterCache() -> PyResult<PyDict> {
+  public func getPathImporterCache() -> PyResultGen<PyDict> {
     return self.getDict(.path_importer_cache)
   }
 

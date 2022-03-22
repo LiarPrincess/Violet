@@ -7,7 +7,7 @@ extension Py {
 
   /// chr(i)
   /// See [this](https://docs.python.org/3/library/functions.html#chr)
-  public func chr(object: PyObject) -> PyResult<PyString> {
+  public func chr(object: PyObject) -> PyResultGen<PyString> {
     // Integer Unicode code point -> string representing a character
 
     let pyInt: PyInt
@@ -33,7 +33,7 @@ extension Py {
 
   /// ord(c)
   /// See [this](https://docs.python.org/3/library/functions.html#ord)
-  public func ord(object: PyObject) -> PyResult<PyInt> {
+  public func ord(object: PyObject) -> PyResultGen<PyInt> {
     // Unicode character -> integer representing the Unicode code point
 
     if let string = self.cast.asString(object) {

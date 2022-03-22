@@ -17,7 +17,7 @@ extension Py {
   ///
   /// This value is set in:
   /// 'initimport(PyInterpreterState *interp, PyObject *sysmod)'
-  public func get__import__() -> PyResult<PyObject> {
+  public func get__import__() -> PyResultGen<PyObject> {
     let dict = self.builtins.__dict__
 
     if let fn = dict.get(self, id: .__import__) {
@@ -41,7 +41,7 @@ extension Py {
                          globals: PyObject? = nil,
                          locals: PyObject? = nil,
                          fromList: PyObject? = nil,
-                         level levelArg: PyObject? = nil) -> PyResult<PyObject> {
+                         level levelArg: PyObject? = nil) -> PyResultGen<PyObject> {
     guard let name = self.cast.asString(nameArg) else {
       return .typeError(self, message: "module name must be a string")
     }
@@ -91,7 +91,7 @@ extension Py {
 
   // MARK: - Parse level
 
-  private func parseLevel(from object: PyObject?) -> PyResult<PyInt> {
+  private func parseLevel(from object: PyObject?) -> PyResultGen<PyInt> {
     guard let object = object else {
       return .value(self.newInt(0))
     }
@@ -117,7 +117,7 @@ extension Py {
   /// resolve_name(PyObject *name, PyObject *globals, int level)
   private func resolveLevel(name: PyString,
                             level: PyInt,
-                            globals: PyObject?) -> PyResult<String> {
+                            globals: PyObject?) -> PyResultGen<String> {
     if level.value == 0 {
       if name.isEmpty {
         return .valueError(self, message: "Empty module name")
@@ -157,7 +157,7 @@ extension Py {
     return .value(result)
   }
 
-  private func getPackage(globals globalsArg: PyObject?) -> PyResult<String> {
+  private func getPackage(globals globalsArg: PyObject?) -> PyResultGen<String> {
     // 'globals' represent 'module.__dict__'
     guard let globalsObject = globalsArg else {
       return .keyError(self, message: "'__name__' not in globals")
@@ -208,7 +208,7 @@ extension Py {
     return .value(name.value)
   }
 
-  private func getParent(spec: PyObject) -> PyResult<PyString> {
+  private func getParent(spec: PyObject) -> PyResultGen<PyString> {
     switch self.getAttribute(object: spec, name: "parent") {
     case let .value(object):
       guard let string = self.cast.asString(object) else {
@@ -221,7 +221,7 @@ extension Py {
     }
   }
 
-  private func get__name__(globals: PyDict) -> PyResult<PyString> {
+  private func get__name__(globals: PyDict) -> PyResultGen<PyString> {
     guard let object = globals.get(self, id: .__name__) else {
       return .keyError(self, message: "'__name__' not in globals")
     }
@@ -237,7 +237,7 @@ extension Py {
 
   /// PyObject *
   /// PyImport_GetModule(PyObject *name)
-  private func getExistingOrLoadModule(absName: PyString) -> PyResult<PyObject> {
+  private func getExistingOrLoadModule(absName: PyString) -> PyResultGen<PyObject> {
     switch self.sys.getModule(name: absName) {
     case let .module(m):
       return .value(m.asObject)
@@ -252,7 +252,7 @@ extension Py {
 
   /// static PyObject *
   /// import_find_and_load(PyObject *abs_name)
-  private func call_find_and_load(absName: PyString) -> PyResult<PyObject> {
+  private func call_find_and_load(absName: PyString) -> PyResultGen<PyObject> {
     let __import__: PyObject
     switch self.get__import__() {
     case let .value(i): __import__ = i
@@ -295,7 +295,7 @@ extension Py {
                               absName: PyString,
                               level: PyInt,
                               module: PyObject,
-                              fromList: PyObject?) -> PyResult<PyObject> {
+                              fromList: PyObject?) -> PyResultGen<PyObject> {
     // If we have 'fromList' then call '_handle_fromlist' from 'importlib'
     if let fl = fromList, !self.cast.isNone(fl) {
       switch self.isTrueBool(object: fl) {
@@ -354,7 +354,7 @@ extension Py {
   /// And yes, `_handle_fromlist` is the `Python` selector.
   /// We have not changed our naming convention.
   private func call_handle_fromlist(module: PyObject,
-                                    fromList: PyObject) -> PyResult<PyObject> {
+                                    fromList: PyObject) -> PyResultGen<PyObject> {
     let __import__: PyObject
     switch self.get__import__() {
     case let .value(i): __import__ = i

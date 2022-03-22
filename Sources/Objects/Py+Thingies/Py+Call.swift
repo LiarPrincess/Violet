@@ -18,7 +18,7 @@ extension Py {
     case notCallable(PyBaseException)
     case error(PyBaseException)
 
-    public var asResult: PyResult<PyObject> {
+    public var asResult: PyResultGen<PyObject> {
       switch self {
       case let .value(o):
         return .value(o)
@@ -108,13 +108,13 @@ extension Py {
 extension Py {
 
   public func hasMethod(object: PyObject,
-                        selector: IdString) -> PyResult<Bool> {
+                        selector: IdString) -> PyResultGen<Bool> {
     let selectorString = self.resolve(id: selector)
     return self.hasMethod(object: object, selector: selectorString)
   }
 
   public func hasMethod(object: PyObject,
-                        selector: PyString) -> PyResult<Bool> {
+                        selector: PyString) -> PyResultGen<Bool> {
     let result = self.getMethod(object: object,
                                 selector: selector,
                                 allowsCallableFromDict: false)
@@ -148,7 +148,7 @@ extension Py {
     /// Raise error in VM.
     case error(PyBaseException)
 
-    internal init(result: PyResult<PyObject>) {
+    internal init(result: PyResultGen<PyObject>) {
       switch result {
       case let .value(o):
         self = .value(o)
@@ -236,7 +236,7 @@ extension Py {
     case notCallable(PyBaseException)
     case error(PyBaseException)
 
-    public var asResult: PyResult<PyObject> {
+    public var asResult: PyResultGen<PyObject> {
       switch self {
       case let .value(o):
         return .value(o)

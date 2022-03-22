@@ -8,7 +8,7 @@ extension AbstractString {
 
   internal static func abstract__contains__(_ py: Py,
                                             zelf: PyObject,
-                                            object: PyObject) -> PyResult<PyObject> {
+                                            object: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__contains__")
     }
@@ -16,7 +16,7 @@ extension AbstractString {
     switch Self.getElementsForFindCountContainsIndexOf(py, object: object) {
     case .value(let value):
       let result = zelf.abstractContains(elements: value)
-      return PyResult(py, result)
+      return PyResultGen(py, result)
 
     case .invalidObjectType:
       let t = Self.pythonTypeName
@@ -50,7 +50,7 @@ extension AbstractString {
                                      zelf: PyObject,
                                      object: PyObject,
                                      start: PyObject?,
-                                     end: PyObject?) -> PyResult<PyObject> {
+                                     end: PyObject?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "count")
     }
@@ -74,7 +74,7 @@ extension AbstractString {
     }
 
     let result = Self.count(string: substring.value, value: value)
-    return PyResult(py, result)
+    return PyResultGen(py, result)
   }
 
   private static func count(string: Elements.SubSequence, value: Elements) -> BigInt {
@@ -111,7 +111,7 @@ extension AbstractString {
                                      zelf: PyObject,
                                      object: PyObject,
                                      start: PyObject?,
-                                     end: PyObject?) -> PyResult<PyObject> {
+                                     end: PyObject?) -> PyResultGen<PyObject> {
     return Self.indexOfTemplate(py,
                                 zelf: zelf,
                                 object: object,
@@ -125,7 +125,7 @@ extension AbstractString {
                                       zelf: PyObject,
                                       object: PyObject,
                                       start: PyObject?,
-                                      end: PyObject?) -> PyResult<PyObject> {
+                                      end: PyObject?) -> PyResultGen<PyObject> {
     return Self.indexOfTemplate(py,
                                 zelf: zelf,
                                 object: object,
@@ -143,7 +143,7 @@ extension AbstractString {
     end: PyObject?,
     fnName: String,
     findFn: (Elements.SubSequence, Elements) -> AbstractStringFindResult<Elements>
-  ) -> PyResult<PyObject> {
+  ) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
@@ -173,7 +173,7 @@ extension AbstractString {
       // from the start of the string!
       let start = substring.start?.adjustedInt ?? 0
       let result = BigInt(start) + position
-      return PyResult(py, result)
+      return PyResultGen(py, result)
 
     case .notFound:
       return .valueError(py, message: "substring not found")

@@ -164,7 +164,7 @@ extension Py {
 
   /// _PyUnicode_JoinArray
   public func join(strings elements: [PyObject],
-                   separator: PyObject) -> PyResult<PyString> {
+                   separator: PyObject) -> PyResultGen<PyString> {
     if elements.isEmpty {
       return .value(self.emptyString)
     }
@@ -200,7 +200,7 @@ extension Py {
     return .value(resultObject)
   }
 
-  private func asStringArray(elements: [PyObject]) -> PyResult<[PyString]> {
+  private func asStringArray(elements: [PyObject]) -> PyResultGen<[PyString]> {
     var result = [PyString]()
 
     for (index, object) in elements.enumerated() {

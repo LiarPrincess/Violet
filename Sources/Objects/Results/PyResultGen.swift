@@ -9,7 +9,7 @@ import VioletCore
 ///
 /// On a type-system level:
 /// given a type `Wrapped` it will add an `error` possibility to it.
-public enum PyResult<Wrapped> {
+public enum PyResultGen<Wrapped> {
 
   /// Use this ctor for ordinary (non-error) values.
   ///
@@ -19,7 +19,7 @@ public enum PyResult<Wrapped> {
   /// Use this ctor to raise an error in VM.
   case error(PyBaseException)
 
-  public func map<A>(_ f: (Wrapped) -> A) -> PyResult<A> {
+  public func map<A>(_ f: (Wrapped) -> A) -> PyResultGen<A> {
     switch self {
     case let .value(v):
       return .value(f(v))
@@ -28,7 +28,7 @@ public enum PyResult<Wrapped> {
     }
   }
 
-  public func flatMap<A>(_ f: (Wrapped) -> PyResult<A>) -> PyResult<A> {
+  public func flatMap<A>(_ f: (Wrapped) -> PyResultGen<A>) -> PyResultGen<A> {
     switch self {
     case let .value(v):
       return f(v)
@@ -40,20 +40,20 @@ public enum PyResult<Wrapped> {
 
 // MARK: - Wrapped = Void
 
-extension PyResult where Wrapped == Void {
-  public static func value() -> PyResult {
-    return PyResult.value(())
+extension PyResultGen where Wrapped == Void {
+  public static func value() -> PyResultGen {
+    return PyResultGen.value(())
   }
 }
 
 // MARK: - Wrapped = PyObject
 
-extension PyResult where Wrapped == PyObject {
-  public static func none(_ py: Py) -> PyResult {
+extension PyResultGen where Wrapped == PyObject {
+  public static func none(_ py: Py) -> PyResultGen {
     return .value(py.none.asObject)
   }
 
-  public static func notImplemented(_ py: Py) -> PyResult {
+  public static func notImplemented(_ py: Py) -> PyResultGen {
     return .value(py.notImplemented.asObject)
   }
 
@@ -62,7 +62,7 @@ extension PyResult where Wrapped == PyObject {
     self = .value(object.asObject)
   }
 
-  public init(_ py: Py, _ value: PyResult<Bool>) {
+  public init(_ py: Py, _ value: PyResultGen<Bool>) {
     self = value.map { py.newBool($0).asObject }
   }
 
@@ -76,7 +76,7 @@ extension PyResult where Wrapped == PyObject {
     self = .value(object.asObject)
   }
 
-  public init(_ py: Py, _ value: PyResult<Int>) {
+  public init(_ py: Py, _ value: PyResultGen<Int>) {
     self = value.map { py.newInt($0).asObject }
   }
 
@@ -85,7 +85,7 @@ extension PyResult where Wrapped == PyObject {
     self = .value(object.asObject)
   }
 
-  public init(_ py: Py, _ value: PyResult<BigInt>) {
+  public init(_ py: Py, _ value: PyResultGen<BigInt>) {
     self = value.map { py.newInt($0).asObject }
   }
 
@@ -94,7 +94,7 @@ extension PyResult where Wrapped == PyObject {
     self = .value(object.asObject)
   }
 
-  public init(_ py: Py, _ value: PyResult<Double>) {
+  public init(_ py: Py, _ value: PyResultGen<Double>) {
     self = value.map { py.newFloat($0).asObject }
   }
 
@@ -113,7 +113,7 @@ extension PyResult where Wrapped == PyObject {
     self = .value(object.asObject)
   }
 
-  public init(_ py: Py, _ value: PyResult<String>) {
+  public init(_ py: Py, _ value: PyResultGen<String>) {
     self = value.map { py.newString($0).asObject }
   }
 
@@ -121,7 +121,7 @@ extension PyResult where Wrapped == PyObject {
     self = .value(value.asObject)
   }
 
-  public init<T: PyObjectMixin>(_ value: PyResult<T>) {
+  public init<T: PyObjectMixin>(_ value: PyResultGen<T>) {
     self = value.map { $0.asObject }
   }
 
@@ -147,104 +147,104 @@ extension PyResult where Wrapped == PyObject {
 
 // MARK: - Errors
 
-extension PyResult {
+extension PyResultGen {
 
-  public static func typeError(_ py: Py, message: String) -> PyResult<Wrapped> {
+  public static func typeError(_ py: Py, message: String) -> PyResultGen<Wrapped> {
     let error = py.newTypeError(message: message)
     return .error(error.asBaseException)
   }
 
-  public static func indexError(_ py: Py, message: String) -> PyResult<Wrapped> {
+  public static func indexError(_ py: Py, message: String) -> PyResultGen<Wrapped> {
     let error = py.newIndexError(message: message)
     return .error(error.asBaseException)
   }
 
-  public static func attributeError(_ py: Py, message: String) -> PyResult<Wrapped> {
+  public static func attributeError(_ py: Py, message: String) -> PyResultGen<Wrapped> {
     let error = py.newAttributeError(message: message)
     return .error(error.asBaseException)
   }
 
-  public static func zeroDivisionError(_ py: Py, message: String) -> PyResult<Wrapped> {
+  public static func zeroDivisionError(_ py: Py, message: String) -> PyResultGen<Wrapped> {
     let error = py.newZeroDivisionError(message: message)
     return .error(error.asBaseException)
   }
 
-  public static func overflowError(_ py: Py, message: String) -> PyResult<Wrapped> {
+  public static func overflowError(_ py: Py, message: String) -> PyResultGen<Wrapped> {
     let error = py.newOverflowError(message: message)
     return .error(error.asBaseException)
   }
 
-  public static func systemError(_ py: Py, message: String) -> PyResult<Wrapped> {
+  public static func systemError(_ py: Py, message: String) -> PyResultGen<Wrapped> {
     let error = py.newSystemError(message: message)
     return .error(error.asBaseException)
   }
 
-  public static func nameError(_ py: Py, message: String) -> PyResult<Wrapped> {
+  public static func nameError(_ py: Py, message: String) -> PyResultGen<Wrapped> {
     let error = py.newNameError(message: message)
     return .error(error.asBaseException)
   }
 
-  public static func keyError(_ py: Py, message: String) -> PyResult<Wrapped> {
+  public static func keyError(_ py: Py, message: String) -> PyResultGen<Wrapped> {
     let error = py.newKeyError(message: message)
     return .error(error.asBaseException)
   }
 
-  public static func valueError(_ py: Py, message: String) -> PyResult<Wrapped> {
+  public static func valueError(_ py: Py, message: String) -> PyResultGen<Wrapped> {
     let error = py.newValueError(message: message)
     return .error(error.asBaseException)
   }
 
-  public static func lookupError(_ py: Py, message: String) -> PyResult<Wrapped> {
+  public static func lookupError(_ py: Py, message: String) -> PyResultGen<Wrapped> {
     let error = py.newLookupError(message: message)
     return .error(error.asBaseException)
   }
 
-  public static func runtimeError(_ py: Py, message: String) -> PyResult<Wrapped> {
+  public static func runtimeError(_ py: Py, message: String) -> PyResultGen<Wrapped> {
     let error = py.newRuntimeError(message: message)
     return .error(error.asBaseException)
   }
 
-  public static func osError(_ py: Py, message: String) -> PyResult<Wrapped> {
+  public static func osError(_ py: Py, message: String) -> PyResultGen<Wrapped> {
     let error = py.newOSError(message: message)
     return .error(error.asBaseException)
   }
 
-  public static func assertionError(_ py: Py, message: String) -> PyResult<Wrapped> {
+  public static func assertionError(_ py: Py, message: String) -> PyResultGen<Wrapped> {
     let error = py.newAssertionError(message: message)
     return .error(error.asBaseException)
   }
 
-  public static func eofError(_ py: Py, message: String) -> PyResult<Wrapped> {
+  public static func eofError(_ py: Py, message: String) -> PyResultGen<Wrapped> {
     let error = py.newEOFError(message: message)
     return .error(error.asBaseException)
   }
 
-  public static func keyError(_ py: Py, key: PyObject) -> PyResult<Wrapped> {
+  public static func keyError(_ py: Py, key: PyObject) -> PyResultGen<Wrapped> {
     let error = py.newKeyError(key: key)
     return .error(error.asBaseException)
   }
 
   /// `Value` is used by generators and coroutines to hold `return` value.
-  public static func stopIteration(_ py: Py, value: PyObject? = nil) -> PyResult<Wrapped> {
+  public static func stopIteration(_ py: Py, value: PyObject? = nil) -> PyResultGen<Wrapped> {
     let error = py.newStopIteration(value: value)
     return .error(error.asBaseException)
   }
 
-  public static func unboundLocalError(_ py: Py, variableName: String) -> PyResult<Wrapped> {
+  public static func unboundLocalError(_ py: Py, variableName: String) -> PyResultGen<Wrapped> {
     let error = py.newUnboundLocalError(variableName: variableName)
     return .error(error.asBaseException)
   }
 
   public static func unicodeDecodeError(_ py: Py,
                                         encoding: PyString.Encoding,
-                                        data: Data) -> PyResult<Wrapped> {
+                                        data: Data) -> PyResultGen<Wrapped> {
     let error = py.newUnicodeDecodeError(data: data, encoding: encoding)
     return .error(error.asBaseException)
   }
 
   public static func unicodeEncodeError(_ py: Py,
                                         encoding: PyString.Encoding,
-                                        string: String) -> PyResult<Wrapped> {
+                                        string: String) -> PyResultGen<Wrapped> {
     let error = py.newUnicodeEncodeError(string: string, encoding: encoding)
     return .error(error.asBaseException)
   }
@@ -252,7 +252,7 @@ extension PyResult {
   public static func importError(_ py: Py,
                                  message: String,
                                  moduleName: String?,
-                                 modulePath: Path?) -> PyResult<Wrapped> {
+                                 modulePath: Path?) -> PyResultGen<Wrapped> {
     let error = py.newImportError(message: message,
                                   moduleName: moduleName,
                                   modulePath: modulePath)
@@ -262,7 +262,7 @@ extension PyResult {
   public static func importError(_ py: Py,
                                  message: String,
                                  moduleName: String? = nil,
-                                 modulePath: String? = nil) -> PyResult<Wrapped> {
+                                 modulePath: String? = nil) -> PyResultGen<Wrapped> {
     let error = py.newImportError(message: message,
                                   moduleName: moduleName,
                                   modulePath: modulePath)

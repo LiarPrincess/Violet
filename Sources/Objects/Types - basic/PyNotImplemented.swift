@@ -32,12 +32,12 @@ public struct PyNotImplemented: PyObjectMixin {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard Self.downcast(py, zelf) != nil else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
-    return PyResult(py, interned: "NotImplemented")
+    return PyResultGen(py, interned: "NotImplemented")
   }
 
   // MARK: - Class
@@ -53,7 +53,7 @@ public struct PyNotImplemented: PyObjectMixin {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResult<PyObject> {
+                               kwargs: PyDict?) -> PyResultGen<PyObject> {
     let noArgs = args.isEmpty
     let noKwargs = kwargs?.elements.isEmpty ?? true
     guard noArgs && noKwargs else {

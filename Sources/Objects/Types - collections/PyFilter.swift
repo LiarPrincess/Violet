@@ -55,7 +55,7 @@ public struct PyFilter: PyObjectMixin {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResult<PyObject> {
+                                        name: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -66,18 +66,18 @@ public struct PyFilter: PyObjectMixin {
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
-    return PyResult(zelf)
+    return PyResultGen(zelf)
   }
 
   // MARK: - Next
 
   // sourcery: pymethod = __next__
-  internal static func __next__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __next__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__next__")
     }
@@ -119,7 +119,7 @@ public struct PyFilter: PyObjectMixin {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResult<PyObject> {
+                               kwargs: PyDict?) -> PyResultGen<PyObject> {
     if type === py.types.filter {
       if let e = ArgumentParser.noKwargsOrError(py,
                                                 fnName: Self.pythonTypeName,
@@ -146,6 +146,6 @@ public struct PyFilter: PyObjectMixin {
     }
 
     let result = py.memory.newFilter(py, type: type, fn: fn, iterator: iter)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 }

@@ -58,24 +58,24 @@ public struct PyBool: PyObjectMixin {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     return Self.toString(py, zelf: zelf, fnName: "__repr__")
   }
 
   // sourcery: pymethod = __str__
-  internal static func __str__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __str__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     return Self.toString(py, zelf: zelf, fnName: "__str__")
   }
 
   private static func toString(_ py: Py,
                                zelf: PyObject,
-                               fnName: String) -> PyResult<PyObject> {
+                               fnName: String) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
 
     let result = zelf.isTrue ? "True" : "False"
-    return PyResult(py, interned: result)
+    return PyResultGen(py, interned: result)
   }
 
   // MARK: - Class
@@ -90,7 +90,7 @@ public struct PyBool: PyObjectMixin {
   // sourcery: pymethod = __and__
   internal static func __and__(_ py: Py,
                                zelf: PyObject,
-                               other: PyObject) -> PyResult<PyObject> {
+                               other: PyObject) -> PyResultGen<PyObject> {
     return Self.binaryOperation(py,
                                 zelf: zelf,
                                 other: other,
@@ -102,7 +102,7 @@ public struct PyBool: PyObjectMixin {
   // sourcery: pymethod = __rand__
   internal static func __rand__(_ py: Py,
                                 zelf: PyObject,
-                                other: PyObject) -> PyResult<PyObject> {
+                                other: PyObject) -> PyResultGen<PyObject> {
     return Self.binaryOperation(py,
                                 zelf: zelf,
                                 other: other,
@@ -116,7 +116,7 @@ public struct PyBool: PyObjectMixin {
   // sourcery: pymethod = __or__
   internal static func __or__(_ py: Py,
                               zelf: PyObject,
-                              other: PyObject) -> PyResult<PyObject> {
+                              other: PyObject) -> PyResultGen<PyObject> {
     return Self.binaryOperation(py,
                                 zelf: zelf,
                                 other: other,
@@ -128,7 +128,7 @@ public struct PyBool: PyObjectMixin {
   // sourcery: pymethod = __ror__
   internal static func __ror__(_ py: Py,
                                zelf: PyObject,
-                               other: PyObject) -> PyResult<PyObject> {
+                               other: PyObject) -> PyResultGen<PyObject> {
     return Self.binaryOperation(py,
                                 zelf: zelf,
                                 other: other,
@@ -142,7 +142,7 @@ public struct PyBool: PyObjectMixin {
   // sourcery: pymethod = __xor__
   internal static func __xor__(_ py: Py,
                                zelf: PyObject,
-                               other: PyObject) -> PyResult<PyObject> {
+                               other: PyObject) -> PyResultGen<PyObject> {
     return Self.binaryOperation(py,
                                 zelf: zelf,
                                 other: other,
@@ -154,7 +154,7 @@ public struct PyBool: PyObjectMixin {
   // sourcery: pymethod = __rxor__
   internal static func __rxor__(_ py: Py,
                                 zelf: PyObject,
-                                other: PyObject) -> PyResult<PyObject> {
+                                other: PyObject) -> PyResultGen<PyObject> {
     return Self.binaryOperation(py,
                                 zelf: zelf,
                                 other: other,
@@ -169,7 +169,7 @@ public struct PyBool: PyObjectMixin {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResult<PyObject> {
+                               kwargs: PyDict?) -> PyResultGen<PyObject> {
     if let e = ArgumentParser.noKwargsOrError(py, fnName: "bool", kwargs: kwargs) {
       return .error(e.asBaseException)
     }
@@ -183,11 +183,11 @@ public struct PyBool: PyObjectMixin {
     }
 
     if args.isEmpty {
-      return PyResult(py, false)
+      return PyResultGen(py, false)
     }
 
     let result = py.isTrue(object: args[0])
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   // MARK: - Operations
@@ -198,8 +198,8 @@ public struct PyBool: PyObjectMixin {
     other: PyObject,
     fnName: String,
     fn: (Bool, Bool) -> Bool,
-    intFn: (Py, PyObject, PyObject) -> PyResult<PyObject>
-  ) -> PyResult<PyObject> {
+    intFn: (Py, PyObject, PyObject) -> PyResultGen<PyObject>
+  ) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
@@ -209,6 +209,6 @@ public struct PyBool: PyObjectMixin {
     }
 
     let result = fn(zelf.isTrue, other.isTrue)
-    return PyResult(py, result)
+    return PyResultGen(py, result)
   }
 }

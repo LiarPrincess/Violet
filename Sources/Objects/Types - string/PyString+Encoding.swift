@@ -63,7 +63,7 @@ extension PyString {
     /// If this fails -> handle error according to `errorHandling` argument.
     internal func decodeOrError(_ py: Py,
                                 data: Data,
-                                onError: ErrorHandling) -> PyResult<String> {
+                                onError: ErrorHandling) -> PyResultGen<String> {
       if let string = self.decode(data: data) {
         return .value(string)
       }
@@ -88,7 +88,7 @@ extension PyString {
     /// If this fails -> handle error according to `errorHandling` argument.
     internal func encodeOrError(_ py: Py,
                                 string: String,
-                                onError: ErrorHandling) -> PyResult<Data> {
+                                onError: ErrorHandling) -> PyResultGen<Data> {
       if let data = self.encode(string: string) {
         return .value(data)
       }
@@ -104,7 +104,7 @@ extension PyString {
 
     // MARK: - From
 
-    internal static func from(_ py: Py, object: PyObject?) -> PyResult<Encoding> {
+    internal static func from(_ py: Py, object: PyObject?) -> PyResultGen<Encoding> {
       guard let object = object else {
         let encoding = Unimplemented.locale.getpreferredencoding
         return .value(encoding)
@@ -118,12 +118,12 @@ extension PyString {
       return Self.from(py, string: string)
     }
 
-    internal static func from(_ py: Py, string: PyString) -> PyResult<Encoding> {
+    internal static func from(_ py: Py, string: PyString) -> PyResultGen<Encoding> {
       return Self.from(py, string: string.value)
     }
 
     // swiftlint:disable:next function_body_length
-    internal static func from(_ py: Py, string: String) -> PyResult<Encoding> {
+    internal static func from(_ py: Py, string: String) -> PyResultGen<Encoding> {
       switch string {
       case "ascii",
            "646",

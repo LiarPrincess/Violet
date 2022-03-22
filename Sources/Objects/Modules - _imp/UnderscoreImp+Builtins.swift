@@ -20,14 +20,14 @@ extension UnderscoreImp {
 
   internal static func is_builtin(_ py: Py,
                                   module: PyObject,
-                                  name: PyObject) -> PyResult<PyObject> {
+                                  name: PyObject) -> PyResultGen<PyObject> {
     let result = py._imp.isBuiltin(name: name)
-    return PyResult(py, result)
+    return PyResultGen(py, result)
   }
 
   /// static PyObject *
   /// _imp_is_builtin_impl(PyObject *module, PyObject *name)
-  public func isBuiltin(name: PyObject) -> PyResult<Int> {
+  public func isBuiltin(name: PyObject) -> PyResultGen<Int> {
     guard self.py.cast.isString(name) else {
       let message = "is_builtin() argument must be str, not \(name.typeName)"
       return .typeError(self.py, message: message)
@@ -62,14 +62,14 @@ extension UnderscoreImp {
 
   internal static func create_builtin(_ py: Py,
                                       module: PyObject,
-                                      spec: PyObject) -> PyResult<PyObject> {
+                                      spec: PyObject) -> PyResultGen<PyObject> {
     let result = py._imp.createBuiltin(spec: spec)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   /// static PyObject *
   /// _imp_create_builtin(PyObject *module, PyObject *spec)
-  public func createBuiltin(spec: PyObject) -> PyResult<PyModule> {
+  public func createBuiltin(spec: PyObject) -> PyResultGen<PyModule> {
     // Note that we do not have to 'create' new module here!
     // We already did that in 'self.py.initialize'.
 
@@ -104,7 +104,7 @@ extension UnderscoreImp {
 
   internal static func exec_builtin(_ py: Py,
                                     module: PyObject,
-                                    mod: PyObject) -> PyResult<PyObject> {
+                                    mod: PyObject) -> PyResultGen<PyObject> {
     if let error = py._imp.execBuiltin(module: mod) {
       return .error(error)
     }

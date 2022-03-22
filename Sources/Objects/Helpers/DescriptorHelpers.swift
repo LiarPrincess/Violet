@@ -108,7 +108,7 @@ internal class GetDescriptor {
     self.get = getLookup.object
   }
 
-  internal func call() -> PyResult<PyObject> {
+  internal func call() -> PyResultGen<PyObject> {
     let args = [self.descriptor, self.object, self.type.asObject]
     switch self.py.call(callable: self.get, args: args) {
     case .value(let r):
@@ -157,7 +157,7 @@ internal class SetDescriptor {
     self.set = setLookup.object
   }
 
-  internal func call(value: PyObject?) -> PyResult<PyObject> {
+  internal func call(value: PyObject?) -> PyResultGen<PyObject> {
     let none = self.py.none.asObject
     let args = [self.descriptor, self.object, value ?? none]
 

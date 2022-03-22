@@ -10,7 +10,7 @@ extension PyString {
     /// Ignore the malformed data and continue without further notice.
     case ignore
 
-    internal static func from(_ py: Py, object: PyObject?) -> PyResult<ErrorHandling> {
+    internal static func from(_ py: Py, object: PyObject?) -> PyResultGen<ErrorHandling> {
       guard let object = object else {
         return .value(.strict)
       }
@@ -23,7 +23,7 @@ extension PyString {
       return Self.from(py, string: string.value)
     }
 
-    internal static func from(_ py: Py, string: String) -> PyResult<ErrorHandling> {
+    internal static func from(_ py: Py, string: String) -> PyResultGen<ErrorHandling> {
       switch string {
       case "strict":
         return .value(.strict)

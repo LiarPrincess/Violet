@@ -23,7 +23,7 @@ extension AbstractBytes {
   internal static func abstract__new__(_ py: Py,
                                        object: PyObject?,
                                        encoding: PyObject?,
-                                       errors: PyObject?) -> PyResult<Data> {
+                                       errors: PyObject?) -> PyResultGen<Data> {
     guard let object = object else {
       return .value(Data())
     }
@@ -59,7 +59,7 @@ extension AbstractBytes {
   private static func fromEncoded(_ py: Py,
                                   object: PyObject,
                                   encoding encodingObject: PyObject?,
-                                  errors errorObject: PyObject?) -> PyResult<Data> {
+                                  errors errorObject: PyObject?) -> PyResultGen<Data> {
     let encoding: PyString.Encoding
     switch PyString.Encoding.from(py, object: encodingObject) {
     case let .value(e): encoding = e

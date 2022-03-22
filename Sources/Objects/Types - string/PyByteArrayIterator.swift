@@ -55,7 +55,7 @@ public struct PyByteArrayIterator: PyObjectMixin {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResult<PyObject> {
+                                        name: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -66,18 +66,18 @@ public struct PyByteArrayIterator: PyObjectMixin {
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
-    return PyResult(zelf)
+    return PyResultGen(zelf)
   }
 
   // MARK: - Next
 
   // sourcery: pymethod = __next__
-  internal static func __next__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __next__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__next__")
     }
@@ -86,7 +86,7 @@ public struct PyByteArrayIterator: PyObjectMixin {
       let byte = zelf.bytes.elements[zelf.index]
       let result = py.newInt(byte)
       zelf.index += 1
-      return PyResult(result)
+      return PyResultGen(result)
     }
 
     return .stopIteration(py)
@@ -95,14 +95,14 @@ public struct PyByteArrayIterator: PyObjectMixin {
   // MARK: - Length hint
 
   // sourcery: pymethod = __length_hint__
-  internal static func __length_hint__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __length_hint__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__length_hint__")
     }
 
     let count = zelf.bytes.count
     let result = count - zelf.index
-    return PyResult(py, result)
+    return PyResultGen(py, result)
   }
 
   // MARK: - Python new
@@ -111,7 +111,7 @@ public struct PyByteArrayIterator: PyObjectMixin {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResult<PyObject> {
+                               kwargs: PyDict?) -> PyResultGen<PyObject> {
     return .typeError(py, message: "cannot create 'bytearray_iterator' instances")
   }
 }

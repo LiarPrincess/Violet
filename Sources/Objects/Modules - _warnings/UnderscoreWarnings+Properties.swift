@@ -14,7 +14,7 @@ extension UnderscoreWarnings {
 
   // MARK: - Filters
 
-  public func getFilters() -> PyResult<PyList> {
+  public func getFilters() -> PyResultGen<PyList> {
     return self.getList(.filters)
   }
 
@@ -91,7 +91,7 @@ extension UnderscoreWarnings {
 
   // MARK: - Default action
 
-  public func getDefaultAction() -> PyResult<PyString> {
+  public func getDefaultAction() -> PyResultGen<PyString> {
     return self.getString(._defaultaction)
   }
 
@@ -101,7 +101,7 @@ extension UnderscoreWarnings {
 
   // MARK: - Once registry
 
-  public func getOnceRegistry() -> PyResult<PyDict> {
+  public func getOnceRegistry() -> PyResultGen<PyDict> {
     return self.getDict(._onceregistry)
   }
 

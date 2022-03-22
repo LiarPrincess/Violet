@@ -40,7 +40,7 @@ extension PyFloat {
       """
 
   // sourcery: pymethod = hex, doc = hexDoc
-  internal static func hex(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func hex(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "hex")
     }
@@ -90,7 +90,7 @@ extension PyFloat {
     result.append(exponent < 0 ? "-" : "+")
     result.append(String(exponentAbs, radix: 10, uppercase: false))
 
-    return PyResult(py, result)
+    return PyResultGen(py, result)
   }
 }
 
@@ -113,7 +113,7 @@ extension PyFloat {
   // sourcery: pyclassmethod = fromhex, doc = fromHexDoc
   internal static func fromhex(_ py: Py,
                                type: PyType,
-                               value: PyObject) -> PyResult<PyObject> {
+                               value: PyObject) -> PyResultGen<PyObject> {
     guard let stringObject = py.cast.asString(value) else {
       // This message looks weird, but argument name is 'string'
       let message = "fromhex(): string has to have str type, not \(value.typeName)"
@@ -139,7 +139,7 @@ extension PyFloat {
 
   /// Raw `fromHex` that works on Swift values, use this for debug.
   private static func fromHex(_ py: Py,
-                              string _string: String) -> PyResult<Double> {
+                              string _string: String) -> PyResultGen<Double> {
     var string = FromHexString(string: _string)
     if string.isEmpty {
       let error = Self.parserError(py)
@@ -404,7 +404,7 @@ extension PyFloat {
                               sign: FloatingPointSign,
                               integer _integer: HexDigits,
                               fraction _fraction: HexDigits?,
-                              exponent _exponent: Int) -> PyResult<Double> {
+                              exponent _exponent: Int) -> PyResultGen<Double> {
     // This will also check if coefficient is empty.
     guard let firstCoefficientDigit = _integer.first ?? _fraction?.first else {
       let error = Self.parserError(py)

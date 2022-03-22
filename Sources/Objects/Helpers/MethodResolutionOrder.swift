@@ -22,7 +22,7 @@ public struct MethodResolutionOrder {
 
   // MARK: - From single type
 
-  internal typealias Result = PyResult<MethodResolutionOrder>
+  internal typealias Result = PyResultGen<MethodResolutionOrder>
 
   /// Create (trivial) C3 linearization using given class.
   /// [doc](https://www.python.org/download/releases/2.3/mro/)
@@ -168,7 +168,7 @@ public struct MethodResolutionOrder {
 
   // MARK: - Get type MRO
 
-  private static func getMro(_ py: Py, type: PyType) -> PyResult<[PyType]> {
+  private static func getMro(_ py: Py, type: PyType) -> PyResultGen<[PyType]> {
     // If this is just a boring type which has 'Py.types.type' as type
     // then we know exactly what method should be called.
     // For example 'int' type has 'type' set to 'Py.types.type'

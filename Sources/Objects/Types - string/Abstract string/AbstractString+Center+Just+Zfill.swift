@@ -13,7 +13,7 @@ extension AbstractString {
   internal static func abstractCenter(_ py: Py,
                                       zelf: PyObject,
                                       width: PyObject,
-                                      fillChar: PyObject?) -> PyResult<PyObject> {
+                                      fillChar: PyObject?) -> PyResultGen<PyObject> {
     return Self.justTemplate(py,
                              zelf: zelf,
                              width: width,
@@ -44,7 +44,7 @@ extension AbstractString {
   internal static func abstractLJust(_ py: Py,
                                      zelf: PyObject,
                                      width: PyObject,
-                                     fillChar: PyObject?) -> PyResult<PyObject> {
+                                     fillChar: PyObject?) -> PyResultGen<PyObject> {
     return Self.justTemplate(py,
                              zelf: zelf,
                              width: width,
@@ -71,7 +71,7 @@ extension AbstractString {
   internal static func abstractRJust(_ py: Py,
                                      zelf: PyObject,
                                      width: PyObject,
-                                     fillChar: PyObject?) -> PyResult<PyObject> {
+                                     fillChar: PyObject?) -> PyResultGen<PyObject> {
     return Self.justTemplate(py,
                              zelf: zelf,
                              width: width,
@@ -100,7 +100,7 @@ extension AbstractString {
                                    width widthObject: PyObject,
                                    fillChar fillCharObject: PyObject?,
                                    fnName: String,
-                                   justFn: (Self, Int, Element) -> Builder) -> PyResult<PyObject> {
+                                   justFn: (Self, Int, Element) -> Builder) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
@@ -121,12 +121,12 @@ extension AbstractString {
     let builder = justFn(zelf, width, fillChar)
     let result = builder.finalize()
     let resultObject = Self.newObject(py, result: result)
-    return PyResult(resultObject)
+    return PyResultGen(resultObject)
   }
 
   private static func parseWidth(_ py: Py,
                                  object: PyObject,
-                                 fnName: String) -> PyResult<Int> {
+                                 fnName: String) -> PyResultGen<Int> {
     guard let pyInt = py.cast.asInt(object) else {
       let message = "\(fnName) width arg must be int, not \(object.typeName)"
       return .typeError(py, message: message)
@@ -164,7 +164,7 @@ extension AbstractString {
 
   internal static func abstractZFill(_ py: Py,
                                      zelf: PyObject,
-                                     width widthObject: PyObject) -> PyResult<PyObject> {
+                                     width widthObject: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "zfill")
     }
@@ -180,7 +180,7 @@ extension AbstractString {
     let builder = Self.zfill(zelf: zelf, width: width)
     let result = builder.finalize()
     let resultObject = Self.newObject(py, result: result)
-    return PyResult(resultObject)
+    return PyResultGen(resultObject)
   }
 
   private static func zfill(zelf: Self, width: Int) -> Builder {

@@ -11,7 +11,7 @@ extension Sys {
   ///
   /// A tuple of strings giving the names of all modules that are compiled
   /// into this Python interpreter.
-  public func getBuiltinModuleNames() -> PyResult<PyTuple> {
+  public func getBuiltinModuleNames() -> PyResultGen<PyTuple> {
     return self.getTuple(.builtin_module_names)
   }
 
@@ -21,9 +21,9 @@ extension Sys {
 
   // MARK: - Modules
 
-  internal static func modules(_ py: Py, module: PyObject) -> PyResult<PyObject> {
+  internal static func modules(_ py: Py, module: PyObject) -> PyResultGen<PyObject> {
     let result = py.sys.getModules()
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   /// sys.modules
@@ -31,7 +31,7 @@ extension Sys {
   ///
   /// This is a dictionary that maps module names to modules
   /// which have already been loaded.
-  public func getModules() -> PyResult<PyDict> {
+  public func getModules() -> PyResultGen<PyDict> {
     return self.getDict(.modules)
   }
 
@@ -140,8 +140,8 @@ extension Sys {
   // MARK: - Builtin module names
 
   internal static func builtin_module_names(_ py: Py,
-                                            module: PyObject) -> PyResult<PyObject> {
+                                            module: PyObject) -> PyResultGen<PyObject> {
     let result = py.sys.getBuiltinModuleNames()
-    return PyResult(result)
+    return PyResultGen(result)
   }
 }

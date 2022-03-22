@@ -50,7 +50,7 @@ extension Py {
                           defaults: PyObject?,
                           keywordDefaults: PyObject?,
                           closure: PyObject?,
-                          annotations: PyObject?) -> PyResult<PyFunction> {
+                          annotations: PyObject?) -> PyResultGen<PyFunction> {
     guard let codeValue = self.cast.asCode(code) else {
       let message = "function() code must be code, not \(code.typeName)"
       return .typeError(self, message: message)
@@ -82,7 +82,7 @@ extension Py {
                           defaults: PyObject?,
                           keywordDefaults: PyObject?,
                           closure: PyObject?,
-                          annotations: PyObject?) -> PyResult<PyFunction> {
+                          annotations: PyObject?) -> PyResultGen<PyFunction> {
     let type = self.types.function
     let module = globals.get(self, id: .__name__) ?? self.none.asObject
     let result = self.memory.newFunction(self,
@@ -122,7 +122,7 @@ extension Py {
     return self.memory.newMethod(self, type: type, function: fn, object: object)
   }
 
-  public func newMethod(fn: PyObject, object: PyObject) -> PyResult<PyObject> {
+  public func newMethod(fn: PyObject, object: PyObject) -> PyResultGen<PyObject> {
     if let f = self.cast.asBuiltinFunction(fn) {
       let fn = f.function
       let module = f.module
@@ -326,7 +326,7 @@ extension Py {
 
   // MARK: - Is abstract method
 
-  public func isAbstractMethod(object: PyObject) -> PyResult<Bool> {
+  public func isAbstractMethod(object: PyObject) -> PyResultGen<Bool> {
     if let result = PyStaticCall.__isabstractmethod__(self, object: object) {
       switch result {
       case let .value(o): return self.isTrueBool(object: o)

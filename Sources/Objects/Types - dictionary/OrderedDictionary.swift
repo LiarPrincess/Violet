@@ -271,7 +271,7 @@ public struct OrderedDictionary<Value> {
 
   // MARK: - Contains
 
-  public func contains(_ py: Py, key: Key) -> PyResult<Bool> {
+  public func contains(_ py: Py, key: Key) -> PyResultGen<Bool> {
     switch self.get(py, key: key) {
     case .value:
       return .value(true)
@@ -427,7 +427,7 @@ public struct OrderedDictionary<Value> {
     }
   }
 
-  private func areEqual(_ py: Py, lhs: Key, rhs: Key) -> PyResult<Bool> {
+  private func areEqual(_ py: Py, lhs: Key, rhs: Key) -> PyResultGen<Bool> {
     // >>> class HashCollisionWith1:
     // ...     def __hash__(self): return 1
     // ...     def __eq__(self, other): raise NotImplementedError('Ooo!')

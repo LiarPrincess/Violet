@@ -95,7 +95,7 @@ extension AbstractString {
   internal static func abstractSplit(_ py: Py,
                                      zelf: PyObject,
                                      args: [PyObject],
-                                     kwargs: PyDict?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResultGen<PyObject> {
     return Self.template(py,
                          zelf: zelf,
                          args: args,
@@ -192,7 +192,7 @@ extension AbstractString {
   internal static func abstractRSplit(_ py: Py,
                                       zelf: PyObject,
                                       args: [PyObject],
-                                      kwargs: PyDict?) -> PyResult<PyObject> {
+                                      kwargs: PyDict?) -> PyResultGen<PyObject> {
     return Self.template(py,
                          zelf: zelf,
                          args: args,
@@ -345,7 +345,7 @@ extension AbstractString {
     fnName: String,
     onWhitespaceSplit: (Py, Self, Int) -> [PyObject],
     onSeparatorSplit: (Py, Self, Elements, Int) -> [PyObject]
-  ) -> PyResult<PyObject> {
+  ) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
@@ -375,7 +375,7 @@ extension AbstractString {
     maxCount maxCountObject: PyObject?,
     onWhitespaceSplit: (Py, Self, Int) -> [PyObject],
     onSeparatorSplit: (Py, Self, Elements, Int) -> [PyObject]
-  ) -> PyResult<PyObject> {
+  ) -> PyResultGen<PyObject> {
     var count: Int
     switch Self.parseMaxCount(py, object: maxCountObject) {
     case let .value(c): count = c
@@ -386,7 +386,7 @@ extension AbstractString {
     case .whitespace:
       let result = onWhitespaceSplit(py, zelf, count)
       let list = py.newList(elements: result)
-      return PyResult(list)
+      return PyResultGen(list)
 
     case .some(let separator):
       let result: [PyObject]
@@ -400,7 +400,7 @@ extension AbstractString {
       }
 
       let list = py.newList(elements: result)
-      return PyResult(list)
+      return PyResultGen(list)
 
     case .error(let e):
       return .error(e)
@@ -409,7 +409,7 @@ extension AbstractString {
 
   // MARK: - Parse arguments
 
-  private static func parseMaxCount(_ py: Py, object: PyObject?) -> PyResult<Int> {
+  private static func parseMaxCount(_ py: Py, object: PyObject?) -> PyResultGen<Int> {
     guard let object = object else {
       return .value(Int.max)
     }

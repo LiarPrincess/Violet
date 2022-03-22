@@ -19,7 +19,7 @@ internal protocol AbstractDictView: PyObjectMixin {
   /// Create error when the `zelf` argument cast failed.
   static func invalidZelfArgument<T>(_ py: Py,
                                      _ object: PyObject,
-                                     _ fnName: String) -> PyResult<T>
+                                     _ fnName: String) -> PyResultGen<T>
 }
 
 extension AbstractDictView {
@@ -172,14 +172,14 @@ extension AbstractDictView {
   internal static func abstract__repr__(
     _ py: Py,
     zelf: PyObject,
-    elementRepr: (Py, Element) -> PyResult<String>
-  ) -> PyResult<PyObject> {
+    elementRepr: (Py, Element) -> PyResultGen<String>
+  ) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
     if zelf.hasReprLock {
-      return PyResult(py, interned:  "...")
+      return PyResultGen(py, interned:  "...")
     }
 
     return zelf.withReprLock {
@@ -196,7 +196,7 @@ extension AbstractDictView {
       }
 
       result += ")"
-      return PyResult(py, result)
+      return PyResultGen(py, result)
     }
   }
 
@@ -205,7 +205,7 @@ extension AbstractDictView {
   // sourcery: pymethod = __getattribute__
   internal static func abstract__getattribute__(_ py: Py,
                                                 zelf: PyObject,
-                                                name: PyObject) -> PyResult<PyObject> {
+                                                name: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -216,12 +216,12 @@ extension AbstractDictView {
   // MARK: - __len__
 
   internal static func abstract__len__(_ py: Py,
-                                       zelf: PyObject) -> PyResult<PyObject> {
+                                       zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__len__")
     }
 
     let result = zelf.elements.count
-    return PyResult(py, result)
+    return PyResultGen(py, result)
   }
 }

@@ -2,25 +2,25 @@ extension Py {
 
   /// bin(x)
   /// See [this](https://docs.python.org/3/library/functions.html#bin)
-  public func bin(object: PyObject) -> PyResult<PyString> {
+  public func bin(object: PyObject) -> PyResultGen<PyString> {
     return self.toNumberString(object: object, radix: 2, prefix: "0b")
   }
 
   /// oct(x)
   /// See [this](https://docs.python.org/3/library/functions.html#oct)
-  public func oct(object: PyObject) -> PyResult<PyString> {
+  public func oct(object: PyObject) -> PyResultGen<PyString> {
     return self.toNumberString(object: object, radix: 8, prefix: "0o")
   }
 
   /// hex(x)
   /// See [this](https://docs.python.org/3/library/functions.html#hex)
-  public func hex(object: PyObject) -> PyResult<PyString> {
+  public func hex(object: PyObject) -> PyResultGen<PyString> {
     return self.toNumberString(object: object, radix: 16, prefix: "0x")
   }
 
   private func toNumberString(object: PyObject,
                               radix: Int,
-                              prefix: String) -> PyResult<PyString> {
+                              prefix: String) -> PyResultGen<PyString> {
     switch IndexHelper.pyInt(self, object: object) {
     case let .value(pyInt):
       let bigInt = pyInt.value

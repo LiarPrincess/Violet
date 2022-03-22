@@ -37,7 +37,7 @@ public struct OrderedSet {
 
   // MARK: - Contains
 
-  public func contains(_ py: Py, element: Element) -> PyResult<Bool> {
+  public func contains(_ py: Py, element: Element) -> PyResultGen<Bool> {
     return self.dict.contains(py, key: element)
   }
 

@@ -4,7 +4,7 @@ extension AbstractString {
 
   internal static func abstract__add__(_ py: Py,
                                        zelf: PyObject,
-                                       other: PyObject) -> PyResult<PyObject> {
+                                       other: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__add__")
     }
@@ -19,7 +19,7 @@ extension AbstractString {
     let result = builder.finalize()
 
     let resultObject = Self.newObject(py, result: result)
-    return PyResult(resultObject)
+    return PyResultGen(resultObject)
   }
 
   internal static func abstractCreateAddTypeError(_ py: Py, other: PyObject) -> PyTypeError {
@@ -33,7 +33,7 @@ extension AbstractString {
 
   internal static func abstract__mul__(_ py: Py,
                                        zelf: PyObject,
-                                       other: PyObject) -> PyResult<PyObject> {
+                                       other: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__mul__")
     }
@@ -43,7 +43,7 @@ extension AbstractString {
 
   internal static func abstract__rmul__(_ py: Py,
                                         zelf: PyObject,
-                                        other: PyObject) -> PyResult<PyObject> {
+                                        other: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__rmul__")
     }
@@ -53,7 +53,7 @@ extension AbstractString {
 
   private static func mul(_ py: Py,
                           zelf: Self,
-                          count countObject: PyObject) -> PyResult<PyObject> {
+                          count countObject: PyObject) -> PyResultGen<PyObject> {
     let count: Int
     switch Self.abstractParseMulCount(py, object: countObject) {
     case let .value(c): count = c
@@ -69,10 +69,10 @@ extension AbstractString {
 
     let result = builder.finalize()
     let resultObject = Self.newObject(py, result: result)
-    return PyResult(resultObject)
+    return PyResultGen(resultObject)
   }
 
-  internal static func abstractParseMulCount(_ py: Py, object: PyObject) -> PyResult<Int> {
+  internal static func abstractParseMulCount(_ py: Py, object: PyObject) -> PyResultGen<Int> {
     guard let pyInt = py.cast.asInt(object) else {
       let t = Self.pythonTypeName
       let message = "can only multiply \(t) and int (not '\(object.typeName)')"

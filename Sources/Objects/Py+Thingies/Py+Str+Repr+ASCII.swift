@@ -13,7 +13,7 @@ extension Py {
 
   /// repr(object)
   /// See [this](https://docs.python.org/3/library/functions.html#repr)
-  public func repr(object: PyObject) -> PyResult<PyString> {
+  public func repr(object: PyObject) -> PyResultGen<PyString> {
     switch self.reprImpl(object: object) {
     case .string(let s):
       let py = self.newString(s)
@@ -31,7 +31,7 @@ extension Py {
 
   /// repr(object)
   /// See [this](https://docs.python.org/3/library/functions.html#repr)
-  public func reprString(object: PyObject) -> PyResult<String> {
+  public func reprString(object: PyObject) -> PyResultGen<String> {
     switch self.reprImpl(object: object) {
     case .string(let s):
       return .value(s)
@@ -133,7 +133,7 @@ extension Py {
 
   /// class str(object='')
   /// class str(object=b'', encoding='utf-8', errors='strict')
-  public func str(object: PyObject) -> PyResult<PyString> {
+  public func str(object: PyObject) -> PyResultGen<PyString> {
     switch self.strImpl(object: object) {
     case .reprLock:
       return .value(self.emptyString)
@@ -153,7 +153,7 @@ extension Py {
 
   /// class str(object='')
   /// class str(object=b'', encoding='utf-8', errors='strict')
-  public func strString(object: PyObject) -> PyResult<String> {
+  public func strString(object: PyObject) -> PyResultGen<String> {
     switch self.strImpl(object: object) {
     case .reprLock:
       return .value("")
@@ -248,7 +248,7 @@ extension Py {
 
   /// ascii(object)
   /// See [this](https://docs.python.org/3/library/functions.html#ascii)
-  public func ascii(object: PyObject) -> PyResult<PyString> {
+  public func ascii(object: PyObject) -> PyResultGen<PyString> {
     switch self.asciiImpl(object: object) {
     case let .string(s):
       let py = self.newString(s)
@@ -262,7 +262,7 @@ extension Py {
 
   /// ascii(object)
   /// See [this](https://docs.python.org/3/library/functions.html#ascii)
-  public func asciiString(object: PyObject) -> PyResult<String> {
+  public func asciiString(object: PyObject) -> PyResultGen<String> {
     switch self.asciiImpl(object: object) {
     case let .string(s):
       return .value(s)

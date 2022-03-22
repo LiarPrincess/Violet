@@ -36,7 +36,7 @@ extension Py {
 
   /// PyObject *
   /// PyLong_FromDouble(double dval)
-  public func newInt(double value: Double) -> PyResult<PyInt> {
+  public func newInt(double value: Double) -> PyResultGen<PyInt> {
     if value.isInfinite {
       return .overflowError(self, message: "cannot convert float infinity to integer")
     }
@@ -71,7 +71,7 @@ extension Py {
   /// round(number[, ndigits])
   /// See [this](https://docs.python.org/3/library/functions.html#round)
   public func round(number: PyObject,
-                    nDigits: PyObject? = nil) -> PyResult<PyObject> {
+                    nDigits: PyObject? = nil) -> PyResultGen<PyObject> {
     let nDigits = self.cast.isNilOrNone(nDigits) ? nil : nDigits
 
     if let result = PyStaticCall.__round__(self, object: number, nDigits: nDigits) {

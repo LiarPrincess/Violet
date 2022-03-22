@@ -156,7 +156,7 @@ extension Py {
     return file.write(self, string: line)
   }
 
-  private func getErrorAttribute(error: PyObject, name: String) -> PyResult<String> {
+  private func getErrorAttribute(error: PyObject, name: String) -> PyResultGen<String> {
     assert(self.isException(object: error))
     let key = self.intern(string: name)
 

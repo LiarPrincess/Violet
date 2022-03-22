@@ -108,13 +108,13 @@ public struct PyNamespace: PyObjectMixin {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.getDict(py)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   internal func getDict(_ py: Py) -> PyDict {
@@ -130,7 +130,7 @@ public struct PyNamespace: PyObjectMixin {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
@@ -140,7 +140,7 @@ public struct PyNamespace: PyObjectMixin {
 
     if zelf.hasReprLock {
       let result = name + "(...)"
-      return PyResult(py, interned: result)
+      return PyResultGen(py, interned: result)
     }
 
     return zelf.withReprLock {
@@ -168,7 +168,7 @@ public struct PyNamespace: PyObjectMixin {
       }
 
       let result = "\(name)(\(values))"
-      return PyResult(py, result)
+      return PyResultGen(py, result)
     }
   }
 
@@ -177,7 +177,7 @@ public struct PyNamespace: PyObjectMixin {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResult<PyObject> {
+                                        name: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -189,7 +189,7 @@ public struct PyNamespace: PyObjectMixin {
   internal static func __setattr__(_ py: Py,
                                    zelf: PyObject,
                                    name: PyObject,
-                                   value: PyObject?) -> PyResult<PyObject> {
+                                   value: PyObject?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__setattr__")
     }
@@ -200,7 +200,7 @@ public struct PyNamespace: PyObjectMixin {
   // sourcery: pymethod = __delattr__
   internal static func __delattr__(_ py: Py,
                                    zelf: PyObject,
-                                   name: PyObject) -> PyResult<PyObject> {
+                                   name: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__delattr__")
     }
@@ -214,10 +214,10 @@ public struct PyNamespace: PyObjectMixin {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResult<PyObject> {
+                               kwargs: PyDict?) -> PyResultGen<PyObject> {
     let dict = py.newDict()
     let result = py.memory.newNamespace(py, type: type, __dict__: dict)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   // MARK: - Python init
@@ -226,7 +226,7 @@ public struct PyNamespace: PyObjectMixin {
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResult<PyObject> {
+                                kwargs: PyDict?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }

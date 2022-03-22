@@ -4,7 +4,7 @@ extension AbstractString {
   /// 'A@B@C'
   internal static func abstractJoin(_ py: Py,
                                     zelf: PyObject,
-                                    iterable: PyObject) -> PyResult<PyObject> {
+                                    iterable: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "join")
     }
@@ -37,7 +37,7 @@ extension AbstractString {
 
     let result = builder.finalize()
     let resultObject = Self.newObject(py, result: result)
-    return PyResult(resultObject)
+    return PyResultGen(resultObject)
   }
 
   private static func approximateCapacity(_ py: Py,

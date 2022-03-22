@@ -161,7 +161,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   // MARK: - Call
 
   /// Call the stored function with provided arguments.
-  public func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+  public func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
     // Just delegate to specific wrapper.
     switch self.kind {
     case let .new(w): return w.call(py, args: args, kwargs: kwargs)
@@ -248,7 +248,7 @@ public struct FunctionWrapper: CustomStringConvertible {
 
   internal static func handleTypeArgument(_ py: Py,
                                           fnName: String,
-                                          args: [PyObject]) -> PyResult<PyType> {
+                                          args: [PyObject]) -> PyResultGen<PyType> {
     if args.isEmpty {
       let error = py.newTypeError(message: "\(fnName)(): not enough arguments")
       return .error(error.asBaseException)
@@ -268,7 +268,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Positional nullary: no arguments (or an empty tuple of arguments, also known as `Void` argument).
   ///
   /// `(Py) -> PyResult<PyObject>`
-  public typealias Void_to_Result_Fn = (Py) -> PyResult<PyObject>
+  public typealias Void_to_Result_Fn = (Py) -> PyResultGen<PyObject>
 
   internal struct Void_to_Result {
     private let fn: Void_to_Result_Fn
@@ -279,7 +279,7 @@ public struct FunctionWrapper: CustomStringConvertible {
       self.fn = fn
     }
 
-    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -304,7 +304,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Positional unary: single `self` argument.
   ///
   /// `(Py, PyObject) -> PyResult<PyObject>`
-  public typealias Object_to_Result_Fn = (Py, PyObject) -> PyResult<PyObject>
+  public typealias Object_to_Result_Fn = (Py, PyObject) -> PyResultGen<PyObject>
 
   internal struct Object_to_Result {
     private let fn: Object_to_Result_Fn
@@ -315,7 +315,7 @@ public struct FunctionWrapper: CustomStringConvertible {
       self.fn = fn
     }
 
-    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -340,7 +340,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Positional unary: `classmethod` with no arguments.
   ///
   /// `(Py, PyType) -> PyResult<PyObject>`
-  public typealias Type_to_Result_Fn = (Py, PyType) -> PyResult<PyObject>
+  public typealias Type_to_Result_Fn = (Py, PyType) -> PyResultGen<PyObject>
 
   internal struct Type_to_Result {
     private let fn: Type_to_Result_Fn
@@ -351,7 +351,7 @@ public struct FunctionWrapper: CustomStringConvertible {
       self.fn = fn
     }
 
-    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -383,7 +383,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Positional binary: `self` and `object`.
   ///
   /// `(Py, PyObject, PyObject) -> PyResult<PyObject>`
-  public typealias Object_Object_to_Result_Fn = (Py, PyObject, PyObject) -> PyResult<PyObject>
+  public typealias Object_Object_to_Result_Fn = (Py, PyObject, PyObject) -> PyResultGen<PyObject>
 
   internal struct Object_Object_to_Result {
     private let fn: Object_Object_to_Result_Fn
@@ -394,7 +394,7 @@ public struct FunctionWrapper: CustomStringConvertible {
       self.fn = fn
     }
 
-    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -419,7 +419,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Positional binary: `self` and optional `object`.
   ///
   /// `(Py, PyObject, PyObject?) -> PyResult<PyObject>`
-  public typealias Object_ObjectOpt_to_Result_Fn = (Py, PyObject, PyObject?) -> PyResult<PyObject>
+  public typealias Object_ObjectOpt_to_Result_Fn = (Py, PyObject, PyObject?) -> PyResultGen<PyObject>
 
   internal struct Object_ObjectOpt_to_Result {
     private let fn: Object_ObjectOpt_to_Result_Fn
@@ -430,7 +430,7 @@ public struct FunctionWrapper: CustomStringConvertible {
       self.fn = fn
     }
 
-    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -457,7 +457,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Positional binary: 2 `objects` (both optional).
   ///
   /// `(Py, PyObject?, PyObject?) -> PyResult<PyObject>`
-  public typealias ObjectOpt_ObjectOpt_to_Result_Fn = (Py, PyObject?, PyObject?) -> PyResult<PyObject>
+  public typealias ObjectOpt_ObjectOpt_to_Result_Fn = (Py, PyObject?, PyObject?) -> PyResultGen<PyObject>
 
   internal struct ObjectOpt_ObjectOpt_to_Result {
     private let fn: ObjectOpt_ObjectOpt_to_Result_Fn
@@ -468,7 +468,7 @@ public struct FunctionWrapper: CustomStringConvertible {
       self.fn = fn
     }
 
-    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -497,7 +497,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Positional binary: `classmethod` with a single argument.
   ///
   /// `(Py, PyType, PyObject) -> PyResult<PyObject>`
-  public typealias Type_Object_to_Result_Fn = (Py, PyType, PyObject) -> PyResult<PyObject>
+  public typealias Type_Object_to_Result_Fn = (Py, PyType, PyObject) -> PyResultGen<PyObject>
 
   internal struct Type_Object_to_Result {
     private let fn: Type_Object_to_Result_Fn
@@ -508,7 +508,7 @@ public struct FunctionWrapper: CustomStringConvertible {
       self.fn = fn
     }
 
-    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -540,7 +540,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Positional binary: `classmethod` with a single optional argument.
   ///
   /// `(Py, PyType, PyObject?) -> PyResult<PyObject>`
-  public typealias Type_ObjectOpt_to_Result_Fn = (Py, PyType, PyObject?) -> PyResult<PyObject>
+  public typealias Type_ObjectOpt_to_Result_Fn = (Py, PyType, PyObject?) -> PyResultGen<PyObject>
 
   internal struct Type_ObjectOpt_to_Result {
     private let fn: Type_ObjectOpt_to_Result_Fn
@@ -551,7 +551,7 @@ public struct FunctionWrapper: CustomStringConvertible {
       self.fn = fn
     }
 
-    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -585,7 +585,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Positional ternary: `self` and 2 `objects`.
   ///
   /// `(Py, PyObject, PyObject, PyObject) -> PyResult<PyObject>`
-  public typealias Object_Object_Object_to_Result_Fn = (Py, PyObject, PyObject, PyObject) -> PyResult<PyObject>
+  public typealias Object_Object_Object_to_Result_Fn = (Py, PyObject, PyObject, PyObject) -> PyResultGen<PyObject>
 
   internal struct Object_Object_Object_to_Result {
     private let fn: Object_Object_Object_to_Result_Fn
@@ -596,7 +596,7 @@ public struct FunctionWrapper: CustomStringConvertible {
       self.fn = fn
     }
 
-    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -621,7 +621,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Positional ternary: `self` and 2 `objects` (last one is optional).
   ///
   /// `(Py, PyObject, PyObject, PyObject?) -> PyResult<PyObject>`
-  public typealias Object_Object_ObjectOpt_to_Result_Fn = (Py, PyObject, PyObject, PyObject?) -> PyResult<PyObject>
+  public typealias Object_Object_ObjectOpt_to_Result_Fn = (Py, PyObject, PyObject, PyObject?) -> PyResultGen<PyObject>
 
   internal struct Object_Object_ObjectOpt_to_Result {
     private let fn: Object_Object_ObjectOpt_to_Result_Fn
@@ -632,7 +632,7 @@ public struct FunctionWrapper: CustomStringConvertible {
       self.fn = fn
     }
 
-    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -659,7 +659,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Positional ternary: `self` and 2 `objects` (both optional).
   ///
   /// `(Py, PyObject, PyObject?, PyObject?) -> PyResult<PyObject>`
-  public typealias Object_ObjectOpt_ObjectOpt_to_Result_Fn = (Py, PyObject, PyObject?, PyObject?) -> PyResult<PyObject>
+  public typealias Object_ObjectOpt_ObjectOpt_to_Result_Fn = (Py, PyObject, PyObject?, PyObject?) -> PyResultGen<PyObject>
 
   internal struct Object_ObjectOpt_ObjectOpt_to_Result {
     private let fn: Object_ObjectOpt_ObjectOpt_to_Result_Fn
@@ -670,7 +670,7 @@ public struct FunctionWrapper: CustomStringConvertible {
       self.fn = fn
     }
 
-    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -699,7 +699,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Positional ternary: 3 `objects` (all optional).
   ///
   /// `(Py, PyObject?, PyObject?, PyObject?) -> PyResult<PyObject>`
-  public typealias ObjectOpt_ObjectOpt_ObjectOpt_to_Result_Fn = (Py, PyObject?, PyObject?, PyObject?) -> PyResult<PyObject>
+  public typealias ObjectOpt_ObjectOpt_ObjectOpt_to_Result_Fn = (Py, PyObject?, PyObject?, PyObject?) -> PyResultGen<PyObject>
 
   internal struct ObjectOpt_ObjectOpt_ObjectOpt_to_Result {
     private let fn: ObjectOpt_ObjectOpt_ObjectOpt_to_Result_Fn
@@ -710,7 +710,7 @@ public struct FunctionWrapper: CustomStringConvertible {
       self.fn = fn
     }
 
-    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -741,7 +741,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Positional ternary: `classmethod` with 2 arguments.
   ///
   /// `(Py, PyType, PyObject, PyObject) -> PyResult<PyObject>`
-  public typealias Type_Object_Object_to_Result_Fn = (Py, PyType, PyObject, PyObject) -> PyResult<PyObject>
+  public typealias Type_Object_Object_to_Result_Fn = (Py, PyType, PyObject, PyObject) -> PyResultGen<PyObject>
 
   internal struct Type_Object_Object_to_Result {
     private let fn: Type_Object_Object_to_Result_Fn
@@ -752,7 +752,7 @@ public struct FunctionWrapper: CustomStringConvertible {
       self.fn = fn
     }
 
-    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -784,7 +784,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Positional ternary: `classmethod` with 2 arguments (last one is optional).
   ///
   /// `(Py, PyType, PyObject, PyObject?) -> PyResult<PyObject>`
-  public typealias Type_Object_ObjectOpt_to_Result_Fn = (Py, PyType, PyObject, PyObject?) -> PyResult<PyObject>
+  public typealias Type_Object_ObjectOpt_to_Result_Fn = (Py, PyType, PyObject, PyObject?) -> PyResultGen<PyObject>
 
   internal struct Type_Object_ObjectOpt_to_Result {
     private let fn: Type_Object_ObjectOpt_to_Result_Fn
@@ -795,7 +795,7 @@ public struct FunctionWrapper: CustomStringConvertible {
       self.fn = fn
     }
 
-    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -829,7 +829,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Positional ternary: `classmethod` with 2 arguments (both optional).
   ///
   /// `(Py, PyType, PyObject?, PyObject?) -> PyResult<PyObject>`
-  public typealias Type_ObjectOpt_ObjectOpt_to_Result_Fn = (Py, PyType, PyObject?, PyObject?) -> PyResult<PyObject>
+  public typealias Type_ObjectOpt_ObjectOpt_to_Result_Fn = (Py, PyType, PyObject?, PyObject?) -> PyResultGen<PyObject>
 
   internal struct Type_ObjectOpt_ObjectOpt_to_Result {
     private let fn: Type_ObjectOpt_ObjectOpt_to_Result_Fn
@@ -840,7 +840,7 @@ public struct FunctionWrapper: CustomStringConvertible {
       self.fn = fn
     }
 
-    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -876,7 +876,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Positional quartary: `self` and 3 `objects`.
   ///
   /// `(Py, PyObject, PyObject, PyObject, PyObject) -> PyResult<PyObject>`
-  public typealias Object_Object_Object_Object_to_Result_Fn = (Py, PyObject, PyObject, PyObject, PyObject) -> PyResult<PyObject>
+  public typealias Object_Object_Object_Object_to_Result_Fn = (Py, PyObject, PyObject, PyObject, PyObject) -> PyResultGen<PyObject>
 
   internal struct Object_Object_Object_Object_to_Result {
     private let fn: Object_Object_Object_Object_to_Result_Fn
@@ -887,7 +887,7 @@ public struct FunctionWrapper: CustomStringConvertible {
       self.fn = fn
     }
 
-    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -912,7 +912,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Positional quartary: `self` and 3 `objects` (last one is optional).
   ///
   /// `(Py, PyObject, PyObject, PyObject, PyObject?) -> PyResult<PyObject>`
-  public typealias Object_Object_Object_ObjectOpt_to_Result_Fn = (Py, PyObject, PyObject, PyObject, PyObject?) -> PyResult<PyObject>
+  public typealias Object_Object_Object_ObjectOpt_to_Result_Fn = (Py, PyObject, PyObject, PyObject, PyObject?) -> PyResultGen<PyObject>
 
   internal struct Object_Object_Object_ObjectOpt_to_Result {
     private let fn: Object_Object_Object_ObjectOpt_to_Result_Fn
@@ -923,7 +923,7 @@ public struct FunctionWrapper: CustomStringConvertible {
       self.fn = fn
     }
 
-    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -950,7 +950,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Positional quartary: `self` and 3 `objects` (2nd and 3rd are optional).
   ///
   /// `(Py, PyObject, PyObject, PyObject?, PyObject?) -> PyResult<PyObject>`
-  public typealias Object_Object_ObjectOpt_ObjectOpt_to_Result_Fn = (Py, PyObject, PyObject, PyObject?, PyObject?) -> PyResult<PyObject>
+  public typealias Object_Object_ObjectOpt_ObjectOpt_to_Result_Fn = (Py, PyObject, PyObject, PyObject?, PyObject?) -> PyResultGen<PyObject>
 
   internal struct Object_Object_ObjectOpt_ObjectOpt_to_Result {
     private let fn: Object_Object_ObjectOpt_ObjectOpt_to_Result_Fn
@@ -961,7 +961,7 @@ public struct FunctionWrapper: CustomStringConvertible {
       self.fn = fn
     }
 
-    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -990,7 +990,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Positional quartary: `self` and 3 `objects` (all optional).
   ///
   /// `(Py, PyObject, PyObject?, PyObject?, PyObject?) -> PyResult<PyObject>`
-  public typealias Object_ObjectOpt_ObjectOpt_ObjectOpt_to_Result_Fn = (Py, PyObject, PyObject?, PyObject?, PyObject?) -> PyResult<PyObject>
+  public typealias Object_ObjectOpt_ObjectOpt_ObjectOpt_to_Result_Fn = (Py, PyObject, PyObject?, PyObject?, PyObject?) -> PyResultGen<PyObject>
 
   internal struct Object_ObjectOpt_ObjectOpt_ObjectOpt_to_Result {
     private let fn: Object_ObjectOpt_ObjectOpt_ObjectOpt_to_Result_Fn
@@ -1001,7 +1001,7 @@ public struct FunctionWrapper: CustomStringConvertible {
       self.fn = fn
     }
 
-    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -1032,7 +1032,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Positional quartary: `4 `objects` (all optional).
   ///
   /// `(Py, PyObject?, PyObject?, PyObject?, PyObject?) -> PyResult<PyObject>`
-  public typealias ObjectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Result_Fn = (Py, PyObject?, PyObject?, PyObject?, PyObject?) -> PyResult<PyObject>
+  public typealias ObjectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Result_Fn = (Py, PyObject?, PyObject?, PyObject?, PyObject?) -> PyResultGen<PyObject>
 
   internal struct ObjectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Result {
     private let fn: ObjectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Result_Fn
@@ -1043,7 +1043,7 @@ public struct FunctionWrapper: CustomStringConvertible {
       self.fn = fn
     }
 
-    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -1076,7 +1076,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Positional quartary: `classmethod` with 3 arguments.
   ///
   /// `(Py, PyType, PyObject, PyObject, PyObject) -> PyResult<PyObject>`
-  public typealias Type_Object_Object_Object_to_Result_Fn = (Py, PyType, PyObject, PyObject, PyObject) -> PyResult<PyObject>
+  public typealias Type_Object_Object_Object_to_Result_Fn = (Py, PyType, PyObject, PyObject, PyObject) -> PyResultGen<PyObject>
 
   internal struct Type_Object_Object_Object_to_Result {
     private let fn: Type_Object_Object_Object_to_Result_Fn
@@ -1087,7 +1087,7 @@ public struct FunctionWrapper: CustomStringConvertible {
       self.fn = fn
     }
 
-    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -1119,7 +1119,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Positional quartary: `classmethod` with 3 arguments (last one is optional).
   ///
   /// `(Py, PyType, PyObject, PyObject, PyObject?) -> PyResult<PyObject>`
-  public typealias Type_Object_Object_ObjectOpt_to_Result_Fn = (Py, PyType, PyObject, PyObject, PyObject?) -> PyResult<PyObject>
+  public typealias Type_Object_Object_ObjectOpt_to_Result_Fn = (Py, PyType, PyObject, PyObject, PyObject?) -> PyResultGen<PyObject>
 
   internal struct Type_Object_Object_ObjectOpt_to_Result {
     private let fn: Type_Object_Object_ObjectOpt_to_Result_Fn
@@ -1130,7 +1130,7 @@ public struct FunctionWrapper: CustomStringConvertible {
       self.fn = fn
     }
 
-    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -1164,7 +1164,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Positional quartary: `classmethod` with 3 arguments (2nd and 3rd are optional).
   ///
   /// `(Py, PyType, PyObject, PyObject?, PyObject?) -> PyResult<PyObject>`
-  public typealias Type_Object_ObjectOpt_ObjectOpt_to_Result_Fn = (Py, PyType, PyObject, PyObject?, PyObject?) -> PyResult<PyObject>
+  public typealias Type_Object_ObjectOpt_ObjectOpt_to_Result_Fn = (Py, PyType, PyObject, PyObject?, PyObject?) -> PyResultGen<PyObject>
 
   internal struct Type_Object_ObjectOpt_ObjectOpt_to_Result {
     private let fn: Type_Object_ObjectOpt_ObjectOpt_to_Result_Fn
@@ -1175,7 +1175,7 @@ public struct FunctionWrapper: CustomStringConvertible {
       self.fn = fn
     }
 
-    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -1211,7 +1211,7 @@ public struct FunctionWrapper: CustomStringConvertible {
   /// Positional quartary: `classmethod` with 3 arguments (all optional).
   ///
   /// `(Py, PyType, PyObject?, PyObject?, PyObject?) -> PyResult<PyObject>`
-  public typealias Type_ObjectOpt_ObjectOpt_ObjectOpt_to_Result_Fn = (Py, PyType, PyObject?, PyObject?, PyObject?) -> PyResult<PyObject>
+  public typealias Type_ObjectOpt_ObjectOpt_ObjectOpt_to_Result_Fn = (Py, PyType, PyObject?, PyObject?, PyObject?) -> PyResultGen<PyObject>
 
   internal struct Type_ObjectOpt_ObjectOpt_ObjectOpt_to_Result {
     private let fn: Type_ObjectOpt_ObjectOpt_ObjectOpt_to_Result_Fn
@@ -1222,7 +1222,7 @@ public struct FunctionWrapper: CustomStringConvertible {
       self.fn = fn
     }
 
-    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)

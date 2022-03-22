@@ -4,7 +4,7 @@ extension AbstractSet {
 
   internal static func abstractIntersection(_ py: Py,
                                             zelf: PyObject,
-                                            other: PyObject) -> PyResult<PyObject> {
+                                            other: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "intersection")
     }
@@ -14,7 +14,7 @@ extension AbstractSet {
       switch Self.abstractIntersection(py, lhs: zelf.elements, rhs: elements) {
       case let .value(set):
         let result = Self.newObject(py, elements: set)
-        return PyResult(result)
+        return PyResultGen(result)
       case let .error(e):
         return .error(e)
       }
@@ -26,7 +26,7 @@ extension AbstractSet {
 
   internal static func abstractIntersection(_ py: Py,
                                             lhs: OrderedSet,
-                                            rhs: OrderedSet) -> PyResult<OrderedSet> {
+                                            rhs: OrderedSet) -> PyResultGen<OrderedSet> {
     let isLhsSmaller = lhs.count < rhs.count
     let smaller = isLhsSmaller ? lhs : rhs
     let bigger = isLhsSmaller ? rhs : lhs
@@ -57,7 +57,7 @@ extension AbstractSet {
 
   internal static func abstractUnion(_ py: Py,
                                      zelf: PyObject,
-                                     other: PyObject) -> PyResult<PyObject> {
+                                     other: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "union")
     }
@@ -67,7 +67,7 @@ extension AbstractSet {
       switch Self.abstractUnion(py, lhs: zelf.elements, rhs: elements) {
       case let .value(set):
         let result = Self.newObject(py, elements: set)
-        return PyResult(result)
+        return PyResultGen(result)
       case let .error(e):
         return .error(e)
       }
@@ -79,7 +79,7 @@ extension AbstractSet {
 
   internal static func abstractUnion(_ py: Py,
                                      lhs: OrderedSet,
-                                     rhs: OrderedSet) -> PyResult<OrderedSet> {
+                                     rhs: OrderedSet) -> PyResultGen<OrderedSet> {
     let isLhsSmaller = lhs.count < rhs.count
     let smaller = isLhsSmaller ? lhs : rhs
     let bigger = isLhsSmaller ? rhs : lhs
@@ -102,7 +102,7 @@ extension AbstractSet {
 
   internal static func abstractDifference(_ py: Py,
                                           zelf: PyObject,
-                                          other: PyObject) -> PyResult<PyObject> {
+                                          other: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "difference")
     }
@@ -112,7 +112,7 @@ extension AbstractSet {
       switch Self.abstractDifference(py, lhs: zelf.elements, rhs: elements) {
       case let .value(set):
         let result = Self.newObject(py, elements: set)
-        return PyResult(result)
+        return PyResultGen(result)
 
       case let .error(e):
         return .error(e)
@@ -124,7 +124,7 @@ extension AbstractSet {
 
   internal static func abstractDifference(_ py: Py,
                                           lhs: OrderedSet,
-                                          rhs: OrderedSet) -> PyResult<OrderedSet> {
+                                          rhs: OrderedSet) -> PyResultGen<OrderedSet> {
     var result = OrderedSet()
 
     for element in lhs {
@@ -153,7 +153,7 @@ extension AbstractSet {
 
   internal static func abstractSymmetricDifference(_ py: Py,
                                                    zelf: PyObject,
-                                                   other: PyObject) -> PyResult<PyObject> {
+                                                   other: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "symmetric_difference")
     }
@@ -163,7 +163,7 @@ extension AbstractSet {
       switch Self.abstractSymmetricDifference(py, lhs: zelf.elements, rhs: elements) {
       case let .value(set):
         let result = Self.newObject(py, elements: set)
-        return PyResult(result)
+        return PyResultGen(result)
       case let .error(e):
         return .error(e)
       }
@@ -175,7 +175,7 @@ extension AbstractSet {
 
   internal static func abstractSymmetricDifference(_ py: Py,
                                                    lhs: OrderedSet,
-                                                   rhs: OrderedSet) -> PyResult<OrderedSet> {
+                                                   rhs: OrderedSet) -> PyResultGen<OrderedSet> {
     var result = OrderedSet()
 
     for element in lhs {

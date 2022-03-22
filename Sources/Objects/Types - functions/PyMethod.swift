@@ -125,7 +125,7 @@ public struct PyMethod: PyObjectMixin {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
@@ -138,7 +138,7 @@ public struct PyMethod: PyObjectMixin {
 
     let functionName = zelf.function.qualname.value
     let result = "<bound method \(functionName) of \(objectRepr)>"
-    return PyResult(py, result)
+    return PyResultGen(py, result)
   }
 
   // MARK: - Class
@@ -180,7 +180,7 @@ public struct PyMethod: PyObjectMixin {
   /// method_getattro(PyObject *obj, PyObject *name)
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResult<PyObject> {
+                                        name: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -197,14 +197,14 @@ public struct PyMethod: PyObjectMixin {
   /// method_getattro(PyObject *obj, PyObject *name)
   internal static func getAttribute(_ py: Py,
                                     zelf: PyMethod,
-                                    name: PyString) -> PyResult<PyObject> {
+                                    name: PyString) -> PyResultGen<PyObject> {
     switch zelf.type.mroLookup(py, name: name) {
     case .value(let lookup):
       let zelfObject = zelf.asObject
       if let descriptor = GetDescriptor(py, object: zelfObject, attribute: lookup.object) {
         return descriptor.call()
       } else {
-        return PyResult(lookup.object)
+        return PyResultGen(lookup.object)
       }
 
     case .notFound:
@@ -223,7 +223,7 @@ public struct PyMethod: PyObjectMixin {
   internal static func __setattr__(_ py: Py,
                                    zelf: PyObject,
                                    name: PyObject,
-                                   value: PyObject?) -> PyResult<PyObject> {
+                                   value: PyObject?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__setattr__")
     }
@@ -234,7 +234,7 @@ public struct PyMethod: PyObjectMixin {
   // sourcery: pymethod = __delattr__
   internal static func __delattr__(_ py: Py,
                                    zelf: PyObject,
-                                   name: PyObject) -> PyResult<PyObject> {
+                                   name: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__delattr__")
     }
@@ -245,13 +245,13 @@ public struct PyMethod: PyObjectMixin {
   // MARK: - Getters
 
   // sourcery: pymethod = __func__
-  internal static func __func__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __func__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__func__")
     }
 
     let result = zelf.getFunction()
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   internal func getFunction() -> PyFunction {
@@ -259,22 +259,22 @@ public struct PyMethod: PyObjectMixin {
   }
 
   // sourcery: pymethod = __self__
-  internal static func __self__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __self__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__self__")
     }
 
-    return PyResult(zelf.object)
+    return PyResultGen(zelf.object)
   }
 
   // sourcery: pyproperty = __doc__
-  internal static func __doc__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __doc__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__doc__")
     }
 
     let result = zelf.function.doc
-    return PyResult(py, result)
+    return PyResultGen(py, result)
   }
 
   // MARK: - Get
@@ -283,17 +283,17 @@ public struct PyMethod: PyObjectMixin {
   internal static func __get__(_ py: Py,
                                zelf: PyObject,
                                object: PyObject,
-                               type: PyObject?) -> PyResult<PyObject> {
+                               type: PyObject?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__get__")
     }
 
     if py.isDescriptorStaticMarker(object) {
-      return PyResult(zelf)
+      return PyResultGen(zelf)
     }
 
     let result = py.newMethod(fn: zelf.function, object: object)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   // MARK: - Call
@@ -302,7 +302,7 @@ public struct PyMethod: PyObjectMixin {
   internal static func __call__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResult<PyObject> {
+                                kwargs: PyDict?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__call__")
     }

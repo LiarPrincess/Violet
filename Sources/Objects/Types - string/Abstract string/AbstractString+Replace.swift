@@ -4,7 +4,7 @@ extension AbstractString {
                                        zelf: PyObject,
                                        old oldObject: PyObject,
                                        new newObject: PyObject,
-                                       count countObject: PyObject?) -> PyResult<PyObject> {
+                                       count countObject: PyObject?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "replace")
     }
@@ -28,7 +28,7 @@ extension AbstractString {
     let builder = Self.replace(zelf: zelf, old: old, new: new, count: count)
     let result = builder.finalize()
     let resultObject = Self.newObject(py, result: result)
-    return PyResult(resultObject)
+    return PyResultGen(resultObject)
   }
 
   private static func replace(zelf: Self,
@@ -84,7 +84,7 @@ extension AbstractString {
     return Swift.min(max, Swift.max(min, value))
   }
 
-  private static func parseCount(_ py: Py, count: PyObject?) -> PyResult<Int> {
+  private static func parseCount(_ py: Py, count: PyObject?) -> PyResultGen<Int> {
     guard let count = count else {
       return .value(Int.max)
     }

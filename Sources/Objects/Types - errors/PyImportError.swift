@@ -115,19 +115,19 @@ public struct PyImportError: PyErrorMixin {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __str__
-  internal static func __str__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __str__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__str__")
     }
@@ -135,7 +135,7 @@ public struct PyImportError: PyErrorMixin {
     // If we have 'msg' then use it.
     if let msgObject = zelf.msg,
        let msg = py.cast.asString(msgObject) {
-      return PyResult(msg)
+      return PyResultGen(msg)
     }
 
     // Otherwise just use standard path.
@@ -146,17 +146,17 @@ public struct PyImportError: PyErrorMixin {
   // MARK: - Msg
 
   // sourcery: pyproperty = msg, setter
-  internal static func msg(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func msg(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "msg")
     }
 
-    return PyResult(py, zelf.msg)
+    return PyResultGen(py, zelf.msg)
   }
 
   internal static func msg(_ py: Py,
                            zelf: PyObject,
-                           value: PyObject?) -> PyResult<PyObject> {
+                           value: PyObject?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "msg")
     }
@@ -168,17 +168,17 @@ public struct PyImportError: PyErrorMixin {
   // MARK: - Name
 
   // sourcery: pyproperty = name, setter
-  internal static func name(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func name(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "name")
     }
 
-    return PyResult(py, zelf.moduleName)
+    return PyResultGen(py, zelf.moduleName)
   }
 
   internal static func name(_ py: Py,
                             zelf: PyObject,
-                            value: PyObject?) -> PyResult<PyObject> {
+                            value: PyObject?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "name")
     }
@@ -190,17 +190,17 @@ public struct PyImportError: PyErrorMixin {
   // MARK: - Path
 
   // sourcery: pyproperty = path, setter
-  internal static func path(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func path(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "path")
     }
 
-    return PyResult(py, zelf.modulePath)
+    return PyResultGen(py, zelf.modulePath)
   }
 
   internal static func path(_ py: Py,
                             zelf: PyObject,
-                            value: PyObject?) -> PyResult<PyObject> {
+                            value: PyObject?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "path")
     }
@@ -215,10 +215,10 @@ public struct PyImportError: PyErrorMixin {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResult<PyObject> {
+                               kwargs: PyDict?) -> PyResultGen<PyObject> {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newImportError(py, type: type, args: argsTuple)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   // MARK: - Python init
@@ -232,7 +232,7 @@ public struct PyImportError: PyErrorMixin {
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResult<PyObject> {
+                                kwargs: PyDict?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }

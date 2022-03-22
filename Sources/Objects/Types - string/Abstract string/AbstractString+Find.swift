@@ -15,7 +15,7 @@ extension AbstractString {
                                     zelf: PyObject,
                                     object: PyObject,
                                     start: PyObject?,
-                                    end: PyObject?) -> PyResult<PyObject> {
+                                    end: PyObject?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "find")
     }
@@ -72,7 +72,7 @@ extension AbstractString {
                                      zelf: PyObject,
                                      object: PyObject,
                                      start: PyObject?,
-                                     end: PyObject?) -> PyResult<PyObject> {
+                                     end: PyObject?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "rfind")
     }
@@ -140,7 +140,7 @@ extension AbstractString {
     start: PyObject?,
     end: PyObject?,
     findFn: (Elements.SubSequence, Elements) -> AbstractStringFindResult<Elements>
-  ) -> PyResult<PyObject> {
+  ) -> PyResultGen<PyObject> {
     let valueToFind: Elements
     switch Self.getElementsForFindCountContainsIndexOf(py, object: object) {
     case .value(let s):
@@ -167,11 +167,11 @@ extension AbstractString {
       // from the start of the string!
       let start = substring.start?.adjustedInt ?? 0
       let result = BigInt(start) + position
-      return PyResult(py, result)
+      return PyResultGen(py, result)
 
     case .notFound:
       // Python convention of returning '-1'.
-      return PyResult(py, -1)
+      return PyResultGen(py, -1)
     }
   }
 }

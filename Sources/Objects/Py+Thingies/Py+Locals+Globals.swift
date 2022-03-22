@@ -8,7 +8,7 @@ extension Py {
 
   /// globals()
   /// See [this](https://docs.python.org/3/library/functions.html#globals)
-  public func globals() -> PyResult<PyDict> {
+  public func globals() -> PyResultGen<PyDict> {
     guard let frame = self.delegate.frame else {
       return .runtimeError(self, message: "globals(): no current frame")
     }
@@ -19,7 +19,7 @@ extension Py {
 
   /// locals()
   /// See [this](https://docs.python.org/3/library/functions.html#locals)
-  public func locals() -> PyResult<PyDict> {
+  public func locals() -> PyResultGen<PyDict> {
     guard let frame = self.delegate.frame else {
       return .runtimeError(self, message: "locals(): no current frame")
     }

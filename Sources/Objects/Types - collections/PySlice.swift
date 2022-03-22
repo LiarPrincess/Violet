@@ -171,7 +171,7 @@ public struct PySlice: PyObjectMixin {
                               zelf: PyObject,
                               other: PyObject,
                               operation: CompareResult.Operation,
-                              compareFn: (PyObject, PyObject) -> PyResult<Bool>,
+                              compareFn: (PyObject, PyObject) -> PyResultGen<Bool>,
                               onEqual: Bool) -> CompareResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, operation)
@@ -205,7 +205,7 @@ public struct PySlice: PyObjectMixin {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
@@ -229,7 +229,7 @@ public struct PySlice: PyObjectMixin {
     }
 
     let result = "slice(\(start), \(stop), \(step))"
-    return PyResult(py, result)
+    return PyResultGen(py, result)
   }
 
   // MARK: - Attributes
@@ -237,7 +237,7 @@ public struct PySlice: PyObjectMixin {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResult<PyObject> {
+                                        name: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -255,30 +255,30 @@ public struct PySlice: PyObjectMixin {
   // MARK: - Start, stop, step
 
   // sourcery: pyproperty = start
-  internal static func start(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func start(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "start")
     }
 
-    return PyResult(zelf.start)
+    return PyResultGen(zelf.start)
   }
 
   // sourcery: pyproperty = stop
-  internal static func stop(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func stop(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "stop")
     }
 
-    return PyResult(zelf.stop)
+    return PyResultGen(zelf.stop)
   }
 
   // sourcery: pyproperty = step
-  internal static func step(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func step(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "step")
     }
 
-    return PyResult(zelf.step)
+    return PyResultGen(zelf.step)
   }
 
   // MARK: - Indices
@@ -288,7 +288,7 @@ public struct PySlice: PyObjectMixin {
   /// slice_indices(PySliceObject* self, PyObject* len)
   internal static func indices(_ py: Py,
                                zelf: PyObject,
-                               length: PyObject) -> PyResult<PyObject> {
+                               length: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "indices")
     }
@@ -317,7 +317,7 @@ public struct PySlice: PyObjectMixin {
     let start = py.newInt(indices.start)
     let stop = py.newInt(indices.stop)
     let step = py.newInt(indices.step)
-    return PyResult(py, tuple: start.asObject, stop.asObject, step.asObject)
+    return PyResultGen(py, tuple: start.asObject, stop.asObject, step.asObject)
   }
 
   internal struct GetLongIndicesResult {
@@ -333,7 +333,7 @@ public struct PySlice: PyObjectMixin {
   /// Assumes that `len` is a nonnegative.
   internal static func getLongIndices(_ py: Py,
                                       zelf: PySlice,
-                                      length: BigInt) -> PyResult<GetLongIndicesResult> {
+                                      length: BigInt) -> PyResultGen<GetLongIndicesResult> {
     // swiftlint:disable:previous function_body_length
     assert(length.isPositiveOrZero)
 
@@ -500,7 +500,7 @@ public struct PySlice: PyObjectMixin {
   /// int
   /// PySlice_Unpack(PyObject *_r,
   ///                Py_ssize_t *start, Py_ssize_t *stop, Py_ssize_t *step)
-  internal func unpack(_ py: Py) -> PyResult<UnpackedIndices> {
+  internal func unpack(_ py: Py) -> PyResultGen<UnpackedIndices> {
     let min = Int.min
     let max = Int.max
     assert(min + 1 <= -max)
@@ -584,7 +584,7 @@ public struct PySlice: PyObjectMixin {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResult<PyObject> {
+                               kwargs: PyDict?) -> PyResultGen<PyObject> {
     if let e = ArgumentParser.noKwargsOrError(py,
                                               fnName: Self.pythonTypeName,
                                               kwargs: kwargs) {
@@ -603,7 +603,7 @@ public struct PySlice: PyObjectMixin {
     // Handle 1 argument
     if args.count == 1 {
       let result = py.newSlice(stop: args[0])
-      return PyResult(result)
+      return PyResultGen(result)
     }
 
     // Handle 2 or 3 arguments
@@ -612,6 +612,6 @@ public struct PySlice: PyObjectMixin {
     let step = args.count == 3 ? args[2] : nil
 
     let result = py.newSlice(start: start, stop: stop, step: step)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 }
