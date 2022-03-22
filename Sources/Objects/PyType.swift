@@ -833,7 +833,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   /// metaclass would probably be more confusing than helpful.
   internal static func __dir__(_ py: Py, zelf: PyObject) -> PyResultGen<DirResult> {
     guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__dir__")
+      return .invalidSelfArgument(py, zelf, Self.pythonTypeName)
     }
 
     return zelf.dir(py)
