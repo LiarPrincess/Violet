@@ -24,7 +24,7 @@ class FakeDelegate: PyDelegate {
 
             globals: PyDict,
             locals: PyDict,
-            closure: PyTuple?) -> PyResult<PyObject> {
+            closure: PyTuple?) -> PyResult {
     shouldNotBeCalled()
   }
 }

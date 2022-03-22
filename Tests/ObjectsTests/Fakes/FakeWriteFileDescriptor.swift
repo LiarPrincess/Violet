@@ -10,15 +10,15 @@ class FakeWriteFileDescriptor: FileDescriptorType {
     self.raw = fd
   }
 
-  func readLine() -> PyResult<Data> {
+  func readLine() -> PyResultGen<Data> {
     shouldNotBeCalled()
   }
 
-  func readToEnd() -> PyResult<Data> {
+  func readToEnd() -> PyResultGen<Data> {
     shouldNotBeCalled()
   }
 
-  func read(upToCount count: Int) -> PyResult<Data> {
+  func read(upToCount count: Int) -> PyResultGen<Data> {
     shouldNotBeCalled()
   }
 
@@ -30,11 +30,11 @@ class FakeWriteFileDescriptor: FileDescriptorType {
     shouldNotBeCalled()
   }
 
-  func offset() -> PyResult<UInt64> {
+  func offset() -> PyResultGen<UInt64> {
     shouldNotBeCalled()
   }
 
-  func seekToEnd() -> PyResult<UInt64> {
+  func seekToEnd() -> PyResultGen<UInt64> {
     shouldNotBeCalled()
   }
 

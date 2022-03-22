@@ -98,7 +98,7 @@ class PyBoolTests: PyTestCase {
     self.assertBinaryOperationTypeError(py, left: left, right: right, message: message, fn: Py.xor, file: file, line: line)
   }
 
-  private typealias BinaryOperation = (Py) -> (PyObject, PyObject) -> PyResult<PyObject>
+  private typealias BinaryOperation = (Py) -> (PyObject, PyObject) -> PyResult
 
   private func assertBinaryOperation(_ py: Py,
                                      left: Bool,

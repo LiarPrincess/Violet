@@ -234,7 +234,7 @@ extension PyFloatTests {
     self.assertBinaryOperationTypeError(py, left: left, right: right, message: message, fn: Py.divMod, file: file, line: line)
   }
 
-  typealias BinaryOperation = (Py) -> (PyObject, PyObject) -> PyResult<PyObject>
+  typealias BinaryOperation = (Py) -> (PyObject, PyObject) -> PyResult
 
   func assertBinaryOperation(_ py: Py,
                              left: Double,
