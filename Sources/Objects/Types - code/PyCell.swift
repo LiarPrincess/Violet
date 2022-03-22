@@ -194,7 +194,7 @@ public struct PyCell: PyObjectMixin {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
@@ -202,12 +202,12 @@ public struct PyCell: PyObjectMixin {
     let ptr = zelf.ptr
 
     guard let content = zelf.content else {
-      return PyResult(py, "<cell at \(ptr): empty>")
+      return PyResultGen(py, "<cell at \(ptr): empty>")
     }
 
     let type = content.typeName
     let contentPtr = content.ptr
-    return PyResult(py, "<cell at \(ptr): \(type) object at \(contentPtr)>")
+    return PyResultGen(py, "<cell at \(ptr): \(type) object at \(contentPtr)>")
   }
 
   // MARK: - Attributes
@@ -215,7 +215,7 @@ public struct PyCell: PyObjectMixin {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResult<PyObject> {
+                                        name: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }

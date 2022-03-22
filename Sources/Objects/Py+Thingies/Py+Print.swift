@@ -171,7 +171,7 @@ extension Py {
 
   // MARK: - File
 
-  private func getTextFile(file: PyObject?) -> PyResult<PyTextFile> {
+  private func getTextFile(file: PyObject?) -> PyResultGen<PyTextFile> {
     guard let file = file, !self.cast.isNone(file) else {
       return self.sys.getFile(stream: defaultStream)
     }
@@ -186,16 +186,16 @@ extension Py {
 
   // MARK: - Separator
 
-  private func parseSeparator(object: PyObject?) -> PyResult<PyString?> {
+  private func parseSeparator(object: PyObject?) -> PyResultGen<PyString?> {
     return self.parseSeparator(argName: "sep", object: object)
   }
 
-  private func parseEnd(object: PyObject?) -> PyResult<PyString?> {
+  private func parseEnd(object: PyObject?) -> PyResultGen<PyString?> {
     return self.parseSeparator(argName: "end", object: object)
   }
 
   private func parseSeparator(argName: String,
-                              object: PyObject?) -> PyResult<PyString?> {
+                              object: PyObject?) -> PyResultGen<PyString?> {
     guard let object = object else {
       return .value(.none)
     }

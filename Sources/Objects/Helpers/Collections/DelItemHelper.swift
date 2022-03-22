@@ -15,7 +15,7 @@ extension DelItemHelper {
 
   internal static func delItem(_ py: Py,
                                target: inout Target,
-                               index: PyObject) -> PyResult<PyObject> {
+                               index: PyObject) -> PyResultGen<PyObject> {
     switch IndexHelper.int(py, object: index, onOverflow: .indexError) {
     case .value(let int):
       return Self.delItem(py, target: &target, index: int)
@@ -40,7 +40,7 @@ extension DelItemHelper {
 
   internal static func delItem(_ py: Py,
                                target: inout Target,
-                               index: Int) -> PyResult<PyObject> {
+                               index: Int) -> PyResultGen<PyObject> {
     var index = index
 
     if index < 0 {
@@ -60,7 +60,7 @@ extension DelItemHelper {
 
   internal static func delSlice(_ py: Py,
                                 target: inout Target,
-                                slice: PySlice) -> PyResult<PyObject> {
+                                slice: PySlice) -> PyResultGen<PyObject> {
     var indices: PySlice.AdjustedIndices
     switch slice.unpack(py) {
     case let .value(u): indices = u.adjust(toCount: target.count)

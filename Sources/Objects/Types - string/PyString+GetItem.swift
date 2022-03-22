@@ -5,13 +5,13 @@ extension PyString {
 
   internal static func getItem(_ py: Py,
                                zelf: PyString,
-                               index indexObject: PyObject) -> PyResult<PyObject> {
+                               index indexObject: PyObject) -> PyResultGen<PyObject> {
     switch IndexHelper.int(py, object: indexObject, onOverflow: .indexError) {
     case .value(let index):
       switch Self.getItem(py, zelf: zelf, index: index) {
       case let .value(element):
         let resultObject = Self.newObject(py, element: element)
-        return PyResult(resultObject)
+        return PyResultGen(resultObject)
       case let .error(e):
         return .error(e)
       }
@@ -30,7 +30,7 @@ extension PyString {
       case let .value(builder):
         let result = builder.finalize()
         let resultObject = Self.newObject(py, result: result)
-        return PyResult(resultObject)
+        return PyResultGen(resultObject)
       case let .error(e):
         return .error(e)
       }
@@ -46,7 +46,7 @@ extension PyString {
 
   private static func getItem(_ py: Py,
                               zelf: PyString,
-                              index indexArg: Int) -> PyResult<Element> {
+                              index indexArg: Int) -> PyResultGen<Element> {
     var offset = indexArg
     if offset < 0 {
       offset += zelf.count
@@ -74,7 +74,7 @@ extension PyString {
 
   private static func getSlice(_ py: Py,
                                zelf: PyString,
-                               slice: PySlice) -> PyResult<Builder> {
+                               slice: PySlice) -> PyResultGen<Builder> {
     switch slice.unpack(py) {
     case let .value(u):
       let indices = u.adjust(toCount: zelf.count)
@@ -93,7 +93,7 @@ extension PyString {
                                zelf: PyString,
                                start: Int,
                                step: Int,
-                               count: Int) -> PyResult<Builder> {
+                               count: Int) -> PyResultGen<Builder> {
     var builder = Builder(capacity: count)
 
     // swiftlint:disable:next empty_count

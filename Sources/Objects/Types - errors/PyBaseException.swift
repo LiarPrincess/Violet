@@ -133,7 +133,7 @@ public struct PyBaseException: PyErrorMixin {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
@@ -147,7 +147,7 @@ public struct PyBaseException: PyErrorMixin {
       switch py.reprString(object: first) {
       case let .value(s):
         let result = name + "(" + s + ")"
-        return PyResult(py, result)
+        return PyResultGen(py, result)
       case let .error(e):
         return .error(e)
       }
@@ -159,7 +159,7 @@ public struct PyBaseException: PyErrorMixin {
          let .reprLock(s),
          let .value(s):
       let result = name + s
-      return PyResult(py, result)
+      return PyResultGen(py, result)
 
     case let .error(e):
       return .error(e)
@@ -167,7 +167,7 @@ public struct PyBaseException: PyErrorMixin {
   }
 
   // sourcery: pymethod = __str__
-  internal static func __str__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __str__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__str__")
     }
@@ -175,32 +175,32 @@ public struct PyBaseException: PyErrorMixin {
     return Self.str(py, zelf: zelf)
   }
 
-  internal static func str(_ py: Py, zelf: PyBaseException) -> PyResult<PyObject> {
+  internal static func str(_ py: Py, zelf: PyBaseException) -> PyResultGen<PyObject> {
     let args = zelf.args
 
     switch args.count {
     case 0:
-      return PyResult(py.emptyString)
+      return PyResultGen(py.emptyString)
     case 1:
       let first = args.elements[0]
       let result = py.str(object: first)
-      return PyResult(result)
+      return PyResultGen(result)
     default:
       let result = py.str(object: args.asObject)
-      return PyResult(result)
+      return PyResultGen(result)
     }
   }
 
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.getDict(py)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   internal func getDict(_ py: Py) -> PyDict {
@@ -225,7 +225,7 @@ public struct PyBaseException: PyErrorMixin {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResult<PyObject> {
+                                        name: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -237,7 +237,7 @@ public struct PyBaseException: PyErrorMixin {
   internal static func __setattr__(_ py: Py,
                                    zelf: PyObject,
                                    name: PyObject,
-                                   value: PyObject?) -> PyResult<PyObject> {
+                                   value: PyObject?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__setattr__")
     }
@@ -248,7 +248,7 @@ public struct PyBaseException: PyErrorMixin {
   // sourcery: pymethod = __delattr__
   internal static func __delattr__(_ py: Py,
                                    zelf: PyObject,
-                                   name: PyObject) -> PyResult<PyObject> {
+                                   name: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__delattr__")
     }
@@ -259,13 +259,13 @@ public struct PyBaseException: PyErrorMixin {
   // MARK: - Args
 
   // sourcery: pyproperty = args, setter
-  internal static func args(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func args(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "args")
     }
 
     let result = zelf.getArgs()
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   internal func getArgs() -> PyTuple {
@@ -274,7 +274,7 @@ public struct PyBaseException: PyErrorMixin {
 
   internal static func args(_ py: Py,
                             zelf: PyObject,
-                            value: PyObject?) -> PyResult<PyObject> {
+                            value: PyObject?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "args")
     }
@@ -313,13 +313,13 @@ public struct PyBaseException: PyErrorMixin {
   // MARK: - Traceback
 
   // sourcery: pyproperty = __traceback__, setter
-  internal static func __traceback__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __traceback__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__traceback__")
     }
 
     let result = zelf.getTraceback()
-    return PyResult(py, result)
+    return PyResultGen(py, result)
   }
 
   internal func getTraceback() -> PyTraceback? {
@@ -328,7 +328,7 @@ public struct PyBaseException: PyErrorMixin {
 
   internal static func __traceback__(_ py: Py,
                                      zelf: PyObject,
-                                     value: PyObject?) -> PyResult<PyObject> {
+                                     value: PyObject?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__traceback__")
     }
@@ -374,7 +374,7 @@ public struct PyBaseException: PyErrorMixin {
   // sourcery: pymethod = with_traceback, doc = withTracebackDoc
   internal static func with_traceback(_ py: Py,
                                       zelf: PyObject,
-                                      traceback: PyObject?) -> PyResult<PyObject> {
+                                      traceback: PyObject?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "with_traceback")
     }
@@ -383,7 +383,7 @@ public struct PyBaseException: PyErrorMixin {
       return .error(error)
     }
 
-    return PyResult(zelf)
+    return PyResultGen(zelf)
   }
 
   // MARK: - Cause
@@ -391,12 +391,12 @@ public struct PyBaseException: PyErrorMixin {
   internal static let getCauseDoc = "exception cause"
 
   // sourcery: pyproperty = __cause__, setter, doc = getCauseDoc
-  internal static func __cause__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __cause__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__cause__")
     }
 
-    return PyResult(py, zelf.cause)
+    return PyResultGen(py, zelf.cause)
   }
 
   internal func getCause() -> PyBaseException? {
@@ -405,7 +405,7 @@ public struct PyBaseException: PyErrorMixin {
 
   internal static func __cause__(_ py: Py,
                                  zelf: PyObject,
-                                 value: PyObject?) -> PyResult<PyObject> {
+                                 value: PyObject?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__cause__")
     }
@@ -444,13 +444,13 @@ public struct PyBaseException: PyErrorMixin {
   internal static let getContextDoc = "exception context"
 
   // sourcery: pyproperty = __context__, setter, doc = getContextDoc
-  internal static func __context__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __context__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__context__")
     }
 
     let result = zelf.getContext()
-    return PyResult(py, result)
+    return PyResultGen(py, result)
   }
 
   internal func getContext() -> PyBaseException? {
@@ -459,7 +459,7 @@ public struct PyBaseException: PyErrorMixin {
 
   internal static func __context__(_ py: Py,
                                    zelf: PyObject,
-                                   value: PyObject?) -> PyResult<PyObject> {
+                                   value: PyObject?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__context__")
     }
@@ -590,13 +590,13 @@ public struct PyBaseException: PyErrorMixin {
   // MARK: - Suppress context
 
   // sourcery: pyproperty = __suppress_context__, setter
-  internal static func __suppress_context__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __suppress_context__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__suppress_context__")
     }
 
     let result = zelf.getSuppressContext()
-    return PyResult(py, result)
+    return PyResultGen(py, result)
   }
 
   internal func getSuppressContext() -> Bool {
@@ -605,7 +605,7 @@ public struct PyBaseException: PyErrorMixin {
 
   internal static func __suppress_context__(_ py: Py,
                                             zelf: PyObject,
-                                            value: PyObject?) -> PyResult<PyObject> {
+                                            value: PyObject?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__suppress_context__")
     }
@@ -630,10 +630,10 @@ public struct PyBaseException: PyErrorMixin {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResult<PyObject> {
+                               kwargs: PyDict?) -> PyResultGen<PyObject> {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newBaseException(py, type: type, args: argsTuple)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   // MARK: - Python init
@@ -642,7 +642,7 @@ public struct PyBaseException: PyErrorMixin {
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResult<PyObject> {
+                                kwargs: PyDict?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }

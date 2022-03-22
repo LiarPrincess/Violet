@@ -115,7 +115,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
@@ -123,9 +123,9 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
     switch zelf.repr(py) {
     case let .empty(s),
          let .reprLock(s):
-      return PyResult(py, interned: s)
+      return PyResultGen(py, interned: s)
     case let .value(s):
-      return PyResult(py, s)
+      return PyResultGen(py, s)
     case let .error(e):
       return .error(e)
     }
@@ -168,7 +168,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResult<PyObject> {
+                                        name: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -186,13 +186,13 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResult<PyObject> {
+  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__len__")
     }
 
     let result = zelf.count
-    return PyResult(py, result)
+    return PyResultGen(py, result)
   }
 
   // MARK: - Contains, count, index of
@@ -200,21 +200,21 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
   // sourcery: pymethod = __contains__
   internal static func __contains__(_ py: Py,
                                     zelf: PyObject,
-                                    object: PyObject) -> PyResult<PyObject> {
+                                    object: PyObject) -> PyResultGen<PyObject> {
     return Self.abstract__contains__(py, zelf: zelf, object: object)
   }
 
   // sourcery: pymethod = count
   internal static func count(_ py: Py,
                              zelf: PyObject,
-                             object: PyObject) -> PyResult<PyObject> {
+                             object: PyObject) -> PyResultGen<PyObject> {
     return Self.abstractCount(py, zelf: zelf, object: object)
   }
 
   // Special overload for `index` static method
   internal static func index(_ py: Py,
                              zelf: PyObject,
-                             object: PyObject) -> PyResult<PyObject> {
+                             object: PyObject) -> PyResultGen<PyObject> {
     return Self.index(py, zelf: zelf, object: object, start: nil, end: nil)
   }
 
@@ -223,20 +223,20 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
                              zelf: PyObject,
                              object: PyObject,
                              start: PyObject?,
-                             end: PyObject?) -> PyResult<PyObject> {
+                             end: PyObject?) -> PyResultGen<PyObject> {
     return Self.abstractIndex(py, zelf: zelf, object: object, start: start, end: end)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
     let result = py.newIterator(tuple: zelf)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   // MARK: - Get item
@@ -244,7 +244,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
   // sourcery: pymethod = __getitem__
   internal static func __getitem__(_ py: Py,
                                    zelf: PyObject,
-                                   index: PyObject) -> PyResult<PyObject> {
+                                   index: PyObject) -> PyResultGen<PyObject> {
     return Self.abstract__getitem__(py, zelf: zelf, index: index)
   }
 
@@ -253,21 +253,21 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
   // sourcery: pymethod = __add__
   internal static func __add__(_ py: Py,
                                zelf: PyObject,
-                               other: PyObject) -> PyResult<PyObject> {
+                               other: PyObject) -> PyResultGen<PyObject> {
     return Self.abstract__add__(py, zelf: zelf, other: other, isTuple: true)
   }
 
   // sourcery: pymethod = __mul__
   internal static func __mul__(_ py: Py,
                                zelf: PyObject,
-                               other: PyObject) -> PyResult<PyObject> {
+                               other: PyObject) -> PyResultGen<PyObject> {
     return Self.abstract__mul__(py, zelf: zelf, other: other, isTuple: true)
   }
 
   // sourcery: pymethod = __rmul__
   internal static func __rmul__(_ py: Py,
                                 zelf: PyObject,
-                                other: PyObject) -> PyResult<PyObject> {
+                                other: PyObject) -> PyResultGen<PyObject> {
     return Self.abstract__rmul__(py, zelf: zelf, other: other, isTuple: true)
   }
 
@@ -277,7 +277,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResult<PyObject> {
+                               kwargs: PyDict?) -> PyResultGen<PyObject> {
     if let e = ArgumentParser.noKwargsOrError(py,
                                               fnName: Self.pythonTypeName,
                                               kwargs: kwargs) {
@@ -312,6 +312,6 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
       py.newTuple(elements: elements) :
       py.memory.newTuple(py, type: type, elements: elements)
 
-    return PyResult(result)
+    return PyResultGen(result)
   }
 }

@@ -62,21 +62,21 @@ public struct DirResult {
 
 // MARK: - PyResult
 
-extension PyResult where Wrapped == PyObject {
+extension PyResultGen where Wrapped == PyObject {
   public init(_ py: Py, _ dir: DirResult) {
     let list = py.newList(elements: dir.elements)
     switch list.sort(py, key: nil, isReverse: false) {
     case .value:
-      self = PyResult(list)
+      self = PyResultGen(list)
     case .error(let e):
       self = .error(e)
     }
   }
 
-  public init(_ py: Py, _ result: PyResult<DirResult>) {
+  public init(_ py: Py, _ result: PyResultGen<DirResult>) {
     switch result {
     case let .value(dir):
-      self = PyResult(py, dir)
+      self = PyResultGen(py, dir)
     case let .error(e):
       self = .error(e)
     }

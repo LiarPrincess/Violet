@@ -251,12 +251,12 @@ public struct PyObject: PyObjectMixin {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     let result = Self.reprString(py, zelf: zelf)
-    return PyResult(py, result)
+    return PyResultGen(py, result)
   }
 
-  private static func reprString(_ py: Py, zelf: PyObject) -> PyResult<String> {
+  private static func reprString(_ py: Py, zelf: PyObject) -> PyResultGen<String> {
     switch zelf.type.getModuleName(py) {
     case .builtins:
       return .value("<\(zelf.typeName) object at \(zelf.ptr)>")
@@ -268,16 +268,16 @@ public struct PyObject: PyObjectMixin {
   }
 
   // sourcery: pymethod = __str__
-  internal static func __str__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __str__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     // If '__str__' is not implemented then we will use '__repr__'.
     let result = py.repr(object: zelf)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   // sourcery: pymethod = __format__
   internal static func __format__(_ py: Py,
                                   zelf: PyObject,
-                                  spec: PyObject) -> PyResult<PyObject> {
+                                  spec: PyObject) -> PyResultGen<PyObject> {
     if let spec = py.cast.asString(spec), spec.isEmpty {
       return Self.__str__(py, zelf: zelf)
     }
@@ -296,7 +296,7 @@ public struct PyObject: PyObjectMixin {
   // MARK: - Dir
 
   // sourcery: pymethod = __dir__
-  internal static func __dir__(_ py: Py, zelf: PyObject) -> PyResult<DirResult> {
+  internal static func __dir__(_ py: Py, zelf: PyObject) -> PyResultGen<DirResult> {
     var result = DirResult()
 
     // If we have dict then use it to fill 'dir'
@@ -336,7 +336,7 @@ public struct PyObject: PyObjectMixin {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResult<PyObject> {
+                                        name: PyObject) -> PyResultGen<PyObject> {
     return AttributeHelper.getAttribute(py, object: zelf, name: name)
   }
 
@@ -344,14 +344,14 @@ public struct PyObject: PyObjectMixin {
   internal static func __setattr__(_ py: Py,
                                    zelf: PyObject,
                                    name: PyObject,
-                                   value: PyObject?) -> PyResult<PyObject> {
+                                   value: PyObject?) -> PyResultGen<PyObject> {
     return AttributeHelper.setAttribute(py, object: zelf, name: name, value: value)
   }
 
   // sourcery: pymethod = __delattr__
   internal static func __delattr__(_ py: Py,
                                    zelf: PyObject,
-                                   name: PyObject) -> PyResult<PyObject> {
+                                   name: PyObject) -> PyResultGen<PyObject> {
     return AttributeHelper.delAttribute(py, object: zelf, name: name)
   }
 
@@ -366,7 +366,7 @@ public struct PyObject: PyObjectMixin {
   internal static func __subclasshook__(_ py: Py,
                                         type: PyType,
                                         args: [PyObject],
-                                        kwargs: PyDict?) -> PyResult<PyObject> {
+                                        kwargs: PyDict?) -> PyResultGen<PyObject> {
     // This can be called with any number of arguments:
     // >>> type(object).__subclasshook__(1,2)
     // NotImplemented
@@ -384,7 +384,7 @@ public struct PyObject: PyObjectMixin {
   /// The default implementation does nothing.
   /// It may be overridden to extend subclasses.
   internal static func __init_subclass__(_ py: Py,
-                                         zelf: PyObject) -> PyResult<PyObject> {
+                                         zelf: PyObject) -> PyResultGen<PyObject> {
     return .none(py)
   }
 
@@ -397,7 +397,7 @@ public struct PyObject: PyObjectMixin {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResult<PyObject> {
+                               kwargs: PyDict?) -> PyResultGen<PyObject> {
     if Self.hasExcessArgs(args: args, kwargs: kwargs) {
       if Self.hasOverridden__new__(py, type: type) {
         let msg = "object.__new__() takes exactly one argument " +
@@ -421,7 +421,7 @@ public struct PyObject: PyObjectMixin {
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResult<PyObject> {
+                                kwargs: PyDict?) -> PyResultGen<PyObject> {
     if Self.hasExcessArgs(args: args, kwargs: kwargs) {
       if Self.hasOverridden__init__(py, type: zelf.type) {
         let msg = "object.__init__() takes exactly one argument " +

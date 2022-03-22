@@ -3,7 +3,7 @@ extension PySuper {
   internal static func __init__(_ py: Py,
                                 zelf: PySuper,
                                 type typeArg: PyObject?,
-                                object objectArg: PyObject?) -> PyResult<PyObject> {
+                                object objectArg: PyObject?) -> PyResultGen<PyObject> {
     let type: PyType
     var object = objectArg
 
@@ -54,7 +54,7 @@ extension PySuper {
     fileprivate let type: PyType
   }
 
-  private static func getObjectAndTypeFromFrame(_ py: Py) -> PyResult<ObjectAndType> {
+  private static func getObjectAndTypeFromFrame(_ py: Py) -> PyResultGen<ObjectAndType> {
     guard let frame = py.delegate.frame else {
       return .runtimeError(py, message: "super(): no current frame")
     }
@@ -91,7 +91,7 @@ extension PySuper {
     _ py: Py,
     frame: PyFrame,
     code: PyCode
-  ) -> PyResult<PyObject> {
+  ) -> PyResultGen<PyObject> {
     // Note the double optional below:
     // - 'frame.fastLocals' stores 'PyObject?'
     // - 'Collection.first' returns 'Element?'
@@ -183,7 +183,7 @@ extension PySuper {
   internal static func checkSuper(_ py: Py,
                                   zelf: PySuper,
                                   type: PyType,
-                                  object: PyObject) -> PyResult<PyType> {
+                                  object: PyObject) -> PyResultGen<PyType> {
     if let objectAsType = py.cast.asType(object), objectAsType.isSubtype(of: type) {
       return .value(objectAsType)
     }

@@ -18,7 +18,7 @@ extension Sys {
   /// `argv[0]` is set to the string `'-c'`.
   /// If no script name was passed to the Python interpreter,
   /// `argv[0]` is the empty string.
-  public func getArgv() -> PyResult<PyList> {
+  public func getArgv() -> PyResultGen<PyList> {
     return self.getList(.argv)
   }
 
@@ -52,7 +52,7 @@ extension Sys {
 
   // MARK: - Argv0
 
-  public func getArgv0() -> PyResult<PyString> {
+  public func getArgv0() -> PyResultGen<PyString> {
     let list: PyList
     switch self.getArgv() {
     case let .value(l): list = l
@@ -105,7 +105,7 @@ extension Sys {
   ///
   /// The named tuple flags exposes the status of command line flags.
   /// The attributes are read only.
-  public func getFlags() -> PyResult<PyObject> {
+  public func getFlags() -> PyResultGen<PyObject> {
     return self.get(.flags)
   }
 
@@ -153,7 +153,7 @@ extension Sys {
 
   /// sys.warnoptions
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.warnoptions).
-  public func getWarnOptions() -> PyResult<PyList> {
+  public func getWarnOptions() -> PyResultGen<PyList> {
     return self.getList(.warnoptions)
   }
 
@@ -194,7 +194,7 @@ extension Sys {
   /// the Python interpreter, on systems where this makes sense.
   /// If Python is unable to retrieve the real path to its executable,
   /// `sys.executable` will be an empty string or `None`.
-  public func getExecutable() -> PyResult<PyString> {
+  public func getExecutable() -> PyResultGen<PyString> {
     return self.getString(.executable)
   }
 
@@ -210,7 +210,7 @@ extension Sys {
   ///
   /// This string contains a platform identifier that can be used to append
   /// platform-specific components to `sys.path`, for instance.
-  public func getPlatform() -> PyResult<PyString> {
+  public func getPlatform() -> PyResultGen<PyString> {
     return self.getString(.platform)
   }
 
@@ -220,7 +220,7 @@ extension Sys {
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.copyright).
   ///
   /// A string containing the copyright pertaining to the Python interpreter.
-  public func getCopyright() -> PyResult<PyString> {
+  public func getCopyright() -> PyResultGen<PyString> {
     return self.getString(.copyright)
   }
 
@@ -228,7 +228,7 @@ extension Sys {
 
   /// sys.hash_info
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.hash_info).
-  internal func getHashInfo() -> PyResult<PyObject> {
+  internal func getHashInfo() -> PyResultGen<PyObject> {
     return self.get(.hash_info)
   }
 
@@ -266,7 +266,7 @@ extension Sys {
   /// platform.
   ///
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.maxsize).
-  public func getMaxSize() -> PyResult<PyInt> {
+  public func getMaxSize() -> PyResultGen<PyInt> {
     return self.getInt(.maxsize)
   }
 }

@@ -93,7 +93,7 @@ public struct PyDict: PyObjectMixin {
     return CompareResult(result)
   }
 
-  internal func isEqual(_ py: Py, other: PyDict) -> PyResult<Bool> {
+  internal func isEqual(_ py: Py, other: PyDict) -> PyResultGen<Bool> {
     guard self.count == other.count else {
       return .value(false)
     }
@@ -160,17 +160,17 @@ public struct PyDict: PyObjectMixin {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
     if zelf.elements.isEmpty {
-      return PyResult(py, interned:  "{}")
+      return PyResultGen(py, interned:  "{}")
     }
 
     if zelf.hasReprLock {
-      return PyResult(py, interned:  "{...}")
+      return PyResultGen(py, interned:  "{...}")
     }
 
     return zelf.withReprLock {
@@ -194,7 +194,7 @@ public struct PyDict: PyObjectMixin {
       }
 
       result += "}"
-      return PyResult(py, result)
+      return PyResultGen(py, result)
     }
   }
 
@@ -203,7 +203,7 @@ public struct PyDict: PyObjectMixin {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResult<PyObject> {
+                                        name: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -221,13 +221,13 @@ public struct PyDict: PyObjectMixin {
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResult<PyObject> {
+  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__len__")
     }
 
     let result = zelf.count
-    return PyResult(py, result)
+    return PyResultGen(py, result)
   }
 
   // MARK: - Get
@@ -385,7 +385,7 @@ public struct PyDict: PyObjectMixin {
   /// Implementation of `Python` subscript.
   internal static func __getitem__(_ py: Py,
                                    zelf: PyObject,
-                                   index: PyObject) -> PyResult<PyObject> {
+                                   index: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getitem__")
     }
@@ -428,7 +428,7 @@ public struct PyDict: PyObjectMixin {
   internal static func __setitem__(_ py: Py,
                                    zelf: PyObject,
                                    index: PyObject,
-                                   value: PyObject) -> PyResult<PyObject> {
+                                   value: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__setitem__")
     }
@@ -454,7 +454,7 @@ public struct PyDict: PyObjectMixin {
   /// Implementation of `Python` subscript.
   internal static func __delitem__(_ py: Py,
                                    zelf: PyObject,
-                                   index: PyObject) -> PyResult<PyObject> {
+                                   index: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__delitem__")
     }
@@ -494,7 +494,7 @@ public struct PyDict: PyObjectMixin {
   internal static func get(_ py: Py,
                            zelf: PyObject,
                            args: [PyObject],
-                           kwargs: PyDict?) -> PyResult<PyObject> {
+                           kwargs: PyDict?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "get")
     }
@@ -516,7 +516,7 @@ public struct PyDict: PyObjectMixin {
   internal static func get(_ py: Py,
                            zelf: PyDict,
                            index: PyObject,
-                           default: PyObject?) -> PyResult<PyObject> {
+                           default: PyObject?) -> PyResultGen<PyObject> {
     let key: Key
     switch Self.createKey(py, object: index) {
     case let .value(v): key = v
@@ -559,7 +559,7 @@ public struct PyDict: PyObjectMixin {
   internal func set(_ py: Py,
                     zelf: PyObject,
                     args: [PyObject],
-                    kwargs: PyDict?) -> PyResult<PyObject> {
+                    kwargs: PyDict?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "set")
     }
@@ -585,7 +585,7 @@ public struct PyDict: PyObjectMixin {
   internal static func setWithDefault(_ py: Py,
                                       zelf: PyDict,
                                       index: PyObject,
-                                      default: PyObject?) -> PyResult<PyObject> {
+                                      default: PyObject?) -> PyResultGen<PyObject> {
     let key: Key
     switch Self.createKey(py, object: index) {
     case let .value(v): key = v
@@ -614,7 +614,7 @@ public struct PyDict: PyObjectMixin {
   // sourcery: pymethod = __contains__
   internal static func __contains__(_ py: Py,
                                     zelf: PyObject,
-                                    object: PyObject) -> PyResult<PyObject> {
+                                    object: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__contains__")
     }
@@ -624,7 +624,7 @@ public struct PyDict: PyObjectMixin {
 
   internal static func contains(_ py: Py,
                                 zelf: PyDict,
-                                object: PyObject) -> PyResult<PyObject> {
+                                object: PyObject) -> PyResultGen<PyObject> {
     let key: Key
     switch Self.createKey(py, object: object) {
     case let .value(v): key = v
@@ -632,19 +632,19 @@ public struct PyDict: PyObjectMixin {
     }
 
     let result = zelf.elements.contains(py, key: key)
-    return PyResult(py, result)
+    return PyResultGen(py, result)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
     let result = py.newIterator(keys: zelf)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   // MARK: - Clear
@@ -654,7 +654,7 @@ public struct PyDict: PyObjectMixin {
     """
 
   // sourcery: pymethod = clear, doc = clearDoc
-  internal static func clear(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func clear(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "clear")
     }
@@ -669,7 +669,7 @@ public struct PyDict: PyObjectMixin {
   internal static func update(_ py: Py,
                               zelf: PyObject,
                               args: [PyObject],
-                              kwargs: PyDict?) -> PyResult<PyObject> {
+                              kwargs: PyDict?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "update")
     }
@@ -702,13 +702,13 @@ public struct PyDict: PyObjectMixin {
   internal static let copyDoc = "D.copy() -> a shallow copy of D"
 
   // sourcery: pymethod = copy, doc = copyDoc
-  internal static func copy(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func copy(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "copy")
     }
 
     let result = zelf.copy(py)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   internal func copy(_ py: Py) -> PyDict {
@@ -726,7 +726,7 @@ public struct PyDict: PyObjectMixin {
   internal static func pop(_ py: Py,
                            zelf: PyObject,
                            index: PyObject,
-                           default: PyObject?) -> PyResult<PyObject> {
+                           default: PyObject?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "pop")
     }
@@ -757,7 +757,7 @@ public struct PyDict: PyObjectMixin {
     """
 
   // sourcery: pymethod = popitem, doc = popitemDoc
-  internal static func popitem(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func popitem(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "popitem")
     }
@@ -770,7 +770,7 @@ public struct PyDict: PyObjectMixin {
 
     let key = last.key.object
     let value = last.value
-    return PyResult(py, tuple: key, value)
+    return PyResultGen(py, tuple: key, value)
   }
 
   // MARK: - From keys
@@ -779,7 +779,7 @@ public struct PyDict: PyObjectMixin {
   internal static func fromkeys(_ py: Py,
                                 type: PyType,
                                 iterable: PyObject,
-                                value: PyObject?) -> PyResult<PyObject> {
+                                value: PyObject?) -> PyResultGen<PyObject> {
     let value = value ?? py.none.asObject
 
     let dictObject: PyObject
@@ -821,7 +821,7 @@ public struct PyDict: PyObjectMixin {
   private static func fillFromKeys(_ py: Py,
                                    target: PyDict,
                                    dict: PyDict,
-                                   value: PyObject) -> PyResult<PyObject> {
+                                   value: PyObject) -> PyResultGen<PyObject> {
     assert(py.cast.isExactlyDict(target.asObject))
     assert(py.cast.isExactlyDict(dict.asObject))
 
@@ -840,7 +840,7 @@ public struct PyDict: PyObjectMixin {
   private static func fillFromKeys(_ py: Py,
                                    target: PyDict,
                                    set: PyAnySet,
-                                   value: PyObject) -> PyResult<PyObject> {
+                                   value: PyObject) -> PyResultGen<PyObject> {
     assert(py.cast.isExactlyDict(target.asObject))
     assert(py.cast.isExactlyAnySet(set))
 
@@ -860,33 +860,33 @@ public struct PyDict: PyObjectMixin {
   // MARK: - Views
 
   // sourcery: pymethod = keys
-  internal static func keys(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func keys(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "keys")
     }
 
     let result = py.newDictKeys(dict: zelf)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   // sourcery: pymethod = items
-  internal static func items(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func items(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "items")
     }
 
     let result = py.newDictItems(dict: zelf)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   // sourcery: pymethod = values
-  internal static func values(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func values(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "values")
     }
 
     let result = py.newDictValues(dict: zelf)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   // MARK: - Python new
@@ -895,7 +895,7 @@ public struct PyDict: PyObjectMixin {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResult<PyObject> {
+                               kwargs: PyDict?) -> PyResultGen<PyObject> {
     let elements = OrderedDictionary()
 
     let isBuiltin = type === py.types.dict
@@ -912,7 +912,7 @@ public struct PyDict: PyObjectMixin {
   internal static  func __init__(_ py: Py,
                                  zelf: PyObject,
                                  args: [PyObject],
-                                 kwargs: PyDict?) -> PyResult<PyObject> {
+                                 kwargs: PyDict?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -922,7 +922,7 @@ public struct PyDict: PyObjectMixin {
 
   // MARK: - Helpers
 
-  internal static func createKey(_ py: Py, object: PyObject) -> PyResult<Key> {
+  internal static func createKey(_ py: Py, object: PyObject) -> PyResultGen<Key> {
     switch py.hash(object: object) {
     case let .value(hash):
       let result = Key(hash: hash, object: object)

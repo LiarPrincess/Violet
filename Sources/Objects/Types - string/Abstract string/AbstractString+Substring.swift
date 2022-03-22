@@ -29,7 +29,7 @@ extension AbstractString {
     zelf: Self,
     start: PyObject?,
     end: PyObject?
-  ) -> PyResult<AbstractStringSubstring<Elements>> {
+  ) -> PyResultGen<AbstractStringSubstring<Elements>> {
     let startIndex: AbstractStringSubstring<Elements>.Index?
     switch Self.extractIndex(py, zelf: zelf, index: start) {
     case let .value(i): startIndex = i
@@ -80,7 +80,7 @@ extension AbstractString {
     _ py: Py,
     zelf: Self,
     index indexObject: PyObject?
-  ) -> PyResult<AbstractStringSubstring<Elements>.Index?> {
+  ) -> PyResultGen<AbstractStringSubstring<Elements>.Index?> {
     guard let indexObject = indexObject else {
       return .value(nil)
     }

@@ -115,7 +115,7 @@ extension PyBool {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -230,7 +230,7 @@ extension PyBuiltinFunction {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -359,7 +359,7 @@ extension PyBuiltinMethod {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -472,7 +472,7 @@ extension PyByteArray {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -581,7 +581,7 @@ extension PyByteArrayIterator {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -684,7 +684,7 @@ extension PyBytes {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -793,7 +793,7 @@ extension PyBytesIterator {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -902,7 +902,7 @@ extension PyCallableIterator {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -1011,7 +1011,7 @@ extension PyCell {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -1114,7 +1114,7 @@ extension PyClassMethod {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -1295,7 +1295,7 @@ extension PyCode {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -1404,7 +1404,7 @@ extension PyComplex {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -1513,7 +1513,7 @@ extension PyDict {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -1628,7 +1628,7 @@ extension PyDictItemIterator {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -1731,7 +1731,7 @@ extension PyDictItems {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -1846,7 +1846,7 @@ extension PyDictKeyIterator {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -1949,7 +1949,7 @@ extension PyDictKeys {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -2064,7 +2064,7 @@ extension PyDictValueIterator {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -2167,7 +2167,7 @@ extension PyDictValues {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -2246,7 +2246,7 @@ extension PyEllipsis {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -2355,7 +2355,7 @@ extension PyEnumerate {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -2470,7 +2470,7 @@ extension PyFilter {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -2579,7 +2579,7 @@ extension PyFloat {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -2748,7 +2748,7 @@ extension PyFrame {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -2861,7 +2861,7 @@ extension PyFrozenSet {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -3018,7 +3018,7 @@ extension PyFunction {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -3131,7 +3131,7 @@ extension PyInt {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -3240,7 +3240,7 @@ extension PyIterator {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -3343,7 +3343,7 @@ extension PyList {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -3452,7 +3452,7 @@ extension PyListIterator {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -3561,7 +3561,7 @@ extension PyListReverseIterator {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -3670,7 +3670,7 @@ extension PyMap {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -3785,7 +3785,7 @@ extension PyMethod {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -3870,7 +3870,7 @@ extension PyModule {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -3957,7 +3957,7 @@ extension PyNamespace {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -4036,7 +4036,7 @@ extension PyNone {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -4115,7 +4115,7 @@ extension PyNotImplemented {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -4315,7 +4315,7 @@ extension PyProperty {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -4446,7 +4446,7 @@ extension PyRange {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -4575,7 +4575,7 @@ extension PyRangeIterator {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -4692,7 +4692,7 @@ extension PyReversed {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -4801,7 +4801,7 @@ extension PySet {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -4916,7 +4916,7 @@ extension PySetIterator {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -5042,7 +5042,7 @@ extension PySlice {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -5153,7 +5153,7 @@ extension PyStaticMethod {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -5268,7 +5268,7 @@ extension PyString {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -5377,7 +5377,7 @@ extension PyStringIterator {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -5492,7 +5492,7 @@ extension PySuper {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -5627,7 +5627,7 @@ extension PyTextFile {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -5762,7 +5762,7 @@ extension PyTraceback {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -5875,7 +5875,7 @@ extension PyTuple {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -5984,7 +5984,7 @@ extension PyTupleIterator {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -6147,7 +6147,7 @@ extension PyType {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -6274,7 +6274,7 @@ extension PyZip {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -6381,7 +6381,7 @@ extension PyArithmeticError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -6500,7 +6500,7 @@ extension PyAssertionError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -6619,7 +6619,7 @@ extension PyAttributeError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -6752,7 +6752,7 @@ extension PyBaseException {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -6871,7 +6871,7 @@ extension PyBlockingIOError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -6990,7 +6990,7 @@ extension PyBrokenPipeError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -7109,7 +7109,7 @@ extension PyBufferError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -7228,7 +7228,7 @@ extension PyBytesWarning {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -7347,7 +7347,7 @@ extension PyChildProcessError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -7466,7 +7466,7 @@ extension PyConnectionAbortedError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -7585,7 +7585,7 @@ extension PyConnectionError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -7704,7 +7704,7 @@ extension PyConnectionRefusedError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -7823,7 +7823,7 @@ extension PyConnectionResetError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -7942,7 +7942,7 @@ extension PyDeprecationWarning {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -8061,7 +8061,7 @@ extension PyEOFError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -8180,7 +8180,7 @@ extension PyException {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -8299,7 +8299,7 @@ extension PyFileExistsError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -8418,7 +8418,7 @@ extension PyFileNotFoundError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -8537,7 +8537,7 @@ extension PyFloatingPointError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -8656,7 +8656,7 @@ extension PyFutureWarning {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -8775,7 +8775,7 @@ extension PyGeneratorExit {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -8930,7 +8930,7 @@ extension PyImportError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -9076,7 +9076,7 @@ extension PyImportWarning {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -9246,7 +9246,7 @@ extension PyIndentationError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -9398,7 +9398,7 @@ extension PyIndexError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -9517,7 +9517,7 @@ extension PyInterruptedError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -9636,7 +9636,7 @@ extension PyIsADirectoryError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -9755,7 +9755,7 @@ extension PyKeyError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -9874,7 +9874,7 @@ extension PyKeyboardInterrupt {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -9993,7 +9993,7 @@ extension PyLookupError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -10112,7 +10112,7 @@ extension PyMemoryError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -10264,7 +10264,7 @@ extension PyModuleNotFoundError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -10410,7 +10410,7 @@ extension PyNameError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -10529,7 +10529,7 @@ extension PyNotADirectoryError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -10648,7 +10648,7 @@ extension PyNotImplementedError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -10767,7 +10767,7 @@ extension PyOSError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -10886,7 +10886,7 @@ extension PyOverflowError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -11005,7 +11005,7 @@ extension PyPendingDeprecationWarning {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -11124,7 +11124,7 @@ extension PyPermissionError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -11243,7 +11243,7 @@ extension PyProcessLookupError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -11362,7 +11362,7 @@ extension PyRecursionError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -11481,7 +11481,7 @@ extension PyReferenceError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -11600,7 +11600,7 @@ extension PyResourceWarning {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -11719,7 +11719,7 @@ extension PyRuntimeError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -11838,7 +11838,7 @@ extension PyRuntimeWarning {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -11957,7 +11957,7 @@ extension PyStopAsyncIteration {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -12100,7 +12100,7 @@ extension PyStopIteration {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -12296,7 +12296,7 @@ extension PySyntaxError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -12448,7 +12448,7 @@ extension PySyntaxWarning {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -12567,7 +12567,7 @@ extension PySystemError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -12710,7 +12710,7 @@ extension PySystemExit {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -12903,7 +12903,7 @@ extension PyTabError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -13055,7 +13055,7 @@ extension PyTimeoutError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -13174,7 +13174,7 @@ extension PyTypeError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -13293,7 +13293,7 @@ extension PyUnboundLocalError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -13412,7 +13412,7 @@ extension PyUnicodeDecodeError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -13531,7 +13531,7 @@ extension PyUnicodeEncodeError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -13650,7 +13650,7 @@ extension PyUnicodeError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -13769,7 +13769,7 @@ extension PyUnicodeTranslateError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -13888,7 +13888,7 @@ extension PyUnicodeWarning {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -14007,7 +14007,7 @@ extension PyUserWarning {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -14126,7 +14126,7 @@ extension PyValueError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -14245,7 +14245,7 @@ extension PyWarning {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)
@@ -14364,7 +14364,7 @@ extension PyZeroDivisionError {
 
   internal static func invalidZelfArgument<T>(_ py: Py,
                                               _ object: PyObject,
-                                              _ fnName: String) -> PyResult<T> {
+                                              _ fnName: String) -> PyResultGen<T> {
     let error = py.newInvalidSelfArgumentError(object: object,
                                                expectedType: Self.pythonTypeName,
                                                fnName: fnName)

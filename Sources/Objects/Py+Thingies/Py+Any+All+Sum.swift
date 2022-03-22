@@ -8,7 +8,7 @@ extension Py {
 
   /// any(iterable)
   /// See [this](https://docs.python.org/3/library/functions.html#any)
-  public func any(iterable: PyObject) -> PyResult<Bool> {
+  public func any(iterable: PyObject) -> PyResultGen<Bool> {
     return self.reduce(iterable: iterable, initial: false) { _, object in
       switch self.isTrueBool(object: object) {
       case .value(true): return .finish(true)
@@ -22,7 +22,7 @@ extension Py {
 
   /// all(iterable)
   /// See [this](https://docs.python.org/3/library/functions.html#all)
-  public func all(iterable: PyObject) -> PyResult<Bool> {
+  public func all(iterable: PyObject) -> PyResultGen<Bool> {
     return self.reduce(iterable: iterable, initial: true) { _, object in
       switch self.isTrueBool(object: object) {
       case .value(true): return .goToNextElement
@@ -36,7 +36,7 @@ extension Py {
 
   /// sum(iterable, /, start=0)
   /// See [this](https://docs.python.org/3/library/functions.html#sum)
-  public func sum(iterable: PyObject, start: PyObject?) -> PyResult<PyObject> {
+  public func sum(iterable: PyObject, start: PyObject?) -> PyResultGen<PyObject> {
     let initial: PyObject
 
     if let start = start {

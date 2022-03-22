@@ -22,7 +22,7 @@ extension UnderscoreWarnings {
   }
 
   /// https://docs.python.org/3.8/library/warnings.html#warnings.formatwarning
-  private func format(warning: Warning) -> PyResult<String> {
+  private func format(warning: Warning) -> PyResultGen<String> {
     // >>> import warnings
     // >>> warnings.formatwarning('message', UserWarning, 'file', 1, 'line')
     // 'file:1: UserWarning: message\n  line\n'

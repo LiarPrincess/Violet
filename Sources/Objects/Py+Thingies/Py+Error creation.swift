@@ -727,7 +727,7 @@ extension Py {
 
   /// static PyObject*
   /// _PyErr_CreateException(PyObject *exception, PyObject *value)
-  public func newException(type: PyType, arg: PyObject?) -> PyResult<PyBaseException> {
+  public func newException(type: PyType, arg: PyObject?) -> PyResultGen<PyBaseException> {
     guard self.isException(type: type) else {
       return .typeError(self, message: "exceptions must derive from BaseException")
     }

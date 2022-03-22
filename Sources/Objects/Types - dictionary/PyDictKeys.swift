@@ -88,11 +88,11 @@ public struct PyDictKeys: PyObjectMixin, AbstractDictView {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     return Self.abstract__repr__(py, zelf: zelf, elementRepr: Self.repr(_:element:))
   }
 
-  private static func repr(_ py: Py, element: Element) -> PyResult<String> {
+  private static func repr(_ py: Py, element: Element) -> PyResultGen<String> {
     // >>> d = {'a': 1, 'b': 2, 'c': 3}
     //
     // >>> k = d.keys()
@@ -106,14 +106,14 @@ public struct PyDictKeys: PyObjectMixin, AbstractDictView {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResult<PyObject> {
+                                        name: PyObject) -> PyResultGen<PyObject> {
     return Self.abstract__getattribute__(py, zelf: zelf, name: name)
   }
 
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResult<PyObject> {
+  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResultGen<PyObject> {
     return Self.abstract__len__(py, zelf: zelf)
   }
 
@@ -122,7 +122,7 @@ public struct PyDictKeys: PyObjectMixin, AbstractDictView {
   // sourcery: pymethod = __contains__
   internal static func __contains__(_ py: Py,
                                     zelf: PyObject,
-                                    object: PyObject) -> PyResult<PyObject> {
+                                    object: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__contains__")
     }
@@ -133,13 +133,13 @@ public struct PyDictKeys: PyObjectMixin, AbstractDictView {
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
     let result = py.newIterator(keys: zelf.dict)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   // MARK: - Python new
@@ -148,7 +148,7 @@ public struct PyDictKeys: PyObjectMixin, AbstractDictView {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResult<PyObject> {
+                               kwargs: PyDict?) -> PyResultGen<PyObject> {
     return .typeError(py, message: "cannot create 'dict_keys' instances")
   }
 }

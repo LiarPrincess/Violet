@@ -12,7 +12,7 @@ extension AbstractSequence {
 
   internal static func abstract__contains__(_ py: Py,
                                             zelf: PyObject,
-                                            object: PyObject) -> PyResult<PyObject> {
+                                            object: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__contains__")
     }
@@ -21,7 +21,7 @@ extension AbstractSequence {
       switch py.isEqualBool(left: element, right: object) {
       case .value(true):
         let result = true
-        return PyResult(py, result)
+        return PyResultGen(py, result)
       case .value(false):
         break // go to next element
       case .error(let e):
@@ -30,14 +30,14 @@ extension AbstractSequence {
     }
 
     let result = false
-    return PyResult(py, result)
+    return PyResultGen(py, result)
   }
 
   // MARK: - Count
 
   internal static func abstractCount(_ py: Py,
                                      zelf: PyObject,
-                                     object: PyObject) -> PyResult<PyObject> {
+                                     object: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "count")
     }
@@ -55,7 +55,7 @@ extension AbstractSequence {
       }
     }
 
-    return PyResult(py, result)
+    return PyResultGen(py, result)
   }
 
   // MARK: - Index of
@@ -64,7 +64,7 @@ extension AbstractSequence {
                                      zelf: PyObject,
                                      object: PyObject,
                                      start: PyObject?,
-                                     end: PyObject?) -> PyResult<PyObject> {
+                                     end: PyObject?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "index")
     }
@@ -79,7 +79,7 @@ extension AbstractSequence {
       switch py.isEqualBool(left: element, right: object) {
       case .value(true):
         let result = BigInt(index)
-        return PyResult(py, result)
+        return PyResultGen(py, result)
       case .value(false):
         break // go to next element
       case .error(let e):
@@ -93,7 +93,7 @@ extension AbstractSequence {
 
   private func getSubsequence(_ py: Py,
                               start: PyObject?,
-                              end: PyObject?) -> PyResult<SubSequence> {
+                              end: PyObject?) -> PyResultGen<SubSequence> {
     let startIndex: Index
     switch self.extractIndex(py, object: start) {
     case .none: startIndex = self.elements.startIndex

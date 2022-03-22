@@ -2,7 +2,7 @@ extension AbstractSet {
 
   internal static func abstract__contains__(_ py: Py,
                                             zelf: PyObject,
-                                            object: PyObject) -> PyResult<PyObject> {
+                                            object: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__contains__")
     }
@@ -10,7 +10,7 @@ extension AbstractSet {
     switch Self.createElement(py, object: object) {
     case let .value(element):
       let result = Self.contains(py, zelf: zelf, element: element)
-      return PyResult(py, result)
+      return PyResultGen(py, result)
     case let .error(e):
       return .error(e)
     }
@@ -18,7 +18,7 @@ extension AbstractSet {
 
   private static func contains(_ py: Py,
                                zelf: Self,
-                               element: Element) -> PyResult<Bool> {
+                               element: Element) -> PyResultGen<Bool> {
     return zelf.elements.contains(py, element: element)
   }
 }

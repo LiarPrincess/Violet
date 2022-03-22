@@ -8,7 +8,7 @@ extension Py {
   // MARK: - Get __build_class__
 
   /// Get `__build_class__` from `builtins` module.
-  public func get__build_class__() -> PyResult<PyObject> {
+  public func get__build_class__() -> PyResultGen<PyObject> {
     let dict = self.builtins.__dict__
 
     if let fn = dict.get(self, id: .__build_class__) {
@@ -43,7 +43,7 @@ extension Py {
   public func __build_class__(name: PyString,
                               bases basesTuple: PyTuple,
                               bodyFn: PyFunction,
-                              kwargs: PyDict?) -> PyResult<PyObject> {
+                              kwargs: PyDict?) -> PyResultGen<PyObject> {
     let bases: [PyType]
     switch PyType.guaranteeAllBasesAreTypes(self, bases: basesTuple) {
     case let .value(b): bases = b
@@ -106,7 +106,7 @@ extension Py {
   // MARK: - Metaclass
 
   private func calculateMetaclass(bases: [PyType],
-                                  kwargs: PyDict?) -> PyResult<PyObject> {
+                                  kwargs: PyDict?) -> PyResultGen<PyObject> {
     var result: PyObject
 
     if let kwargs = kwargs, let meta = kwargs.get(self, id: .metaclass) {
@@ -147,7 +147,7 @@ extension Py {
   /// Otherwise just return empty dict.
   private func createDict(name: PyString,
                           bases: PyTuple,
-                          metatype: PyObject) -> PyResult<PyDict> {
+                          metatype: PyObject) -> PyResultGen<PyDict> {
     switch self.get__prepare__(metatype: metatype) {
     case let .value(__prepare__):
       let object: PyObject
@@ -193,7 +193,7 @@ extension Py {
 
   // MARK: - Eval
 
-  private func eval(fn: PyFunction, locals: PyDict) -> PyResult<PyObject> {
+  private func eval(fn: PyFunction, locals: PyDict) -> PyResultGen<PyObject> {
     return self.delegate.eval(
       name: nil,
       qualname: nil,

@@ -17,11 +17,11 @@ internal protocol SetItemHelper {
     SliceSource.Index == Int
 
   /// When the index is `int` we will call this function to get the value to set.
-  static func getElementToSetAtIntIndex(_ py: Py, object: PyObject) -> PyResult<Target.Element>
+  static func getElementToSetAtIntIndex(_ py: Py, object: PyObject) -> PyResultGen<Target.Element>
 
   /// When the index is `slice` we will call this function to get (multiple)
   /// values to set in collection.
-  static func getElementsToSetAtSliceIndices(_ py: Py, object: PyObject) -> PyResult<SliceSource>
+  static func getElementsToSetAtSliceIndices(_ py: Py, object: PyObject) -> PyResultGen<SliceSource>
 }
 
 extension SetItemHelper {
@@ -31,7 +31,7 @@ extension SetItemHelper {
   internal static func setItem(_ py: Py,
                                target: inout Target,
                                index: PyObject,
-                               value: PyObject) -> PyResult<PyObject> {
+                               value: PyObject) -> PyResultGen<PyObject> {
     switch IndexHelper.int(py, object: index, onOverflow: .indexError) {
     case .value(let int):
       return Self.setItem(py, target: &target, index: int, value: value)
@@ -57,7 +57,7 @@ extension SetItemHelper {
   internal static func setItem(_ py: Py,
                                target: inout Target,
                                index: Int,
-                               value: PyObject) -> PyResult<PyObject> {
+                               value: PyObject) -> PyResultGen<PyObject> {
     var index = index
 
     if index < 0 {
@@ -84,7 +84,7 @@ extension SetItemHelper {
   internal static func setItem(_ py: Py,
                                target: inout Target,
                                slice: PySlice,
-                               value: PyObject) -> PyResult<PyObject> {
+                               value: PyObject) -> PyResultGen<PyObject> {
     var indices: PySlice.AdjustedIndices
     switch slice.unpack(py) {
     case let .value(u): indices = u.adjust(toCount: target.count)
@@ -138,7 +138,7 @@ extension SetItemHelper {
                                          target: inout Target,
                                          start: Int,
                                          stop: Int,
-                                         value: PyObject) -> PyResult<PyObject> {
+                                         value: PyObject) -> PyResultGen<PyObject> {
     let source: SliceSource
     switch Self.getElementsToSetAtSliceIndices(py, object: value) {
     case let .value(e):

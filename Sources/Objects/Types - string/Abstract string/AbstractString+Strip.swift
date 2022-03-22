@@ -4,7 +4,7 @@ extension AbstractString {
 
   internal static func abstractStrip(_ py: Py,
                                      zelf: PyObject,
-                                     chars: PyObject?) -> PyResult<PyObject> {
+                                     chars: PyObject?) -> PyResultGen<PyObject> {
     return Self.template(py,
                          zelf: zelf,
                          chars: chars,
@@ -27,7 +27,7 @@ extension AbstractString {
 
   internal static func abstractLStrip(_ py: Py,
                                       zelf: PyObject,
-                                      chars: PyObject?) -> PyResult<PyObject> {
+                                      chars: PyObject?) -> PyResultGen<PyObject> {
     return Self.template(py,
                          zelf: zelf,
                          chars: chars,
@@ -48,7 +48,7 @@ extension AbstractString {
 
   internal static func abstractRStrip(_ py: Py,
                                       zelf: PyObject,
-                                      chars: PyObject?) -> PyResult<PyObject> {
+                                      chars: PyObject?) -> PyResultGen<PyObject> {
     return Self.template(py,
                          zelf: zelf,
                          chars: chars,
@@ -74,7 +74,7 @@ extension AbstractString {
     fnName: String,
     onStripWhitespace: (Self) -> Elements.SubSequence,
     onStripChars: (Self, Set<Element>) -> Elements.SubSequence
-  ) -> PyResult<PyObject> {
+  ) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
@@ -83,14 +83,14 @@ extension AbstractString {
     guard let chars = chars, !py.cast.isNone(chars) else {
       let result = onStripWhitespace(zelf)
       let resultObject = Self.newObject(py, elements: result)
-      return PyResult(resultObject)
+      return PyResultGen(resultObject)
     }
 
     if let charsElements = Self.getElements(py, object: chars) {
       let charsSet = Set(charsElements)
       let result = onStripChars(zelf, charsSet)
       let resultObject = Self.newObject(py, elements: result)
-      return PyResult(resultObject)
+      return PyResultGen(resultObject)
     }
 
     let selfType = Self.pythonTypeName

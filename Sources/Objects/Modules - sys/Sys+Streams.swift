@@ -10,13 +10,13 @@ extension Sys {
 
   /// `sys.__stdin__`
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
-  public func get__stdin__() -> PyResult<PyTextFile> {
+  public func get__stdin__() -> PyResultGen<PyTextFile> {
     return self.getTextFile(.__stdin__)
   }
 
   /// `sys.stdin`
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.stdin).
-  public func getStdin() -> PyResult<PyTextFile> {
+  public func getStdin() -> PyResultGen<PyTextFile> {
     return self.getTextFile(.stdin)
   }
 
@@ -28,13 +28,13 @@ extension Sys {
 
   /// sys.__stdout__
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
-  public func get__stdout__() -> PyResult<PyTextFile> {
+  public func get__stdout__() -> PyResultGen<PyTextFile> {
     return self.getTextFile(.__stdout__)
   }
 
   /// sys.stdout
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.stdin).
-  public func getStdout() -> PyResult<PyTextFile> {
+  public func getStdout() -> PyResultGen<PyTextFile> {
     return self.getTextFile(.stdout)
   }
 
@@ -46,13 +46,13 @@ extension Sys {
 
   /// sys.__stderr__
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
-  public func get__stderr__() -> PyResult<PyTextFile> {
+  public func get__stderr__() -> PyResultGen<PyTextFile> {
     return self.getTextFile(.__stderr__)
   }
 
   /// sys.stderr
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.stdin).
-  public func getStderr() -> PyResult<PyTextFile> {
+  public func getStderr() -> PyResultGen<PyTextFile> {
     return self.getTextFile(.stderr)
   }
 
@@ -109,7 +109,7 @@ extension Sys {
     case stdin
   }
 
-  public func getFile(stream: InputStream) -> PyResult<PyTextFile> {
+  public func getFile(stream: InputStream) -> PyResultGen<PyTextFile> {
     switch stream {
     case .__stdin__:
       return self.get__stdin__()
@@ -129,7 +129,7 @@ extension Sys {
     case stderr
   }
 
-  public func getFile(stream: OutputStream) -> PyResult<PyTextFile> {
+  public func getFile(stream: OutputStream) -> PyResultGen<PyTextFile> {
     switch stream {
     case .__stdout__:
       return self.get__stdout__()

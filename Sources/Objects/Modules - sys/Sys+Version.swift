@@ -10,7 +10,7 @@ extension Sys {
 
   /// sys.version
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.version).
-  public func getVersion() -> PyResult<PyObject> {
+  public func getVersion() -> PyResultGen<PyObject> {
     return self.get(.version)
   }
 
@@ -23,7 +23,7 @@ extension Sys {
   /// major, minor, micro, releaselevel, and serial.
   /// All values except releaselevel are integers;
   /// the release level is 'alpha', 'beta', 'candidate', or 'final'.
-  public func getVersionInfo() -> PyResult<PyObject> {
+  public func getVersionInfo() -> PyResultGen<PyObject> {
     return self.get(.version_info)
   }
 
@@ -38,7 +38,7 @@ extension Sys {
 
   /// sys.implementation
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.implementation).
-  public func getImplementation() -> PyResult<PyObject> {
+  public func getImplementation() -> PyResultGen<PyObject> {
     return self.get(.implementation)
   }
 
@@ -53,7 +53,7 @@ extension Sys {
 
   /// sys.hexversion
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.hexversion).
-  public func getHexVersion() -> PyResult<PyObject> {
+  public func getHexVersion() -> PyResultGen<PyObject> {
     return self.get(.hexversion)
   }
 

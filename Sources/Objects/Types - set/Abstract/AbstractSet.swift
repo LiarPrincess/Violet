@@ -25,7 +25,7 @@ internal protocol AbstractSet: PyObjectMixin {
   /// Create error when the `zelf` argument cast failed.
   static func invalidZelfArgument<T>(_ py: Py,
                                      _ object: PyObject,
-                                     _ fnName: String) -> PyResult<T>
+                                     _ fnName: String) -> PyResultGen<T>
 }
 
 extension AbstractSet {
@@ -43,7 +43,7 @@ extension AbstractSet {
 
   // MARK: - Get elements
 
-  internal static func getElements(_ py: Py, iterable: PyObject) -> PyResult<OrderedSet> {
+  internal static func getElements(_ py: Py, iterable: PyObject) -> PyResultGen<OrderedSet> {
     // Fast path for sets (since they already have hashed elements)
     if let set = py.cast.asExactlyAnySet(iterable) {
       return .value(set.elements)
@@ -95,7 +95,7 @@ extension AbstractSet {
 
   // MARK: - Create element
 
-  internal static func createElement(_ py: Py, object: PyObject) -> PyResult<Element> {
+  internal static func createElement(_ py: Py, object: PyObject) -> PyResultGen<Element> {
     switch py.hash(object: object) {
     case let .value(hash):
       let element = Element(hash: hash, object: object)

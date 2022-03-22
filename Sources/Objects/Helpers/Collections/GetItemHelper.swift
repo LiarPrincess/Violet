@@ -83,7 +83,7 @@ extension GetItemHelper {
 
   internal static func getItem(_ py: Py,
                                source: Source,
-                               index: Int) -> PyResult<Source.Element> {
+                               index: Int) -> PyResultGen<Source.Element> {
     var index = index
     if index < 0 {
       index += source.count
@@ -101,7 +101,7 @@ extension GetItemHelper {
 
   internal static func getSlice(_ py: Py,
                                 source: Source,
-                                slice: PySlice) -> PyResult<SliceBuilder.Result> {
+                                slice: PySlice) -> PyResultGen<SliceBuilder.Result> {
     let indices: PySlice.AdjustedIndices
     switch slice.unpack(py) {
     case let .value(u): indices = u.adjust(toCount: source.count)

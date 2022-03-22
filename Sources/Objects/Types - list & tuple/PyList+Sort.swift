@@ -12,7 +12,7 @@ extension PyList {
 
   internal func sort(_ py: Py,
                      key: PyObject?,
-                     isReverse: PyObject?) -> PyResult<PyObject> {
+                     isReverse: PyObject?) -> PyResultGen<PyObject> {
     let key = py.cast.isNilOrNone(key) ? nil : key
 
     guard let isReverse = isReverse else {
@@ -29,7 +29,7 @@ extension PyList {
 
   internal func sort(_ py: Py,
                      key: PyObject?,
-                     isReverse: Bool) -> PyResult<PyObject> {
+                     isReverse: Bool) -> PyResultGen<PyObject> {
     // Make list temporarily empty to detect any modifications made by 'key' fn.
     // CPython does the same:
     // >>> l = [1, 2, 3]
@@ -129,7 +129,7 @@ extension PyList {
   // 'static' to make sure we dont touch 'self.elements'
   private static func apply(_ py: Py,
                             elements: [PyObject],
-                            keyFn: PyObject?) -> PyResult<[ElementWithKey]> {
+                            keyFn: PyObject?) -> PyResultGen<[ElementWithKey]> {
     var result = [ElementWithKey]()
     result.reserveCapacity(elements.count)
 

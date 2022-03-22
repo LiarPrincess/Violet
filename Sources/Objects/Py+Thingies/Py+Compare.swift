@@ -71,7 +71,7 @@ extension CompareOp {
   /// PyObject_RichCompare(PyObject *v, PyObject *w, int op)
   fileprivate static func compare(_ py: Py,
                                   left: PyObject,
-                                  right: PyObject) -> PyResult<PyObject> {
+                                  right: PyObject) -> PyResultGen<PyObject> {
     var checkedReflected = false
 
     // Check if right is subtype of left, if so then use right.
@@ -119,7 +119,7 @@ extension CompareOp {
 
   private static func callCompare(_ py: Py,
                                   left: PyObject,
-                                  right: PyObject) -> PyResult<PyObject> {
+                                  right: PyObject) -> PyResultGen<PyObject> {
     // Fast path: we know the method at compile time
     switch self.callStatic(py, left: left, right: right) {
     case .value(let bool):
@@ -179,17 +179,17 @@ private enum EqualCompare: CompareOp {
 
 extension Py {
 
-  public func isEqual(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func isEqual(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     // Quick result when objects are the same.
     // Guarantees that identity implies equality.
     if left.ptr === right.ptr {
-      return PyResult(self.true)
+      return PyResultGen(self.true)
     }
 
     switch EqualCompare.compare(self, left: left, right: right) {
     case .value(let result):
       if self.cast.isNotImplemented(result) {
-        return PyResult(self.false)
+        return PyResultGen(self.false)
       }
 
       return .value(result)
@@ -200,7 +200,7 @@ extension Py {
   }
 
   /// `self.isEqual` + `self.asBool`
-  public func isEqualBool(left: PyObject, right: PyObject) -> PyResult<Bool> {
+  public func isEqualBool(left: PyObject, right: PyObject) -> PyResultGen<Bool> {
     let result = self.isEqual(left: left, right: right)
     return self.asBool(result)
   }
@@ -225,16 +225,16 @@ private enum NotEqualCompare: CompareOp {
 
 extension Py {
 
-  public func isNotEqual(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func isNotEqual(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     // Quick result when objects are the same.
     if left.ptr === right.ptr {
-      return PyResult(self.false)
+      return PyResultGen(self.false)
     }
 
     switch NotEqualCompare.compare(self, left: left, right: right) {
     case .value(let result):
       if self.cast.isNotImplemented(result) {
-        return PyResult(self.true)
+        return PyResultGen(self.true)
       }
 
       return .value(result)
@@ -244,7 +244,7 @@ extension Py {
     }
   }
 
-  public func isNotEqualBool(left: PyObject, right: PyObject) -> PyResult<Bool> {
+  public func isNotEqualBool(left: PyObject, right: PyObject) -> PyResultGen<Bool> {
     return self.asBool(self.isNotEqual(left: left, right: right))
   }
 }
@@ -268,7 +268,7 @@ private enum LessCompare: CompareOp {
 
 extension Py {
 
-  public func isLess(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func isLess(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     switch LessCompare.compare(self, left: left, right: right) {
     case .value(let result):
       if self.cast.isNotImplemented(result) {
@@ -281,7 +281,7 @@ extension Py {
     }
   }
 
-  public func isLessBool(left: PyObject, right: PyObject) -> PyResult<Bool> {
+  public func isLessBool(left: PyObject, right: PyObject) -> PyResultGen<Bool> {
     return self.asBool(self.isLess(left: left, right: right))
   }
 }
@@ -305,7 +305,7 @@ private enum LessEqualCompare: CompareOp {
 
 extension Py {
 
-  public func isLessEqual(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func isLessEqual(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     switch LessEqualCompare.compare(self, left: left, right: right) {
     case .value(let result):
       if self.cast.isNotImplemented(result) {
@@ -318,7 +318,7 @@ extension Py {
     }
   }
 
-  public func isLessEqualBool(left: PyObject, right: PyObject) -> PyResult<Bool> {
+  public func isLessEqualBool(left: PyObject, right: PyObject) -> PyResultGen<Bool> {
     return self.asBool(self.isLessEqual(left: left, right: right))
   }
 }
@@ -342,7 +342,7 @@ private enum GreaterCompare: CompareOp {
 
 extension Py {
 
-  public func isGreater(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func isGreater(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     switch GreaterCompare.compare(self, left: left, right: right) {
     case .value(let result):
       if self.cast.isNotImplemented(result) {
@@ -355,7 +355,7 @@ extension Py {
     }
   }
 
-  public func isGreaterBool(left: PyObject, right: PyObject) -> PyResult<Bool> {
+  public func isGreaterBool(left: PyObject, right: PyObject) -> PyResultGen<Bool> {
     return self.asBool(self.isGreater(left: left, right: right))
   }
 }
@@ -379,7 +379,7 @@ private enum GreaterEqualCompare: CompareOp {
 
 extension Py {
 
-  public func isGreaterEqual(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func isGreaterEqual(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     switch GreaterEqualCompare.compare(self, left: left, right: right) {
     case .value(let result):
       if self.cast.isNotImplemented(result) {
@@ -392,7 +392,7 @@ extension Py {
     }
   }
 
-  public func isGreaterEqualBool(left: PyObject, right: PyObject) -> PyResult<Bool> {
+  public func isGreaterEqualBool(left: PyObject, right: PyObject) -> PyResultGen<Bool> {
     return self.asBool(self.isGreaterEqual(left: left, right: right))
   }
 }
@@ -403,14 +403,14 @@ extension Py {
 
   private func notSupported(_ op: String,
                             left: PyObject,
-                            right: PyObject) -> PyResult<PyObject> {
+                            right: PyObject) -> PyResultGen<PyObject> {
     let l = left.typeName
     let r = right.typeName
     let message = "'\(op)' not supported between instances of '\(l)' and '\(r)'"
     return .typeError(self, message: message)
   }
 
-  private func asBool(_ result: PyResult<PyObject>) -> PyResult<Bool> {
+  private func asBool(_ result: PyResultGen<PyObject>) -> PyResultGen<Bool> {
     // Try this:
     //
     // >>> class C():

@@ -67,13 +67,13 @@ public struct PyModule: PyObjectMixin {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.getDict(py)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   internal func getDict(_ py: Py) -> PyDict {
@@ -89,14 +89,14 @@ public struct PyModule: PyObjectMixin {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
     switch zelf.getNameString(py) {
     case .string(let s):
-      return PyResult(py, interned: "<module \(s)>")
+      return PyResultGen(py, interned: "<module \(s)>")
     case .stringConversionFailed(_, let e):
       return .error(e)
     case .namelessModule:
@@ -109,7 +109,7 @@ public struct PyModule: PyObjectMixin {
 
   /// PyObject*
   /// PyModule_GetNameObject(PyObject *m)
-  internal func getName(_ py: Py) -> PyResult<PyObject> {
+  internal func getName(_ py: Py) -> PyResultGen<PyObject> {
     if let object = self.getNameObjectOrNil(py) {
       return .value(object)
     }
@@ -152,7 +152,7 @@ public struct PyModule: PyObjectMixin {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResult<PyObject> {
+                                        name: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -160,7 +160,7 @@ public struct PyModule: PyObjectMixin {
     return zelf.getAttribute(py, name: name)
   }
 
-  internal func getAttribute(_ py: Py, name: PyObject) -> PyResult<PyObject> {
+  internal func getAttribute(_ py: Py, name: PyObject) -> PyResultGen<PyObject> {
     switch AttributeHelper.extractName(py, name: name) {
     case let .value(n):
       return self.getAttribute(py, name: n)
@@ -171,7 +171,7 @@ public struct PyModule: PyObjectMixin {
 
   /// static PyObject*
   /// module_getattro(PyModuleObject *m, PyObject *name)
-  internal func getAttribute(_ py: Py, name: PyString) -> PyResult<PyObject> {
+  internal func getAttribute(_ py: Py, name: PyString) -> PyResultGen<PyObject> {
     let selfObject = self.asObject
     let attribute = AttributeHelper.getAttribute(py, object: selfObject, name: name)
 
@@ -217,7 +217,7 @@ public struct PyModule: PyObjectMixin {
   internal static func __setattr__(_ py: Py,
                                    zelf: PyObject,
                                    name: PyObject,
-                                   value: PyObject?) -> PyResult<PyObject> {
+                                   value: PyObject?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__setattr__")
     }
@@ -227,7 +227,7 @@ public struct PyModule: PyObjectMixin {
 
   internal func setAttribute(_ py: Py,
                              name: PyObject,
-                             value: PyObject?) -> PyResult<PyObject> {
+                             value: PyObject?) -> PyResultGen<PyObject> {
     switch AttributeHelper.extractName(py, name: name) {
     case let .value(n):
       return self.setAttribute(py, name: n, value: value)
@@ -238,7 +238,7 @@ public struct PyModule: PyObjectMixin {
 
   internal func setAttribute(_ py: Py,
                              name: PyString,
-                             value: PyObject?) -> PyResult<PyObject> {
+                             value: PyObject?) -> PyResultGen<PyObject> {
     let selfObject = self.asObject
     return AttributeHelper.setAttribute(py,
                                         object: selfObject,
@@ -251,7 +251,7 @@ public struct PyModule: PyObjectMixin {
   // sourcery: pymethod = __delattr__
   internal static func __delattr__(_ py: Py,
                                    zelf: PyObject,
-                                   name: PyObject) -> PyResult<PyObject> {
+                                   name: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__delattr__")
     }
@@ -269,7 +269,7 @@ public struct PyModule: PyObjectMixin {
   // MARK: - Dir
 
   // sourcery: pymethod = __dir__
-  internal static func __dir__(_ py: Py, zelf: PyObject) -> PyResult<DirResult> {
+  internal static func __dir__(_ py: Py, zelf: PyObject) -> PyResultGen<DirResult> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dir__")
     }
@@ -308,9 +308,9 @@ public struct PyModule: PyObjectMixin {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResult<PyObject> {
+                               kwargs: PyDict?) -> PyResultGen<PyObject> {
     let result = py.memory.newModule(py, type: type, name: nil, doc: nil, __dict__: nil)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   // MARK: - Python init
@@ -324,7 +324,7 @@ public struct PyModule: PyObjectMixin {
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResult<PyObject> {
+                                kwargs: PyDict?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }

@@ -91,7 +91,7 @@ extension UnderscoreWarnings {
 
   /// static PyObject*
   /// get_filter(PyObject *category, PyObject *text, Py_ssize_t lineno,
-  private func getFilter(warning: Warning) -> PyResult<Filter> {
+  private func getFilter(warning: Warning) -> PyResultGen<Filter> {
     let filters: PyList
     switch self.getFilters() {
     case let .value(f): filters = f
@@ -125,7 +125,7 @@ extension UnderscoreWarnings {
     return defaultAction.map { Filter(action: $0, object: .none) }
   }
 
-  private func isApplicable(filter: PyTuple, warning: Warning) -> PyResult<Bool> {
+  private func isApplicable(filter: PyTuple, warning: Warning) -> PyResultGen<Bool> {
     assert(filter.elements.count == 5)
 
     let filterMessage = filter.elements[1]
@@ -164,7 +164,7 @@ extension UnderscoreWarnings {
   /// static int
   /// check_matched(PyObject *obj, PyObject *arg)
   private func compareStringOrNone(filter object: PyObject,
-                                   arg: PyObject) -> PyResult<Bool> {
+                                   arg: PyObject) -> PyResultGen<Bool> {
     // A 'None' filter always matches
     if self.py.cast.isNone(object) {
       return .value(true)
@@ -180,7 +180,7 @@ extension UnderscoreWarnings {
   }
 
   private func compareLine(filter object: PyObject,
-                           arg: PyInt) -> PyResult<Bool> {
+                           arg: PyInt) -> PyResultGen<Bool> {
     guard let int = self.py.cast.asInt(object) else {
       let message = "filter line must be an int, not \(object.typeName)"
       return .typeError(self.py, message: message)
@@ -200,7 +200,7 @@ extension UnderscoreWarnings {
   /// static int
   /// already_warned(PyObject *registry, PyObject *key, int should_set)
   private func hasAlreadyWarned(registry: WarningRegistry,
-                                key: PyTuple) -> PyResult<Bool> {
+                                key: PyTuple) -> PyResultGen<Bool> {
     assert(key.elements.count == 3, "It should be: text, category, line")
     switch registry {
     case .dict(let dict):

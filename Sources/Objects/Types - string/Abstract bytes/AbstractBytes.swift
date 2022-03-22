@@ -99,7 +99,7 @@ extension AbstractBytes {
   internal static func abstract__repr__(_ py: Py,
                                         zelf: PyObject,
                                         prefix: String,
-                                        suffix: String) -> PyResult<PyObject> {
+                                        suffix: String) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
@@ -110,7 +110,7 @@ extension AbstractBytes {
   /// static PyObject *
   /// bytes_str(PyObject *op)
   internal static func abstract__str__(_ py: Py,
-                                       zelf: PyObject) -> PyResult<PyObject> {
+                                       zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__str__")
     }
@@ -125,7 +125,7 @@ extension AbstractBytes {
   private static func toString(_ py: Py,
                                zelf: Self,
                                prefix: String,
-                               suffix: String) -> PyResult<PyObject> {
+                               suffix: String) -> PyResultGen<PyObject> {
     var result = prefix + "'"
     result.reserveCapacity(zelf.count + 1 + suffix.count)
 
@@ -156,7 +156,7 @@ extension AbstractBytes {
 
     result.append("'")
     result.append(suffix)
-    return PyResult(py, result)
+    return PyResultGen(py, result)
   }
 
   private static func hex(_ value: UInt8) -> String {
@@ -202,7 +202,7 @@ extension AbstractBytes {
   // MARK: - As byte
 
   /// Helper for extracting a single byte.
-  internal static func asByte(_ py: Py, object: PyObject) -> PyResult<UInt8> {
+  internal static func asByte(_ py: Py, object: PyObject) -> PyResultGen<UInt8> {
     let pyInt: PyInt
 
     switch IndexHelper.pyInt(py, object: object) {

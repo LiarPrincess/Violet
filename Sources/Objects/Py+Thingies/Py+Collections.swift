@@ -29,7 +29,7 @@ extension Py {
   }
 
   /// PyObject * PyList_AsTuple(PyObject *v)
-  public func newTuple(list object: PyObject) -> PyResult<PyTuple> {
+  public func newTuple(list object: PyObject) -> PyResultGen<PyTuple> {
     guard let list = self.cast.asList(object) else {
       let message = "expected tuple, but received a '\(object.typeName)'"
       return .typeError(self, message: message)
@@ -43,7 +43,7 @@ extension Py {
     return self.newTuple(elements: list.elements)
   }
 
-  public func newTuple(iterable: PyObject) -> PyResult<PyTuple> {
+  public func newTuple(iterable: PyObject) -> PyResultGen<PyTuple> {
     let array = self.toArray(iterable: iterable)
     return array.map(self.newTuple)
   }
@@ -66,7 +66,7 @@ extension Py {
     return self.memory.newList(self, type: type, elements: elements)
   }
 
-  public func newList(iterable: PyObject) -> PyResult<PyList> {
+  public func newList(iterable: PyObject) -> PyResultGen<PyList> {
     let array = self.toArray(iterable: iterable)
     return array.map(self.newList)
   }
@@ -110,12 +110,12 @@ extension Py {
   }
 
   /// PyObject * PySet_New(PyObject *iterable)
-  public func newSet(elements args: [PyObject]) -> PyResult<PySet> {
+  public func newSet(elements args: [PyObject]) -> PyResultGen<PySet> {
     let elements = self.asSetElements(args: args)
     return elements.map(self.newSet(elements:))
   }
 
-  private func asSetElements(args: [PyObject]) -> PyResult<PySet.OrderedSet> {
+  private func asSetElements(args: [PyObject]) -> PyResultGen<PySet.OrderedSet> {
     var result = PySet.OrderedSet(count: args.count)
 
     for object in args {
@@ -178,7 +178,7 @@ extension Py {
     return self.memory.newFrozenSet(self, type: type, elements: elements)
   }
 
-  public func newFrozenSet(elements args: [PyObject]) -> PyResult<PyFrozenSet> {
+  public func newFrozenSet(elements args: [PyObject]) -> PyResultGen<PyFrozenSet> {
     let elements = self.asSetElements(args: args)
     return elements.map(self.newFrozenSet(elements:))
   }
@@ -210,7 +210,7 @@ extension Py {
     }
   }
 
-  public func newDict(elements: [DictionaryElement]) -> PyResult<PyDict> {
+  public func newDict(elements: [DictionaryElement]) -> PyResultGen<PyDict> {
     let result = self.newDict()
 
     for element in elements {
@@ -226,7 +226,7 @@ extension Py {
     return .value(result)
   }
 
-  public func newDict(keys: PyTuple, elements: [PyObject]) -> PyResult<PyDict> {
+  public func newDict(keys: PyTuple, elements: [PyObject]) -> PyResultGen<PyDict> {
     guard keys.elements.count == elements.count else {
       let message = "bad 'dictionary(keyTuple:elements:)' keys argument"
       return .valueError(self, message: message)
@@ -341,23 +341,23 @@ extension Py {
 
   // MARK: - Range
 
-  public func newRange(stop: BigInt) -> PyResult<PyRange> {
+  public func newRange(stop: BigInt) -> PyResultGen<PyRange> {
     return self.newRange(stop: self.newInt(stop))
   }
 
-  public func newRange(stop: PyInt) -> PyResult<PyRange> {
+  public func newRange(stop: PyInt) -> PyResultGen<PyRange> {
     let start = self.newInt(0)
     return self.newRange(start: start, stop: stop, step: nil)
   }
 
-  public func newRange(stop: PyObject) -> PyResult<PyRange> {
+  public func newRange(stop: PyObject) -> PyResultGen<PyRange> {
     let extracted = self.extractRangeProperty(stop)
     return extracted.flatMap(self.newRange(stop:))
   }
 
   public func newRange(start: BigInt,
                        stop: BigInt,
-                       step: BigInt?) -> PyResult<PyRange> {
+                       step: BigInt?) -> PyResultGen<PyRange> {
     return self.newRange(
       start: self.newInt(start),
       stop: self.newInt(stop),
@@ -367,7 +367,7 @@ extension Py {
 
   public func newRange(start: PyInt,
                        stop: PyInt,
-                       step: PyInt?) -> PyResult<PyRange> {
+                       step: PyInt?) -> PyResultGen<PyRange> {
     if let s = step, s.value == 0 {
       let error = self.newInvalidRangeStepError()
       return .error(error.asBaseException)
@@ -389,7 +389,7 @@ extension Py {
 
   public func newRange(start: PyObject,
                        stop: PyObject,
-                       step: PyObject?) -> PyResult<PyRange> {
+                       step: PyObject?) -> PyResultGen<PyRange> {
     let parsedStart: PyInt
     switch self.extractRangeProperty(start) {
     case let .value(i): parsedStart = i
@@ -415,7 +415,7 @@ extension Py {
     return self.newRange(start: parsedStart, stop: parsedStop, step: parsedStep)
   }
 
-  private func extractRangeProperty(_ object: PyObject) -> PyResult<PyInt> {
+  private func extractRangeProperty(_ object: PyObject) -> PyResultGen<PyInt> {
     // If we are already 'PyInt' then we have to use EXACTLY this value!
     // >>> i = 2**60 # <-- high value to skip interned values (small int cache)
     // >>> assert range(i).stop is i
@@ -449,13 +449,13 @@ extension Py {
   // MARK: - Enumerate
 
   public func newEnumerate(iterable: PyObject,
-                           initialIndex: Int) -> PyResult<PyEnumerate> {
+                           initialIndex: Int) -> PyResultGen<PyEnumerate> {
     let bigIndex = BigInt(initialIndex)
     return self.newEnumerate(iterable: iterable, initialIndex: bigIndex)
   }
 
   public func newEnumerate(iterable: PyObject,
-                           initialIndex: BigInt) -> PyResult<PyEnumerate> {
+                           initialIndex: BigInt) -> PyResultGen<PyEnumerate> {
     let iterator: PyObject
     switch self.iter(object: iterable) {
     case let .value(i): iterator = i
@@ -494,9 +494,9 @@ extension Py {
 
   /// len(s)
   /// See [this](https://docs.python.org/3/library/functions.html#len)
-  public func length(iterable: PyObject) -> PyResult<PyObject> {
+  public func length(iterable: PyObject) -> PyResultGen<PyObject> {
     if let result = PyStaticCall.__len__(self, object: iterable) {
-      return PyResult(result)
+      return PyResultGen(result)
     }
 
     switch self.callMethod(object: iterable, selector: .__len__) {
@@ -511,7 +511,7 @@ extension Py {
     }
   }
 
-  public func lengthPyInt(iterable: PyObject) -> PyResult<PyInt> {
+  public func lengthPyInt(iterable: PyObject) -> PyResultGen<PyInt> {
     switch self.length(iterable: iterable) {
     case let .value(object):
       guard let result = self.cast.asInt(object) else {
@@ -534,7 +534,7 @@ extension Py {
     return dict.elements.count
   }
 
-  public func lengthInt(iterable: PyObject) -> PyResult<Int> {
+  public func lengthInt(iterable: PyObject) -> PyResultGen<Int> {
     switch self.lengthPyInt(iterable: iterable) {
     case let .value(pyInt):
       guard let int = Int(exactly: pyInt.value) else {
@@ -554,14 +554,14 @@ extension Py {
   ///
   /// int
   /// PySequence_Contains(PyObject *seq, PyObject *ob)
-  public func contains(iterable: PyObject, object: PyObject) -> PyResult<PyObject> {
+  public func contains(iterable: PyObject, object: PyObject) -> PyResultGen<PyObject> {
     if let result = PyStaticCall.__contains__(self, object: iterable, element: object) {
-      return PyResult(result)
+      return PyResultGen(result)
     }
 
     switch self.callMethod(object: iterable, selector: .__contains__, arg: object) {
     case .value(let o):
-      return PyResult(o)
+      return PyResultGen(o)
     case .missingMethod:
       break // try other things
     case .error(let e),
@@ -574,7 +574,7 @@ extension Py {
 
   /// Py_ssize_t
   /// _PySequence_IterSearch(PyObject *seq, PyObject *obj, int operation)
-  private func iterSearch(iterable: PyObject, object: PyObject) -> PyResult<PyObject> {
+  private func iterSearch(iterable: PyObject, object: PyObject) -> PyResultGen<PyObject> {
     let result = self.reduce(iterable: iterable, initial: false) { _, object in
       switch self.isEqualBool(left: object, right: object) {
       case .value(true): return .finish(true)
@@ -588,7 +588,7 @@ extension Py {
 
   /// Does this `iterable` contain all of the elments from other iterable?
   public func contains(iterable: PyObject,
-                       allFrom subset: PyObject) -> PyResult<Bool> {
+                       allFrom subset: PyObject) -> PyResultGen<Bool> {
     // Iterate 'subset' and check if every element is in 'iterable'.
     return self.reduce(iterable: subset, initial: true) { _, object in
       switch self.contains(iterable: iterable, object: object) {
@@ -610,7 +610,7 @@ extension Py {
   /// sorted(iterable, *, key=None, reverse=False)
   /// See [this](https://docs.python.org/3/library/functions.html#sorted)
   internal func sorted(iterable: PyObject,
-                       kwargs: PyDict?) -> PyResult<PyList> {
+                       kwargs: PyDict?) -> PyResultGen<PyList> {
     switch self.newList(iterable: iterable) {
     case let .value(list):
       let listObject = list.asObject
@@ -627,7 +627,7 @@ extension Py {
 
   /// In various places (for example: `min`, `max`, `list.sort`) we need to
   /// 'select given key'.
-  internal func selectKey(object: PyObject, key: PyObject?) -> PyResult<PyObject> {
+  internal func selectKey(object: PyObject, key: PyObject?) -> PyResultGen<PyObject> {
     guard let key = key else {
       return .value(object)
     }

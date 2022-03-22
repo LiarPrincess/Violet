@@ -53,7 +53,7 @@ public final class UnderscoreImp: PyModuleImplementation {
 
   // MARK: - Spec helpers
 
-  internal func getName(spec: PyObject) -> PyResult<PyString> {
+  internal func getName(spec: PyObject) -> PyResultGen<PyString> {
     switch self.py.getAttribute(object: spec, name: .name) {
     case let .value(object):
       guard let str = self.py.cast.asString(object) else {
@@ -67,7 +67,7 @@ public final class UnderscoreImp: PyModuleImplementation {
     }
   }
 
-  internal func getPath(spec: PyObject) -> PyResult<PyString> {
+  internal func getPath(spec: PyObject) -> PyResultGen<PyString> {
     switch self.py.getAttribute(object: spec, name: .origin) {
     case let .value(object):
       guard let str = self.py.cast.asString(object) else {

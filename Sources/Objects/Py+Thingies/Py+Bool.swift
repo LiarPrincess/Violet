@@ -22,7 +22,7 @@ extension Py {
   /// Equivalent of 'not v'.
   ///
   /// int PyObject_Not(PyObject *v)
-  public func not(object: PyObject) -> PyResult<PyBool> {
+  public func not(object: PyObject) -> PyResultGen<PyBool> {
     switch self.isTrueBool(object: object) {
     case let .value(b):
       let result = self.newBool(!b)
@@ -32,7 +32,7 @@ extension Py {
     }
   }
 
-  public func notBool(object: PyObject) -> PyResult<Bool> {
+  public func notBool(object: PyObject) -> PyResultGen<Bool> {
     switch self.isTrueBool(object: object) {
     case let .value(b):
       return .value(!b)
@@ -44,7 +44,7 @@ extension Py {
   // MARK: - Is true
 
   /// Test a value used as condition, e.g.,  `if`  or `in` statement.
-  public func isTrue(object: PyObject) -> PyResult<PyBool> {
+  public func isTrue(object: PyObject) -> PyResultGen<PyBool> {
     switch self.isTrueBool(object: object) {
     case let .value(b):
       let result = self.newBool(b)
@@ -60,7 +60,7 @@ extension Py {
 
   /// PyObject_IsTrue(PyObject *v)
   /// slot_nb_bool(PyObject *self)
-  public func isTrueBool(object: PyObject) -> PyResult<Bool> {
+  public func isTrueBool(object: PyObject) -> PyResultGen<Bool> {
     if self.cast.isNone(object) {
       return .value(false)
     }
@@ -100,7 +100,7 @@ extension Py {
     }
   }
 
-  private func interpret__bool__(bool: PyResult<PyObject>) -> PyResult<Bool> {
+  private func interpret__bool__(bool: PyResultGen<PyObject>) -> PyResultGen<Bool> {
     switch bool {
     case let .value(b):
       return self.interpret__bool__(bool: b)
@@ -109,7 +109,7 @@ extension Py {
     }
   }
 
-  private func interpret__bool__(bool object: PyObject) -> PyResult<Bool> {
+  private func interpret__bool__(bool object: PyObject) -> PyResultGen<Bool> {
     if let pyBool = self.cast.asBool(object) {
       return .value(pyBool.isTrue)
     }
@@ -118,7 +118,7 @@ extension Py {
     return .typeError(self, message: message)
   }
 
-  private func interpret__len__asBool(len: PyResult<PyObject>) -> PyResult<Bool> {
+  private func interpret__len__asBool(len: PyResultGen<PyObject>) -> PyResultGen<Bool> {
     switch len {
     case let .value(l):
       return self.interpret__len__asBool(len: l)
@@ -127,7 +127,7 @@ extension Py {
     }
   }
 
-  private func interpret__len__asBool(len: PyObject) -> PyResult<Bool> {
+  private func interpret__len__asBool(len: PyObject) -> PyResultGen<Bool> {
     // Do you even 'int', bro?
     let bigInt: BigInt
     switch IndexHelper.pyInt(self, object: len) {

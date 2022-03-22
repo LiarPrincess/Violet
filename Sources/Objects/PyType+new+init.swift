@@ -38,7 +38,7 @@ extension PyType {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResult<PyObject> {
+                               kwargs: PyDict?) -> PyResultGen<PyObject> {
     // Special case: type(x) should return x->ob_type
     if type === py.types.type {
       let hasSingleArg = args.count == 1
@@ -46,7 +46,7 @@ extension PyType {
 
       if hasSingleArg && noKwargs {
         let result = args[0].type
-        return PyResult(result)
+        return PyResultGen(result)
       }
 
       if args.count != 3 {
@@ -103,7 +103,7 @@ extension PyType {
   internal static func guaranteeAllBasesAreTypes(
     _ py: Py,
     bases: PyTuple
-  ) -> PyResult<[PyType]> {
+  ) -> PyResultGen<[PyType]> {
     var result = [PyType]()
     result.reserveCapacity(bases.elements.count)
 
@@ -126,7 +126,7 @@ extension PyType {
 
   /// static PyObject *
   /// type_new(PyTypeObject *metatype, PyObject *args, PyObject *kwds)
-  private static func __new__(_ py: Py, args: PyTypeNewArgs) -> PyResult<PyObject> {
+  private static func __new__(_ py: Py, args: PyTypeNewArgs) -> PyResultGen<PyObject> {
     let base: PyType
     var bases = args.bases
     var metatype = args.metatype
@@ -266,7 +266,7 @@ extension PyType {
   /// _PyType_CalculateMetaclass(PyTypeObject *metatype, PyObject *bases)
   internal static func calculateMetaclass(_ py: Py,
                                           metatype: PyType,
-                                          bases: [PyType]) -> PyResult<PyType> {
+                                          bases: [PyType]) -> PyResultGen<PyType> {
     var winner = metatype
     for tmp in bases {
       let tmpType = tmp.type
@@ -307,7 +307,7 @@ extension PyType {
   ///
   /// static PyTypeObject *
   /// best_base(PyObject *bases)
-  private static func getSolidBase(_ py: Py, bases: [PyType]) -> PyResult<PyType> {
+  private static func getSolidBase(_ py: Py, bases: [PyType]) -> PyResultGen<PyType> {
     assert(bases.any)
 
     var result: PyType?
@@ -487,18 +487,18 @@ extension PyType {
   /// This method will be called when we get `__dict__` property
   /// on heap type instance.
   private static func getHeapType__dict__(_ py: Py,
-                                          zelf: PyObject) -> PyResult<PyObject> {
+                                          zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.getDict(py)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   private static func setHeapType__dict__(_ py: Py,
                                           zelf: PyObject,
-                                          value: PyObject) -> PyResult<PyObject> {
+                                          value: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
@@ -513,7 +513,7 @@ extension PyType {
   }
 
   private static func delHeapType__dict__(_ py: Py,
-                                          zelf: PyObject) -> PyResult<PyObject> {
+                                          zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = py.cast.asType(zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
@@ -669,7 +669,7 @@ extension PyType {
   internal static  func __init__(_ py: Py,
                                  zelf: PyObject,
                                  args: [PyObject],
-                                 kwargs: PyDict?) -> PyResult<PyObject> {
+                                 kwargs: PyDict?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }

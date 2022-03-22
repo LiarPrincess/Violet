@@ -18,9 +18,9 @@ extension UnderscoreImp {
     On platforms without threads, return False.
     """
 
-  internal static func lock_held(_ py: Py, module: PyObject) -> PyResult<PyObject> {
+  internal static func lock_held(_ py: Py, module: PyObject) -> PyResultGen<PyObject> {
     let result = py._imp.lockHeld()
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   /// static PyObject *
@@ -42,7 +42,7 @@ extension UnderscoreImp {
     modules. On platforms without threads, this function does nothing.
     """
 
-  internal static func acquire_lock(_ py: Py, module: PyObject) -> PyResult<PyObject> {
+  internal static func acquire_lock(_ py: Py, module: PyObject) -> PyResultGen<PyObject> {
     py._imp.acquireLock()
     return .none(py)
   }
@@ -64,7 +64,7 @@ extension UnderscoreImp {
     On platforms without threads, this function does nothing.
     """
 
-  internal static func release_lock(_ py: Py, module: PyObject) -> PyResult<PyObject> {
+  internal static func release_lock(_ py: Py, module: PyObject) -> PyResultGen<PyObject> {
     py._imp.releaseLock()
     return .none(py)
   }

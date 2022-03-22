@@ -11,7 +11,7 @@ extension Py {
   ///
   /// Py_hash_t PyObject_Hash(PyObject *v)
   /// slot_tp_hash(PyObject *self)
-  public func hash(object: PyObject) -> PyResult<PyHash> {
+  public func hash(object: PyObject) -> PyResultGen<PyHash> {
     if let result = PyStaticCall.__hash__(self, object: object) {
       switch result {
       case let .value(hash):

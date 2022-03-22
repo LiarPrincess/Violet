@@ -19,14 +19,14 @@ extension Sys {
     """
   internal static func intern(_ py: Py,
                               module: PyObject,
-                              string: PyObject) -> PyResult<PyObject> {
+                              string: PyObject) -> PyResultGen<PyObject> {
     let result = py.sys.intern(string)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   /// sys.intern(string)
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.intern).
-  public func intern(_ value: PyObject) -> PyResult<PyString> {
+  public func intern(_ value: PyObject) -> PyResultGen<PyString> {
     guard let str = self.py.cast.asString(value) else {
       let message = "intern() argument 1 must be str, not \(value.typeName)"
       return .typeError(self.py, message: message)
@@ -58,7 +58,7 @@ extension Sys {
 
   internal static func exit(_ py: Py,
                             module: PyObject,
-                            status: PyObject?) -> PyResult<PyObject> {
+                            status: PyObject?) -> PyResultGen<PyObject> {
     let error = py.sys.exit(status: status)
     return .error(error)
   }
@@ -70,7 +70,7 @@ extension Sys {
     return error.asBaseException
   }
 
-  public func getExit() -> PyResult<PyObject> {
+  public func getExit() -> PyResultGen<PyObject> {
     return self.get(.exit)
   }
 
@@ -84,9 +84,9 @@ extension Sys {
     """
 
   internal static func getdefaultencoding(_ py: Py,
-                                          module: PyObject) -> PyResult<PyObject> {
+                                          module: PyObject) -> PyResultGen<PyObject> {
     let result = py.sys.defaultEncoding
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   // MARK: - Recursion limit
@@ -100,9 +100,9 @@ extension Sys {
     """
 
   internal static func getrecursionlimit(_ py: Py,
-                                         module: PyObject) -> PyResult<PyObject> {
+                                         module: PyObject) -> PyResultGen<PyObject> {
     let result = py.sys.recursionLimit
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   internal static let setRecursionLimitDoc = """
@@ -116,7 +116,7 @@ extension Sys {
 
   internal static func setrecursionlimit(_ py: Py,
                                          module: PyObject,
-                                         limit: PyObject) -> PyResult<PyObject> {
+                                         limit: PyObject) -> PyResultGen<PyObject> {
     if let error = py.sys.setRecursionLimit(limit) {
       return .error(error)
     }
@@ -148,14 +148,14 @@ extension Sys {
 
   // MARK: - Traceback limit
 
-  internal static func tracebacklimit(_ py: Py, module: PyObject) -> PyResult<PyObject> {
+  internal static func tracebacklimit(_ py: Py, module: PyObject) -> PyResultGen<PyObject> {
     let result = py.sys.getTracebackLimit()
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   /// sys.tracebacklimit
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.tracebacklimit).
-  public func getTracebackLimit() -> PyResult<PyInt> {
+  public func getTracebackLimit() -> PyResultGen<PyInt> {
     return self.getInt(.tracebacklimit)
   }
 
@@ -175,22 +175,22 @@ extension Sys {
 
   internal static func _getframe(_ py: Py,
                                  module: PyObject,
-                                 depth: PyObject?) -> PyResult<PyObject> {
+                                 depth: PyObject?) -> PyResultGen<PyObject> {
     let result = py.sys.getFrame(depth: depth)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
 
   /// sys._getframe([depth])
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys._getframe).
-  internal func getFrame(depth: PyObject?) -> PyResult<PyFrame> {
+  internal func getFrame(depth: PyObject?) -> PyResultGen<PyFrame> {
     switch self.parseFrameDepth(object: depth) {
     case let .value(d): return self.getFrame(depth: d)
     case let .error(e): return .error(e)
     }
   }
 
-  internal func getFrame(depth: BigInt) -> PyResult<PyFrame> {
+  internal func getFrame(depth: BigInt) -> PyResultGen<PyFrame> {
     guard let initialFrame = self.py.delegate.frame else {
       return .runtimeError(self.py, message: "_getFrame(): no current frame")
     }
@@ -209,7 +209,7 @@ extension Sys {
     return .value(result)
   }
 
-  private func parseFrameDepth(object: PyObject?) -> PyResult<BigInt> {
+  private func parseFrameDepth(object: PyObject?) -> PyResultGen<BigInt> {
     guard let object = object else {
       return .value(-1)
     }

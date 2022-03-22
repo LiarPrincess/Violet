@@ -90,7 +90,7 @@ extension AbstractString {
   private static func getInvalidZelfArgumentError(_ py: Py,
                                                   zelf: PyObject,
                                                   fnName: String) -> PyBaseException {
-    let result: PyResult<Int> = Self.invalidZelfArgument(py, zelf, fnName)
+    let result: PyResultGen<Int> = Self.invalidZelfArgument(py, zelf, fnName)
     switch result {
     case .value:
       trap("Expected 'Self.invalidZelfArgument' to return error.")

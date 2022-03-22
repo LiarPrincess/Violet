@@ -112,7 +112,7 @@ extension PyDict {
   /// Given iterable of 2 elements it will return
   /// `iterable[0]` as key and `iterable[1]` as value.
   private func unpackKeyValuePair(_ py: Py,
-                                  iterable: PyObject) -> PyResult<KeyValue> {
+                                  iterable: PyObject) -> PyResultGen<KeyValue> {
     struct Tmp {
       var key: Key?
       var value: PyObject?

@@ -1,7 +1,7 @@
 extension AbstractSequence {
 
   internal static func abstractJoinElementsForRepr(_ py: Py,
-                                                   zelf: Self) -> PyResult<String> {
+                                                   zelf: Self) -> PyResultGen<String> {
     var result = ""
     for element in zelf.elements {
       if !result.isEmpty {

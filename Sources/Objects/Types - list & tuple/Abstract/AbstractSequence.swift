@@ -23,7 +23,7 @@ internal protocol AbstractSequence: PyObjectMixin {
   /// Create error when the `zelf` argument cast failed.
   static func invalidZelfArgument<T>(_ py: Py,
                                      _ object: PyObject,
-                                     _ fnName: String) -> PyResult<T>
+                                     _ fnName: String) -> PyResultGen<T>
 }
 
 extension AbstractSequence {

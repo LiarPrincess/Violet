@@ -43,7 +43,7 @@ extension UnderscoreWarnings {
                               filename: PyString,
                               lineNo: PyInt,
                               module moduleArg: PyString?,
-                              source: PyObject?) -> PyResult<Warning> {
+                              source: PyObject?) -> PyResultGen<Warning> {
     // swiftlint:enable function_parameter_count
 
     let text: PyObject

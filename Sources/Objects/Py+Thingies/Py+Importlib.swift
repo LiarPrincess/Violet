@@ -50,7 +50,7 @@ extension Py {
   // MARK: - Importlib
 
   /// `importlib` is the module used for importing other modules.
-  public func getImportlib() -> PyResult<PyModule> {
+  public func getImportlib() -> PyResultGen<PyModule> {
     // 'self.initImportlibIfNeeded' is idempotent:
     // - if it was never called it will initialize it
     // - if we already called it then it will return module from 'sys'
@@ -62,7 +62,7 @@ extension Py {
   }
 
   /// `importlib` is the module used for importing other modules.
-  public func initImportlibIfNeeded() -> PyResult<PyModule> {
+  public func initImportlibIfNeeded() -> PyResultGen<PyModule> {
     let spec = ModuleSpec(
       self,
       name: "importlib",
@@ -76,12 +76,12 @@ extension Py {
 
   // MARK: - Importlib external
 
-  public func getImportlibExternal() -> PyResult<PyModule> {
+  public func getImportlibExternal() -> PyResultGen<PyModule> {
     let importlib = self.getImportlib()
     return importlib.flatMap(self.getImportlibExternal(importlib:))
   }
 
-  public func getImportlibExternal(importlib: PyModule) -> PyResult<PyModule> {
+  public func getImportlibExternal(importlib: PyModule) -> PyResultGen<PyModule> {
     // 'self.initImportlibExternalIfNeeded' is idempotent (with the same caveats
     // as 'self.initImportlibIfNeeded').
     return self.initImportlibExternalIfNeeded(importlib: importlib)
@@ -97,7 +97,7 @@ extension Py {
   /// but we will do it in Swift.
   public func initImportlibExternalIfNeeded(
     importlib: PyModule
-  ) -> PyResult<PyModule> {
+  ) -> PyResultGen<PyModule> {
     let spec = ModuleSpec(
       self,
       name: "importlib_external",
@@ -109,7 +109,7 @@ extension Py {
     return self.toResult(module)
   }
 
-  private func toResult(_ result: ImportlibResult<PyModule>) -> PyResult<PyModule> {
+  private func toResult(_ result: ImportlibResult<PyModule>) -> PyResultGen<PyModule> {
     switch result {
     case let .value(w):
       return .value(w)

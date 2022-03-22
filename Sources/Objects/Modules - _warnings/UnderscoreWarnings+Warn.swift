@@ -26,7 +26,7 @@ extension UnderscoreWarnings {
   internal static func warn(_ py: Py,
                             module: PyObject,
                             args: [PyObject],
-                            kwargs: PyDict?) -> PyResult<PyObject> {
+                            kwargs: PyDict?) -> PyResultGen<PyObject> {
     switch arguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")
@@ -111,7 +111,7 @@ extension UnderscoreWarnings {
   /// static PyObject *
   /// get_category(PyObject *message, PyObject *category)
   private func parseCategory(message: PyObject,
-                             category: PyObject?) -> PyResult<PyType> {
+                             category: PyObject?) -> PyResultGen<PyType> {
     if self.isWarningSubtype(type: message.type) {
       return .value(message.type)
     }
@@ -142,7 +142,7 @@ extension UnderscoreWarnings {
 
   // MARK: - Stack level
 
-  private func parseStackLevel(level: PyObject?) -> PyResult<Int> {
+  private func parseStackLevel(level: PyObject?) -> PyResultGen<Int> {
     guard let level = level else {
       return .value(1)
     }
@@ -215,12 +215,12 @@ extension UnderscoreWarnings {
 
   // MARK: - Warning registry
 
-  public func getWarningRegistry(frame: PyFrame?) -> PyResult<WarningRegistry> {
+  public func getWarningRegistry(frame: PyFrame?) -> PyResultGen<WarningRegistry> {
     let globals = self.getGlobals(frame: frame)
     return self.getWarningRegistry(globals: globals)
   }
 
-  public func getWarningRegistry(globals: PyDict) -> PyResult<WarningRegistry> {
+  public func getWarningRegistry(globals: PyDict) -> PyResultGen<WarningRegistry> {
     if let object = globals.get(self.py, id: .__warningregistry__) {
       if self.py.cast.isNone(object) {
         return .value(.none)

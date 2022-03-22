@@ -283,7 +283,7 @@ extension Py {
   /// PyObject *
   /// PyFile_GetLine(PyObject *f, int n)
   private func getLine(source: String,
-                       lineno requestedLineNumber: BigInt) -> PyResult<Substring> {
+                       lineno requestedLineNumber: BigInt) -> PyResultGen<Substring> {
     guard let requestedLineNumber = Int(exactly: requestedLineNumber),
           requestedLineNumber >= 0 else {
       return .eofError(self, message: "EOF when reading a line")

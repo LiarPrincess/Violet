@@ -32,23 +32,23 @@ public struct PyNone: PyObjectMixin, HasCustomGetMethod {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard Self.downcast(py, zelf) != nil else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
-    return PyResult(py, interned: "None")
+    return PyResultGen(py, interned: "None")
   }
 
   // MARK: - As bool
 
   // sourcery: pymethod = __bool__
-  internal static func __bool__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __bool__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard Self.downcast(py, zelf) != nil else {
       return Self.invalidZelfArgument(py, zelf, "__bool__")
     }
 
-    return PyResult(py, false)
+    return PyResultGen(py, false)
   }
 
   // MARK: - Class
@@ -63,7 +63,7 @@ public struct PyNone: PyObjectMixin, HasCustomGetMethod {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResult<PyObject> {
+                                        name: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -76,7 +76,7 @@ public struct PyNone: PyObjectMixin, HasCustomGetMethod {
     }
   }
 
-  internal func getAttribute(_ py: Py, name: PyString) -> PyResult<PyObject> {
+  internal func getAttribute(_ py: Py, name: PyString) -> PyResultGen<PyObject> {
     // (Read following sentences with Bernadette Banner voice.)
     //
     // Descriptors use a comparision with 'None' to determine if they are either
@@ -121,15 +121,15 @@ public struct PyNone: PyObjectMixin, HasCustomGetMethod {
     return .error(e.asBaseException)
   }
 
-  private func bindToSelf(_ py: Py, object: PyObject) -> PyResult<PyObject> {
+  private func bindToSelf(_ py: Py, object: PyObject) -> PyResultGen<PyObject> {
     if let fn = py.cast.asBuiltinFunction(object) {
       let method = fn.bind(py, object: self.asObject)
-      return PyResult(method)
+      return PyResultGen(method)
     }
 
     if let fn = py.cast.asFunction(object) {
       let method = fn.bind(py, object: self.asObject)
-      return PyResult(method.asObject)
+      return PyResultGen(method.asObject)
     }
 
     if let prop = py.cast.asProperty(object) {
@@ -165,7 +165,7 @@ public struct PyNone: PyObjectMixin, HasCustomGetMethod {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResult<PyObject> {
+                               kwargs: PyDict?) -> PyResultGen<PyObject> {
     let noArgs = args.isEmpty
     let noKwargs = kwargs?.elements.isEmpty ?? true
     guard noArgs && noKwargs else {

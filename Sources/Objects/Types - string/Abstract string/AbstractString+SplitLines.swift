@@ -8,7 +8,7 @@ extension AbstractString {
   internal static func abstractSplitLines(_ py: Py,
                                           zelf: PyObject,
                                           args: [PyObject],
-                                          kwargs: PyDict?) -> PyResult<PyObject> {
+                                          kwargs: PyDict?) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "splitlines")
     }
@@ -25,17 +25,17 @@ extension AbstractString {
     }
   }
 
-  private static func splitLines(_ py: Py, zelf: Self, keepEnds: PyObject?) -> PyResult<PyObject> {
+  private static func splitLines(_ py: Py, zelf: Self, keepEnds: PyObject?) -> PyResultGen<PyObject> {
     guard let keepEnds = keepEnds else {
       let result = Self.splitLines(py, zelf: zelf, keepEnds: false)
-      return PyResult(result)
+      return PyResultGen(result)
     }
 
     // `bool` is also `int`
     if let int = py.cast.asInt(keepEnds) {
       let keepEnds = int.value.isTrue
       let result = Self.splitLines(py, zelf: zelf, keepEnds: keepEnds)
-      return PyResult(result)
+      return PyResultGen(result)
     }
 
     let message = "keepends must be integer or bool, not \(keepEnds.typeName)"

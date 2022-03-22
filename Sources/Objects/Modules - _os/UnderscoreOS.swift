@@ -38,9 +38,9 @@ public final class UnderscoreOS: PyModuleImplementation {
 
   // MARK: - Cwd
 
-  internal static func getcwd(_ py: Py, module: PyObject) -> PyResult<PyObject> {
+  internal static func getcwd(_ py: Py, module: PyObject) -> PyResultGen<PyObject> {
     let result = py._os.getCwd()
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   /// static PyObject *
@@ -56,9 +56,9 @@ public final class UnderscoreOS: PyModuleImplementation {
 
   internal static func fspath(_ py: Py,
                               module: PyObject,
-                              path: PyObject) -> PyResult<PyObject> {
+                              path: PyObject) -> PyResultGen<PyObject> {
     let result = py._os.getFSPath(path: path)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   /// Return the file system representation of the path.
@@ -72,7 +72,7 @@ public final class UnderscoreOS: PyModuleImplementation {
   ///
   /// PyObject *
   /// PyOS_FSPath(PyObject *path)
-  public func getFSPath(path: PyObject) -> PyResult<PyString> {
+  public func getFSPath(path: PyObject) -> PyResultGen<PyString> {
     return self.parsePath(object: path)
   }
 
@@ -80,9 +80,9 @@ public final class UnderscoreOS: PyModuleImplementation {
 
   internal static func stat(_ py: Py,
                             module: PyObject,
-                            path: PyObject) -> PyResult<PyObject> {
+                            path: PyObject) -> PyResultGen<PyObject> {
     let result = py._os.getStat(path: path)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   /// Doc:
@@ -90,7 +90,7 @@ public final class UnderscoreOS: PyModuleImplementation {
   ///
   /// static int
   /// _io_FileIO___init___impl(fileio *self, PyObject *nameobj, … )
-  public func getStat(path: PyObject) -> PyResult<PyNamespace> {
+  public func getStat(path: PyObject) -> PyResultGen<PyNamespace> {
     switch self.parsePathOrDescriptor(object: path) {
     case let .descriptor(fd):
       let stat = self.py.fileSystem.stat(fd: fd)
@@ -106,7 +106,7 @@ public final class UnderscoreOS: PyModuleImplementation {
   }
 
   private func createStatObject(stat: PyFileSystemStatResult,
-                                path: Path? = nil) -> PyResult<PyNamespace> {
+                                path: Path? = nil) -> PyResultGen<PyNamespace> {
     switch stat {
     case .value(let stat):
       return self.createStatObject(stat: stat)
@@ -118,7 +118,7 @@ public final class UnderscoreOS: PyModuleImplementation {
     }
   }
 
-  private func createStatObject(stat: Stat) -> PyResult<PyNamespace> {
+  private func createStatObject(stat: Stat) -> PyResultGen<PyNamespace> {
     let dict = self.py.newDict()
 
     let modeKey = self.py.intern(string: "st_mode")
@@ -148,9 +148,9 @@ public final class UnderscoreOS: PyModuleImplementation {
 
   internal static func listdir(_ py: Py,
                                module: PyObject,
-                               path: PyObject?) -> PyResult<PyObject> {
+                               path: PyObject?) -> PyResultGen<PyObject> {
     let result = py._os.listdir(path: path)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   /// Doc:
@@ -158,7 +158,7 @@ public final class UnderscoreOS: PyModuleImplementation {
   ///
   /// static PyObject *
   /// os_listdir_impl(PyObject *module, path_t *path)
-  public func listdir(path: PyObject?) -> PyResult<PyList> {
+  public func listdir(path: PyObject?) -> PyResultGen<PyList> {
     switch self.parseListdirPath(path: path) {
     case let .descriptor(fd):
       let result = self.py.fileSystem.readdir(fd: fd)
@@ -183,7 +183,7 @@ public final class UnderscoreOS: PyModuleImplementation {
   }
 
   private func createObject(result: PyFileSystemReaddirResult,
-                            path: Path?) -> PyResult<PyList> {
+                            path: Path?) -> PyResultGen<PyList> {
     switch result {
     case .entries(let entries):
       var elements = [PyObject]()
@@ -227,7 +227,7 @@ public final class UnderscoreOS: PyModuleImplementation {
 
   // MARK: - Helpers
 
-  private func parsePath(object: PyObject) -> PyResult<PyString> {
+  private func parsePath(object: PyObject) -> PyResultGen<PyString> {
     switch self.py.getString(object: object, encoding: .default) {
     case .string(let pyString, _):
       return .value(pyString)

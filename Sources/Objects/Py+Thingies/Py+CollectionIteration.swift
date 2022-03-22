@@ -13,7 +13,7 @@ extension Py {
   /// Convert iterable to Swift array.
   ///
   /// Most of the time you want to use `self.reduce` though…
-  public func toArray(iterable: PyObject) -> PyResult<[PyObject]> {
+  public func toArray(iterable: PyObject) -> PyResultGen<[PyObject]> {
     if let trivialArray = self.triviallyIntoSwiftArray(iterable: iterable) {
       return .value(trivialArray)
     }
@@ -109,7 +109,7 @@ extension Py {
   /// This method is similar to `Swift.Sequence.reduce(_:_:)`.
   public func reduce<Acc>(iterable: PyObject,
                           initial: Acc,
-                          fn: ReduceFn<Acc>) -> PyResult<Acc> {
+                          fn: ReduceFn<Acc>) -> PyResultGen<Acc> {
     // Fast path if we are an object with known conversion.
     if let iterator = self.triviallyIntoSwiftIterator(iterable: iterable) {
       return self.reduce(iterator: iterator, initial: initial, fn: fn)
@@ -144,7 +144,7 @@ extension Py {
 
   private func reduce<Acc>(iterator: AnyIterator<PyObject>,
                            initial: Acc,
-                           fn: ReduceFn<Acc>) -> PyResult<Acc> {
+                           fn: ReduceFn<Acc>) -> PyResultGen<Acc> {
     var acc = initial
 
     for o in iterator {

@@ -24,11 +24,11 @@ public enum HashResult {
   }
 }
 
-extension PyResult where Wrapped == PyObject {
+extension PyResultGen where Wrapped == PyObject {
   public init(_ py: Py, _ result: HashResult) {
     switch result {
     case let .value(hash):
-      self = PyResult(py, hash)
+      self = PyResultGen(py, hash)
 
     case let .unhashable(object):
       let error = HashResult.createUnhashableError(py, object: object)

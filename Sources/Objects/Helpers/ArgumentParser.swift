@@ -282,7 +282,7 @@ internal struct ArgumentParser {
   ///                           va_list *p_va, int flags)
   internal func bind(_ py: Py,
                      args: PyObject,
-                     kwargs: PyObject?) -> PyResult<Binding> {
+                     kwargs: PyObject?) -> PyResultGen<Binding> {
     let argsArray: [PyObject]
     switch ArgumentParser.unpackArgsTuple(py, args: args) {
     case let .value(o): argsArray = o
@@ -299,7 +299,7 @@ internal struct ArgumentParser {
   ///                           va_list *p_va, int flags)
   internal func bind(_ py: Py,
                      args: [PyObject],
-                     kwargs: PyObject?) -> PyResult<Binding> {
+                     kwargs: PyObject?) -> PyResultGen<Binding> {
     let kwargsData: PyDict?
     switch ArgumentParser.unpackKwargsDict(py, kwargs: kwargs) {
     case let .value(o): kwargsData = o
@@ -316,7 +316,7 @@ internal struct ArgumentParser {
   ///                           va_list *p_va, int flags)
   internal func bind(_ py: Py,
                      args: [PyObject],
-                     kwargs: PyDict?) -> PyResult<Binding> {
+                     kwargs: PyDict?) -> PyResultGen<Binding> {
     // We do not expect large kwargs dictionaries,
     // so the allocation should be minimal.
     var kwargsDict: [String: PyObject]
@@ -335,7 +335,7 @@ internal struct ArgumentParser {
   ///                           va_list *p_va, int flags)
   internal func bind(_ py: Py,
                      args: [PyObject],
-                     kwargs: [String: PyObject]) -> PyResult<Binding> {
+                     kwargs: [String: PyObject]) -> PyResultGen<Binding> {
     if args.count + kwargs.count > self.argumentCount {
       let error = self.tooMuchArgumentsError(py, args: args, kwargs: kwargs)
       return .error(error.asBaseException)
@@ -487,7 +487,7 @@ internal struct ArgumentParser {
   // MARK: - Unpack
 
   internal static func unpackArgsTuple(_ py: Py,
-                                       args: PyObject) -> PyResult<[PyObject]> {
+                                       args: PyObject) -> PyResultGen<[PyObject]> {
     guard let tuple = py.cast.asTuple(args) else {
       let msg = "Function positional arguments should be a tuple, not \(args.typeName)"
       return .typeError(py, message: msg)
@@ -497,7 +497,7 @@ internal struct ArgumentParser {
   }
 
   internal static func unpackKwargsDict(_ py: Py,
-                                        kwargs: PyObject?) -> PyResult<PyDict?> {
+                                        kwargs: PyObject?) -> PyResultGen<PyDict?> {
     guard let kwargs = kwargs else {
       return .value(nil)
     }
@@ -572,7 +572,7 @@ internal struct ArgumentParser {
   /// int
   /// PyArg_ValidateKeywordArguments(PyObject *kwargs)
   internal static func guaranteeStringKeywords(_ py: Py,
-                                               kwargs: PyDict?) -> PyResult<NameToValue> {
+                                               kwargs: PyDict?) -> PyResultGen<NameToValue> {
 
     switch kwargs {
     case .some(let kwargs):
@@ -585,7 +585,7 @@ internal struct ArgumentParser {
   /// int
   /// PyArg_ValidateKeywordArguments(PyObject *kwargs)
   internal static func guaranteeStringKeywords(_ py: Py,
-                                               kwargs: PyDict) -> PyResult<NameToValue> {
+                                               kwargs: PyDict) -> PyResultGen<NameToValue> {
 
     var result = [String: PyObject]()
 

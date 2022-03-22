@@ -12,7 +12,7 @@ extension Sys {
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.ps1).
   ///
   /// String specifying the primary prompt of the interpreter.
-  public func getPS1() -> PyResult<PyObject> {
+  public func getPS1() -> PyResultGen<PyObject> {
     return self.get(.ps1)
   }
 
@@ -26,7 +26,7 @@ extension Sys {
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.ps1).
   ///
   /// Strings specifying the secondary prompt of the interpreter.
-  public func getPS2() -> PyResult<PyObject> {
+  public func getPS2() -> PyResultGen<PyObject> {
     return self.get(.ps2)
   }
 

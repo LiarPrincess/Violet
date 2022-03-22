@@ -66,7 +66,7 @@ public struct PyReversed: PyObjectMixin {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResult<PyObject> {
+                                        name: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -77,18 +77,18 @@ public struct PyReversed: PyObjectMixin {
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
-    return PyResult(zelf)
+    return PyResultGen(zelf)
   }
 
   // MARK: - Next
 
   // sourcery: pymethod = __next__
-  internal static func __next__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __next__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__next__")
     }
@@ -115,14 +115,14 @@ public struct PyReversed: PyObjectMixin {
   // MARK: - Length hint
 
   // sourcery: pymethod = __length_hint__
-  internal static func __length_hint__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {
+  internal static func __length_hint__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__length_hint__")
     }
 
     // '+1' because users start counting from 1, not from 0
     let result = zelf.index + 1
-    return PyResult(py, result)
+    return PyResultGen(py, result)
   }
 
   // MARK: - Python new
@@ -131,7 +131,7 @@ public struct PyReversed: PyObjectMixin {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResult<PyObject> {
+                               kwargs: PyDict?) -> PyResultGen<PyObject> {
     if let e = ArgumentParser.noKwargsOrError(py,
                                               fnName: Self.pythonTypeName,
                                               kwargs: kwargs) {
@@ -151,7 +151,7 @@ public struct PyReversed: PyObjectMixin {
 
   private static func __new__(_ py: Py,
                               type: PyType,
-                              object: PyObject) -> PyResult<PyObject> {
+                              object: PyObject) -> PyResultGen<PyObject> {
     // If we have dedicated '__reversed__' then we will use it
     switch Self.call__reversed__(py, object: object) {
     case .value(let r):
@@ -181,7 +181,7 @@ public struct PyReversed: PyObjectMixin {
     }
 
     let result = py.memory.newReversed(py, type: type, sequence: object, count: count)
-    return PyResult(result)
+    return PyResultGen(result)
   }
 
   private static func call__reversed__(_ py: Py, object: PyObject) -> Py.CallMethodResult {
@@ -195,7 +195,7 @@ public struct PyReversed: PyObjectMixin {
     return py.callMethod(object: object, selector: .__reversed__)
   }
 
-  private static func has__getitem__(_ py: Py, object: PyObject) -> PyResult<Bool> {
+  private static func has__getitem__(_ py: Py, object: PyObject) -> PyResultGen<Bool> {
     return py.hasMethod(object: object, selector: .__getitem__)
   }
 }

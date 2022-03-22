@@ -16,7 +16,7 @@ private enum StaticCallResult {
   /// Static call is not available
   case unavailable
 
-  fileprivate init(_ value: PyResult<PyObject>?) {
+  fileprivate init(_ value: PyResultGen<PyObject>?) {
     guard let v = value else {
       self = .unavailable
       return
@@ -74,7 +74,7 @@ extension BinaryOp {
   /// define SLOT1BINFULL(FUNCNAME, TESTFUNC, SLOTNAME, OPSTR, ROPSTR)
   fileprivate static func call(_ py: Py,
                                left: PyObject,
-                               right: PyObject) -> PyResult<PyObject> {
+                               right: PyObject) -> PyResultGen<PyObject> {
     switch self.callInner(py, left: left, right: right) {
     case let .value(result):
       if py.cast.isNotImplemented(result) {
@@ -103,7 +103,7 @@ extension BinaryOp {
 
   fileprivate static func callInPlace(_ py: Py,
                                       left: PyObject,
-                                      right: PyObject) -> PyResult<PyObject> {
+                                      right: PyObject) -> PyResultGen<PyObject> {
     switch self.callInPlaceOp(py, left: left, right: right) {
     case let .value(result):
       if py.cast.isNotImplemented(result) {
@@ -142,7 +142,7 @@ extension BinaryOp {
   /// binary_op(PyObject *v, PyObject *w, const int op_slot, const char *op_name)
   fileprivate static func callInner(_ py: Py,
                                     left: PyObject,
-                                    right: PyObject) -> PyResult<PyObject> {
+                                    right: PyObject) -> PyResultGen<PyObject> {
     var checkedReflected = false
 
     // Check if right is subtype of left, if so then use right.
@@ -192,7 +192,7 @@ extension BinaryOp {
 
   private static func callOp(_ py: Py,
                              left: PyObject,
-                             right: PyObject) -> PyResult<PyObject> {
+                             right: PyObject) -> PyResultGen<PyObject> {
     // Fast path: we know the method at compile time
     switch self.callStatic(py, left: left, right: right) {
     case .value(let result):
@@ -217,7 +217,7 @@ extension BinaryOp {
 
   private static func callReflectedOp(_ py: Py,
                                       left: PyObject,
-                                      right: PyObject) -> PyResult<PyObject> {
+                                      right: PyObject) -> PyResultGen<PyObject> {
     // Fast path: we know the method at compile time
     switch self.callStaticReflected(py, left: left, right: right) {
     case .value(let result):
@@ -242,7 +242,7 @@ extension BinaryOp {
 
   private static func callInPlaceOp(_ py: Py,
                                     left: PyObject,
-                                    right: PyObject) -> PyResult<PyObject> {
+                                    right: PyObject) -> PyResultGen<PyObject> {
     // Fast path: we know the method at compile time
     switch self.callStaticInPlace(py, left: left, right: right) {
     case .value(let result):
@@ -300,11 +300,11 @@ private struct AddOp: BinaryOp {
 
 extension Py {
 
-  public func add(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func add(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return AddOp.call(self, left: left, right: right)
   }
 
-  public func addInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func addInPlace(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return AddOp.callInPlace(self, left: left, right: right)
   }
 }
@@ -343,11 +343,11 @@ private struct SubOp: BinaryOp {
 
 extension Py {
 
-  public func sub(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func sub(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return SubOp.call(self, left: left, right: right)
   }
 
-  public func subInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func subInPlace(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return SubOp.callInPlace(self, left: left, right: right)
   }
 }
@@ -386,11 +386,11 @@ private struct MulOp: BinaryOp {
 
 extension Py {
 
-  public func mul(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func mul(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return MulOp.call(self, left: left, right: right)
   }
 
-  public func mulInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func mulInPlace(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return MulOp.callInPlace(self, left: left, right: right)
   }
 }
@@ -429,11 +429,11 @@ private struct MatmulOp: BinaryOp {
 
 extension Py {
 
-  public func matmul(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func matmul(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return MatmulOp.call(self, left: left, right: right)
   }
 
-  public func matmulInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func matmulInPlace(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return MatmulOp.callInPlace(self, left: left, right: right)
   }
 }
@@ -472,11 +472,11 @@ private struct TrueDivOp: BinaryOp {
 
 extension Py {
 
-  public func trueDiv(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func trueDiv(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return TrueDivOp.call(self, left: left, right: right)
   }
 
-  public func trueDivInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func trueDivInPlace(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return TrueDivOp.callInPlace(self, left: left, right: right)
   }
 }
@@ -515,11 +515,11 @@ private struct FloorDivOp: BinaryOp {
 
 extension Py {
 
-  public func floorDiv(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func floorDiv(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return FloorDivOp.call(self, left: left, right: right)
   }
 
-  public func floorDivInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func floorDivInPlace(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return FloorDivOp.callInPlace(self, left: left, right: right)
   }
 }
@@ -558,11 +558,11 @@ private struct ModOp: BinaryOp {
 
 extension Py {
 
-  public func mod(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func mod(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return ModOp.call(self, left: left, right: right)
   }
 
-  public func modInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func modInPlace(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return ModOp.callInPlace(self, left: left, right: right)
   }
 }
@@ -603,7 +603,7 @@ extension Py {
 
   /// divmod(a, b)
   /// See [this](https://docs.python.org/3/library/functions.html#divmod)
-  public func divMod(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func divMod(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return DivModOp.call(self, left: left, right: right)
   }
 
@@ -644,11 +644,11 @@ private struct LshiftOp: BinaryOp {
 
 extension Py {
 
-  public func lshift(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func lshift(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return LshiftOp.call(self, left: left, right: right)
   }
 
-  public func lshiftInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func lshiftInPlace(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return LshiftOp.callInPlace(self, left: left, right: right)
   }
 }
@@ -687,11 +687,11 @@ private struct RshiftOp: BinaryOp {
 
 extension Py {
 
-  public func rshift(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func rshift(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return RshiftOp.call(self, left: left, right: right)
   }
 
-  public func rshiftInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func rshiftInPlace(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return RshiftOp.callInPlace(self, left: left, right: right)
   }
 }
@@ -730,11 +730,11 @@ private struct AndOp: BinaryOp {
 
 extension Py {
 
-  public func and(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func and(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return AndOp.call(self, left: left, right: right)
   }
 
-  public func andInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func andInPlace(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return AndOp.callInPlace(self, left: left, right: right)
   }
 }
@@ -773,11 +773,11 @@ private struct OrOp: BinaryOp {
 
 extension Py {
 
-  public func or(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func or(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return OrOp.call(self, left: left, right: right)
   }
 
-  public func orInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func orInPlace(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return OrOp.callInPlace(self, left: left, right: right)
   }
 }
@@ -816,11 +816,11 @@ private struct XorOp: BinaryOp {
 
 extension Py {
 
-  public func xor(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func xor(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return XorOp.call(self, left: left, right: right)
   }
 
-  public func xorInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+  public func xorInPlace(left: PyObject, right: PyObject) -> PyResultGen<PyObject> {
     return XorOp.callInPlace(self, left: left, right: right)
   }
 }

@@ -25,7 +25,7 @@ extension ExecEval {
   fileprivate static func run(_ py: Py,
                               source: PyObject,
                               globals _globals: PyObject?,
-                              locals _locals: PyObject?) -> PyResult<PyObject> {
+                              locals _locals: PyObject?) -> PyResultGen<PyObject> {
     let locals: PyDict
     let globals: PyDict
     switch Self.parseEnv(py, globals: _globals, locals: _locals) {
@@ -83,7 +83,7 @@ extension ExecEval {
 
   private static func parseEnv(_ py: Py,
                                globals: PyObject?,
-                               locals: PyObject?) -> PyResult<Env> {
+                               locals: PyObject?) -> PyResultGen<Env> {
     // Omg! This code looks soooooo bad.
     // So, we basically try to do 'Self.parseDictOrNone' 2 times
     // (on both 'globals' and 'locals'), so that gives us 7 cases to handle.
@@ -142,7 +142,7 @@ extension ExecEval {
 
   // MARK: - Source
 
-  private static func parseSource(_ py: Py, arg: PyObject) -> PyResult<PyCode> {
+  private static func parseSource(_ py: Py, arg: PyObject) -> PyResultGen<PyCode> {
     if let code = py.cast.asCode(arg) {
       if code.freeVariableCount > 0 {
         return .typeError(py, message: Self.sourceWithFreeVariablesError)
@@ -241,7 +241,7 @@ extension Py {
   /// See [this](https://docs.python.org/3/library/functions.html#eval)
   public func eval(source: PyObject,
                    globals: PyObject?,
-                   locals: PyObject?) -> PyResult<PyObject> {
+                   locals: PyObject?) -> PyResultGen<PyObject> {
     return Eval.run(self, source: source, globals: globals, locals: locals)
   }
 }

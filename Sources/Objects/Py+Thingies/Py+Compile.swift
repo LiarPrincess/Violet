@@ -123,7 +123,7 @@ extension Py {
     /// Non lexer, parser or compiler error
     case error(PyBaseException)
 
-    public func asResult() -> PyResult<PyCode> {
+    public func asResult() -> PyResultGen<PyCode> {
       switch self {
       case let .code(c):
         return .value(c)
@@ -224,7 +224,7 @@ extension Py {
   // MARK: - Source
 
   private func parseStringArg(argumentIndex index: Int,
-                              arg: PyObject) -> PyResult<String> {
+                              arg: PyObject) -> PyResultGen<String> {
     switch self.getString(object: arg, encoding: .default) {
     case .string(_, let s),
          .bytes(_, let s):
@@ -238,7 +238,7 @@ extension Py {
 
   // MARK: - Mode
 
-  private func parseMode(arg: PyObject) -> PyResult<Parser.Mode> {
+  private func parseMode(arg: PyObject) -> PyResultGen<Parser.Mode> {
     guard let string = self.cast.asString(arg) else {
       return .typeError(self, message: "compile(): mode must be an str")
     }
@@ -264,7 +264,7 @@ extension Py {
     return self.sys.flags.optimize
   }
 
-  private func parseOptimize(arg: PyObject?) -> PyResult<Compiler.OptimizationLevel> {
+  private func parseOptimize(arg: PyObject?) -> PyResultGen<Compiler.OptimizationLevel> {
     // The argument optimize specifies the optimization level of the compiler;
     // the default value of -1 selects the optimization level of the interpreter
     // as given by -O options.

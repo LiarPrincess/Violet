@@ -5,7 +5,7 @@ extension FunctionWrapper {
   // MARK: - New
 
   /// Python `__new__` function.
-  public typealias NewFn = (Py, PyType, [PyObject], PyDict?) -> PyResult<PyObject>
+  public typealias NewFn = (Py, PyType, [PyObject], PyDict?) -> PyResultGen<PyObject>
 
   internal struct NewWrapper {
     private let fn: NewFn
@@ -19,7 +19,7 @@ extension FunctionWrapper {
       self.fnName = typeName + ".__new__"
     }
 
-    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       guard args.any else {
         let message = "\(self.fnName)(): not enough arguments"
         return .typeError(py, message: message)
@@ -53,7 +53,7 @@ extension FunctionWrapper {
   // MARK: - Init
 
   /// Python `__init__` function.
-  public typealias InitFn = (Py, PyObject, [PyObject], PyDict?) -> PyResult<PyObject>
+  public typealias InitFn = (Py, PyObject, [PyObject], PyDict?) -> PyResultGen<PyObject>
 
   internal struct InitWrapper {
     private let fn: InitFn
@@ -65,7 +65,7 @@ extension FunctionWrapper {
       self.fnName = typeName + ".__init__"
     }
 
-    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       guard args.any else {
         return .typeError(py, message: "\(self.fnName)(): not enough arguments")
       }
@@ -96,7 +96,7 @@ extension FunctionWrapper {
       self.fn = fn
     }
 
-    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -105,7 +105,7 @@ extension FunctionWrapper {
       switch args.count {
       case 2:
         let result = self.fn(py, args[0], args[1])
-        return PyResult(py, result)
+        return PyResultGen(py, result)
       default:
         return .typeError(py, message: "expected 2 arguments, got \(args.count)")
       }
@@ -131,7 +131,7 @@ extension FunctionWrapper {
       self.fn = fn
     }
 
-    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -140,7 +140,7 @@ extension FunctionWrapper {
       switch args.count {
       case 1:
         let result = self.fn(py, args[0])
-        return PyResult(py, result)
+        return PyResultGen(py, result)
       default:
         return .typeError(py, message: "expected 1 argument, got \(args.count)")
       }
@@ -155,7 +155,7 @@ extension FunctionWrapper {
   // MARK: - Dir
 
   /// Python `__dir__` function.
-  public typealias DirFn = (Py, PyObject) -> PyResult<DirResult>
+  public typealias DirFn = (Py, PyObject) -> PyResultGen<DirResult>
 
   internal struct DirWrapper {
     private let fn: DirFn
@@ -166,7 +166,7 @@ extension FunctionWrapper {
       self.fn = fn
     }
 
-    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -175,7 +175,7 @@ extension FunctionWrapper {
       switch args.count {
       case 1:
         let result = self.fn(py, args[0])
-        return PyResult(py, result)
+        return PyResultGen(py, result)
       default:
         return .typeError(py, message: "expected 1 argument, got \(args.count)")
       }
@@ -201,7 +201,7 @@ extension FunctionWrapper {
       self.fn = fn
     }
 
-    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has only positional arguments, so any kwargs -> error
       if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
         return .error(e.asBaseException)
@@ -210,7 +210,7 @@ extension FunctionWrapper {
       switch args.count {
       case 1:
         let result = self.fn(py, args[0])
-        return PyResult(result)
+        return PyResultGen(result)
       default:
         return .typeError(py, message: "expected 1 argument, got \(args.count)")
       }
@@ -225,7 +225,7 @@ extension FunctionWrapper {
   // MARK: - Args kwargs function
 
   /// Function with *args and **kwargs.
-  public typealias ArgsKwargsFunction = (Py, [PyObject], PyDict?) -> PyResult<PyObject>
+  public typealias ArgsKwargsFunction = (Py, [PyObject], PyDict?) -> PyResultGen<PyObject>
 
   internal struct ArgsKwargsFunctionWrapper {
     private let fn: ArgsKwargsFunction
@@ -236,7 +236,7 @@ extension FunctionWrapper {
       self.fn = fn
     }
 
-    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       return self.fn(py, args, kwargs)
     }
   }
@@ -249,7 +249,7 @@ extension FunctionWrapper {
   // MARK: - Args kwargs method
 
   /// Function with *args and **kwargs.
-  public typealias ArgsKwargsMethod = (Py, PyObject, [PyObject], PyDict?) -> PyResult<PyObject>
+  public typealias ArgsKwargsMethod = (Py, PyObject, [PyObject], PyDict?) -> PyResultGen<PyObject>
 
   internal struct ArgsKwargsMethodWrapper {
     internal let fnName: String
@@ -260,7 +260,7 @@ extension FunctionWrapper {
       self.fnName = name
     }
 
-    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       guard args.any else {
         return .typeError(py, message: "\(self.fnName)(): not enough arguments")
       }
@@ -279,7 +279,7 @@ extension FunctionWrapper {
   // MARK: - Args kwargs class method
 
   /// Function with *args and **kwargs.
-  public typealias ArgsKwargsClassMethod = (Py, PyType, [PyObject], PyDict?) -> PyResult<PyObject>
+  public typealias ArgsKwargsClassMethod = (Py, PyType, [PyObject], PyDict?) -> PyResultGen<PyObject>
 
   internal struct ArgsKwargsClassMethodWrapper {
     internal let fnName: String
@@ -290,7 +290,7 @@ extension FunctionWrapper {
       self.fnName = name
     }
 
-    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    internal func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
       // This function has a 'type' argument that we have to cast
       let type: PyType
       switch FunctionWrapper.handleTypeArgument(py, fnName: self.fnName, args: args) {
