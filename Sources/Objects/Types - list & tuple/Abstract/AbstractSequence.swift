@@ -19,11 +19,6 @@ internal protocol AbstractSequence: PyObjectMixin {
   /// - For `tuple` it should return `tuple`.
   /// - For `list` it should return `list`.
   static func downcast(_ py: Py, _ object: PyObject) -> Self?
-
-  /// Create error when the `zelf` argument cast failed.
-  static func invalidZelfArgument<T>(_ py: Py,
-                                     _ object: PyObject,
-                                     _ fnName: String) -> PyResultGen<T>
 }
 
 extension AbstractSequence {
@@ -38,5 +33,15 @@ extension AbstractSequence {
 
   internal var count: Int {
     return self.elements.count
+  }
+
+  internal static func invalidZelfArgument(_ py: Py,
+                                           _ object: PyObject,
+                                           _ fnName: String) -> PyResult {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }

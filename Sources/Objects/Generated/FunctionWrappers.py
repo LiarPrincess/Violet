@@ -27,9 +27,9 @@ if __name__ == '__main__':
 /// Why do we need so many different signatures?
 ///
 /// For example for ternary methods (self + 2 args) we have:
-/// - (PyObject, PyObject,  PyObject) -> PyResult<PyObject>
-/// - (PyObject, PyObject,  PyObject?) -> PyResult<PyObject>
-/// - (PyObject, PyObject?, PyObject?) -> PyResult<PyObject>
+/// - (PyObject, PyObject,  PyObject) -> PyResult
+/// - (PyObject, PyObject,  PyObject?) -> PyResult
+/// - (PyObject, PyObject?, PyObject?) -> PyResult
 ///
 /// So:
 /// Some ternary (and also binary and quartary) methods can be called with
@@ -105,7 +105,7 @@ public struct FunctionWrapper: CustomStringConvertible {{\
 
     print_mark('Call')
     print('  /// Call the stored function with provided arguments.')
-    print('  public func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {')
+    print('  public func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult {')
     print('    // Just delegate to specific wrapper.')
     print('    switch self.kind {')
 
@@ -150,7 +150,7 @@ public struct FunctionWrapper: CustomStringConvertible {{\
 
     print('  internal static func handleTypeArgument(_ py: Py,')
     print('                                          fnName: String,')
-    print('                                          args: [PyObject]) -> PyResult<PyType> {')
+    print('                                          args: [PyObject]) -> PyResultGen<PyType> {')
     print('    if args.isEmpty {')
     print('      let error = py.newTypeError(message: "\(fnName)(): not enough arguments")')
     print('      return .error(error.asBaseException)')
@@ -195,7 +195,7 @@ public struct FunctionWrapper: CustomStringConvertible {{\
         print(f'    }}')
         print()
 
-        print(f'    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {{')
+        print(f'    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult {{')
         print(f'      // This function has only positional arguments, so any kwargs -> error')
         print(f'      if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {{')
         print(f'        return .error(e.asBaseException)')

@@ -100,7 +100,7 @@ extension Py {
     }
   }
 
-  private func interpret__bool__(bool: PyResultGen<PyObject>) -> PyResultGen<Bool> {
+  private func interpret__bool__(bool: PyResult) -> PyResultGen<Bool> {
     switch bool {
     case let .value(b):
       return self.interpret__bool__(bool: b)
@@ -118,7 +118,7 @@ extension Py {
     return .typeError(self, message: message)
   }
 
-  private func interpret__len__asBool(len: PyResultGen<PyObject>) -> PyResultGen<Bool> {
+  private func interpret__len__asBool(len: PyResult) -> PyResultGen<Bool> {
     switch len {
     case let .value(l):
       return self.interpret__len__asBool(len: l)

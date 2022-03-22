@@ -94,29 +94,27 @@ public struct PySystemExit: PyErrorMixin {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // MARK: - Code
 
   // sourcery: pyproperty = code, setter
-  internal static func code(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func code(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "code")
     }
 
-    return PyResultGen(py, zelf.code)
+    return PyResult(py, zelf.code)
   }
 
-  internal static func code(_ py: Py,
-                            zelf: PyObject,
-                            value: PyObject?) -> PyResultGen<PyObject> {
+  internal static func code(_ py: Py, zelf: PyObject, value: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "code")
     }
@@ -131,10 +129,10 @@ public struct PySystemExit: PyErrorMixin {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newSystemExit(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // MARK: - Python init
@@ -143,7 +141,7 @@ public struct PySystemExit: PyErrorMixin {
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }

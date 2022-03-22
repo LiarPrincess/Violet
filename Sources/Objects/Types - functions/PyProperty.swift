@@ -123,7 +123,7 @@ public struct PyProperty: PyObjectMixin {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResultGen<PyObject> {
+                                        name: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -134,30 +134,30 @@ public struct PyProperty: PyObjectMixin {
   // MARK: - Getters
 
   // sourcery: pyproperty = fget
-  internal static func fget(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func fget(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "fget")
     }
 
-    return PyResultGen(py, zelf._get)
+    return PyResult(py, zelf._get)
   }
 
   // sourcery: pyproperty = fset
-  internal static func fset(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func fset(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "fset")
     }
 
-    return PyResultGen(py, zelf._set)
+    return PyResult(py, zelf._set)
   }
 
   // sourcery: pyproperty = fdel
-  internal static func fdel(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func fdel(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "fdel")
     }
 
-    return PyResultGen(py, zelf._del)
+    return PyResult(py, zelf._del)
   }
 
   // MARK: - Get
@@ -166,19 +166,19 @@ public struct PyProperty: PyObjectMixin {
   internal static func __get__(_ py: Py,
                                zelf: PyObject,
                                object: PyObject,
-                               type: PyObject?) -> PyResultGen<PyObject> {
+                               type: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__get__")
     }
 
     if py.isDescriptorStaticMarker(object) {
-      return PyResultGen(zelf)
+      return PyResult(zelf)
     }
 
     return zelf.bind(py, object: object)
   }
 
-  internal func bind(_ py: Py, object: PyObject) -> PyResultGen<PyObject> {
+  internal func bind(_ py: Py, object: PyObject) -> PyResult {
     guard let propGet = self._get, !py.cast.isNone(propGet) else {
       return .attributeError(py, message: "unreadable attribute")
     }
@@ -198,7 +198,7 @@ public struct PyProperty: PyObjectMixin {
   internal static func __set__(_ py: Py,
                                zelf: PyObject,
                                object: PyObject,
-                               value: PyObject) -> PyResultGen<PyObject> {
+                               value: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__set__")
     }
@@ -209,7 +209,7 @@ public struct PyProperty: PyObjectMixin {
   private static func setOrDelete(_ py: Py,
                                   zelf: PyProperty,
                                   object: PyObject,
-                                  value: PyObject) -> PyResultGen<PyObject> {
+                                  value: PyObject) -> PyResult {
     let isDelete = py.cast.isNone(value)
     if isDelete {
       guard let fn = zelf._del, !py.cast.isNone(fn) else {
@@ -233,7 +233,7 @@ public struct PyProperty: PyObjectMixin {
   // sourcery: pymethod = __delete__
   internal static func __delete__(_ py: Py,
                                   zelf: PyObject,
-                                  object: PyObject) -> PyResultGen<PyObject> {
+                                  object: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__delete__")
     }
@@ -245,17 +245,17 @@ public struct PyProperty: PyObjectMixin {
   // MARK: - Doc
 
   // sourcery: pyproperty = __doc__, setter
-  internal static func __doc__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __doc__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__doc__")
     }
 
-    return PyResultGen(py, zelf.doc)
+    return PyResult(py, zelf.doc)
   }
 
   internal static func __doc__(_ py: Py,
                                zelf: PyObject,
-                               value: PyObject?) -> PyResultGen<PyObject> {
+                               value: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__doc__")
     }
@@ -276,13 +276,12 @@ public struct PyProperty: PyObjectMixin {
   // sourcery: pymethod = getter, doc = getterDoc
   internal static func getter(_ py: Py,
                               zelf: PyObject,
-                              value: PyObject) -> PyResultGen<PyObject> {
+                              value: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "getter")
     }
 
-    let result = zelf.copy(py, get: value, set: nil, del: nil)
-    return PyResultGen(result)
+    return zelf.copy(py, get: value, set: nil, del: nil)
   }
 
   internal static let setterDoc = "Descriptor to change the setter on a property."
@@ -290,13 +289,12 @@ public struct PyProperty: PyObjectMixin {
   // sourcery: pymethod = setter
   internal static func setter(_ py: Py,
                               zelf: PyObject,
-                              value: PyObject) -> PyResultGen<PyObject> {
+                              value: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "setter")
     }
 
-    let result = zelf.copy(py, get: nil, set: value, del: nil)
-    return PyResultGen(result)
+    return zelf.copy(py, get: nil, set: value, del: nil)
   }
 
   internal static let deleterDoc = "Descriptor to change the deleter on a property."
@@ -304,13 +302,12 @@ public struct PyProperty: PyObjectMixin {
   // sourcery: pymethod = deleter
   internal static func deleter(_ py: Py,
                                zelf: PyObject,
-                               value: PyObject) -> PyResultGen<PyObject> {
+                               value: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "deleter")
     }
 
-    let result = zelf.copy(py, get: nil, set: nil, del: value)
-    return PyResultGen(result)
+    return zelf.copy(py, get: nil, set: nil, del: value)
   }
 
   /// static PyObject *
@@ -318,7 +315,7 @@ public struct PyProperty: PyObjectMixin {
   private func copy(_ py: Py,
                     get: PyObject?,
                     set: PyObject?,
-                    del: PyObject?) -> PyResultGen<PyObject> {
+                    del: PyObject?) -> PyResult {
     func resolveOverride(value: PyObject?, override: PyObject?) -> PyObject {
       if let o = override, !py.cast.isNone(o) {
         return o
@@ -350,7 +347,7 @@ public struct PyProperty: PyObjectMixin {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let result = py.memory.newProperty(py,
                                        type: type,
                                        get: nil,
@@ -358,7 +355,7 @@ public struct PyProperty: PyObjectMixin {
                                        del: nil,
                                        doc: nil)
 
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // MARK: - Python init
@@ -372,7 +369,7 @@ public struct PyProperty: PyObjectMixin {
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }

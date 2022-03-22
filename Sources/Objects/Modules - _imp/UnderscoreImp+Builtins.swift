@@ -20,9 +20,9 @@ extension UnderscoreImp {
 
   internal static func is_builtin(_ py: Py,
                                   module: PyObject,
-                                  name: PyObject) -> PyResultGen<PyObject> {
+                                  name: PyObject) -> PyResult {
     let result = py._imp.isBuiltin(name: name)
-    return PyResultGen(py, result)
+    return PyResult(py, result)
   }
 
   /// static PyObject *
@@ -62,9 +62,9 @@ extension UnderscoreImp {
 
   internal static func create_builtin(_ py: Py,
                                       module: PyObject,
-                                      spec: PyObject) -> PyResultGen<PyObject> {
+                                      spec: PyObject) -> PyResult {
     let result = py._imp.createBuiltin(spec: spec)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   /// static PyObject *
@@ -104,7 +104,7 @@ extension UnderscoreImp {
 
   internal static func exec_builtin(_ py: Py,
                                     module: PyObject,
-                                    mod: PyObject) -> PyResultGen<PyObject> {
+                                    mod: PyObject) -> PyResult {
     if let error = py._imp.execBuiltin(module: mod) {
       return .error(error)
     }

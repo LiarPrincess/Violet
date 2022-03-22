@@ -112,24 +112,24 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
     if zelf.elements.isEmpty {
-      return PyResultGen(py, interned: "frozenset()")
+      return PyResult(py, interned: "frozenset()")
     }
 
     if zelf.hasReprLock {
-      return PyResultGen(py, interned: "frozenset(...)")
+      return PyResult(py, interned: "frozenset(...)")
     }
 
     return zelf.withReprLock {
       switch Self.abstractJoinElementsForRepr(py, zelf: zelf) {
       case let .value(elements):
         let result = "frozenset({" + elements + "})"
-        return PyResultGen(py, result)
+        return PyResult(py, result)
       case let .error(e):
         return .error(e)
       }
@@ -141,7 +141,7 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResultGen<PyObject> {
+                                        name: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -159,81 +159,63 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResultGen<PyObject> {
+  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__len__")
     }
 
     let result = zelf.count
-    return PyResultGen(py, result)
+    return PyResult(py, result)
   }
 
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  internal static func __contains__(_ py: Py,
-                                    zelf: PyObject,
-                                    object: PyObject) -> PyResultGen<PyObject> {
+  internal static func __contains__(_ py: Py, zelf: PyObject, object: PyObject) -> PyResult {
     return Self.abstract__contains__(py, zelf: zelf, object: object)
   }
 
   // MARK: - And, or, xor
 
   // sourcery: pymethod = __and__
-  internal static func __and__(_ py: Py,
-                               zelf: PyObject,
-                               other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __and__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.abstract__and__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __rand__
-  internal static func __rand__(_ py: Py,
-                                zelf: PyObject,
-                                other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __rand__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.abstract__rand__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __or__
-  internal static func __or__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __or__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.abstract__or__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __ror__
-  internal static func __ror__(_ py: Py,
-                               zelf: PyObject,
-                               other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __ror__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.abstract__ror__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __xor__
-  internal static func __xor__(_ py: Py,
-                               zelf: PyObject,
-                               other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __xor__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.abstract__xor__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __rxor__
-  internal static func __rxor__(_ py: Py,
-                                zelf: PyObject,
-                                other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __rxor__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.abstract__rxor__(py, zelf: zelf, other: other)
   }
 
   // MARK: - Sub
 
   // sourcery: pymethod = __sub__
-  internal static func __sub__(_ py: Py,
-                               zelf: PyObject,
-                               other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __sub__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.abstract__sub__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __rsub__
-  internal static func __rsub__(_ py: Py,
-                                zelf: PyObject,
-                                other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __rsub__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.abstract__rsub__(py, zelf: zelf, other: other)
   }
 
@@ -244,9 +226,7 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
     """
 
   // sourcery: pymethod = issubset, doc = isSubsetDoc
-  internal static func issubset(_ py: Py,
-                                zelf: PyObject,
-                                other: PyObject) -> PyResultGen<PyObject> {
+  internal static func issubset(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return self.abstractIsSubset(py, zelf: zelf, other: other)
   }
 
@@ -255,9 +235,7 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
     """
 
   // sourcery: pymethod = issuperset, doc = isSupersetDoc
-  internal static func issuperset(_ py: Py,
-                                  zelf: PyObject,
-                                  other: PyObject) -> PyResultGen<PyObject> {
+  internal static func issuperset(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return self.abstractIsSuperset(py, zelf: zelf, other: other)
   }
 
@@ -266,9 +244,7 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
     """
 
   // sourcery: pymethod = isdisjoint, doc = isDisjointDoc
-  internal static func isdisjoint(_ py: Py,
-                                  zelf: PyObject,
-                                  other: PyObject) -> PyResultGen<PyObject> {
+  internal static func isdisjoint(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return self.abstractIsDisjoint(py, zelf: zelf, other: other)
   }
 
@@ -281,9 +257,7 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
     """
 
   // sourcery: pymethod = intersection, doc = intersectionDoc
-  internal static func intersection(_ py: Py,
-                                    zelf: PyObject,
-                                    other: PyObject) -> PyResultGen<PyObject> {
+  internal static func intersection(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return self.abstractIntersection(py, zelf: zelf, other: other)
   }
 
@@ -294,9 +268,7 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
     """
 
   // sourcery: pymethod = union, doc = unionDoc
-  internal static func union(_ py: Py,
-                             zelf: PyObject,
-                             other: PyObject) -> PyResultGen<PyObject> {
+  internal static func union(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return self.abstractUnion(py, zelf: zelf, other: other)
   }
 
@@ -307,9 +279,7 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
     """
 
   // sourcery: pymethod = difference, doc = differenceDoc
-  internal static func difference(_ py: Py,
-                                  zelf: PyObject,
-                                  other: PyObject) -> PyResultGen<PyObject> {
+  internal static func difference(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return self.abstractDifference(py, zelf: zelf, other: other)
   }
 
@@ -322,7 +292,7 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
   // sourcery: pymethod = symmetric_difference, doc = symmetricDifferenceDoc
   internal static func symmetric_difference(_ py: Py,
                                             zelf: PyObject,
-                                            other: PyObject) -> PyResultGen<PyObject> {
+                                            other: PyObject) -> PyResult {
     return self.abstractSymmetricDifference(py, zelf: zelf, other: other)
   }
 
@@ -331,25 +301,25 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
   internal static let copyDoc = "Return a shallow copy of a set."
 
   // sourcery: pymethod = copy, doc = copyDoc
-  internal static func copy(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func copy(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "copy")
     }
 
     let result = py.newFrozenSet(elements: zelf.elements)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
     let result = py.newIterator(set: zelf)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // MARK: - Python new
@@ -358,7 +328,7 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let isBuiltin = type === py.types.frozenset
     if isBuiltin {
       if let e = ArgumentParser.noKwargsOrError(py,
@@ -391,6 +361,6 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
       py.newFrozenSet(elements: elements) :
       py.memory.newFrozenSet(py, type: type, elements: elements)
 
-    return PyResultGen(result)
+    return PyResult(result)
   }
 }

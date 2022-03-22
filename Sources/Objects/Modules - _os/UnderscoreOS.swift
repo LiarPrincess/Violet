@@ -38,9 +38,9 @@ public final class UnderscoreOS: PyModuleImplementation {
 
   // MARK: - Cwd
 
-  internal static func getcwd(_ py: Py, module: PyObject) -> PyResultGen<PyObject> {
+  internal static func getcwd(_ py: Py, module: PyObject) -> PyResult {
     let result = py._os.getCwd()
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   /// static PyObject *
@@ -56,9 +56,9 @@ public final class UnderscoreOS: PyModuleImplementation {
 
   internal static func fspath(_ py: Py,
                               module: PyObject,
-                              path: PyObject) -> PyResultGen<PyObject> {
+                              path: PyObject) -> PyResult {
     let result = py._os.getFSPath(path: path)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   /// Return the file system representation of the path.
@@ -80,9 +80,9 @@ public final class UnderscoreOS: PyModuleImplementation {
 
   internal static func stat(_ py: Py,
                             module: PyObject,
-                            path: PyObject) -> PyResultGen<PyObject> {
+                            path: PyObject) -> PyResult {
     let result = py._os.getStat(path: path)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   /// Doc:
@@ -148,9 +148,9 @@ public final class UnderscoreOS: PyModuleImplementation {
 
   internal static func listdir(_ py: Py,
                                module: PyObject,
-                               path: PyObject?) -> PyResultGen<PyObject> {
+                               path: PyObject?) -> PyResult {
     let result = py._os.listdir(path: path)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   /// Doc:

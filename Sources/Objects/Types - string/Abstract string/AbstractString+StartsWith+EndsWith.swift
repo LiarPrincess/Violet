@@ -6,7 +6,7 @@ extension AbstractString {
                                           zelf: PyObject,
                                           prefix: PyObject,
                                           start: PyObject?,
-                                          end: PyObject?) -> PyResultGen<PyObject> {
+                                          end: PyObject?) -> PyResult {
     return Self.template(py,
                          zelf: zelf,
                          element: prefix,
@@ -46,7 +46,7 @@ extension AbstractString {
                                         zelf: PyObject,
                                         suffix: PyObject,
                                         start: PyObject?,
-                                        end: PyObject?) -> PyResultGen<PyObject> {
+                                        end: PyObject?) -> PyResult {
     return Self.template(py,
                          zelf: zelf,
                          element: suffix,
@@ -81,7 +81,7 @@ extension AbstractString {
     end: PyObject?,
     fnName: String,
     checkSubstring: (AbstractStringSubstring<Elements>, Elements) -> Bool
-  ) -> PyResultGen<PyObject> {
+  ) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
@@ -94,7 +94,7 @@ extension AbstractString {
 
     if let elts = Self.getElements(py, object: element) {
       let result = checkSubstring(substring, elts)
-      return PyResultGen(py, result)
+      return PyResult(py, result)
     }
 
     if let tuple = py.cast.asTuple(element) {
@@ -103,7 +103,7 @@ extension AbstractString {
         case .some(let elts):
           let elementResult = checkSubstring(substring, elts)
           if elementResult {
-            return PyResultGen(py, true)
+            return PyResult(py, true)
           }
         case .none:
           let t = Self.pythonTypeName
@@ -113,7 +113,7 @@ extension AbstractString {
         }
       }
 
-      return PyResultGen(py, false)
+      return PyResult(py, false)
     }
 
     let t = Self.pythonTypeName

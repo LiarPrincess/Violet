@@ -31,7 +31,7 @@ extension MinMaxImpl {
 
   fileprivate static func run(_ py: Py,
                               args: [PyObject],
-                              kwargs: PyDict?) -> PyResultGen<PyObject> {
+                              kwargs: PyDict?) -> PyResult {
     switch Self.argumentParser.bind(py, args: [], kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
@@ -59,7 +59,7 @@ extension MinMaxImpl {
   private static func positional(_ py: Py,
                                  args: [PyObject],
                                  key: PyObject?,
-                                 default: PyObject?) -> PyResultGen<PyObject> {
+                                 default: PyObject?) -> PyResult {
     assert(args.count >= 1)
 
     guard `default` == nil else {
@@ -91,7 +91,7 @@ extension MinMaxImpl {
   private static func iterable(_ py: Py,
                                iterable: PyObject,
                                key: PyObject?,
-                               default: PyObject?) -> PyResultGen<PyObject> {
+                               default: PyObject?) -> PyResult {
     let initial: ObjectPropertyPair? = nil
     let acc = py.reduce(iterable: iterable, initial: initial) { acc, object in
       switch Self.compare(py, current: acc, object: object, key: key) {
@@ -119,7 +119,7 @@ extension MinMaxImpl {
 
   // MARK: - Helpers
 
-  private static func emptyCollectionError(_ py: Py) -> PyResultGen<PyObject> {
+  private static func emptyCollectionError(_ py: Py) -> PyResult {
     let message = "\(Self.fnName) arg is an empty sequence"
     let error = py.newValueError(message: message)
     return .error(error.asBaseException)
@@ -174,7 +174,7 @@ extension Py {
 
   /// min(iterable, *[, key, default])
   /// See [this](https://docs.python.org/3/library/functions.html#min)
-  internal func min(args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
+  internal func min(args: [PyObject], kwargs: PyDict?) -> PyResult {
     return MinImpl.run(self, args: args, kwargs: kwargs)
   }
 }
@@ -201,7 +201,7 @@ extension Py {
 
   /// max(iterable, *[, key, default])
   /// See [this](https://docs.python.org/3/library/functions.html#max)
-  internal func max(args: [PyObject], kwargs: PyDict?) -> PyResultGen<PyObject> {
+  internal func max(args: [PyObject], kwargs: PyDict?) -> PyResult {
     return MaxImpl.run(self, args: args, kwargs: kwargs)
   }
 }

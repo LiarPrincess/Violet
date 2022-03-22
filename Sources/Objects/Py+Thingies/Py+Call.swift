@@ -18,7 +18,7 @@ extension Py {
     case notCallable(PyBaseException)
     case error(PyBaseException)
 
-    public var asResult: PyResultGen<PyObject> {
+    public var asResult: PyResult {
       switch self {
       case let .value(o):
         return .value(o)
@@ -148,7 +148,7 @@ extension Py {
     /// Raise error in VM.
     case error(PyBaseException)
 
-    internal init(result: PyResultGen<PyObject>) {
+    internal init(result: PyResult) {
       switch result {
       case let .value(o):
         self = .value(o)
@@ -236,7 +236,7 @@ extension Py {
     case notCallable(PyBaseException)
     case error(PyBaseException)
 
-    public var asResult: PyResultGen<PyObject> {
+    public var asResult: PyResult {
       switch self {
       case let .value(o):
         return .value(o)

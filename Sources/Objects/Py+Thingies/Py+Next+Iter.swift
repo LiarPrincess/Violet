@@ -4,7 +4,7 @@ extension Py {
 
   /// next(iterator[, default])
   /// See [this](https://docs.python.org/3/library/functions.html#next)
-  public func next(iterator: PyObject, default: PyObject? = nil) -> PyResultGen<PyObject> {
+  public func next(iterator: PyObject, default: PyObject? = nil) -> PyResult {
     switch self.callNext(iterator: iterator) {
     case .value(let r):
       return .value(r)
@@ -18,7 +18,7 @@ extension Py {
     }
   }
 
-  private func callNext(iterator: PyObject) -> PyResultGen<PyObject> {
+  private func callNext(iterator: PyObject) -> PyResult {
     if let result = PyStaticCall.__next__(self, object: iterator) {
       return result
     }
@@ -39,15 +39,15 @@ extension Py {
 
   /// This is the version of `iter` that you probably want to use!
   /// (as opposed to the one with `sentinel` argument)
-  public func iter(object: PyObject) -> PyResultGen<PyObject> {
+  public func iter(object: PyObject) -> PyResult {
     // Check for '__iter__'.
     if let result = PyStaticCall.__iter__(self, object: object) {
-      return PyResultGen(result)
+      return result
     }
 
     switch self.callMethod(object: object, selector: .__iter__) {
     case .value(let o):
-      return PyResultGen(o)
+      return PyResult(o)
     case .missingMethod:
       break
     case .error(let e),
@@ -60,7 +60,7 @@ extension Py {
     case .value(true):
       let type = self.types.iterator
       let iter = self.memory.newIterator(self, type: type, sequence: object)
-      return PyResultGen(iter)
+      return PyResult(iter)
     case .value(false):
       let message = "'\(object.typeName)' object is not an iterable"
       return .typeError(self, message: message)
@@ -73,7 +73,7 @@ extension Py {
   ///
   /// iter(object[, sentinel])
   /// See [this](https://docs.python.org/3/library/functions.html#iter)
-  public func iter(object: PyObject, sentinel: PyObject?) -> PyResultGen<PyObject> {
+  public func iter(object: PyObject, sentinel: PyObject?) -> PyResult {
     guard let sentinel = sentinel else {
       return self.iter(object: object)
     }
@@ -88,7 +88,7 @@ extension Py {
                                                  callable: object,
                                                  sentinel: sentinel)
 
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // MARK: - Has iter

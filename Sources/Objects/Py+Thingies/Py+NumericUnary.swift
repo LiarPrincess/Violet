@@ -7,7 +7,7 @@ extension Py {
   // MARK: - Positive
 
   /// PyObject * PyNumber_Positive(PyObject *o)
-  public func positive(object: PyObject) -> PyResultGen<PyObject> {
+  public func positive(object: PyObject) -> PyResult {
     if let result = PyStaticCall.__pos__(self, object: object) {
       return result
     }
@@ -20,7 +20,7 @@ extension Py {
   // MARK: - Negative
 
   /// PyObject * PyNumber_Negative(PyObject *o)
-  public func negative(object: PyObject) -> PyResultGen<PyObject> {
+  public func negative(object: PyObject) -> PyResult {
     if let result = PyStaticCall.__neg__(self, object: object) {
       return result
     }
@@ -33,7 +33,7 @@ extension Py {
   // MARK: - Invert
 
   /// PyObject * PyNumber_Invert(PyObject *o)
-  public func invert(object: PyObject) -> PyResultGen<PyObject> {
+  public func invert(object: PyObject) -> PyResult {
     if let result = PyStaticCall.__invert__(self, object: object) {
       return result
     }
@@ -49,7 +49,7 @@ extension Py {
   /// See [this](https://docs.python.org/3/library/functions.html#abs)
   ///
   /// PyObject * PyNumber_Absolute(PyObject *o)
-  public func absolute(object: PyObject) -> PyResultGen<PyObject> {
+  public func absolute(object: PyObject) -> PyResult {
     if let result = PyStaticCall.__abs__(self, object: object) {
       return result
     }
@@ -63,7 +63,7 @@ extension Py {
 
   private func callUnaryMethod(object: PyObject,
                                selector: IdString,
-                               operation: String) -> PyResultGen<PyObject> {
+                               operation: String) -> PyResult {
     switch self.callMethod(object: object, selector: selector) {
     case .value(let result):
       return .value(result)

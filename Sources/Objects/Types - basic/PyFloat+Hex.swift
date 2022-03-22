@@ -40,7 +40,7 @@ extension PyFloat {
       """
 
   // sourcery: pymethod = hex, doc = hexDoc
-  internal static func hex(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func hex(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "hex")
     }
@@ -90,7 +90,7 @@ extension PyFloat {
     result.append(exponent < 0 ? "-" : "+")
     result.append(String(exponentAbs, radix: 10, uppercase: false))
 
-    return PyResultGen(py, result)
+    return PyResult(py, result)
   }
 }
 
@@ -111,9 +111,7 @@ extension PyFloat {
       """
 
   // sourcery: pyclassmethod = fromhex, doc = fromHexDoc
-  internal static func fromhex(_ py: Py,
-                               type: PyType,
-                               value: PyObject) -> PyResultGen<PyObject> {
+  internal static func fromhex(_ py: Py, type: PyType, value: PyObject) -> PyResult {
     guard let stringObject = py.cast.asString(value) else {
       // This message looks weird, but argument name is 'string'
       let message = "fromhex(): string has to have str type, not \(value.typeName)"
@@ -138,8 +136,7 @@ extension PyFloat {
   }
 
   /// Raw `fromHex` that works on Swift values, use this for debug.
-  private static func fromHex(_ py: Py,
-                              string _string: String) -> PyResultGen<Double> {
+  private static func fromHex(_ py: Py, string _string: String) -> PyResultGen<Double> {
     var string = FromHexString(string: _string)
     if string.isEmpty {
       let error = Self.parserError(py)

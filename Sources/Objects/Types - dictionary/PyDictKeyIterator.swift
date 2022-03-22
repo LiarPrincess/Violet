@@ -61,21 +61,21 @@ public struct PyDictKeyIterator: PyObjectMixin, AbstractDictViewIterator {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResultGen<PyObject> {
+                                        name: PyObject) -> PyResult {
     return Self.abstract__getattribute__(py, zelf: zelf, name: name)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.abstract__iter__(py, zelf: zelf)
   }
 
   // MARK: - Next
 
   // sourcery: pymethod = __next__
-  internal static func __next__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __next__(_ py: Py, zelf: PyObject) -> PyResult {
     switch Self.abstract__next__(py, zelf: zelf) {
     case let .value(entry):
       let key = entry.key.object
@@ -88,7 +88,7 @@ public struct PyDictKeyIterator: PyObjectMixin, AbstractDictViewIterator {
   // MARK: - Length hint
 
   // sourcery: pymethod = __length_hint__
-  internal static func __length_hint__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __length_hint__(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.abstract__length_hint__(py, zelf: zelf)
   }
 
@@ -98,7 +98,7 @@ public struct PyDictKeyIterator: PyObjectMixin, AbstractDictViewIterator {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     return .typeError(py, message: "cannot create 'dict_keyiterator' instances")
   }
 }

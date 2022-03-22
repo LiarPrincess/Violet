@@ -62,12 +62,13 @@ public struct DirResult {
 
 // MARK: - PyResult
 
-extension PyResultGen where Wrapped == PyObject {
+extension PyResult {
+
   public init(_ py: Py, _ dir: DirResult) {
     let list = py.newList(elements: dir.elements)
     switch list.sort(py, key: nil, isReverse: false) {
     case .value:
-      self = PyResultGen(list)
+      self = PyResult(list)
     case .error(let e):
       self = .error(e)
     }
@@ -76,7 +77,7 @@ extension PyResultGen where Wrapped == PyObject {
   public init(_ py: Py, _ result: PyResultGen<DirResult>) {
     switch result {
     case let .value(dir):
-      self = PyResultGen(py, dir)
+      self = PyResult(py, dir)
     case let .error(e):
       self = .error(e)
     }

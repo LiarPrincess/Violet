@@ -21,11 +21,6 @@ internal protocol AbstractSet: PyObjectMixin {
   /// - For `set` it should return `set`.
   /// - For `frozenset` it should return `frozenset`.
   static func downcast(_ py: Py, _ object: PyObject) -> Self?
-
-  /// Create error when the `zelf` argument cast failed.
-  static func invalidZelfArgument<T>(_ py: Py,
-                                     _ object: PyObject,
-                                     _ fnName: String) -> PyResultGen<T>
 }
 
 extension AbstractSet {
@@ -103,5 +98,17 @@ extension AbstractSet {
     case let .error(e):
       return .error(e)
     }
+  }
+
+  // MARK: - Helpers
+
+  internal static func invalidZelfArgument(_ py: Py,
+                                           _ object: PyObject,
+                                           _ fnName: String) -> PyResult {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }

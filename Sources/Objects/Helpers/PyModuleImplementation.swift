@@ -43,7 +43,7 @@ extension PyModuleImplementation {
   // MARK: - Get
 
   /// Get value from `self.__dict__`.
-  internal func get(_ name: Properties) -> PyResultGen<PyObject> {
+  internal func get(_ name: Properties) -> PyResult {
     let interned = self.intern(name)
     let result = self.__dict__.get(self.py, key: interned)
 
@@ -205,7 +205,7 @@ extension PyModuleImplementation {
   internal func setOrTrap(
     _ name: Properties,
     doc: String?,
-    fn: @escaping (Py, PyObject, [PyObject], PyDict?) -> PyResultGen<PyObject>
+    fn: @escaping (Py, PyObject, [PyObject], PyDict?) -> PyResult
   ) {
     let wrapper = FunctionWrapper(name: name.description, fn: fn)
     self.setOrTrap(name, doc: doc, fn: wrapper)
@@ -215,14 +215,14 @@ extension PyModuleImplementation {
 
   internal func setOrTrap(_ name: Properties,
                           doc: String?,
-                          fn: @escaping (Py, PyObject) -> PyResultGen<PyObject>) {
+                          fn: @escaping (Py, PyObject) -> PyResult) {
     let wrapper = FunctionWrapper(name: name.description, fn: fn)
     self.setOrTrap(name, doc: doc, fn: wrapper)
   }
 
   internal func setOrTrap(_ name: Properties,
                           doc: String?,
-                          fn: @escaping (Py, PyObject?) -> PyResultGen<PyObject>) {
+                          fn: @escaping (Py, PyObject?) -> PyResult) {
     let wrapper = FunctionWrapper(name: name.description, fn: fn)
     self.setOrTrap(name, doc: doc, fn: wrapper)
   }
@@ -231,14 +231,14 @@ extension PyModuleImplementation {
 
   internal func setOrTrap(_ name: Properties,
                           doc: String?,
-                          fn: @escaping (Py, PyObject, PyObject) -> PyResultGen<PyObject>) {
+                          fn: @escaping (Py, PyObject, PyObject) -> PyResult) {
     let wrapper = FunctionWrapper(name: name.description, fn: fn)
     self.setOrTrap(name, doc: doc, fn: wrapper)
   }
 
   internal func setOrTrap(_ name: Properties,
                           doc: String?,
-                          fn: @escaping (Py, PyObject, PyObject?) -> PyResultGen<PyObject>) {
+                          fn: @escaping (Py, PyObject, PyObject?) -> PyResult) {
     let wrapper = FunctionWrapper(name: name.description, fn: fn)
     self.setOrTrap(name, doc: doc, fn: wrapper)
   }
@@ -248,7 +248,7 @@ extension PyModuleImplementation {
   internal func setOrTrap(
     _ name: Properties,
     doc: String?,
-    fn: @escaping (Py, PyObject, PyObject, PyObject) -> PyResultGen<PyObject>
+    fn: @escaping (Py, PyObject, PyObject, PyObject) -> PyResult
   ) {
     let wrapper = FunctionWrapper(name: name.description, fn: fn)
     self.setOrTrap(name, doc: doc, fn: wrapper)
@@ -257,7 +257,7 @@ extension PyModuleImplementation {
   internal func setOrTrap(
     _ name: Properties,
     doc: String?,
-    fn: @escaping (Py, PyObject, PyObject, PyObject?) -> PyResultGen<PyObject>
+    fn: @escaping (Py, PyObject, PyObject, PyObject?) -> PyResult
   ) {
     let wrapper = FunctionWrapper(name: name.description, fn: fn)
     self.setOrTrap(name, doc: doc, fn: wrapper)
@@ -266,7 +266,7 @@ extension PyModuleImplementation {
   internal func setOrTrap(
     _ name: Properties,
     doc: String?,
-    fn: @escaping (Py, PyObject, PyObject?, PyObject?) -> PyResultGen<PyObject>
+    fn: @escaping (Py, PyObject, PyObject?, PyObject?) -> PyResult
   ) {
     let wrapper = FunctionWrapper(name: name.description, fn: fn)
     self.setOrTrap(name, doc: doc, fn: wrapper)
@@ -277,7 +277,7 @@ extension PyModuleImplementation {
   internal func setOrTrap(
     _ name: Properties,
     doc: String?,
-    fn: @escaping (Py, PyObject, PyObject, PyObject, PyObject) -> PyResultGen<PyObject>
+    fn: @escaping (Py, PyObject, PyObject, PyObject, PyObject) -> PyResult
   ) {
     let wrapper = FunctionWrapper(name: name.description, fn: fn)
     self.setOrTrap(name, doc: doc, fn: wrapper)
@@ -286,7 +286,7 @@ extension PyModuleImplementation {
   internal func setOrTrap(
     _ name: Properties,
     doc: String?,
-    fn: @escaping (Py, PyObject, PyObject, PyObject, PyObject?) -> PyResultGen<PyObject>
+    fn: @escaping (Py, PyObject, PyObject, PyObject, PyObject?) -> PyResult
   ) {
     let wrapper = FunctionWrapper(name: name.description, fn: fn)
     self.setOrTrap(name, doc: doc, fn: wrapper)

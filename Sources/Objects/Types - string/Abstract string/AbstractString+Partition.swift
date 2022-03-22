@@ -49,8 +49,11 @@ extension AbstractString {
     findSeparator: (Self, Elements) -> AbstractStringFindResult<Elements>
   ) -> AbstractStringPartitionResult<Elements> {
     guard let zelf = Self.downcast(py, zelf) else {
-      let error = Self.getInvalidZelfArgumentError(py, zelf: zelf, fnName: fnName)
-      return .error(error)
+      let error = py.newInvalidSelfArgumentError(object: zelf,
+                                                 expectedType: Self.pythonTypeName,
+                                                 fnName: fnName)
+
+      return .error(error.asBaseException)
     }
 
     guard let separator = Self.getElements(py, object: separatorObject) else {
@@ -82,20 +85,6 @@ extension AbstractString {
 
     case .notFound:
       return .separatorNotFound
-    }
-  }
-
-  // Tiny hack, since 'Self.invalidZelfArgument' returns 'PyResult<T>',
-  // and we want 'AbstractStringFindResult<Elements>'
-  private static func getInvalidZelfArgumentError(_ py: Py,
-                                                  zelf: PyObject,
-                                                  fnName: String) -> PyBaseException {
-    let result: PyResultGen<Int> = Self.invalidZelfArgument(py, zelf, fnName)
-    switch result {
-    case .value:
-      trap("Expected 'Self.invalidZelfArgument' to return error.")
-    case .error(let e):
-      return e
     }
   }
 }

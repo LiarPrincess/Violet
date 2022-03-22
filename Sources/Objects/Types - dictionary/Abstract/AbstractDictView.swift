@@ -15,11 +15,6 @@ internal protocol AbstractDictView: PyObjectMixin {
 
   /// Cast `PyObject` -> Self``.
   static func downcast(_ py: Py, _ object: PyObject) -> Self?
-
-  /// Create error when the `zelf` argument cast failed.
-  static func invalidZelfArgument<T>(_ py: Py,
-                                     _ object: PyObject,
-                                     _ fnName: String) -> PyResultGen<T>
 }
 
 extension AbstractDictView {
@@ -173,13 +168,13 @@ extension AbstractDictView {
     _ py: Py,
     zelf: PyObject,
     elementRepr: (Py, Element) -> PyResultGen<String>
-  ) -> PyResultGen<PyObject> {
+  ) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
     if zelf.hasReprLock {
-      return PyResultGen(py, interned:  "...")
+      return PyResult(py, interned:  "...")
     }
 
     return zelf.withReprLock {
@@ -196,7 +191,7 @@ extension AbstractDictView {
       }
 
       result += ")"
-      return PyResultGen(py, result)
+      return PyResult(py, result)
     }
   }
 
@@ -205,7 +200,7 @@ extension AbstractDictView {
   // sourcery: pymethod = __getattribute__
   internal static func abstract__getattribute__(_ py: Py,
                                                 zelf: PyObject,
-                                                name: PyObject) -> PyResultGen<PyObject> {
+                                                name: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -216,12 +211,24 @@ extension AbstractDictView {
   // MARK: - __len__
 
   internal static func abstract__len__(_ py: Py,
-                                       zelf: PyObject) -> PyResultGen<PyObject> {
+                                       zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__len__")
     }
 
     let result = zelf.elements.count
-    return PyResultGen(py, result)
+    return PyResult(py, result)
+  }
+
+  // MARK: - Helpers
+
+  private static func invalidZelfArgument(_ py: Py,
+                                          _ object: PyObject,
+                                          _ fnName: String) -> PyResult {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
   }
 }

@@ -368,7 +368,7 @@ public struct PyCode: PyObjectMixin {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
@@ -378,7 +378,7 @@ public struct PyCode: PyObjectMixin {
     let file = zelf.filename.value
     let line = zelf.firstLine
     let result = "<code object \(name) at \(ptr), file '\(file)', line \(line)>"
-    return PyResultGen(py, interned: result)
+    return PyResult(py, interned: result)
   }
 
   // MARK: - Class
@@ -393,7 +393,7 @@ public struct PyCode: PyObjectMixin {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResultGen<PyObject> {
+                                        name: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -404,57 +404,57 @@ public struct PyCode: PyObjectMixin {
   // MARK: - Properties
 
   // sourcery: pyproperty = co_name
-  internal static func co_name(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func co_name(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "co_name")
     }
 
-    return PyResultGen(zelf.name)
+    return PyResult(zelf.name)
   }
 
   // sourcery: pyproperty = co_filename
-  internal static func co_filename(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func co_filename(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "co_filename")
     }
 
-    return PyResultGen(zelf.filename)
+    return PyResult(zelf.filename)
   }
 
   // sourcery: pyproperty = co_firstlineno
-  internal static func co_firstlineno(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func co_firstlineno(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "co_firstlineno")
     }
 
     let result = Int(zelf.firstLine)
-    return PyResultGen(py, result)
+    return PyResult(py, result)
   }
 
   // sourcery: pyproperty = co_argcount
-  internal static func co_argcount(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func co_argcount(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "co_argcount")
     }
 
-    return PyResultGen(py, zelf.argCount)
+    return PyResult(py, zelf.argCount)
   }
 
   // sourcery: pyproperty = co_kwonlyargcount
-  internal static func co_kwonlyargcount(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func co_kwonlyargcount(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "co_kwonlyargcount")
     }
 
-    return PyResultGen(py, zelf.kwOnlyArgCount)
+    return PyResult(py, zelf.kwOnlyArgCount)
   }
 
   // sourcery: pyproperty = co_nlocals
-  internal static func co_nlocals(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func co_nlocals(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "co_nlocals")
     }
 
-    return PyResultGen(py, zelf.variableCount)
+    return PyResult(py, zelf.variableCount)
   }
 }

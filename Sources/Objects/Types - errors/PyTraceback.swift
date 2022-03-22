@@ -81,7 +81,7 @@ public struct PyTraceback: PyObjectMixin {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResultGen<PyObject> {
+                                        name: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -119,13 +119,13 @@ public struct PyTraceback: PyObjectMixin {
   // MARK: - Frame
 
   // sourcery: pyproperty = tb_frame
-  internal static func tb_frame(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func tb_frame(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "tb_frame")
     }
 
     let result = zelf.getFrame()
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   internal func getFrame() -> PyFrame {
@@ -135,13 +135,13 @@ public struct PyTraceback: PyObjectMixin {
   // MARK: - Last instruction
 
   // sourcery: pyproperty = tb_lasti
-  internal static func tb_lasti(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func tb_lasti(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "tb_lasti")
     }
 
     let result = zelf.getLastInstruction()
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   internal func getLastInstruction() -> PyInt {
@@ -151,13 +151,13 @@ public struct PyTraceback: PyObjectMixin {
   // MARK: - Line number
 
   // sourcery: pyproperty = tb_lineno
-  internal static func tb_lineno(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func tb_lineno(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "tb_lineno")
     }
 
     let result = zelf.getLineNo()
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   internal func getLineNo() -> PyInt {
@@ -167,13 +167,13 @@ public struct PyTraceback: PyObjectMixin {
   // MARK: - Next
 
   // sourcery: pyproperty = tb_next, setter
-  internal static func tb_next(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func tb_next(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "tb_next")
     }
 
     let result = zelf.getNext()
-    return PyResultGen(py, result)
+    return PyResult(py, result)
   }
 
   internal func getNext() -> PyTraceback? {
@@ -182,7 +182,7 @@ public struct PyTraceback: PyObjectMixin {
 
   internal static func tb_next(_ py: Py,
                                zelf: PyObject,
-                               value: PyObject?) -> PyResultGen<PyObject> {
+                               value: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "tb_next")
     }
@@ -238,7 +238,7 @@ public struct PyTraceback: PyObjectMixin {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     switch self.newArguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 4, "Invalid required argument count.")
@@ -266,7 +266,7 @@ public struct PyTraceback: PyObjectMixin {
                               next _next: PyObject,
                               frame _frame: PyObject,
                               lastInstruction _lastInstruction: PyObject,
-                              lineNo _lineNo: PyObject) -> PyResultGen<PyObject> {
+                              lineNo _lineNo: PyObject) -> PyResult {
     let fn = "TracebackType.__new__()"
 
     var next: PyTraceback?
@@ -301,6 +301,6 @@ public struct PyTraceback: PyObjectMixin {
                                         lastInstruction: lastInstruction,
                                         lineNo: lineNo)
 
-    return PyResultGen(result)
+    return PyResult(result)
   }
 }

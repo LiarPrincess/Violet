@@ -70,8 +70,7 @@ extension Py {
 
   /// round(number[, ndigits])
   /// See [this](https://docs.python.org/3/library/functions.html#round)
-  public func round(number: PyObject,
-                    nDigits: PyObject? = nil) -> PyResultGen<PyObject> {
+  public func round(number: PyObject, nDigits: PyObject? = nil) -> PyResult {
     let nDigits = self.cast.isNilOrNone(nDigits) ? nil : nDigits
 
     if let result = PyStaticCall.__round__(self, object: number, nDigits: nDigits) {

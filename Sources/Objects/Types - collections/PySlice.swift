@@ -205,7 +205,7 @@ public struct PySlice: PyObjectMixin {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
@@ -229,7 +229,7 @@ public struct PySlice: PyObjectMixin {
     }
 
     let result = "slice(\(start), \(stop), \(step))"
-    return PyResultGen(py, result)
+    return PyResult(py, result)
   }
 
   // MARK: - Attributes
@@ -237,7 +237,7 @@ public struct PySlice: PyObjectMixin {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResultGen<PyObject> {
+                                        name: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -255,30 +255,30 @@ public struct PySlice: PyObjectMixin {
   // MARK: - Start, stop, step
 
   // sourcery: pyproperty = start
-  internal static func start(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func start(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "start")
     }
 
-    return PyResultGen(zelf.start)
+    return PyResult(zelf.start)
   }
 
   // sourcery: pyproperty = stop
-  internal static func stop(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func stop(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "stop")
     }
 
-    return PyResultGen(zelf.stop)
+    return PyResult(zelf.stop)
   }
 
   // sourcery: pyproperty = step
-  internal static func step(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func step(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "step")
     }
 
-    return PyResultGen(zelf.step)
+    return PyResult(zelf.step)
   }
 
   // MARK: - Indices
@@ -288,7 +288,7 @@ public struct PySlice: PyObjectMixin {
   /// slice_indices(PySliceObject* self, PyObject* len)
   internal static func indices(_ py: Py,
                                zelf: PyObject,
-                               length: PyObject) -> PyResultGen<PyObject> {
+                               length: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "indices")
     }
@@ -317,7 +317,7 @@ public struct PySlice: PyObjectMixin {
     let start = py.newInt(indices.start)
     let stop = py.newInt(indices.stop)
     let step = py.newInt(indices.step)
-    return PyResultGen(py, tuple: start.asObject, stop.asObject, step.asObject)
+    return PyResult(py, tuple: start.asObject, stop.asObject, step.asObject)
   }
 
   internal struct GetLongIndicesResult {
@@ -584,7 +584,7 @@ public struct PySlice: PyObjectMixin {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     if let e = ArgumentParser.noKwargsOrError(py,
                                               fnName: Self.pythonTypeName,
                                               kwargs: kwargs) {
@@ -603,7 +603,7 @@ public struct PySlice: PyObjectMixin {
     // Handle 1 argument
     if args.count == 1 {
       let result = py.newSlice(stop: args[0])
-      return PyResultGen(result)
+      return PyResult(result)
     }
 
     // Handle 2 or 3 arguments
@@ -612,6 +612,6 @@ public struct PySlice: PyObjectMixin {
     let step = args.count == 3 ? args[2] : nil
 
     let result = py.newSlice(start: start, stop: stop, step: step)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 }

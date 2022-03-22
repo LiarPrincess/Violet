@@ -13,7 +13,7 @@ extension Py {
   /// See [this](https://docs.python.org/3/library/functions.html#getattr)
   public func getAttribute(object: PyObject,
                            name: String,
-                           default: PyObject? = nil) -> PyResultGen<PyObject> {
+                           default: PyObject? = nil) -> PyResult {
     let n = self.asObject(name: name)
     return self.getAttribute(object: object, name: n, default: `default`)
   }
@@ -22,7 +22,7 @@ extension Py {
   /// See [this](https://docs.python.org/3/library/functions.html#getattr)
   public func getAttribute(object: PyObject,
                            name: IdString,
-                           default: PyObject? = nil) -> PyResultGen<PyObject> {
+                           default: PyObject? = nil) -> PyResult {
     let n = self.resolve(id: name).asObject
     return self.getAttribute(object: object, name: n, default: `default`)
   }
@@ -31,7 +31,7 @@ extension Py {
   /// See [this](https://docs.python.org/3/library/functions.html#getattr)
   public func getAttribute(object: PyObject,
                            name: PyString,
-                           default: PyObject? = nil) -> PyResultGen<PyObject> {
+                           default: PyObject? = nil) -> PyResult {
     let n = name.asObject
     return self.getAttribute(object: object, name: n, default: `default`)
   }
@@ -47,7 +47,7 @@ extension Py {
   /// _PyObject_LookupAttr(PyObject *v, PyObject *name, PyObject **result)
   public func getAttribute(object: PyObject,
                            name: PyObject,
-                           default: PyObject? = nil) -> PyResultGen<PyObject> {
+                           default: PyObject? = nil) -> PyResult {
     guard self.isString(name: name) else {
       return .typeError(self, message: "getattr(): attribute name must be string")
     }
@@ -102,8 +102,7 @@ extension Py {
     return .error(e)
   }
 
-  private func call__getattribute__(object: PyObject,
-                                    name: PyObject) -> PyResultGen<PyObject> {
+  private func call__getattribute__(object: PyObject, name: PyObject) -> PyResult {
     assert(self.isString(name: name), "Attribute should be string.")
 
     // Fast path: we know the method at compile time
@@ -135,7 +134,7 @@ extension Py {
     case missingMethod
     case error(PyBaseException)
 
-    fileprivate init(result: PyResultGen<PyObject>) {
+    fileprivate init(result: PyResult) {
       switch result {
       case let .value(o): self = .value(o)
       case let .error(e): self = .error(e)
@@ -143,8 +142,7 @@ extension Py {
     }
   }
 
-  private func call__getattr__(object: PyObject,
-                               name: PyObject) -> CallGetattrResult {
+  private func call__getattr__(object: PyObject, name: PyObject) -> CallGetattrResult {
     assert(self.isString(name: name), "Attribute should be string.")
 
     // Fast path: we know the method at compile time
@@ -213,7 +211,7 @@ extension Py {
   /// See [this](https://docs.python.org/3/library/functions.html#setattr)
   public func setAttribute(object: PyObject,
                            name: String,
-                           value: PyObject) -> PyResultGen<PyObject> {
+                           value: PyObject) -> PyResult {
     let n = self.asObject(name: name)
     return self.setAttribute(object: object, name: n, value: value)
   }
@@ -222,7 +220,7 @@ extension Py {
   /// See [this](https://docs.python.org/3/library/functions.html#setattr)
   public func setAttribute(object: PyObject,
                            name: IdString,
-                           value: PyObject) -> PyResultGen<PyObject> {
+                           value: PyObject) -> PyResult {
     let n = self.resolve(id: name).asObject
     return self.setAttribute(object: object, name: n, value: value)
   }
@@ -231,7 +229,7 @@ extension Py {
   /// See [this](https://docs.python.org/3/library/functions.html#setattr)
   public func setAttribute(object: PyObject,
                            name: PyString,
-                           value: PyObject) -> PyResultGen<PyObject> {
+                           value: PyObject) -> PyResult {
     let n = name.asObject
     return self.setAttribute(object: object, name: n, value: value)
   }
@@ -240,7 +238,7 @@ extension Py {
   /// See [this](https://docs.python.org/3/library/functions.html#setattr)
   public func setAttribute(object: PyObject,
                            name nameObject: PyObject,
-                           value: PyObject) -> PyResultGen<PyObject> {
+                           value: PyObject) -> PyResult {
     guard let name = self.cast.asString(nameObject) else {
       return .typeError(self, message: "setattr(): attribute name must be string")
     }
@@ -303,21 +301,21 @@ extension Py {
 
   /// delattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#delattr)
-  public func delAttribute(object: PyObject, name: String) -> PyResultGen<PyObject> {
+  public func delAttribute(object: PyObject, name: String) -> PyResult {
     let n = self.asObject(name: name)
     return self.delAttribute(object: object, name: n)
   }
 
   /// delattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#delattr)
-  public func delAttribute(object: PyObject, name: IdString) -> PyResultGen<PyObject> {
+  public func delAttribute(object: PyObject, name: IdString) -> PyResult {
     let n = self.resolve(id: name).asObject
     return self.delAttribute(object: object, name: n)
   }
 
   /// delattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#delattr)
-  public func delAttribute(object: PyObject, name: PyString) -> PyResultGen<PyObject> {
+  public func delAttribute(object: PyObject, name: PyString) -> PyResult {
     let n = name.asObject
     return self.delAttribute(object: object, name: n)
   }
@@ -325,7 +323,7 @@ extension Py {
   /// delattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#delattr)
   public func delAttribute(object: PyObject,
-                           name nameObject: PyObject) -> PyResultGen<PyObject> {
+                           name nameObject: PyObject) -> PyResult {
     guard let name = self.cast.asString(nameObject) else {
       return .typeError(self, message: "delattr(): attribute name must be string")
     }

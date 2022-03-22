@@ -5,13 +5,13 @@ extension Py {
   // MARK: - Get
 
   /// PySequence_GetItem
-  public func getItem(object: PyObject, index: Int) -> PyResultGen<PyObject> {
+  public func getItem(object: PyObject, index: Int) -> PyResult {
     let int = self.newInt(index).asObject
     return self.getItem(object: object, index: int)
   }
 
   /// PyObject_GetItem
-  public func getItem(object: PyObject, index: PyObject) -> PyResultGen<PyObject> {
+  public func getItem(object: PyObject, index: PyObject) -> PyResult {
     if let result = PyStaticCall.__getitem__(self, object: object, index: index) {
       return result
     }
@@ -32,7 +32,7 @@ extension Py {
   /// PyObject_SetItem
   public func setItem(object: PyObject,
                       index: PyObject,
-                      value: PyObject) -> PyResultGen<PyObject> {
+                      value: PyObject) -> PyResult {
     if let result = PyStaticCall.__setitem__(self,
                                              object: object,
                                              index: index,
@@ -56,7 +56,7 @@ extension Py {
   // MARK: - Delete
 
   /// PyObject_DelItem
-  public func deleteItem(object: PyObject, index: PyObject) -> PyResultGen<PyObject> {
+  public func deleteItem(object: PyObject, index: PyObject) -> PyResult {
     if let result = PyStaticCall.__delitem__(self, object: object, index: index) {
       return result
     }

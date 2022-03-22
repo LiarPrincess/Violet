@@ -35,12 +35,12 @@ public struct PyEllipsis: PyObjectMixin {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult {
     guard Self.downcast(py, zelf) != nil else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
-    return PyResultGen(py, interned: "Ellipsis")
+    return PyResult(py, interned: "Ellipsis")
   }
 
   // MARK: - Class
@@ -53,12 +53,12 @@ public struct PyEllipsis: PyObjectMixin {
   // MARK: - Reduce
 
   // sourcery: pymethod = __reduce__
-  internal static func __reduce__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __reduce__(_ py: Py, zelf: PyObject) -> PyResult {
     guard Self.downcast(py, zelf) != nil else {
       return Self.invalidZelfArgument(py, zelf, "__reduce__")
     }
 
-    return PyResultGen(py, interned: "Ellipsis")
+    return PyResult(py, interned: "Ellipsis")
   }
 
   // MARK: - Attributes
@@ -66,7 +66,7 @@ public struct PyEllipsis: PyObjectMixin {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResultGen<PyObject> {
+                                        name: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -80,13 +80,13 @@ public struct PyEllipsis: PyObjectMixin {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let noArgs = args.isEmpty
     let noKwargs = kwargs?.elements.isEmpty ?? true
     guard noArgs && noKwargs else {
       return .typeError(py, message: "EllipsisType takes no arguments")
     }
 
-    return PyResultGen(py.ellipsis)
+    return PyResult(py.ellipsis)
   }
 }

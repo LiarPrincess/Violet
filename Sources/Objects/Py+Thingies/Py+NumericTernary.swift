@@ -11,7 +11,7 @@ extension Py {
   /// PyNumber_Power(PyObject *v, PyObject *w, PyObject *z)
   public func pow(base: PyObject,
                   exp: PyObject,
-                  mod: PyObject? = nil) -> PyResultGen<PyObject> {
+                  mod: PyObject? = nil) -> PyResult {
     let _mod = mod ?? self.none.asObject
 
     switch self.callCommon(left: base, middle: exp, right: _mod) {
@@ -30,7 +30,7 @@ extension Py {
 
   public func powInPlace(base: PyObject,
                          exp: PyObject,
-                         mod: PyObject? = nil) -> PyResultGen<PyObject> {
+                         mod: PyObject? = nil) -> PyResult {
     let _mod = mod ?? self.none.asObject
 
     switch self.callInPlaceOp(base: base, exp: exp, mod: _mod) {
@@ -65,7 +65,7 @@ extension Py {
   /// Basically code shared between normal and in-place call.
   private func callCommon(left: PyObject,
                           middle: PyObject,
-                          right: PyObject) -> PyResultGen<PyObject> {
+                          right: PyObject) -> PyResult {
     var checkedReflected = false
 
     // Check if middle is subtype of left, if so then use middle.
@@ -130,7 +130,7 @@ extension Py {
 
   private func callOp(base: PyObject,
                       exp: PyObject,
-                      mod: PyObject) -> PyResultGen<PyObject> {
+                      mod: PyObject) -> PyResult {
     // Fast path: we know the method at compile time
     if let result = PyStaticCall.__pow__(self, base: base, exp: exp, mod: mod) {
       return result
@@ -150,7 +150,7 @@ extension Py {
 
   private func callReflectedOp(exp: PyObject,
                                base: PyObject,
-                               mod: PyObject) -> PyResultGen<PyObject> {
+                               mod: PyObject) -> PyResult {
     // Fast path: we know the method at compile time
     if let result = PyStaticCall.__rpow__(self, base: base, exp: exp, mod: mod) {
       return result
@@ -170,7 +170,7 @@ extension Py {
 
   private func callInPlaceOp(base: PyObject,
                              exp: PyObject,
-                             mod: PyObject) -> PyResultGen<PyObject> {
+                             mod: PyObject) -> PyResult {
     // Fast path: we know the method at compile time
     if let result = PyStaticCall.__ipow__(self, base: base, exp: exp, mod: mod) {
       return result

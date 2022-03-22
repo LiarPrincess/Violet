@@ -95,7 +95,7 @@ extension Py {
   ///
   /// PyObject *
   /// PyObject_Dir(PyObject *obj)
-  public func dir(object: PyObject? = nil) -> PyResultGen<PyObject> {
+  public func dir(object: PyObject? = nil) -> PyResult {
     if let object = object {
       return self.objectDir(object: object)
     }
@@ -105,9 +105,9 @@ extension Py {
 
   /// static PyObject *
   /// _dir_object(PyObject *obj)
-  private func objectDir(object: PyObject) -> PyResultGen<PyObject> {
+  private func objectDir(object: PyObject) -> PyResult {
     if let result = PyStaticCall.__dir__(self, object: object) {
-      return PyResultGen(self, result)
+      return PyResult(self, result)
     }
 
     switch self.callMethod(object: object, selector: .__dir__) {
@@ -118,7 +118,7 @@ extension Py {
         return .error(e)
       }
 
-      return PyResultGen(self, dir)
+      return PyResult(self, dir)
 
     case .missingMethod:
       return .typeError(self, message: "object does not provide __dir__")
@@ -130,7 +130,7 @@ extension Py {
 
   /// static PyObject *
   /// _dir_locals(void)
-  private func localsDir() -> PyResultGen<PyObject> {
+  private func localsDir() -> PyResult {
     guard let frame = self.delegate.frame else {
       return .systemError(self, message: "frame does not exist")
     }
@@ -140,6 +140,6 @@ extension Py {
       return .error(e)
     }
 
-    return PyResultGen(self, dir)
+    return PyResult(self, dir)
   }
 }

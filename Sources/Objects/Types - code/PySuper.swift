@@ -81,7 +81,7 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
@@ -91,10 +91,10 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
     if let objectType = zelf.objectType {
       let objectTypeName = objectType.getNameString()
       let result = "<super: <class '\(typeName)'>, <\(objectTypeName) object>>"
-      return PyResultGen(py, result)
+      return PyResult(py, result)
     }
 
-    return PyResultGen(py, "<super: <class '\(typeName)'>, NULL>")
+    return PyResult(py, "<super: <class '\(typeName)'>, NULL>")
   }
 
   // MARK: - Attributes
@@ -102,7 +102,7 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResultGen<PyObject> {
+                                        name: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -120,7 +120,7 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
     // CPython: 'su->type' and 'su->obj'
     // It should never be nil (nil is allowed only because it is needed in '__new__')
     guard let superType = zelf.thisClass, let superObject = zelf.object else {
-      return PyResultGen(zelf)
+      return PyResult(zelf)
     }
 
     // The 'zelf.objectType' determines the method resolution order to be searched.
@@ -159,7 +159,7 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
   /// `skip` label in `self.getAttribute`
   internal static func standardGetAttribute(_ py: Py,
                                             zelf: PySuper,
-                                            name: PyObject) -> PyResultGen<PyObject> {
+                                            name: PyObject) -> PyResult {
     let zelfObject = zelf.asObject
     return AttributeHelper.getAttribute(py, object: zelfObject, name: name)
   }
@@ -203,37 +203,37 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
   internal static let thisClassDoc = "the class invoking super()"
 
   // sourcery: pyproperty = __thisclass__, doc = thisClassDoc
-  internal static func __thisclass__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __thisclass__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__thisclass__")
     }
 
     let result = zelf.thisClass?.asObject ?? py.none.asObject
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   internal static let selfDoc = "the instance invoking super(); may be None"
 
   // sourcery: pyproperty = __self__, doc = selfDoc
-  internal static func __self__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __self__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__self__")
     }
 
     let result = zelf.object?.asObject ?? py.none.asObject
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   internal static let selfClassDoc = "the type of the instance invoking super(); may be None"
 
   // sourcery: pyproperty = __self_class__, doc = selfClassDoc
-  internal static func __self_class__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __self_class__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__self_class__")
     }
 
     let result = zelf.objectType?.asObject ?? py.none.asObject
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // MARK: - Get
@@ -242,25 +242,25 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
   internal static func __get__(_ py: Py,
                                zelf: PyObject,
                                object: PyObject,
-                               type: PyObject?) -> PyResultGen<PyObject> {
+                               type: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__get__")
     }
 
     // Basically 'py.cast.isNone(object)'
     if py.isDescriptorStaticMarker(object) {
-      return PyResultGen(zelf)
+      return PyResult(zelf)
     }
 
     let isAlreadyBound = zelf.object != nil
     if isAlreadyBound {
-      return PyResultGen(zelf)
+      return PyResult(zelf)
     }
 
     // CPython: 'su->type'
     // It should never be nil (nil is allowed only because it is needed in '__new__')
     guard let superType = zelf.thisClass else {
-      return PyResultGen(zelf)
+      return PyResult(zelf)
     }
 
     // If super is an instance of a (strict) subclass of super, call its type
@@ -277,7 +277,7 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
     }
 
     let result = py.newSuper(requestedType: superType, object: object, objectType: objectType)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // MARK: - Python new
@@ -286,14 +286,14 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let result = py.memory.newSuper(py,
                                     type: type,
                                     requestedType: nil,
                                     object: nil,
                                     objectType: nil)
 
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // MARK: - Python init
@@ -307,7 +307,7 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }

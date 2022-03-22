@@ -25,7 +25,7 @@ extension ExecEval {
   fileprivate static func run(_ py: Py,
                               source: PyObject,
                               globals _globals: PyObject?,
-                              locals _locals: PyObject?) -> PyResultGen<PyObject> {
+                              locals _locals: PyObject?) -> PyResult {
     let locals: PyDict
     let globals: PyDict
     switch Self.parseEnv(py, globals: _globals, locals: _locals) {
@@ -239,9 +239,7 @@ extension Py {
 
   /// eval(expression[, globals[, locals]])
   /// See [this](https://docs.python.org/3/library/functions.html#eval)
-  public func eval(source: PyObject,
-                   globals: PyObject?,
-                   locals: PyObject?) -> PyResultGen<PyObject> {
+  public func eval(source: PyObject, globals: PyObject?, locals: PyObject?) -> PyResult {
     return Eval.run(self, source: source, globals: globals, locals: locals)
   }
 }

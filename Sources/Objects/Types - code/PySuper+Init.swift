@@ -3,7 +3,7 @@ extension PySuper {
   internal static func __init__(_ py: Py,
                                 zelf: PySuper,
                                 type typeArg: PyObject?,
-                                object objectArg: PyObject?) -> PyResultGen<PyObject> {
+                                object objectArg: PyObject?) -> PyResult {
     let type: PyType
     var object = objectArg
 
@@ -87,11 +87,9 @@ extension PySuper {
   /// By convention 'firstArgument' should be named 'self',
   /// but users can actually put anything they want there,
   /// so we can't rely that.
-  private static func getSelfObjectFromFirstArgument(
-    _ py: Py,
-    frame: PyFrame,
-    code: PyCode
-  ) -> PyResultGen<PyObject> {
+  private static func getSelfObjectFromFirstArgument(_ py: Py,
+                                                     frame: PyFrame,
+                                                     code: PyCode) -> PyResult {
     // Note the double optional below:
     // - 'frame.fastLocals' stores 'PyObject?'
     // - 'Collection.first' returns 'Element?'

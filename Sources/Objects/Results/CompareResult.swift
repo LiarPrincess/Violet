@@ -66,20 +66,23 @@ public enum CompareResult {
   }
 }
 
-extension PyResultGen where Wrapped == PyObject {
+extension PyResult {
+
   public init(_ py: Py, _ result: CompareResult) {
     switch result {
     case .value(let bool):
-      self = PyResultGen(py, bool)
+      self = PyResult(py, bool)
 
     case .notImplemented:
-      self = PyResultGen(py.notImplemented)
+      self = PyResult(py.notImplemented)
 
     case let .invalidSelfArgument(object, expectedType, operation):
-      let error = CompareResult.createInvalidSelfArgumentError(py,
-                                                               object: object,
-                                                               expectedType: expectedType,
-                                                               operation: operation)
+      let error = CompareResult.createInvalidSelfArgumentError(
+        py,
+        object: object,
+        expectedType: expectedType,
+        operation: operation
+      )
 
       self = .error(error.asBaseException)
 

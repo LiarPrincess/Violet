@@ -235,7 +235,7 @@ public struct PyRange: PyObjectMixin {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
@@ -252,19 +252,19 @@ public struct PyRange: PyObjectMixin {
       result = "range(\(start), \(stop), \(step))"
     }
 
-    return PyResultGen(py, result)
+    return PyResult(py, result)
   }
 
   // MARK: - Convertible
 
   // sourcery: pymethod = __bool__
-  internal static func __bool__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __bool__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__bool__")
     }
 
     let result = zelf.length.value.isTrue
-    return PyResultGen(py, result)
+    return PyResult(py, result)
   }
 
   // MARK: - Class
@@ -277,13 +277,13 @@ public struct PyRange: PyObjectMixin {
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResultGen<PyObject> {
+  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__len__")
     }
 
     let result = zelf.length
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // MARK: - Attributes
@@ -291,7 +291,7 @@ public struct PyRange: PyObjectMixin {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResultGen<PyObject> {
+                                        name: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -304,17 +304,17 @@ public struct PyRange: PyObjectMixin {
   // sourcery: pymethod = __contains__
   internal static func __contains__(_ py: Py,
                                     zelf: PyObject,
-                                    object: PyObject) -> PyResultGen<PyObject> {
+                                    object: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__contains__")
     }
 
     guard let int = py.cast.asInt(object) else {
-      return PyResultGen(py, false)
+      return PyResult(py, false)
     }
 
     let result = Self.contains(zelf: zelf, int: int)
-    return PyResultGen(py, result)
+    return PyResult(py, result)
   }
 
   private static func contains(zelf: PyRange, int: PyInt) -> Bool {
@@ -345,7 +345,7 @@ public struct PyRange: PyObjectMixin {
   /// range_subscript(rangeobject* self, PyObject* item)
   internal static func __getitem__(_ py: Py,
                                    zelf: PyObject,
-                                   index: PyObject) -> PyResultGen<PyObject> {
+                                   index: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getitem__")
     }
@@ -353,7 +353,7 @@ public struct PyRange: PyObjectMixin {
     switch IndexHelper.pyInt(py, object: index) {
     case .value(let int):
       let result = Self.getItem(py, zelf: zelf, index: int)
-      return PyResultGen(py, result)
+      return PyResult(py, result)
     case .notIndex:
       break // Try slice
     case .error(let e):
@@ -362,7 +362,7 @@ public struct PyRange: PyObjectMixin {
 
     if let slice = py.cast.asSlice(index) {
       let result = Self.getItem(py, zelf: zelf, slice: slice)
-      return PyResultGen(result)
+      return PyResult(result)
     }
 
     let message = "range indices must be integers or slices, not \(index.typeName)"
@@ -415,36 +415,36 @@ public struct PyRange: PyObjectMixin {
   // MARK: - Start, stop, step
 
   // sourcery: pyproperty = start
-  internal static func start(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func start(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "start")
     }
 
-    return PyResultGen(zelf.start)
+    return PyResult(zelf.start)
   }
 
   // sourcery: pyproperty = stop
-  internal static func stop(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func stop(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "stop")
     }
 
-    return PyResultGen(zelf.stop)
+    return PyResult(zelf.stop)
   }
 
   // sourcery: pyproperty = step
-  internal static func step(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func step(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "step")
     }
 
-    return PyResultGen(zelf.step)
+    return PyResult(zelf.step)
   }
 
   // MARK: - Reversed
 
   // sourcery: pymethod = __reversed__
-  internal static func __reversed__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __reversed__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__reversed__")
     }
@@ -475,13 +475,13 @@ public struct PyRange: PyObjectMixin {
                                      step: newStep,
                                      length: newLength)
 
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
@@ -490,7 +490,7 @@ public struct PyRange: PyObjectMixin {
     let step = zelf.step.value
     let length = zelf.length.value
     let result = py.newRangeIterator(start: start, step: step, length: length)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // MARK: - Count
@@ -498,7 +498,7 @@ public struct PyRange: PyObjectMixin {
   // sourcery: pymethod = count
   internal static func count(_ py: Py,
                              zelf: PyObject,
-                             object: PyObject) -> PyResultGen<PyObject> {
+                             object: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "count")
     }
@@ -506,10 +506,10 @@ public struct PyRange: PyObjectMixin {
     if let int = py.cast.asInt(object) {
       let contains = Self.contains(zelf: zelf, int: int)
       let result = contains ? 1 : 0
-      return PyResultGen(py, result)
+      return PyResult(py, result)
     }
 
-    return PyResultGen(py, 0)
+    return PyResult(py, 0)
   }
 
   // MARK: - Index
@@ -517,7 +517,7 @@ public struct PyRange: PyObjectMixin {
   // sourcery: pymethod = index
   internal static func index(_ py: Py,
                              zelf: PyObject,
-                             object: PyObject) -> PyResultGen<PyObject> {
+                             object: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "index")
     }
@@ -533,7 +533,7 @@ public struct PyRange: PyObjectMixin {
 
     let tmp0 = int.value - zelf.start.value
     let tmp1 = tmp0 / zelf.step.value
-    return PyResultGen(py, tmp1)
+    return PyResult(py, tmp1)
   }
 
   // MARK: - Reduce
@@ -542,7 +542,7 @@ public struct PyRange: PyObjectMixin {
   internal static func __reduce__(_ py: Py,
                                   zelf: PyObject,
                                   args: [PyObject],
-                                  kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                  kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__reduce__")
     }
@@ -555,7 +555,7 @@ public struct PyRange: PyObjectMixin {
     let type = zelf.type.asObject
     let result = py.newTuple(elements: type, props.asObject)
 
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // MARK: - Python new
@@ -564,7 +564,7 @@ public struct PyRange: PyObjectMixin {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     if let e = ArgumentParser.noKwargsOrError(py,
                                               fnName: Self.pythonTypeName,
                                               kwargs: kwargs) {
@@ -583,7 +583,7 @@ public struct PyRange: PyObjectMixin {
     // Handle 1 argument
     if args.count == 1 {
       let result = py.newRange(stop: args[0])
-      return PyResultGen(result)
+      return PyResult(result)
     }
 
     // Handle 2 or 3 arguments
@@ -591,6 +591,6 @@ public struct PyRange: PyObjectMixin {
     let stop = args[1]
     let step = args.count == 3 ? args[2] : nil
     let result = py.newRange(start: start, stop: stop, step: step)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 }

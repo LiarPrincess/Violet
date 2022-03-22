@@ -12,7 +12,7 @@ extension AbstractSequence {
   internal static func abstract__add__(_ py: Py,
                                        zelf: PyObject,
                                        other: PyObject,
-                                       isTuple: Bool) -> PyResultGen<PyObject> {
+                                       isTuple: Bool) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__add__")
     }
@@ -27,11 +27,11 @@ extension AbstractSequence {
     // Tuples are immutable, so we can do some minor performance improvements.
     if isTuple {
       if zelf.isEmpty {
-        return PyResultGen(other)
+        return PyResult(other)
       }
 
       if other.isEmpty {
-        return PyResultGen(zelf)
+        return PyResult(zelf)
       }
     }
 
@@ -41,7 +41,7 @@ extension AbstractSequence {
     elements.append(contentsOf: other.elements)
 
     let result = Self.newObject(py, elements: elements)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // MARK: - Mul
@@ -49,7 +49,7 @@ extension AbstractSequence {
   internal static func abstract__mul__(_ py: Py,
                                        zelf: PyObject,
                                        other: PyObject,
-                                       isTuple: Bool) -> PyResultGen<PyObject> {
+                                       isTuple: Bool) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__mul__")
     }
@@ -60,7 +60,7 @@ extension AbstractSequence {
   internal static func abstract__rmul__(_ py: Py,
                                         zelf: PyObject,
                                         other: PyObject,
-                                        isTuple: Bool) -> PyResultGen<PyObject> {
+                                        isTuple: Bool) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__rmul__")
     }
@@ -71,7 +71,7 @@ extension AbstractSequence {
   private static func common__mul__(_ py: Py,
                                     zelf: Self,
                                     other: PyObject,
-                                    isTuple: Bool) -> PyResultGen<PyObject> {
+                                    isTuple: Bool) -> PyResult {
     let count: BigInt
     switch Self.abstractParseMulCount(py, object: other) {
     case .value(let int): count = int
@@ -80,14 +80,14 @@ extension AbstractSequence {
 
     // Tuples are immutable, so we can just return 'zelf'.
     if isTuple && count == 1 {
-      return PyResultGen(zelf)
+      return PyResult(zelf)
     }
 
     var copy = zelf.elements
     Self.abstractMul(elements: &copy, count: count)
 
     let result = Self.newObject(py, elements: copy)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   internal static func abstractParseMulCount(

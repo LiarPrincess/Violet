@@ -19,9 +19,9 @@ extension Sys {
     """
   internal static func intern(_ py: Py,
                               module: PyObject,
-                              string: PyObject) -> PyResultGen<PyObject> {
+                              string: PyObject) -> PyResult {
     let result = py.sys.intern(string)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   /// sys.intern(string)
@@ -58,7 +58,7 @@ extension Sys {
 
   internal static func exit(_ py: Py,
                             module: PyObject,
-                            status: PyObject?) -> PyResultGen<PyObject> {
+                            status: PyObject?) -> PyResult {
     let error = py.sys.exit(status: status)
     return .error(error)
   }
@@ -70,7 +70,7 @@ extension Sys {
     return error.asBaseException
   }
 
-  public func getExit() -> PyResultGen<PyObject> {
+  public func getExit() -> PyResult {
     return self.get(.exit)
   }
 
@@ -84,9 +84,9 @@ extension Sys {
     """
 
   internal static func getdefaultencoding(_ py: Py,
-                                          module: PyObject) -> PyResultGen<PyObject> {
+                                          module: PyObject) -> PyResult {
     let result = py.sys.defaultEncoding
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // MARK: - Recursion limit
@@ -100,9 +100,9 @@ extension Sys {
     """
 
   internal static func getrecursionlimit(_ py: Py,
-                                         module: PyObject) -> PyResultGen<PyObject> {
+                                         module: PyObject) -> PyResult {
     let result = py.sys.recursionLimit
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   internal static let setRecursionLimitDoc = """
@@ -116,7 +116,7 @@ extension Sys {
 
   internal static func setrecursionlimit(_ py: Py,
                                          module: PyObject,
-                                         limit: PyObject) -> PyResultGen<PyObject> {
+                                         limit: PyObject) -> PyResult {
     if let error = py.sys.setRecursionLimit(limit) {
       return .error(error)
     }
@@ -148,9 +148,9 @@ extension Sys {
 
   // MARK: - Traceback limit
 
-  internal static func tracebacklimit(_ py: Py, module: PyObject) -> PyResultGen<PyObject> {
+  internal static func tracebacklimit(_ py: Py, module: PyObject) -> PyResult {
     let result = py.sys.getTracebackLimit()
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   /// sys.tracebacklimit
@@ -175,9 +175,9 @@ extension Sys {
 
   internal static func _getframe(_ py: Py,
                                  module: PyObject,
-                                 depth: PyObject?) -> PyResultGen<PyObject> {
+                                 depth: PyObject?) -> PyResult {
     let result = py.sys.getFrame(depth: depth)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
 

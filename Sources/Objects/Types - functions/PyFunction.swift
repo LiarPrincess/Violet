@@ -152,13 +152,13 @@ public struct PyFunction: PyObjectMixin {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__repr__")
     }
 
     let result = "<function \(zelf.qualname.value) at \(zelf.ptr)>"
-    return PyResultGen(py, result)
+    return PyResult(py, result)
   }
 
   // MARK: - Class
@@ -171,13 +171,13 @@ public struct PyFunction: PyObjectMixin {
   // MARK: - Name
 
   // sourcery: pyproperty = __name__, setter
-  internal static func __name__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __name__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__name__")
     }
 
     let result = zelf.getName()
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   internal func getName() -> PyString {
@@ -186,7 +186,7 @@ public struct PyFunction: PyObjectMixin {
 
   internal static func __name__(_ py: Py,
                                 zelf: PyObject,
-                                value: PyObject?) -> PyResultGen<PyObject> {
+                                value: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__name__")
     }
@@ -206,17 +206,17 @@ public struct PyFunction: PyObjectMixin {
   // MARK: - Qualname
 
   // sourcery: pyproperty = __qualname__, setter
-  internal static func __qualname__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __qualname__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__qualname__")
     }
 
-    return PyResultGen(zelf.qualname)
+    return PyResult(zelf.qualname)
   }
 
   internal static func __qualname__(_ py: Py,
                                     zelf: PyObject,
-                                    value: PyObject?) -> PyResultGen<PyObject> {
+                                    value: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__qualname__")
     }
@@ -236,17 +236,17 @@ public struct PyFunction: PyObjectMixin {
   // MARK: - Defaults
 
   // sourcery: pyproperty = __defaults__, setter
-  internal static func __defaults__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __defaults__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__defaults__")
     }
 
-    return PyResultGen(py, zelf.defaults)
+    return PyResult(py, zelf.defaults)
   }
 
   internal static func __defaults__(_ py: Py,
                                     zelf: PyObject,
-                                    value: PyObject?) -> PyResultGen<PyObject> {
+                                    value: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__defaults__")
     }
@@ -276,17 +276,17 @@ public struct PyFunction: PyObjectMixin {
   // MARK: - Keyword defaults
 
   // sourcery: pyproperty = __kwdefaults__, setter
-  internal static func __kwdefaults__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __kwdefaults__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__kwdefaults__")
     }
 
-    return PyResultGen(py, zelf.kwDefaults)
+    return PyResult(py, zelf.kwDefaults)
   }
 
   internal static func __kwdefaults__(_ py: Py,
                                       zelf: PyObject,
-                                      value: PyObject?) -> PyResultGen<PyObject> {
+                                      value: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__kwdefaults__")
     }
@@ -316,19 +316,19 @@ public struct PyFunction: PyObjectMixin {
   // MARK: - Closure
 
   // sourcery: pyproperty = __closure__, setter
-  internal static func __closure__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __closure__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__closure__")
     }
 
-    return PyResultGen(py, zelf.closure)
+    return PyResult(py, zelf.closure)
   }
 
   /// Note that there is not `Python` setter for closure.
   /// It can be only set from `Swift`.
   internal static func __closure__(_ py: Py,
                                    zelf: PyObject,
-                                   value: PyObject?) -> PyResultGen<PyObject> {
+                                   value: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__closure__")
     }
@@ -359,17 +359,17 @@ public struct PyFunction: PyObjectMixin {
   // MARK: - Globals
 
   // sourcery: pyproperty = __globals__, setter
-  internal static func __globals__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __globals__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__globals__")
     }
 
-    return PyResultGen(py, zelf.globals)
+    return PyResult(py, zelf.globals)
   }
 
   internal static func __globals__(_ py: Py,
                                    zelf: PyObject,
-                                   value: PyObject?) -> PyResultGen<PyObject> {
+                                   value: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__globals__")
     }
@@ -389,17 +389,17 @@ public struct PyFunction: PyObjectMixin {
   // MARK: - Annotations
 
   // sourcery: pyproperty = __annotations__, setter
-  internal static func __annotations__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __annotations__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__annotations__")
     }
 
-    return PyResultGen(py, zelf.annotations)
+    return PyResult(py, zelf.annotations)
   }
 
   internal static func __annotations__(_ py: Py,
                                        zelf: PyObject,
-                                       value: PyObject?) -> PyResultGen<PyObject> {
+                                       value: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__annotations__")
     }
@@ -429,17 +429,15 @@ public struct PyFunction: PyObjectMixin {
   // MARK: - Code
 
   // sourcery: pyproperty = __code__, setter
-  internal static func __code__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __code__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__code__")
     }
 
-    return PyResultGen(zelf.code)
+    return PyResult(zelf.code)
   }
 
-  internal static func __code__(_ py: Py,
-                                zelf: PyObject,
-                                value: PyObject?) -> PyResultGen<PyObject> {
+  internal static func __code__(_ py: Py, zelf: PyObject, value: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__code__")
     }
@@ -468,17 +466,15 @@ public struct PyFunction: PyObjectMixin {
   // MARK: - Doc
 
   // sourcery: pyproperty = __doc__, setter
-  internal static func __doc__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __doc__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__doc__")
     }
 
-    return PyResultGen(py, zelf.doc)
+    return PyResult(py, zelf.doc)
   }
 
-  internal static func __doc__(_ py: Py,
-                               zelf: PyObject,
-                               value: PyObject?) -> PyResultGen<PyObject> {
+  internal static func __doc__(_ py: Py, zelf: PyObject, value: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__doc__")
     }
@@ -499,7 +495,7 @@ public struct PyFunction: PyObjectMixin {
   // MARK: - Module
 
   // sourcery: pyproperty = __module__, setter
-  internal static func __module__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __module__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__module__")
     }
@@ -511,12 +507,10 @@ public struct PyFunction: PyObjectMixin {
     }
 
     let result = py.str(object: moduleObject)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
-  internal static func __module__(_ py: Py,
-                                  zelf: PyObject,
-                                  value: PyObject?) -> PyResultGen<PyObject> {
+  internal static func __module__(_ py: Py, zelf: PyObject, value: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__module__")
     }
@@ -531,13 +525,13 @@ public struct PyFunction: PyObjectMixin {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   internal func getDict(_ py: Py) -> PyDict {
@@ -556,17 +550,17 @@ public struct PyFunction: PyObjectMixin {
   internal static func __get__(_ py: Py,
                                zelf: PyObject,
                                object: PyObject,
-                               type: PyObject?) -> PyResultGen<PyObject> {
+                               type: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__get__")
     }
 
     if py.isDescriptorStaticMarker(object) {
-      return PyResultGen(zelf)
+      return PyResult(zelf)
     }
 
     let result = zelf.bind(py, object: object)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   internal func bind(_ py: Py, object: PyObject) -> PyMethod {
@@ -581,7 +575,7 @@ public struct PyFunction: PyObjectMixin {
   internal static func __call__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__call__")
     }

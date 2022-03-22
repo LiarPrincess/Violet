@@ -24,7 +24,7 @@ extension Sys {
   /// sys_displayhook(PyObject *self, PyObject *o)
   internal static func displayhook(_ py: Py,
                                    module: PyObject,
-                                   object: PyObject) -> PyResultGen<PyObject> {
+                                   object: PyObject) -> PyResult {
     // Print value except if None.
     // Before, set '_' to None to avoid recursion.
     // After printing, also assign to '_'
@@ -60,11 +60,11 @@ extension Sys {
     return .none(py)
   }
 
-  public func getDisplayhook() -> PyResultGen<PyObject> {
+  public func getDisplayhook() -> PyResult {
     return self.get(.displayhook)
   }
 
-  public func callDisplayhook(object: PyObject) -> PyResultGen<PyObject> {
+  public func callDisplayhook(object: PyObject) -> PyResult {
     switch self.getDisplayhook() {
     case let .value(hook):
       let callResult = self.py.call(callable: hook, arg: object)
@@ -95,7 +95,7 @@ extension Sys {
                                   module: PyObject,
                                   type: PyObject,
                                   value: PyObject,
-                                  traceback: PyObject) -> PyResultGen<PyObject> {
+                                  traceback: PyObject) -> PyResult {
     guard let error = py.cast.asBaseException(value) else {
       let message = "sys.excepthook(): Exception expected for value, \(value.typeName) found"
       return .typeError(py, message: message)
@@ -125,7 +125,7 @@ extension Sys {
     }
   }
 
-  public func getExcepthook() -> PyResultGen<PyObject> {
+  public func getExcepthook() -> PyResult {
     return self.get(.excepthook)
   }
 

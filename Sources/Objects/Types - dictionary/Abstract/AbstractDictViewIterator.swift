@@ -14,11 +14,6 @@ internal protocol AbstractDictViewIterator: PyObjectMixin {
 
   /// Cast `PyObject` -> Self``.
   static func downcast(_ py: Py, _ object: PyObject) -> Self?
-
-  /// Create error when the `zelf` argument cast failed.
-  static func invalidZelfArgument<T>(_ py: Py,
-                                     _ object: PyObject,
-                                     _ fnName: String) -> PyResultGen<T>
 }
 
 extension AbstractDictViewIterator {
@@ -28,7 +23,7 @@ extension AbstractDictViewIterator {
   // sourcery: pymethod = __getattribute__
   internal static func abstract__getattribute__(_ py: Py,
                                                 zelf: PyObject,
-                                                name: PyObject) -> PyResultGen<PyObject> {
+                                                name: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -38,23 +33,22 @@ extension AbstractDictViewIterator {
 
   // MARK: - __iter__
 
-  internal static func abstract__iter__(_ py: Py,
-                                        zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func abstract__iter__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
-    return PyResultGen(zelf)
+    return PyResult(zelf)
   }
 
   // MARK: - __next__
 
   internal typealias Entry = PyDict.OrderedDictionary.Entry
 
-  internal static func abstract__next__(_ py: Py,
-                                        zelf: PyObject) -> PyResultGen<Entry> {
+  internal static func abstract__next__(_ py: Py, zelf: PyObject) -> PyResultGen<Entry> {
     guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__next__")
+      let error = self.invalidZelfArgumentError(py, zelf, "__next__")
+      return .error(error.asBaseException)
     }
 
     let elements = zelf.dict.elements
@@ -86,14 +80,30 @@ extension AbstractDictViewIterator {
 
   // MARK: - __length_hint__
 
-  internal static func abstract__length_hint__(_ py: Py,
-                                               zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func abstract__length_hint__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__length_hint__")
     }
 
     let count = zelf.dict.elements.count
     let result = count - zelf.index
-    return PyResultGen(py, result)
+    return PyResult(py, result)
+  }
+
+  // MARK: - Helpers
+
+  private static func invalidZelfArgumentError(_ py: Py,
+                                               _ object: PyObject,
+                                               _ fnName: String) -> PyTypeError {
+    return py.newInvalidSelfArgumentError(object: object,
+                                          expectedType: Self.pythonTypeName,
+                                          fnName: fnName)
+  }
+
+  private static func invalidZelfArgument(_ py: Py,
+                                          _ object: PyObject,
+                                          _ fnName: String) -> PyResult {
+    let error = self.invalidZelfArgumentError(py, object, fnName)
+    return .error(error.asBaseException)
   }
 }

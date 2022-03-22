@@ -169,7 +169,7 @@ public struct {swift_type_name}: PyErrorMixin {{
   }}
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult<PyObject> {{
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {{
     guard let zelf = Self.downcast(py, zelf) else {{
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }}
@@ -182,7 +182,7 @@ public struct {swift_type_name}: PyErrorMixin {{
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResult<PyObject> {{
+                               kwargs: PyDict?) -> PyResult {{
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.{py_memory_function_name}(py, type: type, args: argsTuple)
     return PyResult(result)
@@ -192,7 +192,7 @@ public struct {swift_type_name}: PyErrorMixin {{
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResult<PyObject> {{
+                                kwargs: PyDict?) -> PyResult {{
     guard let zelf = Self.downcast(py, zelf) else {{
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }}

@@ -64,30 +64,30 @@ public struct PyKeyboardInterrupt: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newKeyboardInterrupt(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -146,30 +146,30 @@ public struct PyGeneratorExit: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newGeneratorExit(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -228,30 +228,30 @@ public struct PyException: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newException(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -310,30 +310,30 @@ public struct PyStopAsyncIteration: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newStopAsyncIteration(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -392,30 +392,30 @@ public struct PyArithmeticError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newArithmeticError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -474,30 +474,30 @@ public struct PyFloatingPointError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newFloatingPointError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -556,30 +556,30 @@ public struct PyOverflowError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newOverflowError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -638,30 +638,30 @@ public struct PyZeroDivisionError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newZeroDivisionError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -720,30 +720,30 @@ public struct PyAssertionError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newAssertionError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -802,30 +802,30 @@ public struct PyAttributeError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newAttributeError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -884,30 +884,30 @@ public struct PyBufferError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newBufferError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -966,30 +966,30 @@ public struct PyEOFError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newEOFError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -1070,30 +1070,30 @@ public struct PyModuleNotFoundError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newModuleNotFoundError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -1152,30 +1152,30 @@ public struct PyLookupError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newLookupError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -1234,30 +1234,30 @@ public struct PyIndexError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newIndexError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -1316,30 +1316,30 @@ public struct PyMemoryError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newMemoryError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -1398,30 +1398,30 @@ public struct PyNameError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newNameError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -1480,30 +1480,30 @@ public struct PyUnboundLocalError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newUnboundLocalError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -1562,30 +1562,30 @@ public struct PyOSError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newOSError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -1644,30 +1644,30 @@ public struct PyBlockingIOError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newBlockingIOError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -1726,30 +1726,30 @@ public struct PyChildProcessError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newChildProcessError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -1808,30 +1808,30 @@ public struct PyConnectionError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newConnectionError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -1890,30 +1890,30 @@ public struct PyBrokenPipeError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newBrokenPipeError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -1972,30 +1972,30 @@ public struct PyConnectionAbortedError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newConnectionAbortedError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -2054,30 +2054,30 @@ public struct PyConnectionRefusedError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newConnectionRefusedError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -2136,30 +2136,30 @@ public struct PyConnectionResetError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newConnectionResetError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -2218,30 +2218,30 @@ public struct PyFileExistsError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newFileExistsError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -2300,30 +2300,30 @@ public struct PyFileNotFoundError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newFileNotFoundError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -2382,30 +2382,30 @@ public struct PyInterruptedError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newInterruptedError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -2464,30 +2464,30 @@ public struct PyIsADirectoryError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newIsADirectoryError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -2546,30 +2546,30 @@ public struct PyNotADirectoryError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newNotADirectoryError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -2628,30 +2628,30 @@ public struct PyPermissionError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newPermissionError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -2710,30 +2710,30 @@ public struct PyProcessLookupError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newProcessLookupError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -2792,30 +2792,30 @@ public struct PyTimeoutError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newTimeoutError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -2874,30 +2874,30 @@ public struct PyReferenceError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newReferenceError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -2956,30 +2956,30 @@ public struct PyRuntimeError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newRuntimeError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -3038,30 +3038,30 @@ public struct PyNotImplementedError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newNotImplementedError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -3120,30 +3120,30 @@ public struct PyRecursionError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newRecursionError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -3230,30 +3230,30 @@ public struct PyIndentationError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newIndentationError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -3340,30 +3340,30 @@ public struct PyTabError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newTabError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -3425,30 +3425,30 @@ public struct PySystemError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newSystemError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -3507,30 +3507,30 @@ public struct PyTypeError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newTypeError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -3589,30 +3589,30 @@ public struct PyValueError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newValueError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -3671,30 +3671,30 @@ public struct PyUnicodeError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newUnicodeError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -3753,30 +3753,30 @@ public struct PyUnicodeDecodeError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newUnicodeDecodeError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -3835,30 +3835,30 @@ public struct PyUnicodeEncodeError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newUnicodeEncodeError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -3917,30 +3917,30 @@ public struct PyUnicodeTranslateError: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newUnicodeTranslateError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -3999,30 +3999,30 @@ public struct PyWarning: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newWarning(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -4081,30 +4081,30 @@ public struct PyDeprecationWarning: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newDeprecationWarning(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -4164,30 +4164,30 @@ public struct PyPendingDeprecationWarning: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newPendingDeprecationWarning(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -4246,30 +4246,30 @@ public struct PyRuntimeWarning: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newRuntimeWarning(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -4328,30 +4328,30 @@ public struct PySyntaxWarning: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newSyntaxWarning(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -4410,30 +4410,30 @@ public struct PyUserWarning: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newUserWarning(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -4493,30 +4493,30 @@ public struct PyFutureWarning: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newFutureWarning(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -4575,30 +4575,30 @@ public struct PyImportWarning: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newImportWarning(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -4658,30 +4658,30 @@ public struct PyUnicodeWarning: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newUnicodeWarning(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -4741,30 +4741,30 @@ public struct PyBytesWarning: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newBytesWarning(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }
@@ -4823,30 +4823,30 @@ public struct PyResourceWarning: PyErrorMixin {
   }
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pystaticmethod = __new__
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newResourceWarning(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }

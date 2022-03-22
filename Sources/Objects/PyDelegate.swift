@@ -38,5 +38,5 @@ public protocol PyDelegate: AnyObject {
 
             globals: PyDict,
             locals: PyDict,
-            closure: PyTuple?) -> PyResultGen<PyObject>
+            closure: PyTuple?) -> PyResult
 }
