@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import FileSystem
 import VioletObjects
@@ -21,17 +20,21 @@ internal class PyFileSystemImpl: PyFileSystem {
 
   // MARK: - Open
 
-  internal func open(fd: Int32, mode: FileMode) -> PyResult<FileDescriptorType> {
+  internal func open(_ py: Py,
+                     fd: Int32,
+                     mode: FileMode) -> PyResultGen<FileDescriptorType> {
     // When we get raw descriptor we assume that the user knows what they
     // are doing, which means that we can ignore 'mode'.
     let result = FileDescriptor(fileDescriptor: fd, closeOnDealloc: false)
-    let adapter = FileDescriptorAdapter(fd: result, path: nil)
+    let adapter = FileDescriptorAdapter(py, fd: result, path: nil)
     return .value(adapter)
   }
 
   /// static int
   /// _io_FileIO___init___impl(fileio *self, PyObject *nameobj, … )
-  internal func open(path: Path, mode: FileMode) -> PyResult<FileDescriptorType> {
+  internal func open(_ py: Py,
+                     path: Path,
+                     mode: FileMode) -> PyResultGen<FileDescriptorType> {
     var flags: Int32 = 0
     switch mode {
     case .read: flags |= O_RDONLY
@@ -45,34 +48,36 @@ internal class PyFileSystemImpl: PyFileSystem {
     if let fd = FileDescriptor(path: path.string,
                                flags: flags,
                                createMode: createMode) {
-      let adapter = FileDescriptorAdapter(fd: fd, path: path.string)
+      let adapter = FileDescriptorAdapter(py, fd: fd, path: path.string)
       return .value(adapter)
     }
 
-    switch self.stat(path: path) {
+    switch self.stat(py, path: path) {
     case .enoent:
-      return .error(Py.newFileNotFoundError(path: path))
+      let error = py.newFileNotFoundError(path: path)
+      return .error(error.asBaseException)
     case .value,
-         .error:
+        .error:
       // Maybe we could check 'stat' for permissions?
-      return .osError("unable to open '\(path)' (mode: \(mode))")
+      return .osError(py, message: "unable to open '\(path)' (mode: \(mode))")
     }
   }
 
   // MARK: - Stat
 
-  internal func stat(fd: Int32) -> PyFileSystem_StatResult {
+  internal func stat(_ py: Py, fd: Int32) -> PyFileSystemStatResult {
     let result = self.fileSystem.stat(fd: fd)
-    return self.handleStatResult(result: result, path: nil)
+    return self.handleStatResult(py, result: result, path: nil)
   }
 
-  internal func stat(path: Path) -> PyFileSystem_StatResult {
+  internal func stat(_ py: Py, path: Path) -> PyFileSystemStatResult {
     let result = self.fileSystem.stat(path: path)
-    return self.handleStatResult(result: result, path: path)
+    return self.handleStatResult(py, result: result, path: path)
   }
 
-  private func handleStatResult(result: FileSystem.StatResult,
-                                path: Path?) -> PyFileSystem_StatResult {
+  private func handleStatResult(_ py: Py,
+                                result: FileSystem.StatResult,
+                                path: Path?) -> PyFileSystemStatResult {
     switch result {
     case let .value(stat):
       return .value(stat)
@@ -84,27 +89,30 @@ internal class PyFileSystemImpl: PyFileSystem {
       assert(e != ENOENT)
 
       if let p = path {
-        return .error(Py.newOSError(errno: errno, path: p))
+        let error = py.newOSError(errno: errno, path: p)
+        return .error(error)
       }
 
-      return .error(Py.newOSError(errno: errno))
+      let error = py.newOSError(errno: errno)
+      return .error(error)
     }
   }
 
   // MARK: - Read dir
 
-  internal func readdir(fd: Int32) -> PyFileSystem_ReaddirResult {
+  internal func readdir(_ py: Py, fd: Int32) -> PyFileSystemReaddirResult {
     let result = self.fileSystem.readdir(fd: fd)
-    return self.handleReaddirResult(result: result, path: nil)
+    return self.handleReaddirResult(py, result: result, path: nil)
   }
 
-  internal func readdir(path: Path) -> PyFileSystem_ReaddirResult {
+  internal func readdir(_ py: Py, path: Path) -> PyFileSystemReaddirResult {
     let result = self.fileSystem.readdir(path: path)
-    return self.handleReaddirResult(result: result, path: path)
+    return self.handleReaddirResult(py, result: result, path: path)
   }
 
-  private func handleReaddirResult(result: FileSystem.ReaddirResult,
-                                   path: Path?) -> PyFileSystem_ReaddirResult {
+  private func handleReaddirResult(_ py: Py,
+                                   result: FileSystem.ReaddirResult,
+                                   path: Path?) -> PyFileSystemReaddirResult {
     switch result {
     case let .value(readdir):
       return .entries(readdir)
@@ -116,10 +124,12 @@ internal class PyFileSystemImpl: PyFileSystem {
       assert(e != ENOENT)
 
       if let p = path {
-        return .error(Py.newOSError(errno: errno, path: p))
+        let error = py.newOSError(errno: errno, path: p)
+        return .error(error)
       }
 
-      return .error(Py.newOSError(errno: errno))
+      let error = py.newOSError(errno: errno)
+      return .error(error)
     }
   }
 
@@ -149,5 +159,3 @@ internal class PyFileSystemImpl: PyFileSystem {
     return self.fileSystem.join(path: path, elements: elements)
   }
 }
-
-*/

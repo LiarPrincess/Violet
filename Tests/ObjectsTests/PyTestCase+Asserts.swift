@@ -13,7 +13,7 @@ extension PyTestCase {
                                     expected: String,
                                     file: StaticString = #file,
                                     line: UInt = #line) {
-    let result = py.repr(object: object.asObject)
+    let result = py.repr(object.asObject)
     let expectedObject = py.newString(expected)
     self.assertIsEqual(py, left: result, right: expectedObject, file: file, line: line)
   }
@@ -23,7 +23,7 @@ extension PyTestCase {
                                    expected: String,
                                    file: StaticString = #file,
                                    line: UInt = #line) {
-    let result = py.str(object: object.asObject)
+    let result = py.str(object.asObject)
     let expectedObject = py.newString(expected)
     self.assertIsEqual(py, left: result, right: expectedObject, file: file, line: line)
   }

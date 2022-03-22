@@ -93,11 +93,11 @@ public final class UnderscoreOS: PyModuleImplementation {
   public func getStat(path: PyObject) -> PyResultGen<PyNamespace> {
     switch self.parsePathOrDescriptor(object: path) {
     case let .descriptor(fd):
-      let stat = self.py.fileSystem.stat(fd: fd)
+      let stat = self.py.fileSystem.stat(self.py, fd: fd)
       return self.createStatObject(stat: stat)
 
     case let .path(path):
-      let stat = self.py.fileSystem.stat(path: path)
+      let stat = self.py.fileSystem.stat(self.py, path: path)
       return self.createStatObject(stat: stat, path: path)
 
     case let .error(e):
@@ -161,11 +161,11 @@ public final class UnderscoreOS: PyModuleImplementation {
   public func listdir(path: PyObject?) -> PyResultGen<PyList> {
     switch self.parseListdirPath(path: path) {
     case let .descriptor(fd):
-      let result = self.py.fileSystem.readdir(fd: fd)
+      let result = self.py.fileSystem.readdir(self.py, fd: fd)
       return self.createObject(result: result, path: nil)
 
     case let .path(path):
-      let result = self.py.fileSystem.readdir(path: path)
+      let result = self.py.fileSystem.readdir(self.py, path: path)
       return self.createObject(result: result, path: path)
 
     case let .error(e):

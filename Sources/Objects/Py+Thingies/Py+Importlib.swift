@@ -211,7 +211,7 @@ extension Py {
       triedPaths.append(dir)
 
       let stat: Stat
-      switch self.fileSystem.stat(path: modulePath) {
+      switch self.fileSystem.stat(self, path: modulePath) {
       case .value(let s): stat = s
       case .enoent: continue // No such file - just try next 'path'
       case .error(let e):

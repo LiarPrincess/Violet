@@ -176,8 +176,7 @@ public struct PyTextFile: PyObjectMixin {
       return .error(e)
     }
 
-    let readLineResult = zelf.fd.readLine()
-    switch readLineResult {
+    switch zelf.fd.readLine() {
     case let .value(data):
       let result = zelf.encoding.decodeOrError(py,
                                                data: data,
