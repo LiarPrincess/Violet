@@ -102,12 +102,12 @@ public enum PyStaticCall {{
   /// Methods stored on `PyType` needed to make `PyStaticCall` work.
   ///
   /// See `PyStaticCall` documentation for more information.
-  public struct KnownNotOverriddenMethods {{
+  public final class KnownNotOverriddenMethods {{
 ''')
 
-    # ========================
-    # === struct - Aliases ===
-    # ========================
+    # =======================
+    # === class - Aliases ===
+    # =======================
 
     print('''\
     // MARK: - Aliases
@@ -134,9 +134,9 @@ public enum PyStaticCall {{
 
     print()
 
-    # ===========================
-    # === struct - Properties ===
-    # ===========================
+    # ==========================
+    # === class - Properties ===
+    # ==========================
 
     print('''\
     // MARK: - Properties
@@ -154,13 +154,12 @@ public enum PyStaticCall {{
 
     print()
 
-    # =====================
-    # === struct - Init ===
-    # =====================
+    # ====================
+    # === class - Init ===
+    # ====================
 
     print('    // MARK: - Init')
     print()
-    print("    // We need 'init' without params, because we also have other 'init'.")
     print('    public init() {')
 
     for m in ALL_STATIC_METHODS:
@@ -172,9 +171,9 @@ public enum PyStaticCall {{
     print('    }')
     print()
 
-    # =========================
-    # === struct - Init MRO ===
-    # =========================
+    # ========================
+    # === class - Init MRO ===
+    # ========================
 
     print('''\
     // MARK: - Init MRO
@@ -184,12 +183,12 @@ public enum PyStaticCall {{
     ///
     /// We can't just use 'base' type, because each type has a different method
     /// resolution order (MRO) and we have to respect this.
-    public init(
+    public convenience init(
       _ py: Py,
       mroWithoutCurrentlyCreatedType mro: [PyType],
       dictForCurrentlyCreatedType dict: PyDict
     ) {
-      self = KnownNotOverriddenMethods()
+      self.init()
 
       // We need to start from the back (the most base type, probably 'object').
       for type in mro.reversed() {
@@ -202,7 +201,7 @@ public enum PyStaticCall {{
     }
 ''')
 
-    print('    private mutating func copyMethods(from other: KnownNotOverriddenMethods) {')
+    print('    private func copyMethods(from other: KnownNotOverriddenMethods) {')
     for m in ALL_STATIC_METHODS:
         if m.name in INSERT_NEW_LINE_BEFORE:
             print()
@@ -213,7 +212,7 @@ public enum PyStaticCall {{
     print()
 
     print('''\
-    private mutating func removeOverriddenMethods(_ py: Py, dict: PyDict) {
+    private func removeOverriddenMethods(_ py: Py, dict: PyDict) {
       for entry in dict.elements {
         let key = entry.key.object
         guard let string = py.cast.asString(key) else {
@@ -237,21 +236,26 @@ public enum PyStaticCall {{
     print('    }')
     print()
 
-    # =====================
-    # === struct - Copy ===
-    # =====================
+    # ====================
+    # === class - Copy ===
+    # ====================
 
-    print('''\
-    // MARK: - Copy
+    print('    // MARK: - Copy')
+    print()
+    print('    public func copy() -> KnownNotOverriddenMethods {')
+    print('      let result = KnownNotOverriddenMethods()')
+    print()
 
-    public func copy() -> KnownNotOverriddenMethods {
-      // We are struct, so this is trivial.
-      // If we ever change it to reference type, then we just need to change
-      // this method.
-      return self
-    }
-  }\
-''')
+    for m in ALL_STATIC_METHODS:
+        if m.name in INSERT_NEW_LINE_BEFORE:
+            print()
+
+        print(f'      result.{m.name} = self.{m.name}')
+
+    print()
+    print('      return result')
+    print('    }')
+    print('  }')
 
     # =================
     # === Functions ===

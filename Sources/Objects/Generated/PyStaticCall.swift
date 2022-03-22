@@ -86,7 +86,7 @@ public enum PyStaticCall {
   /// Methods stored on `PyType` needed to make `PyStaticCall` work.
   ///
   /// See `PyStaticCall` documentation for more information.
-  public struct KnownNotOverriddenMethods {
+  public final class KnownNotOverriddenMethods {
 
     // MARK: - Aliases
 
@@ -224,7 +224,6 @@ public enum PyStaticCall {
 
     // MARK: - Init
 
-    // We need 'init' without params, because we also have other 'init'.
     public init() {
       self.__repr__ = nil
       self.__str__ = nil
@@ -329,12 +328,12 @@ public enum PyStaticCall {
     ///
     /// We can't just use 'base' type, because each type has a different method
     /// resolution order (MRO) and we have to respect this.
-    public init(
+    public convenience init(
       _ py: Py,
       mroWithoutCurrentlyCreatedType mro: [PyType],
       dictForCurrentlyCreatedType dict: PyDict
     ) {
-      self = KnownNotOverriddenMethods()
+      self.init()
 
       // We need to start from the back (the most base type, probably 'object').
       for type in mro.reversed() {
@@ -346,7 +345,7 @@ public enum PyStaticCall {
       self.removeOverriddenMethods(py, dict: dict)
     }
 
-    private mutating func copyMethods(from other: KnownNotOverriddenMethods) {
+    private func copyMethods(from other: KnownNotOverriddenMethods) {
       self.__repr__ = other.__repr__ ?? self.__repr__
       self.__str__ = other.__str__ ?? self.__str__
 
@@ -443,7 +442,7 @@ public enum PyStaticCall {
       self.__ipow__ = other.__ipow__ ?? self.__ipow__
     }
 
-    private mutating func removeOverriddenMethods(_ py: Py, dict: PyDict) {
+    private func removeOverriddenMethods(_ py: Py, dict: PyDict) {
       for entry in dict.elements {
         let key = entry.key.object
         guard let string = py.cast.asString(key) else {
@@ -555,10 +554,104 @@ public enum PyStaticCall {
     // MARK: - Copy
 
     public func copy() -> KnownNotOverriddenMethods {
-      // We are struct, so this is trivial.
-      // If we ever change it to reference type, then we just need to change
-      // this method.
-      return self
+      let result = KnownNotOverriddenMethods()
+
+      result.__repr__ = self.__repr__
+      result.__str__ = self.__str__
+
+      result.__hash__ = self.__hash__
+      result.__dir__ = self.__dir__
+
+      result.__eq__ = self.__eq__
+      result.__ne__ = self.__ne__
+      result.__lt__ = self.__lt__
+      result.__le__ = self.__le__
+      result.__gt__ = self.__gt__
+      result.__ge__ = self.__ge__
+
+      result.__bool__ = self.__bool__
+      result.__int__ = self.__int__
+      result.__float__ = self.__float__
+      result.__complex__ = self.__complex__
+      result.__index__ = self.__index__
+
+      result.__getattr__ = self.__getattr__
+      result.__getattribute__ = self.__getattribute__
+      result.__setattr__ = self.__setattr__
+      result.__delattr__ = self.__delattr__
+
+      result.__getitem__ = self.__getitem__
+      result.__setitem__ = self.__setitem__
+      result.__delitem__ = self.__delitem__
+
+      result.__iter__ = self.__iter__
+      result.__next__ = self.__next__
+      result.__len__ = self.__len__
+      result.__contains__ = self.__contains__
+      result.__reversed__ = self.__reversed__
+      result.keys = self.keys
+
+      result.__del__ = self.__del__
+      result.__call__ = self.__call__
+
+      result.__instancecheck__ = self.__instancecheck__
+      result.__subclasscheck__ = self.__subclasscheck__
+      result.__isabstractmethod__ = self.__isabstractmethod__
+
+      result.__pos__ = self.__pos__
+      result.__neg__ = self.__neg__
+      result.__invert__ = self.__invert__
+      result.__abs__ = self.__abs__
+      result.__trunc__ = self.__trunc__
+      result.__round__ = self.__round__
+
+      result.__add__ = self.__add__
+      result.__and__ = self.__and__
+      result.__divmod__ = self.__divmod__
+      result.__floordiv__ = self.__floordiv__
+      result.__lshift__ = self.__lshift__
+      result.__matmul__ = self.__matmul__
+      result.__mod__ = self.__mod__
+      result.__mul__ = self.__mul__
+      result.__or__ = self.__or__
+      result.__rshift__ = self.__rshift__
+      result.__sub__ = self.__sub__
+      result.__truediv__ = self.__truediv__
+      result.__xor__ = self.__xor__
+
+      result.__radd__ = self.__radd__
+      result.__rand__ = self.__rand__
+      result.__rdivmod__ = self.__rdivmod__
+      result.__rfloordiv__ = self.__rfloordiv__
+      result.__rlshift__ = self.__rlshift__
+      result.__rmatmul__ = self.__rmatmul__
+      result.__rmod__ = self.__rmod__
+      result.__rmul__ = self.__rmul__
+      result.__ror__ = self.__ror__
+      result.__rrshift__ = self.__rrshift__
+      result.__rsub__ = self.__rsub__
+      result.__rtruediv__ = self.__rtruediv__
+      result.__rxor__ = self.__rxor__
+
+      result.__iadd__ = self.__iadd__
+      result.__iand__ = self.__iand__
+      result.__idivmod__ = self.__idivmod__
+      result.__ifloordiv__ = self.__ifloordiv__
+      result.__ilshift__ = self.__ilshift__
+      result.__imatmul__ = self.__imatmul__
+      result.__imod__ = self.__imod__
+      result.__imul__ = self.__imul__
+      result.__ior__ = self.__ior__
+      result.__irshift__ = self.__irshift__
+      result.__isub__ = self.__isub__
+      result.__itruediv__ = self.__itruediv__
+      result.__ixor__ = self.__ixor__
+
+      result.__pow__ = self.__pow__
+      result.__rpow__ = self.__rpow__
+      result.__ipow__ = self.__ipow__
+
+      return result
     }
   }
 
