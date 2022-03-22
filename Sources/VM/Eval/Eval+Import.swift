@@ -1,3 +1,4 @@
+/* MARKER
 import VioletObjects
 
 extension Eval {
@@ -112,7 +113,7 @@ extension Eval {
   }
 
   private func startsWithUnderscore(name: PyObject) -> Bool {
-    guard let str = PyCast.asString(name) else {
+    guard let str = self.py.cast.asString(name) else {
       return false
     }
 
@@ -167,13 +168,13 @@ extension Eval {
   private func getAttribute(module: PyObject, name: IdString) -> GetAttribute {
     switch Py.getAttribute(object: module, name: name) {
     case let .value(o):
-      if PyCast.isNone(o) {
+      if self.py.cast.isNone(o) {
         return .notFound
       }
       return .value(o)
 
     case let .error(e):
-      if PyCast.isAttributeError(e) {
+      if self.py.cast.isAttributeError(e) {
         return .notFound
       }
 
@@ -283,10 +284,12 @@ extension Eval {
     case let .error(e): return .error(e)
     }
 
-    guard let str = PyCast.asString(object) else {
+    guard let str = self.py.cast.asString(object) else {
       return .notString
     }
 
     return .value(str)
   }
 }
+
+*/

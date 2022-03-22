@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import VioletCore
 import VioletObjects
@@ -102,3 +103,5 @@ private func register(_ signum: Int32,
 
   return nil
 }
+
+*/

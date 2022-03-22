@@ -1,3 +1,4 @@
+/* MARKER
 import VioletBytecode
 import VioletObjects
 
@@ -45,7 +46,7 @@ extension Eval {
       return .ok
 
     case .error(let e):
-      if PyCast.isStopIteration(e) {
+      if self.py.cast.isStopIteration(e) {
         _ = self.stack.pop() // iter
         self.jumpTo(labelIndex: ifEmptyLabelIndex)
         return .ok
@@ -71,3 +72,5 @@ extension Eval {
     return .continue(loopStartLabelIndex: loopStartLabelIndex)
   }
 }
+
+*/

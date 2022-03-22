@@ -1,3 +1,4 @@
+/* MARKER
 import VioletBytecode
 import VioletObjects
 
@@ -145,7 +146,7 @@ internal struct FillFastLocals {
     // Handle keyword arguments
     // swiftlint:disable:next closure_body_length
     let e = Py.forEach(dict: kwargs) { key, value in
-      guard let keyword = PyCast.asString(key) else {
+      guard let keyword = self.py.cast.asString(key) else {
         let name = self.code.name
         let e = Py.newTypeError(msg: "\(name)() keywords must be strings")
         return .error(e)
@@ -383,3 +384,5 @@ internal struct FillFastLocals {
     return name.beforeMangling
   }
 }
+
+*/

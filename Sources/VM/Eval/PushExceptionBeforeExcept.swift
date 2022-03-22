@@ -1,3 +1,4 @@
+/* MARKER
 import VioletObjects
 
 /// Helper for the situation when we want to push current exception onto the stack.
@@ -47,7 +48,7 @@ internal enum PushExceptionBeforeExcept {
   internal static func pop(from stack: inout PyFrame.ObjectStack) -> Pop {
     let value = stack.pop()
 
-    if let exception = PyCast.asBaseException(value) {
+    if let exception = self.py.cast.asBaseException(value) {
       return .exception(exception)
     }
 
@@ -68,6 +69,8 @@ internal enum PushExceptionBeforeExcept {
   }
 
   private static func isNoExceptionMarker(_ value: PyObject) -> Bool {
-    return PyCast.isNone(value)
+    return self.py.cast.isNone(value)
   }
 }
+
+*/

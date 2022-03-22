@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import FileSystem
 import VioletObjects
@@ -68,3 +69,5 @@ public final class VM: PyDelegate {
     Py.destroy()
   }
 }
+
+*/

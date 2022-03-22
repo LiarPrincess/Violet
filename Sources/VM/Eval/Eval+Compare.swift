@@ -1,3 +1,4 @@
+/* MARKER
 import VioletBytecode
 import VioletObjects
 
@@ -57,7 +58,7 @@ extension Eval {
 
   private func exceptionMatch(left: PyObject,
                               right: PyObject) -> PyResult<PyObject> {
-    if let rightTuple = PyCast.asTuple(right) {
+    if let rightTuple = self.py.cast.asTuple(right) {
       for element in rightTuple.elements {
         if let e = self.guaranteeExceptionType(element) {
           return .error(e)
@@ -74,7 +75,7 @@ extension Eval {
   }
 
   private func guaranteeExceptionType(_ object: PyObject) -> PyBaseException? {
-    if let type = PyCast.asType(object), type.isException {
+    if let type = self.py.cast.asType(object), type.isException {
       return nil
     }
 
@@ -82,3 +83,5 @@ extension Eval {
     return Py.newTypeError(msg: msg)
   }
 }
+
+*/

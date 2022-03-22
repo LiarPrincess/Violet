@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 import VioletBytecode
 import VioletObjects
@@ -152,7 +153,7 @@ extension VM {
     assert(closure.elements.count == code.freeVariableCount)
 
     for (index, cellObject) in closure.elements.enumerated() {
-      guard let cell = PyCast.asCell(cellObject) else {
+      guard let cell = self.py.cast.asCell(cellObject) else {
         let t = cellObject.typeName
         trap("Closure can only contain cells, not '\(t)'.")
       }
@@ -190,3 +191,5 @@ extension VM {
     return nil
   }
 }
+
+*/

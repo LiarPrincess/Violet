@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import VioletCore
 import VioletBytecode
@@ -585,3 +586,5 @@ internal struct Eval {
     }
   }
 }
+
+*/

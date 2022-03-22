@@ -1,3 +1,4 @@
+/* MARKER
 import VioletBytecode
 import VioletObjects
 
@@ -94,7 +95,7 @@ extension Eval {
   internal func buildConstKeyMap(elementCount: Int) -> InstructionResult {
     let keys = self.stack.pop()
 
-    guard let keysTuple = PyCast.asTuple(keys) else {
+    guard let keysTuple = self.py.cast.asTuple(keys) else {
       let msg = "bad BUILD_CONST_KEY_MAP keys argument"
       return .exception(Py.newSystemError(msg: msg))
     }
@@ -160,3 +161,5 @@ extension Eval {
     return .ok
   }
 }
+
+*/
