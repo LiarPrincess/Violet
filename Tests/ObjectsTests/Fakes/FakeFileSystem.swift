@@ -7,11 +7,11 @@ class FakeFileSystem: PyFileSystem {
 
   var currentWorkingDirectory = Path(string: "cwd")
 
-  func open(fd: Int32, mode: FileMode) -> PyResult<FileDescriptorType> {
+  func open(fd: Int32, mode: FileMode) -> PyResultGen<FileDescriptorType> {
     shouldNotBeCalled()
   }
 
-  func open(path: Path, mode: FileMode) -> PyResult<FileDescriptorType> {
+  func open(path: Path, mode: FileMode) -> PyResultGen<FileDescriptorType> {
     shouldNotBeCalled()
   }
 
@@ -31,11 +31,11 @@ class FakeFileSystem: PyFileSystem {
     shouldNotBeCalled()
   }
 
-  func read(fd: Int32) -> PyResult<Data> {
+  func read(fd: Int32) -> PyResultGen<Data> {
     shouldNotBeCalled()
   }
 
-  func read(path: Path) -> PyResult<Data> {
+  func read(path: Path) -> PyResultGen<Data> {
     shouldNotBeCalled()
   }
 

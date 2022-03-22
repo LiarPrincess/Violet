@@ -12,7 +12,7 @@ extension PyTestCase {
                              object objectArg: T,
                              propertyName: String,
                              file: StaticString = #file,
-                             line: UInt = #line) -> PyResult<PyObject> {
+                             line: UInt = #line) -> PyResult {
     let object = objectArg.asObject
     let propertyNameStr = py.newString(propertyName)
     return py.getAttribute(object: object, name: propertyNameStr, default: nil)
@@ -25,7 +25,7 @@ extension PyTestCase {
                                     selector: String,
                                     args: [PyObject],
                                     file: StaticString = #file,
-                                    line: UInt = #line) -> PyResult<PyObject> {
+                                    line: UInt = #line) -> PyResult {
     let object = objectArg.asObject
     let selectorStr = py.newString(selector)
 
@@ -39,8 +39,22 @@ extension PyTestCase {
 
   // MARK: - Result
 
+  func unwrapResult(_ py: Py,
+                    result: PyResult,
+                    file: StaticString = #file,
+                    line: UInt = #line) -> PyObject? {
+    switch result {
+    case let .value(o):
+      return o
+    case let .error(e):
+      let reason = self.toString(py, error: e)
+      XCTFail("Result is error: \(reason)", file: file, line: line)
+      return nil
+    }
+  }
+
   func unwrapResult<T>(_ py: Py,
-                       result: PyResult<T>,
+                       result: PyResultGen<T>,
                        file: StaticString = #file,
                        line: UInt = #line) -> T? {
     switch result {
@@ -53,7 +67,19 @@ extension PyTestCase {
     }
   }
 
-  func unwrapError<T>(result: PyResult<T>,
+  func unwrapError(result: PyResult,
+                   file: StaticString = #file,
+                   line: UInt = #line) -> PyBaseException? {
+    switch result {
+    case let .value(o):
+      XCTFail("Result is value: \(o)", file: file, line: line)
+      return nil
+    case let .error(e):
+      return e
+    }
+  }
+
+  func unwrapError<T>(result: PyResultGen<T>,
                       file: StaticString = #file,
                       line: UInt = #line) -> PyBaseException? {
     switch result {

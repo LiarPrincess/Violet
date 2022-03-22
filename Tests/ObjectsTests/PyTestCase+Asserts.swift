@@ -44,8 +44,24 @@ extension PyTestCase {
     self.assertIsEqual(py, left: left, right: right, expected: expected, file: file, line: line)
   }
 
+  func assertIsEqual<R: PyObjectMixin>(_ py: Py,
+                                       left: PyResult,
+                                       right: R,
+                                       expected: Bool = true,
+                                       file: StaticString = #file,
+                                       line: UInt = #line) {
+    switch left {
+    case let .value(o):
+      self.assertIsEqual(py, left: o, right: right, expected: expected, file: file, line: line)
+    case let .error(e):
+      let reason = self.toString(py, error: e)
+      XCTFail("Left is error: \(reason)", file: file, line: line)
+      return
+    }
+  }
+
   func assertIsEqual<L: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
-                                                         left: PyResult<L>,
+                                                         left: PyResultGen<L>,
                                                          right: R,
                                                          expected: Bool = true,
                                                          file: StaticString = #file,
@@ -115,17 +131,23 @@ extension PyTestCase {
 
   // MARK: - Type error
 
+  func assertTypeError(_ py: Py,
+                       error: PyResult,
+                       message: String?,
+                       file: StaticString = #file,
+                       line: UInt = #line) {
+    if let e = self.unwrapError(result: error, file: file, line: line) {
+      self.assertTypeError(py, error: e, message: message, file: file, line: line)
+    }
+  }
+
   func assertTypeError<T>(_ py: Py,
-                          error: PyResult<T>,
+                          error: PyResultGen<T>,
                           message: String?,
                           file: StaticString = #file,
                           line: UInt = #line) {
     if let e = self.unwrapError(result: error, file: file, line: line) {
-      self.assertTypeError(py,
-                           error: e,
-                           message: message,
-                           file: file,
-                           line: line)
+      self.assertTypeError(py, error: e, message: message, file: file, line: line)
     }
   }
 
