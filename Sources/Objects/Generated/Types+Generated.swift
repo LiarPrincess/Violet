@@ -1149,6 +1149,7 @@ extension PyCode {
   /// This type was automatically generated based on `PyCode` properties
   /// with `sourcery: storedProperty` annotation.
   internal struct Layout {
+    internal let codeObjectOffset: Int
     internal let nameOffset: Int
     internal let qualifiedNameOffset: Int
     internal let filenameOffset: Int
@@ -1171,6 +1172,7 @@ extension PyCode {
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
+          PyMemory.FieldLayout(from: PyCode.CodeObject.self), // PyCode.codeObject
           PyMemory.FieldLayout(from: PyString.self), // PyCode.name
           PyMemory.FieldLayout(from: PyString.self), // PyCode.qualifiedName
           PyMemory.FieldLayout(from: PyString.self), // PyCode.filename
@@ -1188,21 +1190,22 @@ extension PyCode {
         ]
       )
 
-      assert(layout.offsets.count == 14)
-      self.nameOffset = layout.offsets[0]
-      self.qualifiedNameOffset = layout.offsets[1]
-      self.filenameOffset = layout.offsets[2]
-      self.instructionsOffset = layout.offsets[3]
-      self.firstLineOffset = layout.offsets[4]
-      self.instructionLinesOffset = layout.offsets[5]
-      self.constantsOffset = layout.offsets[6]
-      self.labelsOffset = layout.offsets[7]
-      self.namesOffset = layout.offsets[8]
-      self.variableNamesOffset = layout.offsets[9]
-      self.cellVariableNamesOffset = layout.offsets[10]
-      self.freeVariableNamesOffset = layout.offsets[11]
-      self.argCountOffset = layout.offsets[12]
-      self.kwOnlyArgCountOffset = layout.offsets[13]
+      assert(layout.offsets.count == 15)
+      self.codeObjectOffset = layout.offsets[0]
+      self.nameOffset = layout.offsets[1]
+      self.qualifiedNameOffset = layout.offsets[2]
+      self.filenameOffset = layout.offsets[3]
+      self.instructionsOffset = layout.offsets[4]
+      self.firstLineOffset = layout.offsets[5]
+      self.instructionLinesOffset = layout.offsets[6]
+      self.constantsOffset = layout.offsets[7]
+      self.labelsOffset = layout.offsets[8]
+      self.namesOffset = layout.offsets[9]
+      self.variableNamesOffset = layout.offsets[10]
+      self.cellVariableNamesOffset = layout.offsets[11]
+      self.freeVariableNamesOffset = layout.offsets[12]
+      self.argCountOffset = layout.offsets[13]
+      self.kwOnlyArgCountOffset = layout.offsets[14]
       self.size = layout.size
       self.alignment = layout.alignment
     }
@@ -1217,6 +1220,8 @@ extension PyCode {
   internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
   /// Property from base class: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property: `PyCode.codeObject`.
+  internal var codeObjectPtr: Ptr<PyCode.CodeObject> { Ptr(self.ptr, offset: Self.layout.codeObjectOffset) }
   /// Property: `PyCode.name`.
   internal var namePtr: Ptr<PyString> { Ptr(self.ptr, offset: Self.layout.nameOffset) }
   /// Property: `PyCode.qualifiedName`.
@@ -1269,6 +1274,7 @@ extension PyCode {
     zelf.beforeDeinitialize()
 
     // Call 'deinitialize' on all of our own properties.
+    zelf.codeObjectPtr.deinitialize()
     zelf.namePtr.deinitialize()
     zelf.qualifiedNamePtr.deinitialize()
     zelf.filenamePtr.deinitialize()
@@ -1307,7 +1313,7 @@ extension PyCode {
 extension PyMemory {
 
   /// Allocate a new instance of `code` type.
-  public func newCode(_ py: Py, type: PyType, code: CodeObject) -> PyCode {
+  public func newCode(_ py: Py, type: PyType, code: VioletBytecode.CodeObject) -> PyCode {
     let typeLayout = PyCode.layout
     let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
 

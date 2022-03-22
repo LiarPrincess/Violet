@@ -1,4 +1,3 @@
-/* MARKER
 import VioletParser
 import VioletBytecode
 import VioletObjects
@@ -13,77 +12,77 @@ private let isEnabled = false
 /// Printing various things (to help with debugging)
 internal enum Debug {
 
-  #if DEBUG
+#if DEBUG
   // Most of the time we don't want to debug importlib
   internal static var isAfterImportlib = false
 
   private static var isEnabledAndAfterImportlib: Bool {
     return isEnabled && self.isAfterImportlib
   }
-  #endif
+#endif
 
   // MARK: - Parser, compiler
 
   internal static func ast(_ ast: AST) {
-    #if DEBUG
+#if DEBUG
     guard Self.isEnabledAndAfterImportlib else { return }
     print("=== AST ===")
     print(ast)
     print()
-    #endif
+#endif
   }
 
-  internal static func code(_ code: PyCode) {
-    #if DEBUG
+  internal static func code(_ py: Py, _ code: PyCode) {
+#if DEBUG
     guard Self.isEnabledAndAfterImportlib else { return }
 
-    let qualifiedName = code.qualifiedName.value
+    let qualifiedName = py.strString(code.qualifiedName)
     let title = qualifiedName.isEmpty ? "(no name)" : qualifiedName
 
     print("=== \(title) ===")
     print(code)
 
     for constant in code.constants {
-      if let codeConstant = self.py.cast.asCode(constant) {
-        Debug.code(codeConstant)
+      if let codeConstant = py.cast.asCode(constant) {
+        Debug.code(py, codeConstant)
       }
     }
-    #endif
+#endif
   }
 
   // MARK: - Instruction
 
-  internal static func instruction(code: PyCode,
-                                   index: Int,
-                                   extendedArg: Int) {
-    #if DEBUG
+  internal static func instruction(code: PyCode, index: Int) {
+#if DEBUG
     guard Self.isEnabledAndAfterImportlib else { return }
     let byte = index * Instruction.byteSize
     let dump = code.codeObject.getFilledInstruction(index: index)
     print("\(byte): \(dump)")
-    #endif
+#endif
   }
 
   // MARK: - Frame
 
-  internal static func frameStart(frame: PyFrame) {
-    #if DEBUG
+  internal static func frameStart(_ py: Py, _ frame: PyFrame) {
+#if DEBUG
     guard Self.isEnabledAndAfterImportlib else { return }
-    print("--- Frame start: \(frame.code.name.value) ---")
-    #endif
+    let name = py.strString(frame.code.name)
+    print("--- Frame start: \(name) ---")
+#endif
   }
 
-  internal static func frameEnd(frame: PyFrame) {
-    #if DEBUG
+  internal static func frameEnd(_ py: Py, _ frame: PyFrame) {
+#if DEBUG
     guard Self.isEnabledAndAfterImportlib else { return }
-    print("--- Frame end: \(frame.code.name.value) ---")
-    #endif
+    let name = py.strString(frame.code.name)
+    print("--- Frame end: \(name) ---")
+#endif
   }
 
   // MARK: - Stack
 
   internal static func stack(stack: PyFrame.ObjectStack) {
-    #if DEBUG
+#if DEBUG
     guard Self.isEnabledAndAfterImportlib else { return }
 
     if stack.isEmpty {
@@ -97,13 +96,13 @@ internal enum Debug {
       let value = stack.peek(peekIndex)
       print("    \(value)")
     }
-    #endif
+#endif
   }
 
   // MARK: - Blocks
 
   internal static func stack(stack: PyFrame.BlockStack) {
-    #if DEBUG
+#if DEBUG
     guard Self.isEnabledAndAfterImportlib else { return }
 
     if stack.isEmpty {
@@ -117,22 +116,22 @@ internal enum Debug {
       let value = stack.peek(peekIndex)
       print("    \(value)")
     }
-    #endif
+#endif
   }
 
   internal static func push(block: PyFrame.Block) {
-    #if DEBUG
+#if DEBUG
     guard Self.isEnabledAndAfterImportlib else { return }
     print("  push block:", block)
-    #endif
+#endif
   }
 
   internal static func pop(block: PyFrame.Block?) {
-    #if DEBUG
+#if DEBUG
     guard Self.isEnabledAndAfterImportlib else { return }
     let s = block.map(String.init(describing:)) ?? "nil"
     print("  pop block:", s)
-    #endif
+#endif
   }
 
   // MARK: - Compare
@@ -140,14 +139,14 @@ internal enum Debug {
   internal static func compare(type: Instruction.CompareType,
                                a: PyObject,
                                b: PyObject,
-                               result: PyResult<PyObject>) {
-    #if DEBUG
+                               result: PyResult) {
+#if DEBUG
     guard Self.isEnabledAndAfterImportlib else { return }
     print("  type:", type)
     print("  a:", a)
     print("  b:", b)
     print("  result:", result)
-    #endif
+#endif
   }
 
   // MARK: - Function/method
@@ -155,8 +154,8 @@ internal enum Debug {
   internal static func callFunction(fn: PyObject,
                                     args: [PyObject],
                                     kwargs: PyDict?,
-                                    result: PyInstance.CallResult) {
-    #if DEBUG
+                                    result: Py.CallResult) {
+#if DEBUG
     guard Self.isEnabledAndAfterImportlib else { return }
     print("  fn:", fn)
     print("  args:", args)
@@ -164,26 +163,24 @@ internal enum Debug {
       print("  kwargs:", kwargs)
     }
     print("  result:", result)
-    #endif
+#endif
   }
 
-  internal static func loadMethod(method: PyInstance.GetMethodResult) {
-    #if DEBUG
+  internal static func loadMethod(method: Py.GetMethodResult) {
+#if DEBUG
     guard Self.isEnabledAndAfterImportlib else { return }
     print("  method:", method)
-    #endif
+#endif
   }
 
   internal static func callMethod(method: PyObject,
                                   args: [PyObject],
-                                  result: PyInstance.CallResult) {
-    #if DEBUG
+                                  result: Py.CallResult) {
+#if DEBUG
     guard Self.isEnabledAndAfterImportlib else { return }
     print("  method:", method)
     print("  args:", args)
     print("  result:", result)
-    #endif
+#endif
   }
 }
-
-*/
