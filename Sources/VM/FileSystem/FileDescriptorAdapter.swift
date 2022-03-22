@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import FileSystem
 import VioletObjects
@@ -9,6 +8,9 @@ import VioletObjects
 /// and then in case of exception it will convert it to Python error.
 internal struct FileDescriptorAdapter: CustomStringConvertible, FileDescriptorType {
 
+  /// File descriptors are `Py` specic (you can't use the same adapter in multiple
+  /// contexts), so we may as well store `py` reference.
+  private let py: Py
   private let fd: FileDescriptor
   /// Path for error messages
   private let path: String?
@@ -17,7 +19,8 @@ internal struct FileDescriptorAdapter: CustomStringConvertible, FileDescriptorTy
     return self.fd.description
   }
 
-  internal init(fd: FileDescriptor, path: String?) {
+  internal init(_ py: Py, fd: FileDescriptor, path: String?) {
+    self.py = py
     self.fd = fd
     self.path = path
   }
@@ -30,125 +33,122 @@ internal struct FileDescriptorAdapter: CustomStringConvertible, FileDescriptorTy
 
   // MARK: - Read
 
-  internal func readLine() -> PyResult<Data> {
+  internal func readLine() -> PyResultGen<Data> {
     do {
       let data = try self.fd.readLine()
       return .value(data)
     } catch {
-      let e = self.osError(from: error)
-      return .error(e)
+      return self.toOSError(error)
     }
   }
 
-  internal func readToEnd() -> PyResult<Data> {
+  internal func readToEnd() -> PyResultGen<Data> {
     do {
       let data = try self.fd.readToEnd()
       return .value(data)
     } catch {
-      let e = self.osError(from: error)
-      return .error(e)
+      return self.toOSError(error)
     }
   }
 
-  internal func read(upToCount count: Int) -> PyResult<Data> {
+  internal func read(upToCount count: Int) -> PyResultGen<Data> {
     do {
       let data = try self.fd.read(upToCount: count)
       return .value(data)
     } catch {
-      let e = self.osError(from: error)
-      return .error(e)
+      return self.toOSError(error)
     }
   }
 
   // MARK: - Write
 
-  internal func write<T: DataProtocol>(contentsOf data: T) -> PyResult<PyNone> {
+  internal func write<T: DataProtocol>(contentsOf data: T) -> PyBaseException? {
     do {
       try self.fd.write(contentsOf: data)
-      return .value(Py.none)
+      return nil
     } catch {
-      let e = self.osError(from: error)
-      return .error(e)
+      return self.toOSError(error)
     }
   }
 
   // MARK: - Flush
 
-  internal func flush() -> PyResult<PyNone> {
+  internal func flush() -> PyBaseException? {
     do {
       try self.fd.synchronize()
-      return .value(Py.none)
+      return nil
     } catch {
-      let e = self.osError(from: error)
-      return .error(e)
+      return self.toOSError(error)
     }
   }
 
   // MARK: - Offset
 
-  internal func offset() -> PyResult<UInt64> {
+  internal func offset() -> PyResultGen<UInt64> {
     do {
       let result = try self.fd.offset()
       return .value(result)
     } catch {
-      let e = self.osError(from: error)
-      return .error(e)
+      return self.toOSError(error)
     }
   }
 
   // MARK: - Seek
 
-  internal func seekToEnd() -> PyResult<UInt64> {
+  internal func seekToEnd() -> PyResultGen<UInt64> {
     do {
       let result = try self.fd.seekToEnd()
       return .value(result)
     } catch {
-      let e = self.osError(from: error)
-      return .error(e)
+      return self.toOSError(error)
     }
   }
 
-  internal func seek(toOffset offset: UInt64) -> PyResult<PyNone> {
+  internal func seek(toOffset offset: UInt64) -> PyBaseException? {
     do {
       try self.fd.seek(toOffset: offset)
-      return .value(Py.none)
+      return nil
     } catch {
-      let e = self.osError(from: error)
-      return .error(e)
+      return self.toOSError(error)
     }
   }
 
   // MARK: - Close
 
-  internal func close() -> PyResult<PyNone> {
+  internal func close() -> PyBaseException? {
     do {
       try self.fd.close()
-      return .value(Py.none)
+      return nil
     } catch {
-      let e = self.osError(from: error)
-      return .error(e)
+      return self.toOSError(error)
     }
   }
 
   // MARK: - Error
 
-  private func osError(from error: Error) -> PyBaseException {
+  private func toOSError<T>(_ error: Error) -> PyResultGen<T> {
+    let osError: PyBaseException = self.toOSError(error)
+    return .error(osError)
+  }
+
+  private func toOSError(_ error: Error) -> PyBaseException {
     if let descriptorError = error as? FileDescriptor.Error {
       let errno = descriptorError.errno
       if let p = self.path {
-        return Py.newOSError(errno: errno, path: p)
+        let error = self.py.newOSError(errno: errno, path: p)
+        return error.asBaseException
       }
 
-      return Py.newOSError(errno: errno)
+      let error = self.py.newOSError(errno: errno)
+      return error.asBaseException
     }
 
-    var msg = "unknown IO error"
+    var message = "unknown IO error"
     if let p = self.path {
-      msg.append(" (file: \(p))")
+      message.append(" (file: \(p))")
     }
 
-    return Py.newOSError(msg: msg)
+    let error = self.py.newOSError(message: message)
+    return error.asBaseException
   }
 }
-
-*/

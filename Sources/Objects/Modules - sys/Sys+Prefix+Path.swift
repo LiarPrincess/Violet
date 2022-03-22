@@ -74,7 +74,7 @@ extension Sys {
   }
 
   private func isFile(path: Path) -> Bool {
-    switch self.py.fileSystem.stat(path: path) {
+    switch self.py.fileSystem.stat(self.py, path: path) {
     case .value(let stat):
       return stat.type == .regularFile
     case .enoent,

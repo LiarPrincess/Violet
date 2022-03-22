@@ -123,13 +123,13 @@ extension Py {
   ) -> PyResultGen<OpenedFileDescriptor> {
     func _open(string: String) -> PyResultGen<OpenedFileDescriptor> {
       let path = Path(string: string)
-      let fd = self.fileSystem.open(path: path, mode: mode)
+      let fd = self.fileSystem.open(self, path: path, mode: mode)
       return fd.map { OpenedFileDescriptor(path: path, value: $0) }
     }
 
     switch source {
     case let .fileDescriptor(fdInt):
-      let fd = self.fileSystem.open(fd: fdInt, mode: mode)
+      let fd = self.fileSystem.open(self, fd: fdInt, mode: mode)
       return fd.map { OpenedFileDescriptor(path: nil, value: $0) }
 
     case let .string(string):

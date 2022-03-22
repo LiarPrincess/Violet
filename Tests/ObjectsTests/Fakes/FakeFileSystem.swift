@@ -7,35 +7,35 @@ class FakeFileSystem: PyFileSystem {
 
   var currentWorkingDirectory = Path(string: "cwd")
 
-  func open(fd: Int32, mode: FileMode) -> PyResultGen<FileDescriptorType> {
+  func open(_ py: Py, fd: Int32, mode: FileMode) -> PyResultGen<FileDescriptorType> {
     shouldNotBeCalled()
   }
 
-  func open(path: Path, mode: FileMode) -> PyResultGen<FileDescriptorType> {
+  func open(_ py: Py, path: Path, mode: FileMode) -> PyResultGen<FileDescriptorType> {
     shouldNotBeCalled()
   }
 
-  func stat(fd: Int32) -> PyFileSystemStatResult {
+  func stat(_ py: Py, fd: Int32) -> PyFileSystemStatResult {
     shouldNotBeCalled()
   }
 
-  func stat(path: Path) -> PyFileSystemStatResult {
+  func stat(_ py: Py, path: Path) -> PyFileSystemStatResult {
     shouldNotBeCalled()
   }
 
-  func readdir(fd: Int32) -> PyFileSystemReaddirResult {
+  func readdir(_ py: Py, fd: Int32) -> PyFileSystemReaddirResult {
     shouldNotBeCalled()
   }
 
-  func readdir(path: Path) -> PyFileSystemReaddirResult {
+  func readdir(_ py: Py, path: Path) -> PyFileSystemReaddirResult {
     shouldNotBeCalled()
   }
 
-  func read(fd: Int32) -> PyResultGen<Data> {
+  func read(_ py: Py, fd: Int32) -> PyResultGen<Data> {
     shouldNotBeCalled()
   }
 
-  func read(path: Path) -> PyResultGen<Data> {
+  func read(_ py: Py, path: Path) -> PyResultGen<Data> {
     shouldNotBeCalled()
   }
 

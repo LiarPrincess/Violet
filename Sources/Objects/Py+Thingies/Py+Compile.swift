@@ -88,7 +88,7 @@ extension Py {
 
   internal func readSourceFile(path: Path) -> ReadSourceFileResult {
     let data: Data
-    switch self.fileSystem.read(path: path) {
+    switch self.fileSystem.read(self, path: path) {
     case let .value(d): data = d
     case let .error(e): return .readError(e)
     }

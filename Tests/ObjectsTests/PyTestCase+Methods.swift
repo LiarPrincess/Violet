@@ -100,7 +100,7 @@ extension PyTestCase {
       return typeName
     }
 
-    switch py.strString(object: message.asObject) {
+    switch py.strString(message.asObject) {
     case .value(let s):
       return s
     case .error:
@@ -115,7 +115,7 @@ extension PyTestCase {
       return nil
     }
 
-    switch py.strString(object: message.asObject) {
+    switch py.strString(message.asObject) {
     case .value(let s):
       return s
     case .error:

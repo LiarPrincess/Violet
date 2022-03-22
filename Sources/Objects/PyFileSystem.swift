@@ -55,38 +55,38 @@ public protocol PyFileSystem: AnyObject {
   // MARK: - Open
 
   /// Open file with given `fd`.
-  func open(fd: Int32, mode: FileMode) -> PyResultGen<FileDescriptorType>
+  func open(_ py: Py, fd: Int32, mode: FileMode) -> PyResultGen<FileDescriptorType>
   /// Open file at given `path`.
-  func open(path: Path, mode: FileMode) -> PyResultGen<FileDescriptorType>
+  func open(_ py: Py, path: Path, mode: FileMode) -> PyResultGen<FileDescriptorType>
 
   // MARK: - Stat
 
   /// Information about given file/dir.
   ///
   /// Always chase the link.
-  func stat(fd: Int32) -> PyFileSystemStatResult
+  func stat(_ py: Py, fd: Int32) -> PyFileSystemStatResult
   /// Information about given file/dir.
   ///
   /// Always chase the link.
-  func stat(path: Path) -> PyFileSystemStatResult
+  func stat(_ py: Py, path: Path) -> PyFileSystemStatResult
 
   // MARK: - Read dir
 
   /// List containing the names of the entries in the directory given by `fd`.
-  func readdir(fd: Int32) -> PyFileSystemReaddirResult
+  func readdir(_ py: Py, fd: Int32) -> PyFileSystemReaddirResult
   /// List containing the names of the entries in the directory given by `path`.
-  func readdir(path: Path) -> PyFileSystemReaddirResult
+  func readdir(_ py: Py, path: Path) -> PyFileSystemReaddirResult
 
   // MARK: - Read
 
   /// Read the whole file.
   ///
   /// Default implementation available.
-  func read(fd: Int32) -> PyResultGen<Data>
+  func read(_ py: Py, fd: Int32) -> PyResultGen<Data>
   /// Read the whole file.
   ///
   /// Default implementation available.
-  func read(path: Path) -> PyResultGen<Data>
+  func read(_ py: Py, path: Path) -> PyResultGen<Data>
 
   // MARK: - Basename
 
@@ -163,8 +163,8 @@ public protocol PyFileSystem: AnyObject {
 
 extension PyFileSystem {
 
-  public func read(fd: Int32) -> PyResultGen<Data> {
-    switch self.open(fd: fd, mode: .read) {
+  public func read(_ py: Py, fd: Int32) -> PyResultGen<Data> {
+    switch self.open(py, fd: fd, mode: .read) {
     case let .value(fd):
       return self.readToEnd(fd: fd)
     case let .error(e):
@@ -172,8 +172,8 @@ extension PyFileSystem {
     }
   }
 
-  public func read(path: Path) -> PyResultGen<Data> {
-    switch self.open(path: path, mode: .read) {
+  public func read(_ py: Py, path: Path) -> PyResultGen<Data> {
+    switch self.open(py, path: path, mode: .read) {
     case let .value(fd):
       return self.readToEnd(fd: fd)
     case let .error(e):
