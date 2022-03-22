@@ -270,7 +270,7 @@ public struct PyObject: PyObjectMixin {
   // sourcery: pymethod = __str__
   internal static func __str__(_ py: Py, zelf: PyObject) -> PyResult {
     // If '__str__' is not implemented then we will use '__repr__'.
-    let result = py.repr(object: zelf)
+    let result = py.repr(zelf)
     return PyResult(result)
   }
 

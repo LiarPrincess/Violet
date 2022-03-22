@@ -891,7 +891,7 @@ extension Builtins {
   internal static func repr(_ py: Py,
                             module: PyObject,
                             object: PyObject) -> PyResult {
-    let result = py.repr(object: object)
+    let result = py.repr(object)
     return PyResult(result)
   }
 
@@ -909,7 +909,7 @@ extension Builtins {
   internal static func ascii(_ py: Py,
                              module: PyObject,
                              object: PyObject) -> PyResult {
-    let result = py.ascii(object: object)
+    let result = py.ascii(object)
     return PyResult(result)
   }
 }

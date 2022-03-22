@@ -100,7 +100,7 @@ public struct PyDictKeys: PyObjectMixin, AbstractDictView {
     // "dict_keys(['a', 'b', 'c'])"
 
     let key = element.key.object
-    return py.reprString(object: key)
+    return py.reprString(key)
   }
 
   // sourcery: pymethod = __getattribute__

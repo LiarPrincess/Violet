@@ -170,7 +170,7 @@ extension Py {
       return .value(.bytes(bytes.elements))
     }
 
-    let repr = self.reprOrGenericString(object: object)
+    let repr = self.reprOrGenericString(object)
     return .typeError(self, message: "invalid file: \(repr)")
   }
 

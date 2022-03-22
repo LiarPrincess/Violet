@@ -41,7 +41,7 @@ extension UnderscoreWarnings {
     let category = warning.category.getNameString()
 
     let content: String
-    switch self.py.strString(object: warning.text) {
+    switch self.py.strString(warning.text) {
     case let .value(c): content = c
     case let .error(e): return .error(e)
     }

@@ -523,7 +523,7 @@ public struct PyRange: PyObjectMixin {
     }
 
     guard let int = py.cast.asInt(object), Self.contains(zelf: zelf, int: int) else {
-      switch py.strString(object: object) {
+      switch py.strString(object) {
       case .value(let str):
         return .valueError(py, message: "\(str) is not in range")
       case .error:

@@ -506,7 +506,7 @@ public struct PyFunction: PyObjectMixin {
       return module.getName(py)
     }
 
-    let result = py.str(object: moduleObject)
+    let result = py.str(moduleObject)
     return PyResult(result)
   }
 

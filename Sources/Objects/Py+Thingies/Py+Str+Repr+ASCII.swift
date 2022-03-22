@@ -13,8 +13,8 @@ extension Py {
 
   /// repr(object)
   /// See [this](https://docs.python.org/3/library/functions.html#repr)
-  public func repr(object: PyObject) -> PyResultGen<PyString> {
-    switch self.reprImpl(object: object) {
+  public func repr(_ object: PyObject) -> PyResultGen<PyString> {
+    switch self.reprImpl(object) {
     case .string(let s):
       let py = self.newString(s)
       return .value(py)
@@ -31,8 +31,8 @@ extension Py {
 
   /// repr(object)
   /// See [this](https://docs.python.org/3/library/functions.html#repr)
-  public func reprString(object: PyObject) -> PyResultGen<String> {
-    switch self.reprImpl(object: object) {
+  public func reprString(_ object: PyObject) -> PyResultGen<String> {
+    switch self.reprImpl(object) {
     case .string(let s):
       return .value(s)
     case .pyString(let s):
@@ -63,7 +63,7 @@ extension Py {
     }
   }
 
-  private func reprImpl(object: PyObject) -> ReprImplResult {
+  private func reprImpl(_ object: PyObject) -> ReprImplResult {
     if let result = PyStaticCall.__repr__(self, object: object) {
       switch result {
       case let .value(o): return ReprImplResult(self, object: o)
@@ -75,7 +75,7 @@ extension Py {
     case let .value(object):
       return ReprImplResult(self, object: object)
     case .missingMethod:
-      let generic = self.genericRepr(object: object)
+      let generic = self.genericRepr(object)
       return .string(generic)
     case let .notCallable(e):
       return .notCallable(e)
@@ -95,8 +95,8 @@ extension Py {
   /// Get object `__repr__`, if that fails then use generic representation.
   ///
   /// This is mostly for error messages, where we have to use _something_.
-  public func reprOrGeneric(object: PyObject) -> PyString {
-    switch self.reprImpl(object: object) {
+  public func reprOrGeneric(_ object: PyObject) -> PyString {
+    switch self.reprImpl(object) {
     case .string(let s):
       return self.newString(s)
     case .pyString(let s):
@@ -104,7 +104,7 @@ extension Py {
     case .methodReturnedNonString,
          .error,
          .notCallable:
-      let generic = self.genericRepr(object: object)
+      let generic = self.genericRepr(object)
       return self.newString(generic)
     }
   }
@@ -112,8 +112,8 @@ extension Py {
   /// Get object `__repr__`, if that fails then use generic representation.
   ///
   /// This is mostly for error messages, where we have to use _something_.
-  public func reprOrGenericString(object: PyObject) -> String {
-    switch self.reprImpl(object: object) {
+  public func reprOrGenericString(_ object: PyObject) -> String {
+    switch self.reprImpl(object) {
     case .string(let s):
       return s
     case .pyString(let s):
@@ -121,11 +121,11 @@ extension Py {
     case .methodReturnedNonString,
          .error,
          .notCallable:
-      return self.genericRepr(object: object)
+      return self.genericRepr(object)
     }
   }
 
-  private func genericRepr(object: PyObject) -> String {
+  private func genericRepr(_ object: PyObject) -> String {
     return "<\(object.typeName) object at \(object.ptr)>"
   }
 
@@ -133,8 +133,8 @@ extension Py {
 
   /// class str(object='')
   /// class str(object=b'', encoding='utf-8', errors='strict')
-  public func str(object: PyObject) -> PyResultGen<PyString> {
-    switch self.strImpl(object: object) {
+  public func str(_ object: PyObject) -> PyResultGen<PyString> {
+    switch self.strImpl(object) {
     case .reprLock:
       return .value(self.emptyString)
     case .string(let s):
@@ -151,10 +151,14 @@ extension Py {
     }
   }
 
+  public func strString(_ string: PyString) -> String {
+    return string.value
+  }
+
   /// class str(object='')
   /// class str(object=b'', encoding='utf-8', errors='strict')
-  public func strString(object: PyObject) -> PyResultGen<String> {
-    switch self.strImpl(object: object) {
+  public func strString(_ object: PyObject) -> PyResultGen<String> {
+    switch self.strImpl(object) {
     case .reprLock:
       return .value("")
     case .string(let s):
@@ -198,14 +202,14 @@ extension Py {
     }
   }
 
-  private func strImpl(object: PyObject) -> StrImplResult {
+  private func strImpl(_ object: PyObject) -> StrImplResult {
     if object.hasReprLock {
       return .reprLock
     }
 
     // If we do not override '__str__' then we have to use '__repr__'.
     guard self.hasCustom__str__(object: object) else {
-      let repr = self.reprImpl(object: object)
+      let repr = self.reprImpl(object)
       return StrImplResult(repr: repr)
     }
 
@@ -221,7 +225,7 @@ extension Py {
       return StrImplResult(self, object: object)
     case .missingMethod:
       // Hmm… we checked that we have custom '__str__', so we should not end up here
-      let repr = self.reprImpl(object: object)
+      let repr = self.reprImpl(object)
       return StrImplResult(repr: repr)
     case let .notCallable(e):
       return .notCallable(e)
@@ -248,8 +252,8 @@ extension Py {
 
   /// ascii(object)
   /// See [this](https://docs.python.org/3/library/functions.html#ascii)
-  public func ascii(object: PyObject) -> PyResultGen<PyString> {
-    switch self.asciiImpl(object: object) {
+  public func ascii(_ object: PyObject) -> PyResultGen<PyString> {
+    switch self.asciiImpl(object) {
     case let .string(s):
       let py = self.newString(s)
       return .value(py)
@@ -262,8 +266,8 @@ extension Py {
 
   /// ascii(object)
   /// See [this](https://docs.python.org/3/library/functions.html#ascii)
-  public func asciiString(object: PyObject) -> PyResultGen<String> {
-    switch self.asciiImpl(object: object) {
+  public func asciiString(_ object: PyObject) -> PyResultGen<String> {
+    switch self.asciiImpl(object) {
     case let .string(s):
       return .value(s)
     case let .pystring(s):
@@ -279,15 +283,15 @@ extension Py {
     case error(PyBaseException)
   }
 
-  private func asciiImpl(object: PyObject) -> AsciiImplResult {
-    switch self.reprImpl(object: object) {
+  private func asciiImpl(_ object: PyObject) -> AsciiImplResult {
+    switch self.reprImpl(object) {
     case .string(let s):
       let allASCII = s.unicodeScalars.allSatisfy { $0.isASCII }
       if allASCII {
         return .string(s)
       }
 
-      return self.asciiImpl(string: s)
+      return self.asciiImpl(s)
 
     case .pyString(let s):
       let allASCII = s.elements.allSatisfy { $0.isASCII }
@@ -295,7 +299,7 @@ extension Py {
         return .pystring(s)
       }
 
-      return self.asciiImpl(string: s.value)
+      return self.asciiImpl(s.value)
 
     case .methodReturnedNonString(let o):
       let e = self.createReprReturnedNonStringError(object: o)
@@ -306,7 +310,7 @@ extension Py {
     }
   }
 
-  private func asciiImpl(string: String) -> AsciiImplResult {
+  private func asciiImpl(_ string: String) -> AsciiImplResult {
     var result = ""
 
     for scalar in string.unicodeScalars {

@@ -260,8 +260,8 @@ extension UnderscoreWarnings {
       return nil // Nothing to do
 
     case .other:
-      let actStr = self.repr(object: filter.actionObject)
-      let objStr = self.repr(object: filter.object)
+      let actStr = self.repr(filter.actionObject)
+      let objStr = self.repr(filter.object)
       let message = "Unrecognized action (\(actStr))) in warnings.filters:\n \(objStr)"
       let error = self.py.newRuntimeError(message: message)
       return error.asBaseException
@@ -273,18 +273,18 @@ extension UnderscoreWarnings {
     }
   }
 
-  private func repr(object: PyString) -> String {
-    return self.py.reprOrGenericString(object: object.asObject)
+  private func repr(_ object: PyString) -> String {
+    return self.py.reprOrGenericString(object.asObject)
   }
 
-  private func repr(object: Filter.Object) -> String {
+  private func repr(_ object: Filter.Object) -> String {
     let realObject: PyObject
     switch object {
     case .value(let tuple): realObject = tuple.asObject
     case .none: realObject = self.py.none.asObject
     }
 
-    return self.py.reprOrGenericString(object: realObject)
+    return self.py.reprOrGenericString(realObject)
   }
 
   /// static int

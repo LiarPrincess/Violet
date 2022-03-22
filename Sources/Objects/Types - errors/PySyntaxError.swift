@@ -186,7 +186,7 @@ public struct PySyntaxError: PyErrorMixin {
 
     let msg: String
     let msgObject = zelf.msg?.asObject ?? py.none.asObject
-    switch py.strString(object: msgObject) {
+    switch py.strString(msgObject) {
     case let .value(m): msg = m
     case let .error(e): return .error(e)
     }

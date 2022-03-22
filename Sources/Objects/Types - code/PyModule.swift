@@ -126,7 +126,7 @@ public struct PyModule: PyObjectMixin {
 
   internal func getNameString(_ py: Py) -> ModuleName {
     if let object = self.getNameObjectOrNil(py) {
-      switch py.strString(object: object) {
+      switch py.strString(object) {
       case let .value(s):
         return .string(s)
       case let .error(e):

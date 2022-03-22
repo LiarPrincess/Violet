@@ -155,7 +155,7 @@ extension AbstractBuiltinFunction {
     }
 
     guard let module = py.cast.asModule(moduleObject) else {
-      let result = py.str(object: moduleObject)
+      let result = py.str(moduleObject)
       return PyResult(result)
     }
 

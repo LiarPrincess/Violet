@@ -144,7 +144,7 @@ public struct PyBaseException: PyErrorMixin {
     if args.count == 1 {
       // BaseException('Elsa')
       let first = args.elements[0]
-      switch py.reprString(object: first) {
+      switch py.reprString(first) {
       case let .value(s):
         let result = name + "(" + s + ")"
         return PyResult(py, result)
@@ -183,10 +183,10 @@ public struct PyBaseException: PyErrorMixin {
       return PyResult(py.emptyString)
     case 1:
       let first = args.elements[0]
-      let result = py.str(object: first)
+      let result = py.str(first)
       return PyResult(result)
     default:
-      let result = py.str(object: args.asObject)
+      let result = py.str(args.asObject)
       return PyResult(result)
     }
   }

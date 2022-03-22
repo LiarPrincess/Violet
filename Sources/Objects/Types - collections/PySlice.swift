@@ -211,19 +211,19 @@ public struct PySlice: PyObjectMixin {
     }
 
     let start: String
-    switch py.reprString(object: zelf.start) {
+    switch py.reprString(zelf.start) {
     case let .value(s): start = s
     case let .error(e): return .error(e)
     }
 
     let stop: String
-    switch py.reprString(object: zelf.stop) {
+    switch py.reprString(zelf.stop) {
     case let .value(s): stop = s
     case let .error(e): return .error(e)
     }
 
     let step: String
-    switch py.reprString(object: zelf.step) {
+    switch py.reprString(zelf.step) {
     case let .value(s): step = s
     case let .error(e): return .error(e)
     }

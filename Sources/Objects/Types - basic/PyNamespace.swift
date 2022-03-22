@@ -155,13 +155,13 @@ public struct PyNamespace: PyObjectMixin {
         }
 
         let keyRepr: String
-        switch py.reprString(object: entry.key.object) {
+        switch py.reprString(entry.key.object) {
         case let .value(r): keyRepr = r
         case let .error(e): return .error(e)
         }
 
         let valueRepr: String
-        switch py.reprString(object: entry.value) {
+        switch py.reprString(entry.value) {
         case let .value(r): valueRepr = r
         case let .error(e): return .error(e)
         }

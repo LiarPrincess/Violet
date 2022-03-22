@@ -220,7 +220,7 @@ extension Py {
     // If content is nil -> it may be warning
     if cell.content == nil {
       let typeName = type.getNameString()
-      let typeRepr = self.reprOrGenericString(object: type.asObject)
+      let typeRepr = self.reprOrGenericString(type.asObject)
       let message = "__class__ not set defining \(typeName) as \(typeRepr). " +
                 "Was __classcell__ propagated to type.__new__?"
       if let e = self.warn(type: .deprecation, message: message) {
@@ -231,8 +231,8 @@ extension Py {
     // If we already have content that is not our class -> throw
     if let content = cell.content, content.ptr !== type.ptr {
       let typeName = type.getNameString()
-      let typeRepr = self.reprOrGenericString(object: type.asObject)
-      let contentRepr = self.reprOrGenericString(object: content)
+      let typeRepr = self.reprOrGenericString(type.asObject)
+      let contentRepr = self.reprOrGenericString(content)
       let message = "__class__ set to \(contentRepr) defining \(typeName) as \(typeRepr)"
       let error = self.newTypeError(message: message)
       return error.asBaseException

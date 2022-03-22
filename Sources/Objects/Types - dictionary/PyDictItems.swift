@@ -101,14 +101,14 @@ public struct PyDictItems: PyObjectMixin, AbstractDictView {
 
     let key = element.key.object
     let keyRepr: String
-    switch py.reprString(object: key) {
+    switch py.reprString(key) {
     case let .value(s): keyRepr = s
     case let .error(e): return .error(e)
     }
 
     let value = element.value
     let valueRepr: String
-    switch py.reprString(object: value) {
+    switch py.reprString(value) {
     case let .value(s): valueRepr = s
     case let .error(e): return .error(e)
     }

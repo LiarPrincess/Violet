@@ -89,7 +89,7 @@ public struct PyKeyError: PyErrorMixin {
     switch args.count {
     case 1:
       let first = args.elements[0]
-      let result = py.repr(object: first)
+      let result = py.repr(first)
       return PyResult(result)
     default:
       let zelfAsBase = zelf.asBaseException

@@ -12,7 +12,7 @@ extension AbstractSequence {
         result.append(", ")
       }
 
-      switch py.reprString(object: element) {
+      switch py.reprString(element) {
       case let .value(s): result.append(s)
       case let .error(e): return .error(e)
       }
