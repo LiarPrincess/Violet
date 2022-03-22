@@ -1,3 +1,4 @@
+/* MARKER
 import VioletBytecode
 import VioletObjects
 
@@ -82,3 +83,5 @@ extension Eval {
     self.frame.nextInstructionIndex = instructionIndex
   }
 }
+
+*/

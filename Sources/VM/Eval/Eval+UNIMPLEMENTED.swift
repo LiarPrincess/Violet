@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 import VioletBytecode
 import VioletObjects
@@ -75,7 +76,7 @@ extension Eval {
     // Fast path for common types
     let isFormatEmpty = format?.value.isEmpty ?? true
     if isFormatEmpty {
-      if let str = PyCast.asExactlyString(object) {
+      if let str = self.py.cast.asExactlyString(object) {
         return .value(str)
       }
 
@@ -96,7 +97,7 @@ extension Eval {
       return .nil
     }
 
-    guard let str = PyCast.asString(format) else {
+    guard let str = self.py.cast.asString(format) else {
       let t = format.typeName
       let msg = "Format specifier must be a string, not \(t)"
       return .error(Py.newTypeError(msg: msg))
@@ -111,3 +112,5 @@ extension Eval {
     trap("NOT IMPLEMENTED: '\(fn)'")
   }
 }
+
+*/

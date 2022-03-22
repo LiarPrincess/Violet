@@ -1,3 +1,4 @@
+/* MARKER
 import VioletParser
 import VioletBytecode
 import VioletObjects
@@ -43,7 +44,7 @@ internal enum Debug {
     print(code)
 
     for constant in code.constants {
-      if let codeConstant = PyCast.asCode(constant) {
+      if let codeConstant = self.py.cast.asCode(constant) {
         Debug.code(codeConstant)
       }
     }
@@ -184,3 +185,5 @@ internal enum Debug {
     #endif
   }
 }
+
+*/

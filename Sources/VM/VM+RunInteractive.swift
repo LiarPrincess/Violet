@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import FileSystem
 import VioletCore
@@ -139,7 +140,7 @@ extension VM {
         }
 
       case .error(let e):
-        if PyCast.isSystemExit(e) {
+        if self.py.cast.isSystemExit(e) {
           return e
         }
 
@@ -265,7 +266,7 @@ extension VM {
       return self.defaultInteractivePrompt
     }
 
-    if let s = PyCast.asString(object) {
+    if let s = self.py.cast.asString(object) {
       return s.value
     }
 
@@ -353,3 +354,5 @@ extension VM {
     }
   }
 }
+
+*/

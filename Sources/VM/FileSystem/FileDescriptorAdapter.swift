@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import FileSystem
 import VioletObjects
@@ -149,3 +150,5 @@ internal struct FileDescriptorAdapter: CustomStringConvertible, FileDescriptorTy
     return Py.newOSError(msg: msg)
   }
 }
+
+*/

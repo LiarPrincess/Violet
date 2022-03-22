@@ -1,3 +1,4 @@
+/* MARKER
 import VioletObjects
 
 extension Eval {
@@ -172,7 +173,7 @@ extension Eval {
     // Otherwise, the exception will be processed normally upon exit from this method.
 
     var isExceptionSuppressed = false
-    let isExceptionNone = PyCast.isNone(exception)
+    let isExceptionNone = self.py.cast.isNone(exception)
     if !isExceptionNone {
       switch Py.isTrueBool(object: result) {
       case let .value(value):
@@ -190,3 +191,5 @@ extension Eval {
     return .ok
   }
 }
+
+*/

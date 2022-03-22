@@ -1,3 +1,4 @@
+/* MARKER
 import VioletBytecode
 import VioletObjects
 
@@ -197,3 +198,5 @@ extension Eval {
     }
   }
 }
+
+*/

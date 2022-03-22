@@ -1,3 +1,4 @@
+/* MARKER
 import VioletBytecode
 import VioletObjects
 
@@ -73,7 +74,7 @@ extension Eval {
     iterable: PyObject,
     error: PyBaseException
   ) -> PyBaseException? {
-    let isTypeErrorForIter = PyCast.isTypeError(error) && !Py.hasIter(object: iterable)
+    let isTypeErrorForIter = self.py.cast.isTypeError(error) && !Py.hasIter(object: iterable)
     guard isTypeErrorForIter else {
       return nil
     }
@@ -120,7 +121,7 @@ extension Eval {
       case .value:
         break // just go to the next element
       case .error(let e):
-        if PyCast.isAttributeError(e) {
+        if self.py.cast.isAttributeError(e) {
           let msg = "'\(object.typeName)' object is not a mapping"
           return .exception(Py.newTypeError(msg: msg))
         }
@@ -144,7 +145,7 @@ extension Eval {
       case .value:
         break // just go to the next element
       case .error(let e):
-        if PyCast.isKeyError(e) {
+        if self.py.cast.isKeyError(e) {
           let e2 = self.mapUnpackWithCallDuplicateError(keyError: e)
           return .exception(e2)
         }
@@ -198,17 +199,17 @@ extension Eval {
     let fn = self.stack.second
     let fnName = Py.getFunctionName(object: fn) ?? "function"
 
-    if PyCast.isAttributeError(error) {
+    if self.py.cast.isAttributeError(error) {
       let t = iterable.typeName
       let msg = "\(fnName) argument after ** must be a mapping, not \(t)"
       return Py.newTypeError(msg: msg)
     }
 
-    if let keyError = PyCast.asKeyError(error) {
+    if let keyError = self.py.cast.asKeyError(error) {
       let args = Py.getArgs(exception: keyError)
       guard let first = args.elements.first else { return nil }
 
-      if let key = PyCast.asString(first) {
+      if let key = self.py.cast.asString(first) {
         let msg = "\(fnName) got multiple values for keyword argument '\(key)'"
         return Py.newTypeError(msg: msg)
       }
@@ -314,3 +315,5 @@ extension Eval {
     return nil
   }
 }
+
+*/

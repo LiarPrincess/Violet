@@ -1,3 +1,4 @@
+/* MARKER
 import VioletBytecode
 import VioletObjects
 
@@ -138,9 +139,9 @@ extension Eval {
     }
 
     var exceptionOrNil: PyBaseException?
-    if let error = PyCast.asBaseException(value) {
+    if let error = self.py.cast.asBaseException(value) {
       exceptionOrNil = error
-    } else if let type = PyCast.asType(value), type.isException {
+    } else if let type = self.py.cast.asType(value), type.isException {
       switch Py.newException(type: type, arg: nil) {
       case let .value(e): exceptionOrNil = e
       case let .error(e): return e
@@ -171,18 +172,18 @@ extension Eval {
       return .none
     }
 
-    if PyCast.isNone(cause) {
+    if self.py.cast.isNone(cause) {
       return .none
     }
 
-    if let type = PyCast.asType(cause), type.isException {
+    if let type = self.py.cast.asType(cause), type.isException {
       switch Py.newException(type: type, arg: nil) {
       case let .value(o): return .object(o)
       case let .error(e): return .error(e)
       }
     }
 
-    if let error = PyCast.asBaseException(cause) {
+    if let error = self.py.cast.asBaseException(cause) {
       return .object(error)
     }
 
@@ -190,3 +191,5 @@ extension Eval {
     return .error(Py.newTypeError(msg: msg))
   }
 }
+
+*/

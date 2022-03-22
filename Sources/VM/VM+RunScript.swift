@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import FileSystem
 import VioletCore
@@ -117,3 +118,5 @@ extension VM {
     }
   }
 }
+
+*/

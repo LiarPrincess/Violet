@@ -1,3 +1,4 @@
+/* MARKER
 import VioletBytecode
 import VioletObjects
 
@@ -118,7 +119,7 @@ extension Eval {
   internal func callFunctionKw(argumentCount: Int) -> InstructionResult {
     let kwNamesObject = self.stack.pop()
 
-    guard let kwNames = PyCast.asTuple(kwNamesObject) else {
+    guard let kwNames = self.py.cast.asTuple(kwNamesObject) else {
       let t = kwNamesObject.typeName
       let msg = "Keyword argument names should to be a tuple, not \(t)."
       return .exception(Py.newSystemError(msg: msg))
@@ -244,7 +245,7 @@ extension Eval {
   }
 
   private func extractKwargs(from object: PyObject) -> PyResult<PyDict> {
-    if let dict = PyCast.asDict(object) {
+    if let dict = self.py.cast.asDict(object) {
       return .value(dict)
     }
 
@@ -258,7 +259,7 @@ extension Eval {
   }
 
   private func extractArgs(fn: PyObject, args: PyObject) -> PyResult<[PyObject]> {
-    if let tuple = PyCast.asTuple(args) {
+    if let tuple = self.py.cast.asTuple(args) {
       return .value(tuple.elements)
     }
 
@@ -326,3 +327,5 @@ extension Eval {
     }
   }
 }
+
+*/

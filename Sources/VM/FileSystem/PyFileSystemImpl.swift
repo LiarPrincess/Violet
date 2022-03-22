@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import FileSystem
 import VioletObjects
@@ -148,3 +149,5 @@ internal class PyFileSystemImpl: PyFileSystem {
     return self.fileSystem.join(path: path, elements: elements)
   }
 }
+
+*/

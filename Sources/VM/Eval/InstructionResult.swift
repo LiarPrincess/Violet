@@ -1,3 +1,4 @@
+/* MARKER
 import VioletObjects
 
 /// Result of running of a single instruction.
@@ -40,3 +41,5 @@ internal enum InstructionResult {
     return .unwind(.silenced)
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import FileSystem
 import VioletCore
@@ -133,7 +134,7 @@ extension VM {
   }
 
   private func handleErrorOrSystemExit(error: PyBaseException) -> RunResult {
-    guard PyCast.isSystemExit(error) else {
+    guard self.py.cast.isSystemExit(error) else {
       return .error(error)
     }
 
@@ -386,3 +387,5 @@ extension VM {
     return Py.getAttribute(object: module, name: attribute)
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 import VioletBytecode
 import VioletObjects
@@ -336,7 +337,7 @@ extension Eval {
   private func store(dict: PyDict,
                      name: PyString,
                      value: PyObject) -> InstructionResult {
-    let isExactlyDictNotSubclass = PyCast.isExactlyDict(dict)
+    let isExactlyDictNotSubclass = self.py.cast.isExactlyDict(dict)
     if isExactlyDictNotSubclass {
       switch dict.set(key: name, to: value) {
       case .ok:
@@ -355,7 +356,7 @@ extension Eval {
   }
 
   private func load(dict: PyDict, name: PyString) -> PyDict.GetResult {
-    let isExactlyDictNotSubclass = PyCast.isExactlyDict(dict)
+    let isExactlyDictNotSubclass = self.py.cast.isExactlyDict(dict)
     if isExactlyDictNotSubclass {
       return dict.get(key: name)
     }
@@ -367,7 +368,7 @@ extension Eval {
          let .notCallable(e):
       return .error(e)
     case let .error(e):
-      if PyCast.isKeyError(e) {
+      if self.py.cast.isKeyError(e) {
         return .notFound
       }
 
@@ -392,7 +393,7 @@ extension Eval {
   }
 
   private func del(dict: PyDict, name: PyString) -> InstructionResult {
-    let isExactlyDictNotSubclass = PyCast.isExactlyDict(dict)
+    let isExactlyDictNotSubclass = self.py.cast.isExactlyDict(dict)
     if isExactlyDictNotSubclass {
       switch dict.del(key: name) {
       case .value:
@@ -418,3 +419,5 @@ extension Eval {
     return .exception(e)
   }
 }
+
+*/

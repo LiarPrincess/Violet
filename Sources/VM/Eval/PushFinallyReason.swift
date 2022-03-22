@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 import VioletCore
 import VioletObjects
@@ -122,7 +123,7 @@ internal enum PushFinallyReason {
   internal static func pop(from stack: inout PyFrame.ObjectStack) -> Pop {
     let marker = stack.pop()
 
-    if let pyInt = PyCast.asInt(marker) {
+    if let pyInt = self.py.cast.asInt(marker) {
       switch pyInt.value {
       case Marker.return:
         let value = stack.pop()
@@ -131,7 +132,7 @@ internal enum PushFinallyReason {
         return .break
       case Marker.continue:
         let value = stack.pop()
-        if let pyInt = PyCast.asInt(value), let int = Int(exactly: pyInt.value) {
+        if let pyInt = self.py.cast.asInt(value), let int = Int(exactly: pyInt.value) {
           return .continue(loopStartLabelIndex: int, asObject: pyInt)
         }
         trap("Invalid argument (\(value)) for 'continue' after finally block")
@@ -146,14 +147,16 @@ internal enum PushFinallyReason {
       }
     }
 
-    if let e = PyCast.asBaseException(marker) {
+    if let e = self.py.cast.asBaseException(marker) {
       return .exception(e)
     }
 
-    if PyCast.isNone(marker) {
+    if self.py.cast.isNone(marker) {
       return .none
     }
 
     return .invalid
   }
 }
+
+*/

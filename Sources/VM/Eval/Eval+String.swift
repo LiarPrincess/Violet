@@ -1,3 +1,4 @@
+/* MARKER
 import VioletBytecode
 import VioletObjects
 
@@ -17,7 +18,7 @@ extension Eval {
     case let .error(e): return .exception(e)
     }
 
-    if PyCast.isString(object) && format == nil {
+    if self.py.cast.isString(object) && format == nil {
       self.stack.push(object)
       return .ok
     }
@@ -64,3 +65,5 @@ extension Eval {
     }
   }
 }
+
+*/
