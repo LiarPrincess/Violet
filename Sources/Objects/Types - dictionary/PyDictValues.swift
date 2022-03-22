@@ -52,7 +52,7 @@ public struct PyDictValues: PyObjectMixin, AbstractDictView {
     // 'dict_values([1, 2, 3])'
 
     let value = element.value
-    return py.reprString(object: value)
+    return py.reprString(value)
   }
 
   // MARK: - Attributes

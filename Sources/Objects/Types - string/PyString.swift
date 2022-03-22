@@ -931,7 +931,7 @@ public struct PyString: PyObjectMixin, AbstractString {
         return PyResult(str)
       }
 
-      switch py.str(object: object) {
+      switch py.str(object) {
       case let .value(str):
         return Self.allocate(py, type: type, value: str.value)
       case let .error(e):

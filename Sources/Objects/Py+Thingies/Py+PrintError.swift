@@ -61,7 +61,7 @@ extension Py {
     }
 
     let str: String
-    switch self.strString(object: errorObject) {
+    switch self.strString(errorObject) {
     case .value(let s) where s.isEmpty:
       str = "\n"
     case .value(let s):
@@ -166,7 +166,7 @@ extension Py {
     case let .error(e): return .error(e)
     }
 
-    return self.strString(object: object)
+    return self.strString(object)
   }
 
   // MARK: - Module (dot) class

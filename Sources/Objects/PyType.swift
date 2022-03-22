@@ -424,7 +424,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     case .pyString(let s):
       return .string(s.value)
     case .objectNotYetConvertedToString(let o):
-      switch py.strString(object: o) {
+      switch py.strString(o) {
       case let .value(s): return .string(s)
       case let .error(e): return .error(e)
       }
@@ -452,7 +452,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
       }
 
       guard let module = py.cast.asModule(object) else {
-        switch py.str(object: object) {
+        switch py.str(object) {
         case let .value(s):
           return .pyString(s)
         case let .error(e):

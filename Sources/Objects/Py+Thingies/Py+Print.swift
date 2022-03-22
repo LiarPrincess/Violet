@@ -151,7 +151,7 @@ extension Py {
 
   private func printSingle(file: PyTextFile, object: PyObject) -> PyBaseException? {
     let string: String
-    switch self.strString(object: object) {
+    switch self.strString(object) {
     case let .value(s): string = s
     case let .error(e): return e
     }

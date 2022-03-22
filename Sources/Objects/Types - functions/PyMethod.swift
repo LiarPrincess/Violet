@@ -131,7 +131,7 @@ public struct PyMethod: PyObjectMixin {
     }
 
     let objectRepr: String
-    switch py.reprString(object: zelf.object) {
+    switch py.reprString(zelf.object) {
     case let .value(s): objectRepr = s
     case let .error(e): return .error(e)
     }

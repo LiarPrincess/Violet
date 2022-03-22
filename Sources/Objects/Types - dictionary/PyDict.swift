@@ -180,14 +180,14 @@ public struct PyDict: PyObjectMixin {
           result += ", " // so that we don't have ugly ', }'.
         }
 
-        switch py.reprString(object: element.key.object) {
+        switch py.reprString(element.key.object) {
         case let .value(s): result += s
         case let .error(e): return .error(e)
         }
 
         result += ": "
 
-        switch py.reprString(object: element.value) {
+        switch py.reprString(element.value) {
         case let .value(s): result += s
         case let .error(e): return .error(e)
         }
@@ -287,7 +287,7 @@ public struct PyDict: PyObjectMixin {
                                  operation: String,
                                  error: PyBaseException) -> Never {
     // TODO: PyDict.idErrorNotHandled
-    let repr = py.reprOrGenericString(object: error.asObject)
+    let repr = py.reprOrGenericString(error.asObject)
     trap("Dict operation '\(operation)' returned an error: '\(repr)'")
   }
 
