@@ -494,9 +494,9 @@ extension Py {
 
   /// len(s)
   /// See [this](https://docs.python.org/3/library/functions.html#len)
-  public func length(iterable: PyObject) -> PyResultGen<PyObject> {
+  public func length(iterable: PyObject) -> PyResult {
     if let result = PyStaticCall.__len__(self, object: iterable) {
-      return PyResultGen(result)
+      return result
     }
 
     switch self.callMethod(object: iterable, selector: .__len__) {
@@ -554,14 +554,14 @@ extension Py {
   ///
   /// int
   /// PySequence_Contains(PyObject *seq, PyObject *ob)
-  public func contains(iterable: PyObject, object: PyObject) -> PyResultGen<PyObject> {
+  public func contains(iterable: PyObject, object: PyObject) -> PyResult {
     if let result = PyStaticCall.__contains__(self, object: iterable, element: object) {
-      return PyResultGen(result)
+      return result
     }
 
     switch self.callMethod(object: iterable, selector: .__contains__, arg: object) {
     case .value(let o):
-      return PyResultGen(o)
+      return PyResult(o)
     case .missingMethod:
       break // try other things
     case .error(let e),
@@ -574,7 +574,7 @@ extension Py {
 
   /// Py_ssize_t
   /// _PySequence_IterSearch(PyObject *seq, PyObject *obj, int operation)
-  private func iterSearch(iterable: PyObject, object: PyObject) -> PyResultGen<PyObject> {
+  private func iterSearch(iterable: PyObject, object: PyObject) -> PyResult {
     let result = self.reduce(iterable: iterable, initial: false) { _, object in
       switch self.isEqualBool(left: object, right: object) {
       case .value(true): return .finish(true)
@@ -627,7 +627,7 @@ extension Py {
 
   /// In various places (for example: `min`, `max`, `list.sort`) we need to
   /// 'select given key'.
-  internal func selectKey(object: PyObject, key: PyObject?) -> PyResultGen<PyObject> {
+  internal func selectKey(object: PyObject, key: PyObject?) -> PyResult {
     guard let key = key else {
       return .value(object)
     }

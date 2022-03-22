@@ -4,7 +4,7 @@ extension AbstractSet {
 
   internal static func abstractIsSubset(_ py: Py,
                                         zelf: PyObject,
-                                        other: PyObject) -> PyResultGen<PyObject> {
+                                        other: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "issubset")
     }
@@ -12,7 +12,7 @@ extension AbstractSet {
     switch Self.getElements(py, iterable: other) {
     case let .value(elements):
       let result = Self.abstractIsSubset(py, zelf: zelf, other: elements)
-      return PyResultGen(py, result)
+      return PyResult(py, result)
     case let .error(e):
       return .error(e)
     }
@@ -40,7 +40,7 @@ extension AbstractSet {
 
   internal static func abstractIsSuperset(_ py: Py,
                                           zelf: PyObject,
-                                          other: PyObject) -> PyResultGen<PyObject> {
+                                          other: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "issuperset")
     }
@@ -48,7 +48,7 @@ extension AbstractSet {
     switch Self.getElements(py, iterable: other) {
     case let .value(elements):
       let result = Self.abstractIsSuperset(py, zelf: zelf, other: elements)
-      return PyResultGen(py, result)
+      return PyResult(py, result)
     case let .error(e):
       return .error(e)
     }
@@ -76,7 +76,7 @@ extension AbstractSet {
 
   internal static func abstractIsDisjoint(_ py: Py,
                                           zelf: PyObject,
-                                          other: PyObject) -> PyResultGen<PyObject> {
+                                          other: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "isdisjoint")
     }
@@ -84,7 +84,7 @@ extension AbstractSet {
     switch Self.getElements(py, iterable: other) {
     case let .value(elements):
       let result = Self.abstractIsDisjoint(py, zelf: zelf, other: elements)
-      return PyResultGen(py, result)
+      return PyResult(py, result)
     case let .error(e):
       return .error(e)
     }

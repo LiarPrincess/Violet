@@ -105,7 +105,7 @@ extension Sys {
   ///
   /// The named tuple flags exposes the status of command line flags.
   /// The attributes are read only.
-  public func getFlags() -> PyResultGen<PyObject> {
+  public func getFlags() -> PyResult {
     return self.get(.flags)
   }
 
@@ -228,7 +228,7 @@ extension Sys {
 
   /// sys.hash_info
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.hash_info).
-  internal func getHashInfo() -> PyResultGen<PyObject> {
+  internal func getHashInfo() -> PyResult {
     return self.get(.hash_info)
   }
 

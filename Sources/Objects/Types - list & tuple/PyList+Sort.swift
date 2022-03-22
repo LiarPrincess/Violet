@@ -10,9 +10,7 @@ import VioletCore
 // Python requires a stable sort, we are not that fancy.
 extension PyList {
 
-  internal func sort(_ py: Py,
-                     key: PyObject?,
-                     isReverse: PyObject?) -> PyResultGen<PyObject> {
+  internal func sort(_ py: Py, key: PyObject?, isReverse: PyObject?) -> PyResult {
     let key = py.cast.isNilOrNone(key) ? nil : key
 
     guard let isReverse = isReverse else {
@@ -27,9 +25,7 @@ extension PyList {
     }
   }
 
-  internal func sort(_ py: Py,
-                     key: PyObject?,
-                     isReverse: Bool) -> PyResultGen<PyObject> {
+  internal func sort(_ py: Py, key: PyObject?, isReverse: Bool) -> PyResult {
     // Make list temporarily empty to detect any modifications made by 'key' fn.
     // CPython does the same:
     // >>> l = [1, 2, 3]

@@ -1,7 +1,7 @@
 from typing import List, Tuple
 
 # Tuple of: arguments + documentation
-# All of them return 'PyResult<PyObject>'.
+# All of them return 'PyResult'.
 # As for the names go to: https://en.wikipedia.org/wiki/Arity
 SIGNATURE_STRINGS: List[Tuple[str, str]] = [
 
@@ -100,7 +100,7 @@ class ReturnType:
     def __repr__(self) -> str:
         return self.swift_type
 
-RETURN_RESULT = ReturnType('PyResult<PyObject>', 'Result')
+RETURN_RESULT = ReturnType('PyResult', 'Result')
 
 def get_return_type(name: str) -> Argument:
     name_lower = name.strip().lower()

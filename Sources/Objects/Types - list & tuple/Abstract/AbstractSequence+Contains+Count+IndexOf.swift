@@ -12,7 +12,7 @@ extension AbstractSequence {
 
   internal static func abstract__contains__(_ py: Py,
                                             zelf: PyObject,
-                                            object: PyObject) -> PyResultGen<PyObject> {
+                                            object: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__contains__")
     }
@@ -21,7 +21,7 @@ extension AbstractSequence {
       switch py.isEqualBool(left: element, right: object) {
       case .value(true):
         let result = true
-        return PyResultGen(py, result)
+        return PyResult(py, result)
       case .value(false):
         break // go to next element
       case .error(let e):
@@ -30,14 +30,14 @@ extension AbstractSequence {
     }
 
     let result = false
-    return PyResultGen(py, result)
+    return PyResult(py, result)
   }
 
   // MARK: - Count
 
   internal static func abstractCount(_ py: Py,
                                      zelf: PyObject,
-                                     object: PyObject) -> PyResultGen<PyObject> {
+                                     object: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "count")
     }
@@ -55,7 +55,7 @@ extension AbstractSequence {
       }
     }
 
-    return PyResultGen(py, result)
+    return PyResult(py, result)
   }
 
   // MARK: - Index of
@@ -64,7 +64,7 @@ extension AbstractSequence {
                                      zelf: PyObject,
                                      object: PyObject,
                                      start: PyObject?,
-                                     end: PyObject?) -> PyResultGen<PyObject> {
+                                     end: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "index")
     }
@@ -79,7 +79,7 @@ extension AbstractSequence {
       switch py.isEqualBool(left: element, right: object) {
       case .value(true):
         let result = BigInt(index)
-        return PyResultGen(py, result)
+        return PyResult(py, result)
       case .value(false):
         break // go to next element
       case .error(let e):

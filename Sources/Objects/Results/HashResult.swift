@@ -24,20 +24,23 @@ public enum HashResult {
   }
 }
 
-extension PyResultGen where Wrapped == PyObject {
+extension PyResult {
+
   public init(_ py: Py, _ result: HashResult) {
     switch result {
     case let .value(hash):
-      self = PyResultGen(py, hash)
+      self = PyResult(py, hash)
 
     case let .unhashable(object):
       let error = HashResult.createUnhashableError(py, object: object)
       self = .error(error.asBaseException)
 
     case let .invalidSelfArgument(object, expectedType):
-      let error = HashResult.createInvalidSelfArgumentError(py,
-                                                            object: object,
-                                                            expectedType: expectedType)
+      let error = HashResult.createInvalidSelfArgumentError(
+        py,
+        object: object,
+        expectedType: expectedType
+      )
 
       self = .error(error.asBaseException)
 

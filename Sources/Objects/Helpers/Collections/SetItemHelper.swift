@@ -31,7 +31,7 @@ extension SetItemHelper {
   internal static func setItem(_ py: Py,
                                target: inout Target,
                                index: PyObject,
-                               value: PyObject) -> PyResultGen<PyObject> {
+                               value: PyObject) -> PyResult {
     switch IndexHelper.int(py, object: index, onOverflow: .indexError) {
     case .value(let int):
       return Self.setItem(py, target: &target, index: int, value: value)
@@ -57,7 +57,7 @@ extension SetItemHelper {
   internal static func setItem(_ py: Py,
                                target: inout Target,
                                index: Int,
-                               value: PyObject) -> PyResultGen<PyObject> {
+                               value: PyObject) -> PyResult {
     var index = index
 
     if index < 0 {
@@ -84,7 +84,7 @@ extension SetItemHelper {
   internal static func setItem(_ py: Py,
                                target: inout Target,
                                slice: PySlice,
-                               value: PyObject) -> PyResultGen<PyObject> {
+                               value: PyObject) -> PyResult {
     var indices: PySlice.AdjustedIndices
     switch slice.unpack(py) {
     case let .value(u): indices = u.adjust(toCount: target.count)
@@ -138,7 +138,7 @@ extension SetItemHelper {
                                          target: inout Target,
                                          start: Int,
                                          stop: Int,
-                                         value: PyObject) -> PyResultGen<PyObject> {
+                                         value: PyObject) -> PyResult {
     let source: SliceSource
     switch Self.getElementsToSetAtSliceIndices(py, object: value) {
     case let .value(e):

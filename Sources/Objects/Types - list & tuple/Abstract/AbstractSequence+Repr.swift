@@ -1,11 +1,15 @@
 extension AbstractSequence {
 
-  internal static func abstractJoinElementsForRepr(_ py: Py,
-                                                   zelf: Self) -> PyResultGen<String> {
-    var result = ""
+  internal static func abstractJoinElementsForRepr(
+    _ py: Py,
+    zelf: Self,
+    prefix: String,
+    suffix: String
+  ) -> PyResultGen<String> {
+    var result = prefix
     for element in zelf.elements {
       if !result.isEmpty {
-        result += ", "
+        result.append(", ")
       }
 
       switch py.reprString(object: element) {
@@ -14,6 +18,7 @@ extension AbstractSequence {
       }
     }
 
+    result.append(suffix)
     return .value(result)
   }
 }

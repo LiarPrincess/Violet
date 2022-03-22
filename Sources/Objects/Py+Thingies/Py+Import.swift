@@ -17,7 +17,7 @@ extension Py {
   ///
   /// This value is set in:
   /// 'initimport(PyInterpreterState *interp, PyObject *sysmod)'
-  public func get__import__() -> PyResultGen<PyObject> {
+  public func get__import__() -> PyResult {
     let dict = self.builtins.__dict__
 
     if let fn = dict.get(self, id: .__import__) {
@@ -41,7 +41,7 @@ extension Py {
                          globals: PyObject? = nil,
                          locals: PyObject? = nil,
                          fromList: PyObject? = nil,
-                         level levelArg: PyObject? = nil) -> PyResultGen<PyObject> {
+                         level levelArg: PyObject? = nil) -> PyResult {
     guard let name = self.cast.asString(nameArg) else {
       return .typeError(self, message: "module name must be a string")
     }
@@ -237,7 +237,7 @@ extension Py {
 
   /// PyObject *
   /// PyImport_GetModule(PyObject *name)
-  private func getExistingOrLoadModule(absName: PyString) -> PyResultGen<PyObject> {
+  private func getExistingOrLoadModule(absName: PyString) -> PyResult {
     switch self.sys.getModule(name: absName) {
     case let .module(m):
       return .value(m.asObject)
@@ -252,7 +252,7 @@ extension Py {
 
   /// static PyObject *
   /// import_find_and_load(PyObject *abs_name)
-  private func call_find_and_load(absName: PyString) -> PyResultGen<PyObject> {
+  private func call_find_and_load(absName: PyString) -> PyResult {
     let __import__: PyObject
     switch self.get__import__() {
     case let .value(i): __import__ = i
@@ -264,8 +264,7 @@ extension Py {
     return callResult.asResult
   }
 
-  private func callImportlibMethod(selector: IdString,
-                                   args: [PyObject]) -> CallResult {
+  private func callImportlibMethod(selector: IdString, args: [PyObject]) -> CallResult {
     let importlib: PyModule
     switch self.getImportlib() {
     case let .value(m): importlib = m
@@ -295,7 +294,7 @@ extension Py {
                               absName: PyString,
                               level: PyInt,
                               module: PyObject,
-                              fromList: PyObject?) -> PyResultGen<PyObject> {
+                              fromList: PyObject?) -> PyResult {
     // If we have 'fromList' then call '_handle_fromlist' from 'importlib'
     if let fl = fromList, !self.cast.isNone(fl) {
       switch self.isTrueBool(object: fl) {
@@ -353,8 +352,7 @@ extension Py {
 
   /// And yes, `_handle_fromlist` is the `Python` selector.
   /// We have not changed our naming convention.
-  private func call_handle_fromlist(module: PyObject,
-                                    fromList: PyObject) -> PyResultGen<PyObject> {
+  private func call_handle_fromlist(module: PyObject, fromList: PyObject) -> PyResult {
     let __import__: PyObject
     switch self.get__import__() {
     case let .value(i): __import__ = i

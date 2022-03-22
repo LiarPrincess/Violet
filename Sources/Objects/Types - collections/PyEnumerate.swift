@@ -75,7 +75,7 @@ public struct PyEnumerate: PyObjectMixin {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResultGen<PyObject> {
+                                        name: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -86,18 +86,18 @@ public struct PyEnumerate: PyObjectMixin {
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
-    return PyResultGen(zelf)
+    return PyResult(zelf)
   }
 
   // MARK: - Next
 
   // sourcery: pymethod = __next__
-  internal static func __next__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __next__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__next__")
     }
@@ -114,7 +114,7 @@ public struct PyEnumerate: PyObjectMixin {
     let index = py.newInt(zelf.nextIndex)
     zelf.nextIndex += 1
 
-    return PyResultGen(py, tuple: index.asObject, item)
+    return PyResult(py, tuple: index.asObject, item)
   }
 
   // MARK: - Python new
@@ -144,7 +144,7 @@ public struct PyEnumerate: PyObjectMixin {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     switch PyEnumerate.newArguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")
@@ -162,7 +162,7 @@ public struct PyEnumerate: PyObjectMixin {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                iterable: PyObject,
-                               startFrom index: PyObject?) -> PyResultGen<PyObject> {
+                               startFrom index: PyObject?) -> PyResult {
     var initialIndex = BigInt(0)
     if let index = index {
       switch IndexHelper.pyInt(py, object: index) {
@@ -187,6 +187,6 @@ public struct PyEnumerate: PyObjectMixin {
                                         iterator: iter,
                                         initialIndex: initialIndex)
 
-    return PyResultGen(result)
+    return PyResult(result)
   }
 }

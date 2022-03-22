@@ -38,7 +38,7 @@ extension PyType {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     // Special case: type(x) should return x->ob_type
     if type === py.types.type {
       let hasSingleArg = args.count == 1
@@ -46,7 +46,7 @@ extension PyType {
 
       if hasSingleArg && noKwargs {
         let result = args[0].type
-        return PyResultGen(result)
+        return PyResult(result)
       }
 
       if args.count != 3 {
@@ -126,7 +126,7 @@ extension PyType {
 
   /// static PyObject *
   /// type_new(PyTypeObject *metatype, PyObject *args, PyObject *kwds)
-  private static func __new__(_ py: Py, args: PyTypeNewArgs) -> PyResultGen<PyObject> {
+  private static func __new__(_ py: Py, args: PyTypeNewArgs) -> PyResult {
     let base: PyType
     var bases = args.bases
     var metatype = args.metatype
@@ -423,7 +423,7 @@ extension PyType {
   }
 
   private static func convertFunctionToClassMethodIfNeeded(
- _ py: Py,
+    _ py: Py,
     type: PyType,
     fnName: IdString
   ) {
@@ -486,19 +486,18 @@ extension PyType {
 
   /// This method will be called when we get `__dict__` property
   /// on heap type instance.
-  private static func getHeapType__dict__(_ py: Py,
-                                          zelf: PyObject) -> PyResultGen<PyObject> {
+  private static func getHeapType__dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = py.cast.asType(zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   private static func setHeapType__dict__(_ py: Py,
                                           zelf: PyObject,
-                                          value: PyObject) -> PyResultGen<PyObject> {
+                                          value: PyObject) -> PyResult {
     guard let zelf = py.cast.asType(zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
@@ -512,8 +511,7 @@ extension PyType {
     return .none(py)
   }
 
-  private static func delHeapType__dict__(_ py: Py,
-                                          zelf: PyObject) -> PyResultGen<PyObject> {
+  private static func delHeapType__dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = py.cast.asType(zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
@@ -568,8 +566,7 @@ extension PyType {
 
   // MARK: - __classcell__
 
-  private static func fill__classcell__(_ py: Py,
-                                        type: PyType) -> PyTypeError? {
+  private static func fill__classcell__(_ py: Py, type: PyType) -> PyTypeError? {
     let dict = type.getDict(py)
 
     guard let __classcell__ = dict.get(py, id: .__classcell__) else {
@@ -669,7 +666,7 @@ extension PyType {
   internal static  func __init__(_ py: Py,
                                  zelf: PyObject,
                                  args: [PyObject],
-                                 kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                 kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }

@@ -2,7 +2,7 @@ extension AbstractString {
 
   // MARK: - Lower case
 
-  internal static func abstractLower(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func abstractLower(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "lower")
     }
@@ -16,12 +16,12 @@ extension AbstractString {
 
     let result = builder.finalize()
     let resultObject = Self.newObject(py, result: result)
-    return PyResultGen(resultObject)
+    return PyResult(resultObject)
   }
 
   // MARK: - Upper case
 
-  internal static func abstractUpper(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func abstractUpper(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "upper")
     }
@@ -35,12 +35,12 @@ extension AbstractString {
 
     let result = builder.finalize()
     let resultObject = Self.newObject(py, result: result)
-    return PyResultGen(resultObject)
+    return PyResult(resultObject)
   }
 
   // MARK: - Title case
 
-  internal static func abstractTitle(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func abstractTitle(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "title")
     }
@@ -62,12 +62,12 @@ extension AbstractString {
 
     let result = builder.finalize()
     let resultObject = Self.newObject(py, result: result)
-    return PyResultGen(resultObject)
+    return PyResult(resultObject)
   }
 
   // MARK: - Swap case
 
-  internal static func abstractSwapcase(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func abstractSwapcase(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "swapcase")
     }
@@ -91,12 +91,12 @@ extension AbstractString {
 
     let result = builder.finalize()
     let resultObject = Self.newObject(py, result: result)
-    return PyResultGen(resultObject)
+    return PyResult(resultObject)
   }
 
   // MARK: - Capitalize
 
-  internal static func abstractCapitalize(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func abstractCapitalize(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "capitalize")
     }
@@ -109,7 +109,7 @@ extension AbstractString {
     guard let first = zelf.elements.first else {
       let result = builder.finalize()
       let resultObject = Self.newObject(py, result: result)
-      return PyResultGen(resultObject)
+      return PyResult(resultObject)
     }
 
     let firstUpper = Self.uppercaseMapping(element: first)
@@ -122,6 +122,6 @@ extension AbstractString {
 
     let result = builder.finalize()
     let resultObject = Self.newObject(py, result: result)
-    return PyResultGen(resultObject)
+    return PyResult(resultObject)
   }
 }

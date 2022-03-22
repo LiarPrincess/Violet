@@ -122,7 +122,7 @@ extension Py {
     return self.memory.newMethod(self, type: type, function: fn, object: object)
   }
 
-  public func newMethod(fn: PyObject, object: PyObject) -> PyResultGen<PyObject> {
+  public func newMethod(fn: PyObject, object: PyObject) -> PyResult {
     if let f = self.cast.asBuiltinFunction(fn) {
       let fn = f.function
       let module = f.module

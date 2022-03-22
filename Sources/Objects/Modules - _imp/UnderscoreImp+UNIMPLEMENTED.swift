@@ -22,7 +22,7 @@ extension UnderscoreImp {
   /// _imp_is_frozen_impl(PyObject *module, PyObject *name)
   internal static func is_frozen(_ py: Py,
                                  module: PyObject,
-                                 name: PyObject) -> PyResultGen<PyObject> {
+                                 name: PyObject) -> PyResult {
     Self.unimplemented()
   }
 
@@ -37,7 +37,7 @@ extension UnderscoreImp {
   /// _imp_is_frozen_package_impl(PyObject *module, PyObject *name)
   internal static func is_frozen_package(_ py: Py,
                                          module: PyObject,
-                                         name: PyObject) -> PyResultGen<PyObject> {
+                                         name: PyObject) -> PyResult {
     Self.unimplemented()
   }
 
@@ -52,7 +52,7 @@ extension UnderscoreImp {
   /// _imp_get_frozen_object_impl(PyObject *module, PyObject *name)
   internal static func get_frozen_object(_ py: Py,
                                          module: PyObject,
-                                         name: PyObject) -> PyResultGen<PyObject> {
+                                         name: PyObject) -> PyResult {
     Self.unimplemented()
   }
 
@@ -67,7 +67,7 @@ extension UnderscoreImp {
   /// _imp_init_frozen_impl(PyObject *module, PyObject *name)
   internal static func init_frozen(_ py: Py,
                                    module: PyObject,
-                                   name: PyObject) -> PyResultGen<PyObject> {
+                                   name: PyObject) -> PyResult {
     Self.unimplemented()
   }
 
@@ -85,7 +85,7 @@ extension UnderscoreImp {
   internal static func create_dynamic(_ py: Py,
                                       module: PyObject,
                                       spec: PyObject,
-                                      file: PyObject) -> PyResultGen<PyObject> {
+                                      file: PyObject) -> PyResult {
     Self.unimplemented()
   }
 
@@ -100,7 +100,7 @@ extension UnderscoreImp {
   /// _imp_exec_dynamic_impl(PyObject *module, PyObject *mod)
   internal static func exec_dynamic(_ py: Py,
                                     module: PyObject,
-                                    mode: PyObject) -> PyResultGen<PyObject> {
+                                    mode: PyObject) -> PyResult {
     Self.unimplemented()
   }
 
@@ -116,7 +116,7 @@ extension UnderscoreImp {
   internal static func source_hash(_ py: Py,
                                    module: PyObject,
                                    key: PyObject,
-                                   source: PyObject) -> PyResultGen<PyObject> {
+                                   source: PyObject) -> PyResult {
     // Used for frozen modules, see:
     // https://docs.python.org/3.7/reference/import.html#cached-bytecode-invalidation
     Self.unimplemented()
@@ -124,8 +124,7 @@ extension UnderscoreImp {
 
   internal static let checkHashBasedPycsDoc = ""
 
-  internal static func check_hash_based_pycs(_ py: Py,
-                                             module: PyObject) -> PyResultGen<PyObject> {
+  internal static func check_hash_based_pycs(_ py: Py, module: PyObject) -> PyResult {
     Self.unimplemented()
   }
 
@@ -146,7 +145,7 @@ extension UnderscoreImp {
   internal static func _fix_co_filename(_ py: Py,
                                         module: PyObject,
                                         code: PyObject,
-                                        path: PyObject) -> PyResultGen<PyObject> {
+                                        path: PyObject) -> PyResult {
     Self.unimplemented()
   }
 
@@ -159,8 +158,7 @@ extension UnderscoreImp {
 
   /// static PyObject *
   /// _imp_extension_suffixes_impl(PyObject *module)
-  internal static func extension_suffixes(_ py: Py,
-                                          module: PyObject) -> PyResultGen<PyObject> {
+  internal static func extension_suffixes(_ py: Py, module: PyObject) -> PyResult {
     Self.unimplemented()
   }
 

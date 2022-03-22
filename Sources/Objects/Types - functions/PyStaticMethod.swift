@@ -65,13 +65,13 @@ public struct PyStaticMethod: PyObjectMixin {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   internal func getDict(_ py: Py) -> PyDict {
@@ -87,13 +87,13 @@ public struct PyStaticMethod: PyObjectMixin {
   // MARK: - Func
 
   // sourcery: pyproperty = __func__
-  internal static func __func__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __func__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__func__")
     }
 
     let result = zelf.getFunction()
-    return PyResultGen(py, result)
+    return PyResult(py, result)
   }
 
   internal func getFunction() -> PyObject? {
@@ -106,7 +106,7 @@ public struct PyStaticMethod: PyObjectMixin {
   internal static func __get__(_ py: Py,
                                zelf: PyObject,
                                object: PyObject,
-                               type: PyObject?) -> PyResultGen<PyObject> {
+                               type: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__get__")
     }
@@ -121,17 +121,17 @@ public struct PyStaticMethod: PyObjectMixin {
   // MARK: - Is abstract method
 
   // sourcery: pymethod = __isabstractmethod__
-  internal static func __isabstractmethod__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __isabstractmethod__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__isabstractmethod__")
     }
 
     guard let callable = zelf.callable else {
-      return PyResultGen(py, false)
+      return PyResult(py, false)
     }
 
     let result = py.isAbstractMethod(object: callable)
-    return PyResultGen(py, result)
+    return PyResult(py, result)
   }
 
   // MARK: - Python new
@@ -140,9 +140,9 @@ public struct PyStaticMethod: PyObjectMixin {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let result = py.memory.newStaticMethod(py, type: type, callable: nil)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // MARK: - Python init
@@ -151,7 +151,7 @@ public struct PyStaticMethod: PyObjectMixin {
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }

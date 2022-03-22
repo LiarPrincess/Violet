@@ -152,19 +152,19 @@ public struct PySyntaxError: PyErrorMixin {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __str__
-  internal static func __str__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __str__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__str__")
     }
@@ -192,34 +192,32 @@ public struct PySyntaxError: PyErrorMixin {
     }
 
     if let filename = filenameOrNil, let lineno = linenoOrNil {
-      return PyResultGen(py, "\(msg) (\(filename), line \(lineno))")
+      return PyResult(py, "\(msg) (\(filename), line \(lineno))")
     }
 
     if let filename = filenameOrNil {
-      return PyResultGen(py, "\(msg) (\(filename))")
+      return PyResult(py, "\(msg) (\(filename))")
     }
 
     if let lineno = linenoOrNil {
-      return PyResultGen(py, "\(msg) (line \(lineno))")
+      return PyResult(py, "\(msg) (line \(lineno))")
     }
 
-    return PyResultGen(py, msg)
+    return PyResult(py, msg)
   }
 
   // MARK: - Msg
 
   // sourcery: pyproperty = msg, setter
-  internal static func msg(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func msg(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "msg")
     }
 
-    return PyResultGen(py, zelf.msg)
+    return PyResult(py, zelf.msg)
   }
 
-  internal static func msg(_ py: Py,
-                           zelf: PyObject,
-                           value: PyObject?) -> PyResultGen<PyObject> {
+  internal static func msg(_ py: Py, zelf: PyObject, value: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "msg")
     }
@@ -231,17 +229,15 @@ public struct PySyntaxError: PyErrorMixin {
   // MARK: - Filename
 
   // sourcery: pyproperty = filename, setter
-  internal static func filename(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func filename(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "filename")
     }
 
-    return PyResultGen(py, zelf.filename)
+    return PyResult(py, zelf.filename)
   }
 
-  internal static func filename(_ py: Py,
-                                zelf: PyObject,
-                                value: PyObject?) -> PyResultGen<PyObject> {
+  internal static func filename(_ py: Py, zelf: PyObject, value: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "filename")
     }
@@ -252,17 +248,15 @@ public struct PySyntaxError: PyErrorMixin {
   // MARK: - Lineno
 
   // sourcery: pyproperty = lineno, setter
-  internal static func lineno(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func lineno(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "lineno")
     }
 
-    return PyResultGen(py, zelf.lineno)
+    return PyResult(py, zelf.lineno)
   }
 
-  internal static func lineno(_ py: Py,
-                              zelf: PyObject,
-                              value: PyObject?) -> PyResultGen<PyObject> {
+  internal static func lineno(_ py: Py, zelf: PyObject, value: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "lineno")
     }
@@ -274,17 +268,15 @@ public struct PySyntaxError: PyErrorMixin {
   // MARK: - Offset
 
   // sourcery: pyproperty = offset, setter
-  internal static func offset(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func offset(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "offset")
     }
 
-    return PyResultGen(py, zelf.offset)
+    return PyResult(py, zelf.offset)
   }
 
-  internal static func offset(_ py: Py,
-                              zelf: PyObject,
-                              value: PyObject?) -> PyResultGen<PyObject> {
+  internal static func offset(_ py: Py, zelf: PyObject, value: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "offset")
     }
@@ -296,17 +288,15 @@ public struct PySyntaxError: PyErrorMixin {
   // MARK: - Text
 
   // sourcery: pyproperty = text, setter
-  internal static func text(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func text(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "text")
     }
 
-    return PyResultGen(py, zelf.text)
+    return PyResult(py, zelf.text)
   }
 
-  internal static func text(_ py: Py,
-                            zelf: PyObject,
-                            value: PyObject?) -> PyResultGen<PyObject> {
+  internal static func text(_ py: Py, zelf: PyObject, value: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "text")
     }
@@ -318,17 +308,17 @@ public struct PySyntaxError: PyErrorMixin {
   // MARK: - Print file and line
 
   // sourcery: pyproperty = print_file_and_line, setter
-  internal static func print_file_and_line(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func print_file_and_line(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "print_file_and_line")
     }
 
-    return PyResultGen(py, zelf.printFileAndLine)
+    return PyResult(py, zelf.printFileAndLine)
   }
 
   internal static func print_file_and_line(_ py: Py,
                                            zelf: PyObject,
-                                           value: PyObject?) -> PyResultGen<PyObject> {
+                                           value: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "print_file_and_line")
     }
@@ -342,10 +332,10 @@ public struct PySyntaxError: PyErrorMixin {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
     let result = py.memory.newSyntaxError(py, type: type, args: argsTuple)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // MARK: - Python init
@@ -356,7 +346,7 @@ public struct PySyntaxError: PyErrorMixin {
   internal static func __init__(_ py: Py,
                                 zelf: PyObject,
                                 args: [PyObject],
-                                kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }

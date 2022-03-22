@@ -26,7 +26,7 @@ extension UnderscoreWarnings {
   internal static func warn(_ py: Py,
                             module: PyObject,
                             args: [PyObject],
-                            kwargs: PyDict?) -> PyResultGen<PyObject> {
+                            kwargs: PyDict?) -> PyResult {
     switch arguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")

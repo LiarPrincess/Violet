@@ -117,12 +117,12 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.abstract__repr__(py, zelf: zelf, prefix: "b", suffix: "")
   }
 
   // sourcery: pymethod = __str__
-  internal static func __str__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __str__(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.abstract__str__(py, zelf: zelf)
   }
 
@@ -138,7 +138,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResultGen<PyObject> {
+                                        name: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -149,21 +149,19 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResultGen<PyObject> {
+  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__len__")
     }
 
     let result = zelf.count
-    return PyResultGen(py, result)
+    return PyResult(py, result)
   }
 
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  internal static func __contains__(_ py: Py,
-                                    zelf: PyObject,
-                                    object: PyObject) -> PyResultGen<PyObject> {
+  internal static func __contains__(_ py: Py, zelf: PyObject, object: PyObject) -> PyResult {
     return Self.abstract__contains__(py, zelf: zelf, object: object)
   }
 
@@ -177,9 +175,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
   }
 
   // sourcery: pymethod = __getitem__
-  internal static func __getitem__(_ py: Py,
-                                   zelf: PyObject,
-                                   index: PyObject) -> PyResultGen<PyObject> {
+  internal static func __getitem__(_ py: Py, zelf: PyObject, index: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getitem__")
     }
@@ -188,10 +184,10 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
     switch result {
     case let .single(byte):
       let int = py.newInt(byte)
-      return PyResultGen(int)
+      return PyResult(int)
     case let .slice(data):
       let bytes = py.newBytes(data)
-      return PyResultGen(bytes)
+      return PyResult(bytes)
     case let .error(e):
       return .error(e)
     }
@@ -207,7 +203,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
     """
 
   // sourcery: pymethod = isalnum, doc = isalnumDoc
-  internal static func isalnum(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func isalnum(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.abstractIsAlphaNumeric(py, zelf: zelf)
   }
 
@@ -219,7 +215,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
     """
 
   // sourcery: pymethod = isalpha, doc = isalphaDoc
-  internal static func isalpha(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func isalpha(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.abstractIsAlpha(py, zelf: zelf)
   }
 
@@ -231,7 +227,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
     """
 
   // sourcery: pymethod = isascii, doc = isasciiDoc
-  internal static func isascii(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func isascii(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.abstractIsAscii(py, zelf: zelf)
   }
 
@@ -243,7 +239,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
     """
 
   // sourcery: pymethod = isdigit, doc = isdigitDoc
-  internal static func isdigit(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func isdigit(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.abstractIsDigit(py, zelf: zelf)
   }
 
@@ -255,7 +251,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
     """
 
   // sourcery: pymethod = islower, doc = islowerDoc
-  internal static func islower(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func islower(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.abstractIsLower(py, zelf: zelf)
   }
 
@@ -267,7 +263,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
     """
 
   // sourcery: pymethod = isspace, doc = isspaceDoc
-  internal static func isspace(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func isspace(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.abstractIsSpace(py, zelf: zelf)
   }
 
@@ -279,7 +275,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
     """
 
   // sourcery: pymethod = istitle, doc = istitleDoc
-  internal static func istitle(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func istitle(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.abstractIsTitle(py, zelf: zelf)
   }
 
@@ -291,7 +287,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
     """
 
   // sourcery: pymethod = isupper, doc = isupperDoc
-  internal static func isupper(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func isupper(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.abstractIsUpper(py, zelf: zelf)
   }
 
@@ -311,7 +307,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
                            zelf: PyObject,
                            prefix: PyObject,
                            start: PyObject?,
-                           end: PyObject?) -> PyResultGen<PyObject> {
+                           end: PyObject?) -> PyResult {
     return Self.abstractStartsWith(py,
                                    zelf: zelf,
                                    prefix: prefix,
@@ -333,7 +329,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
                          zelf: PyObject,
                          suffix: PyObject,
                          start: PyObject?,
-                         end: PyObject?) -> PyResultGen<PyObject> {
+                         end: PyObject?) -> PyResult {
     return Self.abstractEndsWith(py,
                                  zelf: zelf,
                                  suffix: suffix,
@@ -350,9 +346,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
     """
 
   // sourcery: pymethod = strip, doc = stripDoc
-  internal static func strip(_ py: Py,
-                             zelf: PyObject,
-                             chars: PyObject?) -> PyResultGen<PyObject> {
+  internal static func strip(_ py: Py, zelf: PyObject, chars: PyObject?) -> PyResult {
     return Self.abstractStrip(py, zelf: zelf, chars: chars)
   }
 
@@ -363,9 +357,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
     """
 
   // sourcery: pymethod = lstrip, doc = lstripDoc
-  internal static func lstrip(_ py: Py,
-                              zelf: PyObject,
-                              chars: PyObject?) -> PyResultGen<PyObject> {
+  internal static func lstrip(_ py: Py, zelf: PyObject, chars: PyObject?) -> PyResult {
     return Self.abstractLStrip(py, zelf: zelf, chars: chars)
   }
 
@@ -376,9 +368,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
     """
 
   // sourcery: pymethod = rstrip, doc = rstripDoc
-  internal static func rstrip(_ py: Py,
-                              zelf: PyObject,
-                              chars: PyObject?) -> PyResultGen<PyObject> {
+  internal static func rstrip(_ py: Py, zelf: PyObject, chars: PyObject?) -> PyResult {
     return Self.abstractRStrip(py, zelf: zelf, chars: chars)
   }
 
@@ -399,7 +389,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
                             zelf: PyObject,
                             object: PyObject,
                             start: PyObject?,
-                            end: PyObject?) -> PyResultGen<PyObject> {
+                            end: PyObject?) -> PyResult {
     return Self.abstractFind(py, zelf: zelf, object: object, start: start, end: end)
   }
 
@@ -418,7 +408,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
                              zelf: PyObject,
                              object: PyObject,
                              start: PyObject?,
-                             end: PyObject?) -> PyResultGen<PyObject> {
+                             end: PyObject?) -> PyResult {
     return Self.abstractRfind(py, zelf: zelf, object: object, start: start, end: end)
   }
 
@@ -439,7 +429,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
                              zelf: PyObject,
                              object: PyObject,
                              start: PyObject?,
-                             end: PyObject?) -> PyResultGen<PyObject> {
+                             end: PyObject?) -> PyResult {
     return Self.abstractIndex(py, zelf: zelf, object: object, start: start, end: end)
   }
 
@@ -458,34 +448,34 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
                               zelf: PyObject,
                               object: PyObject,
                               start: PyObject?,
-                              end: PyObject?) -> PyResultGen<PyObject> {
+                              end: PyObject?) -> PyResult {
     return Self.abstractRIndex(py, zelf: zelf, object: object, start: start, end: end)
   }
 
   // MARK: - Case
 
   // sourcery: pymethod = lower
-  internal static func lower(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func lower(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.abstractLower(py, zelf: zelf)
   }
 
   // sourcery: pymethod = upper
-  internal static func upper(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func upper(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.abstractUpper(py, zelf: zelf)
   }
 
   // sourcery: pymethod = title
-  internal static func title(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func title(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.abstractTitle(py, zelf: zelf)
   }
 
   // sourcery: pymethod = swapcase
-  internal static func swapcase(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func swapcase(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.abstractSwapcase(py, zelf: zelf)
   }
 
   // sourcery: pymethod = capitalize
-  internal static func capitalize(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func capitalize(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.abstractCapitalize(py, zelf: zelf)
   }
 
@@ -495,7 +485,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
   internal static func center(_ py: Py,
                               zelf: PyObject,
                               width: PyObject,
-                              fillChar: PyObject?) -> PyResultGen<PyObject> {
+                              fillChar: PyObject?) -> PyResult {
     return Self.abstractCenter(py, zelf: zelf, width: width, fillChar: fillChar)
   }
 
@@ -503,7 +493,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
   internal static func ljust(_ py: Py,
                              zelf: PyObject,
                              width: PyObject,
-                             fillChar: PyObject?) -> PyResultGen<PyObject> {
+                             fillChar: PyObject?) -> PyResult {
     return Self.abstractLJust(py, zelf: zelf, width: width, fillChar: fillChar)
   }
 
@@ -511,7 +501,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
   internal static func rjust(_ py: Py,
                              zelf: PyObject,
                              width: PyObject,
-                             fillChar: PyObject?) -> PyResultGen<PyObject> {
+                             fillChar: PyObject?) -> PyResult {
     return Self.abstractRJust(py, zelf: zelf, width: width, fillChar: fillChar)
   }
 
@@ -521,7 +511,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
   internal static func split(_ py: Py,
                              zelf: PyObject,
                              args: [PyObject],
-                             kwargs: PyDict?) -> PyResultGen<PyObject> {
+                             kwargs: PyDict?) -> PyResult {
     return Self.abstractSplit(py, zelf: zelf, args: args, kwargs: kwargs)
   }
 
@@ -529,7 +519,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
   internal static func rsplit(_ py: Py,
                               zelf: PyObject,
                               args: [PyObject],
-                              kwargs: PyDict?) -> PyResultGen<PyObject> {
+                              kwargs: PyDict?) -> PyResult {
     return Self.abstractRSplit(py, zelf: zelf, args: args, kwargs: kwargs)
   }
 
@@ -537,26 +527,24 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
   internal static func splitlines(_ py: Py,
                                   zelf: PyObject,
                                   args: [PyObject],
-                                  kwargs: PyDict?) -> PyResultGen<PyObject> {
+                                  kwargs: PyDict?) -> PyResult {
     return Self.abstractSplitLines(py, zelf: zelf, args: args, kwargs: kwargs)
   }
 
   // MARK: - Partition
 
   // sourcery: pymethod = partition
-  internal static func partition(_ py: Py,
-                                 zelf: PyObject,
-                                 separator: PyObject) -> PyResultGen<PyObject> {
+  internal static func partition(_ py: Py, zelf: PyObject, separator: PyObject) -> PyResult {
     switch Self.abstractPartition(py, zelf: zelf, separator: separator) {
     case let .separatorFound(before: b, separator: _, after: a):
       // We can reuse 'separator' because bytes are immutable
       let before = Self.newObject(py, elements: b)
       let after = Self.newObject(py, elements: a)
-      return PyResultGen(py, tuple: before.asObject, separator, after.asObject)
+      return PyResult(py, tuple: before.asObject, separator, after.asObject)
 
     case .separatorNotFound:
       let empty = py.emptyBytes.asObject
-      return PyResultGen(py, tuple: zelf.asObject, empty, empty)
+      return PyResult(py, tuple: zelf.asObject, empty, empty)
 
     case let .error(e):
       return .error(e)
@@ -564,19 +552,17 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
   }
 
   // sourcery: pymethod = rpartition
-  internal static func rpartition(_ py: Py,
-                                  zelf: PyObject,
-                                  separator: PyObject) -> PyResultGen<PyObject> {
+  internal static func rpartition(_ py: Py, zelf: PyObject, separator: PyObject) -> PyResult {
     switch Self.abstractRPartition(py, zelf: zelf, separator: separator) {
     case let .separatorFound(before: b, separator: _, after: a):
       // We can reuse 'separator' because bytes are immutable
       let before = Self.newObject(py, elements: b)
       let after = Self.newObject(py, elements: a)
-      return PyResultGen(py, tuple: before.asObject, separator, after.asObject)
+      return PyResult(py, tuple: before.asObject, separator, after.asObject)
 
     case .separatorNotFound:
       let empty = py.emptyBytes.asObject
-      return PyResultGen(py, tuple: empty, empty, zelf.asObject)
+      return PyResult(py, tuple: empty, empty, zelf.asObject)
 
     case let .error(e):
       return .error(e)
@@ -586,9 +572,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
   // MARK: - Expand tabs
 
   // sourcery: pymethod = expandtabs
-  internal static func expandtabs(_ py: Py,
-                                  zelf: PyObject,
-                                  tabSize: PyObject?) -> PyResultGen<PyObject> {
+  internal static func expandtabs(_ py: Py, zelf: PyObject, tabSize: PyObject?) -> PyResult {
     return Self.abstractExpandTabs(py, zelf: zelf, tabSize: tabSize)
   }
 
@@ -607,16 +591,14 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
                              zelf: PyObject,
                              object: PyObject,
                              start: PyObject?,
-                             end: PyObject?) -> PyResultGen<PyObject> {
+                             end: PyObject?) -> PyResult {
     return Self.abstractCount(py, zelf: zelf, object: object, start: start, end: end)
   }
 
   // MARK: - Join
 
   // sourcery: pymethod = join
-  internal static func join(_ py: Py,
-                            zelf: PyObject,
-                            iterable: PyObject) -> PyResultGen<PyObject> {
+  internal static func join(_ py: Py, zelf: PyObject, iterable: PyObject) -> PyResult {
     return Self.abstractJoin(py, zelf: zelf, iterable: iterable)
   }
 
@@ -627,52 +609,44 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
                                zelf: PyObject,
                                old: PyObject,
                                new: PyObject,
-                               count: PyObject?) -> PyResultGen<PyObject> {
+                               count: PyObject?) -> PyResult {
     return Self.abstractReplace(py, zelf: zelf, old: old, new: new, count: count)
   }
 
   // MARK: - ZFill
 
   // sourcery: pymethod = zfill
-  internal static func zfill(_ py: Py,
-                             zelf: PyObject,
-                             width: PyObject) -> PyResultGen<PyObject> {
+  internal static func zfill(_ py: Py, zelf: PyObject, width: PyObject) -> PyResult {
     return Self.abstractZFill(py, zelf: zelf, width: width)
   }
 
   // MARK: - Add, mul
 
   // sourcery: pymethod = __add__
-  internal static func __add__(_ py: Py,
-                               zelf: PyObject,
-                               other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __add__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.abstract__add__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __mul__
-  internal static func __mul__(_ py: Py,
-                               zelf: PyObject,
-                               other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __mul__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.abstract__mul__(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __rmul__
-  internal static func __rmul__(_ py: Py,
-                                zelf: PyObject,
-                                other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __rmul__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.abstract__rmul__(py, zelf: zelf, other: other)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
     let result = py.newBytesIterator(bytes: zelf)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   // MARK: - Python new
@@ -686,7 +660,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     switch self.newArguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
@@ -709,7 +683,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
                               type: PyType,
                               object: PyObject?,
                               encoding: PyObject?,
-                              errors: PyObject?) -> PyResultGen<PyObject> {
+                              errors: PyObject?) -> PyResult {
     let elements: Data
     switch Self.abstract__new__(py, object: object, encoding: encoding, errors: errors) {
     case let .value(e): elements = e
@@ -721,6 +695,6 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
       py.newBytes(elements) : // There is a potential to re-use interned value!
       py.memory.newBytes(py, type: type, elements: elements)
 
-    return PyResultGen(result)
+    return PyResult(result)
   }
 }

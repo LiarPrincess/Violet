@@ -5,13 +5,13 @@ extension PyString {
 
   internal static func getItem(_ py: Py,
                                zelf: PyString,
-                               index indexObject: PyObject) -> PyResultGen<PyObject> {
+                               index indexObject: PyObject) -> PyResult {
     switch IndexHelper.int(py, object: indexObject, onOverflow: .indexError) {
     case .value(let index):
       switch Self.getItem(py, zelf: zelf, index: index) {
       case let .value(element):
         let resultObject = Self.newObject(py, element: element)
-        return PyResultGen(resultObject)
+        return PyResult(resultObject)
       case let .error(e):
         return .error(e)
       }
@@ -30,7 +30,7 @@ extension PyString {
       case let .value(builder):
         let result = builder.finalize()
         let resultObject = Self.newObject(py, result: result)
-        return PyResultGen(resultObject)
+        return PyResult(resultObject)
       case let .error(e):
         return .error(e)
       }

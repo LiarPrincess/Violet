@@ -40,7 +40,7 @@ public struct PyDictValues: PyObjectMixin, AbstractDictView {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.abstract__repr__(py, zelf: zelf, elementRepr: Self.repr(_:element:))
   }
 
@@ -60,7 +60,7 @@ public struct PyDictValues: PyObjectMixin, AbstractDictView {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResultGen<PyObject> {
+                                        name: PyObject) -> PyResult {
     return Self.abstract__getattribute__(py, zelf: zelf, name: name)
   }
 
@@ -74,19 +74,19 @@ public struct PyDictValues: PyObjectMixin, AbstractDictView {
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResultGen<PyObject> {
+  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResult {
     return Self.abstract__len__(py, zelf: zelf)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
     let result = py.newIterator(values: zelf.dict)
-    return PyResultGen(result)
+    return PyResult(result)
   }
 }

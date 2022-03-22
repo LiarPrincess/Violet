@@ -36,7 +36,7 @@ extension Py {
 
   /// sum(iterable, /, start=0)
   /// See [this](https://docs.python.org/3/library/functions.html#sum)
-  public func sum(iterable: PyObject, start: PyObject?) -> PyResultGen<PyObject> {
+  public func sum(iterable: PyObject, start: PyObject?) -> PyResult {
     let initial: PyObject
 
     if let start = start {
@@ -60,11 +60,13 @@ extension Py {
       initial = self.newInt(0).asObject
     }
 
-    return self.reduce(iterable: iterable, initial: initial) { acc, object in
+    let result = self.reduce(iterable: iterable, initial: initial) { acc, object in
       switch self.add(left: acc, right: object) {
       case let .value(x): return .setAcc(x)
       case let .error(e): return .error(e)
       }
     }
+
+    return PyResult(result)
   }
 }

@@ -3,7 +3,9 @@ import BigInt
 import FileSystem
 import VioletCore
 
-/// Result of a `Python` operation.
+/// Generic result of a `Python` operation.
+/// If you want to use `PyResultGen<PyObject>` then use `PyResult` instead
+/// (no generic -> better performance).
 ///
 /// It is the truth universally acknowledged that EVERYTHING FAILS.
 ///
@@ -19,135 +21,7 @@ public enum PyResultGen<Wrapped> {
   /// Use this ctor to raise an error in VM.
   case error(PyBaseException)
 
-  public func map<A>(_ f: (Wrapped) -> A) -> PyResultGen<A> {
-    switch self {
-    case let .value(v):
-      return .value(f(v))
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  public func flatMap<A>(_ f: (Wrapped) -> PyResultGen<A>) -> PyResultGen<A> {
-    switch self {
-    case let .value(v):
-      return f(v)
-    case let .error(e):
-      return .error(e)
-    }
-  }
-}
-
-// MARK: - Wrapped = Void
-
-extension PyResultGen where Wrapped == Void {
-  public static func value() -> PyResultGen {
-    return PyResultGen.value(())
-  }
-}
-
-// MARK: - Wrapped = PyObject
-
-extension PyResultGen where Wrapped == PyObject {
-  public static func none(_ py: Py) -> PyResultGen {
-    return .value(py.none.asObject)
-  }
-
-  public static func notImplemented(_ py: Py) -> PyResultGen {
-    return .value(py.notImplemented.asObject)
-  }
-
-  public init(_ py: Py, _ value: Bool) {
-    let object = py.newBool(value)
-    self = .value(object.asObject)
-  }
-
-  public init(_ py: Py, _ value: PyResultGen<Bool>) {
-    self = value.map { py.newBool($0).asObject }
-  }
-
-  public init(_ py: Py, _ value: UInt8) {
-    let object = py.newInt(value)
-    self = .value(object.asObject)
-  }
-
-  public init(_ py: Py, _ value: Int) {
-    let object = py.newInt(value)
-    self = .value(object.asObject)
-  }
-
-  public init(_ py: Py, _ value: PyResultGen<Int>) {
-    self = value.map { py.newInt($0).asObject }
-  }
-
-  public init(_ py: Py, _ value: BigInt) {
-    let object = py.newInt(value)
-    self = .value(object.asObject)
-  }
-
-  public init(_ py: Py, _ value: PyResultGen<BigInt>) {
-    self = value.map { py.newInt($0).asObject }
-  }
-
-  public init(_ py: Py, _ value: Double) {
-    let object = py.newFloat(value)
-    self = .value(object.asObject)
-  }
-
-  public init(_ py: Py, _ value: PyResultGen<Double>) {
-    self = value.map { py.newFloat($0).asObject }
-  }
-
-  public init(_ py: Py, real: Double, imag: Double) {
-    let object = py.newComplex(real: real, imag: imag)
-    self = .value(object.asObject)
-  }
-
-  public init(_ py: Py, _ value: String) {
-    let object = py.newString(value)
-    self = .value(object.asObject)
-  }
-
-  public init(_ py: Py, interned value: String) {
-    let object = py.intern(string: value)
-    self = .value(object.asObject)
-  }
-
-  public init(_ py: Py, _ value: PyResultGen<String>) {
-    self = value.map { py.newString($0).asObject }
-  }
-
-  public init<T: PyObjectMixin>(_ value: T) {
-    self = .value(value.asObject)
-  }
-
-  public init<T: PyObjectMixin>(_ value: PyResultGen<T>) {
-    self = value.map { $0.asObject }
-  }
-
-  public init<T: PyObjectMixin>(_ py: Py, _ value: Optional<T>) {
-    switch value {
-    case .some(let o):
-      self = .value(o.asObject)
-    case .none:
-      self = .value(py.none.asObject)
-    }
-  }
-
-  public init(_ py: Py, tuple elements: PyObject...) {
-    let object = py.newTuple(elements: elements)
-    self = .value(object.asObject)
-  }
-
-  public init(_ py: Py, tuple elements: [PyObject]) {
-    let object = py.newTuple(elements: elements)
-    self = .value(object.asObject)
-  }
-}
-
-// MARK: - Errors
-
-extension PyResultGen {
+  // MARK: - Errors
 
   public static func typeError(_ py: Py, message: String) -> PyResultGen<Wrapped> {
     let error = py.newTypeError(message: message)
@@ -267,5 +141,51 @@ extension PyResultGen {
                                   moduleName: moduleName,
                                   modulePath: modulePath)
     return .error(error.asBaseException)
+  }
+
+  // MARK: - Map/flatMap
+
+  public func map<A>(_ f: (Wrapped) -> A) -> PyResultGen<A> {
+    switch self {
+    case let .value(v):
+      return .value(f(v))
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  public func map(_ f: (Wrapped) -> PyObject) -> PyResult {
+    switch self {
+    case let .value(v):
+      return .value(f(v))
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  public func flatMap<A>(_ f: (Wrapped) -> PyResultGen<A>) -> PyResultGen<A> {
+    switch self {
+    case let .value(v):
+      return f(v)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  public func flatMap(_ f: (Wrapped) -> PyResult) -> PyResult {
+    switch self {
+    case let .value(v):
+      return f(v)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+}
+
+// MARK: - Wrapped = Void
+
+extension PyResultGen where Wrapped == Void {
+  public static func value() -> PyResultGen {
+    return PyResultGen.value(())
   }
 }

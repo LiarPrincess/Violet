@@ -63,7 +63,7 @@ public struct PyRangeIterator: PyObjectMixin {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResultGen<PyObject> {
+                                        name: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -74,18 +74,18 @@ public struct PyRangeIterator: PyObjectMixin {
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__iter__")
     }
 
-    return PyResultGen(zelf)
+    return PyResult(zelf)
   }
 
   // MARK: - Next
 
   // sourcery: pymethod = __next__
-  internal static func __next__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __next__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__next__")
     }
@@ -93,7 +93,7 @@ public struct PyRangeIterator: PyObjectMixin {
     if zelf.index < zelf.length {
       let result = zelf.start + zelf.step * zelf.index
       zelf.index += 1
-      return PyResultGen(py, result)
+      return PyResult(py, result)
     }
 
     return .stopIteration(py)
@@ -102,13 +102,13 @@ public struct PyRangeIterator: PyObjectMixin {
   // MARK: - Length hint
 
   // sourcery: pymethod = __length_hint__
-  internal static func __length_hint__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __length_hint__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__length_hint__")
     }
 
     let result = zelf.length - zelf.index
-    return PyResultGen(py, result)
+    return PyResult(py, result)
   }
 
   // MARK: - Python new
@@ -117,7 +117,7 @@ public struct PyRangeIterator: PyObjectMixin {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     return .typeError(py, message: "cannot create 'range_iterator' instances")
   }
 }

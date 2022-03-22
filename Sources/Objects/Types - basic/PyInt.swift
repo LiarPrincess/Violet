@@ -147,20 +147,18 @@ public struct PyInt: PyObjectMixin {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.toString(py, zelf: zelf, fnName: "__repr__")
   }
 
   // sourcery: pymethod = __str__
-  internal static func __str__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __str__(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.toString(py, zelf: zelf, fnName: "__str__")
   }
 
   private static let stringInternRange: ClosedRange<BigInt> = -10...256
 
-  private static func toString(_ py: Py,
-                               zelf: PyObject,
-                               fnName: String) -> PyResultGen<PyObject> {
+  private static func toString(_ py: Py, zelf: PyObject, fnName: String) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
@@ -172,42 +170,42 @@ public struct PyInt: PyObjectMixin {
       py.intern(string: string) :
       py.newString(string)
 
-    return PyResultGen(pyString)
+    return PyResult(pyString)
   }
 
   // MARK: - As bool/int/float/index
 
   // sourcery: pymethod = __bool__
-  internal static func __bool__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __bool__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__bool__")
     }
 
     let result = zelf.value.isTrue
-    return PyResultGen(py, result)
+    return PyResult(py, result)
   }
 
   // sourcery: pymethod = __int__
-  internal static func __int__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __int__(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.identityOperation(py, zelf: zelf, fnName: "__int__")
   }
 
   // sourcery: pymethod = __float__
-  internal static func __float__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __float__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__float__")
     }
 
     switch Self.asDouble(py, int: zelf.value) {
     case let .value(d):
-      return PyResultGen(py, d)
+      return PyResult(py, d)
     case let .overflow(e):
       return .error(e)
     }
   }
 
   // sourcery: pymethod = __index__
-  internal static func __index__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __index__(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.identityOperation(py, zelf: zelf, fnName: "__index__")
   }
 
@@ -221,31 +219,31 @@ public struct PyInt: PyObjectMixin {
   // MARK: - Imaginary
 
   // sourcery: pyproperty = real
-  internal static func real(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func real(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.identityOperation(py, zelf: zelf, fnName: "real")
   }
 
   // sourcery: pyproperty = imag
-  internal static func imag(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func imag(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.intOperation(py, zelf: zelf, fnName: "imag") { _ in 0 }
   }
 
   // sourcery: pymethod = conjugate
   /// int.conjugate
   /// Return self, the complex conjugate of any int.
-  internal static func conjugate(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func conjugate(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.identityOperation(py, zelf: zelf, fnName: "conjugate")
   }
 
   // MARK: - Numerator, denominator
 
   // sourcery: pyproperty = numerator
-  internal static func numerator(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func numerator(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.identityOperation(py, zelf: zelf, fnName: "numerator")
   }
 
   // sourcery: pyproperty = denominator
-  internal static func denominator(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func denominator(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.intOperation(py, zelf: zelf, fnName: "denominator") { _ in 1 }
   }
 
@@ -254,7 +252,7 @@ public struct PyInt: PyObjectMixin {
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
                                         zelf: PyObject,
-                                        name: PyObject) -> PyResultGen<PyObject> {
+                                        name: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
@@ -265,7 +263,7 @@ public struct PyInt: PyObjectMixin {
   // MARK: - Pos, neg, invert, abs
 
   // sourcery: pymethod = __pos__
-  internal static func __pos__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __pos__(_ py: Py, zelf: PyObject) -> PyResult {
     // 'int' is immutable, so if we are exactly 'int' (not an subclass),
     // then we can return ourself. (This saves an allocation).
     if let int = py.cast.asExactlyInt(zelf) {
@@ -276,17 +274,17 @@ public struct PyInt: PyObjectMixin {
   }
 
   // sourcery: pymethod = __neg__
-  internal static func __neg__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __neg__(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.unaryOperation(py, zelf: zelf, fnName: "__neg__") { -$0 }
   }
 
   // sourcery: pymethod = __invert__
-  internal static func __invert__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __invert__(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.unaryOperation(py, zelf: zelf, fnName: "__invert__") { ~$0 }
   }
 
   // sourcery: pymethod = __abs__
-  internal static func __abs__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __abs__(_ py: Py, zelf: PyObject) -> PyResult {
     // 'int' is immutable, so if we are exactly 'int' (not a subclass) and '>=0',
     // then we can return ourself. (This saves an allocation).
     if let int = py.cast.asExactlyInt(zelf), int.value >= 0 {
@@ -301,66 +299,54 @@ public struct PyInt: PyObjectMixin {
   internal static let truncDoc = "Truncating an Integral returns itself."
 
   // sourcery: pymethod = __trunc__, doc = truncDoc
-  internal static func __trunc__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __trunc__(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.identityOperation(py, zelf: zelf, fnName: "__trunc__")
   }
 
   internal static let floorDoc = "Flooring an Integral returns itself."
 
   // sourcery: pymethod = __floor__, doc = floorDoc
-  internal static func __floor__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __floor__(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.identityOperation(py, zelf: zelf, fnName: "__floor__")
   }
 
   internal static let ceilDoc = "Ceiling of an Integral returns itself."
 
   // sourcery: pymethod = __ceil__, doc = ceilDoc
-  internal static func __ceil__(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func __ceil__(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.identityOperation(py, zelf: zelf, fnName: "__ceil__")
   }
 
   // MARK: - Add, sub, mul
 
   // sourcery: pymethod = __add__
-  internal static func __add__(_ py: Py,
-                               zelf: PyObject,
-                               other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __add__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__add__") { $0 + $1 }
   }
 
   // sourcery: pymethod = __radd__
-  internal static func __radd__(_ py: Py,
-                                zelf: PyObject,
-                                other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __radd__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__radd__") { $1 + $0 }
   }
 
   // sourcery: pymethod = __sub__
-  internal static func __sub__(_ py: Py,
-                               zelf: PyObject,
-                               other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __sub__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__sub__") { $0 - $1 }
   }
 
   // sourcery: pymethod = __rsub__
-  internal static func __rsub__(_ py: Py,
-                                zelf: PyObject,
-                                other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __rsub__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     // Important: OTHER - ZELF (not zelf - other)
     return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__rsub__") { $1 - $0 }
   }
 
   // sourcery: pymethod = __mul__
-  internal static func __mul__(_ py: Py,
-                               zelf: PyObject,
-                               other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __mul__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__mul__") { $0 * $1 }
   }
 
   // sourcery: pymethod = __rmul__
-  internal static func __rmul__(_ py: Py,
-                                zelf: PyObject,
-                                other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __rmul__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__rmul__") { $1 * $0 }
   }
 
@@ -379,7 +365,7 @@ public struct PyInt: PyObjectMixin {
     """
 
   // sourcery: pymethod = bit_length, doc = bitLengthDoc
-  internal static func bit_length(_ py: Py, zelf: PyObject) -> PyResultGen<PyObject> {
+  internal static func bit_length(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.intOperation(py, zelf: zelf, fnName: "bit_length") { $0.minRequiredWidth }
   }
 
@@ -389,7 +375,7 @@ public struct PyInt: PyObjectMixin {
   internal static func __pow__(_ py: Py,
                                zelf: PyObject,
                                exp: PyObject,
-                               mod: PyObject?) -> PyResultGen<PyObject> {
+                               mod: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__pow__")
     }
@@ -413,13 +399,13 @@ public struct PyInt: PyObjectMixin {
       switch zelf.pow(py, base: zelf.value, exp: exp.value) {
       case let .int(powInt):
         let divMod = Self.divmodWithUncheckedZero(left: powInt, right: modulo)
-        return PyResultGen(py, divMod.mod)
+        return PyResult(py, divMod.mod)
 
       case let .fraction(powDouble):
         switch Self.asDouble(py, int: modulo) {
         case let .value(d):
           let result = powDouble.truncatingRemainder(dividingBy: d)
-          return PyResultGen(py, result)
+          return PyResult(py, result)
         case let .overflow(e):
           return .error(e)
         }
@@ -437,7 +423,7 @@ public struct PyInt: PyObjectMixin {
   internal static func __rpow__(_ py: Py,
                                 zelf: PyObject,
                                 base: PyObject,
-                                mod: PyObject?) -> PyResultGen<PyObject> {
+                                mod: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__rpow__")
     }
@@ -485,12 +471,12 @@ public struct PyInt: PyObjectMixin {
     case fraction(Double)
     case error(PyBaseException)
 
-    fileprivate func toResult(_ py: Py) -> PyResultGen<PyObject> {
+    fileprivate func toResult(_ py: Py) -> PyResult {
       switch self {
       case let .int(i):
-        return PyResultGen(py, i)
+        return PyResult(py, i)
       case let .fraction(f):
-        return PyResultGen(py, f)
+        return PyResult(py, f)
       case let .error(e):
         return .error(e)
       }
@@ -529,9 +515,7 @@ public struct PyInt: PyObjectMixin {
   // MARK: - True div
 
   // sourcery: pymethod = __truediv__
-  internal static func __truediv__(_ py: Py,
-                                   zelf: PyObject,
-                                   other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __truediv__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.truedivOperation(py,
                                  zelf: zelf,
                                  other: other,
@@ -540,9 +524,7 @@ public struct PyInt: PyObjectMixin {
   }
 
   // sourcery: pymethod = __rtruediv__
-  internal static func __rtruediv__(_ py: Py,
-                                    zelf: PyObject,
-                                    other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __rtruediv__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.truedivOperation(py,
                                  zelf: zelf,
                                  other: other,
@@ -556,7 +538,7 @@ public struct PyInt: PyObjectMixin {
                                        zelf: PyObject,
                                        other: PyObject,
                                        fnName: String,
-                                       isZelfLeft: Bool) -> PyResultGen<PyObject> {
+                                       isZelfLeft: Bool) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
@@ -589,15 +571,13 @@ public struct PyInt: PyObjectMixin {
     }
 
     let result = left / right
-    return PyResultGen(py, result)
+    return PyResult(py, result)
   }
 
   // MARK: - Floor div
 
   // sourcery: pymethod = __floordiv__
-  internal static func __floordiv__(_ py: Py,
-                                    zelf: PyObject,
-                                    other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __floordiv__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.floordivOperation(py,
                                   zelf: zelf,
                                   other: other,
@@ -606,9 +586,7 @@ public struct PyInt: PyObjectMixin {
   }
 
   // sourcery: pymethod = __rfloordiv__
-  internal static func __rfloordiv__(_ py: Py,
-                                     zelf: PyObject,
-                                     other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __rfloordiv__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.floordivOperation(py,
                                   zelf: zelf,
                                   other: other,
@@ -620,7 +598,7 @@ public struct PyInt: PyObjectMixin {
                                         zelf: PyObject,
                                         other: PyObject,
                                         fnName: String,
-                                        isZelfLeft: Bool) -> PyResultGen<PyObject> {
+                                        isZelfLeft: Bool) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
@@ -637,15 +615,13 @@ public struct PyInt: PyObjectMixin {
     }
 
     let divMod = Self.divmodWithUncheckedZero(left: left, right: right)
-    return PyResultGen(py, divMod.div)
+    return PyResult(py, divMod.div)
   }
 
   // MARK: - Mod
 
   // sourcery: pymethod = __mod__
-  internal static func __mod__(_ py: Py,
-                               zelf: PyObject,
-                               other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __mod__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.modOperation(py,
                              zelf: zelf,
                              other: other,
@@ -654,9 +630,7 @@ public struct PyInt: PyObjectMixin {
   }
 
   // sourcery: pymethod = __rmod__
-  internal static func __rmod__(_ py: Py,
-                                zelf: PyObject,
-                                other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __rmod__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.modOperation(py,
                              zelf: zelf,
                              other: other,
@@ -668,7 +642,7 @@ public struct PyInt: PyObjectMixin {
                                    zelf: PyObject,
                                    other: PyObject,
                                    fnName: String,
-                                   isZelfLeft: Bool) -> PyResultGen<PyObject> {
+                                   isZelfLeft: Bool) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
@@ -685,15 +659,13 @@ public struct PyInt: PyObjectMixin {
     }
 
     let divMod = Self.divmodWithUncheckedZero(left: left, right: right)
-    return PyResultGen(py, divMod.mod)
+    return PyResult(py, divMod.mod)
   }
 
   // MARK: - Div mod
 
   // sourcery: pymethod = __divmod__
-  internal static func __divmod__(_ py: Py,
-                                  zelf: PyObject,
-                                  other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __divmod__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.divModOperation(py,
                                 zelf: zelf,
                                 other: other,
@@ -702,9 +674,7 @@ public struct PyInt: PyObjectMixin {
   }
 
   // sourcery: pymethod = __rdivmod__
-  internal static func __rdivmod__(_ py: Py,
-                                   zelf: PyObject,
-                                   other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __rdivmod__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.divModOperation(py,
                                 zelf: zelf,
                                 other: other,
@@ -716,7 +686,7 @@ public struct PyInt: PyObjectMixin {
                                       zelf: PyObject,
                                       other: PyObject,
                                       fnName: String,
-                                      isZelfLeft: Bool) -> PyResultGen<PyObject> {
+                                      isZelfLeft: Bool) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
@@ -737,7 +707,7 @@ public struct PyInt: PyObjectMixin {
     case let .value(divMod):
       let d = py.newInt(divMod.div)
       let m = py.newInt(divMod.mod)
-      return PyResultGen(py, tuple: d.asObject, m.asObject)
+      return PyResult(py, tuple: d.asObject, m.asObject)
     case let .error(e):
       return .error(e)
     }
@@ -801,9 +771,7 @@ public struct PyInt: PyObjectMixin {
   // sourcery: pymethod = __lshift__
   /// static PyObject *
   /// long_lshift(PyObject *v, PyObject *w)
-  internal static func __lshift__(_ py: Py,
-                                  zelf: PyObject,
-                                  other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __lshift__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.lshiftOperation(py,
                                 zelf: zelf,
                                 other: other,
@@ -814,9 +782,7 @@ public struct PyInt: PyObjectMixin {
   // sourcery: pymethod = __rlshift__
   /// static PyObject *
   /// long_rshift(PyLongObject *a, PyLongObject *b)
-  internal static func __rlshift__(_ py: Py,
-                                   zelf: PyObject,
-                                   other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __rlshift__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.lshiftOperation(py,
                                 zelf: zelf,
                                 other: other,
@@ -828,7 +794,7 @@ public struct PyInt: PyObjectMixin {
                                       zelf: PyObject,
                                       other: PyObject,
                                       fnName: String,
-                                      isZelfValue: Bool) -> PyResultGen<PyObject> {
+                                      isZelfValue: Bool) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
@@ -845,7 +811,7 @@ public struct PyInt: PyObjectMixin {
     }
 
     if value.isZero {
-      return PyResultGen(py, 0)
+      return PyResult(py, 0)
     }
 
     guard let count = Int(exactly: countBig) else {
@@ -853,15 +819,13 @@ public struct PyInt: PyObjectMixin {
     }
 
     let result = value << count
-    return PyResultGen(py, result)
+    return PyResult(py, result)
   }
 
   // MARK: - RShift
 
   // sourcery: pymethod = __rshift__
-  internal static func __rshift__(_ py: Py,
-                                  zelf: PyObject,
-                                  other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __rshift__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.rshiftOperation(py,
                                 zelf: zelf,
                                 other: other,
@@ -870,9 +834,7 @@ public struct PyInt: PyObjectMixin {
   }
 
   // sourcery: pymethod = __rrshift__
-  internal static func __rrshift__(_ py: Py,
-                                   zelf: PyObject,
-                                   other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __rrshift__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.rshiftOperation(py,
                                 zelf: zelf,
                                 other: other,
@@ -884,7 +846,7 @@ public struct PyInt: PyObjectMixin {
                                       zelf: PyObject,
                                       other: PyObject,
                                       fnName: String,
-                                      isZelfValue: Bool) -> PyResultGen<PyObject> {
+                                      isZelfValue: Bool) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
@@ -901,50 +863,38 @@ public struct PyInt: PyObjectMixin {
     }
 
     let result = value >> count
-    return PyResultGen(py, result)
+    return PyResult(py, result)
   }
 
   // MARK: - And, or, xor
 
   // sourcery: pymethod = __and__
-  internal static func __and__(_ py: Py,
-                               zelf: PyObject,
-                               other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __and__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__and__") { $0 & $1 }
   }
 
   // sourcery: pymethod = __rand__
-  internal static func __rand__(_ py: Py,
-                                zelf: PyObject,
-                                other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __rand__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__rand__") { $1 & $0 }
   }
 
   // sourcery: pymethod = __or__
-  internal static func __or__(_ py: Py,
-                              zelf: PyObject,
-                              other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __or__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__or__") { $0 | $1 }
   }
 
   // sourcery: pymethod = __ror__
-  internal static func __ror__(_ py: Py,
-                               zelf: PyObject,
-                               other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __ror__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__ror__") { $1 | $0 }
   }
 
   // sourcery: pymethod = __xor__
-  internal static func __xor__(_ py: Py,
-                               zelf: PyObject,
-                               other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __xor__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__xor__") { $0 ^ $1 }
   }
 
   // sourcery: pymethod = __rxor__
-  internal static func __rxor__(_ py: Py,
-                                zelf: PyObject,
-                                other: PyObject) -> PyResultGen<PyObject> {
+  internal static func __rxor__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     return Self.binaryOperation(py, zelf: zelf, other: other, fnName: "__rxor__") { $1 ^ $0 }
   }
 
@@ -962,7 +912,7 @@ public struct PyInt: PyObjectMixin {
   /// long_round(PyObject *self, PyObject *args)
   internal static func __round__(_ py: Py,
                                  zelf: PyObject,
-                                 nDigits _nDigits: PyObject?) -> PyResultGen<PyObject> {
+                                 nDigits _nDigits: PyObject?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__round__")
     }
@@ -979,10 +929,10 @@ public struct PyInt: PyObjectMixin {
     // 1
     if nDigits.isPositiveOrZero {
       if py.cast.isExactlyInt(zelf.asObject) {
-        return PyResultGen(zelf)
+        return PyResult(zelf)
       }
 
-      return PyResultGen(py, zelf.value)
+      return PyResult(py, zelf.value)
     }
 
     // result = self - divmod_near(self, 10 ** -ndigits)[1]
@@ -991,7 +941,7 @@ public struct PyInt: PyObjectMixin {
     switch self.divmodNear(py, left: zelf.value, right: pow10) {
     case let .value(divMod):
       let result = zelf.value - divMod.mod
-      return PyResultGen(py, result)
+      return PyResult(py, result)
     case let .error(e):
       return .error(e)
     }
@@ -1083,7 +1033,7 @@ public struct PyInt: PyObjectMixin {
   internal static func __new__(_ py: Py,
                                type: PyType,
                                args: [PyObject],
-                               kwargs: PyDict?) -> PyResultGen<PyObject> {
+                               kwargs: PyDict?) -> PyResult {
     switch self.newArguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
@@ -1100,7 +1050,7 @@ public struct PyInt: PyObjectMixin {
   private static func __new__(_ py: Py,
                               type: PyType,
                               object: PyObject?,
-                              base: PyObject?) -> PyResultGen<PyObject> {
+                              base: PyObject?) -> PyResult {
     // If we do not have 1st argument -> 0
     guard let object = object else {
       if base != nil {
@@ -1158,30 +1108,26 @@ public struct PyInt: PyObjectMixin {
     return type === py.types.int
   }
 
-  private static func allocate(_ py: Py,
-                               type: PyType,
-                               value: PyInt) -> PyResultGen<PyObject> {
+  private static func allocate(_ py: Py, type: PyType, value: PyInt) -> PyResult {
     // 'int' is immutable, so we can return the same thing (saves allocation).
     let isBuiltin = Self.isBuiltinIntType(py, type: type)
     let isNotSubclass = py.cast.isExactlyInt(value.asObject)
 
     if isBuiltin && isNotSubclass {
-      return PyResultGen(value)
+      return PyResult(value)
     }
 
     return Self.allocate(py, type: type, value: value.value)
   }
 
-  private static func allocate(_ py: Py,
-                               type: PyType,
-                               value: BigInt) -> PyResultGen<PyObject> {
+  private static func allocate(_ py: Py, type: PyType, value: BigInt) -> PyResult {
     // If this is a builtin then try to re-use interned values
     let isBuiltin = Self.isBuiltinIntType(py, type: type)
     let result = isBuiltin ?
       py.newInt(value) :
       py.memory.newInt(py, type: type, value: value)
 
-    return PyResultGen(result)
+    return PyResult(result)
   }
 
   private enum NewWithoutBaseResult {
@@ -1233,8 +1179,7 @@ public struct PyInt: PyObjectMixin {
     case error(PyBaseException)
   }
 
-  private static func call__int__(_ py: Py,
-                                  object: PyObject) -> NumberConverterResult {
+  private static func call__int__(_ py: Py, object: PyObject) -> NumberConverterResult {
     if let result = PyStaticCall.__int__(py, object: object) {
       switch result {
       case let .value(o): return Self.interpret__int__(py, object: o)
@@ -1253,8 +1198,7 @@ public struct PyInt: PyObjectMixin {
     }
   }
 
-  private static func interpret__int__(_ py: Py,
-                                       object: PyObject) -> NumberConverterResult {
+  private static func interpret__int__(_ py: Py, object: PyObject) -> NumberConverterResult {
     guard let int = py.cast.asInt(object) else {
       let message = "__int__ returned non-int (type \(object.typeName)"
       let error = py.newTypeError(message: message)
@@ -1264,8 +1208,7 @@ public struct PyInt: PyObjectMixin {
     return .value(int)
   }
 
-  private static func call__trunc__(_ py: Py,
-                                    object: PyObject) -> NumberConverterResult {
+  private static func call__trunc__(_ py: Py, object: PyObject) -> NumberConverterResult {
     if let result = PyStaticCall.__trunc__(py, object: object) {
       switch result {
       case let .value(o): return Self.interpret__trunc__(py, object: o)
@@ -1284,8 +1227,7 @@ public struct PyInt: PyObjectMixin {
     }
   }
 
-  private static func interpret__trunc__(_ py: Py,
-                                         object: PyObject) -> NumberConverterResult {
+  private static func interpret__trunc__(_ py: Py, object: PyObject) -> NumberConverterResult {
     guard let int = py.cast.asInt(object) else {
       let message = "__trunc__ returned non-Integral (type \(object.typeName))"
       let error = py.newTypeError(message: message)
@@ -1332,7 +1274,7 @@ public struct PyInt: PyObjectMixin {
   /// Operation that returns ourself.
   private static func identityOperation(_ py: Py,
                                         zelf: PyObject,
-                                        fnName: String) -> PyResultGen<PyObject> {
+                                        fnName: String) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
@@ -1344,42 +1286,42 @@ public struct PyInt: PyObjectMixin {
     // >>> True.__index__()
     // 1
     if py.cast.isExactlyInt(zelf.asObject) {
-      return PyResultGen(zelf)
+      return PyResult(zelf)
     }
 
-    return PyResultGen(py, zelf.value)
+    return PyResult(py, zelf.value)
   }
 
   /// Operation that returns an `int`
   private static func intOperation(_ py: Py,
                                    zelf: PyObject,
                                    fnName: String,
-                                   fn: (BigInt) -> Int) -> PyResultGen<PyObject> {
+                                   fn: (BigInt) -> Int) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
 
     let result = fn(zelf.value)
-    return PyResultGen(py, result)
+    return PyResult(py, result)
   }
 
   private static func unaryOperation(_ py: Py,
                                      zelf: PyObject,
                                      fnName: String,
-                                     fn: (BigInt) -> BigInt) -> PyResultGen<PyObject> {
+                                     fn: (BigInt) -> BigInt) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
 
     let result = fn(zelf.value)
-    return PyResultGen(py, result)
+    return PyResult(py, result)
   }
 
   private static func binaryOperation(_ py: Py,
                                       zelf: PyObject,
                                       other: PyObject,
                                       fnName: String,
-                                      fn: (BigInt, BigInt) -> BigInt) -> PyResultGen<PyObject> {
+                                      fn: (BigInt, BigInt) -> BigInt) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, fnName)
     }
@@ -1389,7 +1331,7 @@ public struct PyInt: PyObjectMixin {
     }
 
     let result = fn(zelf.value, other.value)
-    return PyResultGen(py, result)
+    return PyResult(py, result)
   }
 
   // MARK: - Helpers

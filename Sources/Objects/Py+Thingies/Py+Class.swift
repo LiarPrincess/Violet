@@ -8,7 +8,7 @@ extension Py {
   // MARK: - Get __build_class__
 
   /// Get `__build_class__` from `builtins` module.
-  public func get__build_class__() -> PyResultGen<PyObject> {
+  public func get__build_class__() -> PyResult {
     let dict = self.builtins.__dict__
 
     if let fn = dict.get(self, id: .__build_class__) {
@@ -43,7 +43,7 @@ extension Py {
   public func __build_class__(name: PyString,
                               bases basesTuple: PyTuple,
                               bodyFn: PyFunction,
-                              kwargs: PyDict?) -> PyResultGen<PyObject> {
+                              kwargs: PyDict?) -> PyResult {
     let bases: [PyType]
     switch PyType.guaranteeAllBasesAreTypes(self, bases: basesTuple) {
     case let .value(b): bases = b
@@ -105,8 +105,7 @@ extension Py {
 
   // MARK: - Metaclass
 
-  private func calculateMetaclass(bases: [PyType],
-                                  kwargs: PyDict?) -> PyResultGen<PyObject> {
+  private func calculateMetaclass(bases: [PyType], kwargs: PyDict?) -> PyResult {
     var result: PyObject
 
     if let kwargs = kwargs, let meta = kwargs.get(self, id: .metaclass) {
@@ -193,7 +192,7 @@ extension Py {
 
   // MARK: - Eval
 
-  private func eval(fn: PyFunction, locals: PyDict) -> PyResultGen<PyObject> {
+  private func eval(fn: PyFunction, locals: PyDict) -> PyResult {
     return self.delegate.eval(
       name: nil,
       qualname: nil,
