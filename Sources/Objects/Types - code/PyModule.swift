@@ -271,7 +271,7 @@ public struct PyModule: PyObjectMixin {
   // sourcery: pymethod = __dir__
   internal static func __dir__(_ py: Py, zelf: PyObject) -> PyResultGen<DirResult> {
     guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__dir__")
+      return .invalidSelfArgument(py, zelf, Self.pythonTypeName)
     }
 
     // Do not add 'self.type' dir!

@@ -96,7 +96,7 @@ public struct PyTraceback: PyObjectMixin {
   /// tb_dir(PyTracebackObject *self)
   internal static func __dir__(_ py: Py, zelf: PyObject) -> PyResultGen<DirResult> {
     guard Self.downcast(py, zelf) != nil else {
-      return Self.invalidZelfArgument(py, zelf, "__dir__")
+      return .invalidSelfArgument(py, zelf, Self.pythonTypeName)
     }
 
     var result = DirResult()

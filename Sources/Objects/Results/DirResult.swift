@@ -33,13 +33,11 @@ public struct DirResult {
 
   // MARK: - Append keys/elements
 
-  public mutating func append(_ py: Py,
-                              keysFrom dict: PyDict) -> PyBaseException? {
+  public mutating func append(_ py: Py, keysFrom dict: PyDict) -> PyBaseException? {
     self.append(py, keysFrom: dict.asObject)
   }
 
-  public mutating func append(_ py: Py,
-                              keysFrom object: PyObject) -> PyBaseException? {
+  public mutating func append(_ py: Py, keysFrom object: PyObject) -> PyBaseException? {
     switch py.getKeys(object: object) {
     case let .value(keys):
       return self.append(py, elementsFrom: keys)
@@ -49,8 +47,7 @@ public struct DirResult {
     }
   }
 
-  public mutating func append(_ py: Py,
-                              elementsFrom iterable: PyObject) -> PyBaseException? {
+  public mutating func append(_ py: Py, elementsFrom iterable: PyObject) -> PyBaseException? {
     let e = py.forEach(iterable: iterable) { object in
       self.append(object)
       return .goToNextElement
@@ -81,5 +78,19 @@ extension PyResult {
     case let .error(e):
       self = .error(e)
     }
+  }
+}
+
+extension PyResultGen where Wrapped == DirResult {
+  public static func invalidSelfArgument(
+    _ py: Py,
+    _ zelf: PyObject,
+    _ expectedType: String
+  ) -> PyResultGen<DirResult> {
+    let error = py.newInvalidSelfArgumentError(object: zelf,
+                                               expectedType: expectedType,
+                                               fnName: "__dir__")
+
+    return .error(error.asBaseException)
   }
 }
