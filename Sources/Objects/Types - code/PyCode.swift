@@ -16,6 +16,22 @@ public struct PyCode: PyObjectMixin {
   // sourcery: pytypedoc
   internal static let doc = "Create a code object. Not for the faint of heart."
 
+  // MARK: - Code
+
+  // Due to how we generate layout code we have to have the same properties in
+  // DEBUG and non-DEBUG code.
+#if DEBUG
+  public typealias CodeObject = VioletBytecode.CodeObject
+#else
+  public typealias CodeObject = Void
+#endif
+
+  // sourcery: storedProperty
+  /// Code object from colpiler.
+  ///
+  /// Available only in `DEBUG`.
+  public var codeObject: PyCode.CodeObject { self.codeObjectPtr.pointee }
+
   // MARK: - Name
 
   // sourcery: storedProperty
@@ -194,8 +210,14 @@ public struct PyCode: PyObjectMixin {
 
   // MARK: - Initialize/deinitialize
 
-  internal func initialize(_ py: Py, type: PyType, code: CodeObject) {
+  internal func initialize(_ py: Py, type: PyType, code: VioletBytecode.CodeObject) {
     self.initializeBase(py, type: type)
+
+#if DEBUG
+    self.codeObjectPtr.initialize(to: code)
+#else
+    self.codeObjectPtr.initialize(to: ())
+#endif
 
     let totalArgs = PyCode.countArguments(code: code)
     assert(code.variableNames.count >= totalArgs)
