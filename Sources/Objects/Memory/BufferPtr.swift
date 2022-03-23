@@ -1,6 +1,10 @@
 /// A pointer for accessing a continuous allocation of `TrivialElement` instances.
 ///
-/// - Important: `TrivialElement` has to be a trivial type!
+/// - Important: `TrivialElement` has to be a trivial type:
+///   A trivial type can be copied bit for bit with no indirection or
+///   reference-counting operations. Generally, native Swift types that do not
+///   contain strong or weak references or other forms of indirection are trivial,
+///   as are imported C structs and enumerations.
 public struct BufferPtr<TrivialElement>: RandomAccessCollection {
 
   /// A pointer to the first element of the buffer.
