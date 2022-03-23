@@ -71,11 +71,11 @@ extension Sys {
     return .value(result)
   }
 
-  public func setArgv0(value: Path) -> PyBaseException? {
-    return self.setArgv0(value: value.string)
+  public func setArgv0(_ value: Path) -> PyBaseException? {
+    return self.setArgv0(value.string)
   }
 
-  public func setArgv0(value: String) -> PyBaseException? {
+  public func setArgv0(_ value: String) -> PyBaseException? {
     let list: PyList
     switch self.getArgv() {
     case let .value(l): list = l
@@ -245,14 +245,14 @@ extension Sys {
       }
     }
 
-    set(name: "width", value: self.py.newInt(self.hashInfo.width))
-    set(name: "modulus", value: self.py.newInt(self.hashInfo.modulus))
-    set(name: "inf", value: self.py.newInt(self.hashInfo.inf))
-    set(name: "nan", value: self.py.newInt(self.hashInfo.nan))
-    set(name: "imag", value: self.py.newInt(self.hashInfo.imag))
-    set(name: "algorithm", value: self.py.newString(self.hashInfo.algorithm))
-    set(name: "hash_bits", value: self.py.newInt(self.hashInfo.hashBits))
-    set(name: "seed_bits", value: self.py.newInt(self.hashInfo.seedBits))
+    set(name: "width", value: self.py.newInt(Self.hashInfo.width))
+    set(name: "modulus", value: self.py.newInt(Self.hashInfo.modulus))
+    set(name: "inf", value: self.py.newInt(Self.hashInfo.inf))
+    set(name: "nan", value: self.py.newInt(Self.hashInfo.nan))
+    set(name: "imag", value: self.py.newInt(Self.hashInfo.imag))
+    set(name: "algorithm", value: self.py.newString(Self.hashInfo.algorithm))
+    set(name: "hash_bits", value: self.py.newInt(Self.hashInfo.hashBits))
+    set(name: "seed_bits", value: self.py.newInt(Self.hashInfo.seedBits))
 
     return self.py.newNamespace(dict: dict)
   }

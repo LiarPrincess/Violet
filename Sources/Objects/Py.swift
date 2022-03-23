@@ -117,8 +117,7 @@ public struct Py: CustomStringConvertible {
   internal var hasher: Hasher { self.hasherPtr.pointee }
 
   public var description: String {
-    let version = self.sys.versionString
-    return version.value
+    return Sys.version
   }
 
   // MARK: - Init

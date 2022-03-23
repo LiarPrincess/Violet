@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import FileSystem
 import VioletCore
@@ -13,7 +12,7 @@ extension VM {
 
   // MARK: - Interactive without args
 
-  internal func prepareForInteractiveWithoutArgs() -> PyResult<PyObject> {
+  internal func prepareForInteractiveWithoutArgs() -> PyResult {
     // From 'https://docs.python.org/3.7/using/cmdline.html'
     // If no interface option is given:
     // - -i is implied
@@ -21,12 +20,12 @@ extension VM {
     // - current directory will be added to the start of sys.path.
 
     let emptyPath = Path(string: "")
-    if let e = self.setArgv0(value: emptyPath) {
+    if let e = self.setArgv0(emptyPath) {
       return .error(e)
     }
 
     let cwd = self.fileSystem.currentWorkingDirectory
-    if let e = self.prependPath(value: cwd) {
+    if let e = self.prependPath(cwd) {
       return .error(e)
     }
 
@@ -38,37 +37,30 @@ extension VM {
       return .error(e)
     }
 
-    return .value(Py.none)
+    return .none(self.py)
   }
 
   // Normally this would be in 'site.py', but we do not have this module.
   private func addExitAndQuitToBuiltins() -> PyBaseException? {
     let exitFn: PyObject
-
-    switch Py.sys.getExit() {
-    case let .value(f):
-      exitFn = f
-    case let .error(e):
-      return e
+    switch self.py.sys.getExit() {
+    case let .value(f): exitFn = f
+    case let .error(e): return e
     }
 
-    let builtins = Py.builtinsModule
-    let builtinsDict = Py.get__dict__(module: builtins)
+    let builtins = self.py.builtinsModule
+    let builtinsDict = self.py.get__dict__(module: builtins)
 
-    let exit = Py.newString("exit")
-    switch builtinsDict.set(key: exit, to: exitFn) {
-    case .ok:
-      break
-    case let .error(e):
-      return e
+    let exit = self.py.newString("exit")
+    switch builtinsDict.set(self.py, key: exit, value: exitFn) {
+    case .ok: break
+    case let .error(e): return e
     }
 
-    let quit = Py.newString("quit")
-    switch builtinsDict.set(key: quit, to: exitFn) {
-    case .ok:
-      break
-    case let .error(e):
-      return e
+    let quit = self.py.newString("quit")
+    switch builtinsDict.set(self.py, key: quit, value: exitFn) {
+    case .ok: break
+    case let .error(e): return e
     }
 
     return nil
@@ -80,11 +72,11 @@ extension VM {
     and some things may not be working (most notably arrow keys).
     Use 'exit()' or 'quit()' to exit.
 
-    \(Py.sys.version)
+    \(Sys.version)
 
     """
 
-    switch self.writeToStdout(msg: hi) {
+    switch self.writeToStdout(hi) {
     case .ok:
       return nil
     case .streamIsNone:
@@ -130,7 +122,7 @@ extension VM {
       case let .error(e): return e
       }
 
-      let mainDict = Py.get__dict__(module: main)
+      let mainDict = self.py.get__dict__(module: main)
       switch self.eval(code: code, globals: mainDict, locals: mainDict) {
       case .value:
         // We are not responsible for printing value, 'printExpr' instruction is
@@ -140,7 +132,7 @@ extension VM {
         }
 
       case .error(let e):
-        if self.py.cast.isSystemExit(e) {
+        if self.py.cast.isSystemExit(e.asObject) {
           return e
         }
 
@@ -172,7 +164,7 @@ extension VM {
 // swiftlint:enable function_body_length
 
     let stdin: PyTextFile
-    switch Py.sys.getStdin() {
+    switch self.py.sys.getStdin() {
     case let .value(f): stdin = f
     case let .error(e): return .error(e)
     }
@@ -186,7 +178,7 @@ extension VM {
     while true {
       defer { isFirstLine = false }
 
-      switch self.writeToStdout(msg: isFirstLine ? ps1 : ps2) {
+      switch self.writeToStdout(isFirstLine ? ps1 : ps2) {
       case .ok,
            .streamIsNone: break
       case .error(let e): return .error(e)
@@ -198,7 +190,7 @@ extension VM {
       // 2. XCode auto-completes it to: 'print("abc")'
       // 3. Violet will never get the '")' part and fail to compile
       let line: String
-      switch stdin.readLine() {
+      switch stdin.readLine(self.py) {
       case let .value(s): line = s
       case let .error(e): return .error(e)
       }
@@ -250,31 +242,21 @@ extension VM {
 
   /// String that should be printed in interactive mode.
   private func getInteractivePrompt(type: PromptType) -> String {
-    let objectResult: PyResult<PyObject>
+    let objectResult: PyResult
     switch type {
-    case .ps1:
-      objectResult = Py.sys.getPS1()
-    case .ps2:
-      objectResult = Py.sys.getPS2()
+    case .ps1: objectResult = self.py.sys.getPS1()
+    case .ps2: objectResult = self.py.sys.getPS2()
     }
 
     let object: PyObject
     switch objectResult {
-    case .value(let o):
-      object = o
-    case .error:
-      return self.defaultInteractivePrompt
+    case .value(let o): object = o
+    case .error: return self.defaultInteractivePrompt
     }
 
-    if let s = self.py.cast.asString(object) {
-      return s.value
-    }
-
-    switch Py.strString(object: object) {
-    case .value(let s):
-      return s
-    case .error:
-      return self.defaultInteractivePrompt
+    switch self.py.strString(object) {
+    case .value(let s): return s
+    case .error: return self.defaultInteractivePrompt
     }
   }
 
@@ -294,9 +276,9 @@ extension VM {
   }
 
   private func compileInteractive(input: String) -> CompileInteractiveResult {
-    let compileResult = Py.compile(source: input,
-                                   filename: "<stdin>",
-                                   mode: .interactive)
+    let compileResult = self.py.compile(source: input,
+                                        filename: "<stdin>",
+                                        mode: .interactive)
 
     switch compileResult {
     case let .code(code):
@@ -336,23 +318,14 @@ extension VM {
   // MARK: - Flush
 
   private func flushStdout() -> PyBaseException? {
-    switch Py.sys.getStdoutOrNone() {
+    switch self.py.sys.getStdoutOrNone() {
     case .value(let stdout):
-      switch stdout.flush() {
-      case .value:
-        return nil
-      case .error(let e):
-        return e
-      }
-
+      return stdout.flush(self.py)
     case .none:
       // Assuming that user requested no printing
       return nil
-
     case .error(let e):
       return e
     }
   }
 }
-
-*/

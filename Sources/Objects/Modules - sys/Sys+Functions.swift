@@ -83,9 +83,8 @@ extension Sys {
     implementation.
     """
 
-  internal static func getdefaultencoding(_ py: Py,
-                                          module: PyObject) -> PyResult {
-    let result = py.sys.defaultEncoding
+  internal static func getdefaultencoding(_ py: Py, module: PyObject) -> PyResult {
+    let result = py.sys.defaultEncodingString
     return PyResult(result)
   }
 

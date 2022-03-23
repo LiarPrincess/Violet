@@ -146,18 +146,13 @@ extension Py {
   /// '\(fnName) bytes '\(bytes.ptrString)' cannot be interpreted as str'.
   /// - Option 2: return `return .byteDecodingError(bytes)`
   internal func getString(data: Data, encoding: GetStringEncoding) -> String? {
-    let _encoding: PyString.Encoding
+    let enc: PyString.Encoding
     switch encoding {
-    case .default:
-      let sysEncoding = self.sys.defaultEncoding
-      switch PyString.Encoding.from(self, string: sysEncoding) {
-      case .value(let e): _encoding = e
-      case .error: trap("Unable to parse 'sys.defaultEncoding' (\(sysEncoding.value))?")
-      }
-    case .value(let e): _encoding = e
+    case .default: enc = Sys.defaultEncoding
+    case .value(let e): enc = e
     }
 
-    return _encoding.decode(data: data)
+    return enc.decode(data: data)
   }
 
   // MARK: - Join

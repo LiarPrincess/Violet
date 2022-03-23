@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import FileSystem
 import VioletCore
@@ -15,7 +14,7 @@ extension VM {
 
   /// int
   /// PyRun_SimpleFileExFlags(FILE *fp, const char *filename, int closeit, ...)
-  internal func run(scriptPath: Path) -> PyResult<PyObject> {
+  internal func run(scriptPath: Path) -> PyResult {
     // From 'https://docs.python.org/3.7/using/cmdline.html':
     // Execute the Python code contained in script, which must be a filesystem path
     // (absolute or relative) referring to either a Python file, a directory
@@ -36,17 +35,17 @@ extension VM {
     }
 
     let code: PyCode
-    let compileResult = Py.compile(path: script.__main__, mode: .fileInput)
+    let compileResult = self.py.compile(path: script.__main__, mode: .fileInput)
     switch compileResult.asResult() {
     case let .value(c): code = c
     case let .error(e): return .error(e)
     }
 
-    if let e = self.setArgv0(value: scriptPath) {
+    if let e = self.setArgv0(scriptPath) {
       return .error(e)
     }
 
-    if let e = self.prependPath(value: script.directory) {
+    if let e = self.prependPath(script.directory) {
       return .error(e)
     }
 
@@ -57,11 +56,13 @@ extension VM {
     }
 
     // Set '__file__' (remember to cleanup later!).
-    let mainDict = Py.get__dict__(module: main)
-    mainDict.set(id: .__file__, to: Py.newString(scriptPath))
-    defer { _ = mainDict.del(id: .__file__) }
+    let mainDict = self.py.get__dict__(module: main)
+    let scriptPathStr = self.py.newString(scriptPath)
+    mainDict.set(self.py, id: .__file__, value: scriptPathStr.asObject)
 
-    return self.eval(code: code, globals: mainDict, locals: mainDict)
+    let result = self.eval(code: code, globals: mainDict, locals: mainDict)
+    _ = mainDict.del(self.py, id: .__file__) // '__file__' cleanup
+    return result
   }
 
   // MARK: - Script location
@@ -73,15 +74,16 @@ extension VM {
     fileprivate let directory: Path
   }
 
-  private func getScriptLocation(path: Path) -> PyResult<ScriptLocation> {
+  private func getScriptLocation(path: Path) -> PyResultGen<ScriptLocation> {
     let stat: Stat
-    switch self.fileSystem.stat(path: path) {
+    switch self.fileSystem.stat(self.py, path: path) {
     case .value(let s):
       stat = s
     case .enoent:
-      return .error(Py.newFileNotFoundError(path: path))
+      let error = self.py.newFileNotFoundError(path: path)
+      return .error(error.asBaseException)
     case .error(let e):
-      return .error(e)
+      return .error(e.asBaseException)
     }
 
     switch stat.type {
@@ -92,31 +94,30 @@ extension VM {
     case .directory:
       return self.try__main__(inside: path)
     default:
-      let msg = "'\(path)' is neither file nor directory (mode: \(stat.st_mode))"
-      return .error(Py.newOSError(msg: msg))
+      let message = "'\(path)' is neither file nor directory (mode: \(stat.st_mode))"
+      return .osError(self.py, message: message)
     }
   }
 
-  private func try__main__(inside dir: Path) -> PyResult<ScriptLocation> {
+  private func try__main__(inside dir: Path) -> PyResultGen<ScriptLocation> {
     let main = self.fileSystem.join(path: dir, elements: "__main__.py")
 
-    switch self.fileSystem.stat(path: main) {
+    switch self.fileSystem.stat(self.py, path: main) {
     case .value(let stat):
       switch stat.type {
       case .regularFile:
         let location = ScriptLocation(__main__: main, directory: dir)
         return .value(location)
       default:
-        let msg = "'\(main)' is not a file (mode: \(stat.st_mode))"
-        return .error(Py.newOSError(msg: msg))
+        let message = "'\(main)' is not a file (mode: \(stat.st_mode))"
+        return .osError(self.py, message: message)
       }
 
     case .enoent:
-      return .error(Py.newFileNotFoundError(path: main))
+      let error = self.py.newFileNotFoundError(path: main)
+      return .error(error.asBaseException)
     case .error(let e):
-      return .error(e)
+      return .error(e.asBaseException)
     }
   }
 }
-
-*/

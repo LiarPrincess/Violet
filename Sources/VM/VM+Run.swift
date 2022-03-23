@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import FileSystem
 import VioletCore
@@ -39,15 +38,17 @@ extension VM {
   /// static void
   /// pymain_run_python(_PyMain *pymain)
   public func run() -> RunResult {
-    if self.arguments.help {
+    let arguments = self.py.config.arguments
+
+    if arguments.help {
       // (Help!) I need somebody
       // (Help!) Not just anybody
-      let helpMsg = Arguments.helpMessage()
-      return self.writeToStdoutAndFinish(msg: helpMsg)
+      let helpMessage = Arguments.helpMessage()
+      return self.writeToStdoutAndFinish(helpMessage)
     }
 
-    if self.arguments.version {
-      return self.writeToStdoutAndFinish(msg: Py.sys.version)
+    if arguments.version {
+      return self.writeToStdoutAndFinish(Sys.version)
     }
 
     // Oh no… we will be running code! Let's prepare for this.
@@ -61,14 +62,14 @@ extension VM {
       return .error(e)
     }
 
-    var runRepl = Py.sys.flags.inspect
-    var result: PyResult<PyObject>
+    var runRepl = self.py.sys.flags.inspect
+    var result: PyResult
 
-    if let command = self.arguments.command {
+    if let command = arguments.command {
       result = self.run(command: command)
-    } else if let module = self.arguments.module {
+    } else if let module = arguments.module {
       result = self.run(modulePath: module)
-    } else if let script = self.arguments.script {
+    } else if let script = arguments.script {
       result = self.run(scriptPath: script)
     } else {
       runRepl = true
@@ -90,8 +91,8 @@ extension VM {
     return .done
   }
 
-  private func writeToStdoutAndFinish(msg: String) -> RunResult {
-    switch self.writeToStdout(msg: msg) {
+  private func writeToStdoutAndFinish(_ string: String) -> RunResult {
+    switch self.writeToStdout(string) {
     case .ok:
       return .done
     case .streamIsNone:
@@ -115,12 +116,12 @@ extension VM {
     // in such case we will reinitialize the whole thing.
 
     let importlib: PyModule
-    switch Py.initImportlibIfNeeded() {
+    switch self.py.initImportlibIfNeeded() {
     case let .value(m): importlib = m
     case let .error(e): return e
     }
 
-    switch Py.initImportlibExternalIfNeeded(importlib: importlib) {
+    switch self.py.initImportlibExternalIfNeeded(importlib: importlib) {
     case .value: break
     case .error(let e): return e
     }
@@ -134,12 +135,14 @@ extension VM {
   }
 
   private func handleErrorOrSystemExit(error: PyBaseException) -> RunResult {
-    guard self.py.cast.isSystemExit(error) else {
+    let errorObject = error.asObject
+
+    guard self.py.cast.isSystemExit(errorObject) else {
       return .error(error)
     }
 
-    let code = Py.intern(string: "code")
-    switch Py.getAttribute(object: error, name: code) {
+    let code = self.py.intern(string: "code")
+    switch self.py.getAttribute(object: errorObject, name: code) {
     case let .value(object):
       return .systemExit(object)
     case let .error(e):
@@ -151,7 +154,7 @@ extension VM {
 
   /// static int
   /// pymain_run_command(wchar_t *command, PyCompilerFlags *cf)
-  private func run(command: String) -> PyResult<PyObject> {
+  private func run(command: String) -> PyResult {
     // From: https://docs.python.org/3.7/using/cmdline.html#cmdoption-c
     // Execute the Python code in 'command'.
     // 'command' can be one or more statements separated by newlines
@@ -165,7 +168,7 @@ extension VM {
 
   /// static int
   /// pymain_run_module(const wchar_t *modname, int set_argv0)
-  private func run(modulePath: String) -> PyResult<PyObject> {
+  private func run(modulePath: String) -> PyResult {
     // From: https://docs.python.org/3.7/using/cmdline.html#cmdoption-m
     // Search sys.path for the named module and execute its contents
     // as the __main__ module.
@@ -176,24 +179,26 @@ extension VM {
     VM.unimplemented()
   }
 
-  // MARK: - Helpers - write to stream
+  // MARK: - Helpers - Stream write
 
   internal enum WriteToStreamResult {
     case ok
     case streamIsNone
     case error(PyBaseException)
+
+    fileprivate init(_ error: PyBaseException?) {
+      switch error {
+      case .some(let e): self = .error(e)
+      case .none: self = .ok
+      }
+    }
   }
 
-  internal func writeToStdout(object: PyObject) -> WriteToStreamResult {
-    switch Py.sys.getStdoutOrNone() {
+  internal func writeToStdout(_ object: PyObject) -> WriteToStreamResult {
+    switch self.py.sys.getStdoutOrNone() {
     case .value(let file):
-      switch file.write(object: object) {
-      case .value:
-        return .ok
-      case .error(let e):
-        return .error(e)
-      }
-
+      let result = file.write(self.py, object: object)
+      return WriteToStreamResult(result)
     case .none:
       return .streamIsNone
     case .error(let e):
@@ -201,16 +206,11 @@ extension VM {
     }
   }
 
-  internal func writeToStdout(msg: String) -> WriteToStreamResult {
-    switch Py.sys.getStdoutOrNone() {
+  internal func writeToStdout(_ string: String) -> WriteToStreamResult {
+    switch self.py.sys.getStdoutOrNone() {
     case .value(let file):
-      switch file.write(string: msg) {
-      case .value:
-        return .ok
-      case .error(let e):
-        return .error(e)
-      }
-
+      let result = file.write(self.py, string: string)
+      return WriteToStreamResult(result)
     case .none:
       return .streamIsNone
     case .error(let e):
@@ -219,9 +219,9 @@ extension VM {
   }
 
   internal func writeToStderr(error: PyBaseException) -> WriteToStreamResult {
-    switch Py.sys.getStderrOrNone() {
+    switch self.py.sys.getStderrOrNone() {
     case .value(let file):
-      Py.printRecursiveIgnoringErrors(error: error, file: file)
+      self.py.printRecursiveIgnoringErrors(file: file, error: error)
       return .ok
     case .none:
       return .streamIsNone
@@ -230,26 +230,21 @@ extension VM {
     }
   }
 
-  // MARK: - Helpers - set argv0
+  // MARK: - Helpers - Set argv0
 
   /// Set given value as `sys.argv[0]`.
-  internal func setArgv0(value: Path) -> PyBaseException? {
-    switch Py.sys.setArgv0(value: value) {
-    case .value:
-      return nil
-    case .error(let e):
-      return e
-    }
+  internal func setArgv0(_ value: Path) -> PyBaseException? {
+    return self.py.sys.setArgv0(value)
   }
 
-  // MARK: - Helpers - prepend path
+  // MARK: - Helpers - Prepend path
 
   /// Prepend given value to `sys.path`.
-  internal func prependPath(value: Path) -> PyBaseException? {
-    return Py.sys.prependPath(value: value)
+  internal func prependPath(_ value: Path) -> PyBaseException? {
+    return self.py.sys.prependPath(value)
   }
 
-  // MARK: - Helpers - add __main__
+  // MARK: - Helpers - Add __main__
 
   /// Type of the `__loader__` to set on `__main__`module.
   internal struct MainLoader {
@@ -285,8 +280,8 @@ extension VM {
     case replace
   }
 
-  private var __main__ModuleName: PyString {
-    return Py.intern(string: "__main__")
+  private var __main__ModuleName: String {
+    return "__main__"
   }
 
   /// static _PyInitError
@@ -294,7 +289,7 @@ extension VM {
   internal func add__main__Module(
     loader: MainLoader,
     ifAlreadyExists existsPolicy: Existing__main__ModulePolicy
-  ) -> PyResult<PyModule> {
+  ) -> PyResultGen<PyModule> {
     switch self.handleExisting__main__Module(policy: existsPolicy) {
     case .value(let m):
       return .value(m)
@@ -305,27 +300,29 @@ extension VM {
     }
 
     let name = self.__main__ModuleName
-    let module = Py.newModule(name: name)
-    let dict = Py.get__dict__(module: module)
+    let module = self.py.newModule(name: name, doc: nil, dict: nil)
+    let dict = self.py.get__dict__(module: module)
 
-    if dict.get(id: .__annotations__) == nil {
-      dict.set(id: .__annotations__, to: Py.newDict())
+    if dict.get(self.py, id: .__annotations__) == nil {
+      let annotations = self.py.newDict()
+      dict.set(self.py, id: .__annotations__, value: annotations.asObject)
     }
 
-    if dict.get(id: .__builtins__) == nil {
-      dict.set(id: .__builtins__, to: Py.builtinsModule)
+    if dict.get(self.py, id: .__builtins__) == nil {
+      let builtins = self.py.builtinsModule
+      dict.set(self.py, id: .__builtins__, value: builtins.asObject)
     }
 
-    if dict.get(id: .__loader__) == nil {
+    if dict.get(self.py, id: .__loader__) == nil {
       switch self.getLoader(type: loader) {
       case let .value(value):
-        dict.set(id: .__loader__, to: value)
+        dict.set(self.py, id: .__loader__, value: value)
       case let .error(e):
         return .error(e)
       }
     }
 
-    if let e = Py.sys.addModule(module: module) {
+    if let e = self.py.sys.addModule(module: module) {
       return .error(e)
     }
 
@@ -342,19 +339,19 @@ extension VM {
   private func handleExisting__main__Module(
     policy: Existing__main__ModulePolicy
   ) -> Existing__main__Module {
-    let name = self.__main__ModuleName
+    let name = self.py.intern(string: self.__main__ModuleName)
 
     switch policy {
     case .use:
-      switch Py.sys.getModule(name: name) {
+      switch self.py.sys.getModule(name: name) {
       case .module(let m):
         return .value(m)
 
       case .notModule(let o):
-        let msg = "Tried to reuse existing '__main__' module, " +
+        let message = "Tried to reuse existing '__main__' module, " +
           "but 'sys.modules' contains \(o.typeName) instead of module"
-        let e = Py.newRuntimeError(msg: msg)
-        return .error(e)
+        let error = self.py.newRuntimeError(message: message)
+        return .error(error.asBaseException)
 
       case .notFound:
         return .notFound
@@ -367,13 +364,13 @@ extension VM {
     }
   }
 
-  private func getLoader(type: MainLoader) -> PyResult<PyObject> {
+  private func getLoader(type: MainLoader) -> PyResult {
     let module: PyObject
-    let moduleName = Py.intern(string: type.module)
+    let moduleName = self.py.intern(string: type.module)
 
-    switch Py.sys.getModule(name: moduleName) {
+    switch self.py.sys.getModule(name: moduleName) {
     case let .module(m):
-      module = m
+      module = m.asObject
     case .notModule(let o):
       // This is an interesting case,
       // but we will trust that import knows its stuff.
@@ -384,8 +381,6 @@ extension VM {
     }
 
     let attribute = type.name
-    return Py.getAttribute(object: module, name: attribute)
+    return self.py.getAttribute(object: module, name: attribute)
   }
 }
-
-*/
