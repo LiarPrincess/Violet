@@ -28,9 +28,9 @@ extension Sys {
   }
 
   internal func createInitialVersionInfo() -> PyNamespace {
-    return self.createVersionObject(
+    return self.toNamespace(
       property: "version_info",
-      versionInfo: self.pythonVersion
+      version: Self.pythonVersion
     )
   }
 
@@ -43,9 +43,9 @@ extension Sys {
   }
 
   internal func createInitialImplementation() -> PyNamespace {
-    return self.createImplementationObject(
+    return self.toNamespace(
       property: "implementation",
-      implementation: self.implementation
+      implementation: Self.implementation
     )
   }
 
@@ -58,33 +58,32 @@ extension Sys {
   }
 
   internal func createInitialHexVersion() -> PyInt {
-    let hexVersion = self.pythonVersion.hexVersion
+    let hexVersion = Self.pythonVersion.hexVersion
     return self.py.newInt(hexVersion)
   }
 
   // MARK: - Create object
 
-  private func createVersionObject(property: String,
-                                   versionInfo: VersionInfo) -> PyNamespace {
+  private func toNamespace(property: String, version: VersionInfo) -> PyNamespace {
     let dict = self.py.newDict()
 
     func insertOrTrap<T: PyObjectMixin>(name: String, value: T) {
       self.insertOrTrap(dict: dict, name: name, value: value, for: property)
     }
 
-    let releaseLevel = versionInfo.releaseLevel.description
+    let releaseLevel = version.releaseLevel.description
 
-    insertOrTrap(name: "major", value: self.py.newInt(versionInfo.major))
-    insertOrTrap(name: "minor", value: self.py.newInt(versionInfo.minor))
-    insertOrTrap(name: "micro", value: self.py.newInt(versionInfo.micro))
+    insertOrTrap(name: "major", value: self.py.newInt(version.major))
+    insertOrTrap(name: "minor", value: self.py.newInt(version.minor))
+    insertOrTrap(name: "micro", value: self.py.newInt(version.micro))
     insertOrTrap(name: "releaseLevel", value: self.py.newString(releaseLevel))
-    insertOrTrap(name: "serial", value: self.py.newInt(versionInfo.serial))
+    insertOrTrap(name: "serial", value: self.py.newInt(version.serial))
 
     return self.py.newNamespace(dict: dict)
   }
 
-  private func createImplementationObject(property: String,
-                                          implementation: ImplementationInfo) -> PyNamespace {
+  private func toNamespace(property: String,
+                           implementation: ImplementationInfo) -> PyNamespace {
     let dict = self.py.newDict()
 
     func insertOrTrap<T: PyObjectMixin>(name: String, value: T) {
@@ -94,9 +93,9 @@ extension Sys {
     let name = self.py.intern(string: implementation.name)
     let hexversion = self.py.newInt(implementation.version.hexVersion)
 
-    let version = self.createVersionObject(
+    let version = self.toNamespace(
       property: property,
-      versionInfo: implementation.version
+      version: implementation.version
     )
 
     let cacheTag: PyObject

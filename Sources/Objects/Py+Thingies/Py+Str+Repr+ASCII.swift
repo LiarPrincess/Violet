@@ -203,6 +203,10 @@ extension Py {
   }
 
   private func strImpl(_ object: PyObject) -> StrImplResult {
+    if let str = self.cast.asExactlyString(object) {
+      return .pyString(str)
+    }
+
     if object.hasReprLock {
       return .reprLock
     }

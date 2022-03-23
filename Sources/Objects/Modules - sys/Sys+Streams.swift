@@ -20,7 +20,8 @@ extension Sys {
     return self.getTextFile(.stdin)
   }
 
-  public func setStdin(to value: PyObject) -> PyBaseException? {
+  public func setStdin(fd: FileDescriptorType?) -> PyBaseException? {
+    let value = self.createStdio(kind: .stdin, fd: fd)
     return self.set(.stdin, value: value)
   }
 
@@ -38,7 +39,8 @@ extension Sys {
     return self.getTextFile(.stdout)
   }
 
-  public func setStdout(to value: PyObject) -> PyBaseException? {
+  public func setStdout(fd: FileDescriptorType?) -> PyBaseException? {
+    let value = self.createStdio(kind: .stdout, fd: fd)
     return self.set(.stdout, value: value)
   }
 
@@ -56,7 +58,8 @@ extension Sys {
     return self.getTextFile(.stderr)
   }
 
-  public func setStderr(to value: PyObject) -> PyBaseException? {
+  public func setStderr(fd: FileDescriptorType?) -> PyBaseException? {
+    let value = self.createStdio(kind: .stderr, fd: fd)
     return self.set(.stderr, value: value)
   }
 
@@ -144,31 +147,44 @@ extension Sys {
 
   // MARK: - Initial
 
-  internal func createInitialStdin() -> PyTextFile {
+  internal func createInitialStdin() -> PyObject {
     let fd = self.py.config.standardInput
-    return self.createStdio(name: "<stdin>", fd: fd, mode: .read)
+    return self.createStdio(kind: .stdin, fd: fd)
   }
 
-  internal func createInitialStdout() -> PyTextFile {
+  internal func createInitialStdout() -> PyObject {
     let fd = self.py.config.standardOutput
-    return self.createStdio(name: "<stdout>", fd: fd, mode: .write)
+    return self.createStdio(kind: .stdout, fd: fd)
   }
 
-  internal func createInitialStderr() -> PyTextFile {
+  internal func createInitialStderr() -> PyObject {
     let fd = self.py.config.standardError
-    return self.createStdio(name: "<stderr>", fd: fd, mode: .write)
+    return self.createStdio(kind: .stderr, fd: fd)
+  }
+
+  private struct StdioKind {
+    fileprivate static let stdin = StdioKind(name: "<stdin>", mode: .read)
+    fileprivate static let stdout = StdioKind(name: "<stdout>", mode: .write)
+    fileprivate static let stderr = StdioKind(name: "<stderr>", mode: .write)
+
+    fileprivate let name: String
+    fileprivate let mode: FileMode
   }
 
   /// static PyObject*
   /// create_stdio(PyObject* io,
-  private func createStdio(name: String,
-                           fd: FileDescriptorType,
-                           mode: FileMode) -> PyTextFile {
-    return self.py.newTextFile(name: name,
-                               fd: fd,
-                               mode: mode,
-                               encoding: Unimplemented.stdioEncoding,
-                               errorHandling: Unimplemented.stdioErrors,
-                               closeOnDealloc: false)
+  private func createStdio(kind: StdioKind, fd: FileDescriptorType?) -> PyObject {
+    guard let fd = fd else {
+      return self.py.none.asObject
+    }
+
+    let result = self.py.newTextFile(name: kind.name,
+                                     fd: fd,
+                                     mode: kind.mode,
+                                     encoding: Unimplemented.stdioEncoding,
+                                     errorHandling: Unimplemented.stdioErrors,
+                                     closeOnDealloc: false)
+
+    return result.asObject
   }
 }

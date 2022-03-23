@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 import VioletObjects
 
@@ -9,5 +8,3 @@ extension VM {
     trap("Unimplemented '\(fn)'.")
   }
 }
-
-*/

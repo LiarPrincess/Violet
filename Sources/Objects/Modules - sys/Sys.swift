@@ -81,65 +81,29 @@ public final class Sys: PyModuleImplementation {
     settrace() -- set the global debug tracing function
     """
 
-  // MARK: - Properties
-
-  /// This dict will be used inside our `PyModule` instance.
-  internal let __dict__: PyDict
-  internal let py: Py
-
-  /// Initial value for `sys.flags`.
-  public let flags: Flags
-  /// Initial value for `sys.hash_info`.
-  public let hashInfo = HashInfo()
+  // MARK: - Static properties
 
   /// Initial value for `sys.version_info`.
-  public let pythonVersion = Configure.pythonVersion
+  public static let pythonVersion = Configure.pythonVersion
+
   /// Initial value for `sys.implementation`.
-  public let implementation = Configure.implementation
+  public static let implementation = Configure.implementation
+
   /// Initial value for `sys.version`.
-  public let versionString: PyString
-  /// Initial value for `sys.platform`.
-  public let platform: PyString
-  /// Initial value for `sys.copyright`.
-  public let copyright: PyString
-
-  /// sys.getdefaultencoding()
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.getdefaultencoding).
-  public let defaultEncoding: PyString
-  /// sys.getrecursionlimit()
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.getrecursionlimit).
-  ///
-  /// This is not stored in `__dict__`!
-  /// CPython stores it in `_PyRuntime.ceval.recursion_limit`.
-  internal var recursionLimit: PyInt
-
-  // MARK: - Init
-
-  internal init(_ py: Py) {
-    self.py = py
-    self.__dict__ = py.newDict()
-
-    self.platform = py.newString(Self.platformString)
-    self.copyright = py.newString(Lyrics.galavant) // Very important…
-    self.recursionLimit = py.newInt(1000)
-
-    let config = py.config
-    self.flags = Flags(arguments: config.arguments, environment: config.environment )
-
-    let defaultEncoding = PyString.Encoding.utf8
-    self.defaultEncoding = py.newString(defaultEncoding.description)
-
-    let p = self.pythonVersion
-    let i = self.implementation
+  public static let version: String = {
+    let p = Configure.pythonVersion
+    let i = Configure.implementation
     let iv = i.version
     let pythonVersion = "Python \(p.major).\(p.minor).\(p.micro)"
     let implementationVersion = "(\(i.name) \(iv.major).\(iv.minor).\(iv.micro))"
-    self.versionString = py.newString("\(pythonVersion) (\(implementationVersion))")
+    return "\(pythonVersion) (\(implementationVersion))"
+  }()
 
-    self.fill__dict__()
-  }
+  /// Initial value for `sys.hash_info`.
+  public static let hashInfo = HashInfo()
 
-  private static var platformString: String {
+  /// Initial value for `sys.platform`.
+  public static var platform: String {
 #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
     return "darwin"
 #elseif os(Linux) || os(Android)
@@ -153,6 +117,45 @@ public final class Sys: PyModuleImplementation {
 #endif
   }
 
+  /// sys.getdefaultencoding()
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.getdefaultencoding).
+  ///
+  /// const char *
+  /// PyUnicode_GetDefaultEncoding(void)
+  public static let defaultEncoding = PyString.Encoding.utf8
+
+  // MARK: - Properties
+
+  /// This dict will be used inside our `PyModule` instance.
+  internal let __dict__: PyDict
+  internal let py: Py
+
+  /// Initial value for `sys.flags`.
+  public let flags: Flags
+
+  /// `Self.defaultEncoding` but as a Python string.
+  internal let defaultEncodingString: PyString
+
+  /// sys.getrecursionlimit()
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.getrecursionlimit).
+  ///
+  /// This is not stored in `__dict__`!
+  /// CPython stores it in `_PyRuntime.ceval.recursion_limit`.
+  internal var recursionLimit: PyInt
+
+  // MARK: - Init
+
+  internal init(_ py: Py) {
+    self.py = py
+    self.__dict__ = py.newDict()
+
+    self.recursionLimit = py.newInt(1000)
+    self.flags = Flags(config: py.config)
+    self.defaultEncodingString = py.newString(Self.defaultEncoding)
+
+    self.fill__dict__()
+  }
+
   // MARK: - Fill dict
 
   // swiftlint:disable:next function_body_length
@@ -162,18 +165,22 @@ public final class Sys: PyModuleImplementation {
     self.setOrTrap(.ps1, value: ps1)
     self.setOrTrap(.ps2, value: ps2)
 
+    let copyright = self.py.newString(Lyrics.galavant) // Very important…
     self.setOrTrap(.argv, value: self.createInitialArgv())
     self.setOrTrap(.flags, value: self.createInitialFlags())
     self.setOrTrap(.executable, value: self.createInitialExecutablePath())
-    self.setOrTrap(.platform, value: self.platform)
-    self.setOrTrap(.copyright, value: self.copyright)
+    self.setOrTrap(.platform, value: self.py.newString(Self.platform))
+    self.setOrTrap(.copyright, value: copyright)
     self.setOrTrap(.hash_info, value: self.createInitialHashInfo())
     self.setOrTrap(.tracebacklimit, value: self.py.newInt(1000))
     self.setOrTrap(.maxsize, value: self.py.newInt(Int.max))
     self.setOrTrap(.warnoptions, value: self.createInitialWarnOptions())
 
-    self.setOrTrap(.modules, value: self.py.newDict())
-    self.setOrTrap(.builtin_module_names, value: self.py.emptyTuple)
+    let version = self.py.newString(Self.version)
+    self.setOrTrap(.version, value: version)
+    self.setOrTrap(.version_info, value: self.createInitialVersionInfo())
+    self.setOrTrap(.implementation, value: self.createInitialImplementation())
+    self.setOrTrap(.hexversion, value: self.createInitialHexVersion())
 
     let prefix = self.createInitialPrefix()
     let path = self.createInitialPath(prefix: prefix)
@@ -193,10 +200,8 @@ public final class Sys: PyModuleImplementation {
     self.setOrTrap(.stdout, value: stdout)
     self.setOrTrap(.stderr, value: stderr)
 
-    self.setOrTrap(.version, value: self.versionString)
-    self.setOrTrap(.version_info, value: self.createInitialVersionInfo())
-    self.setOrTrap(.implementation, value: self.createInitialImplementation())
-    self.setOrTrap(.hexversion, value: self.createInitialHexVersion())
+    self.setOrTrap(.modules, value: self.py.newDict())
+    self.setOrTrap(.builtin_module_names, value: self.py.emptyTuple)
 
     self.setOrTrap(.displayhook, doc: Self.displayhookDoc, fn: Self.displayhook(_:module:object:))
     self.setOrTrap(.excepthook, doc: Self.excepthookDoc, fn: Self.excepthook(_:module:type:value:traceback:))

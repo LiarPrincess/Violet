@@ -18,6 +18,10 @@ extension Sys {
       return self._environment
     }
 
+    internal init(config: PyConfig) {
+      self = Flags(arguments: config.arguments, environment: config.environment)
+    }
+
     internal init(arguments: Arguments, environment: Environment) {
       self.arguments = arguments
       self._environment = environment
