@@ -226,7 +226,7 @@ extension PyObject {
     }
 
     /// Append/remove given flag.
-    internal mutating func set(_ flag: Flags, to value: Bool) {
+    internal mutating func set(_ flag: Flags, value: Bool) {
       if value {
         self.set(flag)
       } else {

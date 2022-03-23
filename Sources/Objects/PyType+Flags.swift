@@ -39,7 +39,7 @@ extension PyType {
       self = TypeFlags()
 
       for flag in elements {
-        self.set(flag, to: true)
+        self.set(flag, value: true)
       }
     }
 
@@ -90,13 +90,13 @@ extension PyType {
     /// (for example by `class` statement).
     public var isHeapType: Bool {
       get { return self.isSet(Self.isHeapTypeFlag) }
-      set { self.set(Self.isHeapTypeFlag, to: newValue) }
+      set { self.set(Self.isHeapTypeFlag, value: newValue) }
     }
 
     /// Set if the type allows sub-classing.
     public var isBaseType: Bool {
       get { return self.isSet(Self.isBaseTypeFlag) }
-      set { self.set(Self.isBaseTypeFlag, to: newValue) }
+      set { self.set(Self.isBaseTypeFlag, value: newValue) }
     }
 
     /// Objects support garbage collection.
@@ -104,7 +104,7 @@ extension PyType {
     /// This flag was taken from CPython and is not used in Violet.
     public var hasGC: Bool {
       get { return self.isSet(Self.hasGCFlag) }
-      set { self.set(Self.hasGCFlag, to: newValue) }
+      set { self.set(Self.hasGCFlag, value: newValue) }
     }
 
     /// Type is abstract and cannot be instantiated
@@ -112,7 +112,7 @@ extension PyType {
     /// This flag was taken from CPython and is not used in Violet..
     public var isAbstract: Bool {
       get { return self.isSet(Self.isAbstractFlag) }
-      set { self.set(Self.isAbstractFlag, to: newValue) }
+      set { self.set(Self.isAbstractFlag, value: newValue) }
     }
 
     /// Type structure has `tp_finalize` member (3.4)
@@ -120,7 +120,7 @@ extension PyType {
     /// This flag was taken from CPython and is not used in Violet.
     public var hasFinalize: Bool {
       get { return self.isSet(Self.hasFinalizeFlag) }
-      set { self.set(Self.hasFinalizeFlag, to: newValue) }
+      set { self.set(Self.hasFinalizeFlag, value: newValue) }
     }
 
     /// ```c
@@ -132,7 +132,7 @@ extension PyType {
     /// This flag was taken from CPython and is not used in Violet.
     public var isDefault: Bool {
       get { return self.isSet(Self.isDefaultFlag) }
-      set { self.set(Self.isDefaultFlag, to: newValue) }
+      set { self.set(Self.isDefaultFlag, value: newValue) }
     }
 
       // MARK: - Is XXX subclass
@@ -142,7 +142,7 @@ extension PyType {
     /// It is used for fast path in `PyCast`.
     public var isLongSubclass: Bool {
       get { return self.isSet(Self.isLongSubclassFlag) }
-      set { self.set(Self.isLongSubclassFlag, to: newValue) }
+      set { self.set(Self.isLongSubclassFlag, value: newValue) }
     }
 
     /// This type is a `list` subclass.
@@ -150,7 +150,7 @@ extension PyType {
     /// It is used for fast path in `PyCast`.
     public var isListSubclass: Bool {
       get { return self.isSet(Self.isListSubclassFlag) }
-      set { self.set(Self.isListSubclassFlag, to: newValue) }
+      set { self.set(Self.isListSubclassFlag, value: newValue) }
     }
 
     /// This type is a `tuple` subclass.
@@ -158,7 +158,7 @@ extension PyType {
     /// It is used for fast path in `PyCast`.
     public var isTupleSubclass: Bool {
       get { return self.isSet(Self.isTupleSubclassFlag) }
-      set { self.set(Self.isTupleSubclassFlag, to: newValue) }
+      set { self.set(Self.isTupleSubclassFlag, value: newValue) }
     }
 
     /// This type is a `bytes` subclass.
@@ -166,7 +166,7 @@ extension PyType {
     /// It is used for fast path in `PyCast`.
     public var isBytesSubclass: Bool {
       get { return self.isSet(Self.isBytesSubclassFlag) }
-      set { self.set(Self.isBytesSubclassFlag, to: newValue) }
+      set { self.set(Self.isBytesSubclassFlag, value: newValue) }
     }
 
     /// This type is a `str` subclass.
@@ -174,7 +174,7 @@ extension PyType {
     /// It is used for fast path in `PyCast`.
     public var isUnicodeSubclass: Bool {
       get { return self.isSet(Self.isUnicodeSubclassFlag) }
-      set { self.set(Self.isUnicodeSubclassFlag, to: newValue) }
+      set { self.set(Self.isUnicodeSubclassFlag, value: newValue) }
     }
 
     /// This type is a `dict` subclass.
@@ -182,7 +182,7 @@ extension PyType {
     /// It is used for fast path in `PyCast`.
     public var isDictSubclass: Bool {
       get { return self.isSet(Self.isDictSubclassFlag) }
-      set { self.set(Self.isDictSubclassFlag, to: newValue) }
+      set { self.set(Self.isDictSubclassFlag, value: newValue) }
     }
 
     /// This type is a `baseException` subclass.
@@ -190,7 +190,7 @@ extension PyType {
     /// It is used for fast path in `PyCast`.
     public var isBaseExceptionSubclass: Bool {
       get { return self.isSet(Self.isBaseExceptionSubclassFlag) }
-      set { self.set(Self.isBaseExceptionSubclassFlag, to: newValue) }
+      set { self.set(Self.isBaseExceptionSubclassFlag, value: newValue) }
     }
 
     /// This type is a `type` subclass.
@@ -198,7 +198,7 @@ extension PyType {
     /// It is used for fast path in `PyCast`.
     public var isTypeSubclass: Bool {
       get { return self.isSet(Self.isTypeSubclassFlag) }
-      set { self.set(Self.isTypeSubclassFlag, to: newValue) }
+      set { self.set(Self.isTypeSubclassFlag, value: newValue) }
     }
 
     // MARK: - Violet
@@ -207,7 +207,7 @@ extension PyType {
     /// to `__dict__`.
     public var instancesHave__dict__: Bool {
       get { return self.isSet(Self.instancesHave__dict__Flag) }
-      set { self.set(Self.instancesHave__dict__Flag, to: newValue) }
+      set { self.set(Self.instancesHave__dict__Flag, value: newValue) }
     }
 
     /// (VIOLET ONLY) Flag used to denote that instances of subclass of this type
@@ -229,7 +229,7 @@ extension PyType {
     /// ```
     public var subclassInstancesHave__dict__: Bool {
       get { return self.isSet(Self.subclassInstancesHave__dict__Flag) }
-      set { self.set(Self.subclassInstancesHave__dict__Flag, to: newValue) }
+      set { self.set(Self.subclassInstancesHave__dict__Flag, value: newValue) }
     }
 
     // MARK: - Methods
@@ -241,9 +241,9 @@ extension PyType {
     }
 
     /// Append/remove given flag.
-    internal mutating func set(_ flag: TypeFlags, to value: Bool) {
+    internal mutating func set(_ flag: TypeFlags, value: Bool) {
       let objectFlags = flag.objectFlags
-      self.objectFlags.set(objectFlags, to: value)
+      self.objectFlags.set(objectFlags, value: value)
     }
   }
 }

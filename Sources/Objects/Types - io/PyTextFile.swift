@@ -52,7 +52,7 @@ public struct PyTextFile: PyObjectMixin {
   /// Should we close the file when deallocating?
   internal var closeOnDealloc: Bool {
     get { self.flags.isSet(Self.closeOnDeallocFlag) }
-    nonmutating set { self.flags.set(Self.closeOnDeallocFlag, to: newValue) }
+    nonmutating set { self.flags.set(Self.closeOnDeallocFlag, value: newValue) }
   }
 
   // MARK: - Swift init

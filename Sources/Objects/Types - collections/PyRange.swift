@@ -55,8 +55,8 @@ public struct PyRange: PyObjectMixin {
     }
     nonmutating set {
       switch newValue {
-      case .implicit: self.flags.set(PyRange.isStepImplicitFlag, to: true)
-      case .explicit: self.flags.set(PyRange.isStepImplicitFlag, to: false)
+      case .implicit: self.flags.set(PyRange.isStepImplicitFlag, value: true)
+      case .explicit: self.flags.set(PyRange.isStepImplicitFlag, value: false)
       }
     }
   }

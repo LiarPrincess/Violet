@@ -56,7 +56,7 @@ public struct PyBaseException: PyErrorMixin {
     }
     nonmutating set {
       let object = PyObject(ptr: self.ptr)
-      object.flags.set(Self.suppressContextFlag, to: newValue)
+      object.flags.set(Self.suppressContextFlag, value: newValue)
     }
   }
 
