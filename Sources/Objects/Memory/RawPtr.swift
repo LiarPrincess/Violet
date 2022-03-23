@@ -1,7 +1,8 @@
-/// Pointer to a Python object as a whole.
+/// A raw pointer for accessing untyped data.
 ///
-/// If you need to manipulate memory inside of a Python object, for example a single
-/// property like `type`, then use the typed `Ptr`.
+/// For example: a pointer to a Python object as a whole. If you need to manipulate
+/// memory inside of a Python object (for example get the object `type`) then use
+/// the typed `Ptr`.
 public struct RawPtr: CustomStringConvertible {
 
   // Do not change it to 'UnsafeMutableRawPointer'!
@@ -65,8 +66,7 @@ public struct RawPtr: CustomStringConvertible {
   ///   The number of bytes in this region is `count * MemoryLayout<T>.stride`.
   public func bind<T>(to type: T.Type, count: Int) -> BufferPtr<T> {
     let unsafePtr = self.value.bindMemory(to: T.self, capacity: count)
-    let unsafeBufferPtr = UnsafeBufferPointer(start: unsafePtr, count: count)
-    return BufferPtr(unsafeBufferPtr)
+    return BufferPtr(start: unsafePtr, count: count)
   }
 
   // MARK: - Advanced by
