@@ -78,8 +78,16 @@ public struct PyFrame: PyObjectMixin {
   }
 
   // sourcery: storedProperty
-  /// Stack of blocks (for loops, exception handlers etc.).
-  public var blocks: BlockStack { self.blocksPtr.pointee }
+  internal var blockStackStorage: BufferPtr<Block> {
+    self.blockStackStoragePtr.pointee
+  }
+
+  /// Stack of blocks (`for` loops, `exception` handlers etc.).
+  ///
+  /// 'Exclusive' means that only 1 instance is allowed for a given `PyFrame`.
+  public var blocks: ExclusiveBlockStackProxy {
+    ExclusiveBlockStackProxy(frame: self)
+  }
 
   // MARK: - Fast locals/cell/free
 
@@ -183,7 +191,8 @@ public struct PyFrame: PyObjectMixin {
     let objectStack = self.allocateObjectStack(py, code: code)
     self.objectStackStoragePtr.initialize(to: objectStack)
 
-    self.blocksPtr.initialize(to: BlockStack())
+    let blockStack = self.allocateBlockStack(py, code: code)
+    self.blockStackStoragePtr.initialize(to: blockStack)
 
     let builtins = Self.getBuiltins(py, globals: globals, parent: parent)
     self.builtinsPtr.initialize(to: builtins)
@@ -216,6 +225,7 @@ public struct PyFrame: PyObjectMixin {
 
   internal func beforeDeinitialize() {
     self.deallocateObjectStack()
+    self.deallocateBlockStack()
     self.deallocateFastLocals()
     self.deallocateCellAndFreeVariables()
   }

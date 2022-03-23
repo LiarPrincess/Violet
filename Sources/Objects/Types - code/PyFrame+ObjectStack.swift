@@ -1,56 +1,59 @@
-extension PyCode {
-  fileprivate var fastLocalsCount: Int {
-    return self.variableCount
-  }
-}
-
 extension PyFrame {
 
-  // MARK: - Object stack
+  // MARK: - Allocate
 
   internal func allocateObjectStack(_ py: Py, code: PyCode) -> BufferPtr<PyObject> {
-    // We will allocate a bit more space, because the exact allocation could
-    // be too tight.
-    let predictedObjectStackCount = code.predictedObjectStackCount + 16
-    let count = Swift.max(predictedObjectStackCount, 128)
     // 'PyObject' is trivial, so we don't have to initalize the memory.
-    return Self.allocateObjectStackStorage(count: count)
+    let count = Swift.max(code.predictedObjectStackCount, 128)
+    return Self.allocateBuffer(count: count)
   }
 
-  private static func allocateObjectStackStorage(count: Int) -> BufferPtr<PyObject> {
+  private static func allocateBuffer(count: Int) -> BufferPtr<PyObject> {
     let stride = MemoryLayout<PyObject>.stride
     let alignment = MemoryLayout<PyObject>.alignment
     let rawPtr = PyMemory.allocate(byteCount: count * stride, alignment: alignment)
     return rawPtr.bind(to: PyObject.self, count: count)
   }
 
+  // MARK: - Deallocate
+
   internal func deallocateObjectStack() {
-    Self.deallocateObjectStackStorage(ptr: self.objectStackStorage)
+    Self.deallocateBuffer(ptr: self.objectStackStorage)
   }
 
-  private static func deallocateObjectStackStorage(ptr: BufferPtr<PyObject>) {
+  private static func deallocateBuffer(ptr: BufferPtr<PyObject>) {
     let rawPtr = ptr.deinitialize()
     rawPtr.deallocate()
   }
 
+  // MARK: - Stack
+
   /// 'Exclusive' means that only 1 instance is allowed for a given `PyFrame`.
   public struct ExclusiveObjectStackProxy {
 
+    /// Top of the stack.
+    /// Undefined result if on empty stack.
     public var top: PyObject {
       get { return self.endPointer.advanced(by: -1).pointee }
       set { self.endPointer.advanced(by: -1).pointee = newValue }
     }
 
+    /// Object below `self.top`.
+    /// Undefined result if `self.count < 2`.
     public var second: PyObject {
       get { return self.endPointer.advanced(by: -2).pointee }
       set { self.endPointer.advanced(by: -2).pointee = newValue }
     }
 
+    /// Object below `self.second`.
+    /// Undefined result if `self.count < 3`.
     public var third: PyObject {
       get { return self.endPointer.advanced(by: -3).pointee }
       set { self.endPointer.advanced(by: -3).pointee = newValue }
     }
 
+    /// Object below `self.third`.
+    /// Undefined result if `self.count < 4`.
     public var fourth: PyObject {
       get { return self.endPointer.advanced(by: -4).pointee }
       set { self.endPointer.advanced(by: -4).pointee = newValue }
@@ -65,6 +68,12 @@ extension PyFrame {
       return self.buffer.baseAddress.distance(to: self.endPointer)
     }
 
+    /// Predicted object count next time this `code` executes.
+    /// Used to optimize allocation size.
+    public var predictedNextRunCount: Int {
+      return self.buffer.count
+    }
+
     /// Pointer to the element AFTER the top of the stack.
     private var endPointer: UnsafeMutablePointer<PyObject>
     /// Shortcut to `self.frame.objectStackStorage`.
@@ -77,6 +86,8 @@ extension PyFrame {
       self.endPointer = frame.objectStackStorage.baseAddress
       self.frame = frame
     }
+
+    // MARK: - Peek/set
 
     public func peek(_ n: Int) -> PyObject {
       assert(
@@ -99,6 +110,8 @@ extension PyFrame {
       let ptr = self.endPointer.advanced(by: -n - 1)
       ptr.pointee = object
     }
+
+    // MARK: - Push
 
     public mutating func push(_ object: PyObject) {
       self.resizeIfNeeded(pushCount: 1)
@@ -129,16 +142,19 @@ extension PyFrame {
 
       // We need a new buffer!
       let newCount = pushCount + Swift.min(count, 256)
-      let newBuffer = PyFrame.allocateObjectStackStorage(count: newCount)
+      let newBuffer = PyFrame.allocateBuffer(count: newCount)
       newBuffer.initialize(from: self.buffer)
-      // Elements after 'self.count' are uninitialized (they are trivial, so whatever).
+      // Elements after 'self.count' are uninitialized
+      // (they are trivial, so whatever).
 
-      PyFrame.deallocateObjectStackStorage(ptr: self.buffer)
+      PyFrame.deallocateBuffer(ptr: self.buffer)
 
       self.buffer = newBuffer
       self.frame.objectStackStoragePtr.pointee = newBuffer
       self.endPointer = newBuffer.baseAddress.advanced(by: count)
     }
+
+    // MARK: - Pop
 
     public mutating func pop() -> PyObject {
       assert(!self.isEmpty, "Pop from an empty stack.")
@@ -179,113 +195,6 @@ extension PyFrame {
       )
 
       self.endPointer = self.buffer.baseAddress.advanced(by: untilCount)
-    }
-  }
-
-  // MARK: - Fast locals
-
-  public typealias FastLocal = PyObject?
-
-  internal func allocateFastLocals(_ py: Py, code: PyCode) -> BufferPtr<FastLocal> {
-    let count = code.fastLocalsCount
-    let stride = MemoryLayout<FastLocal>.stride
-    let byteCount = count * stride
-
-    let alignment = MemoryLayout<FastLocal>.alignment
-    let rawPtr = PyMemory.allocate(byteCount: byteCount, alignment: alignment)
-    let ptr = rawPtr.bind(to: FastLocal.self, count: count)
-
-    ptr.initialize(repeating: nil)
-    return ptr
-  }
-
-  internal func deallocateFastLocals() {
-    let ptr = self.fastLocalsStorage.deinitialize()
-    ptr.deallocate()
-  }
-
-  public struct FastLocalsProxy {
-
-    private let ptr: BufferPtr<FastLocal>
-
-    internal var first: FastLocal? {
-      return self.ptr.first
-    }
-
-    public var count: Int {
-      return self.ptr.count
-    }
-
-    internal init(frame: PyFrame) {
-      self.ptr = frame.fastLocalsStorage
-    }
-
-    public subscript(index: Int) -> FastLocal {
-      get { return self.ptr[index] }
-      nonmutating set { self.ptr[index] = newValue }
-    }
-  }
-
-  // MARK: - Cell/free variables
-
-  public typealias Cell = PyCell
-
-  internal func allocateCellAndFreeVariables(_ py: Py, code: PyCode) -> BufferPtr<Cell> {
-    let cellCount = code.cellVariableCount
-    let freeCount = code.freeVariableCount
-    let count = cellCount + freeCount
-
-    let stride = MemoryLayout<Cell>.stride
-    let byteCount = count * stride
-
-    let alignment = MemoryLayout<Cell>.alignment
-    let rawPtr = PyMemory.allocate(byteCount: byteCount, alignment: alignment)
-    let ptr = rawPtr.bind(to: Cell.self, count: count)
-
-    ptr.initialize { _ in py.newCell(content: nil) }
-    return ptr
-  }
-
-  internal func deallocateCellAndFreeVariables() {
-    let ptr = self.cellAndFreeVariableStorage.deinitialize()
-    ptr.deallocate()
-  }
-
-  public struct CellVariablesProxy {
-
-    private let ptr: BufferPtr<Cell>
-
-    public var count: Int {
-      return self.ptr.count
-    }
-
-    internal init(frame: PyFrame) {
-      let startIndex = 0
-      let endIndex = frame.code.cellVariableCount
-      self.ptr = frame.cellAndFreeVariableStorage[startIndex..<endIndex]
-    }
-
-    public subscript(index: Int) -> Cell {
-      return self.ptr[index]
-    }
-  }
-
-  public struct FreeVariablesProxy {
-
-    private let ptr: BufferPtr<Cell>
-
-    public var count: Int {
-      return self.ptr.count
-    }
-
-    internal init(frame: PyFrame) {
-      let startIndex = frame.code.cellVariableCount
-      let endIndex = frame.cellAndFreeVariableStorage.count
-      self.ptr = frame.cellAndFreeVariableStorage[startIndex..<endIndex]
-    }
-
-    public subscript(index: Int) -> Cell {
-      return self.ptr[index]
     }
   }
 }
