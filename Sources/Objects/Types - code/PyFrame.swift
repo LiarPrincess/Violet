@@ -66,8 +66,16 @@ public struct PyFrame: PyObjectMixin {
   // MARK: - Stacks
 
   // sourcery: storedProperty
-  /// Stack of `PyObjects`.
-  public var stack: ObjectStack { self.stackPtr.pointee }
+  internal var objectStackStorage: BufferPtr<PyObject> {
+    self.objectStackStoragePtr.pointee
+  }
+
+  /// Stack of `PyObjects` to be manipulated when executing code.
+  ///
+  /// 'Exclusive' means that only 1 instance is allowed for a given `PyFrame`.
+  public var exclusiveObjectStack: ExclusiveObjectStackProxy {
+    ExclusiveObjectStackProxy(frame: self)
+  }
 
   // sourcery: storedProperty
   /// Stack of blocks (for loops, exception handlers etc.).
@@ -172,7 +180,9 @@ public struct PyFrame: PyObjectMixin {
     self.localsPtr.initialize(to: locals)
     self.globalsPtr.initialize(to: globals)
 
-    self.stackPtr.initialize(to: ObjectStack())
+    let objectStack = self.allocateObjectStack(py, code: code)
+    self.objectStackStoragePtr.initialize(to: objectStack)
+
     self.blocksPtr.initialize(to: BlockStack())
 
     let builtins = Self.getBuiltins(py, globals: globals, parent: parent)
@@ -205,6 +215,7 @@ public struct PyFrame: PyObjectMixin {
   }
 
   internal func beforeDeinitialize() {
+    self.deallocateObjectStack()
     self.deallocateFastLocals()
     self.deallocateCellAndFreeVariables()
   }

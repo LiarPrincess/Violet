@@ -1,62 +1,82 @@
-public struct BufferPtr<Element>: RandomAccessCollection {
+/// A pointer for accessing a continuous allocation of `TrivialElement` instances.
+///
+/// - Important: `TrivialElement` has to be a trivial type!
+public struct BufferPtr<TrivialElement>: RandomAccessCollection {
 
+  /// A pointer to the first element of the buffer.
+  public let baseAddress: UnsafeMutablePointer<TrivialElement>
   /// The number of elements in the buffer.
   ///
   /// If the `baseAddress` of this buffer is `nil`, the count is zero. However,
   /// a buffer can have a `count` of zero even with a non-`nil` base address.
-  public var count: Int { self.value.count }
+  public let count: Int
 
   public var startIndex: Int { 0 }
   public var endIndex: Int { self.count }
 
-  private let value: UnsafeMutableBufferPointer<Element>
-
-  public init(_ value: UnsafeBufferPointer<Element>) {
-    self.value = UnsafeMutableBufferPointer(mutating: value)
+  /// Creates a new buffer pointer over the specified number of contiguous
+  /// instances beginning at the given pointer.
+  ///
+  /// - Parameters:
+  ///   - start: A pointer to the start of the buffer. The pointer passed as `start`
+  ///     must be aligned to `MemoryLayout<TrivialElement>.alignment`.
+  ///   - count: The number of instances in the buffer. `count` must not be
+  ///     negative.
+  public init(start: UnsafePointer<TrivialElement>, count: Int) {
+    let startMutable = UnsafeMutablePointer(mutating: start)
+    self.init(start: startMutable, count: count)
   }
 
-  public init(_ value: UnsafeMutableBufferPointer<Element>) {
-    self.value = value
+  /// Creates a new buffer pointer over the specified number of contiguous
+  /// instances beginning at the given pointer.
+  ///
+  /// - Parameters:
+  ///   - start: A pointer to the start of the buffer. The pointer passed as `start`
+  ///     must be aligned to `MemoryLayout<TrivialElement>.alignment`.
+  ///   - count: The number of instances in the buffer. `count` must not be
+  ///     negative.
+  public init(start: UnsafeMutablePointer<TrivialElement>, count: Int) {
+    assert(count >= 0, "BufferPtr with negative count")
+    self.baseAddress = start
+    self.count = count
   }
 
   // MARK: - Initialize
 
   /// Initializes every element in this buffer's memory to a copy of the given value.
   ///
-  /// The destination memory must be uninitialized or the buffer's `Element`
-  /// must be a trivial type. After a call to `initialize(repeating:)`, the
-  /// entire region of memory referenced by this buffer is initialized.
-  ///
-  /// - Parameters:
-  ///   - repeatedValue: The instance to initialize this buffer's memory with.
-  public func initialize(repeating repeatedValue: Element) {
-    self.value.initialize(repeating: repeatedValue)
+  /// After a call to `initialize(repeating:)`, the entire region of memory
+  /// referenced by this buffer is initialized.
+  public func initialize(repeating repeatedValue: TrivialElement) {
+    self.baseAddress.initialize(repeating: repeatedValue, count: self.count)
   }
 
-  /// Initializes the buffer's memory with the given elements.
+  /// Initializes `source.count` first elements referenced by this buffer with
+  /// the values frm `source`.
   ///
-  /// When calling the `initialize(from:)` method on a buffer `b`, the memory
-  /// referenced by `b` must be uninitialized or the `Element` type must be a
-  /// trivial type. After the call, the memory referenced by this buffer up
-  /// to, but not including, the returned index is initialized. The buffer
-  /// must contain sufficient memory to accommodate
-  /// `source.underestimatedCount`.
+  /// After calling `initialize(from:)` the initial `source.count` elements are
+  /// initialized. The rest of the elements are left uninitalized.
   ///
-  /// The returned index is the position of the element in the buffer one past
-  /// the last element written. If `source` contains no elements, the returned
-  /// index is equal to the buffer's `startIndex`. If `source` contains an
-  /// equal or greater number of elements than the buffer can hold, the
-  /// returned index is equal to the buffer's `endIndex`.
+  /// - Parameters:
+  ///   - source: A pointer to the values to copy. The memory region
+  ///     `source..<(source + count)` must be initialized. The memory regions
+  ///     referenced by `source` and this pointer must not overlap.
+  public func initialize(from source: BufferPtr<TrivialElement>) {
+    self.baseAddress.initialize(from: source.baseAddress, count: source.count)
+  }
+
+  /// Initializes every element in this buffer's memory to a result of calling
+  /// `fn(index)`.
   ///
-  /// - Parameter source: A sequence of elements with which to initializer the
-  ///   buffer.
-  /// - Returns: An iterator to any elements of `source` that didn't fit in the
-  ///   buffer, and an index to the point in the buffer one past the last
-  ///   element written.
-  public func initialize<S: Sequence>(
-    from source: S
-  ) -> (S.Iterator, Int) where S.Element == Element {
-    return self.value.initialize(from: source)
+  /// After a call to `initialize(fn:)`, the entire region of memory referenced
+  /// by this buffer is initialized.
+  public func initialize(fn: (Int) -> TrivialElement) {
+    var ptr = self.baseAddress
+    for index in 0..<self.count {
+      let element = fn(index)
+      ptr.initialize(to: element)
+      ptr = ptr.advanced(by: 1)
+    }
   }
 
   /// Deinitializes the specified all values in buffer.
@@ -66,55 +86,39 @@ public struct BufferPtr<Element>: RandomAccessCollection {
   /// calling `deinitialize(count:)`, the memory is uninitialized, but still
   /// bound to the `Pointee` type.
   @discardableResult
-  public func deinitialize() -> RawPtr? {
-    let unsafeRawPointer = self.value.baseAddress?.deinitialize(count: self.count)
-    return unsafeRawPointer.map(RawPtr.init)
+  public func deinitialize() -> RawPtr {
+    let raw = self.baseAddress.deinitialize(count: self.count)
+    return RawPtr(raw)
   }
 
   // MARK: - Subscript
 
-  public subscript(index: Int) -> Element {
-    get { return self.value[index] }
-    nonmutating set { self.value[index] = newValue }
-  }
-
-  public subscript(range: Range<Int>) -> BufferPtr<Element> {
-    let slice = self.value[range]
-    let ptr = UnsafeMutableBufferPointer(rebasing: slice)
-    return BufferPtr(ptr)
-  }
-
-  // MARK: - Equality
-
-
-  private var baseAddress: UnsafeMutablePointer<Element>? {
-    return self.value.baseAddress
-  }
-
-  /// Returns a `Boolean` value indicating whether two `Ptrs` are pointing
-  /// to the same object.
-  @available(*, unavailable, message: "Can't compare buffers")
-  public static func === (lhs: BufferPtr, rhs: BufferPtr) -> Bool {
-    guard lhs.count == rhs.count else {
-      return false
+  public subscript(index: Int) -> TrivialElement {
+    get {
+      let elementPtr = self.getElementPointer(index: index)
+      return elementPtr.pointee
     }
-
-    // Docs for 'UnsafeMutablePointer.baseAddress':
-    // A pointer to the first element of the buffer.
-    //
-    // If the `baseAddress` of this buffer is `nil`, the count is zero. However,
-    // a buffer can have a `count` of zero even with a non-`nil` base address.
-
-    // Basically:
-    // - both have 'baseAddress' -> compare them
-    // - one of them does not have 'baseAddress' -> false
-    // - both do not have 'baseAddress' -> THIS IS THE PROBLEM
-    //   we have already lost our 'identity' so we have nothing to compare.
-
-    guard let lhsPtr = lhs.baseAddress, let rhsPtr = rhs.baseAddress else {
-      return false
+    nonmutating set {
+      // This type only deals with trivial elements!
+      let elementPtr = self.getElementPointer(index: index)
+      elementPtr.pointee = newValue
     }
+  }
 
-    return lhsPtr == rhsPtr
+  private func getElementPointer(index: Int) -> UnsafeMutablePointer<TrivialElement> {
+#if DEBUG
+    assert(index >= 0)
+    assert(index < self.count)
+#endif
+    return self.baseAddress.advanced(by: index)
+  }
+
+  public subscript(range: Range<Int>) -> BufferPtr<TrivialElement> {
+#if DEBUG
+    assert(range.lowerBound >= 0)
+    assert(range.upperBound <= self.count)
+#endif
+    let ptr = self.baseAddress.advanced(by: range.lowerBound)
+    return BufferPtr(start: ptr, count: range.count)
   }
 }

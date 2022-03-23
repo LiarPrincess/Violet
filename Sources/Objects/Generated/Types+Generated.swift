@@ -2625,7 +2625,7 @@ extension PyFrame {
     internal let localsOffset: Int
     internal let globalsOffset: Int
     internal let builtinsOffset: Int
-    internal let stackOffset: Int
+    internal let objectStackStorageOffset: Int
     internal let blocksOffset: Int
     internal let fastLocalsStorageOffset: Int
     internal let cellAndFreeVariableStorageOffset: Int
@@ -2644,7 +2644,7 @@ extension PyFrame {
           PyMemory.FieldLayout(from: PyDict.self), // PyFrame.locals
           PyMemory.FieldLayout(from: PyDict.self), // PyFrame.globals
           PyMemory.FieldLayout(from: PyDict.self), // PyFrame.builtins
-          PyMemory.FieldLayout(from: ObjectStack.self), // PyFrame.stack
+          PyMemory.FieldLayout(from: BufferPtr<PyObject>.self), // PyFrame.objectStackStorage
           PyMemory.FieldLayout(from: BlockStack.self), // PyFrame.blocks
           PyMemory.FieldLayout(from: BufferPtr<FastLocal>.self), // PyFrame.fastLocalsStorage
           PyMemory.FieldLayout(from: BufferPtr<Cell>.self), // PyFrame.cellAndFreeVariableStorage
@@ -2659,7 +2659,7 @@ extension PyFrame {
       self.localsOffset = layout.offsets[2]
       self.globalsOffset = layout.offsets[3]
       self.builtinsOffset = layout.offsets[4]
-      self.stackOffset = layout.offsets[5]
+      self.objectStackStorageOffset = layout.offsets[5]
       self.blocksOffset = layout.offsets[6]
       self.fastLocalsStorageOffset = layout.offsets[7]
       self.cellAndFreeVariableStorageOffset = layout.offsets[8]
@@ -2689,8 +2689,8 @@ extension PyFrame {
   internal var globalsPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.globalsOffset) }
   /// Property: `PyFrame.builtins`.
   internal var builtinsPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.builtinsOffset) }
-  /// Property: `PyFrame.stack`.
-  internal var stackPtr: Ptr<ObjectStack> { Ptr(self.ptr, offset: Self.layout.stackOffset) }
+  /// Property: `PyFrame.objectStackStorage`.
+  internal var objectStackStoragePtr: Ptr<BufferPtr<PyObject>> { Ptr(self.ptr, offset: Self.layout.objectStackStorageOffset) }
   /// Property: `PyFrame.blocks`.
   internal var blocksPtr: Ptr<BlockStack> { Ptr(self.ptr, offset: Self.layout.blocksOffset) }
   /// Property: `PyFrame.fastLocalsStorage`.
@@ -2730,7 +2730,7 @@ extension PyFrame {
     zelf.localsPtr.deinitialize()
     zelf.globalsPtr.deinitialize()
     zelf.builtinsPtr.deinitialize()
-    zelf.stackPtr.deinitialize()
+    zelf.objectStackStoragePtr.deinitialize()
     zelf.blocksPtr.deinitialize()
     zelf.fastLocalsStoragePtr.deinitialize()
     zelf.cellAndFreeVariableStoragePtr.deinitialize()

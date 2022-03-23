@@ -1,4 +1,6 @@
-/// Pointer inside of a Python object (for example to a `type` or `__dict__` property).
+/// A pointer for accessing a single instance of `Pointee`.
+///
+/// For example: a pointer to Python object `type` or `__dict__` property.
 public struct Ptr<Pointee> {
 
   /// Accesses the instance referenced by this pointer.

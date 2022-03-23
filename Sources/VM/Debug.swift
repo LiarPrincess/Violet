@@ -81,7 +81,7 @@ internal enum Debug {
 
   // MARK: - Stack
 
-  internal static func stack(stack: PyFrame.ObjectStack) {
+  internal static func stack(stack: PyFrame.ExclusiveObjectStackProxy) {
 #if DEBUG
     guard Self.isEnabledAndAfterImportlib else { return }
 
