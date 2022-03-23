@@ -44,6 +44,31 @@ public struct RawPtr: CustomStringConvertible {
     return Ptr(unsafePtr)
   }
 
+  /// Binds the memory to the specified type and returns a typed pointer to the
+  /// bound memory.
+  ///
+  /// Use the `bind(to:count:)` method to bind the memory referenced by this pointer
+  /// to the type `T`. The memory must be uninitialized or initialized to a type
+  /// that is layout compatible with `T`. If the memory is uninitialized,
+  /// it is still uninitialized after being bound to `T`.
+  ///
+  /// - Warning: A memory location may only be bound to one type at a time. The
+  ///   behavior of accessing memory as a type unrelated to its bound type is
+  ///   undefined.
+  ///
+  /// - Parameters:
+  ///   - type: The type `T` to bind the memory to.
+  ///   - count: The amount of memory to bind to type `T`, counted as instances
+  ///     of `T`.
+  /// - Returns: A typed pointer to the newly bound memory. The memory in this
+  ///   region is bound to `T`, but has not been modified in any other way.
+  ///   The number of bytes in this region is `count * MemoryLayout<T>.stride`.
+  public func bind<T>(to type: T.Type, count: Int) -> BufferPtr<T> {
+    let unsafePtr = self.value.bindMemory(to: T.self, capacity: count)
+    let unsafeBufferPtr = UnsafeBufferPointer(start: unsafePtr, count: count)
+    return BufferPtr(unsafeBufferPtr)
+  }
+
   // MARK: - Advanced by
 
   /// Returns a `ptr` that is offset the specified distance from this `ptr`.

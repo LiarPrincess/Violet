@@ -44,7 +44,7 @@ public final class PyMemory {
     return ptr
   }
 
-  private static func allocate(byteCount: Int, alignment: Int) -> RawPtr {
+  internal static func allocate(byteCount: Int, alignment: Int) -> RawPtr {
     return RawPtr.allocate(byteCount: byteCount, alignment: alignment)
   }
 
