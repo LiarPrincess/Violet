@@ -79,12 +79,22 @@ extension PyFrame {
     }
 
     public func peek(_ n: Int) -> PyObject {
+      assert(
+        0 <= n && n < self.count,
+        "Peek out of bounds (n: \(n), count: \(self.count))."
+      )
+
       // '-1' because 'endPointer' is after last object.
       let ptr = self.endPointer.advanced(by: -n - 1)
       return ptr.pointee
     }
 
     public func set(_ n: Int, object: PyObject) {
+      assert(
+        0 <= n && n < self.count,
+        "Set out of bounds (n: \(n), count: \(self.count))."
+      )
+
       // '-1' because 'endPointer' is after last object.
       let ptr = self.endPointer.advanced(by: -n - 1)
       ptr.pointee = object
@@ -118,7 +128,7 @@ extension PyFrame {
       }
 
       // We need a new buffer!
-      let newCount = pushCount + Swift.min(self.count, 256)
+      let newCount = pushCount + Swift.min(count, 256)
       let newBuffer = PyFrame.allocateObjectStackStorage(count: newCount)
       newBuffer.initialize(from: self.buffer)
       // Elements after 'self.count' are uninitialized (they are trivial, so whatever).
@@ -142,15 +152,15 @@ extension PyFrame {
     /// So, basically it will slice stack `count` elements from the end
     /// and return this slice.
     public mutating func popElementsInPushOrder(count: Int) -> [PyObject] {
-      // Fast check to avoid allocation.
-      if count == 0 {
-        return []
-      }
-
       assert(
         self.count >= count,
         "Pop elements out of bounds (pop: \(count), count: \(self.count))."
       )
+
+      // Fast check to avoid allocation.
+      if count == 0 {
+        return []
+      }
 
       let resultStart = self.count - count
       let resultBuffer = self.buffer[resultStart..<self.count]
@@ -164,7 +174,7 @@ extension PyFrame {
     /// Pop elements until we reach `untilCount`.
     public mutating func pop(untilCount: Int) {
       assert(
-        self.count >= untilCount,
+        untilCount <= self.count,
         "Pop until count out of bounds (pop: \(untilCount), count: \(self.count))."
       )
 

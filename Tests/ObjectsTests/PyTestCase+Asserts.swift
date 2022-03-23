@@ -33,6 +33,7 @@ extension PyTestCase {
   func assertIsEqual<L: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
                                                          left: L?,
                                                          right: R,
+                                                         message: String? = nil,
                                                          expected: Bool = true,
                                                          file: StaticString = #file,
                                                          line: UInt = #line) {
@@ -41,18 +42,31 @@ extension PyTestCase {
       return
     }
 
-    self.assertIsEqual(py, left: left, right: right, expected: expected, file: file, line: line)
+    self.assertIsEqual(py,
+                       left: left,
+                       right: right,
+                       message: message,
+                       expected: expected,
+                       file: file,
+                       line: line)
   }
 
   func assertIsEqual<R: PyObjectMixin>(_ py: Py,
                                        left: PyResult,
                                        right: R,
+                                       message: String? = nil,
                                        expected: Bool = true,
                                        file: StaticString = #file,
                                        line: UInt = #line) {
     switch left {
     case let .value(o):
-      self.assertIsEqual(py, left: o, right: right, expected: expected, file: file, line: line)
+      self.assertIsEqual(py,
+                         left: o,
+                         right: right,
+                         message: message,
+                         expected: expected,
+                         file: file,
+                         line: line)
     case let .error(e):
       let reason = self.toString(py, error: e)
       XCTFail("Left is error: \(reason)", file: file, line: line)
@@ -63,12 +77,19 @@ extension PyTestCase {
   func assertIsEqual<L: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
                                                          left: PyResultGen<L>,
                                                          right: R,
+                                                         message: String? = nil,
                                                          expected: Bool = true,
                                                          file: StaticString = #file,
                                                          line: UInt = #line) {
     switch left {
     case let .value(o):
-      self.assertIsEqual(py, left: o, right: right, expected: expected, file: file, line: line)
+      self.assertIsEqual(py,
+                         left: o,
+                         right: right,
+                         message: message,
+                         expected: expected,
+                         file: file,
+                         line: line)
     case let .error(e):
       let reason = self.toString(py, error: e)
       XCTFail("Left is error: \(reason)", file: file, line: line)
@@ -79,16 +100,19 @@ extension PyTestCase {
   func assertIsEqual<L: PyObjectMixin, R: PyObjectMixin>(_ py: Py,
                                                          left: L,
                                                          right: R,
+                                                         message: String? = nil,
                                                          expected: Bool = true,
                                                          file: StaticString = #file,
                                                          line: UInt = #line) {
+    let prefix = message.map { $0 + ": " } ?? ""
+
     switch py.isEqualBool(left: left.asObject, right: right.asObject) {
     case let .value(bool):
       // Doing 'if' gives better error messages than 'XCTAssertEqual'.
       if expected {
-        XCTAssertTrue(bool, "\(left) == \(right)", file: file, line: line)
+        XCTAssertTrue(bool, "\(prefix)\(left) == \(right)", file: file, line: line)
       } else {
-        XCTAssertFalse(bool, "\(left) != \(right)", file: file, line: line)
+        XCTAssertFalse(bool, "\(prefix)\(left) != \(right)", file: file, line: line)
       }
     case let .error(e):
       let reason = self.toString(py, error: e)
