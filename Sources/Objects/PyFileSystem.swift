@@ -166,7 +166,7 @@ extension PyFileSystem {
   public func read(_ py: Py, fd: Int32) -> PyResultGen<Data> {
     switch self.open(py, fd: fd, mode: .read) {
     case let .value(fd):
-      return self.readToEnd(fd: fd)
+      return self.readToEnd(py, fd: fd)
     case let .error(e):
       return .error(e)
     }
@@ -175,13 +175,13 @@ extension PyFileSystem {
   public func read(_ py: Py, path: Path) -> PyResultGen<Data> {
     switch self.open(py, path: path, mode: .read) {
     case let .value(fd):
-      return self.readToEnd(fd: fd)
+      return self.readToEnd(py, fd: fd)
     case let .error(e):
       return .error(e)
     }
   }
 
-  private func readToEnd(fd: FileDescriptorType) -> PyResultGen<Data> {
-    return fd.readToEnd()
+  private func readToEnd(_ py: Py, fd: FileDescriptorType) -> PyResultGen<Data> {
+    return fd.readToEnd(py)
   }
 }

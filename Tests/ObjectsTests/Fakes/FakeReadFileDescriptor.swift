@@ -10,39 +10,39 @@ class FakeReadFileDescriptor: FileDescriptorType {
     self.raw = fd
   }
 
-  func readLine() -> PyResultGen<Data> {
+  func readLine(_ py: Py) -> PyResultGen<Data> {
     shouldNotBeCalled()
   }
 
-  func readToEnd() -> PyResultGen<Data> {
+  func readToEnd(_ py: Py) -> PyResultGen<Data> {
     shouldNotBeCalled()
   }
 
-  func read(upToCount count: Int) -> PyResultGen<Data> {
+  func read(_ py: Py, count: Int) -> PyResultGen<Data> {
     shouldNotBeCalled()
   }
 
-  func write<T: DataProtocol>(contentsOf data: T) -> PyBaseException? {
+  func write<T: DataProtocol>(_ py: Py, data: T) -> PyBaseException? {
     shouldNotBeCalled()
   }
 
-  func flush() -> PyBaseException? {
+  func flush(_ py: Py) -> PyBaseException? {
     shouldNotBeCalled()
   }
 
-  func offset() -> PyResultGen<UInt64> {
+  func offset(_ py: Py) -> PyResultGen<UInt64> {
     shouldNotBeCalled()
   }
 
-  func seekToEnd() -> PyResultGen<UInt64> {
+  func seekToEnd(_ py: Py) -> PyResultGen<UInt64> {
     shouldNotBeCalled()
   }
 
-  func seek(toOffset offset: UInt64) -> PyBaseException? {
+  func seek(_ py: Py, offset: UInt64) -> PyBaseException? {
     shouldNotBeCalled()
   }
 
-  func close() -> PyBaseException? {
+  func close(_ py: Py) -> PyBaseException? {
     shouldNotBeCalled()
   }
 }

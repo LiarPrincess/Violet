@@ -172,17 +172,18 @@ public struct PyTextFile: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "readline")
     }
 
-    if let e = zelf.assertFileIsOpenAndReadable(py) {
+    let result = zelf.readLine(py)
+    return PyResult(py, result)
+  }
+
+  public func readLine(_ py: Py) -> PyResultGen<String> {
+    if let e = self.assertFileIsOpenAndReadable(py) {
       return .error(e)
     }
 
-    switch zelf.fd.readLine() {
+    switch self.fd.readLine(py) {
     case let .value(data):
-      let result = zelf.encoding.decodeOrError(py,
-                                               data: data,
-                                               onError: zelf.errorHandling)
-
-      return PyResult(py, result)
+      return self.encoding.decodeOrError(py, data: data, onError: self.errorHandling)
     case let .error(e):
       return .error(e)
     }
@@ -229,8 +230,8 @@ public struct PyTextFile: PyObjectMixin {
     }
 
     let readResult = size > 0 ?
-      self.fd.read(upToCount: size) :
-      self.fd.readToEnd()
+      self.fd.read(py, count: size) :
+      self.fd.readToEnd(py)
 
     let data: Data
     switch readResult {
@@ -296,16 +297,21 @@ public struct PyTextFile: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "write")
     }
 
-    guard let str = py.cast.asString(object) else {
-      let message = "write() argument must be str, not \(object.typeName)"
-      return .typeError(py, message: message)
-    }
-
-    if let error = zelf.write(py, string: str.value) {
-      return .error(error)
+    if let e = zelf.write(py, object: object) {
+      return .error(e)
     }
 
     return .none(py)
+  }
+
+  public func write(_ py: Py, object: PyObject) -> PyBaseException? {
+    guard let str = py.cast.asString(object) else {
+      let message = "write() argument must be str, not \(object.typeName)"
+      let error = py.newTypeError(message: message)
+      return error.asBaseException
+    }
+
+    return self.write(py, string: str.value)
   }
 
   public func write(_ py: Py, string: String) -> PyBaseException? {
@@ -320,7 +326,7 @@ public struct PyTextFile: PyObjectMixin {
 
     switch self.encoding.encodeOrError(py, string: string, onError: self.errorHandling) {
     case let .value(data):
-      return self.fd.write(contentsOf: data)
+      return self.fd.write(py, data: data)
     case let .error(e):
       return e
     }
@@ -334,15 +340,15 @@ public struct PyTextFile: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "flush")
     }
 
-    if let error = zelf.flush() {
+    if let error = zelf.flush(py) {
       return .error(error)
     }
 
     return .none(py)
   }
 
-  public func flush() -> PyBaseException? {
-    return self.fd.flush()
+  public func flush(_ py: Py) -> PyBaseException? {
+    return self.fd.flush(py)
   }
 
   // MARK: - Close
@@ -368,7 +374,7 @@ public struct PyTextFile: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "close")
     }
 
-    if let error = zelf.close() {
+    if let error = zelf.close(py) {
       return .error(error)
     }
 
@@ -376,13 +382,13 @@ public struct PyTextFile: PyObjectMixin {
   }
 
   /// Idempotent
-  public func close() -> PyBaseException? {
-    return self.closeIfNotAlreadyClosed()
+  public func close(_ py: Py) -> PyBaseException? {
+    return self.closeIfNotAlreadyClosed(py)
   }
 
-  private func closeIfNotAlreadyClosed() -> PyBaseException? {
+  private func closeIfNotAlreadyClosed(_ py: Py) -> PyBaseException? {
     if !self.isClosed {
-      return self.fd.close()
+      return self.fd.close(py)
     }
 
     return nil
@@ -413,7 +419,7 @@ public struct PyTextFile: PyObjectMixin {
     }
 
     // 'self.close' is (or at least should be) idempotent
-    if let error = zelf.close() {
+    if let error = zelf.close(py) {
       return .error(error)
     }
 
@@ -449,7 +455,7 @@ public struct PyTextFile: PyObjectMixin {
     // Remember that if we return 'truthy' value (yes, we JavasScript now)
     // then the exception will be suppressed (and we don't want this).
     // So we return 'None' which is 'falsy'.
-    if let error = zelf.close() {
+    if let error = zelf.close(py) {
       return .error(error)
     }
 

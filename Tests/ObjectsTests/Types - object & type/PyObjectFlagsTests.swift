@@ -87,10 +87,10 @@ class PyObjectFlagsTests: XCTestCase {
       var f = Flags()
       XCTAssertFalse(f.isSet(flag))
 
-      f.set(flag, to: true)
+      f.set(flag, value: true)
       XCTAssertTrue(f.isSet(flag))
 
-      f.set(flag, to: false)
+      f.set(flag, value: false)
       XCTAssertFalse(f.isSet(flag))
     }
   }

@@ -83,11 +83,9 @@ public final class PyMemory {
   internal static func destroyPy(_ py: Py) {
     let memory = py.memory
 
-    var object = memory.lastAllocatedObject
-    while let o = object {
-      let previous = o.memoryInfo.previous
-      memory.destroy(object: o)
-      object = previous
+    // Remember that objects may be created in the 'deinitalize' functions!
+    while let object = memory.lastAllocatedObject {
+      memory.destroy(object: object)
     }
 
     py.deinitialize()
