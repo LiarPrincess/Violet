@@ -53,8 +53,10 @@ public struct Ptr<Pointee> {
   ///
   /// - Important: Calling this method is **essential** for updating ARC
   /// for managed objects.
-  public func deinitialize() {
-    self.value.deinitialize(count: 1)
+  @discardableResult
+  public func deinitialize() -> RawPtr {
+    let unsafeRawPtr = self.value.deinitialize(count: 1)
+    return RawPtr(unsafeRawPtr)
   }
 
   // MARK: - Equality

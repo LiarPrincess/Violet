@@ -28,6 +28,8 @@ public struct PyFrame: PyObjectMixin {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
+  // MARK: - Code, parent
+
   // sourcery: storedProperty
   /// Code object being executed in this frame.
   ///
@@ -40,13 +42,7 @@ public struct PyFrame: PyObjectMixin {
   /// Cpython: `f_back`.
   public var parent: PyFrame? { self.parentPtr.pointee }
 
-  // sourcery: storedProperty
-  /// Stack of `PyObjects`.
-  public var stack: ObjectStack { self.stackPtr.pointee }
-
-  // sourcery: storedProperty
-  /// Stack of blocks (for loops, exception handlers etc.).
-  public var blocks: BlockStack { self.blocksPtr.pointee }
+  // MARK: - Globals, locals, builtins
 
   // sourcery: storedProperty
   /// Local namespace seen by this frame.
@@ -67,7 +63,28 @@ public struct PyFrame: PyObjectMixin {
   /// CPython: `f_builtins`.
   public var builtins: PyDict { self.builtinsPtr.pointee }
 
+  // MARK: - Stacks
+
   // sourcery: storedProperty
+  /// Stack of `PyObjects`.
+  public var stack: ObjectStack { self.stackPtr.pointee }
+
+  // sourcery: storedProperty
+  /// Stack of blocks (for loops, exception handlers etc.).
+  public var blocks: BlockStack { self.blocksPtr.pointee }
+
+  // MARK: - Fast locals/cell/free
+
+  // sourcery: storedProperty
+  internal var fastLocalsStorage: BufferPtr<FastLocal> {
+    self.fastLocalsStoragePtr.pointee
+  }
+
+  // sourcery: storedProperty
+  internal var cellAndFreeVariableStorage: BufferPtr<Cell> {
+    self.cellAndFreeVariableStoragePtr.pointee
+  }
+
   /// Function args and local variables.
   ///
   /// We could use `self.localSymbols` but that would be `O(1)` with
@@ -78,12 +95,8 @@ public struct PyFrame: PyObjectMixin {
   /// We use array, which is like dictionary, but with lower constants.
   ///
   /// CPython: `f_localsplus`.
-  public var fastLocals: [PyObject?] {
-    get { self.fastLocalsPtr.pointee }
-    nonmutating _modify { yield &self.fastLocalsPtr.pointee }
-  }
+  public var fastLocals: FastLocalsProxy { FastLocalsProxy(frame: self) }
 
-  // sourcery: storedProperty
   /// Cell variables (variables from upper scopes).
   ///
   /// Btw. `Cell` = source for `free` variable.
@@ -91,9 +104,8 @@ public struct PyFrame: PyObjectMixin {
   /// And yes, just as `self.fastLocals` they could be placed at the bottom
   /// of the stack. And no, we will not do this (see `self.fastLocals` comment).
   /// \#hipsters
-  public var cellVariables: [PyCell] { self.cellVariablesPtr.pointee }
+  public var cellVariables: CellVariablesProxy { CellVariablesProxy(frame: self) }
 
-  // sourcery: storedProperty
   /// Free variables (variables from upper scopes).
   ///
   /// Btw. `Free` = cell from upper scope.
@@ -101,7 +113,9 @@ public struct PyFrame: PyObjectMixin {
   /// And yes, just as `self.fastLocals` they could be placed at the bottom
   /// of the stack. And no, we will not do this (see `self.fastLocals` comment).
   /// \#hipsters
-  public var freeVariables: [PyCell] { self.freeVariablesPtr.pointee }
+  public var freeVariables: FreeVariablesProxy { FreeVariablesProxy(frame: self) }
+
+  // MARK: - Current instruction
 
   // sourcery: storedProperty
   /// Index of last attempted instruction in bytecode
@@ -164,29 +178,14 @@ public struct PyFrame: PyObjectMixin {
     let builtins = Self.getBuiltins(py, globals: globals, parent: parent)
     self.builtinsPtr.initialize(to: builtins)
 
-    let fastLocals = [PyObject?](repeating: nil, count: self.code.variableCount)
-    self.fastLocalsPtr.initialize(to: fastLocals)
+    let fastLocals = self.allocateFastLocals(py, code: code)
+    self.fastLocalsStoragePtr.initialize(to: fastLocals)
 
-    let cellVariables = Self.createEmptyCells(py, count: self.code.cellVariableCount)
-    self.cellVariablesPtr.initialize(to: cellVariables)
-
-    let freeVariables = Self.createEmptyCells(py, count: self.code.freeVariableCount)
-    self.freeVariablesPtr.initialize(to: freeVariables)
+    let cellFreeVarialbes = self.allocateCellAndFreeVariables(py, code: code)
+    self.cellAndFreeVariableStoragePtr.initialize(to: cellFreeVarialbes)
 
     self.currentInstructionIndexPtr.initialize(to: nil)
     self.nextInstructionIndexPtr.initialize(to: 0)
-  }
-
-  private static func createEmptyCells(_ py: Py, count: Int) -> [PyCell] {
-    var result = [PyCell]()
-    result.reserveCapacity(count)
-
-    for _ in 0..<count {
-      let cell = py.newCell(content: nil)
-      result.append(cell)
-    }
-
-    return result
   }
 
   private static func getBuiltins(_ py: Py, globals: PyDict, parent: PyFrame?) -> PyDict {
@@ -205,8 +204,10 @@ public struct PyFrame: PyObjectMixin {
     return py.builtins.__dict__
   }
 
-  // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize() {
+    self.deallocateFastLocals()
+    self.deallocateCellAndFreeVariables()
+  }
 
   // MARK: - Debug
 

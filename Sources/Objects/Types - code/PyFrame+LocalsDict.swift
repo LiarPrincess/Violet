@@ -20,11 +20,13 @@ extension PyFrame {
   /// int
   /// PyFrame_FastToLocalsWithError(PyFrameObject *f)
   public func copyFastToLocals(_ py: Py) -> PyBaseException? {
-    let variableNames = self.code.variableNames
     let fastLocals = self.fastLocals
-    assert(variableNames.count == fastLocals.count)
+    assert(fastLocals.count == self.code.variableCount)
 
-    for (name, value) in zip(variableNames, fastLocals) {
+    for index in 0..<fastLocals.count {
+      let name = self.code.variableNames[index]
+      let value = fastLocals[index]
+
       if self.isCellOrFree(name: name) {
         continue
       }
@@ -35,21 +37,25 @@ extension PyFrame {
       }
     }
 
-    let cellNames = self.code.cellVariableNames
     let cellVariables = self.cellVariables
-    assert(cellNames.count == cellVariables.count)
+    assert(cellVariables.count == self.code.cellVariableCount)
 
-    for (name, cell) in zip(cellNames, cellVariables) {
+    for index in 0..<cellVariables.count {
+      let name = self.code.cellVariableNames[index]
+      let cell = cellVariables[index]
+
       if let e = self.updateLocals(py, name: name, value: cell.content, allowDelete: false) {
         return e
       }
     }
 
-    let freeNames = self.code.freeVariableNames
     let freeVariables = self.freeVariables
-    assert(freeNames.count == freeVariables.count)
+    assert(freeVariables.count == self.code.freeVariableCount)
 
-    for (name, cell) in zip(freeNames, freeVariables) {
+    for index in 0..<freeVariables.count {
+      let name = self.code.freeVariableNames[index]
+      let cell = freeVariables[index]
+
       if let e = self.updateLocals(py, name: name, value: cell.content, allowDelete: false) {
         return e
       }

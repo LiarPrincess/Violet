@@ -2622,14 +2622,13 @@ extension PyFrame {
   internal struct Layout {
     internal let codeOffset: Int
     internal let parentOffset: Int
-    internal let stackOffset: Int
-    internal let blocksOffset: Int
     internal let localsOffset: Int
     internal let globalsOffset: Int
     internal let builtinsOffset: Int
-    internal let fastLocalsOffset: Int
-    internal let cellVariablesOffset: Int
-    internal let freeVariablesOffset: Int
+    internal let stackOffset: Int
+    internal let blocksOffset: Int
+    internal let fastLocalsStorageOffset: Int
+    internal let cellAndFreeVariableStorageOffset: Int
     internal let currentInstructionIndexOffset: Int
     internal let nextInstructionIndexOffset: Int
     internal let size: Int
@@ -2642,32 +2641,30 @@ extension PyFrame {
         fields: [
           PyMemory.FieldLayout(from: PyCode.self), // PyFrame.code
           PyMemory.FieldLayout(from: PyFrame?.self), // PyFrame.parent
-          PyMemory.FieldLayout(from: ObjectStack.self), // PyFrame.stack
-          PyMemory.FieldLayout(from: BlockStack.self), // PyFrame.blocks
           PyMemory.FieldLayout(from: PyDict.self), // PyFrame.locals
           PyMemory.FieldLayout(from: PyDict.self), // PyFrame.globals
           PyMemory.FieldLayout(from: PyDict.self), // PyFrame.builtins
-          PyMemory.FieldLayout(from: [PyObject?].self), // PyFrame.fastLocals
-          PyMemory.FieldLayout(from: [PyCell].self), // PyFrame.cellVariables
-          PyMemory.FieldLayout(from: [PyCell].self), // PyFrame.freeVariables
+          PyMemory.FieldLayout(from: ObjectStack.self), // PyFrame.stack
+          PyMemory.FieldLayout(from: BlockStack.self), // PyFrame.blocks
+          PyMemory.FieldLayout(from: BufferPtr<FastLocal>.self), // PyFrame.fastLocalsStorage
+          PyMemory.FieldLayout(from: BufferPtr<Cell>.self), // PyFrame.cellAndFreeVariableStorage
           PyMemory.FieldLayout(from: Int?.self), // PyFrame.currentInstructionIndex
           PyMemory.FieldLayout(from: Int.self) // PyFrame.nextInstructionIndex
         ]
       )
 
-      assert(layout.offsets.count == 12)
+      assert(layout.offsets.count == 11)
       self.codeOffset = layout.offsets[0]
       self.parentOffset = layout.offsets[1]
-      self.stackOffset = layout.offsets[2]
-      self.blocksOffset = layout.offsets[3]
-      self.localsOffset = layout.offsets[4]
-      self.globalsOffset = layout.offsets[5]
-      self.builtinsOffset = layout.offsets[6]
-      self.fastLocalsOffset = layout.offsets[7]
-      self.cellVariablesOffset = layout.offsets[8]
-      self.freeVariablesOffset = layout.offsets[9]
-      self.currentInstructionIndexOffset = layout.offsets[10]
-      self.nextInstructionIndexOffset = layout.offsets[11]
+      self.localsOffset = layout.offsets[2]
+      self.globalsOffset = layout.offsets[3]
+      self.builtinsOffset = layout.offsets[4]
+      self.stackOffset = layout.offsets[5]
+      self.blocksOffset = layout.offsets[6]
+      self.fastLocalsStorageOffset = layout.offsets[7]
+      self.cellAndFreeVariableStorageOffset = layout.offsets[8]
+      self.currentInstructionIndexOffset = layout.offsets[9]
+      self.nextInstructionIndexOffset = layout.offsets[10]
       self.size = layout.size
       self.alignment = layout.alignment
     }
@@ -2686,22 +2683,20 @@ extension PyFrame {
   internal var codePtr: Ptr<PyCode> { Ptr(self.ptr, offset: Self.layout.codeOffset) }
   /// Property: `PyFrame.parent`.
   internal var parentPtr: Ptr<PyFrame?> { Ptr(self.ptr, offset: Self.layout.parentOffset) }
-  /// Property: `PyFrame.stack`.
-  internal var stackPtr: Ptr<ObjectStack> { Ptr(self.ptr, offset: Self.layout.stackOffset) }
-  /// Property: `PyFrame.blocks`.
-  internal var blocksPtr: Ptr<BlockStack> { Ptr(self.ptr, offset: Self.layout.blocksOffset) }
   /// Property: `PyFrame.locals`.
   internal var localsPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.localsOffset) }
   /// Property: `PyFrame.globals`.
   internal var globalsPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.globalsOffset) }
   /// Property: `PyFrame.builtins`.
   internal var builtinsPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Self.layout.builtinsOffset) }
-  /// Property: `PyFrame.fastLocals`.
-  internal var fastLocalsPtr: Ptr<[PyObject?]> { Ptr(self.ptr, offset: Self.layout.fastLocalsOffset) }
-  /// Property: `PyFrame.cellVariables`.
-  internal var cellVariablesPtr: Ptr<[PyCell]> { Ptr(self.ptr, offset: Self.layout.cellVariablesOffset) }
-  /// Property: `PyFrame.freeVariables`.
-  internal var freeVariablesPtr: Ptr<[PyCell]> { Ptr(self.ptr, offset: Self.layout.freeVariablesOffset) }
+  /// Property: `PyFrame.stack`.
+  internal var stackPtr: Ptr<ObjectStack> { Ptr(self.ptr, offset: Self.layout.stackOffset) }
+  /// Property: `PyFrame.blocks`.
+  internal var blocksPtr: Ptr<BlockStack> { Ptr(self.ptr, offset: Self.layout.blocksOffset) }
+  /// Property: `PyFrame.fastLocalsStorage`.
+  internal var fastLocalsStoragePtr: Ptr<BufferPtr<FastLocal>> { Ptr(self.ptr, offset: Self.layout.fastLocalsStorageOffset) }
+  /// Property: `PyFrame.cellAndFreeVariableStorage`.
+  internal var cellAndFreeVariableStoragePtr: Ptr<BufferPtr<Cell>> { Ptr(self.ptr, offset: Self.layout.cellAndFreeVariableStorageOffset) }
   /// Property: `PyFrame.currentInstructionIndex`.
   internal var currentInstructionIndexPtr: Ptr<Int?> { Ptr(self.ptr, offset: Self.layout.currentInstructionIndexOffset) }
   /// Property: `PyFrame.nextInstructionIndex`.
@@ -2732,14 +2727,13 @@ extension PyFrame {
     // Call 'deinitialize' on all of our own properties.
     zelf.codePtr.deinitialize()
     zelf.parentPtr.deinitialize()
-    zelf.stackPtr.deinitialize()
-    zelf.blocksPtr.deinitialize()
     zelf.localsPtr.deinitialize()
     zelf.globalsPtr.deinitialize()
     zelf.builtinsPtr.deinitialize()
-    zelf.fastLocalsPtr.deinitialize()
-    zelf.cellVariablesPtr.deinitialize()
-    zelf.freeVariablesPtr.deinitialize()
+    zelf.stackPtr.deinitialize()
+    zelf.blocksPtr.deinitialize()
+    zelf.fastLocalsStoragePtr.deinitialize()
+    zelf.cellAndFreeVariableStoragePtr.deinitialize()
     zelf.currentInstructionIndexPtr.deinitialize()
     zelf.nextInstructionIndexPtr.deinitialize()
 
