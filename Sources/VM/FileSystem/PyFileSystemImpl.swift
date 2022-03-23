@@ -26,7 +26,7 @@ internal class PyFileSystemImpl: PyFileSystem {
     // When we get raw descriptor we assume that the user knows what they
     // are doing, which means that we can ignore 'mode'.
     let result = FileDescriptor(fileDescriptor: fd, closeOnDealloc: false)
-    let adapter = FileDescriptorAdapter(py, fd: result, path: nil)
+    let adapter = FileDescriptorAdapter(fd: result, path: nil)
     return .value(adapter)
   }
 
@@ -48,7 +48,7 @@ internal class PyFileSystemImpl: PyFileSystem {
     if let fd = FileDescriptor(path: path.string,
                                flags: flags,
                                createMode: createMode) {
-      let adapter = FileDescriptorAdapter(py, fd: fd, path: path.string)
+      let adapter = FileDescriptorAdapter(fd: fd, path: path.string)
       return .value(adapter)
     }
 
