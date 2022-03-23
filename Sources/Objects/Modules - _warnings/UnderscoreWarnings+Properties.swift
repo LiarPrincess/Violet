@@ -18,7 +18,7 @@ extension UnderscoreWarnings {
     return self.getList(.filters)
   }
 
-  public func setFilters(to value: PyObject) -> PyBaseException? {
+  public func setFilters(_ value: PyObject) -> PyBaseException? {
     return self.set(.filters, value: value)
   }
 
@@ -95,7 +95,7 @@ extension UnderscoreWarnings {
     return self.getString(._defaultaction)
   }
 
-  public func setDefaultAction(to value: PyObject) -> PyBaseException? {
+  public func setDefaultAction(_ value: PyObject) -> PyBaseException? {
     return self.set(._defaultaction, value: value)
   }
 
@@ -105,7 +105,7 @@ extension UnderscoreWarnings {
     return self.getDict(._onceregistry)
   }
 
-  public func setOnceRegistry(to value: PyObject) -> PyBaseException? {
+  public func setOnceRegistry(_ value: PyObject) -> PyBaseException? {
     return self.set(._onceregistry, value: value)
   }
 }

@@ -105,7 +105,7 @@ extension Sys {
   }
 
   /// Prepend given value to `sys.path`.
-  public func prependPath(value: Path) -> PyBaseException? {
+  public func prependPath(_ value: Path) -> PyBaseException? {
     switch self.getPath() {
     case let .value(list):
       let string = self.py.newString(value)
