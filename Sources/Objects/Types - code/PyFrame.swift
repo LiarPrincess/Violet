@@ -22,7 +22,6 @@ import VioletBytecode
 ///
 /// We have separate `fastLocals`, `cell/free variables` and `stack`.
 /// Our cache usage will suck (3 arrays stored on heap), but… oh well….
-/// This allows us to have typed `cell` and `free` (`[PyCell]` instead of `[PyObject]`).
 public struct PyFrame: PyObjectMixin {
 
   // sourcery: pytypedoc
@@ -85,7 +84,7 @@ public struct PyFrame: PyObjectMixin {
   /// Stack of blocks (`for` loops, `exception` handlers etc.).
   ///
   /// 'Exclusive' means that only 1 instance is allowed for a given `PyFrame`.
-  public var blocks: ExclusiveBlockStackProxy {
+  public var exclusiveBlockStack: ExclusiveBlockStackProxy {
     ExclusiveBlockStackProxy(frame: self)
   }
 
@@ -97,8 +96,8 @@ public struct PyFrame: PyObjectMixin {
   }
 
   // sourcery: storedProperty
-  internal var cellAndFreeVariableStorage: BufferPtr<Cell> {
-    self.cellAndFreeVariableStoragePtr.pointee
+  internal var cellAndFreeVariablesStorage: BufferPtr<Cell> {
+    self.cellAndFreeVariablesStoragePtr.pointee
   }
 
   /// Function args and local variables.
@@ -201,7 +200,7 @@ public struct PyFrame: PyObjectMixin {
     self.fastLocalsStoragePtr.initialize(to: fastLocals)
 
     let cellFreeVarialbes = self.allocateCellAndFreeVariables(py, code: code)
-    self.cellAndFreeVariableStoragePtr.initialize(to: cellFreeVarialbes)
+    self.cellAndFreeVariablesStoragePtr.initialize(to: cellFreeVarialbes)
 
     self.currentInstructionIndexPtr.initialize(to: nil)
     self.nextInstructionIndexPtr.initialize(to: 0)

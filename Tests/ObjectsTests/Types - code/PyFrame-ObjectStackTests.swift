@@ -9,7 +9,7 @@ extension PyFrame {
   }
 }
 
-class PyFrameObjectStackTests: PyTestCase {
+class PyFrameObjectStackTests: PyTestCase, PyFrameTestsMixin {
 
   // MARK: - Empty
 
@@ -156,9 +156,9 @@ class PyFrameObjectStackTests: PyTestCase {
 
     // Actual test starts here
     for _ in 0..<10 {
-      let stackObject = stack.pop()
-      let expectedObject = expectedStack.popLast()
-      self.assertIsEqual(py, left: expectedObject, right: stackObject)
+      let got = stack.pop()
+      let expected = expectedStack.popLast()
+      self.assertIsEqual(py, left: expected, right: got)
       self.assertStack(py, stack, expected: expectedStack)
     }
 
@@ -300,31 +300,5 @@ class PyFrameObjectStackTests: PyTestCase {
                          file: file,
                          line: line)
     }
-  }
-
-  private func createFrame(_ py: Py) -> PyFrame {
-    let code = self.createCode(py)
-    let locals = py.newDict()
-    let globals = py.newDict()
-    return py.newFrame(code: code, locals: locals, globals: globals, parent: nil)
-  }
-
-  private func createCode(_ py: Py) -> PyCode {
-    let builer = CodeObjectBuilder(
-      name: "NAME",
-      qualifiedName: "QUALIFIED_NAME",
-      filename: "FILENAME",
-      kind: .function,
-      flags: [],
-      variableNames: [],
-      freeVariableNames: [],
-      cellVariableNames: [],
-      argCount: 0,
-      kwOnlyArgCount: 0,
-      firstLine: 0
-    )
-
-    let codeObject = builer.finalize()
-    return py.newCode(code: codeObject)
   }
 }
