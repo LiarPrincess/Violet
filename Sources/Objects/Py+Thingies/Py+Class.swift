@@ -68,7 +68,7 @@ extension Py {
     }
 
     // Call 'bodyFn' and use class '__dict__' as locals.
-    // This way 'def let_it_go(self, ...)' in class definition will became entry
+    // This way 'def let_it_go(self, …)' in class definition will became entry
     // in '__dict__'.
     //
     // If we used '__class__' inside 'bodyFn' then we need to fill that cell.

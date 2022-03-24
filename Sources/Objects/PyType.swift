@@ -150,7 +150,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     //             | Type     | Base       | MRO
     // object type | typeType | nil        | [self]
     // type type   | typeType | objectType | [self, objectType]
-    // normal type | typeType | objectType | [self, (...), objectType]
+    // normal type | typeType | objectType | [self, (…), objectType]
 
     PyObject.initialize(typeType: typeType, objectType: objectType)
 

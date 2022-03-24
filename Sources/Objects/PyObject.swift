@@ -45,7 +45,7 @@ public struct PyObject: PyObjectMixin {
 
   /// Lazy property written by hand.
   internal enum Lazy__dict__ {
-    /// There is no spoon... (aka. `self.type` does not allow `__dict__`)
+    /// There is no spoon… (aka. `self.type` does not allow `__dict__`)
     case noDict
     /// `__dict__` is available, but not yet created
     case notCreated
@@ -458,7 +458,7 @@ public struct PyObject: PyObjectMixin {
       let t = type.getNameString()
       trap("Uh… oh… So '\(name)' lookup on \(t) failed to find anything. " +
            "It should not be possible since every type derives from 'object', " +
-           "(which has this method) but here we are..."
+           "(which has this method) but here we are…"
       )
     }
 

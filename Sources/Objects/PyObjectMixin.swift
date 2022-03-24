@@ -181,7 +181,7 @@ extension PyObjectMixin {
       }
 
       if array.count >= maxCount {
-        string.append("...")
+        string.append("…")
       }
 
       string.append("]")
