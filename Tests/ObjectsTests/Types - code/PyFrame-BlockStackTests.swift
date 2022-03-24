@@ -17,7 +17,8 @@ class PyFrameBlockStackTests: PyTestCase, PyFrameTestsMixin {
 
   func test_empty() {
     let py = self.createPy()
-    let frame = self.createFrame(py)
+    guard let frame = self.createFrame(py) else { return }
+
     let stack = frame.exclusiveBlockStack
     self.assertStack(py, stack, expected: [])
   }
@@ -26,9 +27,9 @@ class PyFrameBlockStackTests: PyTestCase, PyFrameTestsMixin {
 
   func test_push() {
     let py = self.createPy()
-    let frame = self.createFrame(py)
-    var stack = frame.exclusiveBlockStack
+    guard let frame = self.createFrame(py) else { return }
 
+    var stack = frame.exclusiveBlockStack
     var expectedStack = [Block]()
     self.assertStack(py, stack, expected: expectedStack)
 
@@ -59,9 +60,9 @@ class PyFrameBlockStackTests: PyTestCase, PyFrameTestsMixin {
 
   func test_pop() {
     let py = self.createPy()
-    let frame = self.createFrame(py)
-    var stack = frame.exclusiveBlockStack
+    guard let frame = self.createFrame(py) else { return }
 
+    var stack = frame.exclusiveBlockStack
     var expectedStack = [Block]()
     self.assertStack(py, stack, expected: expectedStack)
 

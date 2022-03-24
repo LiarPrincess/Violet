@@ -69,11 +69,28 @@ extension Py {
   /// 1st argument is `key`.
   /// 2nd argument is `value`.
   public func forEach(dict: PyDict, fn: ForEachDictFn) -> PyBaseException? {
-    for e in dict.elements {
-      let key = e.key.object
-      let value = e.value
+    for entry in dict.elements {
+      let key = entry.key.object
+      let value = entry.value
 
       switch fn(key, value) {
+      case .goToNextElement:
+        break
+      case .finish:
+        return nil
+      case .error(let e):
+        return e
+      }
+    }
+
+    return nil
+  }
+
+  public typealias ForEachTupleFn = (PyObject) -> ForEachStep
+
+  public func forEach(tuple: PyTuple, fn: ForEachTupleFn) -> PyBaseException? {
+    for object in tuple.elements {
+      switch fn(object) {
       case .goToNextElement:
         break
       case .finish:

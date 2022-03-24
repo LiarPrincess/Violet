@@ -7,11 +7,29 @@ protocol PyFrameTestsMixin: PyTestCase { }
 
 extension PyFrameTestsMixin {
 
-  func createFrame(_ py: Py) -> PyFrame {
+  func createFrame(_ py: Py,
+                   file: StaticString = #file,
+                   line: UInt = #line) -> PyFrame? {
     let code = self.createCode(py)
     let locals = py.newDict()
     let globals = py.newDict()
-    return py.newFrame(code: code, locals: locals, globals: globals, parent: nil)
+
+    switch py.newFrame(parent: nil,
+                       code: code,
+                       args: [],
+                       kwargs: nil,
+                       defaults: [],
+                       kwDefaults: nil,
+                       locals: locals,
+                       globals: globals,
+                       closure: nil) {
+    case let .value(frame):
+      return frame
+    case let .error(e):
+      let reason = self.toString(py, error: e)
+      XCTFail(reason, file: file, line: line)
+      return nil
+    }
   }
 
   func createCode(_ py: Py) -> PyCode {

@@ -56,7 +56,7 @@ public struct PyInt: PyObjectMixin {
 
   // sourcery: storedProperty
   // Do not add 'set' to 'self.value' - we cache most used ints!
-  internal var value: BigInt { self.valuePtr.pointee }
+  public var value: BigInt { self.valuePtr.pointee }
 
   public let ptr: RawPtr
 

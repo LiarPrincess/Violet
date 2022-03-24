@@ -291,17 +291,33 @@ extension Py {
 
   /// PyFrameObject* _Py_HOT_FUNCTION
   /// _PyFrame_New_NoTrack(PyThreadState *tstate, PyCodeObject *code,
-  public func newFrame(code: PyCode,
+  public func newFrame(parent: PyFrame?,
+                       code: PyCode,
+                       args: [PyObject],
+                       kwargs: PyDict?,
+                       defaults: [PyObject],
+                       kwDefaults: PyDict?,
                        locals: PyDict,
                        globals: PyDict,
-                       parent: PyFrame?) -> PyFrame {
+                       closure: PyTuple?) -> PyResultGen<PyFrame> {
     let type = self.types.frame
-    return self.memory.newFrame(self,
-                                type: type,
-                                code: code,
-                                locals: locals,
-                                globals: globals,
-                                parent: parent)
+    let frame = self.memory.newFrame(self,
+                                     type: type,
+                                     code: code,
+                                     locals: locals,
+                                     globals: globals,
+                                     parent: parent)
+
+    if let error = frame.initializeFastLocals(self,
+                                              args: args,
+                                              kwargs: kwargs,
+                                              defaults: defaults,
+                                              kwDefaults: kwDefaults) {
+      return .error(error.asBaseException)
+    }
+
+    frame.initializeCellAndFreeVariables(self, closure: closure)
+    return .value(frame)
   }
 
   // MARK: - Super

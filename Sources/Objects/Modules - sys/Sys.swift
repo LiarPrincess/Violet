@@ -141,7 +141,7 @@ public final class Sys: PyModuleImplementation {
   ///
   /// This is not stored in `__dict__`!
   /// CPython stores it in `_PyRuntime.ceval.recursion_limit`.
-  internal var recursionLimit: PyInt
+  public internal(set) var recursionLimit: PyInt
 
   // MARK: - Init
 
