@@ -32,7 +32,7 @@ public struct PyCode: PyObjectMixin {
   /// Available only in `DEBUG`.
   public var codeObject: PyCode.CodeObject { self.codeObjectPtr.pointee }
 
-  // MARK: - Name
+  // MARK: - Names
 
   // sourcery: storedProperty
   /// Non-unique name of this code object.
@@ -89,15 +89,13 @@ public struct PyCode: PyObjectMixin {
     return lines[index]
   }
 
-  // MARK: - Constants
+  // MARK: - Constants, labels
 
   // sourcery: storedProperty
   /// Constants used.
   /// E.g. `LoadConst 5` loads `self.constants[5]` value.
   /// CPython: `co_consts`.
   public var constants: [PyObject] { self.constantsPtr.pointee }
-
-  // MARK: - Labels
 
   // sourcery: storedProperty
   /// Absolute jump targets.
@@ -188,6 +186,26 @@ public struct PyCode: PyObjectMixin {
   /// CPython: `co_kwonlyargcount`.
   internal var kwOnlyArgCount: Int { self.kwOnlyArgCountPtr.pointee }
 
+  // MARK: - Predicted counts
+
+  // sourcery: storedProperty
+  /// After executing this code we will store the stack count,
+  /// so that the next execution avoids reallocations.
+  public var predictedObjectStackCount: Int {
+    get { self.predictedObjectStackCountPtr.pointee }
+    nonmutating set { self.predictedObjectStackCountPtr.pointee = newValue }
+  }
+
+  // sourcery: storedProperty
+  /// After executing this code we will store the stack count,
+  /// so that the next execution avoids reallocations.
+  public var predictedBlockStackCount: Int {
+    get { self.predictedBlockStackCountPtr.pointee }
+    nonmutating set { self.predictedBlockStackCountPtr.pointee = newValue }
+  }
+
+  // MARK: - Flags
+
   /// Various flags used during the compilation process.
   public private(set) var codeFlags: CodeObject.Flags {
     get {
@@ -248,6 +266,8 @@ public struct PyCode: PyObjectMixin {
 
     self.argCountPtr.initialize(to: code.argCount)
     self.kwOnlyArgCountPtr.initialize(to: code.kwOnlyArgCount)
+    self.predictedObjectStackCountPtr.initialize(to: 0)
+    self.predictedBlockStackCountPtr.initialize(to: 0)
 
     self.codeFlags = code.flags
   }

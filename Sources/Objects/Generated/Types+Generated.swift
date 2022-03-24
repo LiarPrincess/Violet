@@ -1164,6 +1164,8 @@ extension PyCode {
     internal let freeVariableNamesOffset: Int
     internal let argCountOffset: Int
     internal let kwOnlyArgCountOffset: Int
+    internal let predictedObjectStackCountOffset: Int
+    internal let predictedBlockStackCountOffset: Int
     internal let size: Int
     internal let alignment: Int
 
@@ -1186,11 +1188,13 @@ extension PyCode {
           PyMemory.FieldLayout(from: [MangledName].self), // PyCode.cellVariableNames
           PyMemory.FieldLayout(from: [MangledName].self), // PyCode.freeVariableNames
           PyMemory.FieldLayout(from: Int.self), // PyCode.argCount
-          PyMemory.FieldLayout(from: Int.self) // PyCode.kwOnlyArgCount
+          PyMemory.FieldLayout(from: Int.self), // PyCode.kwOnlyArgCount
+          PyMemory.FieldLayout(from: Int.self), // PyCode.predictedObjectStackCount
+          PyMemory.FieldLayout(from: Int.self) // PyCode.predictedBlockStackCount
         ]
       )
 
-      assert(layout.offsets.count == 15)
+      assert(layout.offsets.count == 17)
       self.codeObjectOffset = layout.offsets[0]
       self.nameOffset = layout.offsets[1]
       self.qualifiedNameOffset = layout.offsets[2]
@@ -1206,6 +1210,8 @@ extension PyCode {
       self.freeVariableNamesOffset = layout.offsets[12]
       self.argCountOffset = layout.offsets[13]
       self.kwOnlyArgCountOffset = layout.offsets[14]
+      self.predictedObjectStackCountOffset = layout.offsets[15]
+      self.predictedBlockStackCountOffset = layout.offsets[16]
       self.size = layout.size
       self.alignment = layout.alignment
     }
@@ -1250,6 +1256,10 @@ extension PyCode {
   internal var argCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.argCountOffset) }
   /// Property: `PyCode.kwOnlyArgCount`.
   internal var kwOnlyArgCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.kwOnlyArgCountOffset) }
+  /// Property: `PyCode.predictedObjectStackCount`.
+  internal var predictedObjectStackCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.predictedObjectStackCountOffset) }
+  /// Property: `PyCode.predictedBlockStackCount`.
+  internal var predictedBlockStackCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.predictedBlockStackCountOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -1289,6 +1299,8 @@ extension PyCode {
     zelf.freeVariableNamesPtr.deinitialize()
     zelf.argCountPtr.deinitialize()
     zelf.kwOnlyArgCountPtr.deinitialize()
+    zelf.predictedObjectStackCountPtr.deinitialize()
+    zelf.predictedBlockStackCountPtr.deinitialize()
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
