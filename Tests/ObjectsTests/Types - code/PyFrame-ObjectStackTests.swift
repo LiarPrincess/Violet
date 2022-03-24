@@ -17,7 +17,7 @@ class PyFrameObjectStackTests: PyTestCase, PyFrameTestsMixin {
     let py = self.createPy()
     guard let frame = self.createFrame(py) else { return }
 
-    let stack = frame.exclusiveObjectStack
+    let stack = frame.objectStack
     self.assertStack(py, stack, expected: [])
   }
 
@@ -27,7 +27,7 @@ class PyFrameObjectStackTests: PyTestCase, PyFrameTestsMixin {
     let py = self.createPy()
     guard let frame = self.createFrame(py) else { return }
 
-    var stack = frame.exclusiveObjectStack
+    let stack = frame.objectStack
     var expectedStack = [PyObject]()
     self.assertStack(py, stack, expected: expectedStack)
 
@@ -57,7 +57,7 @@ class PyFrameObjectStackTests: PyTestCase, PyFrameTestsMixin {
     let py = self.createPy()
     guard let frame = self.createFrame(py) else { return }
 
-    var stack = frame.exclusiveObjectStack
+    let stack = frame.objectStack
     var expectedStack = [PyObject]()
     self.assertStack(py, stack, expected: expectedStack)
 
@@ -96,7 +96,7 @@ class PyFrameObjectStackTests: PyTestCase, PyFrameTestsMixin {
     let py = self.createPy()
     guard let frame = self.createFrame(py) else { return }
 
-    var stack = frame.exclusiveObjectStack
+    let stack = frame.objectStack
     var expectedStack = [PyObject]()
     self.assertStack(py, stack, expected: expectedStack)
 
@@ -142,7 +142,7 @@ class PyFrameObjectStackTests: PyTestCase, PyFrameTestsMixin {
     let py = self.createPy()
     guard let frame = self.createFrame(py) else { return }
 
-    var stack = frame.exclusiveObjectStack
+    let stack = frame.objectStack
     var expectedStack = [PyObject]()
     self.assertStack(py, stack, expected: expectedStack)
 
@@ -170,7 +170,7 @@ class PyFrameObjectStackTests: PyTestCase, PyFrameTestsMixin {
     let py = self.createPy()
     guard let frame = self.createFrame(py) else { return }
 
-    var stack = frame.exclusiveObjectStack
+    let stack = frame.objectStack
     var expectedStack = [PyObject]()
     self.assertStack(py, stack, expected: expectedStack)
 
@@ -212,7 +212,7 @@ class PyFrameObjectStackTests: PyTestCase, PyFrameTestsMixin {
     let py = self.createPy()
     guard let frame = self.createFrame(py) else { return }
 
-    var stack = frame.exclusiveObjectStack
+    let stack = frame.objectStack
     var expectedStack = [PyObject]()
     self.assertStack(py, stack, expected: expectedStack)
 
@@ -246,7 +246,7 @@ class PyFrameObjectStackTests: PyTestCase, PyFrameTestsMixin {
 
   /// Expected is in `bottom-to-top` order.
   private func assertStack(_ py: Py,
-                           _ stack: PyFrame.ExclusiveObjectStackProxy,
+                           _ stack: PyFrame.ObjectStackProxy,
                            expected: [PyObject],
                            file: StaticString = #file,
                            line: UInt = #line) {

@@ -28,35 +28,36 @@ extension PyFrame {
 
   // MARK: - Stack
 
-  /// 'Exclusive' means that only 1 instance is allowed for a given `PyFrame`.
-  public struct ExclusiveObjectStackProxy {
+  public struct ObjectStackProxy {
+
+    internal typealias EndPtr = UnsafeMutablePointer<PyObject>
 
     /// Top of the stack.
-    /// Undefined result if on empty stack.
+    /// Undefined result if used on empty stack.
     public var top: PyObject {
       get { return self.endPointer.advanced(by: -1).pointee }
-      set { self.endPointer.advanced(by: -1).pointee = newValue }
+      nonmutating set { self.endPointer.advanced(by: -1).pointee = newValue }
     }
 
     /// Object below `self.top`.
     /// Undefined result if `self.count < 2`.
     public var second: PyObject {
       get { return self.endPointer.advanced(by: -2).pointee }
-      set { self.endPointer.advanced(by: -2).pointee = newValue }
+      nonmutating set { self.endPointer.advanced(by: -2).pointee = newValue }
     }
 
     /// Object below `self.second`.
     /// Undefined result if `self.count < 3`.
     public var third: PyObject {
       get { return self.endPointer.advanced(by: -3).pointee }
-      set { self.endPointer.advanced(by: -3).pointee = newValue }
+      nonmutating set { self.endPointer.advanced(by: -3).pointee = newValue }
     }
 
     /// Object below `self.third`.
     /// Undefined result if `self.count < 4`.
     public var fourth: PyObject {
       get { return self.endPointer.advanced(by: -4).pointee }
-      set { self.endPointer.advanced(by: -4).pointee = newValue }
+      nonmutating set { self.endPointer.advanced(by: -4).pointee = newValue }
     }
 
     public var isEmpty: Bool {
@@ -74,17 +75,35 @@ extension PyFrame {
       return self.buffer.count
     }
 
+    /// Shortcut to `frame.objectStackStorage`.
+    private var buffer: BufferPtr<PyObject> {
+      get { self.bufferPtr.pointee }
+      nonmutating set { self.bufferPtr.pointee = newValue }
+    }
+
     /// Pointer to the element AFTER the top of the stack.
-    private var endPointer: UnsafeMutablePointer<PyObject>
-    /// Shortcut to `self.frame.objectStackStorage`.
-    private var buffer: BufferPtr<PyObject>
-    /// When we need to reallocate `self.buffer` we also need to update `frame`.
-    private let frame: PyFrame
+    private var endPointer: EndPtr {
+      get { self.endPointerPtr.pointee }
+      nonmutating set { self.endPointerPtr.pointee = newValue }
+    }
+
+    /// `self.buffer` is not stored here! It is actually stored in `frame`.
+    /// So when we want to resize `self.buffer` we actually have to update
+    /// `frame.objectStackStorage`.
+    /// This property is a proxy to `frame.objectStackStorage`.
+    ///
+    /// Don't think about it, just use `self.buffer`.
+    private let bufferPtr: Ptr<BufferPtr<PyObject>>
+    /// `self.endPointer` is not stored here! It is actually stored in `frame`.
+    /// So when we want to update `self.endPointer` we actually have to update
+    /// `frame.objectStackEnd`. This property is a proxy to `frame.objectStackEnd`.
+    ///
+    /// Don't think about it, just use `self.endPointer`.
+    private let endPointerPtr: Ptr<EndPtr>
 
     internal init(frame: PyFrame) {
-      self.buffer = frame.objectStackStorage
-      self.endPointer = frame.objectStackStorage.baseAddress
-      self.frame = frame
+      self.bufferPtr = frame.objectStackStoragePtr
+      self.endPointerPtr = frame.objectStackEndPtr
     }
 
     // MARK: - Peek/set
@@ -113,13 +132,13 @@ extension PyFrame {
 
     // MARK: - Push
 
-    public mutating func push(_ object: PyObject) {
+    public func push(_ object: PyObject) {
       self.resizeIfNeeded(pushCount: 1)
       self.endPointer.pointee = object
       self.endPointer = self.endPointer.successor()
     }
 
-    public mutating func push<C: Collection>(
+    public func push<C: Collection>(
       contentsOf objects: C
     ) where C.Element == PyObject {
       self.resizeIfNeeded(pushCount: objects.count)
@@ -130,7 +149,7 @@ extension PyFrame {
       }
     }
 
-    private mutating func resizeIfNeeded(pushCount: Int) {
+    private func resizeIfNeeded(pushCount: Int) {
       // Both 'self.count' and 'self.buffer.count' are stored inline inside this
       // 'struct', so this check is trivial.
       let count = self.count
@@ -150,13 +169,12 @@ extension PyFrame {
       PyFrame.deallocateBuffer(ptr: self.buffer)
 
       self.buffer = newBuffer
-      self.frame.objectStackStoragePtr.pointee = newBuffer
       self.endPointer = newBuffer.baseAddress.advanced(by: count)
     }
 
     // MARK: - Pop
 
-    public mutating func pop() -> PyObject {
+    public func pop() -> PyObject {
       assert(!self.isEmpty, "Pop from an empty stack.")
       self.endPointer = self.endPointer.predecessor()
       return self.endPointer.pointee
@@ -167,7 +185,7 @@ extension PyFrame {
     ///
     /// So, basically it will slice stack `count` elements from the end
     /// and return this slice.
-    public mutating func popElementsInPushOrder(count: Int) -> [PyObject] {
+    public func popElementsInPushOrder(count: Int) -> [PyObject] {
       assert(
         self.count >= count,
         "Pop elements out of bounds (pop: \(count), count: \(self.count))."
@@ -188,7 +206,7 @@ extension PyFrame {
     }
 
     /// Pop elements until we reach `untilCount`.
-    public mutating func pop(untilCount: Int) {
+    public func pop(untilCount: Int) {
       assert(
         untilCount <= self.count,
         "Pop until count out of bounds (pop: \(untilCount), count: \(self.count))."

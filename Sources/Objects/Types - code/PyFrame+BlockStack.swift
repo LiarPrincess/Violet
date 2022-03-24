@@ -74,7 +74,7 @@ extension PyFrame {
 
   public struct BlockStackProxy {
 
-    internal typealias End = UnsafeMutablePointer<Block>
+    internal typealias EndPtr = UnsafeMutablePointer<Block>
 
     /// Top-most block.
     public var current: Block? {
@@ -94,7 +94,7 @@ extension PyFrame {
     }
 
     /// Pointer to the element AFTER the top of the stack.
-    private var endPointer: UnsafeMutablePointer<Block> {
+    private var endPointer: EndPtr {
       get { self.endPointerPtr.pointee }
       nonmutating set { self.endPointerPtr.pointee = newValue }
     }
@@ -106,7 +106,7 @@ extension PyFrame {
     /// `frame.blockStackEnd`. This property is a proxy to `frame.blockStackEnd`.
     ///
     /// Don't think about it, just use `self.endPointer`.
-    private let endPointerPtr: Ptr<End>
+    private let endPointerPtr: Ptr<EndPtr>
 
     internal init(frame: PyFrame) {
       self.buffer = frame.blockStackStorage

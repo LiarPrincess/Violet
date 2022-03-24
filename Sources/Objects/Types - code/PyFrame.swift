@@ -69,11 +69,17 @@ public struct PyFrame: PyObjectMixin {
     self.objectStackStoragePtr.pointee
   }
 
-  /// Stack of `PyObjects` to be manipulated when executing code.
+  // sourcery: storedProperty
+  /// Pointer to the element AFTER the top of the object stack.
   ///
-  /// 'Exclusive' means that only 1 instance is allowed for a given `PyFrame`.
-  public var exclusiveObjectStack: ExclusiveObjectStackProxy {
-    ExclusiveObjectStackProxy(frame: self)
+  /// Do not use directly! Use `self.objectStack` instead.
+  internal var objectStackEnd: PyFrame.ObjectStackProxy.EndPtr {
+    self.objectStackEndPtr.pointee
+  }
+
+  /// Stack of `PyObjects` to be manipulated when executing code.
+  public var objectStack: ObjectStackProxy {
+    ObjectStackProxy(frame: self)
   }
 
   // MARK: - Block stack
@@ -92,7 +98,7 @@ public struct PyFrame: PyObjectMixin {
   /// Pointer to the element AFTER the top of the block stack.
   ///
   /// Do not use directly! Use `self.blockStack` instead.
-  internal var blockStackEnd: PyFrame.BlockStackProxy.End {
+  internal var blockStackEnd: PyFrame.BlockStackProxy.EndPtr {
     self.blockStackEndPtr.pointee
   }
 
@@ -202,6 +208,7 @@ public struct PyFrame: PyObjectMixin {
 
     let objectStack = self.allocateObjectStack(py, code: code)
     self.objectStackStoragePtr.initialize(to: objectStack)
+    self.objectStackEndPtr.initialize(to: objectStack.baseAddress)
 
     let blockStack = self.allocateBlockStack(py, code: code)
     self.blockStackStoragePtr.initialize(to: blockStack)
