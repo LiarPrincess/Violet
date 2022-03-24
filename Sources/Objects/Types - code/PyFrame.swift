@@ -62,7 +62,7 @@ public struct PyFrame: PyObjectMixin {
   /// CPython: `f_builtins`.
   public var builtins: PyDict { self.builtinsPtr.pointee }
 
-  // MARK: - Stacks
+  // MARK: - Object stack
 
   // sourcery: storedProperty
   internal var objectStackStorage: BufferPtr<PyObject> {
@@ -76,16 +76,29 @@ public struct PyFrame: PyObjectMixin {
     ExclusiveObjectStackProxy(frame: self)
   }
 
+  // MARK: - Block stack
+
+  /// Max static block nesting within a function.
+  ///
+  /// CPython: `#define CO_MAXBLOCKS 20`
+  public static let maxBlockStackCount = 32
+
   // sourcery: storedProperty
   internal var blockStackStorage: BufferPtr<Block> {
     self.blockStackStoragePtr.pointee
   }
 
-  /// Stack of blocks (`for` loops, `exception` handlers etc.).
+  // sourcery: storedProperty
+  /// Pointer to the element AFTER the top of the block stack.
   ///
-  /// 'Exclusive' means that only 1 instance is allowed for a given `PyFrame`.
-  public var exclusiveBlockStack: ExclusiveBlockStackProxy {
-    ExclusiveBlockStackProxy(frame: self)
+  /// Do not use directly! Use `self.blockStack` instead.
+  internal var blockStackEnd: PyFrame.BlockStackProxy.End {
+    self.blockStackEndPtr.pointee
+  }
+
+  /// Stack of blocks (`for` loops, `exception` handlers etc.).
+  public var blockStack: BlockStackProxy {
+    BlockStackProxy(frame: self)
   }
 
   // MARK: - Fast locals/cell/free
@@ -192,6 +205,7 @@ public struct PyFrame: PyObjectMixin {
 
     let blockStack = self.allocateBlockStack(py, code: code)
     self.blockStackStoragePtr.initialize(to: blockStack)
+    self.blockStackEndPtr.initialize(to: blockStack.baseAddress)
 
     let builtins = Self.getBuiltins(py, globals: globals, parent: parent)
     self.builtinsPtr.initialize(to: builtins)
