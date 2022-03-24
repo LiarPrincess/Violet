@@ -1165,7 +1165,6 @@ extension PyCode {
     internal let argCountOffset: Int
     internal let kwOnlyArgCountOffset: Int
     internal let predictedObjectStackCountOffset: Int
-    internal let predictedBlockStackCountOffset: Int
     internal let size: Int
     internal let alignment: Int
 
@@ -1189,12 +1188,11 @@ extension PyCode {
           PyMemory.FieldLayout(from: [MangledName].self), // PyCode.freeVariableNames
           PyMemory.FieldLayout(from: Int.self), // PyCode.argCount
           PyMemory.FieldLayout(from: Int.self), // PyCode.kwOnlyArgCount
-          PyMemory.FieldLayout(from: Int.self), // PyCode.predictedObjectStackCount
-          PyMemory.FieldLayout(from: Int.self) // PyCode.predictedBlockStackCount
+          PyMemory.FieldLayout(from: Int.self) // PyCode.predictedObjectStackCount
         ]
       )
 
-      assert(layout.offsets.count == 17)
+      assert(layout.offsets.count == 16)
       self.codeObjectOffset = layout.offsets[0]
       self.nameOffset = layout.offsets[1]
       self.qualifiedNameOffset = layout.offsets[2]
@@ -1211,7 +1209,6 @@ extension PyCode {
       self.argCountOffset = layout.offsets[13]
       self.kwOnlyArgCountOffset = layout.offsets[14]
       self.predictedObjectStackCountOffset = layout.offsets[15]
-      self.predictedBlockStackCountOffset = layout.offsets[16]
       self.size = layout.size
       self.alignment = layout.alignment
     }
@@ -1258,8 +1255,6 @@ extension PyCode {
   internal var kwOnlyArgCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.kwOnlyArgCountOffset) }
   /// Property: `PyCode.predictedObjectStackCount`.
   internal var predictedObjectStackCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.predictedObjectStackCountOffset) }
-  /// Property: `PyCode.predictedBlockStackCount`.
-  internal var predictedBlockStackCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.predictedBlockStackCountOffset) }
 
   /// Property from base class: `PyObject.type`.
   internal var type: PyType { self.typePtr.pointee }
@@ -1300,7 +1295,6 @@ extension PyCode {
     zelf.argCountPtr.deinitialize()
     zelf.kwOnlyArgCountPtr.deinitialize()
     zelf.predictedObjectStackCountPtr.deinitialize()
-    zelf.predictedBlockStackCountPtr.deinitialize()
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
@@ -2639,6 +2633,7 @@ extension PyFrame {
     internal let builtinsOffset: Int
     internal let objectStackStorageOffset: Int
     internal let blockStackStorageOffset: Int
+    internal let blockStackEndOffset: Int
     internal let fastLocalsStorageOffset: Int
     internal let cellAndFreeVariablesStorageOffset: Int
     internal let currentInstructionIndexOffset: Int
@@ -2658,6 +2653,7 @@ extension PyFrame {
           PyMemory.FieldLayout(from: PyDict.self), // PyFrame.builtins
           PyMemory.FieldLayout(from: BufferPtr<PyObject>.self), // PyFrame.objectStackStorage
           PyMemory.FieldLayout(from: BufferPtr<Block>.self), // PyFrame.blockStackStorage
+          PyMemory.FieldLayout(from: PyFrame.BlockStackProxy.End.self), // PyFrame.blockStackEnd
           PyMemory.FieldLayout(from: BufferPtr<FastLocal>.self), // PyFrame.fastLocalsStorage
           PyMemory.FieldLayout(from: BufferPtr<Cell>.self), // PyFrame.cellAndFreeVariablesStorage
           PyMemory.FieldLayout(from: Int?.self), // PyFrame.currentInstructionIndex
@@ -2665,7 +2661,7 @@ extension PyFrame {
         ]
       )
 
-      assert(layout.offsets.count == 11)
+      assert(layout.offsets.count == 12)
       self.codeOffset = layout.offsets[0]
       self.parentOffset = layout.offsets[1]
       self.localsOffset = layout.offsets[2]
@@ -2673,10 +2669,11 @@ extension PyFrame {
       self.builtinsOffset = layout.offsets[4]
       self.objectStackStorageOffset = layout.offsets[5]
       self.blockStackStorageOffset = layout.offsets[6]
-      self.fastLocalsStorageOffset = layout.offsets[7]
-      self.cellAndFreeVariablesStorageOffset = layout.offsets[8]
-      self.currentInstructionIndexOffset = layout.offsets[9]
-      self.nextInstructionIndexOffset = layout.offsets[10]
+      self.blockStackEndOffset = layout.offsets[7]
+      self.fastLocalsStorageOffset = layout.offsets[8]
+      self.cellAndFreeVariablesStorageOffset = layout.offsets[9]
+      self.currentInstructionIndexOffset = layout.offsets[10]
+      self.nextInstructionIndexOffset = layout.offsets[11]
       self.size = layout.size
       self.alignment = layout.alignment
     }
@@ -2705,6 +2702,8 @@ extension PyFrame {
   internal var objectStackStoragePtr: Ptr<BufferPtr<PyObject>> { Ptr(self.ptr, offset: Self.layout.objectStackStorageOffset) }
   /// Property: `PyFrame.blockStackStorage`.
   internal var blockStackStoragePtr: Ptr<BufferPtr<Block>> { Ptr(self.ptr, offset: Self.layout.blockStackStorageOffset) }
+  /// Property: `PyFrame.blockStackEnd`.
+  internal var blockStackEndPtr: Ptr<PyFrame.BlockStackProxy.End> { Ptr(self.ptr, offset: Self.layout.blockStackEndOffset) }
   /// Property: `PyFrame.fastLocalsStorage`.
   internal var fastLocalsStoragePtr: Ptr<BufferPtr<FastLocal>> { Ptr(self.ptr, offset: Self.layout.fastLocalsStorageOffset) }
   /// Property: `PyFrame.cellAndFreeVariablesStorage`.
@@ -2744,6 +2743,7 @@ extension PyFrame {
     zelf.builtinsPtr.deinitialize()
     zelf.objectStackStoragePtr.deinitialize()
     zelf.blockStackStoragePtr.deinitialize()
+    zelf.blockStackEndPtr.deinitialize()
     zelf.fastLocalsStoragePtr.deinitialize()
     zelf.cellAndFreeVariablesStoragePtr.deinitialize()
     zelf.currentInstructionIndexPtr.deinitialize()

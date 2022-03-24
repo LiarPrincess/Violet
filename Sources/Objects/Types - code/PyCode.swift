@@ -186,7 +186,7 @@ public struct PyCode: PyObjectMixin {
   /// CPython: `co_kwonlyargcount`.
   public var kwOnlyArgCount: Int { self.kwOnlyArgCountPtr.pointee }
 
-  // MARK: - Predicted counts
+  // MARK: - Predicted count
 
   // sourcery: storedProperty
   /// After executing this code we will store the stack count,
@@ -194,14 +194,6 @@ public struct PyCode: PyObjectMixin {
   public var predictedObjectStackCount: Int {
     get { self.predictedObjectStackCountPtr.pointee }
     nonmutating set { self.predictedObjectStackCountPtr.pointee = newValue }
-  }
-
-  // sourcery: storedProperty
-  /// After executing this code we will store the stack count,
-  /// so that the next execution avoids reallocations.
-  public var predictedBlockStackCount: Int {
-    get { self.predictedBlockStackCountPtr.pointee }
-    nonmutating set { self.predictedBlockStackCountPtr.pointee = newValue }
   }
 
   // MARK: - Flags
@@ -267,7 +259,6 @@ public struct PyCode: PyObjectMixin {
     self.argCountPtr.initialize(to: code.argCount)
     self.kwOnlyArgCountPtr.initialize(to: code.kwOnlyArgCount)
     self.predictedObjectStackCountPtr.initialize(to: 0)
-    self.predictedBlockStackCountPtr.initialize(to: 0)
 
     self.codeFlags = code.flags
   }

@@ -19,7 +19,7 @@ class PyFrameBlockStackTests: PyTestCase, PyFrameTestsMixin {
     let py = self.createPy()
     guard let frame = self.createFrame(py) else { return }
 
-    let stack = frame.exclusiveBlockStack
+    let stack = frame.blockStack
     self.assertStack(py, stack, expected: [])
   }
 
@@ -29,31 +29,16 @@ class PyFrameBlockStackTests: PyTestCase, PyFrameTestsMixin {
     let py = self.createPy()
     guard let frame = self.createFrame(py) else { return }
 
-    var stack = frame.exclusiveBlockStack
+    let stack = frame.blockStack
     var expectedStack = [Block]()
     self.assertStack(py, stack, expected: expectedStack)
 
-    // === Before resize ===
-    let capacityBeforeResize = frame.blockStackCapacity
-    print(capacityBeforeResize)
-    for i in 0..<capacityBeforeResize {
+    for i in 0..<PyFrame.maxBlockStackCount {
       let block = self.getBlockToPush(index: i)
       stack.push(block)
       expectedStack.push(block)
       self.assertStack(py, stack, expected: expectedStack)
     }
-
-    XCTAssertEqual(frame.blockStackCapacity, capacityBeforeResize)
-
-    // === Resize ===
-    for i in capacityBeforeResize..<(capacityBeforeResize + 10) {
-      let block = self.getBlockToPush(index: i)
-      stack.push(block)
-      expectedStack.push(block)
-      self.assertStack(py, stack, expected: expectedStack)
-    }
-
-    XCTAssertNotEqual(frame.blockStackCapacity, capacityBeforeResize)
   }
 
   // MARK: - Pop
@@ -62,7 +47,7 @@ class PyFrameBlockStackTests: PyTestCase, PyFrameTestsMixin {
     let py = self.createPy()
     guard let frame = self.createFrame(py) else { return }
 
-    var stack = frame.exclusiveBlockStack
+    let stack = frame.blockStack
     var expectedStack = [Block]()
     self.assertStack(py, stack, expected: expectedStack)
 
@@ -90,7 +75,7 @@ class PyFrameBlockStackTests: PyTestCase, PyFrameTestsMixin {
 
   /// Expected is in `bottom-to-top` order.
   private func assertStack(_ py: Py,
-                           _ stack: PyFrame.ExclusiveBlockStackProxy,
+                           _ stack: PyFrame.BlockStackProxy,
                            expected: [Block],
                            file: StaticString = #file,
                            line: UInt = #line) {
