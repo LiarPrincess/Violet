@@ -4,10 +4,11 @@ extension PyFrame {
 
   // MARK: - Block
 
-  public struct Block: CustomStringConvertible {
+  // 'Equatable' for tests.
+  public struct Block: Equatable, CustomStringConvertible {
 
     // swiftlint:disable:next nesting
-    public enum Kind: CustomStringConvertible {
+    public enum Kind: Equatable, CustomStringConvertible {
       case setupLoop(loopEndLabelIndex: Int)
       case setupExcept(firstExceptLabelIndex: Int)
       case setupFinally(finallyStartLabelIndex: Int)
@@ -135,7 +136,7 @@ extension PyFrame {
 
     /// void
     /// PyFrame_BlockSetup(PyFrameObject *f, int type, int handler, int level)
-    public mutating func push(block: Block) {
+    public mutating func push(_ block: Block) {
       self.resizeIfNeeded()
       self.endPointer.pointee = block
       self.endPointer = self.endPointer.successor()

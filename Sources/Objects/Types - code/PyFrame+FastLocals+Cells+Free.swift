@@ -71,7 +71,7 @@ extension PyFrame {
   }
 
   internal func deallocateCellAndFreeVariables() {
-    let ptr = self.cellAndFreeVariableStorage.deinitialize()
+    let ptr = self.cellAndFreeVariablesStorage.deinitialize()
     ptr.deallocate()
   }
 
@@ -86,7 +86,7 @@ extension PyFrame {
     internal init(frame: PyFrame) {
       let startIndex = 0
       let endIndex = frame.code.cellVariableCount
-      self.ptr = frame.cellAndFreeVariableStorage[startIndex..<endIndex]
+      self.ptr = frame.cellAndFreeVariablesStorage[startIndex..<endIndex]
     }
 
     public subscript(index: Int) -> Cell {
@@ -104,8 +104,8 @@ extension PyFrame {
 
     internal init(frame: PyFrame) {
       let startIndex = frame.code.cellVariableCount
-      let endIndex = frame.cellAndFreeVariableStorage.count
-      self.ptr = frame.cellAndFreeVariableStorage[startIndex..<endIndex]
+      let endIndex = frame.cellAndFreeVariablesStorage.count
+      self.ptr = frame.cellAndFreeVariablesStorage[startIndex..<endIndex]
     }
 
     public subscript(index: Int) -> Cell {

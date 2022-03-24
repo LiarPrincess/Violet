@@ -2628,7 +2628,7 @@ extension PyFrame {
     internal let objectStackStorageOffset: Int
     internal let blockStackStorageOffset: Int
     internal let fastLocalsStorageOffset: Int
-    internal let cellAndFreeVariableStorageOffset: Int
+    internal let cellAndFreeVariablesStorageOffset: Int
     internal let currentInstructionIndexOffset: Int
     internal let nextInstructionIndexOffset: Int
     internal let size: Int
@@ -2647,7 +2647,7 @@ extension PyFrame {
           PyMemory.FieldLayout(from: BufferPtr<PyObject>.self), // PyFrame.objectStackStorage
           PyMemory.FieldLayout(from: BufferPtr<Block>.self), // PyFrame.blockStackStorage
           PyMemory.FieldLayout(from: BufferPtr<FastLocal>.self), // PyFrame.fastLocalsStorage
-          PyMemory.FieldLayout(from: BufferPtr<Cell>.self), // PyFrame.cellAndFreeVariableStorage
+          PyMemory.FieldLayout(from: BufferPtr<Cell>.self), // PyFrame.cellAndFreeVariablesStorage
           PyMemory.FieldLayout(from: Int?.self), // PyFrame.currentInstructionIndex
           PyMemory.FieldLayout(from: Int.self) // PyFrame.nextInstructionIndex
         ]
@@ -2662,7 +2662,7 @@ extension PyFrame {
       self.objectStackStorageOffset = layout.offsets[5]
       self.blockStackStorageOffset = layout.offsets[6]
       self.fastLocalsStorageOffset = layout.offsets[7]
-      self.cellAndFreeVariableStorageOffset = layout.offsets[8]
+      self.cellAndFreeVariablesStorageOffset = layout.offsets[8]
       self.currentInstructionIndexOffset = layout.offsets[9]
       self.nextInstructionIndexOffset = layout.offsets[10]
       self.size = layout.size
@@ -2695,8 +2695,8 @@ extension PyFrame {
   internal var blockStackStoragePtr: Ptr<BufferPtr<Block>> { Ptr(self.ptr, offset: Self.layout.blockStackStorageOffset) }
   /// Property: `PyFrame.fastLocalsStorage`.
   internal var fastLocalsStoragePtr: Ptr<BufferPtr<FastLocal>> { Ptr(self.ptr, offset: Self.layout.fastLocalsStorageOffset) }
-  /// Property: `PyFrame.cellAndFreeVariableStorage`.
-  internal var cellAndFreeVariableStoragePtr: Ptr<BufferPtr<Cell>> { Ptr(self.ptr, offset: Self.layout.cellAndFreeVariableStorageOffset) }
+  /// Property: `PyFrame.cellAndFreeVariablesStorage`.
+  internal var cellAndFreeVariablesStoragePtr: Ptr<BufferPtr<Cell>> { Ptr(self.ptr, offset: Self.layout.cellAndFreeVariablesStorageOffset) }
   /// Property: `PyFrame.currentInstructionIndex`.
   internal var currentInstructionIndexPtr: Ptr<Int?> { Ptr(self.ptr, offset: Self.layout.currentInstructionIndexOffset) }
   /// Property: `PyFrame.nextInstructionIndex`.
@@ -2733,7 +2733,7 @@ extension PyFrame {
     zelf.objectStackStoragePtr.deinitialize()
     zelf.blockStackStoragePtr.deinitialize()
     zelf.fastLocalsStoragePtr.deinitialize()
-    zelf.cellAndFreeVariableStoragePtr.deinitialize()
+    zelf.cellAndFreeVariablesStoragePtr.deinitialize()
     zelf.currentInstructionIndexPtr.deinitialize()
     zelf.nextInstructionIndexPtr.deinitialize()
 
