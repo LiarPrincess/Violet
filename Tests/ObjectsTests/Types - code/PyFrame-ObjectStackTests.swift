@@ -15,7 +15,8 @@ class PyFrameObjectStackTests: PyTestCase, PyFrameTestsMixin {
 
   func test_empty() {
     let py = self.createPy()
-    let frame = self.createFrame(py)
+    guard let frame = self.createFrame(py) else { return }
+
     let stack = frame.exclusiveObjectStack
     self.assertStack(py, stack, expected: [])
   }
@@ -24,9 +25,9 @@ class PyFrameObjectStackTests: PyTestCase, PyFrameTestsMixin {
 
   func test_push() {
     let py = self.createPy()
-    let frame = self.createFrame(py)
-    var stack = frame.exclusiveObjectStack
+    guard let frame = self.createFrame(py) else { return }
 
+    var stack = frame.exclusiveObjectStack
     var expectedStack = [PyObject]()
     self.assertStack(py, stack, expected: expectedStack)
 
@@ -54,9 +55,9 @@ class PyFrameObjectStackTests: PyTestCase, PyFrameTestsMixin {
 
   func test_push_collection() {
     let py = self.createPy()
-    let frame = self.createFrame(py)
-    var stack = frame.exclusiveObjectStack
+    guard let frame = self.createFrame(py) else { return }
 
+    var stack = frame.exclusiveObjectStack
     var expectedStack = [PyObject]()
     self.assertStack(py, stack, expected: expectedStack)
 
@@ -93,9 +94,9 @@ class PyFrameObjectStackTests: PyTestCase, PyFrameTestsMixin {
 
   func test_set() {
     let py = self.createPy()
-    let frame = self.createFrame(py)
-    var stack = frame.exclusiveObjectStack
+    guard let frame = self.createFrame(py) else { return }
 
+    var stack = frame.exclusiveObjectStack
     var expectedStack = [PyObject]()
     self.assertStack(py, stack, expected: expectedStack)
 
@@ -139,9 +140,9 @@ class PyFrameObjectStackTests: PyTestCase, PyFrameTestsMixin {
 
   func test_pop() {
     let py = self.createPy()
-    let frame = self.createFrame(py)
-    var stack = frame.exclusiveObjectStack
+    guard let frame = self.createFrame(py) else { return }
 
+    var stack = frame.exclusiveObjectStack
     var expectedStack = [PyObject]()
     self.assertStack(py, stack, expected: expectedStack)
 
@@ -167,9 +168,9 @@ class PyFrameObjectStackTests: PyTestCase, PyFrameTestsMixin {
 
   func test_pop_in_push_order() {
     let py = self.createPy()
-    let frame = self.createFrame(py)
-    var stack = frame.exclusiveObjectStack
+    guard let frame = self.createFrame(py) else { return }
 
+    var stack = frame.exclusiveObjectStack
     var expectedStack = [PyObject]()
     self.assertStack(py, stack, expected: expectedStack)
 
@@ -209,9 +210,9 @@ class PyFrameObjectStackTests: PyTestCase, PyFrameTestsMixin {
 
   func test_pop_until_count() {
     let py = self.createPy()
-    let frame = self.createFrame(py)
-    var stack = frame.exclusiveObjectStack
+    guard let frame = self.createFrame(py) else { return }
 
+    var stack = frame.exclusiveObjectStack
     var expectedStack = [PyObject]()
     self.assertStack(py, stack, expected: expectedStack)
 

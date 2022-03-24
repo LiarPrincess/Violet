@@ -1,8 +1,86 @@
-/* MARKER
 import VioletBytecode
-import VioletObjects
 
-// swiftlint:disable file_length
+extension PyCode {
+  fileprivate var fastLocalsCount: Int {
+    return self.variableCount
+  }
+}
+
+extension PyFrame {
+
+  public typealias FastLocal = PyObject?
+
+  // MARK: - Initialize
+
+  internal func initializeFastLocals(_ py: Py,
+                                     args: [PyObject],
+                                     kwargs: PyDict?,
+                                     defaults: [PyObject],
+                                     kwDefaults: PyDict?) -> PyBaseException? {
+    let count = code.fastLocalsCount
+    let stride = MemoryLayout<FastLocal>.stride
+    let alignment = MemoryLayout<FastLocal>.alignment
+
+    let rawPtr = PyMemory.allocate(byteCount: count * stride, alignment: alignment)
+    let ptr = rawPtr.bind(to: FastLocal.self, count: count)
+    self.fastLocalsStoragePtr.initialize(to: ptr)
+
+    // Filling args and locals is actually quite complicated,
+    // so it was moved to separate struct.
+    var helper = FillFastLocals(
+      py,
+      frame: self,
+      args: args,
+      kwargs: kwargs,
+      defaults: defaults,
+      kwDefaults: kwDefaults
+    )
+
+    return helper.run()
+  }
+
+  // MARK: - Deallocate
+
+  internal func deallocateFastLocals() {
+    let ptr = self.fastLocalsStorage.deinitialize()
+    ptr.deallocate()
+  }
+
+  // MARK: - Proxy
+
+  public struct FastLocalsProxy {
+
+    private let ptr: BufferPtr<FastLocal>
+
+    internal var first: FastLocal? {
+      return self.ptr.first
+    }
+
+    public var count: Int {
+      return self.ptr.count
+    }
+
+    internal init(frame: PyFrame) {
+      self.ptr = frame.fastLocalsStorage
+    }
+
+    public subscript(index: Int) -> FastLocal {
+      get { return self.ptr[index] }
+      nonmutating set { self.ptr[index] = newValue }
+    }
+  }
+}
+
+// MARK: - FillFastLocals
+
+extension String {
+  fileprivate mutating func append(_ elements: CustomStringConvertible...) {
+    for element in elements {
+      let string = String(describing: element)
+      self.append(string)
+    }
+  }
+}
 
 /// Helper structure for filling `Frame.fastLocals`.
 /// `Frame.fastLocals` holds function args and local variables.
@@ -12,8 +90,9 @@ import VioletObjects
 ///  args | varArgs | varKeywords | locals
 ///       ^ self.totalArgs
 /// ```
-internal struct FillFastLocals {
+private struct FillFastLocals {
 
+  private let py: Py
   private let frame: PyFrame
   /// Positional arguments as given by the user.
   private let args: [PyObject]
@@ -42,11 +121,13 @@ internal struct FillFastLocals {
     return self.frame.code
   }
 
-  internal init(frame: PyFrame,
-                args: [PyObject],
-                kwargs: PyDict?,
-                defaults: [PyObject],
-                kwDefaults: PyDict?) {
+  fileprivate init(_ py: Py,
+                   frame: PyFrame,
+                   args: [PyObject],
+                   kwargs: PyDict?,
+                   defaults: [PyObject],
+                   kwDefaults: PyDict?) {
+    self.py = py
     self.frame = frame
     self.args = args
     self.kwargs = kwargs
@@ -58,7 +139,7 @@ internal struct FillFastLocals {
 
   /// PyObject *
   /// _PyEval_EvalCodeWithName(PyObject *_co, PyObject *globals, ...)
-  internal mutating func run() -> PyBaseException? {
+  fileprivate mutating func run() -> PyBaseException? {
     self.fillFromArgs()
 
     // We could totally use '??' as monadic bind for errors and write this
@@ -98,14 +179,14 @@ internal struct FillFastLocals {
 
   /// *args
   private func setVarArgs(value: [PyObject]) {
-    let tuple = Py.newTuple(elements: value)
-    self.set(index: self.totalArgs, value: tuple)
+    let tuple = self.py.newTuple(elements: value)
+    self.set(index: self.totalArgs, value: tuple.asObject)
   }
 
   /// **kwargs
   private func setVarKwargs(value: PyDict) {
     let index = self.hasVarArgs ? self.totalArgs + 1 : self.totalArgs
-    self.set(index: index, value: value)
+    self.set(index: index, value: value.asObject)
   }
 
   // MARK: - Args
@@ -134,7 +215,7 @@ internal struct FillFastLocals {
     // Create a dictionary for keyword parameters (**kwargs)
     // We have to do this even if we were not called with **kwargs.
     if self.hasVarKeywords {
-      let dict = Py.newDict()
+      let dict = self.py.newDict()
       self.varKwargs = dict
       self.setVarKwargs(value: dict)
     }
@@ -145,25 +226,23 @@ internal struct FillFastLocals {
 
     // Handle keyword arguments
     // swiftlint:disable:next closure_body_length
-    let e = Py.forEach(dict: kwargs) { key, value in
+    return self.py.forEach(dict: kwargs) { key, value in
       guard let keyword = self.py.cast.asString(key) else {
-        let name = self.code.name
-        let e = Py.newTypeError(msg: "\(name)() keywords must be strings")
-        return .error(e)
+        let error = self.newTypeError("keywords must be strings")
+        return .error(error)
       }
 
       // Try to find entry in 'args'
+      let keywordString = self.py.strString(keyword)
       for index in 0..<self.totalArgs {
         let name = self.getName(self.code.variableNames[index])
-        guard name == keyword.value else {
+        guard name == keywordString else {
           continue
         }
 
         guard !self.isSet(index: index) else {
-          let name = self.code.name
-          let msg = "\(name)() got multiple values for argument '\(keyword)'"
-          let e = Py.newTypeError(msg: msg)
-          return .error(e)
+          let error = self.newTypeError("got multiple values for argument '\(keyword)'")
+          return .error(error)
         }
 
         self.set(index: index, value: value)
@@ -172,20 +251,15 @@ internal struct FillFastLocals {
 
       // Ok, this is proper 'kwarg', but do we even have 'kwargs'?
       if let dict = self.varKwargs {
-        switch dict.set(key: keyword, to: value) {
+        switch dict.set(self.py, key: keyword, value: value) {
         case .ok: return .goToNextElement
         case .error(let e): return .error(e)
         }
       }
 
-      let name = self.code.name
-      let msg = "\(name)() got an unexpected keyword argument '\(keyword)'"
-      let e = Py.newTypeError(msg: msg)
-      return .error(e)
+      let error = self.newTypeError("got an unexpected keyword argument '\(keyword)'")
+      return .error(error)
     }
-
-    // We could 'return Py.forEach' but this is better for debugging.
-    return e
   }
 
   // MARK: - Args defaults
@@ -253,9 +327,9 @@ internal struct FillFastLocals {
       }
 
       let name = self.getName(self.code.variableNames[index])
-      let interned = Py.intern(string: name)
+      let interned = self.py.intern(string: name)
 
-      switch kwDefaults.get(key: interned) {
+      switch kwDefaults.get(self.py, key: interned) {
       case .value(let defaultValue):
         self.set(index: index, value: defaultValue)
       case .notFound:
@@ -283,41 +357,40 @@ internal struct FillFastLocals {
     }
 
     let argCount = self.code.argCount
-    let kwOnlyArgCount = self.code.kwOnlyArgCount
+    let defaultsCount = self.defaults.count
+    var message = "takes "
+
+    if defaultsCount == 0 {
+      let s = argCount == 0 ? "" : "s"
+      message.append(argCount, " positional argument", s)
+    } else {
+      let minCount = argCount - defaultsCount
+      message.append("from ", minCount, " to ", argCount, " positional arguments ")
+    }
+
+    let givenArgCount = self.args.count
+    message.append("but ", givenArgCount, " ")
 
     // Count missing keyword-only args.
-    var kwOnlyGiven = 0
-    for i in argCount..<(argCount + kwOnlyArgCount) {
+    let keywordOnlyCount = self.code.kwOnlyArgCount
+    var keywordOnlyGivenCount = 0
+    for i in argCount..<(argCount + keywordOnlyCount) {
       if self.isSet(index: i) {
-        kwOnlyGiven += 1
+        keywordOnlyGivenCount += 1
       }
     }
 
-    let given = self.args.count
-    let defCount = self.defaults.count
-    let fnName = self.code.name.value
-    var msg = "\(fnName)() takes "
+    if keywordOnlyGivenCount > 0 {
+      let s0 = givenArgCount == 0 ? "" : "s"
+      message.append("positional argument", s0)
 
-    if defCount > 0 {
-      msg += "from \(argCount - defCount) to \(argCount) positional arguments "
-    } else {
-      let s = argCount != 1 ? "s" : ""
-      msg += "\(argCount) positional argument\(s) "
+      let s1 = keywordOnlyGivenCount == 0 ? "" : "s"
+      message.append("(and ", keywordOnlyGivenCount, " keyword-only argument", s1, ") ")
     }
 
-    msg += "but \(given) "
-
-    if kwOnlyGiven > 0 {
-      let s0 = given != 1 ? "s" : ""
-      let s1 = kwOnlyGiven != 1 ? "s" : ""
-      msg += "positional argument\(s0) "
-      msg += "(and %\(kwOnlyGiven) keyword-only argument\(s1)) "
-    }
-
-    let was = given == 1 && kwOnlyGiven == 0 ? "was" : "where"
-    msg += "\(was) given"
-
-    return Py.newTypeError(msg: msg)
+    let was = givenArgCount == 1 && keywordOnlyGivenCount == 0 ? "was" : "where"
+    message.append(was, " given")
+    return self.newTypeError(message)
   }
 
   private enum MissingArguments {
@@ -327,8 +400,7 @@ internal struct FillFastLocals {
 
   /// static void
   /// missing_arguments(PyCodeObject *co, Py_ssize_t missing, ...)
-  private func missingArguments(count: Int,
-                                mode: MissingArguments) -> PyBaseException {
+  private func missingArguments(count: Int, mode: MissingArguments) -> PyBaseException {
     let start: Int
     let end: Int
     let kind: String
@@ -345,37 +417,53 @@ internal struct FillFastLocals {
 
     var missingNames = [String]()
     for index in start..<end {
-      let isMissing = !self.isSet(index: index)
-      guard isMissing else { continue }
-
-      let name = self.getName(self.code.variableNames[index])
-      missingNames.append(name)
+      if !self.isSet(index: index) {
+        let name = self.getName(self.code.variableNames[index])
+        missingNames.append(name)
+      }
     }
 
     assert(missingNames.count == count)
 
-    let name = self.code.name.value
-    let count = missingNames.count
-    let s = missingNames.count != 1 ? "s" : ""
-    let names = self.formatNames(names: missingNames)
-    let msg = "\(name)() missing \(count) required \(kind) argument\(s): \(names)"
+    var message = ""
+    let missingCount = missingNames.count
+    let s = missingNames.isEmpty ? "" : "s"
+    message.append("missing ", missingCount, " required ", kind, " argument", s, ": ")
 
-    return Py.newTypeError(msg: msg)
+    self.appendNames(string: &message, names: missingNames)
+    return self.newTypeError(message)
   }
 
-  private func formatNames(names: [String]) -> String {
+  private func appendNames(string: inout String, names: [String]) {
     assert(names.any)
 
     switch names.count {
     case 1:
-      return names[0]
+      string.append(names[0])
     case 2:
-      return "\(names[0]) and \(names[1])"
+      string.append(names[0], " and ", names[1])
     default:
-      let withoutLast = names.dropLast().joined(separator: ",")
-      let last = " and \(names[names.count - 1])"
-      return withoutLast + last
+      for name in names.dropLast() {
+        if !string.isEmpty {
+          string.append(", ")
+        }
+
+        string.append(name)
+      }
+
+      let last = names[names.count - 1]
+      string.append(" and ", last)
     }
+  }
+
+  /// Will automatically prepend the function name.
+  private func newTypeError(_ message: String) -> PyBaseException {
+    var messageWithFn = self.py.strString(self.code.name)
+    messageWithFn.append("() ")
+    messageWithFn.append(message)
+
+    let error = self.py.newTypeError(message: messageWithFn)
+    return error.asBaseException
   }
 
   // MARK: - Helpers
@@ -384,5 +472,3 @@ internal struct FillFastLocals {
     return name.beforeMangling
   }
 }
-
-*/

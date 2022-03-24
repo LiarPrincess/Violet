@@ -196,11 +196,9 @@ public struct PyFrame: PyObjectMixin {
     let builtins = Self.getBuiltins(py, globals: globals, parent: parent)
     self.builtinsPtr.initialize(to: builtins)
 
-    let fastLocals = self.allocateFastLocals(py, code: code)
-    self.fastLocalsStoragePtr.initialize(to: fastLocals)
-
-    let cellFreeVarialbes = self.allocateCellAndFreeVariables(py, code: code)
-    self.cellAndFreeVariablesStoragePtr.initialize(to: cellFreeVarialbes)
+    // Some things will be initialized later:
+    // - 'self.fastLocalsStoragePtr' in 'self.initializeFastLocals'
+    // - 'self.cellAndFreeVariablesStoragePtr' in 'self.initializeCellAndFreeVariables'
 
     self.currentInstructionIndexPtr.initialize(to: nil)
     self.nextInstructionIndexPtr.initialize(to: 0)

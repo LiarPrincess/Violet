@@ -179,12 +179,12 @@ public struct PyCode: PyObjectMixin {
   /// The number of positional arguments the code object expects to receive,
   /// including those with default values (but excluding `*args`).
   /// CPython: `co_argcount`.
-  internal var argCount: Int { self.argCountPtr.pointee }
+  public var argCount: Int { self.argCountPtr.pointee }
 
   // sourcery: storedProperty
   /// The number of keyword arguments the code object can receive.
   /// CPython: `co_kwonlyargcount`.
-  internal var kwOnlyArgCount: Int { self.kwOnlyArgCountPtr.pointee }
+  public var kwOnlyArgCount: Int { self.kwOnlyArgCountPtr.pointee }
 
   // MARK: - Predicted counts
 
