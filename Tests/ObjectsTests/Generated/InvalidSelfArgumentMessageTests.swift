@@ -962,6 +962,8 @@ class InvalidSelfArgumentMessageTests: PyTestCase {
     self.assertInvalidSelfArgumentMessage(py, type: type, fn: "isspace", positionalArgCount: 1)
     self.assertInvalidSelfArgumentMessage(py, type: type, fn: "istitle", positionalArgCount: 1)
     self.assertInvalidSelfArgumentMessage(py, type: type, fn: "isupper", positionalArgCount: 1)
+    self.assertInvalidSelfArgumentMessage(py, type: type, fn: "startswith", positionalArgCount: 4)
+    self.assertInvalidSelfArgumentMessage(py, type: type, fn: "endswith", positionalArgCount: 4)
     self.assertInvalidSelfArgumentMessage(py, type: type, fn: "strip", positionalArgCount: 2)
     self.assertInvalidSelfArgumentMessage(py, type: type, fn: "lstrip", positionalArgCount: 2)
     self.assertInvalidSelfArgumentMessage(py, type: type, fn: "rstrip", positionalArgCount: 2)
