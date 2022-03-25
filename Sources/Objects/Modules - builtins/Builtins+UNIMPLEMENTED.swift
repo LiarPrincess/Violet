@@ -19,7 +19,7 @@ extension Builtins {
 
   /// breakpoint(*args, **kws)
   /// See [this](https://docs.python.org/3/library/functions.html#breakpoint)
-  internal static func breakpoint(_ py: Py, module: PyObject) -> PyObject {
+  internal static func breakpoint(_ py: Py) -> PyObject {
     self.unimplemented(name: "breakpoint")
   }
 
@@ -34,7 +34,7 @@ extension Builtins {
 
   /// vars([object])
   /// See [this](https://docs.python.org/3/library/functions.html#vars)
-  internal static func vars(_ py: Py, module: PyObject) -> PyObject {
+  internal static func vars(_ py: Py) -> PyObject {
     self.unimplemented(name: "vars")
   }
 
@@ -52,7 +52,7 @@ extension Builtins {
 
   /// input([prompt])
   /// See [this](https://docs.python.org/3/library/functions.html#input)
-  internal static func input(_ py: Py, module: PyObject) -> PyObject {
+  internal static func input(_ py: Py) -> PyObject {
     self.unimplemented(name: "input")
   }
 
@@ -69,7 +69,6 @@ extension Builtins {
   /// format(value[, format_spec])
   /// See [this](https://docs.python.org/3/library/functions.html#format)
   internal static func format(_ py: Py,
-                              module: PyObject,
                               value: PyObject,
                               format: PyObject?) -> PyObject {
     self.unimplemented(name: "format")
@@ -77,7 +76,7 @@ extension Builtins {
 
   /// help([object])
   /// See [this](https://docs.python.org/3/library/functions.html#help)
-  internal static func help(_ py: Py, module: PyObject) -> PyObject {
+  internal static func help(_ py: Py) -> PyObject {
     self.unimplemented(name: "help")
   }
 

@@ -21,7 +21,7 @@ extension Sys {
 
   // MARK: - Modules
 
-  internal static func modules(_ py: Py, module: PyObject) -> PyResult {
+  internal static func modules(_ py: Py) -> PyResult {
     let result = py.sys.getModules()
     return PyResult(result)
   }
@@ -139,7 +139,7 @@ extension Sys {
 
   // MARK: - Builtin module names
 
-  internal static func builtin_module_names(_ py: Py, module: PyObject) -> PyResult {
+  internal static func builtin_module_names(_ py: Py) -> PyResult {
     let result = py.sys.getBuiltinModuleNames()
     return PyResult(result)
   }

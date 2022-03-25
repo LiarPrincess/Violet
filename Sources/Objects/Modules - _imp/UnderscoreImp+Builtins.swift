@@ -18,9 +18,7 @@ extension UnderscoreImp {
     Returns True if the module name corresponds to a built-in module.
     """
 
-  internal static func is_builtin(_ py: Py,
-                                  module: PyObject,
-                                  name: PyObject) -> PyResult {
+  internal static func is_builtin(_ py: Py, name: PyObject) -> PyResult {
     let result = py._imp.isBuiltin(name: name)
     return PyResult(py, result)
   }
@@ -60,9 +58,7 @@ extension UnderscoreImp {
     Create an extension module.
     """
 
-  internal static func create_builtin(_ py: Py,
-                                      module: PyObject,
-                                      spec: PyObject) -> PyResult {
+  internal static func create_builtin(_ py: Py, spec: PyObject) -> PyResult {
     let result = py._imp.createBuiltin(spec: spec)
     return PyResult(result)
   }
@@ -102,9 +98,7 @@ extension UnderscoreImp {
     Initialize a built-in module.
     """
 
-  internal static func exec_builtin(_ py: Py,
-                                    module: PyObject,
-                                    mod: PyObject) -> PyResult {
+  internal static func exec_builtin(_ py: Py, mod: PyObject) -> PyResult {
     if let error = py._imp.execBuiltin(module: mod) {
       return .error(error)
     }

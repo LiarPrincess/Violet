@@ -17,9 +17,7 @@ extension Sys {
     Return the string itself or the previously interned string object with the
     same value."
     """
-  internal static func intern(_ py: Py,
-                              module: PyObject,
-                              string: PyObject) -> PyResult {
+  internal static func intern(_ py: Py, string: PyObject) -> PyResult {
     let result = py.sys.intern(string)
     return PyResult(result)
   }
@@ -56,9 +54,7 @@ extension Sys {
     exit status will be one (i.e., failure).
     """
 
-  internal static func exit(_ py: Py,
-                            module: PyObject,
-                            status: PyObject?) -> PyResult {
+  internal static func exit(_ py: Py, status: PyObject?) -> PyResult {
     let error = py.sys.exit(status: status)
     return .error(error)
   }
@@ -83,7 +79,7 @@ extension Sys {
     implementation.
     """
 
-  internal static func getdefaultencoding(_ py: Py, module: PyObject) -> PyResult {
+  internal static func getdefaultencoding(_ py: Py) -> PyResult {
     let result = py.sys.defaultEncodingString
     return PyResult(result)
   }
@@ -98,8 +94,7 @@ extension Sys {
     recursion from causing an overflow of the C stack and crashing Python.
     """
 
-  internal static func getrecursionlimit(_ py: Py,
-                                         module: PyObject) -> PyResult {
+  internal static func getrecursionlimit(_ py: Py) -> PyResult {
     let result = py.sys.recursionLimit
     return PyResult(result)
   }
@@ -113,9 +108,7 @@ extension Sys {
     dependent."
     """
 
-  internal static func setrecursionlimit(_ py: Py,
-                                         module: PyObject,
-                                         limit: PyObject) -> PyResult {
+  internal static func setrecursionlimit(_ py: Py, limit: PyObject) -> PyResult {
     if let error = py.sys.setRecursionLimit(limit) {
       return .error(error)
     }
@@ -147,7 +140,7 @@ extension Sys {
 
   // MARK: - Traceback limit
 
-  internal static func tracebacklimit(_ py: Py, module: PyObject) -> PyResult {
+  internal static func tracebacklimit(_ py: Py) -> PyResult {
     let result = py.sys.getTracebackLimit()
     return PyResult(result)
   }
@@ -172,9 +165,7 @@ extension Sys {
     purposes only."
     """
 
-  internal static func _getframe(_ py: Py,
-                                 module: PyObject,
-                                 depth: PyObject?) -> PyResult {
+  internal static func _getframe(_ py: Py, depth: PyObject?) -> PyResult {
     let result = py.sys.getFrame(depth: depth)
     return PyResult(result)
   }
