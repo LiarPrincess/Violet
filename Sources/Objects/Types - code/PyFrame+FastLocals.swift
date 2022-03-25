@@ -25,6 +25,11 @@ extension PyFrame {
     let ptr = rawPtr.bind(to: FastLocal.self, count: count)
     self.fastLocalsStoragePtr.initialize(to: ptr)
 
+    // 'FillFastLocals' will check if value was filled, so in the beginning
+    // we will set all values to 'nil', otherwise we would read uninitalized
+    // memory.
+    ptr.initialize(repeating: nil)
+
     // Filling args and locals is actually quite complicated,
     // so it was moved to separate struct.
     var helper = FillFastLocals(

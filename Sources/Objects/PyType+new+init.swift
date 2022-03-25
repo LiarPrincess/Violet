@@ -455,7 +455,7 @@ extension PyType {
 
     let get = FunctionWrapper(name: "__get__", fn: PyType.getHeapType__dict__(_:zelf:))
     let set = FunctionWrapper(name: "__set__", fn: PyType.setHeapType__dict__(_:zelf:value:))
-    let del = FunctionWrapper(name: "__det__", fn: PyType.delHeapType__dict__(_:zelf:))
+    let del = FunctionWrapper(name: "__del__", fn: PyType.delHeapType__dict__(_:zelf:))
 
     let dict = type.getDict(py)
     let property = py.newProperty(get: get, set: set, del: del, doc: nil)

@@ -108,7 +108,7 @@ public struct PyBaseException: PyErrorMixin {
   }
 
   internal static func fillDebug(zelf: PyBaseException, debug: inout PyObject.DebugMirror) {
-    debug.append(name: "args", value: zelf.args)
+    debug.append(name: "args", value: zelf.args, includeInShortDescription: true)
     debug.append(name: "traceback", value: zelf.traceback as Any)
     debug.append(name: "cause", value: zelf.cause as Any)
     debug.append(name: "context", value: zelf.context as Any)
