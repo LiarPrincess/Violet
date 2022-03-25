@@ -205,8 +205,17 @@ extension PyModuleImplementation {
   internal func setOrTrap(
     _ name: Properties,
     doc: String?,
-    fn: @escaping (Py, PyObject, [PyObject], PyDict?) -> PyResult
+    fn: @escaping (Py, [PyObject], PyDict?) -> PyResult
   ) {
+    let wrapper = FunctionWrapper(name: name.description, fn: fn)
+    self.setOrTrap(name, doc: doc, fn: wrapper)
+  }
+
+  // MARK: - Set positional nonary
+
+  internal func setOrTrap(_ name: Properties,
+                          doc: String?,
+                          fn: @escaping (Py) -> PyResult) {
     let wrapper = FunctionWrapper(name: name.description, fn: fn)
     self.setOrTrap(name, doc: doc, fn: wrapper)
   }
@@ -267,26 +276,6 @@ extension PyModuleImplementation {
     _ name: Properties,
     doc: String?,
     fn: @escaping (Py, PyObject, PyObject?, PyObject?) -> PyResult
-  ) {
-    let wrapper = FunctionWrapper(name: name.description, fn: fn)
-    self.setOrTrap(name, doc: doc, fn: wrapper)
-  }
-
-  // MARK: - Set positional quartary
-
-  internal func setOrTrap(
-    _ name: Properties,
-    doc: String?,
-    fn: @escaping (Py, PyObject, PyObject, PyObject, PyObject) -> PyResult
-  ) {
-    let wrapper = FunctionWrapper(name: name.description, fn: fn)
-    self.setOrTrap(name, doc: doc, fn: wrapper)
-  }
-
-  internal func setOrTrap(
-    _ name: Properties,
-    doc: String?,
-    fn: @escaping (Py, PyObject, PyObject, PyObject, PyObject?) -> PyResult
   ) {
     let wrapper = FunctionWrapper(name: name.description, fn: fn)
     self.setOrTrap(name, doc: doc, fn: wrapper)

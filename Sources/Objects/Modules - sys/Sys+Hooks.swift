@@ -22,9 +22,7 @@ extension Sys {
   ///
   /// static PyObject *
   /// sys_displayhook(PyObject *self, PyObject *o)
-  internal static func displayhook(_ py: Py,
-                                   module: PyObject,
-                                   object: PyObject) -> PyResult {
+  internal static func displayhook(_ py: Py, object: PyObject) -> PyResult {
     // Print value except if None.
     // Before, set '_' to None to avoid recursion.
     // After printing, also assign to '_'
@@ -92,7 +90,6 @@ extension Sys {
   /// void
   /// PyErr_Display(PyObject *exception, PyObject *value, PyObject *tb)
   internal static func excepthook(_ py: Py,
-                                  module: PyObject,
                                   type: PyObject,
                                   value: PyObject,
                                   traceback: PyObject) -> PyResult {

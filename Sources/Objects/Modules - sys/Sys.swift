@@ -203,15 +203,15 @@ public final class Sys: PyModuleImplementation {
     self.setOrTrap(.modules, value: self.py.newDict())
     self.setOrTrap(.builtin_module_names, value: self.py.emptyTuple)
 
-    self.setOrTrap(.displayhook, doc: Self.displayhookDoc, fn: Self.displayhook(_:module:object:))
-    self.setOrTrap(.excepthook, doc: Self.excepthookDoc, fn: Self.excepthook(_:module:type:value:traceback:))
+    self.setOrTrap(.displayhook, doc: Self.displayhookDoc, fn: Self.displayhook(_:object:))
+    self.setOrTrap(.excepthook, doc: Self.excepthookDoc, fn: Self.excepthook(_:type:value:traceback:))
 
-    self.setOrTrap(.exit, doc: Self.exitDoc, fn: Self.exit(_:module:status:))
-    self.setOrTrap(.intern, doc: Self.internDoc, fn: Self.intern(_:module:string:))
-    self.setOrTrap(.getdefaultencoding, doc: Self.getDefaultEncodingDoc, fn: Self.getdefaultencoding(_:module:))
-    self.setOrTrap(.getrecursionlimit, doc: Self.getRecursionLimitDoc, fn: Self.getrecursionlimit(_:module:))
-    self.setOrTrap(.setrecursionlimit, doc: Self.setRecursionLimitDoc, fn: Self.setrecursionlimit(_:module:limit:))
-    self.setOrTrap(._getframe, doc: Self.getFrameDoc, fn: Self._getframe(_:module:depth:))
+    self.setOrTrap(.exit, doc: Self.exitDoc, fn: Self.exit(_:status:))
+    self.setOrTrap(.intern, doc: Self.internDoc, fn: Self.intern(_:string:))
+    self.setOrTrap(.getdefaultencoding, doc: Self.getDefaultEncodingDoc, fn: Self.getdefaultencoding(_:))
+    self.setOrTrap(.getrecursionlimit, doc: Self.getRecursionLimitDoc, fn: Self.getrecursionlimit(_:))
+    self.setOrTrap(.setrecursionlimit, doc: Self.setRecursionLimitDoc, fn: Self.setrecursionlimit(_:limit:))
+    self.setOrTrap(._getframe, doc: Self.getFrameDoc, fn: Self._getframe(_:depth:))
   }
 
   // MARK: - Properties

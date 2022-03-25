@@ -38,7 +38,7 @@ public final class UnderscoreWarnings: PyModuleImplementation {
     self.setOrTrap(._defaultaction, value: defaultAction.asObject)
     self.setOrTrap(._onceregistry, value: onceRegistry.asObject)
 
-    self.setOrTrap(.warn, doc: Self.warnDoc, fn: Self.warn(_:module:args:kwargs:))
+    self.setOrTrap(.warn, doc: Self.warnDoc, fn: Self.warn(_:args:kwargs:))
   }
 
   // MARK: - Properties

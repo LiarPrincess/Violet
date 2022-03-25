@@ -29,26 +29,26 @@ public final class UnderscoreImp: PyModuleImplementation {
 
   // swiftlint:disable:next function_body_length
   private func fill__dict__() {
-    self.setOrTrap(.lock_held, doc: Self.lockHeldDoc, fn: Self.lock_held(_:module:))
-    self.setOrTrap(.acquire_lock, doc: Self.acquireLockDoc, fn: Self.acquire_lock(_:module:))
-    self.setOrTrap(.release_lock, doc: Self.releaseLockDoc, fn: Self.release_lock(_:module:))
+    self.setOrTrap(.lock_held, doc: Self.lockHeldDoc, fn: Self.lock_held(_:))
+    self.setOrTrap(.acquire_lock, doc: Self.acquireLockDoc, fn: Self.acquire_lock(_:))
+    self.setOrTrap(.release_lock, doc: Self.releaseLockDoc, fn: Self.release_lock(_:))
 
-    self.setOrTrap(.is_builtin, doc: Self.isBuiltinDoc, fn: Self.is_builtin(_:module:name:))
-    self.setOrTrap(.create_builtin, doc: Self.createBuiltinDoc, fn: Self.create_builtin(_:module:spec:))
-    self.setOrTrap(.exec_builtin, doc: Self.execBuiltinDoc, fn: Self.exec_builtin(_:module:mod:))
+    self.setOrTrap(.is_builtin, doc: Self.isBuiltinDoc, fn: Self.is_builtin(_:name:))
+    self.setOrTrap(.create_builtin, doc: Self.createBuiltinDoc, fn: Self.create_builtin(_:spec:))
+    self.setOrTrap(.exec_builtin, doc: Self.execBuiltinDoc, fn: Self.exec_builtin(_:mod:))
 
-    self.setOrTrap(.is_frozen, doc: Self.isFrozenDoc, fn: Self.is_frozen(_:module:name:))
-    self.setOrTrap(.is_frozen_package, doc: Self.isFrozenPackageDoc, fn: Self.is_frozen_package(_:module:name:))
-    self.setOrTrap(.get_frozen_object, doc: Self.getFrozenObjectDoc, fn: Self.get_frozen_object(_:module:name:))
-    self.setOrTrap(.init_frozen, doc: Self.initFrozenDoc, fn: Self.init_frozen(_:module:name:))
+    self.setOrTrap(.is_frozen, doc: Self.isFrozenDoc, fn: Self.is_frozen(_:name:))
+    self.setOrTrap(.is_frozen_package, doc: Self.isFrozenPackageDoc, fn: Self.is_frozen_package(_:name:))
+    self.setOrTrap(.get_frozen_object, doc: Self.getFrozenObjectDoc, fn: Self.get_frozen_object(_:name:))
+    self.setOrTrap(.init_frozen, doc: Self.initFrozenDoc, fn: Self.init_frozen(_:name:))
 
-    self.setOrTrap(.create_dynamic, doc: Self.createDynamicDoc, fn: Self.create_dynamic(_:module:spec:file:))
-    self.setOrTrap(.exec_dynamic, doc: Self.execDynamicDoc, fn: Self.exec_dynamic(_:module:mode:))
+    self.setOrTrap(.create_dynamic, doc: Self.createDynamicDoc, fn: Self.create_dynamic(_:spec:file:))
+    self.setOrTrap(.exec_dynamic, doc: Self.execDynamicDoc, fn: Self.exec_dynamic(_:mode:))
 
-    self.setOrTrap(.source_hash, doc: Self.sourceHashDoc, fn: Self.source_hash(_:module:key:source:))
-    self.setOrTrap(.check_hash_based_pycs, doc: Self.checkHashBasedPycsDoc, fn: Self.check_hash_based_pycs(_:module:))
-    self.setOrTrap(._fix_co_filename, doc: Self.fixCoFilenameDoc, fn: Self._fix_co_filename(_:module:code:path:))
-    self.setOrTrap(.extension_suffixes, doc: Self.extensionSuffixesDoc, fn: Self.extension_suffixes(_:module:))
+    self.setOrTrap(.source_hash, doc: Self.sourceHashDoc, fn: Self.source_hash(_:key:source:))
+    self.setOrTrap(.check_hash_based_pycs, doc: Self.checkHashBasedPycsDoc, fn: Self.check_hash_based_pycs(_:))
+    self.setOrTrap(._fix_co_filename, doc: Self.fixCoFilenameDoc, fn: Self._fix_co_filename(_:code:path:))
+    self.setOrTrap(.extension_suffixes, doc: Self.extensionSuffixesDoc, fn: Self.extension_suffixes(_:))
   }
 
   // MARK: - Spec helpers

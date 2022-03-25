@@ -39,9 +39,7 @@ extension Builtins {
 
   /// any(iterable)
   /// See [this](https://docs.python.org/3/library/functions.html#any)
-  internal static func any(_ py: Py,
-                           module: PyObject,
-                           iterable: PyObject) -> PyResult {
+  internal static func any(_ py: Py, iterable: PyObject) -> PyResult {
     let result = py.any(iterable: iterable)
     return PyResult(py, result)
   }
@@ -54,9 +52,7 @@ extension Builtins {
 
   /// all(iterable)
   /// See [this](https://docs.python.org/3/library/functions.html#all)
-  internal static func all(_ py: Py,
-                           module: PyObject,
-                           iterable: PyObject) -> PyResult {
+  internal static func all(_ py: Py, iterable: PyObject) -> PyResult {
     let result = py.all(iterable: iterable)
     return PyResult(py, result)
   }
@@ -71,9 +67,7 @@ extension Builtins {
 
   /// sum(iterable, /, start=0)
   /// See [this](https://docs.python.org/3/library/functions.html#sum)
-  internal static func sum(_ py: Py,
-                           module: PyObject,
-                           args: [PyObject], kwargs: PyDict?) -> PyResult {
+  internal static func sum(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult {
     switch sumArguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")
@@ -103,7 +97,6 @@ extension Builtins {
   /// getattr(object, name[, default])
   /// See [this](https://docs.python.org/3/library/functions.html#getattr)
   internal static func getattr(_ py: Py,
-                               module: PyObject,
                                object: PyObject,
                                name: PyObject,
                                default: PyObject? = nil) -> PyResult {
@@ -119,7 +112,6 @@ extension Builtins {
   /// hasattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#hasattr)
   internal static func hasattr(_ py: Py,
-                               module: PyObject,
                                object: PyObject,
                                name: PyObject) -> PyResult {
     let result = py.hasAttribute(object: object, name: name)
@@ -135,7 +127,6 @@ extension Builtins {
   /// setattr(object, name, value)
   /// See [this](https://docs.python.org/3/library/functions.html#setattr)
   internal static func setattr(_ py: Py,
-                               module: PyObject,
                                object: PyObject,
                                name: PyObject,
                                value: PyObject) -> PyResult {
@@ -151,7 +142,6 @@ extension Builtins {
   /// delattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#delattr)
   internal static func delattr(_ py: Py,
-                               module: PyObject,
                                object: PyObject,
                                name: PyObject) -> PyResult {
     return py.delAttribute(object: object, name: name)
@@ -171,9 +161,7 @@ extension Builtins {
 
   /// id(object)
   /// See [this](https://docs.python.org/3/library/functions.html#id)
-  internal static func id(_ py: Py,
-                          module: PyObject,
-                          object: PyObject) -> PyResult {
+  internal static func id(_ py: Py, object: PyObject) -> PyResult {
     let result = py.id(object: object)
     return PyResult(result)
   }
@@ -200,9 +188,7 @@ extension Builtins {
 
   /// dir([object])
   /// See [this](https://docs.python.org/3/library/functions.html#dir)
-  internal static func dir(_ py: Py,
-                           module: PyObject,
-                           object: PyObject?) -> PyResult {
+  internal static func dir(_ py: Py, object: PyObject?) -> PyResult {
     return py.dir(object: object)
   }
 }
@@ -220,9 +206,7 @@ extension Builtins {
 
   /// bin(x)
   /// See [this](https://docs.python.org/3/library/functions.html#bin)
-  internal static func bin(_ py: Py,
-                           module: PyObject,
-                           object: PyObject) -> PyResult {
+  internal static func bin(_ py: Py, object: PyObject) -> PyResult {
     let result = py.bin(object: object)
     return PyResult(result)
   }
@@ -236,9 +220,7 @@ extension Builtins {
 
   /// oct(x)
   /// See [this](https://docs.python.org/3/library/functions.html#oct)
-  internal static func oct(_ py: Py,
-                           module: PyObject,
-                           object: PyObject) -> PyResult {
+  internal static func oct(_ py: Py, object: PyObject) -> PyResult {
     let result = py.oct(object: object)
     return PyResult(result)
   }
@@ -252,9 +234,7 @@ extension Builtins {
 
   /// hex(x)
   /// See [this](https://docs.python.org/3/library/functions.html#hex)
-  internal static func hex(_ py: Py,
-                           module: PyObject,
-                           object: PyObject) -> PyResult {
+  internal static func hex(_ py: Py, object: PyObject) -> PyResult {
     let result = py.hex(object: object)
     return PyResult(result)
   }
@@ -270,9 +250,7 @@ extension Builtins {
 
   /// chr(i)
   /// See [this](https://docs.python.org/3/library/functions.html#chr)
-  internal static func chr(_ py: Py,
-                           module: PyObject,
-                           object: PyObject) -> PyResult {
+  internal static func chr(_ py: Py, object: PyObject) -> PyResult {
     let result = py.chr(object: object)
     return PyResult(result)
   }
@@ -283,9 +261,7 @@ extension Builtins {
 
   /// ord(c)
   /// See [this](https://docs.python.org/3/library/functions.html#ord)
-  internal static func ord(_ py: Py,
-                           module: PyObject,
-                           object: PyObject) -> PyResult {
+  internal static func ord(_ py: Py, object: PyObject) -> PyResult {
     let result = py.ord(object: object)
     return PyResult(result)
   }
@@ -304,9 +280,7 @@ extension Builtins {
 
   /// callable(object)
   /// See [this](https://docs.python.org/3/library/functions.html#callable)
-  internal static func callable(_ py: Py,
-                                module: PyObject,
-                                object: PyObject) -> PyResult {
+  internal static func callable(_ py: Py, object: PyObject) -> PyResult {
     let result = py.isCallable(object: object)
     return PyResult(py, result)
   }
@@ -322,9 +296,7 @@ extension Builtins {
 
   /// len(s)
   /// See [this](https://docs.python.org/3/library/functions.html#len)
-  internal static func len(_ py: Py,
-                           module: PyObject,
-                           iterable: PyObject) -> PyResult {
+  internal static func len(_ py: Py, iterable: PyObject) -> PyResult {
     return py.length(iterable: iterable)
   }
 
@@ -340,10 +312,7 @@ extension Builtins {
 
   /// sorted(iterable, *, key=None, reverse=False)
   /// See [this](https://docs.python.org/3/library/functions.html#sorted)
-  internal static func sorted(_ py: Py,
-                              module: PyObject,
-                              args: [PyObject],
-                              kwargs: PyDict?) -> PyResult {
+  internal static func sorted(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult {
     if let e = ArgumentParser.guaranteeArgsCountOrError(py,
                                                         fnName: "sorted",
                                                         args: args,
@@ -371,9 +340,7 @@ extension Builtins {
 
   /// hash(object)
   /// See [this](https://docs.python.org/3/library/functions.html#hash)
-  internal static func hash(_ py: Py,
-                            module: PyObject,
-                            object: PyObject) -> PyResult {
+  internal static func hash(_ py: Py, object: PyObject) -> PyResult {
     let result = py.hash(object: object)
     return PyResult(py, result)
   }
@@ -405,10 +372,7 @@ extension Builtins {
   /// - Parameters:
   ///   - args: Objects to print
   ///   - kwargs: Options
-  internal static func print(_ py: Py,
-                             module: PyObject,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult {
+  internal static func print(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult {
     switch printArguments.bind(py, args: [], kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
@@ -572,10 +536,7 @@ extension Builtins {
   /// open(file, mode='r', buffering=-1, encoding=None, errors=None, newline=None,
   ///            closefd=True, opener=None)
   /// See [this](https://docs.python.org/3/library/functions.html#open)
-  internal static func open(_ py: Py,
-                            module: PyObject,
-                            args: [PyObject],
-                            kwargs: PyDict?) -> PyResult {
+  internal static func open(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult {
     switch openArguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")
@@ -618,7 +579,6 @@ extension Builtins {
     """
 
   internal static func __build_class__(_ py: Py,
-                                       module: PyObject,
                                        args: [PyObject],
                                        kwargs: PyDict?) -> PyResult {
     if args.count < 2 {
@@ -671,7 +631,6 @@ extension Builtins {
   /// __import__(name, globals=None, locals=None, fromlist=(), level=0)
   /// See [this](https://docs.python.org/3/library/functions.html#__import__)
   internal static func __import__(_ py: Py,
-                                  module: PyObject,
                                   args: [PyObject],
                                   kwargs: PyDict?) -> PyResult {
     switch importArguments.bind(py, args: args, kwargs: kwargs) {
@@ -710,7 +669,7 @@ extension Builtins {
 
   /// globals()
   /// See [this](https://docs.python.org/3/library/functions.html#globals)
-  internal static func globals(_ py: Py, module: PyObject) -> PyResult {
+  internal static func globals(_ py: Py) -> PyResult {
     let result = py.globals()
     return PyResult(result)
   }
@@ -725,7 +684,7 @@ extension Builtins {
 
   /// locals()
   /// See [this](https://docs.python.org/3/library/functions.html#locals)
-  internal static func locals(_ py: Py, module: PyObject) -> PyResult {
+  internal static func locals(_ py: Py) -> PyResult {
     let result = py.locals()
     return PyResult(result)
   }
@@ -747,10 +706,7 @@ extension Builtins {
 
   /// min(iterable, *[, key, default])
   /// See [this](https://docs.python.org/3/library/functions.html#min)
-  internal static func min(_ py: Py,
-                           module: PyObject,
-                           args: [PyObject],
-                           kwargs: PyDict?) -> PyResult {
+  internal static func min(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult {
     return py.min(args: args, kwargs: kwargs)
   }
 
@@ -766,10 +722,7 @@ extension Builtins {
 
   /// max(iterable, *[, key, default])
   /// See [this](https://docs.python.org/3/library/functions.html#max)
-  internal static func max(_ py: Py,
-                           module: PyObject,
-                           args: [PyObject],
-                           kwargs: PyDict?) -> PyResult {
+  internal static func max(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult {
     return py.max(args: args, kwargs: kwargs)
   }
 }
@@ -788,7 +741,6 @@ extension Builtins {
   /// next(iterator[, default])
   /// See [this](https://docs.python.org/3/library/functions.html#next)
   internal static func next(_ py: Py,
-                            module: PyObject,
                             iterator: PyObject,
                             default: PyObject?) -> PyResult {
     return py.next(iterator: iterator, default: `default`)
@@ -806,7 +758,6 @@ extension Builtins {
   /// iter(object[, sentinel])
   /// See [this](https://docs.python.org/3/library/functions.html#iter)
   internal static func iter(_ py: Py,
-                            module: PyObject,
                             object: PyObject,
                             sentinel: PyObject?) -> PyResult {
     return py.iter(object: object, sentinel: sentinel)
@@ -826,10 +777,7 @@ extension Builtins {
 
   /// round(number[, ndigits])
   /// See [this](https://docs.python.org/3/library/functions.html#round)
-  internal static func round(_ py: Py,
-                             module: PyObject,
-                             number: PyObject,
-                             nDigits: PyObject?) -> PyResult {
+  internal static func round(_ py: Py, number: PyObject, nDigits: PyObject?) -> PyResult {
     return py.round(number: number, nDigits: nDigits)
   }
 
@@ -839,10 +787,7 @@ extension Builtins {
 
   /// divmod(a, b)
   /// See [this](https://docs.python.org/3/library/functions.html#divmod)
-  internal static func divmod(_ py: Py,
-                              module: PyObject,
-                              left: PyObject,
-                              right: PyObject) -> PyResult {
+  internal static func divmod(_ py: Py, left: PyObject, right: PyObject) -> PyResult {
     return py.divMod(left: left, right: right)
   }
 
@@ -852,9 +797,7 @@ extension Builtins {
 
   /// abs(x)
   /// See [this](https://docs.python.org/3/library/functions.html#abs)
-  internal static func abs(_ py: Py,
-                           module: PyObject,
-                           object: PyObject) -> PyResult {
+  internal static func abs(_ py: Py, object: PyObject) -> PyResult {
     return py.absolute(object: object)
   }
 
@@ -868,7 +811,6 @@ extension Builtins {
   /// pow(base, exp[, mod])
   /// See [this](https://docs.python.org/3/library/functions.html#pow)
   internal static func pow(_ py: Py,
-                           module: PyObject,
                            base: PyObject,
                            exp: PyObject,
                            mod: PyObject?) -> PyResult {
@@ -888,9 +830,7 @@ extension Builtins {
 
   /// repr(object)
   /// See [this](https://docs.python.org/3/library/functions.html#repr)
-  internal static func repr(_ py: Py,
-                            module: PyObject,
-                            object: PyObject) -> PyResult {
+  internal static func repr(_ py: Py, object: PyObject) -> PyResult {
     let result = py.repr(object)
     return PyResult(result)
   }
@@ -906,9 +846,7 @@ extension Builtins {
 
   /// ascii(object)
   /// See [this](https://docs.python.org/3/library/functions.html#ascii)
-  internal static func ascii(_ py: Py,
-                             module: PyObject,
-                             object: PyObject) -> PyResult {
+  internal static func ascii(_ py: Py, object: PyObject) -> PyResult {
     let result = py.ascii(object)
     return PyResult(result)
   }
@@ -929,7 +867,6 @@ extension Builtins {
   /// isinstance(object, classinfo)
   /// See [this](https://docs.python.org/3/library/functions.html#isinstance)
   internal static func isinstance(_ py: Py,
-                                  module: PyObject,
                                   object: PyObject,
                                   of typeOrTuple: PyObject) -> PyResult {
     let result = py.isInstance(object: object, of: typeOrTuple)
@@ -947,7 +884,6 @@ extension Builtins {
   /// issubclass(class, classinfo)
   /// See [this](https://docs.python.org/3/library/functions.html#issubclass)
   internal static func issubclass(_ py: Py,
-                                  module: PyObject,
                                   object: PyObject,
                                   of typeOrTuple: PyObject) -> PyResult {
     let result = py.isSubclass(object: object, of: typeOrTuple)
@@ -982,7 +918,6 @@ extension Builtins {
   /// compile(source, filename, mode, flags=0, dont_inherit=False, optimize=-1)
   /// See [this](https://docs.python.org/3/library/functions.html#compile)
   internal static func compile(_ py: Py,
-                               module: PyObject,
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     switch compileArguments.bind(py, args: args, kwargs: kwargs) {
@@ -1039,10 +974,7 @@ extension Builtins {
 
   /// exec(object[, globals[, locals]])
   /// See [this](https://docs.python.org/3/library/functions.html#exec)
-  internal static func exec(_ py: Py,
-                            module: PyObject,
-                            args: [PyObject],
-                            kwargs: PyDict?) -> PyResult {
+  internal static func exec(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult {
     switch execArguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")
@@ -1075,10 +1007,7 @@ extension Builtins {
 
   /// eval(expression[, globals[, locals]])
   /// See [this](https://docs.python.org/3/library/functions.html#eval)
-  internal static func eval(_ py: Py,
-                            module: PyObject,
-                            args: [PyObject],
-                            kwargs: PyDict?) -> PyResult {
+  internal static func eval(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult {
     switch execArguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")
