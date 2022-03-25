@@ -670,6 +670,30 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     return PyResult(result)
   }
 
+  // MARK: - Prepare
+
+  internal static let prepareDoc = """
+    __prepare__() -> dict
+    --
+
+    used to create the namespace for the class statement
+    """
+
+  // sourcery: pyclassmethod = __prepare__, doc = prepareDoc
+  /// static PyObject *
+  /// type_prepare(PyObject *self, PyObject *const *args, Py_ssize_t nargs, ...)
+  internal static func __prepare__(_ py: Py,
+                                   zelf: PyObject,
+                                   args: [PyObject],
+                                   kwargs: PyDict?) -> PyResult {
+    guard Self.downcast(py, zelf) != nil else {
+      return Self.invalidZelfArgument(py, zelf, "__prepare__")
+    }
+
+    let result = py.newDict()
+    return PyResult(result)
+  }
+
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
@@ -742,7 +766,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
 
     let nameQuoted = name.repr().quoted
     let message = "type object '\(self.name)' has no attribute \(nameQuoted)"
-    return .typeError(py, message: message)
+    return .attributeError(py, message: message)
   }
 
   // sourcery: pymethod = __setattr__
