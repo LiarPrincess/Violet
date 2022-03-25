@@ -1,4 +1,3 @@
-/* MARKER
 import VioletBytecode
 import VioletObjects
 
@@ -27,7 +26,7 @@ extension Eval {
   private func popJumpIf(condition: Bool, labelIndex: Int) -> InstructionResult {
     let top = self.stack.pop()
 
-    switch Py.isTrueBool(object: top) {
+    switch self.py.isTrueBool(object: top) {
     case let .value(isTrue):
       if isTrue == condition {
         self.jumpTo(labelIndex: labelIndex)
@@ -57,7 +56,7 @@ extension Eval {
   private func jumpIfOrPop(condition: Bool, labelIndex: Int) -> InstructionResult {
     let top = self.stack.top
 
-    switch Py.isTrueBool(object: top) {
+    switch self.py.isTrueBool(object: top) {
     case let .value(isTrue):
       if isTrue == condition {
         self.jumpTo(labelIndex: labelIndex)
@@ -75,7 +74,7 @@ extension Eval {
   // MARK: - Helpers
 
   internal func jumpTo(labelIndex: Int) {
-    let label = self.getLabel(index: labelIndex)
+    let label = self.code.labels[labelIndex]
     self.jumpTo(instructionIndex: label.instructionIndex)
   }
 
@@ -83,5 +82,3 @@ extension Eval {
     self.frame.nextInstructionIndex = instructionIndex
   }
 }
-
-*/

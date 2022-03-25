@@ -12,7 +12,7 @@ public struct PyCell: PyObjectMixin {
 
   // sourcery: storedProperty
   // This has to be public for performance
-  internal var content: PyObject? {
+  public var content: PyObject? {
     get { self.contentPtr.pointee }
     nonmutating set { self.contentPtr.pointee = newValue }
   }

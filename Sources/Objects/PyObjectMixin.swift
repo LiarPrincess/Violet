@@ -1,6 +1,6 @@
 /// Common things for all of the Python objects.
 public protocol PyObjectMixin: CustomStringConvertible {
-  /// Pointer to and object.
+  /// Pointer to an object.
   ///
   /// Each object starts with the same fields as `PyObject`.
   var ptr: RawPtr { get }
@@ -15,10 +15,15 @@ extension PyObjectMixin {
     return PyObject(ptr: self.ptr)
   }
 
+  /// Runtime type of this Python object.
+  public var type: PyType {
+    let object = self.asObject
+    return object.type
+  }
+
   /// [Convenience] Name of the runtime type of this Python object.
   public var typeName: String {
-    let object = self.asObject
-    let type = object.type
+    let type = self.type
     return type.name
   }
 
@@ -46,11 +51,14 @@ extension PyObjectMixin {
   // MARK: - Description
 
   public var description: String {
-    let ptr = self.ptr
-    let object = PyObject(ptr: ptr)
-    let type = object.type
-    let mirror = type.debugFn(self.ptr)
+    let object = self.asObject
 
+    let hasDescriptionLock = object.flags.isSet(.descriptionLock)
+    if hasDescriptionLock {
+      return "Xxx(\(self.typeName), RECURSIVE ENTRY)"
+    }
+
+    let mirror = object.type.debugFn(self.ptr)
     var result = mirror.swiftType
     result.append("(")
     result.append(self.typeName) // python type
@@ -59,12 +67,6 @@ extension PyObjectMixin {
     if flagsString != "[]" {
       result.append(", flags: ")
       result.append(flagsString)
-    }
-
-    let hasDescriptionLock = object.flags.isSet(.descriptionLock)
-    if hasDescriptionLock {
-      result.append(", RECURSIVE ENTRY)")
-      return result
     }
 
     object.flags.set(.descriptionLock)

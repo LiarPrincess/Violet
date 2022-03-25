@@ -1,4 +1,3 @@
-/* MARKER
 import VioletBytecode
 import VioletObjects
 
@@ -11,7 +10,7 @@ extension Eval {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch Py.addInPlace(left: left, right: right) {
+    switch self.py.addInPlace(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -27,7 +26,7 @@ extension Eval {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch Py.subInPlace(left: left, right: right) {
+    switch self.py.subInPlace(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -43,7 +42,7 @@ extension Eval {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch Py.mulInPlace(left: left, right: right) {
+    switch self.py.mulInPlace(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -57,7 +56,7 @@ extension Eval {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch Py.matmulInPlace(left: left, right: right) {
+    switch self.py.matmulInPlace(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -70,8 +69,9 @@ extension Eval {
   internal func inPlacePower() -> InstructionResult {
     let exp = self.stack.pop()
     let base = self.stack.top
+    let none = self.py.none.asObject
 
-    switch Py.powInPlace(base: base, exp: exp, mod: Py.none) {
+    switch self.py.powInPlace(base: base, exp: exp, mod: none) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -87,7 +87,7 @@ extension Eval {
     let divisor = self.stack.pop()
     let dividend = self.stack.top
 
-    switch Py.floordivInPlace(left: dividend, right: divisor) {
+    switch self.py.floorDivInPlace(left: dividend, right: divisor) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -101,7 +101,7 @@ extension Eval {
     let divisor = self.stack.pop()
     let dividend = self.stack.top
 
-    switch Py.truedivInPlace(left: dividend, right: divisor) {
+    switch self.py.trueDivInPlace(left: dividend, right: divisor) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -115,7 +115,7 @@ extension Eval {
     let divisor = self.stack.pop()
     let dividend = self.stack.top
 
-    switch Py.modInPlace(left: dividend, right: divisor) {
+    switch self.py.modInPlace(left: dividend, right: divisor) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -131,7 +131,7 @@ extension Eval {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch Py.lshiftInPlace(left: left, right: right) {
+    switch self.py.lshiftInPlace(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -145,7 +145,7 @@ extension Eval {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch Py.rshiftInPlace(left: left, right: right) {
+    switch self.py.rshiftInPlace(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -161,7 +161,7 @@ extension Eval {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch Py.andInPlace(left: left, right: right) {
+    switch self.py.andInPlace(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -175,7 +175,7 @@ extension Eval {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch Py.xorInPlace(left: left, right: right) {
+    switch self.py.xorInPlace(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -189,7 +189,7 @@ extension Eval {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch Py.orInPlace(left: left, right: right) {
+    switch self.py.orInPlace(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -198,5 +198,3 @@ extension Eval {
     }
   }
 }
-
-*/

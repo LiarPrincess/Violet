@@ -1,4 +1,3 @@
-/* MARKER
 import VioletBytecode
 import VioletObjects
 
@@ -14,7 +13,8 @@ extension Eval {
   internal func buildTupleUnpack(elementCount: Int) -> InstructionResult {
     switch self.unpackToArray(elementCount: elementCount) {
     case let .value(elements):
-      self.stack.push(Py.newTuple(elements: elements))
+      let collection = self.py.newTuple(elements: elements)
+      self.stack.push(collection.asObject)
       return .ok
     case let .error(e):
       return .exception(e)
@@ -26,19 +26,20 @@ extension Eval {
   internal func buildListUnpack(elementCount: Int) -> InstructionResult {
     switch self.unpackToArray(elementCount: elementCount) {
     case let .value(elements):
-      self.stack.push(Py.newList(elements: elements))
+      let collection = self.py.newList(elements: elements)
+      self.stack.push(collection.asObject)
       return .ok
     case let .error(e):
       return .exception(e)
     }
   }
 
-  private func unpackToArray(elementCount: Int) -> PyResult<[PyObject]> {
+  private func unpackToArray(elementCount: Int) -> PyResultGen<[PyObject]> {
     var result = [PyObject]()
     let iterables = self.stack.popElementsInPushOrder(count: elementCount)
 
     for iterable in iterables {
-      switch Py.toArray(iterable: iterable) {
+      switch self.py.toArray(iterable: iterable) {
       case let .value(elements):
         result.append(contentsOf: elements)
       case let .error(e):
@@ -56,7 +57,7 @@ extension Eval {
     let iterables = self.stack.popElementsInPushOrder(count: elementCount)
 
     for iterable in iterables {
-      switch Py.toArray(iterable: iterable) {
+      switch self.py.toArray(iterable: iterable) {
       case let .value(elements):
         result.append(contentsOf: elements)
       case let .error(e):
@@ -66,7 +67,8 @@ extension Eval {
       }
     }
 
-    self.stack.push(Py.newTuple(elements: result))
+    let collection = self.py.newTuple(elements: result)
+    self.stack.push(collection.asObject)
     return .ok
   }
 
@@ -74,16 +76,17 @@ extension Eval {
     iterable: PyObject,
     error: PyBaseException
   ) -> PyBaseException? {
-    let isTypeErrorForIter = self.py.cast.isTypeError(error) && !Py.hasIter(object: iterable)
-    guard isTypeErrorForIter else {
+    let isTypeError = self.py.cast.isTypeError(error.asObject)
+    let hasIter = self.py.hasIter(object: iterable)
+
+    guard isTypeError && !hasIter else {
       return nil
     }
 
     let fn = self.stack.top
-    let fnName = Py.getFunctionName(object: fn) ?? "function"
-
-    let msg = "\(fnName) argument after * must be an iterable, not \(iterable.type)"
-    return Py.newTypeError(msg: msg)
+    let fnName = self.getName(function: fn) ?? "function"
+    let message = "\(fnName) argument after * must be an iterable, not \(iterable.typeName)"
+    return self.newTypeError(message: message)
   }
 
   // MARK: - Unpack set
@@ -91,19 +94,16 @@ extension Eval {
   /// This is similar to `BuildTupleUnpack`, but pushes a set instead of tuple.
   /// Implements iterable unpacking in set displays `{*x, *y, *z}`.
   internal func buildSetUnpack(elementCount: Int) -> InstructionResult {
-    let set = Py.newSet()
+    let set = self.py.newSet()
     let iterables = self.stack.popElementsInPushOrder(count: elementCount)
 
     for object in iterables {
-      switch Py.update(set: set, from: object) {
-      case .value:
-        break // just go to the next element
-      case .error(let e):
+      if let e = self.py.update(set: set, fromIterable: object) {
         return .exception(e)
       }
     }
 
-    self.stack.push(set)
+    self.stack.push(set.asObject)
     return .ok
   }
 
@@ -113,39 +113,34 @@ extension Eval {
   /// and pushes the result.
   /// Implements dictionary unpacking in dictionary displays `{**x, **y, **z}`.
   internal func buildMapUnpack(elementCount: Int) -> InstructionResult {
-    let dict = Py.newDict()
+    let dict = self.py.newDict()
     let iterables = self.stack.popElementsInPushOrder(count: elementCount)
 
     for object in iterables {
-      switch dict.update(from: object, onKeyDuplicate: .continue) {
-      case .value:
-        break // just go to the next element
-      case .error(let e):
-        if self.py.cast.isAttributeError(e) {
-          let msg = "'\(object.typeName)' object is not a mapping"
-          return .exception(Py.newTypeError(msg: msg))
+      if let e = dict.update(self.py, from: object, onKeyDuplicate: .continue) {
+        if self.py.cast.isAttributeError(e.asObject) {
+          let message = "'\(object.typeName)' object is not a mapping"
+          let error = self.newTypeError(message: message)
+          return .exception(error)
         }
 
         return .exception(e)
       }
     }
 
-    self.stack.push(dict)
+    self.stack.push(dict.asObject)
     return .ok
   }
 
   /// This is similar to `BuildMapUnpack`, but is used for `f(**x, **y, **z)` call syntax.
   /// The stack item at position count + 2 should be the corresponding callable `f`.
   internal func buildMapUnpackWithCall(elementCount: Int) -> InstructionResult {
-    let dict = Py.newDict()
+    let dict = self.py.newDict()
     let iterables = self.stack.popElementsInPushOrder(count: elementCount)
 
     for object in iterables {
-      switch dict.update(from: object, onKeyDuplicate: .error) {
-      case .value:
-        break // just go to the next element
-      case .error(let e):
-        if self.py.cast.isKeyError(e) {
+      if let e = dict.update(self.py, from: object, onKeyDuplicate: .error) {
+        if self.py.cast.isKeyError(e.asObject) {
           let e2 = self.mapUnpackWithCallDuplicateError(keyError: e)
           return .exception(e2)
         }
@@ -156,69 +151,77 @@ extension Eval {
       }
     }
 
-    self.stack.push(dict)
+    self.stack.push(dict.asObject)
     return .ok
   }
 
-  private func mapUnpackWithCallDuplicateError(
-    keyError: PyBaseException
-  ) -> PyBaseException {
+  private func mapUnpackWithCallDuplicateError(keyError: PyBaseException) -> PyBaseException {
     /// Template: function_name() got multiple values for keyword argument 'key_str'
-    var msg = ""
+    var message = ""
 
     if self.stack.count >= 2 {
-      let fnObject = self.stack.second
+      let fn = self.stack.second
 
-      if let name = Py.getFunctionName(object: fnObject) {
-        msg.append(name + "() ")
+      if let name = self.getName(function: fn) {
+        message.append(name)
+        message.append("() ")
       } else {
-        msg.append(fnObject.typeName + "object ")
+        message.append(fn.typeName)
+        message.append("object ")
       }
     }
 
-    msg.append("got multiple values for keyword argument")
+    message.append("got multiple values for keyword argument")
 
-    let args = Py.getArgs(exception: keyError)
-    if let firstArg = args.elements.first {
-      switch Py.strString(object: firstArg) {
-      case .value(let s):
-        msg.append(" \(s.quoted)")
-      case .error:
-        break
+    let args = self.py.getArgs(exception: keyError)
+    if let firstArg = self.getFirst(args: args) {
+      switch self.py.strString(firstArg) {
+      case .value(let string):
+        message.append(" ")
+        message.append(string.quoted)
+      case .error: break
       }
     }
 
-    return Py.newTypeError(msg: msg)
+    let error = self.py.newTypeError(message: message)
+    return error.asBaseException
   }
 
-  private func mapUnpackWithCallError(
-    iterable: PyObject,
-    error: PyBaseException
-  ) -> PyBaseException? {
+  private func mapUnpackWithCallError(iterable: PyObject,
+                                      error: PyBaseException) -> PyBaseException? {
 
     let fn = self.stack.second
-    let fnName = Py.getFunctionName(object: fn) ?? "function"
+    let fnName = self.getName(function: fn) ?? "function"
 
-    if self.py.cast.isAttributeError(error) {
-      let t = iterable.typeName
-      let msg = "\(fnName) argument after ** must be a mapping, not \(t)"
-      return Py.newTypeError(msg: msg)
+    if self.py.cast.isAttributeError(error.asObject) {
+      let message = "\(fnName) argument after ** must be a mapping, not \(iterable.typeName)"
+      return self.newTypeError(message: message)
     }
 
-    if let keyError = self.py.cast.asKeyError(error) {
-      let args = Py.getArgs(exception: keyError)
-      guard let first = args.elements.first else { return nil }
+    if let keyError = self.py.cast.asKeyError(error.asObject) {
+      let args = self.py.getArgs(exception: keyError.asBaseException)
+      guard let first = self.getFirst(args: args) else { return nil }
 
-      if let key = self.py.cast.asString(first) {
-        let msg = "\(fnName) got multiple values for keyword argument '\(key)'"
-        return Py.newTypeError(msg: msg)
+      if let keyPy = self.py.cast.asString(first) {
+        let key = self.py.strString(keyPy)
+        let message = "\(fnName) got multiple values for keyword argument '\(key)'"
+        return self.newTypeError(message: message)
       }
 
-      let msg = "\(fnName) keywords must be strings"
-      return Py.newTypeError(msg: msg)
+      let message = "\(fnName) keywords must be strings"
+      return self.newTypeError(message: message)
     }
 
     return nil
+  }
+
+  private func getFirst(args: PyTuple) -> PyObject? {
+    switch py.getItem(object: args.asObject, index: 0) {
+    case .value(let object):
+      return object
+    case .error:
+      return nil
+    }
   }
 
   // MARK: - Unpack sequence
@@ -229,7 +232,7 @@ extension Eval {
     let iterable = self.stack.pop()
 
     let elements: [PyObject]
-    switch Py.toArray(iterable: iterable) {
+    switch self.py.toArray(iterable: iterable) {
     case let .value(e):
       elements = e
     case let .error(e):
@@ -240,13 +243,15 @@ extension Eval {
 
     if elements.count < elementCount {
       let got = elements.count
-      let msg = "not enough values to unpack (expected \(elementCount), got \(got))"
-      return .exception(Py.newValueError(msg: msg))
+      let message = "not enough values to unpack (expected \(elementCount), got \(got))"
+      let error = self.newValueError(message: message)
+      return .exception(error)
     }
 
     if elements.count > elementCount {
-      let msg = "too many values to unpack (expected \(elementCount))"
-      return .exception(Py.newValueError(msg: msg))
+      let message = "too many values to unpack (expected \(elementCount))"
+      let error = self.newValueError(message: message)
+      return .exception(error)
     }
 
     assert(elements.count == elementCount)
@@ -271,7 +276,7 @@ extension Eval {
     let iterable = self.stack.pop()
 
     let elements: [PyObject]
-    switch Py.toArray(iterable: iterable) {
+    switch self.py.toArray(iterable: iterable) {
     case let .value(e):
       elements = e
     case let .error(e):
@@ -283,8 +288,9 @@ extension Eval {
     let minCount = arg.countBefore + arg.countAfter
     if elements.count < minCount {
       let got = elements.count
-      let msg = "not enough values to unpack (expected at least \(minCount), got \(got))"
-      return .exception(Py.newValueError(msg: msg))
+      let message = "not enough values to unpack (expected at least \(minCount), got \(got))"
+      let error = self.newValueError(message: message)
+      return .exception(error)
     }
 
     let afterStartsAtIndex = elements.count - arg.countAfter
@@ -297,23 +303,22 @@ extension Eval {
     assert(after.count == arg.countAfter)
 
     // Reverse because we have to push them in 'right-to-left' order!
+    let list = self.py.newList(elements: pack)
     self.stack.push(contentsOf: after.reversed())
-    self.stack.push(Py.newList(elements: pack))
+    self.stack.push(list.asObject)
     self.stack.push(contentsOf: before.reversed())
 
     return .ok
   }
 
   private func notIterableUnpackError(iterable: PyObject) -> PyBaseException? {
-    let hasIter = Py.hasIter(object: iterable)
+    let hasIter = self.py.hasIter(object: iterable)
 
     if !hasIter {
-      let msg = "cannot unpack non-iterable \(iterable.typeName) object"
-      return Py.newTypeError(msg: msg)
+      let message = "cannot unpack non-iterable \(iterable.typeName) object"
+      return self.newTypeError(message: message)
     }
 
     return nil
   }
 }
-
-*/

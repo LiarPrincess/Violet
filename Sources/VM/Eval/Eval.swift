@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import VioletCore
 import VioletBytecode
@@ -19,133 +18,70 @@ import VioletObjects
 /// So… just do not store `Eval` as property on `VM`.
 internal struct Eval {
 
-  internal typealias Block = PyFrame.Block
-  internal typealias BlockStack = PyFrame.BlockStack
-  internal typealias ObjectStack = PyFrame.ObjectStack
-
   // MARK: - Properties
 
+  internal let py: Py
   /// Only here so that we can manage `vm.currentlyHandledException`
-  internal let vm: VM
-
+  private let vm: VM
   /// You know… the thing that we are evaluating…
   internal let frame: PyFrame
-
   /// Code to run.
   internal var code: PyCode
 
-  internal init(vm: VM, frame: PyFrame) {
-    self.vm = vm
-    self.frame = frame
-    self.code = frame.code
-  }
-
-  // MARK: - Stacks
-
-  /// Stack of `PyObjects`.
-  internal var stack: ObjectStack {
-    get { return self.frame.stack } // swiftlint:disable:this implicit_getter
-    nonmutating _modify { yield &self.frame.stack }
-  }
-
-  /// Stack of blocks (for loops, exception handlers etc.).
-  internal var blockStack: BlockStack {
-    get { return self.frame.blocks } // swiftlint:disable:this implicit_getter
-    nonmutating _modify { yield &self.frame.blocks }
-  }
-
-  // MARK: - Locals, globals, builtins
-
-  // Note that those are 'PyDict' which means that they have reference semantics.
-
   /// Local variables.
-  internal var locals: PyDict { return self.frame.locals }
+  internal let locals: PyDict
   /// Global variables.
-  internal var globals: PyDict { return self.frame.globals }
-  /// Builtin symbols (most of the time it would be `Py.builtinsModule.__dict__`).
-  internal var builtins: PyDict { return self.frame.builtins }
+  internal let globals: PyDict
+  /// Builtin symbols (most of the time it would be `self.py.builtinsModule.__dict__`).
+  internal let builtins: PyDict
 
+  /// Stack of `PyObjects` to be manipulated when executing code.
+  internal let stack: PyFrame.ObjectStackProxy
+  /// Stack of blocks (`for` loops, `exception` handlers etc.).
+  internal let blockStack: PyFrame.BlockStackProxy
   /// Function args and local variables.
   ///
-  /// We could use `self.localSymbols` but that would be `O(1)` with
-  /// massive constants.
-  /// We could also put them at the bottom of our stack (like in other languages),
-  /// but as 'the hipster trash that we are' (quote from @bestdressed)
-  /// we won't do this.
-  /// We use array which is like dictionary, but with lower constants.
-  ///
   /// CPython: `f_localsplus`.
-  internal var fastLocals: [PyObject?] {
-    get { return self.frame.fastLocals } // swiftlint:disable:this implicit_getter
-    nonmutating _modify { yield &self.frame.fastLocals }
-  }
-
-  // MARK: - Cells and free
-
+  internal let fastLocals: PyFrame.FastLocalsProxy
   /// Cell variables (variables from upper scopes).
   ///
   /// Btw. `Cell` = source for `free` variable.
-  ///
-  /// And yes, just as `self.fastLocals` they could be placed at the bottom
-  /// of the stack. And no, we will not do this (see `self.fastLocals` comment).
-  /// \#hipsters
-  ///
   /// CPython: `f_lasti`.
-  internal var cellVariables: [PyCell] {
-    return self.frame.cellVariables
-  }
-
+  internal let cellVariables: PyFrame.CellVariablesProxy
   /// Free variables (variables from upper scopes).
   ///
   /// Btw. `Free` = cell from upper scope.
-  ///
-  /// And yes, just as `self.fastLocals` they could be placed at the bottom
-  /// of the stack. And no, we will not do this (see `self.fastLocals` comment).
-  /// \#hipsters
-  internal var freeVariables: [PyCell] {
-    return self.frame.freeVariables
-  }
-
-  // MARK: - Currently handled exception
+  internal let freeVariables: PyFrame.FreeVariablesProxy
 
   internal var currentlyHandledException: PyBaseException? {
-    return self.vm.currentlyHandledException
+    get { self.vm.currentlyHandledException }
+    nonmutating set { self.vm.currentlyHandledException =  newValue }
   }
 
-  internal func setCurrentlyHandledException(exception: PyBaseException?) {
-    self.vm.currentlyHandledException = exception
-  }
+  // MARK: - Init
 
-  // MARK: - Code object getters
+  internal init(vm: VM, frame: PyFrame) {
+    self.py = vm.py
+    self.vm = vm
+    self.frame = frame
+    self.code = frame.code
 
-  internal func getConstant(index: Int) -> PyObject {
-    assert(0 <= index && index < self.code.constants.count)
-    return self.code.constants[index]
-  }
+    self.locals = frame.locals
+    self.globals = frame.globals
+    self.builtins = frame.builtins
 
-  internal func getName(index: Int) -> PyString {
-    assert(0 <= index && index < self.code.names.count)
-    return self.code.names[index]
-  }
-
-  internal func getCell(index: Int) -> PyCell {
-    assert(0 <= index && index < self.cellVariables.count)
-    return self.cellVariables[index]
-  }
-
-  internal func getFree(index: Int) -> PyCell {
-    assert(0 <= index && index < self.freeVariables.count)
-    return self.freeVariables[index]
-  }
-
-  internal func getLabel(index: Int) -> CodeObject.Label {
-    assert(0 <= index && index < self.code.labels.count)
-    return self.code.labels[index]
+    self.stack = frame.objectStack
+    self.blockStack = frame.blockStack
+    self.fastLocals = frame.fastLocals
+    self.cellVariables = frame.cellVariables
+    self.freeVariables = frame.freeVariables
   }
 
   // MARK: - Run
 
-  internal func run() -> PyResult<PyObject> {
+  internal func run() -> PyResult {
+    defer { self.updatePredictedNextRunStackCount() }
+
     while true {
       switch self.executeInstruction(extendedArg: 0) {
       case .ok:
@@ -160,7 +96,7 @@ internal struct Eval {
         case .continueCodeExecution:
           break
         case .return(let value):
-          return .value(value)
+          return PyResult(value)
         case .reportExceptionToParentFrame(let e):
           // 'FromUnwind' means not the one from 'case .unwind(let reason):'
           self.fillContextAndTracebackIfNotExceptionFromUnwind(
@@ -168,8 +104,8 @@ internal struct Eval {
             unwindReason: reason
           )
 
-          let eTraceback = Py.getTraceback(exception: e)
-          let eFrame = eTraceback.map(Py.getFrame(traceback:))
+          let eTraceback = self.py.getTraceback(exception: e)
+          let eFrame = eTraceback.map(self.py.getFrame(traceback:))
           assert(eFrame === self.frame)
           return .error(e)
         }
@@ -179,13 +115,13 @@ internal struct Eval {
 
   private func fillContextAndTraceback(exception: PyBaseException) {
     // Context - another exception during whose handling this exception was raised.
-    Py.setContextUsingCurrentlyHandledExceptionFromDelegate(
+    self.py.setContextUsingCurrentlyHandledExceptionFromDelegate(
       on: exception,
       overrideCurrent: false
     )
 
     // Traceback - stack trace, call stack etc.
-    Py.addTraceback(to: exception, frame: self.frame)
+    self.py.addTraceback(to: exception, frame: self.frame)
   }
 
   private func fillContextAndTracebackIfNotExceptionFromUnwind(
@@ -203,12 +139,42 @@ internal struct Eval {
     //   except BaseException as ee:
     //     pass
 
-    if case let UnwindReason.exception(unwindException, _) = unwindReason,
-       exception === unwindException {
+    if case let .exception(e, _) = unwindReason, exception === e {
       return
     }
 
     self.fillContextAndTraceback(exception: exception)
+  }
+
+  private func updatePredictedNextRunStackCount() {
+    let stack = self.stack.predictedNextRunCount
+    let code = self.code.predictedObjectStackCount
+    self.code.predictedObjectStackCount = Swift.max(stack, code)
+  }
+
+  // MARK: - Helpers
+
+  internal func getName(function: PyObject) -> String? {
+    if let pyName = self.py.getName(function: function) {
+      return self.py.strString(pyName)
+    }
+
+    return nil
+  }
+
+  internal func newTypeError(message: String) -> PyBaseException {
+    let error = self.py.newTypeError(message: message)
+    return error.asBaseException
+  }
+
+  internal func newValueError(message: String) -> PyBaseException {
+    let error = self.py.newValueError(message: message)
+    return error.asBaseException
+  }
+
+  internal func newSystemError(message: String) -> PyBaseException {
+    let error = self.py.newSystemError(message: message)
+    return error.asBaseException
   }
 
   // MARK: - Execute instruction
@@ -230,13 +196,12 @@ internal struct Eval {
   private func executeInstruction(extendedArg: Int) -> InstructionResult {
     Debug.stack(stack: self.stack)
     Debug.stack(stack: self.blockStack)
-    Debug.instruction(code: self.code,
-                      index: self.frame.nextInstructionIndex,
-                      extendedArg: extendedArg)
+    Debug.instruction(code: self.code, index: self.frame.nextInstructionIndex)
 
     if Signals.hasKeyboardInterrupt {
       Signals.hasKeyboardInterrupt = false // Reset flag, very important!
-      return .exception(Py.newKeyboardInterrupt())
+      let error = self.py.newKeyboardInterrupt()
+      return .exception(error.asBaseException)
     }
 
     let instruction = self.fetchInstruction()
@@ -586,5 +551,3 @@ internal struct Eval {
     }
   }
 }
-
-*/

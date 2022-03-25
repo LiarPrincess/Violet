@@ -1,4 +1,3 @@
-/* MARKER
 import VioletObjects
 
 extension Eval {
@@ -13,7 +12,7 @@ extension Eval {
   /// The current namespace is not affected: for a proper import statement,
   /// a subsequent StoreFast instruction modifies the namespace.
   internal func importName(nameIndex: Int) -> InstructionResult {
-    let name = self.getName(index: nameIndex)
+    let name = self.code.names[nameIndex]
     let fromList = self.stack.pop()
     let level = self.stack.top
 
@@ -30,19 +29,18 @@ extension Eval {
   /// import_name(PyFrameObject *f, PyObject *name, PyObject *fromlist, PyObject *level)
   private func importName(name: PyString,
                           fromList: PyObject,
-                          level: PyObject) -> PyResult<PyObject> {
+                          level: PyObject) -> PyResult {
     let globals = self.globals
     let locals = self.locals
 
     let __import__: PyObject
-    switch Py.get__import__() {
+    switch self.py.get__import__() {
     case let .value(i): __import__ = i
     case let .error(e): return .error(e)
     }
 
-    let args = [name, globals, locals, fromList, level]
-    let callResult = Py.call(callable: __import__, args: args, kwargs: nil)
-
+    let args = [name.asObject, globals.asObject, locals.asObject, fromList, level]
+    let callResult = self.py.call(callable: __import__, args: args, kwargs: nil)
     return callResult.asResult
   }
 
@@ -56,17 +54,17 @@ extension Eval {
   internal func importStar() -> InstructionResult {
     let module = self.stack.pop()
 
-    if let e = self.frame.copyFastToLocals() {
+    if let e = self.frame.copyFastToLocals(self.py) {
       return .exception(e)
     }
 
     if let e = self.importAllFrom(module: module) {
       // Ignore errors from 'copyLocalsToFast', import error is more important
-      _ = self.frame.copyLocalsToFast(onLocalMissing: .ignore)
+      _ = self.frame.copyLocalsToFast(self.py, onLocalMissing: .ignore)
       return .exception(e)
     }
 
-    if let e = self.frame.copyLocalsToFast(onLocalMissing: .ignore) {
+    if let e = self.frame.copyLocalsToFast(self.py, onLocalMissing: .ignore) {
       return .exception(e)
     }
 
@@ -92,14 +90,14 @@ extension Eval {
       return e
     }
 
-    let e = Py.forEach(iterable: namesObject) { name in
+    let e = self.py.forEach(iterable: namesObject) { name in
       if skipLeadingUnderscores && self.startsWithUnderscore(name: name) {
         return .goToNextElement
       }
 
-      switch Py.getAttribute(object: module, name: name) {
+      switch self.py.getAttribute(object: module, name: name) {
       case let .value(value):
-        switch self.locals.set(key: name, to: value) {
+        switch self.locals.set(self.py, key: name, value: value) {
         case .ok: return .goToNextElement
         case .error(let e): return .error(e)
         }
@@ -108,16 +106,17 @@ extension Eval {
       }
     }
 
-    // We could 'return Py.forEach' but this is better for debugging.
+    // We could 'return self.py.forEach' but this is better for debugging.
     return e
   }
 
   private func startsWithUnderscore(name: PyObject) -> Bool {
-    guard let str = self.py.cast.asString(name) else {
+    guard let pyString = self.py.cast.asString(name) else {
       return false
     }
 
-    return str.value.starts(with: "_")
+    let string = self.py.strString(pyString)
+    return string.starts(with: "_")
   }
 
   private enum ExportedNames {
@@ -140,7 +139,7 @@ extension Eval {
     // Try '__dict__'
     switch self.getAttribute(module: module, name: .__dict__) {
     case .value(let o):
-      switch Py.getKeys(object: o) {
+      switch self.py.getKeys(object: o) {
       case let .value(keys):
         return .dict(keys)
       case let .missingMethod(e),
@@ -149,10 +148,10 @@ extension Eval {
       }
 
     case .notFound:
-      let msg = "from-import-* object has no __dict__ and no __all__"
-      let moduleNameOrNil = self.getModuleName(module: module)
-      let e = Py.newImportError(msg: msg, moduleName: moduleNameOrNil)
-      return .error(e)
+      let message = "from-import-* object has no __dict__ and no __all__"
+      let moduleNameOrNil = self.getModuleName(module)
+      let e = self.py.newImportError(message: message, moduleName: moduleNameOrNil)
+      return .error(e.asBaseException)
 
     case .error(let e):
        return .error(e)
@@ -166,7 +165,7 @@ extension Eval {
   }
 
   private func getAttribute(module: PyObject, name: IdString) -> GetAttribute {
-    switch Py.getAttribute(object: module, name: name) {
+    switch self.py.getAttribute(object: module, name: name) {
     case let .value(o):
       if self.py.cast.isNone(o) {
         return .notFound
@@ -174,7 +173,7 @@ extension Eval {
       return .value(o)
 
     case let .error(e):
-      if self.py.cast.isAttributeError(e) {
+      if self.py.cast.isAttributeError(e.asObject) {
         return .notFound
       }
 
@@ -182,8 +181,8 @@ extension Eval {
     }
   }
 
-  private func getModuleName(module: PyObject) -> String? {
-    switch Py.getModuleName(object: module) {
+  private func getModuleName(_ module: PyObject) -> String? {
+    switch self.py.getName(module: module) {
     case let .string(s):
       return s
     case .notModule,
@@ -200,10 +199,10 @@ extension Eval {
   /// The resulting object is pushed onto the stack,
   /// to be subsequently stored by a `StoreFast` instruction.
   internal func importFrom(nameIndex: Int) -> InstructionResult {
-    let name = self.getName(index: nameIndex)
+    let name = self.code.names[nameIndex]
     let module = self.stack.top // Leave it at top
 
-    switch Py.getAttribute(object: module, name: name) {
+    switch self.py.getAttribute(object: module, name: name) {
     case .value(let o):
       self.stack.push(o)
       return .ok
@@ -220,55 +219,50 @@ extension Eval {
     }
   }
 
-  private func importFromSys(name: PyString,
-                             module: PyObject) -> PyResult<PyObject> {
+  private func importFromSys(name: PyString, module: PyObject) -> PyResult {
     let package: PyString
     switch self.getString(module: module, name: .__name__) {
     case .value(let p):
       package = p
     case .notString,
          .error:
-      let e = self.createImportFromError(name: name,
-                                         module: module,
-                                         package: nil)
-      return .error(e)
+      return self.createImportFromError(name: name, module: module, package: nil)
     }
 
-    let fullName = "\(package.value).\(name.value)"
-    switch Py.sys.getModule(name: Py.newString(fullName)) {
-    case .module(let m):
-      return .value(m)
-    case .notModule(let o):
-      // This is an interesting case,
-      // but we will trust that import knows its stuff.
-      return .value(o)
+    let packageString = self.py.strString(package)
+    let nameString = self.py.strString(name)
+    let fullName = self.py.newString("\(packageString).\(nameString)")
+
+    switch self.py.sys.getModule(name: fullName) {
+    case .module(let module):
+      return .value(module.asObject)
+    case .notModule(let object):
+      // This is an interesting case, but we will trust that import knows its stuff.
+      return .value(object)
     case .notFound,
          .error:
-      let e = self.createImportFromError(name: name,
-                                         module: module,
-                                         package: package)
-      return .error(e)
+      return self.createImportFromError(name: name, module: module, package: package)
     }
   }
 
   private func createImportFromError(name: PyString,
                                      module: PyObject,
-                                     package: PyString?) -> PyImportError {
-    let name = name.value
-    let package = package?.value ?? "<unknown module name>"
+                                     package: PyString?) -> PyResult {
+    let name = self.py.strString(name)
+    let package = package.map(self.py.strString(_:)) ?? "<unknown module name>"
 
-    let path: String = {
-      switch self.getString(module: module, name: .__file__) {
-      case .value(let str):
-        return str.value
-      case .notString,
-           .error:
-        return "unknown location"
-      }
-    }()
+    let path: String
+    switch self.getString(module: module, name: .__file__) {
+    case .value(let pyString):
+      path = self.py.strString(pyString)
+    case .notString,
+        .error:
+      path = "unknown location"
+    }
 
-    let msg = "cannot import name \(name) from \(package) (\(path))"
-    return Py.newImportError(msg: msg, moduleName: name, modulePath: path)
+    let message = "cannot import name \(name) from \(package) (\(path))"
+    let error = self.py.newImportError(message: message, moduleName: name, modulePath: path)
+    return .error(error.asBaseException)
   }
 
   private enum GetString {
@@ -279,7 +273,7 @@ extension Eval {
 
   private func getString(module: PyObject, name: IdString) -> GetString {
     let object: PyObject
-    switch Py.getAttribute(object: module, name: .__name__) {
+    switch self.py.getAttribute(object: module, name: .__name__) {
     case let .value(o): object = o
     case let .error(e): return .error(e)
     }
@@ -291,5 +285,3 @@ extension Eval {
     return .value(str)
   }
 }
-
-*/

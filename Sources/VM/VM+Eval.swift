@@ -6,7 +6,7 @@ import VioletObjects
 // ^^^ Well… yep… we will need this one
 
 extension PyFrame {
-  fileprivate static func ===(lhs: PyFrame?, rhs: PyFrame) -> Bool {
+  internal static func ===(lhs: PyFrame?, rhs: PyFrame) -> Bool {
     guard let lhs = lhs else {
       return false
     }

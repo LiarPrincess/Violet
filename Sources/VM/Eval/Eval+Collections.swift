@@ -1,8 +1,7 @@
-/* MARKER
 import VioletBytecode
 import VioletObjects
 
-private typealias DictionaryElement = PyInstance.DictionaryElement
+private typealias DictionaryElement = Py.DictionaryElement
 
 extension Eval {
 
@@ -12,8 +11,8 @@ extension Eval {
   /// and pushes the resulting tuple onto the stack.
   internal func buildTuple(elementCount: Int) -> InstructionResult {
     let elements = self.stack.popElementsInPushOrder(count: elementCount)
-    let collection = Py.newTuple(elements: elements)
-    self.stack.push(collection)
+    let collection = self.py.newTuple(elements: elements)
+    self.stack.push(collection.asObject)
     return .ok
   }
 
@@ -23,8 +22,8 @@ extension Eval {
   /// and pushes the resulting list onto the stack.
   internal func buildList(elementCount: Int) -> InstructionResult {
     let elements = self.stack.popElementsInPushOrder(count: elementCount)
-    let collection = Py.newList(elements: elements)
-    self.stack.push(collection)
+    let collection = self.py.newList(elements: elements)
+    self.stack.push(collection.asObject)
     return .ok
   }
 
@@ -35,12 +34,11 @@ extension Eval {
     let element = self.stack.pop()
     let list = self.stack.peek(stackIndex)
 
-    switch Py.add(list: list, element: element) {
-    case .value:
-      return .ok
-    case let .error(e):
-      return .exception(e)
+    if let error = self.py.add(list: list, object: element) {
+      return .exception(error)
     }
+
+    return .ok
   }
 
   // MARK: - Set
@@ -49,9 +47,9 @@ extension Eval {
   /// and pushes the resulting set onto the stack.
   internal func buildSet(elementCount: Int) -> InstructionResult {
     let elements = self.stack.popElementsInPushOrder(count: elementCount)
-    switch Py.newSet(elements: elements) {
+    switch self.py.newSet(elements: elements) {
     case let .value(collection):
-      self.stack.push(collection)
+      self.stack.push(collection.asObject)
       return .ok
     case let .error(e):
       return .exception(e)
@@ -65,24 +63,23 @@ extension Eval {
     let element = self.stack.pop()
     let set = self.stack.peek(stackIndex)
 
-    switch Py.add(set: set, element: element) {
-    case .value:
-      return .ok
-    case let .error(e):
-      return .exception(e)
+    if let error = self.py.add(set: set, object: element) {
+      return .exception(error)
     }
+
+    return .ok
   }
 
   // MARK: - Map
 
   /// Pushes a new dictionary object onto the stack.
   /// Pops 2 * count items so that the dictionary holds count entries:
-  /// {..., TOS3: TOS2, TOS1: TOS}.
+  /// {…, TOS3: TOS2, TOS1: TOS}.
   internal func buildMap(elementCount: Int) -> InstructionResult {
     let elements = self.popDictionaryElements(count: elementCount)
-    switch Py.newDict(elements: elements) {
+    switch self.py.newDict(elements: elements) {
     case let .value(collection):
-      self.stack.push(collection)
+      self.stack.push(collection.asObject)
       return .ok
     case let .error(e):
       return .exception(e)
@@ -96,16 +93,16 @@ extension Eval {
     let keys = self.stack.pop()
 
     guard let keysTuple = self.py.cast.asTuple(keys) else {
-      let msg = "bad BUILD_CONST_KEY_MAP keys argument"
-      return .exception(Py.newSystemError(msg: msg))
+      let error = self.newSystemError(message: "bad BUILD_CONST_KEY_MAP keys argument")
+      return .exception(error)
     }
 
-    let count = Py.lenInt(tuple: keysTuple)
+    let count = self.py.lengthInt(tuple: keysTuple)
     let elements = self.stack.popElementsInPushOrder(count: count)
 
-    switch Py.newDict(keys: keysTuple, elements: elements) {
+    switch self.py.newDict(keys: keysTuple, elements: elements) {
     case let .value(collection):
-      self.stack.push(collection)
+      self.stack.push(collection.asObject)
       return .ok
     case let .error(e):
       return .exception(e)
@@ -132,12 +129,11 @@ extension Eval {
     let value = self.stack.pop()
     let map = self.stack.peek(stackIndex)
 
-    switch Py.add(dict: map, key: key, value: value) {
-    case .value:
-      return .ok
-    case let .error(e):
-      return .exception(e)
+    if let error = self.py.add(dict: map, key: key, value: value) {
+      return .exception(error)
     }
+
+    return .ok
   }
 
   // MARK: - Slice
@@ -156,10 +152,8 @@ extension Eval {
     let stop = self.stack.pop()
     let start = self.stack.top
 
-    let slice = Py.newSlice(start: start, stop: stop, step: step)
-    self.stack.top = slice
+    let slice = self.py.newSlice(start: start, stop: stop, step: step)
+    self.stack.top = slice.asObject
     return .ok
   }
 }
-
-*/

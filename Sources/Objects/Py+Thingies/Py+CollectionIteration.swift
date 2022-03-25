@@ -86,11 +86,11 @@ extension Py {
     return nil
   }
 
-  public typealias ForEachTupleFn = (PyObject) -> ForEachStep
+  public typealias ForEachTupleFn = (Int, PyObject) -> ForEachStep
 
   public func forEach(tuple: PyTuple, fn: ForEachTupleFn) -> PyBaseException? {
-    for object in tuple.elements {
-      switch fn(object) {
+    for (index, object) in tuple.elements.enumerated() {
+      switch fn(index, object) {
       case .goToNextElement:
         break
       case .finish:

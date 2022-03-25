@@ -8,6 +8,14 @@ import VioletCore
 
 // swiftlint:disable file_length
 
+public func ===(lhs: PyBaseException, rhs: PyBaseException) -> Bool {
+  return lhs.ptr === rhs.ptr
+}
+
+public func !==(lhs: PyBaseException, rhs: PyBaseException) -> Bool {
+  return lhs.ptr !== rhs.ptr
+}
+
 // sourcery: pyerrortype = BaseException, isDefault, isBaseType, hasGC
 // sourcery: isBaseExceptionSubclass, instancesHave__dict__
 public struct PyBaseException: PyErrorMixin {

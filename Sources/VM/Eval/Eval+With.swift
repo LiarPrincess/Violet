@@ -1,4 +1,3 @@
-/* MARKER
 import VioletObjects
 
 extension Eval {
@@ -20,14 +19,14 @@ extension Eval {
     let manager = self.stack.top
 
     let __enter__: PyObject
-    switch Py.mroLookup(object: manager, name: .__enter__) {
+    switch self.py.mroLookup(object: manager, name: .__enter__) {
     case .value(let o): __enter__ = o
     case .notFound: return self.notFound(manager: manager, attribute: "__enter__")
     case .error(let e): return .exception(e)
     }
 
     let __exit__: PyObject
-    switch Py.mroLookup(object: manager, name: .__exit__) {
+    switch self.py.mroLookup(object: manager, name: .__exit__) {
     case .value(let o): __exit__ = o
     case .notFound: return self.notFound(manager: manager, attribute: "__exit__")
     case .error(let e): return .exception(e)
@@ -35,14 +34,14 @@ extension Eval {
 
     self.stack.top = __exit__
 
-    switch Py.call(callable: __enter__) {
+    switch self.py.call(callable: __enter__) {
     case let .value(res):
       // Setup the finally block before pushing the result of __enter__ on the stack.
-      let block = Block(
+      let block = PyFrame.Block(
         kind: .setupFinally(finallyStartLabelIndex: afterBodyLabelIndex),
         stackCount: self.stack.count
       )
-      self.blockStack.push(block: block)
+      self.blockStack.push(block)
 
       self.stack.push(res)
       return .ok
@@ -52,10 +51,9 @@ extension Eval {
     }
   }
 
-  private func notFound(manager: PyObject,
-                        attribute: String) -> InstructionResult {
-    let e = Py.newAttributeError(object: manager, hasNoAttribute: attribute)
-    return .exception(e)
+  private func notFound(manager: PyObject, attribute: String) -> InstructionResult {
+    let e = self.py.newAttributeError(object: manager, hasNoAttribute: attribute)
+    return .exception(e.asBaseException)
   }
 
   // MARK: - Cleanup start
@@ -85,15 +83,15 @@ extension Eval {
     // swiftlint:enable function_body_length
 
     let __exit__: PyObject
-    var exceptionType: PyObject = Py.none
-    var exception: PyObject = Py.none
-    var traceback: PyObject = Py.none
+    var exceptionType: PyObject = self.py.none.asObject
+    var exception: PyObject = self.py.none.asObject
+    var traceback: PyObject = self.py.none.asObject
 
     let marker = self.stack.top
 
     // In general: Pop as many objects as needed to get to '__exit__'
     // and then push them back again.
-    switch PushFinallyReason.pop(from: &self.frame.stack) {
+    switch PushFinallyReason.pop(self.py, stack: self.stack) {
     case .none:
       // nothing unusual happened
       __exit__ = self.stack.top
@@ -102,21 +100,24 @@ extension Eval {
     case let .return(value):
       // we were returning
       __exit__ = self.stack.pop()
-      PushFinallyReason.push(.return(value), on: &self.frame.stack)
+      PushFinallyReason.push(self.py, stack: self.stack, reason: .return(value))
 
     case let .continue(loopStartLabelIndex: _, asObject: index):
       // we were continuing
       __exit__ = self.stack.pop()
-      PushFinallyReason.push(.continuePy(loopStartLabelIndex: index), on: &self.frame.stack)
+      let value = PushFinallyReason.Push.continuePy(loopStartLabelIndex: index)
+      PushFinallyReason.push(self.py, stack: self.stack, value: value)
 
     case .break:
       __exit__ = self.stack.pop()
-      PushFinallyReason.push(.break, on: &self.frame.stack)
+      PushFinallyReason.push(self.py, stack: self.stack, reason: .break)
 
     case let .exception(e):
-      exceptionType = e.type
-      exception = e
-      traceback = Py.getTraceback(exception: e) ?? Py.none
+      exceptionType = e.type.asObject
+      exception = e.asObject
+      if let tb = self.py.getTraceback(exception: e) {
+        traceback = tb.asObject
+      }
 
       let previousException = self.stack.pop() // may also be 'None'
       __exit__ = self.stack.pop()
@@ -124,26 +125,26 @@ extension Eval {
       self.stack.push(exception)
 
       guard let block = self.blockStack.pop() else {
-        let e = Py.newSystemError(msg: "XXX block stack underflow")
-        return .exception(e)
+        let error = self.newSystemError(message: "XXX block stack underflow")
+        return .exception(error)
       }
 
       assert(block.isExceptHandler)
       let levelWithoutExit = block.stackCount - 1
-      let blockWithoutExit = Block(kind: .exceptHandler, stackCount: levelWithoutExit)
-      self.blockStack.push(block: blockWithoutExit)
+      let blockWithoutExit = PyFrame.Block(kind: .exceptHandler, stackCount: levelWithoutExit)
+      self.blockStack.push(blockWithoutExit)
 
     case .silenced:
       __exit__ = self.stack.pop()
-      PushFinallyReason.push(.silenced, on: &self.frame.stack)
+      PushFinallyReason.push(self.py, stack: self.stack, reason: .silenced)
 
     case .invalid:
-      let e = Py.newSystemError(msg: "'finally' pops bad exception")
-      return .exception(e)
+      let error = self.newSystemError(message: "'finally' pops bad exception")
+      return .exception(error)
     }
 
     let args = [exceptionType, exception, traceback]
-    switch Py.call(callable: __exit__, args: args, kwargs: nil) {
+    switch self.py.call(callable: __exit__, args: args, kwargs: nil) {
     case let .value(result):
       self.stack.push(exception) // Duplicating the exception on the stack
       self.stack.push(result)
@@ -175,7 +176,7 @@ extension Eval {
     var isExceptionSuppressed = false
     let isExceptionNone = self.py.cast.isNone(exception)
     if !isExceptionNone {
-      switch Py.isTrueBool(object: result) {
+      switch self.py.isTrueBool(object: result) {
       case let .value(value):
         isExceptionSuppressed = value
       case let .error(e):
@@ -185,11 +186,9 @@ extension Eval {
 
     if isExceptionSuppressed {
       // There was an exception and a True return
-      PushFinallyReason.push(.silenced, on: &self.frame.stack)
+      PushFinallyReason.push(self.py, stack: self.stack, reason: .silenced)
     }
 
     return .ok
   }
 }
-
-*/

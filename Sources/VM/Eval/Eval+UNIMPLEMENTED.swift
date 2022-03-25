@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 import VioletBytecode
 import VioletObjects
@@ -63,32 +62,23 @@ extension Eval {
 
   /// PyObject *format_spec
   /// PyObject_Format(PyObject *obj, PyObject *)
-  public func format(object: PyObject,
-                     format _format: PyObject?) -> PyResult<PyString> {
-    // Move this to 'Py.format' after we finish the whole implementation.
-    let format: PyString?
-    switch self.parseFormat(format: _format) {
-    case .nil: format = nil
-    case .string(let s): format = s
-    case .error(let e): return .error(e)
+  internal func format(object: PyObject, format: PyObject?) -> PyResultGen<PyString> {
+    // Move this to 'self.py.format' after we finish the whole implementation.
+    switch self.parseFormat(format: format) {
+    case .nil,
+        .empty:
+      return self.py.str(object)
+    case .string:
+      self.unimplemented()
+    case .error(let e):
+      return .error(e)
     }
-
-    // Fast path for common types
-    let isFormatEmpty = format?.value.isEmpty ?? true
-    if isFormatEmpty {
-      if let str = self.py.cast.asExactlyString(object) {
-        return .value(str)
-      }
-
-      return Py.str(object: object)
-    }
-
-    self.unimplemented()
   }
 
   private enum ParseFormatResult {
     case `nil`
-    case string(PyString)
+    case empty
+    case string(PyString, String)
     case error(PyBaseException)
   }
 
@@ -97,13 +87,23 @@ extension Eval {
       return .nil
     }
 
-    guard let str = self.py.cast.asString(format) else {
-      let t = format.typeName
-      let msg = "Format specifier must be a string, not \(t)"
-      return .error(Py.newTypeError(msg: msg))
+    guard let pyString = self.py.cast.asString(format) else {
+      let message = "Format specifier must be a string, not \(format.typeName)"
+      let error = self.newTypeError(message: message)
+      return .error(error)
     }
 
-    return .string(str)
+    let string: String
+    switch self.py.strString(format) {
+    case let .value(s): string = s
+    case let .error(e): return .error(e)
+    }
+
+    if string.isEmpty {
+      return .empty
+    }
+
+    return .string(pyString, string)
   }
 
   // MARK: - Unimplemented
@@ -112,5 +112,3 @@ extension Eval {
     trap("NOT IMPLEMENTED: '\(fn)'")
   }
 }
-
-*/
