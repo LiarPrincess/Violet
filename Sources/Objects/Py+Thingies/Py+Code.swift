@@ -180,7 +180,7 @@ extension Py {
                           set: FunctionWrapper?,
                           del: FunctionWrapper?,
                           doc: String?) -> PyProperty {
-    // We need to make sure that names are '__get__/__set__/__det__'.
+    // We need to make sure that names are '__get__/__set__/__del__'.
     let _get = self.createPropertyFn(name: "__get__", fn: get)
     let _set = self.createPropertyFnOptional(name: "__set__", fn: set)
     let _del = self.createPropertyFnOptional(name: "__del__", fn: del)

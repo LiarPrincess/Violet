@@ -15,8 +15,7 @@ extension Py {
       return .value(fn)
     }
 
-    let message = "'__build_class__' function not found inside builtins module"
-    let error = self.newAttributeError(message: message)
+    let error = self.newAttributeError(message: "'__build_class__' not found")
     return .error(error.asBaseException)
   }
 
@@ -62,7 +61,7 @@ extension Py {
     // Our class '__dict__' (the thing that contains methods etc.)
     // CPython: namespace
     let dict: PyDict
-    switch self.createDict(name: name, bases: basesTuple, metatype: metatype) {
+    switch self.createDict(name: name, bases: basesTuple, metatype: metatype, kwargs: kwargs) {
     case let .value(n): dict = n
     case let .error(e): return .error(e)
     }
@@ -146,12 +145,13 @@ extension Py {
   /// Otherwise just return empty dict.
   private func createDict(name: PyString,
                           bases: PyTuple,
-                          metatype: PyObject) -> PyResultGen<PyDict> {
+                          metatype: PyObject,
+                          kwargs: PyDict?) -> PyResultGen<PyDict> {
     switch self.get__prepare__(metatype: metatype) {
     case let .value(__prepare__):
       let object: PyObject
       let args = [name.asObject, bases.asObject]
-      switch self.call(callable: __prepare__, args: args, kwargs: nil) {
+      switch self.call(callable: __prepare__, args: args, kwargs: kwargs) {
       case let .value(o):
         object = o
       case let .error(e),
