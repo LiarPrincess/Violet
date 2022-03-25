@@ -4051,6 +4051,9 @@ extension Py {
       let __mro__ = FunctionWrapper(name: "__get__", fn: PyType.__mro__(_:zelf:))
       self.add(py, type: type, name: "__mro__", property: __mro__, doc: nil)
 
+      let __prepare__ = FunctionWrapper(name: "__prepare__", fn: PyType.__prepare__(_:zelf:args:kwargs:))
+      self.add(py, type: type, name: "__prepare__", classMethod: __prepare__, doc: PyType.prepareDoc)
+
       let __repr__ = FunctionWrapper(name: "__repr__", fn: PyType.__repr__(_:zelf:))
       self.add(py, type: type, name: "__repr__", method: __repr__, doc: nil)
       let mro = FunctionWrapper(name: "mro", fn: PyType.mro(_:zelf:))
