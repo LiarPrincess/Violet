@@ -137,14 +137,14 @@ internal enum Debug {
   // MARK: - Compare
 
   internal static func compare(type: Instruction.CompareType,
-                               a: PyObject,
-                               b: PyObject,
+                               left: PyObject,
+                               right: PyObject,
                                result: PyResult) {
 #if DEBUG
     guard Self.isEnabledAndAfterImportlib else { return }
     print("  type:", type)
-    print("  a:", a)
-    print("  b:", b)
+    print("  left: ", left)
+    print("  right:", right)
     print("  result:", result)
 #endif
   }

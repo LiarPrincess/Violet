@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 import VioletBytecode
 import VioletObjects
@@ -14,7 +13,7 @@ extension Eval {
 
   /// Pushes constant pointed by `index` onto the stack.
   internal func loadConst(index: Int) -> InstructionResult {
-    let constant = self.getConstant(index: index)
+    let constant = self.code.constants[index]
     self.stack.push(constant)
     return .ok
   }
@@ -23,33 +22,33 @@ extension Eval {
 
   /// Implements `name = TOS`.
   internal func storeName(nameIndex: Int) -> InstructionResult {
-    let name = self.getName(index: nameIndex)
+    let name = self.code.names[nameIndex]
     let value = self.stack.pop()
-    return self.store(dict: self.locals, name: name, value: value)
+    return self.store(self.locals, name: name, value: value)
   }
 
   /// Pushes the value associated with `name` onto the stack.
   internal func loadName(nameIndex: Int) -> InstructionResult {
-    let name = self.getName(index: nameIndex)
+    let name = self.code.names[nameIndex]
     let dicts = [self.locals, self.globals, self.builtins]
     return self.load(dicts: dicts, name: name)
   }
 
   /// Implements `del name`.
   internal func deleteName(nameIndex: Int) -> InstructionResult {
-    let name = self.getName(index: nameIndex)
-    return self.del(dict: self.locals, name: name)
+    let name = self.code.names[nameIndex]
+    return self.del(self.locals, name: name)
   }
 
   // MARK: - Attribute
 
   /// Implements `TOS.name = TOS1`.
   internal func storeAttribute(nameIndex: Int) -> InstructionResult {
-    let name = self.getName(index: nameIndex)
+    let name = self.code.names[nameIndex]
     let object = self.stack.pop()
     let value = self.stack.pop()
 
-    switch Py.setAttribute(object: object, name: name, value: value) {
+    switch self.py.setAttribute(object: object, name: name, value: value) {
     case .value:
       return .ok
     case .error(let e):
@@ -59,10 +58,10 @@ extension Eval {
 
   /// Replaces TOS with `getAttr(TOS, name)`.
   internal func loadAttribute(nameIndex: Int) -> InstructionResult {
-    let name = self.getName(index: nameIndex)
+    let name = self.code.names[nameIndex]
     let object = self.stack.top
 
-    switch Py.getAttribute(object: object, name: name) {
+    switch self.py.getAttribute(object: object, name: name) {
     case let .value(r):
       self.stack.top = r
       return .ok
@@ -73,10 +72,10 @@ extension Eval {
 
   /// Implements `del TOS.name`.
   internal func deleteAttribute(nameIndex: Int) -> InstructionResult {
-    let name = self.getName(index: nameIndex)
+    let name = self.code.names[nameIndex]
     let object = self.stack.pop()
 
-    switch Py.delAttribute(object: object, name: name) {
+    switch self.py.delAttribute(object: object, name: name) {
     case .value:
       return .ok
     case .error(let e):
@@ -91,7 +90,7 @@ extension Eval {
     let index = self.stack.pop()
     let object = self.stack.top
 
-    switch Py.getItem(object: object, index: index) {
+    switch self.py.getItem(object: object, index: index) {
     case let .value(r):
       self.stack.top = r
       return .ok
@@ -106,7 +105,7 @@ extension Eval {
     let object = self.stack.pop()
     let value = self.stack.pop()
 
-    switch Py.setItem(object: object, index: index, value: value) {
+    switch self.py.setItem(object: object, index: index, value: value) {
     case .value:
       return .ok
     case .error(let e):
@@ -119,7 +118,7 @@ extension Eval {
     let index = self.stack.pop()
     let object = self.stack.pop()
 
-    switch Py.deleteItem(object: object, index: index) {
+    switch self.py.deleteItem(object: object, index: index) {
     case .value:
       return .ok
     case .error(let e):
@@ -131,22 +130,22 @@ extension Eval {
 
   /// Works as StoreName, but stores the name as a global.
   internal func storeGlobal(nameIndex: Int) -> InstructionResult {
-    let name = self.getName(index: nameIndex)
+    let name = self.code.names[nameIndex]
     let value = self.stack.pop()
-    return self.store(dict: self.globals, name: name, value: value)
+    return self.store(self.globals, name: name, value: value)
   }
 
   /// Loads the global named `name` onto the stack.
   internal func loadGlobal(nameIndex: Int) -> InstructionResult {
-    let name = self.getName(index: nameIndex)
+    let name = self.code.names[nameIndex]
     let dicts = [self.globals, self.builtins]
     return self.load(dicts: dicts, name: name)
   }
 
   /// Works as DeleteName, but deletes a global name.
   internal func deleteGlobal(nameIndex: Int) -> InstructionResult {
-    let name = self.getName(index: nameIndex)
-    return self.del(dict: self.globals, name: name)
+    let name = self.code.names[nameIndex]
+    return self.del(self.globals, name: name)
   }
 
   // MARK: - Fast
@@ -185,8 +184,8 @@ extension Eval {
     assert(0 <= index && index < self.code.variableCount)
 
     let mangled = self.code.variableNames[index]
-    let e = Py.newUnboundLocalError(variableName: mangled.value)
-    return .exception(e)
+    let error = self.py.newUnboundLocalError(variableName: mangled.value)
+    return .exception(error.asBaseException)
   }
 
   // MARK: - Cell
@@ -194,7 +193,7 @@ extension Eval {
   /// Loads the cell contained in slot i of the cell storage.
   /// Pushes a reference to the object the cell contains on the stack.
   internal func loadCell(index: Int) -> InstructionResult {
-    let cell = self.getCell(index: index)
+    let cell = self.cellVariables[index]
 
     if let content = cell.content {
       self.stack.push(content)
@@ -206,7 +205,7 @@ extension Eval {
 
   /// Stores TOS into the cell contained in slot i of the cell storage.
   internal func storeCell(index: Int) -> InstructionResult {
-    let cell = self.getCell(index: index)
+    let cell = self.cellVariables[index]
     let value = self.stack.pop()
     cell.content = value
     return .ok
@@ -215,7 +214,7 @@ extension Eval {
   /// Empties the cell contained in slot i of the cell storage.
   /// Used by the `del` statement.
   internal func deleteCell(index: Int) -> InstructionResult {
-    let cell = self.getCell(index: index)
+    let cell = self.cellVariables[index]
 
     let isEmpty = cell.content == nil
     if isEmpty {
@@ -233,11 +232,11 @@ extension Eval {
   }
 
   private func unboundCellOrFreeError(name: MangledName) -> InstructionResult {
-    let msg = "cell/free variable '\(name)' referenced before assignment " +
+    let message = "cell/free variable '\(name)' referenced before assignment " +
               "in enclosing scope"
 
-    let e = Py.newNameError(msg: msg)
-    return .exception(e)
+    let error = self.py.newNameError(message: message)
+    return .exception(error.asBaseException)
   }
 
   // MARK: - Free
@@ -245,7 +244,7 @@ extension Eval {
   /// Loads the cell contained in slot i of the cell and free variable storage.
   /// Pushes a reference to the object the cell contains on the stack.
   internal func loadFree(index: Int) -> InstructionResult {
-    let cell = self.getFree(index: index)
+    let cell = self.freeVariables[index]
 
     if let content = cell.content {
       self.stack.push(content)
@@ -258,7 +257,7 @@ extension Eval {
   /// Stores TOS into the cell contained in slot i of the cell
   /// and free variable storage.
   internal func storeFree(index: Int) -> InstructionResult {
-    let cell = self.getFree(index: index)
+    let cell = self.freeVariables[index]
 
     let value = self.stack.pop()
     cell.content = value
@@ -268,7 +267,7 @@ extension Eval {
   /// Empties the cell contained in slot i of the cell and free variable storage.
   /// Used by the del statement.
   internal func deleteFree(index: Int) -> InstructionResult {
-    let cell = self.getFree(index: index)
+    let cell = self.freeVariables[index]
 
     let isEmpty = cell.content == nil
     if isEmpty {
@@ -290,14 +289,14 @@ extension Eval {
   /// This is used for loading free variables in class bodies.
   internal func loadClassFree(index: Int) -> InstructionResult {
     let mangled = self.code.freeVariableNames[index]
-    let name = Py.intern(string: mangled.value)
+    let name = self.py.intern(string: mangled.value)
 
     let value: PyObject
-    switch self.load(dict: self.locals, name: name) {
+    switch self.load(self.locals, name: name) {
     case .value(let o):
       value = o
     case .notFound:
-      let cell = self.self.freeVariables[index]
+      let cell = self.freeVariables[index]
       guard let content = cell.content else {
         return self.unboundFreeError(index: index)
       }
@@ -322,24 +321,23 @@ extension Eval {
 
     let cell: PyCell
     if cellOrFreeIndex < cellCount {
-      cell = self.getCell(index: cellOrFreeIndex)
+      cell = self.cellVariables[cellOrFreeIndex]
     } else {
       let freeIndex = cellOrFreeIndex - cellCount
-      cell = self.getFree(index: freeIndex)
+      cell = self.freeVariables[freeIndex]
     }
 
-    self.stack.push(cell)
+    self.stack.push(cell.asObject)
     return .ok
   }
 
   // MARK: - Helpers
 
-  private func store(dict: PyDict,
+  private func store(_ dict: PyDict,
                      name: PyString,
                      value: PyObject) -> InstructionResult {
-    let isExactlyDictNotSubclass = self.py.cast.isExactlyDict(dict)
-    if isExactlyDictNotSubclass {
-      switch dict.set(key: name, to: value) {
+    if self.isExactlyDictNotSubclass(dict) {
+      switch dict.set(self.py, key: name, value: value) {
       case .ok:
         return .ok
       case .error(let e):
@@ -347,7 +345,9 @@ extension Eval {
       }
     }
 
-    switch Py.setItem(object: dict, index: name, value: value) {
+    let dictObject = dict.asObject
+    let nameObject = name.asObject
+    switch self.py.setItem(object: dictObject, index: nameObject, value: value) {
     case .value:
       return .ok
     case .error(let e):
@@ -355,20 +355,21 @@ extension Eval {
     }
   }
 
-  private func load(dict: PyDict, name: PyString) -> PyDict.GetResult {
-    let isExactlyDictNotSubclass = self.py.cast.isExactlyDict(dict)
-    if isExactlyDictNotSubclass {
-      return dict.get(key: name)
+  private func load(_ dict: PyDict, name: PyString) -> PyDict.GetResult {
+    if self.isExactlyDictNotSubclass(dict) {
+      return dict.get(self.py, key: name)
     }
 
-    switch Py.callMethod(object: dict, selector: .__getitem__, arg: name) {
+    let dictObject = dict.asObject
+    let nameObject = name.asObject
+    switch self.py.callMethod(object: dictObject, selector: .__getitem__, arg: nameObject) {
     case let .value(o):
       return .value(o)
     case let .missingMethod(e),
          let .notCallable(e):
       return .error(e)
     case let .error(e):
-      if self.py.cast.isKeyError(e) {
+      if self.py.cast.isKeyError(e.asObject) {
         return .notFound
       }
 
@@ -378,7 +379,7 @@ extension Eval {
 
   private func load(dicts: [PyDict], name: PyString) -> InstructionResult {
     for dict in dicts {
-      switch self.load(dict: dict, name: name) {
+      switch self.load(dict, name: name) {
       case .value(let o):
         self.stack.push(o)
         return .ok
@@ -392,10 +393,9 @@ extension Eval {
     return self.nameError(name)
   }
 
-  private func del(dict: PyDict, name: PyString) -> InstructionResult {
-    let isExactlyDictNotSubclass = self.py.cast.isExactlyDict(dict)
-    if isExactlyDictNotSubclass {
-      switch dict.del(key: name) {
+  private func del(_ dict: PyDict, name: PyString) -> InstructionResult {
+    if self.isExactlyDictNotSubclass(dict) {
+      switch dict.del(self.py, key: name) {
       case .value:
         return .ok
       case .notFound:
@@ -405,7 +405,9 @@ extension Eval {
       }
     }
 
-    switch Py.deleteItem(object: dict, index: name) {
+    let dictObject = dict.asObject
+    let nameObject = name.asObject
+    switch self.py.deleteItem(object: dictObject, index: nameObject) {
     case .value:
       return .ok
     case .error(let e):
@@ -413,11 +415,13 @@ extension Eval {
     }
   }
 
+  private func isExactlyDictNotSubclass(_ dict: PyDict) -> Bool {
+    return self.py.cast.isExactlyDict(dict.asObject)
+  }
+
   private func nameError(_ name: PyString) -> InstructionResult {
-    let repr = Py.reprOrGenericString(object: name)
-    let e = Py.newNameError(msg: "name \(repr) is not defined")
-    return .exception(e)
+    let repr = self.py.reprOrGenericString(name.asObject)
+    let error = self.py.newNameError(message: "name \(repr) is not defined")
+    return .exception(error.asBaseException)
   }
 }
-
-*/

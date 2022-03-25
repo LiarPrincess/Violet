@@ -161,14 +161,20 @@ public struct PyFrame: PyObjectMixin {
   /// being true).
   ///
   /// CPython: `f_lasti`.
-  public var currentInstructionIndex: Int? { self.currentInstructionIndexPtr.pointee }
+  public var currentInstructionIndex: Int? {
+    get { self.currentInstructionIndexPtr.pointee }
+    nonmutating set { self.currentInstructionIndexPtr.pointee = newValue }
+  }
 
   // sourcery: storedProperty
   /// `PC`
   ///
   /// Index of the next executed instruction.
   /// Change this if you need to jump somewhere.
-  public var nextInstructionIndex: Int { self.nextInstructionIndexPtr.pointee }
+  public var nextInstructionIndex: Int {
+    get { self.nextInstructionIndexPtr.pointee }
+    nonmutating set { self.nextInstructionIndexPtr.pointee = newValue }
+  }
 
   /// Current line number in Python source code.
   /// If we do not have started execution it will return first instruction line.

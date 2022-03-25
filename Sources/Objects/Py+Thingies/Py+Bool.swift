@@ -22,11 +22,10 @@ extension Py {
   /// Equivalent of 'not v'.
   ///
   /// int PyObject_Not(PyObject *v)
-  public func not(object: PyObject) -> PyResultGen<PyBool> {
+  public func not(object: PyObject) -> PyResult {
     switch self.isTrueBool(object: object) {
-    case let .value(b):
-      let result = self.newBool(!b)
-      return .value(result)
+    case let .value(isTrue):
+      return PyResult(self, !isTrue)
     case let .error(e):
       return .error(e)
     }
@@ -34,8 +33,8 @@ extension Py {
 
   public func notBool(object: PyObject) -> PyResultGen<Bool> {
     switch self.isTrueBool(object: object) {
-    case let .value(b):
-      return .value(!b)
+    case let .value(isTrue):
+      return .value(!isTrue)
     case let .error(e):
       return .error(e)
     }
@@ -44,11 +43,10 @@ extension Py {
   // MARK: - Is true
 
   /// Test a value used as condition, e.g.,  `if`  or `in` statement.
-  public func isTrue(object: PyObject) -> PyResultGen<PyBool> {
+  public func isTrue(object: PyObject) -> PyResult {
     switch self.isTrueBool(object: object) {
-    case let .value(b):
-      let result = self.newBool(b)
-      return .value(result)
+    case let .value(isTrue):
+      return PyResult(self, isTrue)
     case let .error(e):
       return .error(e)
     }
@@ -145,12 +143,5 @@ extension Py {
     }
 
     return .value(bigInt.isTrue)
-  }
-
-  // MARK: - Is
-
-  /// `is` will return `True` if two variables point to the same object.
-  public func `is`(left: PyObject, right: PyObject) -> Bool {
-    return left.ptr === right.ptr
   }
 }

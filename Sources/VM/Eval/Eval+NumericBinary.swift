@@ -1,5 +1,3 @@
-/* MARKER
-import VioletBytecode
 import VioletObjects
 
 extension Eval {
@@ -11,7 +9,7 @@ extension Eval {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch Py.add(left: left, right: right) {
+    switch self.py.add(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -27,7 +25,7 @@ extension Eval {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch Py.sub(left: left, right: right) {
+    switch self.py.sub(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -43,7 +41,7 @@ extension Eval {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch Py.mul(left: left, right: right) {
+    switch self.py.mul(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -57,7 +55,7 @@ extension Eval {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch Py.matmul(left: left, right: right) {
+    switch self.py.matmul(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -70,8 +68,9 @@ extension Eval {
   internal func binaryPower() -> InstructionResult {
     let exp = self.stack.pop()
     let base = self.stack.top
+    let none = self.py.none.asObject
 
-    switch Py.pow(base: base, exp: exp, mod: Py.none) {
+    switch self.py.pow(base: base, exp: exp, mod: none) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -87,7 +86,7 @@ extension Eval {
     let divisor = self.stack.pop()
     let dividend = self.stack.top
 
-    switch Py.floordiv(left: dividend, right: divisor) {
+    switch self.py.floorDiv(left: dividend, right: divisor) {
     case let .value(quotient):
       self.stack.top = quotient
       return .ok
@@ -101,7 +100,7 @@ extension Eval {
     let divisor = self.stack.pop()
     let dividend = self.stack.top
 
-    switch Py.truediv(left: dividend, right: divisor) {
+    switch self.py.trueDiv(left: dividend, right: divisor) {
     case let .value(quotient):
       self.stack.top = quotient
       return .ok
@@ -115,7 +114,7 @@ extension Eval {
     let divisor = self.stack.pop()
     let dividend = self.stack.top
 
-    switch Py.mod(left: dividend, right: divisor) {
+    switch self.py.mod(left: dividend, right: divisor) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -131,7 +130,7 @@ extension Eval {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch Py.lshift(left: left, right: right) {
+    switch self.py.lshift(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -145,7 +144,7 @@ extension Eval {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch Py.rshift(left: left, right: right) {
+    switch self.py.rshift(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -161,7 +160,7 @@ extension Eval {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch Py.and(left: left, right: right) {
+    switch self.py.and(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -175,7 +174,7 @@ extension Eval {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch Py.xor(left: left, right: right) {
+    switch self.py.xor(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -189,7 +188,7 @@ extension Eval {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch Py.or(left: left, right: right) {
+    switch self.py.or(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -198,5 +197,3 @@ extension Eval {
     }
   }
 }
-
-*/

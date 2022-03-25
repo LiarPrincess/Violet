@@ -1,4 +1,3 @@
-/* MARKER
 import BigInt
 import VioletCore
 import VioletObjects
@@ -21,9 +20,11 @@ import VioletObjects
 /// ```
 internal enum PushFinallyReason {
 
+  internal typealias ObjectStack = PyFrame.ObjectStackProxy
+
   // MARK: - Marker values
 
-  private enum Marker {
+  private struct Marker {
     fileprivate static let `return` = BigInt(0)
     fileprivate static let `break` = BigInt(1)
     fileprivate static let `continue` = BigInt(2)
@@ -55,49 +56,53 @@ internal enum PushFinallyReason {
   }
 
   /// Remember what we were doing before we started `finally` block.
-  internal static func push(reason: UnwindReason,
-                            on stack: inout PyFrame.ObjectStack) {
-    let value: PushFinallyReason.Push = {
-      switch reason {
-      case .return(let value):
-        return .return(value)
-      case .break:
-        return .break
-      case .continue(loopStartLabelIndex: let index):
-        return .continue(loopStartLabelIndex: index)
-      case .exception(let exception, fillTracebackAndContext: _):
-        return .exception(exception)
-      case .yield:
-        return .yield
-      case .silenced:
-        return .silenced
-      }
-    }()
+  internal static func push(_ py: Py, stack: ObjectStack, reason: UnwindReason) {
+    let value: PushFinallyReason.Push
+    switch reason {
+    case .return(let object):
+      value = .return(object)
+    case .break:
+      value = .break
+    case .continue(loopStartLabelIndex: let index):
+      value = .continue(loopStartLabelIndex: index)
+    case .exception(let exception, fillTracebackAndContext: _):
+      value = .exception(exception)
+    case .yield:
+      value = .yield
+    case .silenced:
+      value = .silenced
+    }
 
-    Self.push(value, on: &stack)
+    Self.push(py, stack: stack, value: value)
   }
 
   /// Remember what we were doing before we started `finally` block.
-  internal static func push(_ value: Push, on stack: inout PyFrame.ObjectStack) {
+  internal static func push(_ py: Py, stack: ObjectStack, value: Push) {
     switch value {
-    case .return(let value):
-      stack.push(value)
-      stack.push(Py.newInt(Marker.return))
+    case .return(let object):
+      stack.push(object)
+      stack.push(Self.toObject(py, marker: Marker.return))
     case .break:
-      stack.push(Py.newInt(Marker.break))
+      stack.push(Self.toObject(py, marker: Marker.break))
     case .continue(loopStartLabelIndex: let index):
-      stack.push(Py.newInt(index)) // int -> PyInt conversion needed
-      stack.push(Py.newInt(Marker.continue))
+      let indexPy = py.newInt(index)  // int -> PyInt conversion needed
+      stack.push(indexPy.asObject)
+      stack.push(Self.toObject(py, marker: Marker.continue))
     case .continuePy(loopStartLabelIndex: let index):
-      stack.push(index)
-      stack.push(Py.newInt(Marker.continue))
+      stack.push(index.asObject)
+      stack.push(Self.toObject(py, marker: Marker.continue))
     case .exception:
-      stack.push(Py.newInt(Marker.exception))
+      stack.push(Self.toObject(py, marker: Marker.exception))
     case .yield:
-      stack.push(Py.newInt(Marker.yield))
+      stack.push(Self.toObject(py, marker: Marker.yield))
     case .silenced:
-      stack.push(Py.newInt(Marker.silenced))
+      stack.push(Self.toObject(py, marker: Marker.silenced))
     }
+  }
+
+  private static func toObject(_ py: Py, marker: BigInt) -> PyObject {
+    let int = py.newInt(marker)
+    return int.asObject
   }
 
   // MARK: - Pop
@@ -120,22 +125,22 @@ internal enum PushFinallyReason {
   }
 
   /// CPython: TARGET(END_FINALLY)
-  internal static func pop(from stack: inout PyFrame.ObjectStack) -> Pop {
+  internal static func pop(_ py: Py, stack: ObjectStack) -> Pop {
     let marker = stack.pop()
 
-    if let pyInt = self.py.cast.asInt(marker) {
+    if let pyInt = py.cast.asInt(marker) {
       switch pyInt.value {
       case Marker.return:
-        let value = stack.pop()
-        return .return(value)
+        let object = stack.pop()
+        return .return(object)
       case Marker.break:
         return .break
       case Marker.continue:
-        let value = stack.pop()
-        if let pyInt = self.py.cast.asInt(value), let int = Int(exactly: pyInt.value) {
+        let object = stack.pop()
+        if let pyInt = py.cast.asInt(object), let int = Int(exactly: pyInt.value) {
           return .continue(loopStartLabelIndex: int, asObject: pyInt)
         }
-        trap("Invalid argument (\(value)) for 'continue' after finally block")
+        trap("Invalid argument (\(object)) for 'continue' after finally block")
       case Marker.exception:
         VM.unimplemented()
       case Marker.yield:
@@ -147,16 +152,14 @@ internal enum PushFinallyReason {
       }
     }
 
-    if let e = self.py.cast.asBaseException(marker) {
+    if let e = py.cast.asBaseException(marker) {
       return .exception(e)
     }
 
-    if self.py.cast.isNone(marker) {
+    if py.cast.isNone(marker) {
       return .none
     }
 
     return .invalid
   }
 }
-
-*/

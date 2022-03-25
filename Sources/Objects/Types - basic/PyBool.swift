@@ -172,8 +172,12 @@ public struct PyBool: PyObjectMixin {
       return PyResult(py, false)
     }
 
-    let result = py.isTrue(object: args[0])
-    return PyResult(result)
+    switch py.isTrueBool(object: args[0]) {
+    case let .value(isTrue):
+      return PyResult(py, isTrue)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Operations

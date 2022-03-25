@@ -1,4 +1,3 @@
-/* MARKER
 import VioletBytecode
 import VioletObjects
 
@@ -9,24 +8,24 @@ extension Eval {
   /// Pushes a try block from a try-except clause onto the block stack.
   /// `firstExceptLabel` points to the first except block.
   internal func setupExcept(firstExceptLabelIndex: Int) -> InstructionResult {
-    let block = Block(
+    let block = PyFrame.Block(
       kind: .setupExcept(firstExceptLabelIndex: firstExceptLabelIndex),
       stackCount: self.stack.count
     )
 
-    self.blockStack.push(block: block)
+    self.blockStack.push(block)
     return .ok
   }
 
   /// Pushes a try block from a try-except clause onto the block stack.
   /// `finallyStartLabel` points to the finally block.
   internal func setupFinally(finallyStartLabelIndex: Int) -> InstructionResult {
-    let block = Block(
+    let block = PyFrame.Block(
       kind: .setupFinally(finallyStartLabelIndex: finallyStartLabelIndex),
       stackCount: self.stack.count
     )
 
-    self.blockStack.push(block: block)
+    self.blockStack.push(block)
     return .ok
   }
 
@@ -39,9 +38,8 @@ extension Eval {
   /// the last popped value is used to restore the exception state.
   internal func popExcept() -> InstructionResult {
     guard let block = self.blockStack.pop(), block.isExceptHandler else {
-      let msg = "popped block is not an except handler"
-      let e = Py.newSystemError(msg: msg)
-      return .exception(e)
+      let error = self.newSystemError(message: "popped block is not an except handler")
+      return .exception(error)
     }
 
     self.unwindExceptHandler(exceptHandlerBlock: block)
@@ -55,7 +53,7 @@ extension Eval {
   /// or whether the function returns, and continues with the outer-next block.
   internal func endFinally() -> InstructionResult {
     // See 'PushFinallyReason' type for comment about what this is.
-    switch PushFinallyReason.pop(from: &self.frame.stack) {
+    switch PushFinallyReason.pop(self.py, stack: self.stack) {
     case let .return(value):
       return .return(value) // We are still returning value
 
@@ -76,8 +74,8 @@ extension Eval {
       // EXCEPT_HANDLER block which was created when the exception was caught,
       // otherwise the stack will be in an inconsistent state.
       guard let block = self.blockStack.pop() else {
-        let e = Py.newSystemError(msg: "XXX block stack underflow")
-        return .exception(e)
+        let error = self.newSystemError(message: "XXX block stack underflow")
+        return .exception(error)
       }
 
       assert(block.isExceptHandler)
@@ -88,8 +86,8 @@ extension Eval {
       return .ok
 
     case .invalid:
-      let e = Py.newSystemError(msg: "'finally' pops bad exception")
-      return .exception(e)
+      let error = self.newSystemError(message: "'finally' pops bad exception")
+      return .exception(error)
     }
   }
 
@@ -132,7 +130,8 @@ extension Eval {
       assert(cause == nil)
 
       guard let current = self.currentlyHandledException else {
-        return Py.newRuntimeError(msg: "No active exception to reraise")
+        let error = self.py.newRuntimeError(message: "No active exception to reraise")
+        return error.asBaseException
       }
 
       return current
@@ -141,20 +140,21 @@ extension Eval {
     var exceptionOrNil: PyBaseException?
     if let error = self.py.cast.asBaseException(value) {
       exceptionOrNil = error
-    } else if let type = self.py.cast.asType(value), type.isException {
-      switch Py.newException(type: type, arg: nil) {
+    } else if let type = self.py.cast.asType(value), self.py.isException(type: type) {
+      switch self.py.newException(type: type, arg: nil) {
       case let .value(e): exceptionOrNil = e
       case let .error(e): return e
       }
     }
 
     guard let exception = exceptionOrNil else {
-      return Py.newTypeError(msg: "exceptions must derive from BaseException")
+      let error = self.py.newTypeError(message: "exceptions must derive from BaseException")
+      return error.asBaseException
     }
 
     switch self.parseCause(from: cause) {
     case .none: break
-    case .object(let o): Py.setCause(exception: exception, cause: o)
+    case .object(let o): self.py.setCause(exception: exception, cause: o)
     case .error(let e): return e
     }
 
@@ -176,8 +176,8 @@ extension Eval {
       return .none
     }
 
-    if let type = self.py.cast.asType(cause), type.isException {
-      switch Py.newException(type: type, arg: nil) {
+    if let type = self.py.cast.asType(cause), self.py.isException(type: type) {
+      switch self.py.newException(type: type, arg: nil) {
       case let .value(o): return .object(o)
       case let .error(e): return .error(e)
       }
@@ -187,9 +187,7 @@ extension Eval {
       return .object(error)
     }
 
-    let msg = "exception causes must derive from BaseException"
-    return .error(Py.newTypeError(msg: msg))
+    let error = self.newTypeError(message: "exception causes must derive from BaseException")
+    return .error(error.asBaseException)
   }
 }
-
-*/

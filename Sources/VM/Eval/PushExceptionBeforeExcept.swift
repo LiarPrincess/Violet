@@ -1,5 +1,14 @@
-/* MARKER
 import VioletObjects
+
+extension Py {
+  fileprivate var noExceptionMarker: PyObject {
+    return self.none.asObject
+  }
+
+  fileprivate func isNoExceptionMarker(_ object: PyObject) -> Bool {
+    return self.cast.isNone(object)
+  }
+}
 
 /// Helper for the situation when we want to push current exception onto the stack.
 /// Later we will probably want to pop it.
@@ -27,11 +36,19 @@ import VioletObjects
 /// ```
 internal enum PushExceptionBeforeExcept {
 
+  /// Number of the values pushed onto the stack
+  internal static let countOnStack = 1
+
+  internal typealias ObjectStack = PyFrame.ObjectStackProxy
+
   // MARK: - Push
 
-  internal static func push(_ exception: PyBaseException?,
-                            on stack: inout PyFrame.ObjectStack) {
-    stack.push(exception ?? Self.noExceptionMarker)
+  internal static func push(_ py: Py, stack: ObjectStack, exception: PyBaseException?) {
+    if let e = exception {
+      stack.push(e.asObject)
+    } else {
+      stack.push(py.noExceptionMarker)
+    }
   }
 
   // MARK: - Pop
@@ -45,32 +62,17 @@ internal enum PushExceptionBeforeExcept {
     case invalidValue(PyObject)
   }
 
-  internal static func pop(from stack: inout PyFrame.ObjectStack) -> Pop {
+  internal static func pop(_ py: Py, stack: ObjectStack) -> Pop {
     let value = stack.pop()
 
-    if let exception = self.py.cast.asBaseException(value) {
+    if let exception = py.cast.asBaseException(value) {
       return .exception(exception)
     }
 
-    if Self.isNoExceptionMarker(value) {
+    if py.isNoExceptionMarker(value) {
       return .noException
     }
 
     return .invalidValue(value)
   }
-
-  // MARK: - Marker
-
-  /// Number of the values pushed onto the stack
-  internal static let countOnStack = 1
-
-  private static var noExceptionMarker: PyObject {
-    return Py.none
-  }
-
-  private static func isNoExceptionMarker(_ value: PyObject) -> Bool {
-    return self.py.cast.isNone(value)
-  }
 }
-
-*/

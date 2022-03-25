@@ -1,4 +1,3 @@
-/* MARKER
 import VioletBytecode
 import VioletObjects
 
@@ -9,12 +8,12 @@ extension Eval {
   /// Pushes a block for a loop onto the block stack.
   /// The block spans from the current instruction up until `loopEndLabel`.
   internal func setupLoop(loopEndLabelIndex: Int) -> InstructionResult {
-    let block = Block(
+    let block = PyFrame.Block(
       kind: .setupLoop(loopEndLabelIndex: loopEndLabelIndex),
       stackCount: self.stack.count
     )
 
-    self.blockStack.push(block: block)
+    self.blockStack.push(block)
     return .ok
   }
 
@@ -24,10 +23,10 @@ extension Eval {
   internal func getIter() -> InstructionResult {
     let iterable = self.stack.top
 
-    switch Py.iter(object: iterable) {
+    switch self.py.iter(object: iterable) {
     case let .value(iter):
       self.stack.top = iter
-    return .ok
+      return .ok
     case let .error(e):
       return .exception(e)
     }
@@ -40,13 +39,13 @@ extension Eval {
     // before: [iter]; after: [iter, iter()] *or* []
     let iter = self.stack.top
 
-    switch Py.next(iterator: iter) {
+    switch self.py.next(iterator: iter) {
     case .value(let o):
       self.stack.push(o)
       return .ok
 
     case .error(let e):
-      if self.py.cast.isStopIteration(e) {
+      if self.py.cast.isStopIteration(e.asObject) {
         _ = self.stack.pop() // iter
         self.jumpTo(labelIndex: ifEmptyLabelIndex)
         return .ok
@@ -72,5 +71,3 @@ extension Eval {
     return .continue(loopStartLabelIndex: loopStartLabelIndex)
   }
 }
-
-*/

@@ -1,15 +1,14 @@
-/* MARKER
 import VioletBytecode
 import VioletObjects
 
 extension Eval {
 
-  // MARK: - Pos
+  // MARK: - Positive
 
   /// Implements `TOS = +TOS`.
   internal func unaryPositive() -> InstructionResult {
     let value = self.stack.top
-    switch Py.pos(object: value) {
+    switch self.py.positive(object: value) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -18,12 +17,12 @@ extension Eval {
     }
   }
 
-  // MARK: - New
+  // MARK: - Negative
 
   /// Implements `TOS = -TOS`.
   internal func unaryNegative() -> InstructionResult {
     let value = self.stack.top
-    switch Py.neg(object: value) {
+    switch self.py.negative(object: value) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -38,9 +37,9 @@ extension Eval {
   internal func unaryNot() -> InstructionResult {
     let top = self.stack.top
 
-    switch Py.not(object: top) {
+    switch self.py.not(object: top) {
     case let .value(not):
-      self.stack.top = not
+      self.stack.top = not.asObject
       return .ok
     case let .error(e):
       return .exception(e)
@@ -52,7 +51,7 @@ extension Eval {
   /// Implements `TOS = ~TOS`.
   internal func unaryInvert() -> InstructionResult {
     let value = self.stack.top
-    switch Py.invert(object: value) {
+    switch self.py.invert(object: value) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -61,5 +60,3 @@ extension Eval {
     }
   }
 }
-
-*/

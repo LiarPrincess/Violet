@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import VioletCore
 import VioletObjects
@@ -81,7 +80,7 @@ extension Eval {
         //   print(princess)
         //   raise ValueError("Evil character appears!") # No longer in loop after this!
         _ = self.blockStack.pop()
-        self.unwindStackToMatchTheOneBeforeBlock(block: block)
+        self.unwindStack(toMatchTheOneBefore: block)
 
         // 'break' just finishes the loop and starts execution after it.
         // Any other 'reason' (exception, return) should unwind more blocks.
@@ -107,7 +106,7 @@ extension Eval {
         //   except:
         //     pass
         _ = self.blockStack.pop()
-        self.unwindStackToMatchTheOneBeforeBlock(block: block)
+        self.unwindStack(toMatchTheOneBefore: block)
 
         // If we have an exception then this is the time to start handling it.
         //
@@ -126,7 +125,7 @@ extension Eval {
       case let .setupFinally(finallyStartLabelIndex: finallyStartLabelIndex):
         // Similar to 'setupExcept'.
         _ = self.blockStack.pop()
-        self.unwindStackToMatchTheOneBeforeBlock(block: block)
+        self.unwindStack(toMatchTheOneBefore: block)
 
         // Similar to 'setupExcept'.
         if case let .exception(e, _) = reason {
@@ -146,7 +145,7 @@ extension Eval {
         //   <we still 'returning elsa'>
 
         // See 'PushFinallyReason' type for comment about what this is.
-        PushFinallyReason.push(reason: reason, on: &self.frame.stack)
+        PushFinallyReason.push(self.py, stack: self.stack, reason: reason)
         self.jumpTo(labelIndex: finallyStartLabelIndex) // execute finally
         return .continueCodeExecution
 
@@ -201,9 +200,8 @@ extension Eval {
   // MARK: - Push except handler block
 
   private func pushExceptHandlerBlock() {
-    let block = Block(kind: .exceptHandler,
-                      stackCount: self.stack.count)
-    self.blockStack.push(block: block)
+    let block = PyFrame.Block(kind: .exceptHandler, stackCount: self.stack.count)
+    self.blockStack.push(block)
   }
 
   // MARK: - Push currently handled exception onto the stack and set new
@@ -221,10 +219,10 @@ extension Eval {
     //   pass
 
     let currentOrNil = self.currentlyHandledException
-    PushExceptionBeforeExcept.push(currentOrNil, on: &self.frame.stack)
+    PushExceptionBeforeExcept.push(self.py, stack: self.stack, exception: currentOrNil)
 
-    self.setCurrentlyHandledException(exception: newCurrentlyHandledException)
-    self.stack.push(newCurrentlyHandledException)
+    self.currentlyHandledException = newCurrentlyHandledException
+    self.stack.push(newCurrentlyHandledException.asObject)
   }
 
   // MARK: - Unwind stack to match the one before block
@@ -233,14 +231,14 @@ extension Eval {
   ///
   /// The more Swift-like name would be 'unwind(toTheLevelBefore: Block)'
   /// But we already have a few 'unwind' methods and we don't want to mix them.
-  internal func unwindStackToMatchTheOneBeforeBlock(block: Block) {
+  internal func unwindStack(toMatchTheOneBefore block: PyFrame.Block) {
     self.stack.pop(untilCount: block.stackCount)
   }
 
   // MARK: - Unwind except handler
 
   /// \#define UNWIND_EXCEPT_HANDLER(b)
-  internal func unwindExceptHandler(exceptHandlerBlock block: Block) {
+  internal func unwindExceptHandler(exceptHandlerBlock block: PyFrame.Block) {
     // Called when:
     //
     // (1) We are normally finishing the 'except' clause
@@ -272,11 +270,11 @@ extension Eval {
     self.stack.pop(untilCount: stackCountIncludingException)
 
     // Pop the exception
-    switch PushExceptionBeforeExcept.pop(from: &self.frame.stack) {
+    switch PushExceptionBeforeExcept.pop(self.py, stack: self.stack) {
     case .exception(let e):
-      self.setCurrentlyHandledException(exception: e)
+      self.currentlyHandledException = e
     case .noException:
-      self.setCurrentlyHandledException(exception: nil)
+      self.currentlyHandledException = nil
     case .invalidValue(let o):
       trap("Expected to pop exception (or None), but popped '\(o)'.")
     }
@@ -287,17 +285,16 @@ extension Eval {
   // MARK: - Continue/Break not in a loop
 
   private func raiseContinueOrBreakNotInALoop(keyword: String) -> UnwindResult {
-    let msg = Py.newString("'\(keyword)' not properly in loop")
-    let e = Py.newSyntaxError(
-      msg: msg,
+    let message = self.py.newString("'\(keyword)' not properly in loop")
+    let error = self.py.newSyntaxError(
+      message: message,
       filename: self.code.filename,
-      lineno: Py.newInt(self.frame.currentInstructionLine),
-      offset: Py.newInt(0),
-      text: msg,
-      printFileAndLine: Py.true
+      lineno: self.py.newInt(self.frame.currentInstructionLine),
+      offset: self.py.newInt(0),
+      text: message,
+      printFileAndLine: self.py.true
     )
-    return .reportExceptionToParentFrame(e)
+
+    return .reportExceptionToParentFrame(error.asBaseException)
   }
 }
-
-*/

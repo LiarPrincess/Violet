@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import VioletBytecode
 import VioletObjects
@@ -22,12 +21,12 @@ extension Eval {
   /// If you want to just `popBlock` then use `self.blockStack.pop()`!
   internal func popBlockInstruction() -> InstructionResult {
     if let block = self.blockStack.pop() {
-      self.unwindStackToMatchTheOneBeforeBlock(block: block)
+      self.unwindStack(toMatchTheOneBefore: block)
       return .ok
     }
 
-    let e = Py.newSystemError(msg: "XXX block stack underflow")
-    return .exception(e)
+    let error = self.newSystemError(message: "XXX block stack underflow")
+    return .exception(error)
   }
 
   // MARK: - Rot
@@ -78,9 +77,9 @@ extension Eval {
   /// TOS is removed from the stack and printed.
   /// In non-interactive mode, an expression statement is terminated with PopTop.
   internal func printExpr() -> InstructionResult {
-    let value = self.stack.pop()
+    let object = self.stack.pop()
 
-    switch Py.sys.callDisplayhook(value: value) {
+    switch self.py.sys.callDisplayhook(object: object) {
     case .value:
       return .ok
     case .error(let e):
@@ -97,20 +96,19 @@ extension Eval {
   internal func setupAnnotations() -> InstructionResult {
     let locals = self.locals
 
-    if let object = locals.get(id: .__annotations__) {
+    if let object = locals.get(self.py, id: .__annotations__) {
       guard self.py.cast.isDict(object) else {
         let t = object.typeName
-        let msg = "You thought __annotations__ would be dict, but it was me Dio (\(t))!"
-        return .exception(Py.newTypeError(msg: msg))
+        let message = "You thought __annotations__ would be dict, but it was me Dio (\(t))!"
+        let error = self.newTypeError(message: message)
+        return .exception(error)
       }
 
       return .ok
     }
 
-    let result = Py.newDict()
-    locals.set(id: .__annotations__, to: result)
+    let result = self.py.newDict()
+    locals.set(self.py, id: .__annotations__, value: result.asObject)
     return .ok
   }
 }
-
-*/

@@ -1,4 +1,3 @@
-/* MARKER
 import VioletObjects
 
 /// Result of running of a single instruction.
@@ -9,8 +8,9 @@ internal enum InstructionResult {
   case unwind(UnwindReason)
 
   /// `UnwindReason.return`
-  internal static func `return`(_ value: PyObject) -> InstructionResult {
-    return .unwind(.return(value))
+  internal static func `return`(_ object: PyObject) -> InstructionResult {
+    let reason = UnwindReason.return(object)
+    return .unwind(reason)
   }
 
   /// `UnwindReason.break`
@@ -20,7 +20,8 @@ internal enum InstructionResult {
 
   /// `UnwindReason.continue`
   internal static func `continue`(loopStartLabelIndex: Int) -> InstructionResult {
-    return .unwind(.continue(loopStartLabelIndex: loopStartLabelIndex))
+    let reason = UnwindReason.continue(loopStartLabelIndex: loopStartLabelIndex)
+    return .unwind(reason)
   }
 
   /// `UnwindReason.exception`
@@ -28,7 +29,8 @@ internal enum InstructionResult {
     _ value: PyBaseException,
     fillTracebackAndContext fill: Bool = true
   ) -> InstructionResult {
-    return .unwind(.exception(value, fillTracebackAndContext: fill))
+    let reason = UnwindReason.exception(value, fillTracebackAndContext: fill)
+    return .unwind(reason)
   }
 
   /// `UnwindReason.yield`
@@ -41,5 +43,3 @@ internal enum InstructionResult {
     return .unwind(.silenced)
   }
 }
-
-*/

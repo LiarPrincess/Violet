@@ -1,4 +1,3 @@
-/* MARKER
 import VioletBytecode
 import VioletObjects
 
@@ -6,8 +5,10 @@ extension Eval {
 
   // MARK: - Format
 
+  internal typealias StringConversion = Instruction.StringConversion
+
   /// Used for implementing formatted literal strings (f-strings).
-  internal func formatValue(conversion: Instruction.StringConversion,
+  internal func formatValue(conversion: StringConversion,
                             hasFormat: Bool) -> InstructionResult {
     let format: PyObject? = hasFormat ? self.stack.pop() : nil
     let objectFromStack = self.stack.pop()
@@ -24,27 +25,27 @@ extension Eval {
     }
 
     switch self.format(object: object, format: format) {
-    case let .value(o):
-      self.stack.push(o)
+    case let .value(pyString):
+      self.stack.push(pyString.asObject)
       return .ok
     case let .error(e):
       return .exception(e)
     }
   }
 
-  private func convert(
-    object: PyObject,
-    conversion: Instruction.StringConversion
-  ) -> PyResult<PyObject> {
+  private func convert(object: PyObject, conversion: StringConversion) -> PyResult {
     switch conversion {
     case .none:
       return .value(object)
     case .str:
-      return Py.str(object: object).map { $0 as PyObject }
+      let result = self.py.str(object)
+      return PyResult(result)
     case .repr:
-      return Py.repr(object: object).map { $0 as PyObject }
+      let result = self.py.repr(object)
+      return PyResult(result)
     case .ascii:
-      return Py.ascii(object: object).map { $0 as PyObject }
+      let result = self.py.ascii(object)
+      return PyResult(result)
     }
   }
 
@@ -53,17 +54,15 @@ extension Eval {
   /// Concatenates `count` strings from the stack
   /// and pushes the resulting string onto the stack.
   internal func buildString(count: Int) -> InstructionResult {
-    let empty = Py.emptyString
+    let empty = self.py.emptyString.asObject
     let elements = self.stack.popElementsInPushOrder(count: count)
 
-    switch Py.join(strings: elements, separator: empty) {
-    case let .value(r):
-      self.stack.push(r)
+    switch self.py.join(strings: elements, separator: empty) {
+    case let .value(pyString):
+      self.stack.push(pyString.asObject)
       return .ok
     case let .error(e):
       return .exception(e)
     }
   }
 }
-
-*/

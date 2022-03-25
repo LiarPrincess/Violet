@@ -1,4 +1,3 @@
-/* MARKER
 import VioletBytecode
 import VioletObjects
 
@@ -45,17 +44,17 @@ extension Eval {
       defaults = self.stack.pop()
     }
 
-    let result = Py.newFunction(qualname: qualname,
-                                code: code,
-                                globals: globals,
-                                defaults: defaults,
-                                keywordDefaults: keywordDefaults,
-                                closure: closure,
-                                annotations: annotations)
+    let result = self.py.newFunction(qualname: qualname,
+                                     code: code,
+                                     globals: globals,
+                                     defaults: defaults,
+                                     keywordDefaults: keywordDefaults,
+                                     closure: closure,
+                                     annotations: annotations)
 
     switch result {
     case let .value(fn):
-      self.stack.push(fn)
+      self.stack.push(fn.asObject)
       return .ok
     case let .error(e):
       return .exception(e)
@@ -120,14 +119,13 @@ extension Eval {
     let kwNamesObject = self.stack.pop()
 
     guard let kwNames = self.py.cast.asTuple(kwNamesObject) else {
-      let t = kwNamesObject.typeName
-      let msg = "Keyword argument names should to be a tuple, not \(t)."
-      return .exception(Py.newSystemError(msg: msg))
+      let msg = "Keyword argument names should to be a tuple, not \(kwNamesObject.typeName)."
+      let error = self.newSystemError(message: msg)
+      return .exception(error)
     }
 
     let level = self.stack.count
-    let result = self.callFunction(argAndKwargCount: argumentCount,
-                                   kwNames: kwNames)
+    let result = self.callFunction(argAndKwargCount: argumentCount, kwNames: kwNames)
 
     let fnObject = 1
     let expectedLevel = level - argumentCount - fnObject
@@ -144,22 +142,21 @@ extension Eval {
   }
 
   /// call_function(PyObject ***pp_stack, Py_ssize_t argCount, PyObject *kwnames)
-  private func callFunction(argAndKwargCount: Int,
-                            kwNames: PyTuple?) -> PyInstance.CallResult {
+  private func callFunction(argAndKwargCount: Int, kwNames: PyTuple?) -> Py.CallResult {
     guard let kwNames = kwNames else {
       let args = self.stack.popElementsInPushOrder(count: argAndKwargCount)
       let fn = self.stack.pop()
-      let result = Py.call(callable: fn, args: args)
+      let result = self.py.call(callable: fn, args: args)
       Debug.callFunction(fn: fn, args: args, kwargs: nil, result: result)
       return result
     }
 
-    let nKwargs = kwNames.elements.count
+    let nKwargs = self.py.lengthInt(tuple: kwNames)
     let kwValues = self.stack.popElementsInPushOrder(count: nKwargs)
     assert(kwValues.count == nKwargs)
 
     let kwargs: PyDict
-    switch self.createKwargs(names: kwNames.elements, values: kwValues) {
+    switch self.createKwargs(names: kwNames, values: kwValues) {
     case let .value(d): kwargs = d
     case let .error(e): return .error(e)
     }
@@ -169,28 +166,31 @@ extension Eval {
     assert(args.count == nArgs)
 
     let fn = self.stack.pop()
-    return Py.call(callable: fn, args: args, kwargs: kwargs)
+    return self.py.call(callable: fn, args: args, kwargs: kwargs)
   }
 
-  private func createKwargs(names: [PyObject],
-                            values: [PyObject]) -> PyResult<PyDict> {
-    assert(names.count == values.count)
+  private func createKwargs(names: PyTuple, values: [PyObject]) -> PyResultGen<PyDict> {
+    let result = self.py.newDict()
 
-    let result = Py.newDict()
-    if names.isEmpty {
+    if values.isEmpty {
       return .value(result)
     }
 
-    for (name, value) in zip(names, values) {
-      switch result.set(key: name, to: value) {
+    let error = self.py.forEach(tuple: names) { (index, name) in
+      let value = values[index]
+      switch result.set(self.py, key: name, value: value) {
       case .ok:
-        break
+        return .goToNextElement
       case .error(let e):
         return .error(e)
       }
     }
 
-    assert(Py.lenInt(dict: result) == names.count)
+    if let e = error {
+      return .error(e)
+    }
+
+    assert(self.py.lengthInt(dict: result) == values.count)
     return .value(result)
   }
 
@@ -212,11 +212,11 @@ extension Eval {
   /// 3. call the callable object with those arguments
   /// 4. push the return value returned by the callable object
   internal func callFunctionEx(hasKeywordArguments: Bool) -> InstructionResult {
-    var kwargs: PyDict?
+    var kwargs: PyObject?
     if hasKeywordArguments {
       let kwargsObject = self.stack.pop()
       switch self.extractKwargs(from: kwargsObject) {
-      case let .value(d): kwargs = d
+      case let .value(d): kwargs = d.asObject
       case let .error(e): return .exception(e)
       }
     }
@@ -224,14 +224,14 @@ extension Eval {
     let argsObject = self.stack.pop()
     let fn = self.stack.top
 
-    let args: [PyObject]
+    let args: PyObject
     switch self.extractArgs(fn: fn, args: argsObject) {
-    case let .value(a): args = a
+    case let .value(a): args = a.asObject
     case let .error(e): return .exception(e)
     }
 
     let level = self.stack.count
-    let result = Py.call(callable: fn, args: args, kwargs: kwargs)
+    let result = self.py.call(callable: fn, args: args, kwargs: kwargs)
 
     switch result {
     case let .value(o):
@@ -244,33 +244,37 @@ extension Eval {
     }
   }
 
-  private func extractKwargs(from object: PyObject) -> PyResult<PyDict> {
+  private func extractKwargs(from object: PyObject) -> PyResultGen<PyDict> {
     if let dict = self.py.cast.asDict(object) {
       return .value(dict)
     }
 
-    let result = Py.newDict()
-    switch result.update(from: object, onKeyDuplicate: .continue) {
-    case .value:
-      return .value(result)
-    case .error(let e):
-      return .error(e)
+    let result = self.py.newDict()
+    if let error = result.update(self.py, from: object, onKeyDuplicate: .continue) {
+      return .error(error)
     }
+
+    return .value(result)
   }
 
-  private func extractArgs(fn: PyObject, args: PyObject) -> PyResult<[PyObject]> {
+  private func extractArgs(fn: PyObject, args: PyObject) -> PyResultGen<PyTuple> {
     if let tuple = self.py.cast.asTuple(args) {
-      return .value(tuple.elements)
+      return .value(tuple)
     }
 
-    guard Py.hasIter(object: args) else {
-      let t = args.typeName
-      let fnName = Py.getFunctionName(object: fn) ?? "function"
-      let msg = "\(fnName) argument after * must be an iterable, not \(t)"
-      return .typeError(msg)
+    guard self.py.hasIter(object: args) else {
+      let fnName = self.getName(function: fn) ?? "function"
+      let message = "\(fnName) argument after * must be an iterable, not \(args.typeName)"
+      return .typeError(self.py, message: message)
     }
 
-    return Py.toArray(iterable: args)
+    switch self.py.toArray(iterable: args) {
+    case let .value(elements):
+      let tuple = self.py.newTuple(elements: elements)
+      return .value(tuple)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Load method
@@ -283,10 +287,10 @@ extension Eval {
   /// Otherwise, NULL and method is pushed (method is bound method
   /// or something else).
   internal func loadMethod(nameIndex: Int) -> InstructionResult {
-    let name = self.getName(index: nameIndex)
+    let name = self.code.names[nameIndex]
     let object = self.stack.top
 
-    switch Py.loadMethod(object: object, selector: name) {
+    switch self.py.loadMethod(object: object, selector: name) {
     case let .value(o):
       self.stack.top = o
       return .ok
@@ -313,7 +317,7 @@ extension Eval {
     let level = self.stack.count
     let method = self.stack.top
 
-    let result = Py.call(callable: method, args: args, kwargs: nil)
+    let result = self.py.call(callable: method, args: args, kwargs: nil)
     Debug.callMethod(method: method, args: args, result: result)
     assert(self.stack.count == level)
 
@@ -327,5 +331,3 @@ extension Eval {
     }
   }
 }
-
-*/
