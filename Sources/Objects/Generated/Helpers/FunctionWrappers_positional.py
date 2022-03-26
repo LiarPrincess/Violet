@@ -9,7 +9,8 @@ SIGNATURE_STRINGS: List[Tuple[str, str]] = [
     ('', 'Positional nullary: no arguments (or an empty tuple of arguments, also known as `Void` argument).'),
 
     # Positional unary
-    ('Object', 'Positional unary: single `self` argument.'),
+    ('Object', 'Positional unary: single `object` (most probably `self`).'),
+    ('Object?', 'Positional unary: single optional `object`.'),
     ('Type', 'Positional unary: `classmethod` with no arguments.'),
 
     # Positional binary
