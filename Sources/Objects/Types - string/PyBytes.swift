@@ -303,11 +303,11 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
     """
 
   // sourcery: pymethod = startswith, doc = startswithDoc
-  internal func startsWith(_ py: Py,
-                           zelf: PyObject,
-                           prefix: PyObject,
-                           start: PyObject?,
-                           end: PyObject?) -> PyResult {
+  internal static func startswith(_ py: Py,
+                                  zelf: PyObject,
+                                  prefix: PyObject,
+                                  start: PyObject?,
+                                  end: PyObject?) -> PyResult {
     return Self.abstractStartsWith(py,
                                    zelf: zelf,
                                    prefix: prefix,
@@ -325,11 +325,11 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
     """
 
   // sourcery: pymethod = endswith, doc = endswithDoc
-  internal func endsWith(_ py: Py,
-                         zelf: PyObject,
-                         suffix: PyObject,
-                         start: PyObject?,
-                         end: PyObject?) -> PyResult {
+  internal static func endswith(_ py: Py,
+                                zelf: PyObject,
+                                suffix: PyObject,
+                                start: PyObject?,
+                                end: PyObject?) -> PyResult {
     return Self.abstractEndsWith(py,
                                  zelf: zelf,
                                  suffix: suffix,
