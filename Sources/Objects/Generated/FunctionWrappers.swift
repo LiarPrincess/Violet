@@ -66,6 +66,8 @@ public struct FunctionWrapper: CustomStringConvertible {
   case void_to_Result(Void_to_Result)
   /// `(Py, PyObject) -> PyResult`
   case object_to_Result(Object_to_Result)
+  /// `(Py, PyObject?) -> PyResult`
+  case objectOpt_to_Result(ObjectOpt_to_Result)
   /// `(Py, PyType) -> PyResult`
   case type_to_Result(Type_to_Result)
   /// `(Py, PyObject, PyObject) -> PyResult`
@@ -133,6 +135,7 @@ public struct FunctionWrapper: CustomStringConvertible {
     case let .argsKwargsClassMethod(w): return w.fnName
     case let .void_to_Result(w): return w.fnName
     case let .object_to_Result(w): return w.fnName
+    case let .objectOpt_to_Result(w): return w.fnName
     case let .type_to_Result(w): return w.fnName
     case let .object_Object_to_Result(w): return w.fnName
     case let .object_ObjectOpt_to_Result(w): return w.fnName
@@ -175,6 +178,7 @@ public struct FunctionWrapper: CustomStringConvertible {
     case let .argsKwargsClassMethod(w): return w.call(py, args: args, kwargs: kwargs)
     case let .void_to_Result(w): return w.call(py, args: args, kwargs: kwargs)
     case let .object_to_Result(w): return w.call(py, args: args, kwargs: kwargs)
+    case let .objectOpt_to_Result(w): return w.call(py, args: args, kwargs: kwargs)
     case let .type_to_Result(w): return w.call(py, args: args, kwargs: kwargs)
     case let .object_Object_to_Result(w): return w.call(py, args: args, kwargs: kwargs)
     case let .object_ObjectOpt_to_Result(w): return w.call(py, args: args, kwargs: kwargs)
@@ -221,6 +225,7 @@ public struct FunctionWrapper: CustomStringConvertible {
     case .argsKwargsClassMethod: return "(Type, *args, **kwargs) -> PyResult"
     case .void_to_Result: return "(Py) -> PyResult"
     case .object_to_Result: return "(Py, PyObject) -> PyResult"
+    case .objectOpt_to_Result: return "(Py, PyObject?) -> PyResult"
     case .type_to_Result: return "(Py, PyType) -> PyResult"
     case .object_Object_to_Result: return "(Py, PyObject, PyObject) -> PyResult"
     case .object_ObjectOpt_to_Result: return "(Py, PyObject, PyObject?) -> PyResult"
@@ -301,7 +306,7 @@ public struct FunctionWrapper: CustomStringConvertible {
 
   // MARK: - (Py, PyObject) -> PyResult
 
-  /// Positional unary: single `self` argument.
+  /// Positional unary: single `object` (most probably `self`).
   ///
   /// `(Py, PyObject) -> PyResult`
   public typealias Object_to_Result_Fn = (Py, PyObject) -> PyResult
@@ -333,6 +338,44 @@ public struct FunctionWrapper: CustomStringConvertible {
   public init(name: String, fn: @escaping Object_to_Result_Fn ) {
     let wrapper = Object_to_Result(name: name, fn: fn)
     self.kind = .object_to_Result(wrapper)
+  }
+
+  // MARK: - (Py, PyObject?) -> PyResult
+
+  /// Positional unary: single optional `object`.
+  ///
+  /// `(Py, PyObject?) -> PyResult`
+  public typealias ObjectOpt_to_Result_Fn = (Py, PyObject?) -> PyResult
+
+  internal struct ObjectOpt_to_Result {
+    private let fn: ObjectOpt_to_Result_Fn
+    fileprivate let fnName: String
+
+    fileprivate init(name: String, fn: @escaping ObjectOpt_to_Result_Fn) {
+      self.fnName = name
+      self.fn = fn
+    }
+
+    fileprivate func call(_ py: Py, args: [PyObject], kwargs: PyDict?) -> PyResult {
+      // This function has only positional arguments, so any kwargs -> error
+      if let e = ArgumentParser.noKwargsOrError(py, fnName: self.fnName, kwargs: kwargs) {
+        return .error(e.asBaseException)
+      }
+
+      switch args.count {
+      case 0:
+        return self.fn(py, nil)
+      case 1:
+        return self.fn(py, args[0])
+      default:
+        return .typeError(py, message: "'\(self.fnName)' takes exactly one argument (\(args.count) given)")
+      }
+    }
+  }
+
+  public init(name: String, fn: @escaping ObjectOpt_to_Result_Fn ) {
+    let wrapper = ObjectOpt_to_Result(name: name, fn: fn)
+    self.kind = .objectOpt_to_Result(wrapper)
   }
 
   // MARK: - (Py, PyType) -> PyResult
