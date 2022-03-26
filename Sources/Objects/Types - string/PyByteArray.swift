@@ -124,7 +124,6 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-
   internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.abstract__repr__(py, zelf: zelf, prefix: "bytearray(b", suffix: ")")
   }
@@ -230,10 +229,10 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
   }
 
   // sourcery: pymethod = __setitem__
-  internal func __setitem__(_ py: Py,
-                            zelf: PyObject,
-                            index: PyObject,
-                            value: PyObject) -> PyResult {
+  internal static func __setitem__(_ py: Py,
+                                   zelf: PyObject,
+                                   index: PyObject,
+                                   value: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__setitem__")
     }
@@ -247,7 +246,9 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
   }
 
   // sourcery: pymethod = __delitem__
-  internal func __delitem__(_ py: Py, zelf: PyObject, index: PyObject) -> PyResult {
+  internal static func __delitem__(_ py: Py,
+                                   zelf: PyObject,
+                                   index: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__delitem__")
     }
@@ -365,11 +366,11 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
     """
 
   // sourcery: pymethod = startswith, doc = startswithDoc
-  internal func startsWith(_ py: Py,
-                           zelf: PyObject,
-                           prefix: PyObject,
-                           start: PyObject?,
-                           end: PyObject?) -> PyResult {
+  internal static func startswith(_ py: Py,
+                                  zelf: PyObject,
+                                  prefix: PyObject,
+                                  start: PyObject?,
+                                  end: PyObject?) -> PyResult {
     return Self.abstractStartsWith(py,
                                    zelf: zelf,
                                    prefix: prefix,
@@ -387,11 +388,11 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
     """
 
   // sourcery: pymethod = endswith, doc = endswithDoc
-  internal func endsWith(_ py: Py,
-                         zelf: PyObject,
-                         suffix: PyObject,
-                         start: PyObject?,
-                         end: PyObject?) -> PyResult {
+  internal static func endswith(_ py: Py,
+                                zelf: PyObject,
+                                suffix: PyObject,
+                                start: PyObject?,
+                                end: PyObject?) -> PyResult {
     return Self.abstractEndsWith(py,
                                  zelf: zelf,
                                  suffix: suffix,
@@ -616,7 +617,7 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
   }
 
   // sourcery: pymethod = rpartition
-  internal func rpartition(_ py: Py, zelf: PyObject, separator: PyObject) -> PyResult {
+  internal static func rpartition(_ py: Py, zelf: PyObject, separator: PyObject) -> PyResult {
     switch Self.abstractRPartition(py, zelf: zelf, separator: separator) {
     case let .separatorFound(before: b, separator: separator, after: a):
       let before = py.newByteArray(b)

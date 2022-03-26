@@ -45,6 +45,11 @@ SwiftInitializer|{{swift_selector_with_types}}
 PyProperty|{{python_name}}|{{has_setter}}|{{swift_static_doc_property}}
 {% endfor %}
 
+{% for method in type.instanceMethods|annotated:"pymethod" %}
+{% set python_name %}{{ method.annotations.pymethod }}{% endset %}
+Only static methods can be marked as 'pymethod': '{{swift_name}}.{{ python_name }}' is an instance method
+{% endfor %}
+
 {% for method in type.staticMethods|annotated:"pymethod" %}
 {% set python_name %}{{ method.annotations.pymethod }}{% endset %}
 {% call print_method "PyMethod" python_name method %}

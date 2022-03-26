@@ -611,7 +611,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
   }
 
   // sourcery: pymethod = __imul__
-  internal func __imul__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
+  internal static func __imul__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__imul__")
     }

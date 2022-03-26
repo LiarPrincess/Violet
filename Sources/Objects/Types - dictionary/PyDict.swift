@@ -556,12 +556,12 @@ public struct PyDict: PyObjectMixin {
   /// If `key` is in the dictionary, return its value.
   /// If not, insert key with a value of `default` and return `default`.
   /// `default` defaults to None.
-  internal func setdefault(_ py: Py,
-                           zelf: PyObject,
-                           args: [PyObject],
-                           kwargs: PyDict?) -> PyResult {
+  internal static func setdefault(_ py: Py,
+                                  zelf: PyObject,
+                                  args: [PyObject],
+                                  kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "set")
+      return Self.invalidZelfArgument(py, zelf, "setdefault")
     }
 
     switch Self.setDefaultArguments.bind(py, args: args, kwargs: kwargs) {
