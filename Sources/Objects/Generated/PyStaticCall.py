@@ -284,11 +284,11 @@ public enum PyStaticCall {{
   // MARK: - {name}
 
   internal static func {name}({func_arguments}) -> {return_type}? {{
-    if let method = {self_argument.name}.type.staticMethods.{name} {{
-      return method({call_arguments})
+    guard let method = {self_argument.name}.type.staticMethods.{name} else {{
+      return nil
     }}
 
-    return nil
+    return method({call_arguments})
   }}\
 ''')
 
