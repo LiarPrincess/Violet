@@ -120,7 +120,7 @@ public struct BufferPtr<TrivialElement>: RandomAccessCollection {
   public subscript(range: Range<Int>) -> BufferPtr<TrivialElement> {
 #if DEBUG
     assert(range.lowerBound >= 0)
-    assert(range.upperBound <= self.count)
+    assert(range.upperBound <= self.count) // 'upperBound' is 1 past end, so is 'self.count'
 #endif
     let ptr = self.baseAddress.advanced(by: range.lowerBound)
     return BufferPtr(start: ptr, count: range.count)

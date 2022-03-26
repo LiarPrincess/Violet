@@ -23,6 +23,8 @@ class PyFrameObjectStackTests: PyTestCase, PyFrameTestsMixin {
 
   // MARK: - Push
 
+  private let expectedCapacities = [128, 256, 512, 768, 1024]
+
   func test_push() {
     let py = self.createPy()
     guard let frame = self.createFrame(py) else { return }
@@ -31,26 +33,20 @@ class PyFrameObjectStackTests: PyTestCase, PyFrameTestsMixin {
     var expectedStack = [PyObject]()
     self.assertStack(py, stack, expected: expectedStack)
 
-    // === Before resize ===
-    let capacityBeforeResize = frame.objectStackCapacity
-    for i in 0..<capacityBeforeResize {
-      let object = py.newInt(i).asObject
-      stack.push(object)
-      expectedStack.push(object)
+    var index = 0
+    for capacity in self.expectedCapacities {
+      while index < capacity {
+        let object = py.newInt(index).asObject
+        stack.push(object)
+        expectedStack.push(object)
+        index += 1
+
+        // We need this assertion in every loop, to check if we have not skipped
+        // some 'expectedCapacity'.
+        XCTAssertEqual(frame.objectStackCapacity, capacity)
+      }
       self.assertStack(py, stack, expected: expectedStack)
     }
-
-    XCTAssertEqual(frame.objectStackCapacity, capacityBeforeResize)
-
-    // === Resize ===
-    for i in capacityBeforeResize..<(capacityBeforeResize + 10) {
-      let object = py.newInt(i).asObject
-      stack.push(object)
-      expectedStack.push(object)
-      self.assertStack(py, stack, expected: expectedStack)
-    }
-
-    XCTAssertNotEqual(frame.objectStackCapacity, capacityBeforeResize)
   }
 
   func test_push_collection() {
@@ -61,33 +57,43 @@ class PyFrameObjectStackTests: PyTestCase, PyFrameTestsMixin {
     var expectedStack = [PyObject]()
     self.assertStack(py, stack, expected: expectedStack)
 
-    // === Before resize ===
-    let capacityBeforeResize = frame.objectStackCapacity
+    for capacity in self.expectedCapacities {
+      var alreadyOnStackCount = stack.count
 
-    let push1Count = capacityBeforeResize / 2
-    let push1Objects = (0..<push1Count).map { py.newInt($0).asObject }
+      var firstHalf = [PyObject]()
+      let firstHalfCount = (capacity - alreadyOnStackCount) / 2
+      firstHalf.reserveCapacity(firstHalfCount)
 
-    stack.push(contentsOf: push1Objects)
-    expectedStack.append(contentsOf: push1Objects)
-    self.assertStack(py, stack, expected: expectedStack)
-    XCTAssertEqual(frame.objectStackCapacity, capacityBeforeResize)
+      for i in 0..<firstHalfCount {
+        let index = alreadyOnStackCount + i
+        let object = py.newInt(index).asObject
+        firstHalf.push(object)
+        expectedStack.push(object)
+      }
 
-    let push2Count = capacityBeforeResize - push1Count
-    let push2Objects = (0..<push2Count).map { py.newInt(push1Count + $0).asObject }
+      stack.push(contentsOf: firstHalf)
+      XCTAssertEqual(frame.objectStackCapacity, capacity)
+      self.assertStack(py, stack, expected: expectedStack)
 
-    stack.push(contentsOf: push2Objects)
-    expectedStack.append(contentsOf: push2Objects)
-    self.assertStack(py, stack, expected: expectedStack)
-    XCTAssertEqual(frame.objectStackCapacity, capacityBeforeResize)
+      // Our allocation strategy is to always round up to next 256.
+      // If we are divisible by 256 then add the next one.
+      alreadyOnStackCount = stack.count
 
-    // === Resize ===
-    let resizeCount = 10
-    let resizeObjects = (0..<resizeCount).map { py.newInt($0).asObject }
+      var secondHalf = [PyObject]()
+      let secondHalfCount = capacity - alreadyOnStackCount
+      secondHalf.reserveCapacity(secondHalfCount)
 
-    stack.push(contentsOf: resizeObjects)
-    expectedStack.append(contentsOf: resizeObjects)
-    self.assertStack(py, stack, expected: expectedStack)
-    XCTAssertNotEqual(frame.objectStackCapacity, capacityBeforeResize)
+      for i in 0..<secondHalfCount {
+        let index = alreadyOnStackCount + i
+        let object = py.newInt(index).asObject
+        secondHalf.push(object)
+        expectedStack.push(object)
+      }
+
+      stack.push(contentsOf: secondHalf)
+      XCTAssertEqual(frame.objectStackCapacity, capacity)
+      self.assertStack(py, stack, expected: expectedStack)
+    }
   }
 
   // MARK: - Set
@@ -166,7 +172,7 @@ class PyFrameObjectStackTests: PyTestCase, PyFrameTestsMixin {
     self.assertStack(py, stack, expected: [])
   }
 
-  func test_pop_in_push_order() {
+  func test_popInPushOrder() {
     let py = self.createPy()
     guard let frame = self.createFrame(py) else { return }
 
@@ -208,7 +214,7 @@ class PyFrameObjectStackTests: PyTestCase, PyFrameTestsMixin {
     self.assertStack(py, stack, expected: [])
   }
 
-  func test_pop_until_count() {
+  func test_popUntilCount() {
     let py = self.createPy()
     guard let frame = self.createFrame(py) else { return }
 

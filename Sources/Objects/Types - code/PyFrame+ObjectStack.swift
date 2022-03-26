@@ -160,7 +160,7 @@ extension PyFrame {
       }
 
       // We need a new buffer!
-      let newCount = pushCount + Swift.min(count, 256)
+      let newCount = self.roundToNextMultipleOf256(count + pushCount)
       let newBuffer = PyFrame.allocateBuffer(count: newCount)
       newBuffer.initialize(from: self.buffer)
       // Elements after 'self.count' are uninitialized
@@ -170,6 +170,12 @@ extension PyFrame {
 
       self.buffer = newBuffer
       self.endPointer = newBuffer.baseAddress.advanced(by: count)
+    }
+
+    private func roundToNextMultipleOf256(_ n: Int) -> Int {
+      // If we are exactly the multiple of 256 then add another 256.
+      let (_, remainder) = n.quotientAndRemainder(dividingBy: 256)
+      return n - remainder + 256
     }
 
     // MARK: - Pop
@@ -199,7 +205,6 @@ extension PyFrame {
       let resultStart = self.count - count
       let resultBuffer = self.buffer[resultStart..<self.count]
       let result = Array(resultBuffer)
-
 
       self.endPointer = self.endPointer.advanced(by: -count)
       return result
