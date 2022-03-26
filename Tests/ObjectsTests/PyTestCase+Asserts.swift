@@ -194,4 +194,46 @@ extension PyTestCase {
       }
     }
   }
+
+  // MARK: - Value error
+
+  func assertValueError(_ py: Py,
+                        error: PyResult,
+                        message: String?,
+                        file: StaticString = #file,
+                        line: UInt = #line) {
+    if let e = self.unwrapError(result: error, file: file, line: line) {
+      self.assertValueError(py, error: e, message: message, file: file, line: line)
+    }
+  }
+
+  func assertValueError<T>(_ py: Py,
+                           error: PyResultGen<T>,
+                           message: String?,
+                           file: StaticString = #file,
+                           line: UInt = #line) {
+    if let e = self.unwrapError(result: error, file: file, line: line) {
+      self.assertValueError(py, error: e, message: message, file: file, line: line)
+    }
+  }
+
+  func assertValueError<T: PyErrorMixin>(_ py: Py,
+                                         error: T,
+                                         message: String?,
+                                         file: StaticString = #file,
+                                         line: UInt = #line) {
+    let isValueError = py.cast.isValueError(error.asObject)
+    XCTAssert(isValueError,
+              "'\(error.typeName)' is not a value error.",
+              file: file,
+              line: line)
+
+    if let expectedMessage = message {
+      if let message = self.getMessageString(py, error: error) {
+        XCTAssertEqual(message, expectedMessage, "Message", file: file, line: line)
+      } else {
+        XCTFail("No message", file: file, line: line)
+      }
+    }
+  }
 }
