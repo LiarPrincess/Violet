@@ -658,810 +658,810 @@ public enum PyStaticCall {
   // MARK: - __repr__
 
   internal static func __repr__(_ py: Py, object: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__repr__ {
-      return method(py, object)
+    guard let method = object.type.staticMethods.__repr__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object)
   }
 
   // MARK: - __str__
 
   internal static func __str__(_ py: Py, object: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__str__ {
-      return method(py, object)
+    guard let method = object.type.staticMethods.__str__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object)
   }
 
   // MARK: - __hash__
 
   internal static func __hash__(_ py: Py, object: PyObject) -> HashResult? {
-    if let method = object.type.staticMethods.__hash__ {
-      return method(py, object)
+    guard let method = object.type.staticMethods.__hash__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object)
   }
 
   // MARK: - __dir__
 
   internal static func __dir__(_ py: Py, object: PyObject) -> PyResultGen<DirResult>? {
-    if let method = object.type.staticMethods.__dir__ {
-      return method(py, object)
+    guard let method = object.type.staticMethods.__dir__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object)
   }
 
   // MARK: - __eq__
 
   internal static func __eq__(_ py: Py, left: PyObject, right: PyObject) -> CompareResult? {
-    if let method = left.type.staticMethods.__eq__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__eq__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __ne__
 
   internal static func __ne__(_ py: Py, left: PyObject, right: PyObject) -> CompareResult? {
-    if let method = left.type.staticMethods.__ne__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__ne__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __lt__
 
   internal static func __lt__(_ py: Py, left: PyObject, right: PyObject) -> CompareResult? {
-    if let method = left.type.staticMethods.__lt__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__lt__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __le__
 
   internal static func __le__(_ py: Py, left: PyObject, right: PyObject) -> CompareResult? {
-    if let method = left.type.staticMethods.__le__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__le__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __gt__
 
   internal static func __gt__(_ py: Py, left: PyObject, right: PyObject) -> CompareResult? {
-    if let method = left.type.staticMethods.__gt__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__gt__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __ge__
 
   internal static func __ge__(_ py: Py, left: PyObject, right: PyObject) -> CompareResult? {
-    if let method = left.type.staticMethods.__ge__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__ge__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __bool__
 
   internal static func __bool__(_ py: Py, object: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__bool__ {
-      return method(py, object)
+    guard let method = object.type.staticMethods.__bool__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object)
   }
 
   // MARK: - __int__
 
   internal static func __int__(_ py: Py, object: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__int__ {
-      return method(py, object)
+    guard let method = object.type.staticMethods.__int__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object)
   }
 
   // MARK: - __float__
 
   internal static func __float__(_ py: Py, object: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__float__ {
-      return method(py, object)
+    guard let method = object.type.staticMethods.__float__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object)
   }
 
   // MARK: - __complex__
 
   internal static func __complex__(_ py: Py, object: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__complex__ {
-      return method(py, object)
+    guard let method = object.type.staticMethods.__complex__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object)
   }
 
   // MARK: - __index__
 
   internal static func __index__(_ py: Py, object: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__index__ {
-      return method(py, object)
+    guard let method = object.type.staticMethods.__index__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object)
   }
 
   // MARK: - __getattr__
 
   internal static func __getattr__(_ py: Py, object: PyObject, name: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__getattr__ {
-      return method(py, object, name)
+    guard let method = object.type.staticMethods.__getattr__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object, name)
   }
 
   // MARK: - __getattribute__
 
   internal static func __getattribute__(_ py: Py, object: PyObject, name: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__getattribute__ {
-      return method(py, object, name)
+    guard let method = object.type.staticMethods.__getattribute__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object, name)
   }
 
   // MARK: - __setattr__
 
   internal static func __setattr__(_ py: Py, object: PyObject, name: PyObject, value: PyObject?) -> PyResult? {
-    if let method = object.type.staticMethods.__setattr__ {
-      return method(py, object, name, value)
+    guard let method = object.type.staticMethods.__setattr__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object, name, value)
   }
 
   // MARK: - __delattr__
 
   internal static func __delattr__(_ py: Py, object: PyObject, name: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__delattr__ {
-      return method(py, object, name)
+    guard let method = object.type.staticMethods.__delattr__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object, name)
   }
 
   // MARK: - __getitem__
 
   internal static func __getitem__(_ py: Py, object: PyObject, index: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__getitem__ {
-      return method(py, object, index)
+    guard let method = object.type.staticMethods.__getitem__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object, index)
   }
 
   // MARK: - __setitem__
 
   internal static func __setitem__(_ py: Py, object: PyObject, index: PyObject, value: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__setitem__ {
-      return method(py, object, index, value)
+    guard let method = object.type.staticMethods.__setitem__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object, index, value)
   }
 
   // MARK: - __delitem__
 
   internal static func __delitem__(_ py: Py, object: PyObject, index: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__delitem__ {
-      return method(py, object, index)
+    guard let method = object.type.staticMethods.__delitem__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object, index)
   }
 
   // MARK: - __iter__
 
   internal static func __iter__(_ py: Py, object: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__iter__ {
-      return method(py, object)
+    guard let method = object.type.staticMethods.__iter__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object)
   }
 
   // MARK: - __next__
 
   internal static func __next__(_ py: Py, object: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__next__ {
-      return method(py, object)
+    guard let method = object.type.staticMethods.__next__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object)
   }
 
   // MARK: - __len__
 
   internal static func __len__(_ py: Py, object: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__len__ {
-      return method(py, object)
+    guard let method = object.type.staticMethods.__len__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object)
   }
 
   // MARK: - __contains__
 
   internal static func __contains__(_ py: Py, object: PyObject, element: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__contains__ {
-      return method(py, object, element)
+    guard let method = object.type.staticMethods.__contains__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object, element)
   }
 
   // MARK: - __reversed__
 
   internal static func __reversed__(_ py: Py, object: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__reversed__ {
-      return method(py, object)
+    guard let method = object.type.staticMethods.__reversed__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object)
   }
 
   // MARK: - keys
 
   internal static func keys(_ py: Py, object: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.keys {
-      return method(py, object)
+    guard let method = object.type.staticMethods.keys else {
+      return nil
     }
 
-    return nil
+    return method(py, object)
   }
 
   // MARK: - __del__
 
   internal static func __del__(_ py: Py, object: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__del__ {
-      return method(py, object)
+    guard let method = object.type.staticMethods.__del__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object)
   }
 
   // MARK: - __call__
 
   internal static func __call__(_ py: Py, object: PyObject, args: [PyObject], kwargs: PyDict?) -> PyResult? {
-    if let method = object.type.staticMethods.__call__ {
-      return method(py, object, args, kwargs)
+    guard let method = object.type.staticMethods.__call__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object, args, kwargs)
   }
 
   // MARK: - __instancecheck__
 
   internal static func __instancecheck__(_ py: Py, type: PyObject, object: PyObject) -> PyResult? {
-    if let method = type.type.staticMethods.__instancecheck__ {
-      return method(py, type, object)
+    guard let method = type.type.staticMethods.__instancecheck__ else {
+      return nil
     }
 
-    return nil
+    return method(py, type, object)
   }
 
   // MARK: - __subclasscheck__
 
   internal static func __subclasscheck__(_ py: Py, type: PyObject, base: PyObject) -> PyResult? {
-    if let method = type.type.staticMethods.__subclasscheck__ {
-      return method(py, type, base)
+    guard let method = type.type.staticMethods.__subclasscheck__ else {
+      return nil
     }
 
-    return nil
+    return method(py, type, base)
   }
 
   // MARK: - __isabstractmethod__
 
   internal static func __isabstractmethod__(_ py: Py, object: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__isabstractmethod__ {
-      return method(py, object)
+    guard let method = object.type.staticMethods.__isabstractmethod__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object)
   }
 
   // MARK: - __pos__
 
   internal static func __pos__(_ py: Py, object: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__pos__ {
-      return method(py, object)
+    guard let method = object.type.staticMethods.__pos__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object)
   }
 
   // MARK: - __neg__
 
   internal static func __neg__(_ py: Py, object: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__neg__ {
-      return method(py, object)
+    guard let method = object.type.staticMethods.__neg__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object)
   }
 
   // MARK: - __invert__
 
   internal static func __invert__(_ py: Py, object: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__invert__ {
-      return method(py, object)
+    guard let method = object.type.staticMethods.__invert__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object)
   }
 
   // MARK: - __abs__
 
   internal static func __abs__(_ py: Py, object: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__abs__ {
-      return method(py, object)
+    guard let method = object.type.staticMethods.__abs__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object)
   }
 
   // MARK: - __trunc__
 
   internal static func __trunc__(_ py: Py, object: PyObject) -> PyResult? {
-    if let method = object.type.staticMethods.__trunc__ {
-      return method(py, object)
+    guard let method = object.type.staticMethods.__trunc__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object)
   }
 
   // MARK: - __round__
 
   internal static func __round__(_ py: Py, object: PyObject, nDigits: PyObject?) -> PyResult? {
-    if let method = object.type.staticMethods.__round__ {
-      return method(py, object, nDigits)
+    guard let method = object.type.staticMethods.__round__ else {
+      return nil
     }
 
-    return nil
+    return method(py, object, nDigits)
   }
 
   // MARK: - __add__
 
   internal static func __add__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__add__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__add__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __and__
 
   internal static func __and__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__and__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__and__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __divmod__
 
   internal static func __divmod__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__divmod__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__divmod__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __floordiv__
 
   internal static func __floordiv__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__floordiv__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__floordiv__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __lshift__
 
   internal static func __lshift__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__lshift__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__lshift__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __matmul__
 
   internal static func __matmul__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__matmul__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__matmul__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __mod__
 
   internal static func __mod__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__mod__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__mod__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __mul__
 
   internal static func __mul__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__mul__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__mul__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __or__
 
   internal static func __or__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__or__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__or__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __rshift__
 
   internal static func __rshift__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__rshift__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__rshift__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __sub__
 
   internal static func __sub__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__sub__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__sub__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __truediv__
 
   internal static func __truediv__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__truediv__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__truediv__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __xor__
 
   internal static func __xor__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__xor__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__xor__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __radd__
 
   internal static func __radd__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__radd__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__radd__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __rand__
 
   internal static func __rand__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__rand__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__rand__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __rdivmod__
 
   internal static func __rdivmod__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__rdivmod__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__rdivmod__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __rfloordiv__
 
   internal static func __rfloordiv__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__rfloordiv__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__rfloordiv__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __rlshift__
 
   internal static func __rlshift__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__rlshift__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__rlshift__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __rmatmul__
 
   internal static func __rmatmul__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__rmatmul__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__rmatmul__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __rmod__
 
   internal static func __rmod__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__rmod__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__rmod__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __rmul__
 
   internal static func __rmul__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__rmul__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__rmul__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __ror__
 
   internal static func __ror__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__ror__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__ror__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __rrshift__
 
   internal static func __rrshift__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__rrshift__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__rrshift__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __rsub__
 
   internal static func __rsub__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__rsub__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__rsub__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __rtruediv__
 
   internal static func __rtruediv__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__rtruediv__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__rtruediv__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __rxor__
 
   internal static func __rxor__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__rxor__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__rxor__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __iadd__
 
   internal static func __iadd__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__iadd__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__iadd__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __iand__
 
   internal static func __iand__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__iand__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__iand__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __idivmod__
 
   internal static func __idivmod__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__idivmod__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__idivmod__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __ifloordiv__
 
   internal static func __ifloordiv__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__ifloordiv__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__ifloordiv__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __ilshift__
 
   internal static func __ilshift__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__ilshift__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__ilshift__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __imatmul__
 
   internal static func __imatmul__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__imatmul__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__imatmul__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __imod__
 
   internal static func __imod__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__imod__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__imod__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __imul__
 
   internal static func __imul__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__imul__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__imul__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __ior__
 
   internal static func __ior__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__ior__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__ior__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __irshift__
 
   internal static func __irshift__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__irshift__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__irshift__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __isub__
 
   internal static func __isub__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__isub__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__isub__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __itruediv__
 
   internal static func __itruediv__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__itruediv__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__itruediv__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __ixor__
 
   internal static func __ixor__(_ py: Py, left: PyObject, right: PyObject) -> PyResult? {
-    if let method = left.type.staticMethods.__ixor__ {
-      return method(py, left, right)
+    guard let method = left.type.staticMethods.__ixor__ else {
+      return nil
     }
 
-    return nil
+    return method(py, left, right)
   }
 
   // MARK: - __pow__
 
   internal static func __pow__(_ py: Py, base: PyObject, exp: PyObject, mod: PyObject) -> PyResult? {
-    if let method = base.type.staticMethods.__pow__ {
-      return method(py, base, exp, mod)
+    guard let method = base.type.staticMethods.__pow__ else {
+      return nil
     }
 
-    return nil
+    return method(py, base, exp, mod)
   }
 
   // MARK: - __rpow__
 
   internal static func __rpow__(_ py: Py, base: PyObject, exp: PyObject, mod: PyObject) -> PyResult? {
-    if let method = base.type.staticMethods.__rpow__ {
-      return method(py, base, exp, mod)
+    guard let method = base.type.staticMethods.__rpow__ else {
+      return nil
     }
 
-    return nil
+    return method(py, base, exp, mod)
   }
 
   // MARK: - __ipow__
 
   internal static func __ipow__(_ py: Py, base: PyObject, exp: PyObject, mod: PyObject) -> PyResult? {
-    if let method = base.type.staticMethods.__ipow__ {
-      return method(py, base, exp, mod)
+    guard let method = base.type.staticMethods.__ipow__ else {
+      return nil
     }
 
-    return nil
+    return method(py, base, exp, mod)
   }
 }
