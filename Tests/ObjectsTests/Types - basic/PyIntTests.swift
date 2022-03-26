@@ -10,33 +10,57 @@ class PyIntTests: PyTestCase {
   func test__pow__() {
     let py = self.createPy()
 
-    self.assertPow(py, base: 3, exp: 27, mod: .none, expected: 7_625_597_484_987)
-    self.assertPow(py, base: 27, exp: 3, mod: .none, expected: 19683)
+    self.assertPow(py, base: 3, exp: 11, mod: .none, expected: 177147)
+    self.assertPow(py, base: 3, exp: -11, mod: .none, expected: 5.645029269476762e-06)
+    self.assertPow(py, base: -3, exp: 11, mod: .none, expected: -177147)
+    self.assertPow(py, base: -3, exp: -11, mod: .none, expected: -5.645029269476762e-06)
+
+    self.assertPow(py, base: 11, exp:  3, mod: .none, expected: 1331)
+    self.assertPow(py, base: 11, exp: -3, mod: .none, expected: 0.0007513148009015778)
+    self.assertPow(py, base: -11, exp:  3, mod: .none, expected: -1331)
+    self.assertPow(py, base: -11, exp: -3, mod: .none, expected: -0.0007513148009015778)
 
     let messageE = "unsupported operand type(s) for ** or pow(): 'int' and 'NoneType'"
     self.assertPowTypeError(py, base: 3, exp: .none, mod: .none, message: messageE)
-    self.assertPowTypeError(py, base: 27, exp: .none, mod: .none, message: messageE)
+    self.assertPowTypeError(py, base: 11, exp: .none, mod: .none, message: messageE)
 
     let messageB = "unsupported operand type(s) for ** or pow(): 'NoneType' and 'int'"
     self.assertPowTypeError(py, base: .none, exp: 3, mod: .none, message: messageB)
-    self.assertPowTypeError(py, base: .none, exp: 27, mod: .none, message: messageB)
+    self.assertPowTypeError(py, base: .none, exp: 11, mod: .none, message: messageB)
   }
 
   func test__pow__mod() {
     let py = self.createPy()
 
-    self.assertPow(py, base: 3, exp: 27, mod: 987, expected: 363)
-    self.assertPow(py, base: 27, exp: 3, mod: 987, expected: 930)
+    // There are only 4 possibilities, because:
+    // ValueError: pow() 2nd argument cannot be negative when 3rd argument specified
+    self.assertPow(py, base: 3, exp: 11, mod: 7, expected: 5)
+    self.assertPow(py, base: 3, exp: 11, mod: -7, expected: -2)
+    self.assertPow(py, base: -3, exp: 11, mod: 7, expected: 2)
+    self.assertPow(py, base: -3, exp: 11, mod: -7, expected: -5)
+
+    self.assertPow(py, base: 11, exp: 3, mod: 7, expected: 1)
+    self.assertPow(py, base: 11, exp: 3, mod: -7, expected: -6)
+    self.assertPow(py, base: -11, exp: 3, mod: 7, expected: 6)
+    self.assertPow(py, base: -11, exp: 3, mod: -7, expected: -1)
 
     let i3 = py.newInt(3).asObject
+    let i_7 = py.newInt(-7).asObject
     let i27 = py.newInt(27).asObject
-    let sA = py.newString("A").asObject
+    let strA = py.newString("A").asObject
 
-    let intIntStr = py.pow(base: i3, exp: i27, mod: sA)
+    let strMod = py.pow(base: i3, exp: i27, mod: strA)
     self.assertTypeError(
       py,
-      error: intIntStr,
+      error: strMod,
       message: "unsupported operand type(s) for pow(): 'int', 'int', 'str'"
+    )
+
+    let negativeExp = py.pow(base: i3, exp: i_7, mod: i27)
+    self.assertValueError(
+      py,
+      error: negativeExp,
+      message: "pow() 2nd argument cannot be negative when 3rd argument specified"
     )
   }
 
@@ -53,6 +77,22 @@ class PyIntTests: PyTestCase {
     let result = py.pow(base: baseObject, exp: expObject, mod: modObject)
 
     let expectedObject = py.newInt(expected).asObject
+    self.assertIsEqual(py, left: result, right: expectedObject, file: file, line: line)
+  }
+
+  private func assertPow(_ py: Py,
+                         base: Int,
+                         exp: Int,
+                         mod: Int?,
+                         expected: Double,
+                         file: StaticString = #file,
+                         line: UInt = #line) {
+    let baseObject = py.newInt(base).asObject
+    let expObject = py.newInt(exp).asObject
+    let modObject = mod.map { py.newInt($0).asObject } ?? py.none.asObject
+    let result = py.pow(base: baseObject, exp: expObject, mod: modObject)
+
+    let expectedObject = py.newFloat(expected).asObject
     self.assertIsEqual(py, left: result, right: expectedObject, file: file, line: line)
   }
 

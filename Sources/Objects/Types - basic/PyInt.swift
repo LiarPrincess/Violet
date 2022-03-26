@@ -384,6 +384,11 @@ public struct PyInt: PyObjectMixin {
       return .notImplemented(py)
     }
 
+    if exp < 0 && !py.cast.isNilOrNone(mod) {
+      let message = "pow() 2nd argument cannot be negative when 3rd argument specified"
+      return .valueError(py, message: message)
+    }
+
     switch zelf.parsePowMod(py, mod: mod) {
     case .none: // No modulo, just pow
       let result = zelf.pow(py, base: zelf.value, exp: exp.value)
@@ -491,7 +496,7 @@ public struct PyInt: PyObjectMixin {
     }
 
     let result = self.powNonNegativeExp(base: base, exp: Swift.abs(exp))
-    if exp > 0 {
+    if exp >= 0 {
       return .int(result)
     }
 
