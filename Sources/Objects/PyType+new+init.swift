@@ -311,26 +311,32 @@ extension PyType {
     assert(bases.any)
 
     var result: PyType?
-    for candidate in bases {
-      guard let currentResult = result else {
-        result = candidate
+    var resultSize: PyType?
+    for base in bases {
+      // Each type has a different size in memory. If the type does not add any
+      // new stored properties then its size is the same as base type.
+      let baseSize = Self.getBaseTypeResponsibleForSize(startingFrom: base)
+
+      guard let currentResult = result, let currentResultSize = resultSize else {
+        result = base
+        resultSize = baseSize
         continue
       }
 
-      if candidate.isSubtype(of: currentResult) {
-        let candidateSize = candidate.instanceSizeWithoutTail
-        let resultSize = currentResult.instanceSizeWithoutTail
+      if baseSize.isSubtype(of: currentResultSize) {
+        let baseByteSize = baseSize.instanceSizeWithoutTail
+        let resultByteSize = currentResultSize.instanceSizeWithoutTail
 
-        if candidateSize == resultSize {
+        if baseByteSize == resultByteSize {
           // Do nothing…
           // class A(int): pass
           // class B(int): pass
           // class C(A, B): pass <- equal layout of A and B
-        } else if candidateSize > resultSize {
-          // 'candidate' has more fields.
-          result = candidate
+        } else if baseByteSize > resultByteSize {
+          // 'base' has more fields.
+          result = base
         } else { // resultSize > candidateSize
-          let candidateName = candidate.name
+          let candidateName = base.name
           let resultName = currentResult.name
           trap("'\(candidateName)' is a subclass of '\(resultName)' but it is smaller?")
         }
@@ -338,7 +344,7 @@ extension PyType {
         continue
       }
 
-      if currentResult.isSubtype(of: candidate) {
+      if currentResultSize.isSubtype(of: baseSize) {
         // Nothing, 'result' has already more fields
         continue
       }
@@ -351,6 +357,18 @@ extension PyType {
     // We can force unwrap because we checked 'bases.any' at the top.
     // swiftlint:disable:next force_unwrapping
     return .value(result!)
+  }
+
+  private static func getBaseTypeResponsibleForSize(startingFrom type: PyType) -> PyType {
+    var result = type
+    var resultSize = result.instanceSizeWithoutTail
+
+    while let base = result.base, base.instanceSizeWithoutTail == resultSize {
+      result = base
+      resultSize = base.instanceSizeWithoutTail
+    }
+
+    return result
   }
 
   // MARK: - __module__
@@ -487,35 +505,23 @@ extension PyType {
   /// This method will be called when we get `__dict__` property
   /// on heap type instance.
   private static func getHeapType__dict__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__dict__")
-    }
-
-    let result = zelf.getDict(py)
-    return PyResult(result)
+    let result = py.get__dict__(object: zelf)
+    return PyResult(py, result)
   }
 
   private static func setHeapType__dict__(_ py: Py,
                                           zelf: PyObject,
                                           value: PyObject) -> PyResult {
-    guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__dict__")
-    }
-
     guard let dict = py.cast.asDict(value) else {
       let message = "__dict__ must be set to a dictionary, not a '\(value.typeName)'"
       return .typeError(py, message: message)
     }
 
-    zelf.setDict(dict)
+    zelf.set__dict__(dict)
     return .none(py)
   }
 
   private static func delHeapType__dict__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = py.cast.asType(zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__dict__")
-    }
-
     // There always has to be an dict:
     // >>> class Princess(): pass
     // ...
@@ -524,7 +530,7 @@ extension PyType {
     // >>> print(elsa.__dict__)
     // {}
     let dict = py.newDict()
-    zelf.setDict(dict)
+    zelf.set__dict__(dict)
     return .none(py)
   }
 
