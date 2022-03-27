@@ -313,9 +313,9 @@ public struct PyCode: PyObjectMixin {
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyCode(ptr: ptr)
     var result = PyObject.DebugMirror(object: zelf)
-    result.append(name: "name", value: zelf.name, includeInShortDescription: true)
-    result.append(name: "qualifiedName", value: zelf.qualifiedName, includeInShortDescription: true)
-    result.append(name: "filename", value: zelf.filename)
+    result.append(name: "name", value: zelf.name, includeInDescription: true)
+    result.append(name: "qualifiedName", value: zelf.qualifiedName, includeInDescription: true)
+    result.append(name: "filename", value: zelf.filename, includeInDescription: true)
     result.append(name: "codeFlags", value: zelf.codeFlags)
     result.append(name: "instructionCount", value: zelf.instructions.count)
     return result

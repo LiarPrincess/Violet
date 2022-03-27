@@ -50,7 +50,7 @@ public struct PyBuiltinMethod: PyObjectMixin, AbstractBuiltinFunction {
     let zelf = PyBuiltinMethod(ptr: ptr)
     var result = PyObject.DebugMirror(object: zelf)
     let name = zelf.function.name
-    result.append(name: "name", value: name, includeInShortDescription: true)
+    result.append(name: "name", value: name, includeInDescription: true)
     result.append(name: "object", value: zelf.object)
     result.append(name: "module", value: zelf.module as Any)
     result.append(name: "doc", value: zelf.doc as Any)

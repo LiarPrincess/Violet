@@ -75,7 +75,7 @@ public struct PyInt: PyObjectMixin {
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyInt(ptr: ptr)
     var result = PyObject.DebugMirror(object: zelf)
-    result.append(name: "value", value: zelf.value, includeInShortDescription: true)
+    result.append(name: "value", value: zelf.value, includeInDescription: true)
     return result
   }
 

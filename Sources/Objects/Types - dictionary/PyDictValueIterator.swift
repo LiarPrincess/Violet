@@ -43,8 +43,8 @@ public struct PyDictValueIterator: PyObjectMixin, AbstractDictViewIterator {
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyDictValueIterator(ptr: ptr)
     var result = PyObject.DebugMirror(object: zelf)
-    result.append(name: "index", value: zelf.index, includeInShortDescription: true)
-    result.append(name: "count", value: zelf.dict.count, includeInShortDescription: true)
+    result.append(name: "index", value: zelf.index, includeInDescription: true)
+    result.append(name: "count", value: zelf.dict.count, includeInDescription: true)
     result.append(name: "dict", value: zelf.dict)
     return result
   }

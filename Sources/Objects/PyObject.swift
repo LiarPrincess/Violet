@@ -169,7 +169,7 @@ public struct PyObject: PyObjectMixin {
     public struct Property {
       public let name: String
       public let value: Any
-      public let includeInShortDescription: Bool
+      public let includeInDescription: Bool
     }
 
     public let object: PyObject
@@ -183,11 +183,11 @@ public struct PyObject: PyObjectMixin {
 
     public mutating func append(name: String,
                                 value: Any,
-                                includeInShortDescription: Bool = false) {
+                                includeInDescription: Bool = false) {
       let property = Property(
         name: name,
         value: value,
-        includeInShortDescription: includeInShortDescription
+        includeInDescription: includeInDescription
       )
 
       self.properties.append(property)

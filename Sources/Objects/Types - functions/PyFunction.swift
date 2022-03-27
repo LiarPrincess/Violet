@@ -144,8 +144,8 @@ public struct PyFunction: PyObjectMixin {
   }
 
   internal static func fillDebug(zelf: PyFunction, debug: inout PyObject.DebugMirror) {
-    debug.append(name: "name", value: zelf.name, includeInShortDescription: true)
-    debug.append(name: "qualname", value: zelf.qualname, includeInShortDescription: true)
+    debug.append(name: "name", value: zelf.name, includeInDescription: true)
+    debug.append(name: "qualname", value: zelf.qualname, includeInDescription: true)
     debug.append(name: "module", value: zelf.module)
     debug.append(name: "doc", value: zelf.doc as Any)
   }

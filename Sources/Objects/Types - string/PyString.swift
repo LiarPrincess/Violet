@@ -33,6 +33,9 @@ public struct PyString: PyObjectMixin, AbstractString {
   // MARK: - Properties
 
   private static let invalidCount = -1
+  // Empty string has hash '0', but this is trivial to recalculate.
+  // If any other string hashes to '0' then we will accept defeat and recalcualte
+  // it on every call. It is still better than not caching at all.
   private static let invalidHash = PyHash.zero
 
   // sourcery: storedProperty
@@ -104,9 +107,9 @@ public struct PyString: PyObjectMixin, AbstractString {
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyString(ptr: ptr)
     var result = PyObject.DebugMirror(object: zelf)
-    result.append(name: "count", value: zelf.cachedCount, includeInShortDescription: true)
-    result.append(name: "hash", value: zelf.cachedHash, includeInShortDescription: true)
-    result.append(name: "value", value: zelf.value, includeInShortDescription: true)
+    result.append(name: "count", value: zelf.cachedCount, includeInDescription: true)
+    result.append(name: "hash", value: zelf.cachedHash, includeInDescription: true)
+    result.append(name: "value", value: zelf.value, includeInDescription: true)
     return result
   }
 

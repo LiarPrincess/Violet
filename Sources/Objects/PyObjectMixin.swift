@@ -72,7 +72,7 @@ extension PyObjectMixin {
     object.flags.set(.descriptionLock)
     defer { object.flags.unset(.descriptionLock) }
 
-    for property in mirror.properties where property.includeInShortDescription {
+    for property in mirror.properties where property.includeInDescription {
       self.append(string: &result, property: property)
     }
 

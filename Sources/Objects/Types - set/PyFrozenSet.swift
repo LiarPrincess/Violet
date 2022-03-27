@@ -42,7 +42,7 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyFrozenSet(ptr: ptr)
     var result = PyObject.DebugMirror(object: zelf)
-    result.append(name: "count", value: zelf.count, includeInShortDescription: true)
+    result.append(name: "count", value: zelf.count, includeInDescription: true)
     result.append(name: "elements", value: zelf.elements)
     return result
   }

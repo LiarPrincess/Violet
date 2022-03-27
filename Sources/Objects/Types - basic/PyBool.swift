@@ -51,7 +51,8 @@ public struct PyBool: PyObjectMixin {
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyBool(ptr: ptr)
     var result = PyObject.DebugMirror(object: zelf)
-    result.append(name: "isTrue", value: zelf.isTrue, includeInShortDescription: true)
+    result.append(name: "value", value: zelf.value, includeInDescription: true)
+    result.append(name: "isTrue", value: zelf.isTrue, includeInDescription: true)
     return result
   }
 

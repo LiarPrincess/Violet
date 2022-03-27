@@ -56,9 +56,9 @@ public struct PySlice: PyObjectMixin {
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PySlice(ptr: ptr)
     var result = PyObject.DebugMirror(object: zelf)
-    result.append(name: "start", value: zelf.start, includeInShortDescription: true)
-    result.append(name: "stop", value: zelf.stop, includeInShortDescription: true)
-    result.append(name: "step", value: zelf.step, includeInShortDescription: true)
+    result.append(name: "start", value: zelf.start, includeInDescription: true)
+    result.append(name: "stop", value: zelf.stop, includeInDescription: true)
+    result.append(name: "step", value: zelf.step, includeInDescription: true)
     return result
   }
 

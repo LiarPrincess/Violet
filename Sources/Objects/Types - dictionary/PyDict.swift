@@ -58,8 +58,8 @@ public struct PyDict: PyObjectMixin {
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyDict(ptr: ptr)
     var result = PyObject.DebugMirror(object: zelf)
-    result.append(name: "count", value: zelf.count, includeInShortDescription: true)
-    result.append(name: "elements", value: zelf.elements)
+    result.append(name: "count", value: zelf.count, includeInDescription: true)
+    result.append(name: "elements", value: zelf.elements, includeInDescription: true)
     return result
   }
 
