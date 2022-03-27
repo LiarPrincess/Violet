@@ -575,8 +575,8 @@ extension Py {
   /// Py_ssize_t
   /// _PySequence_IterSearch(PyObject *seq, PyObject *obj, int operation)
   private func iterSearch(iterable: PyObject, object: PyObject) -> PyResult {
-    let result = self.reduce(iterable: iterable, initial: false) { _, object in
-      switch self.isEqualBool(left: object, right: object) {
+    let result = self.reduce(iterable: iterable, initial: false) { _, element in
+      switch self.isEqualBool(left: element, right: object) {
       case .value(true): return .finish(true)
       case .value(false): return .goToNextElement
       case .error(let e): return .error(e)

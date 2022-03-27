@@ -7,8 +7,8 @@ extension AbstractSequence {
     suffix: String
   ) -> PyResultGen<String> {
     var result = prefix
-    for element in zelf.elements {
-      if !result.isEmpty {
+    for (index, element) in zelf.elements.enumerated() {
+      if index != 0 {
         result.append(", ")
       }
 
