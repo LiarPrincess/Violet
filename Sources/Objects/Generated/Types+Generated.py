@@ -268,9 +268,9 @@ def print_type_extension(t: TypeInfo):
     # === Deinitialize ===
     # ====================
 
-    print(f'  internal static func deinitialize(ptr: RawPtr) {{')
+    print(f'  internal static func deinitialize(_ py: Py, ptr: RawPtr) {{')
     print(f'    let zelf = {swift_type_name}(ptr: ptr)')
-    print(f'    zelf.beforeDeinitialize()')
+    print(f'    zelf.beforeDeinitialize(py)')
 
     if properties_t:
         print()
@@ -284,7 +284,7 @@ def print_type_extension(t: TypeInfo):
         base_swift_type_name = t.base_type_info.swift_type_name
         print(f'    // Call \'deinitialize\' on base type.')
         print(f'    // This will also call base type \'beforeDeinitialize\'.')
-        print(f'    {base_swift_type_name}.deinitialize(ptr: ptr)')
+        print(f'    {base_swift_type_name}.deinitialize(py, ptr: ptr)')
 
     print('  }')
 

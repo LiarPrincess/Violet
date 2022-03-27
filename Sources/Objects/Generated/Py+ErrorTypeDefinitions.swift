@@ -110,7 +110,7 @@ extension Py {
         instanceSizeWithoutTail: PyBaseException.layout.size,
         staticMethods: Py.ErrorTypes.baseExceptionStaticMethods,
         debugFn: PyBaseException.createDebugInfo(ptr:),
-        deinitialize: PyBaseException.deinitialize(ptr:)
+        deinitialize: PyBaseException.deinitialize(_:ptr:)
       )
 
       self.systemExit = memory.newType(
@@ -126,7 +126,7 @@ extension Py {
         instanceSizeWithoutTail: PySystemExit.layout.size,
         staticMethods: Py.ErrorTypes.systemExitStaticMethods,
         debugFn: PySystemExit.createDebugInfo(ptr:),
-        deinitialize: PySystemExit.deinitialize(ptr:)
+        deinitialize: PySystemExit.deinitialize(_:ptr:)
       )
 
       self.keyboardInterrupt = memory.newType(
@@ -142,7 +142,7 @@ extension Py {
         instanceSizeWithoutTail: PyKeyboardInterrupt.layout.size,
         staticMethods: Py.ErrorTypes.keyboardInterruptStaticMethods,
         debugFn: PyKeyboardInterrupt.createDebugInfo(ptr:),
-        deinitialize: PyKeyboardInterrupt.deinitialize(ptr:)
+        deinitialize: PyKeyboardInterrupt.deinitialize(_:ptr:)
       )
 
       self.generatorExit = memory.newType(
@@ -158,7 +158,7 @@ extension Py {
         instanceSizeWithoutTail: PyGeneratorExit.layout.size,
         staticMethods: Py.ErrorTypes.generatorExitStaticMethods,
         debugFn: PyGeneratorExit.createDebugInfo(ptr:),
-        deinitialize: PyGeneratorExit.deinitialize(ptr:)
+        deinitialize: PyGeneratorExit.deinitialize(_:ptr:)
       )
 
       self.exception = memory.newType(
@@ -174,7 +174,7 @@ extension Py {
         instanceSizeWithoutTail: PyException.layout.size,
         staticMethods: Py.ErrorTypes.exceptionStaticMethods,
         debugFn: PyException.createDebugInfo(ptr:),
-        deinitialize: PyException.deinitialize(ptr:)
+        deinitialize: PyException.deinitialize(_:ptr:)
       )
 
       self.stopIteration = memory.newType(
@@ -190,7 +190,7 @@ extension Py {
         instanceSizeWithoutTail: PyStopIteration.layout.size,
         staticMethods: Py.ErrorTypes.stopIterationStaticMethods,
         debugFn: PyStopIteration.createDebugInfo(ptr:),
-        deinitialize: PyStopIteration.deinitialize(ptr:)
+        deinitialize: PyStopIteration.deinitialize(_:ptr:)
       )
 
       self.stopAsyncIteration = memory.newType(
@@ -206,7 +206,7 @@ extension Py {
         instanceSizeWithoutTail: PyStopAsyncIteration.layout.size,
         staticMethods: Py.ErrorTypes.stopAsyncIterationStaticMethods,
         debugFn: PyStopAsyncIteration.createDebugInfo(ptr:),
-        deinitialize: PyStopAsyncIteration.deinitialize(ptr:)
+        deinitialize: PyStopAsyncIteration.deinitialize(_:ptr:)
       )
 
       self.arithmeticError = memory.newType(
@@ -222,7 +222,7 @@ extension Py {
         instanceSizeWithoutTail: PyArithmeticError.layout.size,
         staticMethods: Py.ErrorTypes.arithmeticErrorStaticMethods,
         debugFn: PyArithmeticError.createDebugInfo(ptr:),
-        deinitialize: PyArithmeticError.deinitialize(ptr:)
+        deinitialize: PyArithmeticError.deinitialize(_:ptr:)
       )
 
       self.floatingPointError = memory.newType(
@@ -238,7 +238,7 @@ extension Py {
         instanceSizeWithoutTail: PyFloatingPointError.layout.size,
         staticMethods: Py.ErrorTypes.floatingPointErrorStaticMethods,
         debugFn: PyFloatingPointError.createDebugInfo(ptr:),
-        deinitialize: PyFloatingPointError.deinitialize(ptr:)
+        deinitialize: PyFloatingPointError.deinitialize(_:ptr:)
       )
 
       self.overflowError = memory.newType(
@@ -254,7 +254,7 @@ extension Py {
         instanceSizeWithoutTail: PyOverflowError.layout.size,
         staticMethods: Py.ErrorTypes.overflowErrorStaticMethods,
         debugFn: PyOverflowError.createDebugInfo(ptr:),
-        deinitialize: PyOverflowError.deinitialize(ptr:)
+        deinitialize: PyOverflowError.deinitialize(_:ptr:)
       )
 
       self.zeroDivisionError = memory.newType(
@@ -270,7 +270,7 @@ extension Py {
         instanceSizeWithoutTail: PyZeroDivisionError.layout.size,
         staticMethods: Py.ErrorTypes.zeroDivisionErrorStaticMethods,
         debugFn: PyZeroDivisionError.createDebugInfo(ptr:),
-        deinitialize: PyZeroDivisionError.deinitialize(ptr:)
+        deinitialize: PyZeroDivisionError.deinitialize(_:ptr:)
       )
 
       self.assertionError = memory.newType(
@@ -286,7 +286,7 @@ extension Py {
         instanceSizeWithoutTail: PyAssertionError.layout.size,
         staticMethods: Py.ErrorTypes.assertionErrorStaticMethods,
         debugFn: PyAssertionError.createDebugInfo(ptr:),
-        deinitialize: PyAssertionError.deinitialize(ptr:)
+        deinitialize: PyAssertionError.deinitialize(_:ptr:)
       )
 
       self.attributeError = memory.newType(
@@ -302,7 +302,7 @@ extension Py {
         instanceSizeWithoutTail: PyAttributeError.layout.size,
         staticMethods: Py.ErrorTypes.attributeErrorStaticMethods,
         debugFn: PyAttributeError.createDebugInfo(ptr:),
-        deinitialize: PyAttributeError.deinitialize(ptr:)
+        deinitialize: PyAttributeError.deinitialize(_:ptr:)
       )
 
       self.bufferError = memory.newType(
@@ -318,7 +318,7 @@ extension Py {
         instanceSizeWithoutTail: PyBufferError.layout.size,
         staticMethods: Py.ErrorTypes.bufferErrorStaticMethods,
         debugFn: PyBufferError.createDebugInfo(ptr:),
-        deinitialize: PyBufferError.deinitialize(ptr:)
+        deinitialize: PyBufferError.deinitialize(_:ptr:)
       )
 
       self.eofError = memory.newType(
@@ -334,7 +334,7 @@ extension Py {
         instanceSizeWithoutTail: PyEOFError.layout.size,
         staticMethods: Py.ErrorTypes.eOFErrorStaticMethods,
         debugFn: PyEOFError.createDebugInfo(ptr:),
-        deinitialize: PyEOFError.deinitialize(ptr:)
+        deinitialize: PyEOFError.deinitialize(_:ptr:)
       )
 
       self.importError = memory.newType(
@@ -350,7 +350,7 @@ extension Py {
         instanceSizeWithoutTail: PyImportError.layout.size,
         staticMethods: Py.ErrorTypes.importErrorStaticMethods,
         debugFn: PyImportError.createDebugInfo(ptr:),
-        deinitialize: PyImportError.deinitialize(ptr:)
+        deinitialize: PyImportError.deinitialize(_:ptr:)
       )
 
       self.moduleNotFoundError = memory.newType(
@@ -366,7 +366,7 @@ extension Py {
         instanceSizeWithoutTail: PyModuleNotFoundError.layout.size,
         staticMethods: Py.ErrorTypes.moduleNotFoundErrorStaticMethods,
         debugFn: PyModuleNotFoundError.createDebugInfo(ptr:),
-        deinitialize: PyModuleNotFoundError.deinitialize(ptr:)
+        deinitialize: PyModuleNotFoundError.deinitialize(_:ptr:)
       )
 
       self.lookupError = memory.newType(
@@ -382,7 +382,7 @@ extension Py {
         instanceSizeWithoutTail: PyLookupError.layout.size,
         staticMethods: Py.ErrorTypes.lookupErrorStaticMethods,
         debugFn: PyLookupError.createDebugInfo(ptr:),
-        deinitialize: PyLookupError.deinitialize(ptr:)
+        deinitialize: PyLookupError.deinitialize(_:ptr:)
       )
 
       self.indexError = memory.newType(
@@ -398,7 +398,7 @@ extension Py {
         instanceSizeWithoutTail: PyIndexError.layout.size,
         staticMethods: Py.ErrorTypes.indexErrorStaticMethods,
         debugFn: PyIndexError.createDebugInfo(ptr:),
-        deinitialize: PyIndexError.deinitialize(ptr:)
+        deinitialize: PyIndexError.deinitialize(_:ptr:)
       )
 
       self.keyError = memory.newType(
@@ -414,7 +414,7 @@ extension Py {
         instanceSizeWithoutTail: PyKeyError.layout.size,
         staticMethods: Py.ErrorTypes.keyErrorStaticMethods,
         debugFn: PyKeyError.createDebugInfo(ptr:),
-        deinitialize: PyKeyError.deinitialize(ptr:)
+        deinitialize: PyKeyError.deinitialize(_:ptr:)
       )
 
       self.memoryError = memory.newType(
@@ -430,7 +430,7 @@ extension Py {
         instanceSizeWithoutTail: PyMemoryError.layout.size,
         staticMethods: Py.ErrorTypes.memoryErrorStaticMethods,
         debugFn: PyMemoryError.createDebugInfo(ptr:),
-        deinitialize: PyMemoryError.deinitialize(ptr:)
+        deinitialize: PyMemoryError.deinitialize(_:ptr:)
       )
 
       self.nameError = memory.newType(
@@ -446,7 +446,7 @@ extension Py {
         instanceSizeWithoutTail: PyNameError.layout.size,
         staticMethods: Py.ErrorTypes.nameErrorStaticMethods,
         debugFn: PyNameError.createDebugInfo(ptr:),
-        deinitialize: PyNameError.deinitialize(ptr:)
+        deinitialize: PyNameError.deinitialize(_:ptr:)
       )
 
       self.unboundLocalError = memory.newType(
@@ -462,7 +462,7 @@ extension Py {
         instanceSizeWithoutTail: PyUnboundLocalError.layout.size,
         staticMethods: Py.ErrorTypes.unboundLocalErrorStaticMethods,
         debugFn: PyUnboundLocalError.createDebugInfo(ptr:),
-        deinitialize: PyUnboundLocalError.deinitialize(ptr:)
+        deinitialize: PyUnboundLocalError.deinitialize(_:ptr:)
       )
 
       self.osError = memory.newType(
@@ -478,7 +478,7 @@ extension Py {
         instanceSizeWithoutTail: PyOSError.layout.size,
         staticMethods: Py.ErrorTypes.oSErrorStaticMethods,
         debugFn: PyOSError.createDebugInfo(ptr:),
-        deinitialize: PyOSError.deinitialize(ptr:)
+        deinitialize: PyOSError.deinitialize(_:ptr:)
       )
 
       self.blockingIOError = memory.newType(
@@ -494,7 +494,7 @@ extension Py {
         instanceSizeWithoutTail: PyBlockingIOError.layout.size,
         staticMethods: Py.ErrorTypes.blockingIOErrorStaticMethods,
         debugFn: PyBlockingIOError.createDebugInfo(ptr:),
-        deinitialize: PyBlockingIOError.deinitialize(ptr:)
+        deinitialize: PyBlockingIOError.deinitialize(_:ptr:)
       )
 
       self.childProcessError = memory.newType(
@@ -510,7 +510,7 @@ extension Py {
         instanceSizeWithoutTail: PyChildProcessError.layout.size,
         staticMethods: Py.ErrorTypes.childProcessErrorStaticMethods,
         debugFn: PyChildProcessError.createDebugInfo(ptr:),
-        deinitialize: PyChildProcessError.deinitialize(ptr:)
+        deinitialize: PyChildProcessError.deinitialize(_:ptr:)
       )
 
       self.connectionError = memory.newType(
@@ -526,7 +526,7 @@ extension Py {
         instanceSizeWithoutTail: PyConnectionError.layout.size,
         staticMethods: Py.ErrorTypes.connectionErrorStaticMethods,
         debugFn: PyConnectionError.createDebugInfo(ptr:),
-        deinitialize: PyConnectionError.deinitialize(ptr:)
+        deinitialize: PyConnectionError.deinitialize(_:ptr:)
       )
 
       self.brokenPipeError = memory.newType(
@@ -542,7 +542,7 @@ extension Py {
         instanceSizeWithoutTail: PyBrokenPipeError.layout.size,
         staticMethods: Py.ErrorTypes.brokenPipeErrorStaticMethods,
         debugFn: PyBrokenPipeError.createDebugInfo(ptr:),
-        deinitialize: PyBrokenPipeError.deinitialize(ptr:)
+        deinitialize: PyBrokenPipeError.deinitialize(_:ptr:)
       )
 
       self.connectionAbortedError = memory.newType(
@@ -558,7 +558,7 @@ extension Py {
         instanceSizeWithoutTail: PyConnectionAbortedError.layout.size,
         staticMethods: Py.ErrorTypes.connectionAbortedErrorStaticMethods,
         debugFn: PyConnectionAbortedError.createDebugInfo(ptr:),
-        deinitialize: PyConnectionAbortedError.deinitialize(ptr:)
+        deinitialize: PyConnectionAbortedError.deinitialize(_:ptr:)
       )
 
       self.connectionRefusedError = memory.newType(
@@ -574,7 +574,7 @@ extension Py {
         instanceSizeWithoutTail: PyConnectionRefusedError.layout.size,
         staticMethods: Py.ErrorTypes.connectionRefusedErrorStaticMethods,
         debugFn: PyConnectionRefusedError.createDebugInfo(ptr:),
-        deinitialize: PyConnectionRefusedError.deinitialize(ptr:)
+        deinitialize: PyConnectionRefusedError.deinitialize(_:ptr:)
       )
 
       self.connectionResetError = memory.newType(
@@ -590,7 +590,7 @@ extension Py {
         instanceSizeWithoutTail: PyConnectionResetError.layout.size,
         staticMethods: Py.ErrorTypes.connectionResetErrorStaticMethods,
         debugFn: PyConnectionResetError.createDebugInfo(ptr:),
-        deinitialize: PyConnectionResetError.deinitialize(ptr:)
+        deinitialize: PyConnectionResetError.deinitialize(_:ptr:)
       )
 
       self.fileExistsError = memory.newType(
@@ -606,7 +606,7 @@ extension Py {
         instanceSizeWithoutTail: PyFileExistsError.layout.size,
         staticMethods: Py.ErrorTypes.fileExistsErrorStaticMethods,
         debugFn: PyFileExistsError.createDebugInfo(ptr:),
-        deinitialize: PyFileExistsError.deinitialize(ptr:)
+        deinitialize: PyFileExistsError.deinitialize(_:ptr:)
       )
 
       self.fileNotFoundError = memory.newType(
@@ -622,7 +622,7 @@ extension Py {
         instanceSizeWithoutTail: PyFileNotFoundError.layout.size,
         staticMethods: Py.ErrorTypes.fileNotFoundErrorStaticMethods,
         debugFn: PyFileNotFoundError.createDebugInfo(ptr:),
-        deinitialize: PyFileNotFoundError.deinitialize(ptr:)
+        deinitialize: PyFileNotFoundError.deinitialize(_:ptr:)
       )
 
       self.interruptedError = memory.newType(
@@ -638,7 +638,7 @@ extension Py {
         instanceSizeWithoutTail: PyInterruptedError.layout.size,
         staticMethods: Py.ErrorTypes.interruptedErrorStaticMethods,
         debugFn: PyInterruptedError.createDebugInfo(ptr:),
-        deinitialize: PyInterruptedError.deinitialize(ptr:)
+        deinitialize: PyInterruptedError.deinitialize(_:ptr:)
       )
 
       self.isADirectoryError = memory.newType(
@@ -654,7 +654,7 @@ extension Py {
         instanceSizeWithoutTail: PyIsADirectoryError.layout.size,
         staticMethods: Py.ErrorTypes.isADirectoryErrorStaticMethods,
         debugFn: PyIsADirectoryError.createDebugInfo(ptr:),
-        deinitialize: PyIsADirectoryError.deinitialize(ptr:)
+        deinitialize: PyIsADirectoryError.deinitialize(_:ptr:)
       )
 
       self.notADirectoryError = memory.newType(
@@ -670,7 +670,7 @@ extension Py {
         instanceSizeWithoutTail: PyNotADirectoryError.layout.size,
         staticMethods: Py.ErrorTypes.notADirectoryErrorStaticMethods,
         debugFn: PyNotADirectoryError.createDebugInfo(ptr:),
-        deinitialize: PyNotADirectoryError.deinitialize(ptr:)
+        deinitialize: PyNotADirectoryError.deinitialize(_:ptr:)
       )
 
       self.permissionError = memory.newType(
@@ -686,7 +686,7 @@ extension Py {
         instanceSizeWithoutTail: PyPermissionError.layout.size,
         staticMethods: Py.ErrorTypes.permissionErrorStaticMethods,
         debugFn: PyPermissionError.createDebugInfo(ptr:),
-        deinitialize: PyPermissionError.deinitialize(ptr:)
+        deinitialize: PyPermissionError.deinitialize(_:ptr:)
       )
 
       self.processLookupError = memory.newType(
@@ -702,7 +702,7 @@ extension Py {
         instanceSizeWithoutTail: PyProcessLookupError.layout.size,
         staticMethods: Py.ErrorTypes.processLookupErrorStaticMethods,
         debugFn: PyProcessLookupError.createDebugInfo(ptr:),
-        deinitialize: PyProcessLookupError.deinitialize(ptr:)
+        deinitialize: PyProcessLookupError.deinitialize(_:ptr:)
       )
 
       self.timeoutError = memory.newType(
@@ -718,7 +718,7 @@ extension Py {
         instanceSizeWithoutTail: PyTimeoutError.layout.size,
         staticMethods: Py.ErrorTypes.timeoutErrorStaticMethods,
         debugFn: PyTimeoutError.createDebugInfo(ptr:),
-        deinitialize: PyTimeoutError.deinitialize(ptr:)
+        deinitialize: PyTimeoutError.deinitialize(_:ptr:)
       )
 
       self.referenceError = memory.newType(
@@ -734,7 +734,7 @@ extension Py {
         instanceSizeWithoutTail: PyReferenceError.layout.size,
         staticMethods: Py.ErrorTypes.referenceErrorStaticMethods,
         debugFn: PyReferenceError.createDebugInfo(ptr:),
-        deinitialize: PyReferenceError.deinitialize(ptr:)
+        deinitialize: PyReferenceError.deinitialize(_:ptr:)
       )
 
       self.runtimeError = memory.newType(
@@ -750,7 +750,7 @@ extension Py {
         instanceSizeWithoutTail: PyRuntimeError.layout.size,
         staticMethods: Py.ErrorTypes.runtimeErrorStaticMethods,
         debugFn: PyRuntimeError.createDebugInfo(ptr:),
-        deinitialize: PyRuntimeError.deinitialize(ptr:)
+        deinitialize: PyRuntimeError.deinitialize(_:ptr:)
       )
 
       self.notImplementedError = memory.newType(
@@ -766,7 +766,7 @@ extension Py {
         instanceSizeWithoutTail: PyNotImplementedError.layout.size,
         staticMethods: Py.ErrorTypes.notImplementedErrorStaticMethods,
         debugFn: PyNotImplementedError.createDebugInfo(ptr:),
-        deinitialize: PyNotImplementedError.deinitialize(ptr:)
+        deinitialize: PyNotImplementedError.deinitialize(_:ptr:)
       )
 
       self.recursionError = memory.newType(
@@ -782,7 +782,7 @@ extension Py {
         instanceSizeWithoutTail: PyRecursionError.layout.size,
         staticMethods: Py.ErrorTypes.recursionErrorStaticMethods,
         debugFn: PyRecursionError.createDebugInfo(ptr:),
-        deinitialize: PyRecursionError.deinitialize(ptr:)
+        deinitialize: PyRecursionError.deinitialize(_:ptr:)
       )
 
       self.syntaxError = memory.newType(
@@ -798,7 +798,7 @@ extension Py {
         instanceSizeWithoutTail: PySyntaxError.layout.size,
         staticMethods: Py.ErrorTypes.syntaxErrorStaticMethods,
         debugFn: PySyntaxError.createDebugInfo(ptr:),
-        deinitialize: PySyntaxError.deinitialize(ptr:)
+        deinitialize: PySyntaxError.deinitialize(_:ptr:)
       )
 
       self.indentationError = memory.newType(
@@ -814,7 +814,7 @@ extension Py {
         instanceSizeWithoutTail: PyIndentationError.layout.size,
         staticMethods: Py.ErrorTypes.indentationErrorStaticMethods,
         debugFn: PyIndentationError.createDebugInfo(ptr:),
-        deinitialize: PyIndentationError.deinitialize(ptr:)
+        deinitialize: PyIndentationError.deinitialize(_:ptr:)
       )
 
       self.tabError = memory.newType(
@@ -830,7 +830,7 @@ extension Py {
         instanceSizeWithoutTail: PyTabError.layout.size,
         staticMethods: Py.ErrorTypes.tabErrorStaticMethods,
         debugFn: PyTabError.createDebugInfo(ptr:),
-        deinitialize: PyTabError.deinitialize(ptr:)
+        deinitialize: PyTabError.deinitialize(_:ptr:)
       )
 
       self.systemError = memory.newType(
@@ -846,7 +846,7 @@ extension Py {
         instanceSizeWithoutTail: PySystemError.layout.size,
         staticMethods: Py.ErrorTypes.systemErrorStaticMethods,
         debugFn: PySystemError.createDebugInfo(ptr:),
-        deinitialize: PySystemError.deinitialize(ptr:)
+        deinitialize: PySystemError.deinitialize(_:ptr:)
       )
 
       self.typeError = memory.newType(
@@ -862,7 +862,7 @@ extension Py {
         instanceSizeWithoutTail: PyTypeError.layout.size,
         staticMethods: Py.ErrorTypes.typeErrorStaticMethods,
         debugFn: PyTypeError.createDebugInfo(ptr:),
-        deinitialize: PyTypeError.deinitialize(ptr:)
+        deinitialize: PyTypeError.deinitialize(_:ptr:)
       )
 
       self.valueError = memory.newType(
@@ -878,7 +878,7 @@ extension Py {
         instanceSizeWithoutTail: PyValueError.layout.size,
         staticMethods: Py.ErrorTypes.valueErrorStaticMethods,
         debugFn: PyValueError.createDebugInfo(ptr:),
-        deinitialize: PyValueError.deinitialize(ptr:)
+        deinitialize: PyValueError.deinitialize(_:ptr:)
       )
 
       self.unicodeError = memory.newType(
@@ -894,7 +894,7 @@ extension Py {
         instanceSizeWithoutTail: PyUnicodeError.layout.size,
         staticMethods: Py.ErrorTypes.unicodeErrorStaticMethods,
         debugFn: PyUnicodeError.createDebugInfo(ptr:),
-        deinitialize: PyUnicodeError.deinitialize(ptr:)
+        deinitialize: PyUnicodeError.deinitialize(_:ptr:)
       )
 
       self.unicodeDecodeError = memory.newType(
@@ -910,7 +910,7 @@ extension Py {
         instanceSizeWithoutTail: PyUnicodeDecodeError.layout.size,
         staticMethods: Py.ErrorTypes.unicodeDecodeErrorStaticMethods,
         debugFn: PyUnicodeDecodeError.createDebugInfo(ptr:),
-        deinitialize: PyUnicodeDecodeError.deinitialize(ptr:)
+        deinitialize: PyUnicodeDecodeError.deinitialize(_:ptr:)
       )
 
       self.unicodeEncodeError = memory.newType(
@@ -926,7 +926,7 @@ extension Py {
         instanceSizeWithoutTail: PyUnicodeEncodeError.layout.size,
         staticMethods: Py.ErrorTypes.unicodeEncodeErrorStaticMethods,
         debugFn: PyUnicodeEncodeError.createDebugInfo(ptr:),
-        deinitialize: PyUnicodeEncodeError.deinitialize(ptr:)
+        deinitialize: PyUnicodeEncodeError.deinitialize(_:ptr:)
       )
 
       self.unicodeTranslateError = memory.newType(
@@ -942,7 +942,7 @@ extension Py {
         instanceSizeWithoutTail: PyUnicodeTranslateError.layout.size,
         staticMethods: Py.ErrorTypes.unicodeTranslateErrorStaticMethods,
         debugFn: PyUnicodeTranslateError.createDebugInfo(ptr:),
-        deinitialize: PyUnicodeTranslateError.deinitialize(ptr:)
+        deinitialize: PyUnicodeTranslateError.deinitialize(_:ptr:)
       )
 
       self.warning = memory.newType(
@@ -958,7 +958,7 @@ extension Py {
         instanceSizeWithoutTail: PyWarning.layout.size,
         staticMethods: Py.ErrorTypes.warningStaticMethods,
         debugFn: PyWarning.createDebugInfo(ptr:),
-        deinitialize: PyWarning.deinitialize(ptr:)
+        deinitialize: PyWarning.deinitialize(_:ptr:)
       )
 
       self.deprecationWarning = memory.newType(
@@ -974,7 +974,7 @@ extension Py {
         instanceSizeWithoutTail: PyDeprecationWarning.layout.size,
         staticMethods: Py.ErrorTypes.deprecationWarningStaticMethods,
         debugFn: PyDeprecationWarning.createDebugInfo(ptr:),
-        deinitialize: PyDeprecationWarning.deinitialize(ptr:)
+        deinitialize: PyDeprecationWarning.deinitialize(_:ptr:)
       )
 
       self.pendingDeprecationWarning = memory.newType(
@@ -990,7 +990,7 @@ extension Py {
         instanceSizeWithoutTail: PyPendingDeprecationWarning.layout.size,
         staticMethods: Py.ErrorTypes.pendingDeprecationWarningStaticMethods,
         debugFn: PyPendingDeprecationWarning.createDebugInfo(ptr:),
-        deinitialize: PyPendingDeprecationWarning.deinitialize(ptr:)
+        deinitialize: PyPendingDeprecationWarning.deinitialize(_:ptr:)
       )
 
       self.runtimeWarning = memory.newType(
@@ -1006,7 +1006,7 @@ extension Py {
         instanceSizeWithoutTail: PyRuntimeWarning.layout.size,
         staticMethods: Py.ErrorTypes.runtimeWarningStaticMethods,
         debugFn: PyRuntimeWarning.createDebugInfo(ptr:),
-        deinitialize: PyRuntimeWarning.deinitialize(ptr:)
+        deinitialize: PyRuntimeWarning.deinitialize(_:ptr:)
       )
 
       self.syntaxWarning = memory.newType(
@@ -1022,7 +1022,7 @@ extension Py {
         instanceSizeWithoutTail: PySyntaxWarning.layout.size,
         staticMethods: Py.ErrorTypes.syntaxWarningStaticMethods,
         debugFn: PySyntaxWarning.createDebugInfo(ptr:),
-        deinitialize: PySyntaxWarning.deinitialize(ptr:)
+        deinitialize: PySyntaxWarning.deinitialize(_:ptr:)
       )
 
       self.userWarning = memory.newType(
@@ -1038,7 +1038,7 @@ extension Py {
         instanceSizeWithoutTail: PyUserWarning.layout.size,
         staticMethods: Py.ErrorTypes.userWarningStaticMethods,
         debugFn: PyUserWarning.createDebugInfo(ptr:),
-        deinitialize: PyUserWarning.deinitialize(ptr:)
+        deinitialize: PyUserWarning.deinitialize(_:ptr:)
       )
 
       self.futureWarning = memory.newType(
@@ -1054,7 +1054,7 @@ extension Py {
         instanceSizeWithoutTail: PyFutureWarning.layout.size,
         staticMethods: Py.ErrorTypes.futureWarningStaticMethods,
         debugFn: PyFutureWarning.createDebugInfo(ptr:),
-        deinitialize: PyFutureWarning.deinitialize(ptr:)
+        deinitialize: PyFutureWarning.deinitialize(_:ptr:)
       )
 
       self.importWarning = memory.newType(
@@ -1070,7 +1070,7 @@ extension Py {
         instanceSizeWithoutTail: PyImportWarning.layout.size,
         staticMethods: Py.ErrorTypes.importWarningStaticMethods,
         debugFn: PyImportWarning.createDebugInfo(ptr:),
-        deinitialize: PyImportWarning.deinitialize(ptr:)
+        deinitialize: PyImportWarning.deinitialize(_:ptr:)
       )
 
       self.unicodeWarning = memory.newType(
@@ -1086,7 +1086,7 @@ extension Py {
         instanceSizeWithoutTail: PyUnicodeWarning.layout.size,
         staticMethods: Py.ErrorTypes.unicodeWarningStaticMethods,
         debugFn: PyUnicodeWarning.createDebugInfo(ptr:),
-        deinitialize: PyUnicodeWarning.deinitialize(ptr:)
+        deinitialize: PyUnicodeWarning.deinitialize(_:ptr:)
       )
 
       self.bytesWarning = memory.newType(
@@ -1102,7 +1102,7 @@ extension Py {
         instanceSizeWithoutTail: PyBytesWarning.layout.size,
         staticMethods: Py.ErrorTypes.bytesWarningStaticMethods,
         debugFn: PyBytesWarning.createDebugInfo(ptr:),
-        deinitialize: PyBytesWarning.deinitialize(ptr:)
+        deinitialize: PyBytesWarning.deinitialize(_:ptr:)
       )
 
       self.resourceWarning = memory.newType(
@@ -1118,7 +1118,7 @@ extension Py {
         instanceSizeWithoutTail: PyResourceWarning.layout.size,
         staticMethods: Py.ErrorTypes.resourceWarningStaticMethods,
         debugFn: PyResourceWarning.createDebugInfo(ptr:),
-        deinitialize: PyResourceWarning.deinitialize(ptr:)
+        deinitialize: PyResourceWarning.deinitialize(_:ptr:)
       )
 
     }

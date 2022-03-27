@@ -41,7 +41,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyList(ptr: ptr)

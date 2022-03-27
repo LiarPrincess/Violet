@@ -83,13 +83,13 @@ public struct PyTextFile: PyObjectMixin {
     self.closeOnDealloc = closeOnDealloc
   }
 
-  internal func beforeDeinitialize() {
+  internal func beforeDeinitialize(_ py: Py) {
     // Remember that during 'deinit' we are not allowed to call any other
     // 'Python' function as the whole context may be deinitializing.
 
     if self.closeOnDealloc {
       // Regardless of whether it succeeded/failed we will ignore result.
-      _ = self.closeIfNotAlreadyClosed()
+      _ = self.closeIfNotAlreadyClosed(py)
     }
   }
 

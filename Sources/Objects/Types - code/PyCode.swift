@@ -306,7 +306,7 @@ public struct PyCode: PyObjectMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   // MARK: - Debug
 

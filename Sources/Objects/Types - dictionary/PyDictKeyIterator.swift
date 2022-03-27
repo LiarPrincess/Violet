@@ -38,7 +38,7 @@ public struct PyDictKeyIterator: PyObjectMixin, AbstractDictViewIterator {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyDictKeyIterator(ptr: ptr)

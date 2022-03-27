@@ -29,7 +29,7 @@ public struct PyType: PyObjectMixin {
   // MARK: - Properties
 
   public typealias DebugFn = (RawPtr) -> PyObject.DebugMirror
-  public typealias DeinitializeFn = (RawPtr) -> Void
+  public typealias DeinitializeFn = (Py, RawPtr) -> Void
 
   // sourcery: storedProperty
   internal var name: String {
@@ -164,7 +164,7 @@ public struct PyType: PyObjectMixin {
                                   instanceSizeWithoutTail: PyType.layout.size,
                                   staticMethods: Py.Types.typeStaticMethods,
                                   debugFn: PyType.createDebugInfo(ptr:),
-                                  deinitialize: PyType.deinitialize(ptr:))
+                                  deinitialize: PyType.deinitialize(_:ptr:))
 
     objectType.initializeProperties(name: "object",
                                     qualname: "object",
@@ -176,7 +176,7 @@ public struct PyType: PyObjectMixin {
                                     instanceSizeWithoutTail: PyObject.layout.size,
                                     staticMethods: Py.Types.objectStaticMethods,
                                     debugFn: PyObject.createDebugInfo(ptr:),
-                                    deinitialize: PyObject.deinitialize(ptr:))
+                                    deinitialize: PyObject.deinitialize(_:ptr:))
 
     objectType.subclassesPtr.pointee.append(typeType)
   }
@@ -211,7 +211,7 @@ public struct PyType: PyObjectMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   // MARK: - Debug
 

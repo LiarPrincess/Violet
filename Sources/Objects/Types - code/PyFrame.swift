@@ -247,7 +247,7 @@ public struct PyFrame: PyObjectMixin {
     return py.builtins.__dict__
   }
 
-  internal func beforeDeinitialize() {
+  internal func beforeDeinitialize(_ py: Py) {
     self.deallocateObjectStack()
     self.deallocateBlockStack()
     self.deallocateFastLocals()

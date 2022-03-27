@@ -144,7 +144,7 @@ public struct {swift_type_name}: PyErrorMixin {{
 
         print()
         print('  // Nothing to do here.')
-        print('  internal func beforeDeinitialize() { }')
+        print('  internal func beforeDeinitialize(_ py: Py) { }')
 
         # =============
         # === Debug ===
