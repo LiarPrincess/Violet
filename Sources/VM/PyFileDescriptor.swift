@@ -2,11 +2,11 @@ import Foundation
 import FileSystem
 import VioletObjects
 
-/// Adapter between `FileSystem.FileDescriptor` and `FileDescriptorType`.
+/// Adapter between `FileSystem.FileDescriptor` and `PyFileDescriptorType`.
 ///
 /// Basically it will call a method on provided `FileDescriptor`
 /// and then in case of exception it will convert it to Python error.
-internal struct FileDescriptorAdapter: CustomStringConvertible, FileDescriptorType {
+internal struct PyFileDescriptor: CustomStringConvertible, PyFileDescriptorType {
 
   private let fd: FileDescriptor
   /// Path for error messages

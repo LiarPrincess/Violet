@@ -2,7 +2,7 @@ import Foundation
 import VioletCore
 import VioletObjects
 
-class FakeWriteFileDescriptor: FileDescriptorType {
+class FakeWriteFileDescriptor: PyFileDescriptorType {
 
   let raw: Int32
 

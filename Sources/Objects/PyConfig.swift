@@ -24,11 +24,11 @@ public struct PyConfig {
   public var executablePath: Path
 
   /// Default stream to read from.
-  public var standardInput: FileDescriptorType
+  public var standardInput: PyFileDescriptorType
   /// Default stream to print to.
-  public var standardOutput: FileDescriptorType
+  public var standardOutput: PyFileDescriptorType
   /// Default stream to print errors to.
-  public var standardError: FileDescriptorType
+  public var standardError: PyFileDescriptorType
 
   public struct Sys {
 
@@ -56,9 +56,9 @@ public struct PyConfig {
     arguments: Arguments,
     environment: Environment,
     executablePath: Path,
-    standardInput: FileDescriptorType,
-    standardOutput: FileDescriptorType,
-    standardError: FileDescriptorType
+    standardInput: PyFileDescriptorType,
+    standardOutput: PyFileDescriptorType,
+    standardError: PyFileDescriptorType
   ) {
     self.arguments = arguments
     self.environment = environment

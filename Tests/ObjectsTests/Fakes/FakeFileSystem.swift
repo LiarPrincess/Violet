@@ -7,11 +7,11 @@ class FakeFileSystem: PyFileSystemType {
 
   var currentWorkingDirectory = Path(string: "cwd")
 
-  func open(_ py: Py, fd: Int32, mode: FileMode) -> PyResultGen<FileDescriptorType> {
+  func open(_ py: Py, fd: Int32, mode: FileMode) -> PyResultGen<PyFileDescriptorType> {
     shouldNotBeCalled()
   }
 
-  func open(_ py: Py, path: Path, mode: FileMode) -> PyResultGen<FileDescriptorType> {
+  func open(_ py: Py, path: Path, mode: FileMode) -> PyResultGen<PyFileDescriptorType> {
     shouldNotBeCalled()
   }
 

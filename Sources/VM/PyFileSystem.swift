@@ -22,11 +22,11 @@ internal class PyFileSystem: PyFileSystemType {
 
   internal func open(_ py: Py,
                      fd: Int32,
-                     mode: FileMode) -> PyResultGen<FileDescriptorType> {
+                     mode: FileMode) -> PyResultGen<PyFileDescriptorType> {
     // When we get raw descriptor we assume that the user knows what they
     // are doing, which means that we can ignore 'mode'.
     let result = FileDescriptor(fileDescriptor: fd, closeOnDealloc: false)
-    let adapter = FileDescriptorAdapter(fd: result, path: nil)
+    let adapter = PyFileDescriptor(fd: result, path: nil)
     return .value(adapter)
   }
 
@@ -34,7 +34,7 @@ internal class PyFileSystem: PyFileSystemType {
   /// _io_FileIO___init___impl(fileio *self, PyObject *nameobj, … )
   internal func open(_ py: Py,
                      path: Path,
-                     mode: FileMode) -> PyResultGen<FileDescriptorType> {
+                     mode: FileMode) -> PyResultGen<PyFileDescriptorType> {
     var flags: Int32 = 0
     switch mode {
     case .read: flags |= O_RDONLY
@@ -48,7 +48,7 @@ internal class PyFileSystem: PyFileSystemType {
     if let fd = FileDescriptor(path: path.string,
                                flags: flags,
                                createMode: createMode) {
-      let adapter = FileDescriptorAdapter(fd: fd, path: path.string)
+      let adapter = PyFileDescriptor(fd: fd, path: path.string)
       return .value(adapter)
     }
 

@@ -20,7 +20,7 @@ extension Sys {
     return self.getTextFile(.stdin)
   }
 
-  public func setStdin(fd: FileDescriptorType?) -> PyBaseException? {
+  public func setStdin(fd: PyFileDescriptorType?) -> PyBaseException? {
     let value = self.createStdio(kind: .stdin, fd: fd)
     return self.set(.stdin, value: value)
   }
@@ -39,7 +39,7 @@ extension Sys {
     return self.getTextFile(.stdout)
   }
 
-  public func setStdout(fd: FileDescriptorType?) -> PyBaseException? {
+  public func setStdout(fd: PyFileDescriptorType?) -> PyBaseException? {
     let value = self.createStdio(kind: .stdout, fd: fd)
     return self.set(.stdout, value: value)
   }
@@ -58,7 +58,7 @@ extension Sys {
     return self.getTextFile(.stderr)
   }
 
-  public func setStderr(fd: FileDescriptorType?) -> PyBaseException? {
+  public func setStderr(fd: PyFileDescriptorType?) -> PyBaseException? {
     let value = self.createStdio(kind: .stderr, fd: fd)
     return self.set(.stderr, value: value)
   }
@@ -173,7 +173,7 @@ extension Sys {
 
   /// static PyObject*
   /// create_stdio(PyObject* io,
-  private func createStdio(kind: StdioKind, fd: FileDescriptorType?) -> PyObject {
+  private func createStdio(kind: StdioKind, fd: PyFileDescriptorType?) -> PyObject {
     guard let fd = fd else {
       return self.py.none.asObject
     }

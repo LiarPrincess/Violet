@@ -5567,7 +5567,7 @@ extension PyTextFile {
         initialAlignment: PyObject.layout.alignment,
         fields: [
           PyMemory.FieldLayout(from: String?.self), // PyTextFile.name
-          PyMemory.FieldLayout(from: FileDescriptorType.self), // PyTextFile.fd
+          PyMemory.FieldLayout(from: PyFileDescriptorType.self), // PyTextFile.fd
           PyMemory.FieldLayout(from: FileMode.self), // PyTextFile.mode
           PyMemory.FieldLayout(from: PyString.Encoding.self), // PyTextFile.encoding
           PyMemory.FieldLayout(from: PyString.ErrorHandling.self) // PyTextFile.errorHandling
@@ -5597,7 +5597,7 @@ extension PyTextFile {
   /// Property: `PyTextFile.name`.
   internal var namePtr: Ptr<String?> { Ptr(self.ptr, offset: Self.layout.nameOffset) }
   /// Property: `PyTextFile.fd`.
-  internal var fdPtr: Ptr<FileDescriptorType> { Ptr(self.ptr, offset: Self.layout.fdOffset) }
+  internal var fdPtr: Ptr<PyFileDescriptorType> { Ptr(self.ptr, offset: Self.layout.fdOffset) }
   /// Property: `PyTextFile.mode`.
   internal var modePtr: Ptr<FileMode> { Ptr(self.ptr, offset: Self.layout.modeOffset) }
   /// Property: `PyTextFile.encoding`.
@@ -5660,7 +5660,7 @@ extension PyMemory {
   public func newTextFile(_ py: Py,
                           type: PyType,
                           name: String?,
-                          fd: FileDescriptorType,
+                          fd: PyFileDescriptorType,
                           mode: FileMode,
                           encoding: PyString.Encoding,
                           errorHandling: PyString.ErrorHandling,

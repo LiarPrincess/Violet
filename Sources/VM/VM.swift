@@ -19,9 +19,9 @@ public final class VM {
       arguments: arguments,
       environment: environment,
       executablePath: Path(string: executablePath),
-      standardInput: FileDescriptorAdapter(fd: .standardInput, path: "stdin"),
-      standardOutput: FileDescriptorAdapter(fd: .standardOutput, path: "stdin"),
-      standardError: FileDescriptorAdapter(fd: .standardError, path: "stderr")
+      standardInput: PyFileDescriptor(fd: .standardInput, path: "stdin"),
+      standardOutput: PyFileDescriptor(fd: .standardOutput, path: "stdin"),
+      standardError: PyFileDescriptor(fd: .standardError, path: "stderr")
     )
 
     self.delegate = PyDelegate()

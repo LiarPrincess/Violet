@@ -107,7 +107,7 @@ public struct Py: CustomStringConvertible {
   // sourcery: storedProperty
   public var delegate: PyDelegateType { self.delegatePtr.pointee }
   // sourcery: storedProperty
-  public var fileSystem: PyFileSystem { self.fileSystemPtr.pointee }
+  public var fileSystem: PyFileSystemType { self.fileSystemPtr.pointee }
 
   // sourcery: storedProperty
   public var memory: PyMemory { self.memoryPtr.pointee }
@@ -126,7 +126,7 @@ public struct Py: CustomStringConvertible {
 
   public init(config: PyConfig,
               delegate: PyDelegateType,
-              fileSystem: PyFileSystem) {
+              fileSystem: PyFileSystemType) {
     checkInvariants()
 
     self.ptr = PyMemory.allocatePy()
