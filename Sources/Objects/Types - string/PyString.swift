@@ -100,7 +100,7 @@ public struct PyString: PyObjectMixin, AbstractString {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   // MARK: - Debug
 

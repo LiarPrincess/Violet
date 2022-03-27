@@ -49,7 +49,7 @@ public struct PyKeyboardInterrupt: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyKeyboardInterrupt(ptr: ptr)
@@ -131,7 +131,7 @@ public struct PyGeneratorExit: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyGeneratorExit(ptr: ptr)
@@ -213,7 +213,7 @@ public struct PyException: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyException(ptr: ptr)
@@ -295,7 +295,7 @@ public struct PyStopAsyncIteration: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyStopAsyncIteration(ptr: ptr)
@@ -377,7 +377,7 @@ public struct PyArithmeticError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyArithmeticError(ptr: ptr)
@@ -459,7 +459,7 @@ public struct PyFloatingPointError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyFloatingPointError(ptr: ptr)
@@ -541,7 +541,7 @@ public struct PyOverflowError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyOverflowError(ptr: ptr)
@@ -623,7 +623,7 @@ public struct PyZeroDivisionError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyZeroDivisionError(ptr: ptr)
@@ -705,7 +705,7 @@ public struct PyAssertionError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyAssertionError(ptr: ptr)
@@ -787,7 +787,7 @@ public struct PyAttributeError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyAttributeError(ptr: ptr)
@@ -869,7 +869,7 @@ public struct PyBufferError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyBufferError(ptr: ptr)
@@ -951,7 +951,7 @@ public struct PyEOFError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyEOFError(ptr: ptr)
@@ -1055,7 +1055,7 @@ public struct PyModuleNotFoundError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyModuleNotFoundError(ptr: ptr)
@@ -1137,7 +1137,7 @@ public struct PyLookupError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyLookupError(ptr: ptr)
@@ -1219,7 +1219,7 @@ public struct PyIndexError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyIndexError(ptr: ptr)
@@ -1301,7 +1301,7 @@ public struct PyMemoryError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyMemoryError(ptr: ptr)
@@ -1383,7 +1383,7 @@ public struct PyNameError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyNameError(ptr: ptr)
@@ -1465,7 +1465,7 @@ public struct PyUnboundLocalError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyUnboundLocalError(ptr: ptr)
@@ -1547,7 +1547,7 @@ public struct PyOSError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyOSError(ptr: ptr)
@@ -1629,7 +1629,7 @@ public struct PyBlockingIOError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyBlockingIOError(ptr: ptr)
@@ -1711,7 +1711,7 @@ public struct PyChildProcessError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyChildProcessError(ptr: ptr)
@@ -1793,7 +1793,7 @@ public struct PyConnectionError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyConnectionError(ptr: ptr)
@@ -1875,7 +1875,7 @@ public struct PyBrokenPipeError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyBrokenPipeError(ptr: ptr)
@@ -1957,7 +1957,7 @@ public struct PyConnectionAbortedError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyConnectionAbortedError(ptr: ptr)
@@ -2039,7 +2039,7 @@ public struct PyConnectionRefusedError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyConnectionRefusedError(ptr: ptr)
@@ -2121,7 +2121,7 @@ public struct PyConnectionResetError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyConnectionResetError(ptr: ptr)
@@ -2203,7 +2203,7 @@ public struct PyFileExistsError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyFileExistsError(ptr: ptr)
@@ -2285,7 +2285,7 @@ public struct PyFileNotFoundError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyFileNotFoundError(ptr: ptr)
@@ -2367,7 +2367,7 @@ public struct PyInterruptedError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyInterruptedError(ptr: ptr)
@@ -2449,7 +2449,7 @@ public struct PyIsADirectoryError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyIsADirectoryError(ptr: ptr)
@@ -2531,7 +2531,7 @@ public struct PyNotADirectoryError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyNotADirectoryError(ptr: ptr)
@@ -2613,7 +2613,7 @@ public struct PyPermissionError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyPermissionError(ptr: ptr)
@@ -2695,7 +2695,7 @@ public struct PyProcessLookupError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyProcessLookupError(ptr: ptr)
@@ -2777,7 +2777,7 @@ public struct PyTimeoutError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyTimeoutError(ptr: ptr)
@@ -2859,7 +2859,7 @@ public struct PyReferenceError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyReferenceError(ptr: ptr)
@@ -2941,7 +2941,7 @@ public struct PyRuntimeError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyRuntimeError(ptr: ptr)
@@ -3023,7 +3023,7 @@ public struct PyNotImplementedError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyNotImplementedError(ptr: ptr)
@@ -3105,7 +3105,7 @@ public struct PyRecursionError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyRecursionError(ptr: ptr)
@@ -3215,7 +3215,7 @@ public struct PyIndentationError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyIndentationError(ptr: ptr)
@@ -3325,7 +3325,7 @@ public struct PyTabError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyTabError(ptr: ptr)
@@ -3410,7 +3410,7 @@ public struct PySystemError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PySystemError(ptr: ptr)
@@ -3492,7 +3492,7 @@ public struct PyTypeError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyTypeError(ptr: ptr)
@@ -3574,7 +3574,7 @@ public struct PyValueError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyValueError(ptr: ptr)
@@ -3656,7 +3656,7 @@ public struct PyUnicodeError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyUnicodeError(ptr: ptr)
@@ -3738,7 +3738,7 @@ public struct PyUnicodeDecodeError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyUnicodeDecodeError(ptr: ptr)
@@ -3820,7 +3820,7 @@ public struct PyUnicodeEncodeError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyUnicodeEncodeError(ptr: ptr)
@@ -3902,7 +3902,7 @@ public struct PyUnicodeTranslateError: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyUnicodeTranslateError(ptr: ptr)
@@ -3984,7 +3984,7 @@ public struct PyWarning: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyWarning(ptr: ptr)
@@ -4066,7 +4066,7 @@ public struct PyDeprecationWarning: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyDeprecationWarning(ptr: ptr)
@@ -4149,7 +4149,7 @@ public struct PyPendingDeprecationWarning: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyPendingDeprecationWarning(ptr: ptr)
@@ -4231,7 +4231,7 @@ public struct PyRuntimeWarning: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyRuntimeWarning(ptr: ptr)
@@ -4313,7 +4313,7 @@ public struct PySyntaxWarning: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PySyntaxWarning(ptr: ptr)
@@ -4395,7 +4395,7 @@ public struct PyUserWarning: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyUserWarning(ptr: ptr)
@@ -4478,7 +4478,7 @@ public struct PyFutureWarning: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyFutureWarning(ptr: ptr)
@@ -4560,7 +4560,7 @@ public struct PyImportWarning: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyImportWarning(ptr: ptr)
@@ -4643,7 +4643,7 @@ public struct PyUnicodeWarning: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyUnicodeWarning(ptr: ptr)
@@ -4726,7 +4726,7 @@ public struct PyBytesWarning: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyBytesWarning(ptr: ptr)
@@ -4808,7 +4808,7 @@ public struct PyResourceWarning: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyResourceWarning(ptr: ptr)

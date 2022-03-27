@@ -100,13 +100,13 @@ extension PyBool {
     base.initialize(py, type: type, value: value)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyBool(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyInt.deinitialize(ptr: ptr)
+    PyInt.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyBool? {
@@ -210,9 +210,9 @@ extension PyBuiltinFunction {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyBuiltinFunction(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.functionPtr.deinitialize()
@@ -221,7 +221,7 @@ extension PyBuiltinFunction {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyBuiltinFunction? {
@@ -338,9 +338,9 @@ extension PyBuiltinMethod {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyBuiltinMethod(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.functionPtr.deinitialize()
@@ -350,7 +350,7 @@ extension PyBuiltinMethod {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyBuiltinMethod? {
@@ -454,16 +454,16 @@ extension PyByteArray {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyByteArray(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.elementsPtr.deinitialize()
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyByteArray? {
@@ -562,9 +562,9 @@ extension PyByteArrayIterator {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyByteArrayIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.bytesPtr.deinitialize()
@@ -572,7 +572,7 @@ extension PyByteArrayIterator {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyByteArrayIterator? {
@@ -666,16 +666,16 @@ extension PyBytes {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyBytes(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.elementsPtr.deinitialize()
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyBytes? {
@@ -774,9 +774,9 @@ extension PyBytesIterator {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyBytesIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.bytesPtr.deinitialize()
@@ -784,7 +784,7 @@ extension PyBytesIterator {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyBytesIterator? {
@@ -883,9 +883,9 @@ extension PyCallableIterator {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyCallableIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.callablePtr.deinitialize()
@@ -893,7 +893,7 @@ extension PyCallableIterator {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyCallableIterator? {
@@ -993,16 +993,16 @@ extension PyCell {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyCell(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.contentPtr.deinitialize()
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyCell? {
@@ -1096,16 +1096,16 @@ extension PyClassMethod {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyClassMethod(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.callablePtr.deinitialize()
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyClassMethod? {
@@ -1274,9 +1274,9 @@ extension PyCode {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyCode(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.codeObjectPtr.deinitialize()
@@ -1298,7 +1298,7 @@ extension PyCode {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyCode? {
@@ -1397,9 +1397,9 @@ extension PyComplex {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyComplex(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.realPtr.deinitialize()
@@ -1407,7 +1407,7 @@ extension PyComplex {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyComplex? {
@@ -1507,16 +1507,16 @@ extension PyDict {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyDict(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.elementsPtr.deinitialize()
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyDict? {
@@ -1620,9 +1620,9 @@ extension PyDictItemIterator {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyDictItemIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.dictPtr.deinitialize()
@@ -1631,7 +1631,7 @@ extension PyDictItemIterator {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyDictItemIterator? {
@@ -1725,16 +1725,16 @@ extension PyDictItems {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyDictItems(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.dictPtr.deinitialize()
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyDictItems? {
@@ -1838,9 +1838,9 @@ extension PyDictKeyIterator {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyDictKeyIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.dictPtr.deinitialize()
@@ -1849,7 +1849,7 @@ extension PyDictKeyIterator {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyDictKeyIterator? {
@@ -1943,16 +1943,16 @@ extension PyDictKeys {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyDictKeys(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.dictPtr.deinitialize()
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyDictKeys? {
@@ -2056,9 +2056,9 @@ extension PyDictValueIterator {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyDictValueIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.dictPtr.deinitialize()
@@ -2067,7 +2067,7 @@ extension PyDictValueIterator {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyDictValueIterator? {
@@ -2161,16 +2161,16 @@ extension PyDictValues {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyDictValues(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.dictPtr.deinitialize()
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyDictValues? {
@@ -2243,13 +2243,13 @@ extension PyEllipsis {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyEllipsis(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyEllipsis? {
@@ -2348,9 +2348,9 @@ extension PyEnumerate {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyEnumerate(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.iteratorPtr.deinitialize()
@@ -2358,7 +2358,7 @@ extension PyEnumerate {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyEnumerate? {
@@ -2463,9 +2463,9 @@ extension PyFilter {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyFilter(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.fnPtr.deinitialize()
@@ -2473,7 +2473,7 @@ extension PyFilter {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyFilter? {
@@ -2573,16 +2573,16 @@ extension PyFloat {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyFloat(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.valuePtr.deinitialize()
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyFloat? {
@@ -2736,9 +2736,9 @@ extension PyFrame {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyFrame(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.codePtr.deinitialize()
@@ -2757,7 +2757,7 @@ extension PyFrame {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyFrame? {
@@ -2861,16 +2861,16 @@ extension PyFrozenSet {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyFrozenSet(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.elementsPtr.deinitialize()
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyFrozenSet? {
@@ -3009,9 +3009,9 @@ extension PyFunction {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyFunction(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.namePtr.deinitialize()
@@ -3027,7 +3027,7 @@ extension PyFunction {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyFunction? {
@@ -3131,16 +3131,16 @@ extension PyInt {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyInt(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.valuePtr.deinitialize()
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyInt? {
@@ -3239,9 +3239,9 @@ extension PyIterator {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.sequencePtr.deinitialize()
@@ -3249,7 +3249,7 @@ extension PyIterator {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyIterator? {
@@ -3343,16 +3343,16 @@ extension PyList {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyList(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.elementsPtr.deinitialize()
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyList? {
@@ -3451,9 +3451,9 @@ extension PyListIterator {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyListIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.listPtr.deinitialize()
@@ -3461,7 +3461,7 @@ extension PyListIterator {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyListIterator? {
@@ -3560,9 +3560,9 @@ extension PyListReverseIterator {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyListReverseIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.listPtr.deinitialize()
@@ -3570,7 +3570,7 @@ extension PyListReverseIterator {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyListReverseIterator? {
@@ -3669,9 +3669,9 @@ extension PyMap {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyMap(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.fnPtr.deinitialize()
@@ -3679,7 +3679,7 @@ extension PyMap {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyMap? {
@@ -3784,9 +3784,9 @@ extension PyMethod {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyMethod(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.functionPtr.deinitialize()
@@ -3794,7 +3794,7 @@ extension PyMethod {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyMethod? {
@@ -3873,13 +3873,13 @@ extension PyModule {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyModule(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyModule? {
@@ -3960,13 +3960,13 @@ extension PyNamespace {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyNamespace(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyNamespace? {
@@ -4039,13 +4039,13 @@ extension PyNone {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyNone(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyNone? {
@@ -4118,13 +4118,13 @@ extension PyNotImplemented {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyNotImplemented(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyNotImplemented? {
@@ -4209,9 +4209,9 @@ extension PyObject {
   /// Property: `PyObject.flags`.
   internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: Self.layout.flagsOffset) }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyObject(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.typePtr.deinitialize()
@@ -4312,9 +4312,9 @@ extension PyProperty {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyProperty(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf._getPtr.deinitialize()
@@ -4324,7 +4324,7 @@ extension PyProperty {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyProperty? {
@@ -4443,9 +4443,9 @@ extension PyRange {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyRange(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.startPtr.deinitialize()
@@ -4455,7 +4455,7 @@ extension PyRange {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyRange? {
@@ -4572,9 +4572,9 @@ extension PyRangeIterator {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyRangeIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.startPtr.deinitialize()
@@ -4584,7 +4584,7 @@ extension PyRangeIterator {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyRangeIterator? {
@@ -4691,9 +4691,9 @@ extension PyReversed {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyReversed(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.sequencePtr.deinitialize()
@@ -4701,7 +4701,7 @@ extension PyReversed {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyReversed? {
@@ -4801,16 +4801,16 @@ extension PySet {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PySet(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.elementsPtr.deinitialize()
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PySet? {
@@ -4914,9 +4914,9 @@ extension PySetIterator {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PySetIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.setPtr.deinitialize()
@@ -4925,7 +4925,7 @@ extension PySetIterator {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PySetIterator? {
@@ -5040,9 +5040,9 @@ extension PySlice {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PySlice(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.startPtr.deinitialize()
@@ -5051,7 +5051,7 @@ extension PySlice {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PySlice? {
@@ -5153,16 +5153,16 @@ extension PyStaticMethod {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyStaticMethod(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.callablePtr.deinitialize()
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyStaticMethod? {
@@ -5266,9 +5266,9 @@ extension PyString {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyString(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.cachedCountPtr.deinitialize()
@@ -5277,7 +5277,7 @@ extension PyString {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyString? {
@@ -5376,9 +5376,9 @@ extension PyStringIterator {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyStringIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.stringPtr.deinitialize()
@@ -5386,7 +5386,7 @@ extension PyStringIterator {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyStringIterator? {
@@ -5490,9 +5490,9 @@ extension PySuper {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PySuper(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.thisClassPtr.deinitialize()
@@ -5501,7 +5501,7 @@ extension PySuper {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PySuper? {
@@ -5623,9 +5623,9 @@ extension PyTextFile {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyTextFile(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.namePtr.deinitialize()
@@ -5636,7 +5636,7 @@ extension PyTextFile {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyTextFile? {
@@ -5759,9 +5759,9 @@ extension PyTraceback {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyTraceback(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.nextPtr.deinitialize()
@@ -5771,7 +5771,7 @@ extension PyTraceback {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyTraceback? {
@@ -5875,16 +5875,16 @@ extension PyTuple {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyTuple(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.elementsPtr.deinitialize()
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyTuple? {
@@ -5983,9 +5983,9 @@ extension PyTupleIterator {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyTupleIterator(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.tuplePtr.deinitialize()
@@ -5993,7 +5993,7 @@ extension PyTupleIterator {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyTupleIterator? {
@@ -6137,9 +6137,9 @@ extension PyType {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyType(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.namePtr.deinitialize()
@@ -6156,7 +6156,7 @@ extension PyType {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyType? {
@@ -6274,16 +6274,16 @@ extension PyZip {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyZip(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.iteratorsPtr.deinitialize()
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyZip? {
@@ -6384,13 +6384,13 @@ extension PyArithmeticError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyArithmeticError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyException.deinitialize(ptr: ptr)
+    PyException.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyArithmeticError? {
@@ -6503,13 +6503,13 @@ extension PyAssertionError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyAssertionError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyException.deinitialize(ptr: ptr)
+    PyException.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyAssertionError? {
@@ -6622,13 +6622,13 @@ extension PyAttributeError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyAttributeError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyException.deinitialize(ptr: ptr)
+    PyException.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyAttributeError? {
@@ -6749,9 +6749,9 @@ extension PyBaseException {
     base.initialize(py, type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyBaseException(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.argsPtr.deinitialize()
@@ -6761,7 +6761,7 @@ extension PyBaseException {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyObject.deinitialize(ptr: ptr)
+    PyObject.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyBaseException? {
@@ -6874,13 +6874,13 @@ extension PyBlockingIOError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyBlockingIOError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyOSError.deinitialize(ptr: ptr)
+    PyOSError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyBlockingIOError? {
@@ -6993,13 +6993,13 @@ extension PyBrokenPipeError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyBrokenPipeError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyConnectionError.deinitialize(ptr: ptr)
+    PyConnectionError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyBrokenPipeError? {
@@ -7112,13 +7112,13 @@ extension PyBufferError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyBufferError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyException.deinitialize(ptr: ptr)
+    PyException.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyBufferError? {
@@ -7231,13 +7231,13 @@ extension PyBytesWarning {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyBytesWarning(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyWarning.deinitialize(ptr: ptr)
+    PyWarning.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyBytesWarning? {
@@ -7350,13 +7350,13 @@ extension PyChildProcessError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyChildProcessError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyOSError.deinitialize(ptr: ptr)
+    PyOSError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyChildProcessError? {
@@ -7469,13 +7469,13 @@ extension PyConnectionAbortedError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyConnectionAbortedError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyConnectionError.deinitialize(ptr: ptr)
+    PyConnectionError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyConnectionAbortedError? {
@@ -7588,13 +7588,13 @@ extension PyConnectionError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyConnectionError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyOSError.deinitialize(ptr: ptr)
+    PyOSError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyConnectionError? {
@@ -7707,13 +7707,13 @@ extension PyConnectionRefusedError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyConnectionRefusedError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyConnectionError.deinitialize(ptr: ptr)
+    PyConnectionError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyConnectionRefusedError? {
@@ -7826,13 +7826,13 @@ extension PyConnectionResetError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyConnectionResetError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyConnectionError.deinitialize(ptr: ptr)
+    PyConnectionError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyConnectionResetError? {
@@ -7945,13 +7945,13 @@ extension PyDeprecationWarning {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyDeprecationWarning(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyWarning.deinitialize(ptr: ptr)
+    PyWarning.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyDeprecationWarning? {
@@ -8064,13 +8064,13 @@ extension PyEOFError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyEOFError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyException.deinitialize(ptr: ptr)
+    PyException.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyEOFError? {
@@ -8183,13 +8183,13 @@ extension PyException {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyException(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyBaseException.deinitialize(ptr: ptr)
+    PyBaseException.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyException? {
@@ -8302,13 +8302,13 @@ extension PyFileExistsError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyFileExistsError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyOSError.deinitialize(ptr: ptr)
+    PyOSError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyFileExistsError? {
@@ -8421,13 +8421,13 @@ extension PyFileNotFoundError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyFileNotFoundError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyOSError.deinitialize(ptr: ptr)
+    PyOSError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyFileNotFoundError? {
@@ -8540,13 +8540,13 @@ extension PyFloatingPointError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyFloatingPointError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyArithmeticError.deinitialize(ptr: ptr)
+    PyArithmeticError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyFloatingPointError? {
@@ -8659,13 +8659,13 @@ extension PyFutureWarning {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyFutureWarning(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyWarning.deinitialize(ptr: ptr)
+    PyWarning.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyFutureWarning? {
@@ -8778,13 +8778,13 @@ extension PyGeneratorExit {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyGeneratorExit(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyBaseException.deinitialize(ptr: ptr)
+    PyBaseException.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyGeneratorExit? {
@@ -8928,9 +8928,9 @@ extension PyImportError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyImportError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.msgPtr.deinitialize()
@@ -8939,7 +8939,7 @@ extension PyImportError {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyException.deinitialize(ptr: ptr)
+    PyException.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyImportError? {
@@ -9079,13 +9079,13 @@ extension PyImportWarning {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyImportWarning(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyWarning.deinitialize(ptr: ptr)
+    PyWarning.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyImportWarning? {
@@ -9249,13 +9249,13 @@ extension PyIndentationError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyIndentationError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PySyntaxError.deinitialize(ptr: ptr)
+    PySyntaxError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyIndentationError? {
@@ -9401,13 +9401,13 @@ extension PyIndexError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyIndexError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyLookupError.deinitialize(ptr: ptr)
+    PyLookupError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyIndexError? {
@@ -9520,13 +9520,13 @@ extension PyInterruptedError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyInterruptedError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyOSError.deinitialize(ptr: ptr)
+    PyOSError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyInterruptedError? {
@@ -9639,13 +9639,13 @@ extension PyIsADirectoryError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyIsADirectoryError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyOSError.deinitialize(ptr: ptr)
+    PyOSError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyIsADirectoryError? {
@@ -9758,13 +9758,13 @@ extension PyKeyError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyKeyError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyLookupError.deinitialize(ptr: ptr)
+    PyLookupError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyKeyError? {
@@ -9877,13 +9877,13 @@ extension PyKeyboardInterrupt {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyKeyboardInterrupt(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyBaseException.deinitialize(ptr: ptr)
+    PyBaseException.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyKeyboardInterrupt? {
@@ -9996,13 +9996,13 @@ extension PyLookupError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyLookupError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyException.deinitialize(ptr: ptr)
+    PyException.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyLookupError? {
@@ -10115,13 +10115,13 @@ extension PyMemoryError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyMemoryError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyException.deinitialize(ptr: ptr)
+    PyException.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyMemoryError? {
@@ -10267,13 +10267,13 @@ extension PyModuleNotFoundError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyModuleNotFoundError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyImportError.deinitialize(ptr: ptr)
+    PyImportError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyModuleNotFoundError? {
@@ -10413,13 +10413,13 @@ extension PyNameError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyNameError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyException.deinitialize(ptr: ptr)
+    PyException.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyNameError? {
@@ -10532,13 +10532,13 @@ extension PyNotADirectoryError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyNotADirectoryError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyOSError.deinitialize(ptr: ptr)
+    PyOSError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyNotADirectoryError? {
@@ -10651,13 +10651,13 @@ extension PyNotImplementedError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyNotImplementedError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyRuntimeError.deinitialize(ptr: ptr)
+    PyRuntimeError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyNotImplementedError? {
@@ -10770,13 +10770,13 @@ extension PyOSError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyOSError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyException.deinitialize(ptr: ptr)
+    PyException.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyOSError? {
@@ -10889,13 +10889,13 @@ extension PyOverflowError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyOverflowError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyArithmeticError.deinitialize(ptr: ptr)
+    PyArithmeticError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyOverflowError? {
@@ -11008,13 +11008,13 @@ extension PyPendingDeprecationWarning {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyPendingDeprecationWarning(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyWarning.deinitialize(ptr: ptr)
+    PyWarning.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyPendingDeprecationWarning? {
@@ -11127,13 +11127,13 @@ extension PyPermissionError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyPermissionError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyOSError.deinitialize(ptr: ptr)
+    PyOSError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyPermissionError? {
@@ -11246,13 +11246,13 @@ extension PyProcessLookupError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyProcessLookupError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyOSError.deinitialize(ptr: ptr)
+    PyOSError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyProcessLookupError? {
@@ -11365,13 +11365,13 @@ extension PyRecursionError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyRecursionError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyRuntimeError.deinitialize(ptr: ptr)
+    PyRuntimeError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyRecursionError? {
@@ -11484,13 +11484,13 @@ extension PyReferenceError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyReferenceError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyException.deinitialize(ptr: ptr)
+    PyException.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyReferenceError? {
@@ -11603,13 +11603,13 @@ extension PyResourceWarning {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyResourceWarning(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyWarning.deinitialize(ptr: ptr)
+    PyWarning.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyResourceWarning? {
@@ -11722,13 +11722,13 @@ extension PyRuntimeError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyRuntimeError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyException.deinitialize(ptr: ptr)
+    PyException.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyRuntimeError? {
@@ -11841,13 +11841,13 @@ extension PyRuntimeWarning {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyRuntimeWarning(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyWarning.deinitialize(ptr: ptr)
+    PyWarning.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyRuntimeWarning? {
@@ -11960,13 +11960,13 @@ extension PyStopAsyncIteration {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyStopAsyncIteration(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyException.deinitialize(ptr: ptr)
+    PyException.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyStopAsyncIteration? {
@@ -12100,16 +12100,16 @@ extension PyStopIteration {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyStopIteration(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.valuePtr.deinitialize()
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyException.deinitialize(ptr: ptr)
+    PyException.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyStopIteration? {
@@ -12291,9 +12291,9 @@ extension PySyntaxError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PySyntaxError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.msgPtr.deinitialize()
@@ -12305,7 +12305,7 @@ extension PySyntaxError {
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyException.deinitialize(ptr: ptr)
+    PyException.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PySyntaxError? {
@@ -12451,13 +12451,13 @@ extension PySyntaxWarning {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PySyntaxWarning(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyWarning.deinitialize(ptr: ptr)
+    PyWarning.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PySyntaxWarning? {
@@ -12570,13 +12570,13 @@ extension PySystemError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PySystemError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyException.deinitialize(ptr: ptr)
+    PyException.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PySystemError? {
@@ -12710,16 +12710,16 @@ extension PySystemExit {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PySystemExit(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on all of our own properties.
     zelf.codePtr.deinitialize()
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyBaseException.deinitialize(ptr: ptr)
+    PyBaseException.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PySystemExit? {
@@ -12906,13 +12906,13 @@ extension PyTabError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyTabError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyIndentationError.deinitialize(ptr: ptr)
+    PyIndentationError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyTabError? {
@@ -13058,13 +13058,13 @@ extension PyTimeoutError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyTimeoutError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyOSError.deinitialize(ptr: ptr)
+    PyOSError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyTimeoutError? {
@@ -13177,13 +13177,13 @@ extension PyTypeError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyTypeError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyException.deinitialize(ptr: ptr)
+    PyException.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyTypeError? {
@@ -13296,13 +13296,13 @@ extension PyUnboundLocalError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyUnboundLocalError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyNameError.deinitialize(ptr: ptr)
+    PyNameError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyUnboundLocalError? {
@@ -13415,13 +13415,13 @@ extension PyUnicodeDecodeError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyUnicodeDecodeError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyUnicodeError.deinitialize(ptr: ptr)
+    PyUnicodeError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyUnicodeDecodeError? {
@@ -13534,13 +13534,13 @@ extension PyUnicodeEncodeError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyUnicodeEncodeError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyUnicodeError.deinitialize(ptr: ptr)
+    PyUnicodeError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyUnicodeEncodeError? {
@@ -13653,13 +13653,13 @@ extension PyUnicodeError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyUnicodeError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyValueError.deinitialize(ptr: ptr)
+    PyValueError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyUnicodeError? {
@@ -13772,13 +13772,13 @@ extension PyUnicodeTranslateError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyUnicodeTranslateError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyUnicodeError.deinitialize(ptr: ptr)
+    PyUnicodeError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyUnicodeTranslateError? {
@@ -13891,13 +13891,13 @@ extension PyUnicodeWarning {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyUnicodeWarning(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyWarning.deinitialize(ptr: ptr)
+    PyWarning.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyUnicodeWarning? {
@@ -14010,13 +14010,13 @@ extension PyUserWarning {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyUserWarning(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyWarning.deinitialize(ptr: ptr)
+    PyWarning.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyUserWarning? {
@@ -14129,13 +14129,13 @@ extension PyValueError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyValueError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyException.deinitialize(ptr: ptr)
+    PyException.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyValueError? {
@@ -14248,13 +14248,13 @@ extension PyWarning {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyWarning(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyException.deinitialize(ptr: ptr)
+    PyException.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyWarning? {
@@ -14367,13 +14367,13 @@ extension PyZeroDivisionError {
                     suppressContext: suppressContext)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
     let zelf = PyZeroDivisionError(ptr: ptr)
-    zelf.beforeDeinitialize()
+    zelf.beforeDeinitialize(py)
 
     // Call 'deinitialize' on base type.
     // This will also call base type 'beforeDeinitialize'.
-    PyArithmeticError.deinitialize(ptr: ptr)
+    PyArithmeticError.deinitialize(py, ptr: ptr)
   }
 
   internal static func downcast(_ py: Py, _ object: PyObject) -> PyZeroDivisionError? {

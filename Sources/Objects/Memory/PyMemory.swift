@@ -48,13 +48,12 @@ public final class PyMemory {
     return RawPtr.allocate(byteCount: byteCount, alignment: alignment)
   }
 
-  public func destroy(object: PyObject) {
+  public func destroy(_ py: Py, object: PyObject) {
     let ptr = object.ptr
+
+    // 1. Remove it from the list.
     let previous = object.memoryInfo.previous
     let next = object.memoryInfo.next
-
-    object.type.deinitialize(ptr)
-    object.ptr.deallocate()
 
     previous?.memoryInfo.next = next
     next?.memoryInfo.previous = previous
@@ -66,6 +65,11 @@ public final class PyMemory {
     if let last = self.lastAllocatedObject, last.ptr === ptr {
       self.lastAllocatedObject = previous
     }
+
+    // 2. Deinitialize & deallocate.
+    // A new object may be allocated during 'deinitialize'!
+    object.type.deinitialize(py, ptr)
+    object.ptr.deallocate()
 
 #if DEBUG
     self.destroyedObjectCount += 1
@@ -85,7 +89,7 @@ public final class PyMemory {
 
     // Remember that objects may be created in the 'deinitalize' functions!
     while let object = memory.lastAllocatedObject {
-      memory.destroy(object: object)
+      memory.destroy(py, object: object)
     }
 
     py.deinitialize()

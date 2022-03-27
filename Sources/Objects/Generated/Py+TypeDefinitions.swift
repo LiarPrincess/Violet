@@ -117,7 +117,7 @@ extension Py {
         instanceSizeWithoutTail: PyBuiltinFunction.layout.size,
         staticMethods: Py.Types.builtinFunctionStaticMethods,
         debugFn: PyBuiltinFunction.createDebugInfo(ptr:),
-        deinitialize: PyBuiltinFunction.deinitialize(ptr:)
+        deinitialize: PyBuiltinFunction.deinitialize(_:ptr:)
       )
 
       self.builtinMethod = memory.newType(
@@ -133,7 +133,7 @@ extension Py {
         instanceSizeWithoutTail: PyBuiltinMethod.layout.size,
         staticMethods: Py.Types.builtinMethodStaticMethods,
         debugFn: PyBuiltinMethod.createDebugInfo(ptr:),
-        deinitialize: PyBuiltinMethod.deinitialize(ptr:)
+        deinitialize: PyBuiltinMethod.deinitialize(_:ptr:)
       )
 
       self.bytearray = memory.newType(
@@ -149,7 +149,7 @@ extension Py {
         instanceSizeWithoutTail: PyByteArray.layout.size,
         staticMethods: Py.Types.byteArrayStaticMethods,
         debugFn: PyByteArray.createDebugInfo(ptr:),
-        deinitialize: PyByteArray.deinitialize(ptr:)
+        deinitialize: PyByteArray.deinitialize(_:ptr:)
       )
 
       self.bytearray_iterator = memory.newType(
@@ -165,7 +165,7 @@ extension Py {
         instanceSizeWithoutTail: PyByteArrayIterator.layout.size,
         staticMethods: Py.Types.byteArrayIteratorStaticMethods,
         debugFn: PyByteArrayIterator.createDebugInfo(ptr:),
-        deinitialize: PyByteArrayIterator.deinitialize(ptr:)
+        deinitialize: PyByteArrayIterator.deinitialize(_:ptr:)
       )
 
       self.bytes = memory.newType(
@@ -181,7 +181,7 @@ extension Py {
         instanceSizeWithoutTail: PyBytes.layout.size,
         staticMethods: Py.Types.bytesStaticMethods,
         debugFn: PyBytes.createDebugInfo(ptr:),
-        deinitialize: PyBytes.deinitialize(ptr:)
+        deinitialize: PyBytes.deinitialize(_:ptr:)
       )
 
       self.bytes_iterator = memory.newType(
@@ -197,7 +197,7 @@ extension Py {
         instanceSizeWithoutTail: PyBytesIterator.layout.size,
         staticMethods: Py.Types.bytesIteratorStaticMethods,
         debugFn: PyBytesIterator.createDebugInfo(ptr:),
-        deinitialize: PyBytesIterator.deinitialize(ptr:)
+        deinitialize: PyBytesIterator.deinitialize(_:ptr:)
       )
 
       self.callable_iterator = memory.newType(
@@ -213,7 +213,7 @@ extension Py {
         instanceSizeWithoutTail: PyCallableIterator.layout.size,
         staticMethods: Py.Types.callableIteratorStaticMethods,
         debugFn: PyCallableIterator.createDebugInfo(ptr:),
-        deinitialize: PyCallableIterator.deinitialize(ptr:)
+        deinitialize: PyCallableIterator.deinitialize(_:ptr:)
       )
 
       self.cell = memory.newType(
@@ -229,7 +229,7 @@ extension Py {
         instanceSizeWithoutTail: PyCell.layout.size,
         staticMethods: Py.Types.cellStaticMethods,
         debugFn: PyCell.createDebugInfo(ptr:),
-        deinitialize: PyCell.deinitialize(ptr:)
+        deinitialize: PyCell.deinitialize(_:ptr:)
       )
 
       self.classmethod = memory.newType(
@@ -245,7 +245,7 @@ extension Py {
         instanceSizeWithoutTail: PyClassMethod.layout.size,
         staticMethods: Py.Types.classMethodStaticMethods,
         debugFn: PyClassMethod.createDebugInfo(ptr:),
-        deinitialize: PyClassMethod.deinitialize(ptr:)
+        deinitialize: PyClassMethod.deinitialize(_:ptr:)
       )
 
       self.code = memory.newType(
@@ -261,7 +261,7 @@ extension Py {
         instanceSizeWithoutTail: PyCode.layout.size,
         staticMethods: Py.Types.codeStaticMethods,
         debugFn: PyCode.createDebugInfo(ptr:),
-        deinitialize: PyCode.deinitialize(ptr:)
+        deinitialize: PyCode.deinitialize(_:ptr:)
       )
 
       self.complex = memory.newType(
@@ -277,7 +277,7 @@ extension Py {
         instanceSizeWithoutTail: PyComplex.layout.size,
         staticMethods: Py.Types.complexStaticMethods,
         debugFn: PyComplex.createDebugInfo(ptr:),
-        deinitialize: PyComplex.deinitialize(ptr:)
+        deinitialize: PyComplex.deinitialize(_:ptr:)
       )
 
       self.dict = memory.newType(
@@ -293,7 +293,7 @@ extension Py {
         instanceSizeWithoutTail: PyDict.layout.size,
         staticMethods: Py.Types.dictStaticMethods,
         debugFn: PyDict.createDebugInfo(ptr:),
-        deinitialize: PyDict.deinitialize(ptr:)
+        deinitialize: PyDict.deinitialize(_:ptr:)
       )
 
       self.dict_itemiterator = memory.newType(
@@ -309,7 +309,7 @@ extension Py {
         instanceSizeWithoutTail: PyDictItemIterator.layout.size,
         staticMethods: Py.Types.dictItemIteratorStaticMethods,
         debugFn: PyDictItemIterator.createDebugInfo(ptr:),
-        deinitialize: PyDictItemIterator.deinitialize(ptr:)
+        deinitialize: PyDictItemIterator.deinitialize(_:ptr:)
       )
 
       self.dict_items = memory.newType(
@@ -325,7 +325,7 @@ extension Py {
         instanceSizeWithoutTail: PyDictItems.layout.size,
         staticMethods: Py.Types.dictItemsStaticMethods,
         debugFn: PyDictItems.createDebugInfo(ptr:),
-        deinitialize: PyDictItems.deinitialize(ptr:)
+        deinitialize: PyDictItems.deinitialize(_:ptr:)
       )
 
       self.dict_keyiterator = memory.newType(
@@ -341,7 +341,7 @@ extension Py {
         instanceSizeWithoutTail: PyDictKeyIterator.layout.size,
         staticMethods: Py.Types.dictKeyIteratorStaticMethods,
         debugFn: PyDictKeyIterator.createDebugInfo(ptr:),
-        deinitialize: PyDictKeyIterator.deinitialize(ptr:)
+        deinitialize: PyDictKeyIterator.deinitialize(_:ptr:)
       )
 
       self.dict_keys = memory.newType(
@@ -357,7 +357,7 @@ extension Py {
         instanceSizeWithoutTail: PyDictKeys.layout.size,
         staticMethods: Py.Types.dictKeysStaticMethods,
         debugFn: PyDictKeys.createDebugInfo(ptr:),
-        deinitialize: PyDictKeys.deinitialize(ptr:)
+        deinitialize: PyDictKeys.deinitialize(_:ptr:)
       )
 
       self.dict_valueiterator = memory.newType(
@@ -373,7 +373,7 @@ extension Py {
         instanceSizeWithoutTail: PyDictValueIterator.layout.size,
         staticMethods: Py.Types.dictValueIteratorStaticMethods,
         debugFn: PyDictValueIterator.createDebugInfo(ptr:),
-        deinitialize: PyDictValueIterator.deinitialize(ptr:)
+        deinitialize: PyDictValueIterator.deinitialize(_:ptr:)
       )
 
       self.dict_values = memory.newType(
@@ -389,7 +389,7 @@ extension Py {
         instanceSizeWithoutTail: PyDictValues.layout.size,
         staticMethods: Py.Types.dictValuesStaticMethods,
         debugFn: PyDictValues.createDebugInfo(ptr:),
-        deinitialize: PyDictValues.deinitialize(ptr:)
+        deinitialize: PyDictValues.deinitialize(_:ptr:)
       )
 
       self.ellipsis = memory.newType(
@@ -405,7 +405,7 @@ extension Py {
         instanceSizeWithoutTail: PyEllipsis.layout.size,
         staticMethods: Py.Types.ellipsisStaticMethods,
         debugFn: PyEllipsis.createDebugInfo(ptr:),
-        deinitialize: PyEllipsis.deinitialize(ptr:)
+        deinitialize: PyEllipsis.deinitialize(_:ptr:)
       )
 
       self.enumerate = memory.newType(
@@ -421,7 +421,7 @@ extension Py {
         instanceSizeWithoutTail: PyEnumerate.layout.size,
         staticMethods: Py.Types.enumerateStaticMethods,
         debugFn: PyEnumerate.createDebugInfo(ptr:),
-        deinitialize: PyEnumerate.deinitialize(ptr:)
+        deinitialize: PyEnumerate.deinitialize(_:ptr:)
       )
 
       self.filter = memory.newType(
@@ -437,7 +437,7 @@ extension Py {
         instanceSizeWithoutTail: PyFilter.layout.size,
         staticMethods: Py.Types.filterStaticMethods,
         debugFn: PyFilter.createDebugInfo(ptr:),
-        deinitialize: PyFilter.deinitialize(ptr:)
+        deinitialize: PyFilter.deinitialize(_:ptr:)
       )
 
       self.float = memory.newType(
@@ -453,7 +453,7 @@ extension Py {
         instanceSizeWithoutTail: PyFloat.layout.size,
         staticMethods: Py.Types.floatStaticMethods,
         debugFn: PyFloat.createDebugInfo(ptr:),
-        deinitialize: PyFloat.deinitialize(ptr:)
+        deinitialize: PyFloat.deinitialize(_:ptr:)
       )
 
       self.frame = memory.newType(
@@ -469,7 +469,7 @@ extension Py {
         instanceSizeWithoutTail: PyFrame.layout.size,
         staticMethods: Py.Types.frameStaticMethods,
         debugFn: PyFrame.createDebugInfo(ptr:),
-        deinitialize: PyFrame.deinitialize(ptr:)
+        deinitialize: PyFrame.deinitialize(_:ptr:)
       )
 
       self.frozenset = memory.newType(
@@ -485,7 +485,7 @@ extension Py {
         instanceSizeWithoutTail: PyFrozenSet.layout.size,
         staticMethods: Py.Types.frozenSetStaticMethods,
         debugFn: PyFrozenSet.createDebugInfo(ptr:),
-        deinitialize: PyFrozenSet.deinitialize(ptr:)
+        deinitialize: PyFrozenSet.deinitialize(_:ptr:)
       )
 
       self.function = memory.newType(
@@ -501,7 +501,7 @@ extension Py {
         instanceSizeWithoutTail: PyFunction.layout.size,
         staticMethods: Py.Types.functionStaticMethods,
         debugFn: PyFunction.createDebugInfo(ptr:),
-        deinitialize: PyFunction.deinitialize(ptr:)
+        deinitialize: PyFunction.deinitialize(_:ptr:)
       )
 
       self.int = memory.newType(
@@ -517,7 +517,7 @@ extension Py {
         instanceSizeWithoutTail: PyInt.layout.size,
         staticMethods: Py.Types.intStaticMethods,
         debugFn: PyInt.createDebugInfo(ptr:),
-        deinitialize: PyInt.deinitialize(ptr:)
+        deinitialize: PyInt.deinitialize(_:ptr:)
       )
 
       self.iterator = memory.newType(
@@ -533,7 +533,7 @@ extension Py {
         instanceSizeWithoutTail: PyIterator.layout.size,
         staticMethods: Py.Types.iteratorStaticMethods,
         debugFn: PyIterator.createDebugInfo(ptr:),
-        deinitialize: PyIterator.deinitialize(ptr:)
+        deinitialize: PyIterator.deinitialize(_:ptr:)
       )
 
       self.list = memory.newType(
@@ -549,7 +549,7 @@ extension Py {
         instanceSizeWithoutTail: PyList.layout.size,
         staticMethods: Py.Types.listStaticMethods,
         debugFn: PyList.createDebugInfo(ptr:),
-        deinitialize: PyList.deinitialize(ptr:)
+        deinitialize: PyList.deinitialize(_:ptr:)
       )
 
       self.list_iterator = memory.newType(
@@ -565,7 +565,7 @@ extension Py {
         instanceSizeWithoutTail: PyListIterator.layout.size,
         staticMethods: Py.Types.listIteratorStaticMethods,
         debugFn: PyListIterator.createDebugInfo(ptr:),
-        deinitialize: PyListIterator.deinitialize(ptr:)
+        deinitialize: PyListIterator.deinitialize(_:ptr:)
       )
 
       self.list_reverseiterator = memory.newType(
@@ -581,7 +581,7 @@ extension Py {
         instanceSizeWithoutTail: PyListReverseIterator.layout.size,
         staticMethods: Py.Types.listReverseIteratorStaticMethods,
         debugFn: PyListReverseIterator.createDebugInfo(ptr:),
-        deinitialize: PyListReverseIterator.deinitialize(ptr:)
+        deinitialize: PyListReverseIterator.deinitialize(_:ptr:)
       )
 
       self.map = memory.newType(
@@ -597,7 +597,7 @@ extension Py {
         instanceSizeWithoutTail: PyMap.layout.size,
         staticMethods: Py.Types.mapStaticMethods,
         debugFn: PyMap.createDebugInfo(ptr:),
-        deinitialize: PyMap.deinitialize(ptr:)
+        deinitialize: PyMap.deinitialize(_:ptr:)
       )
 
       self.method = memory.newType(
@@ -613,7 +613,7 @@ extension Py {
         instanceSizeWithoutTail: PyMethod.layout.size,
         staticMethods: Py.Types.methodStaticMethods,
         debugFn: PyMethod.createDebugInfo(ptr:),
-        deinitialize: PyMethod.deinitialize(ptr:)
+        deinitialize: PyMethod.deinitialize(_:ptr:)
       )
 
       self.module = memory.newType(
@@ -629,7 +629,7 @@ extension Py {
         instanceSizeWithoutTail: PyModule.layout.size,
         staticMethods: Py.Types.moduleStaticMethods,
         debugFn: PyModule.createDebugInfo(ptr:),
-        deinitialize: PyModule.deinitialize(ptr:)
+        deinitialize: PyModule.deinitialize(_:ptr:)
       )
 
       self.simpleNamespace = memory.newType(
@@ -645,7 +645,7 @@ extension Py {
         instanceSizeWithoutTail: PyNamespace.layout.size,
         staticMethods: Py.Types.namespaceStaticMethods,
         debugFn: PyNamespace.createDebugInfo(ptr:),
-        deinitialize: PyNamespace.deinitialize(ptr:)
+        deinitialize: PyNamespace.deinitialize(_:ptr:)
       )
 
       self.none = memory.newType(
@@ -661,7 +661,7 @@ extension Py {
         instanceSizeWithoutTail: PyNone.layout.size,
         staticMethods: Py.Types.noneStaticMethods,
         debugFn: PyNone.createDebugInfo(ptr:),
-        deinitialize: PyNone.deinitialize(ptr:)
+        deinitialize: PyNone.deinitialize(_:ptr:)
       )
 
       self.notImplemented = memory.newType(
@@ -677,7 +677,7 @@ extension Py {
         instanceSizeWithoutTail: PyNotImplemented.layout.size,
         staticMethods: Py.Types.notImplementedStaticMethods,
         debugFn: PyNotImplemented.createDebugInfo(ptr:),
-        deinitialize: PyNotImplemented.deinitialize(ptr:)
+        deinitialize: PyNotImplemented.deinitialize(_:ptr:)
       )
 
       self.property = memory.newType(
@@ -693,7 +693,7 @@ extension Py {
         instanceSizeWithoutTail: PyProperty.layout.size,
         staticMethods: Py.Types.propertyStaticMethods,
         debugFn: PyProperty.createDebugInfo(ptr:),
-        deinitialize: PyProperty.deinitialize(ptr:)
+        deinitialize: PyProperty.deinitialize(_:ptr:)
       )
 
       self.range = memory.newType(
@@ -709,7 +709,7 @@ extension Py {
         instanceSizeWithoutTail: PyRange.layout.size,
         staticMethods: Py.Types.rangeStaticMethods,
         debugFn: PyRange.createDebugInfo(ptr:),
-        deinitialize: PyRange.deinitialize(ptr:)
+        deinitialize: PyRange.deinitialize(_:ptr:)
       )
 
       self.range_iterator = memory.newType(
@@ -725,7 +725,7 @@ extension Py {
         instanceSizeWithoutTail: PyRangeIterator.layout.size,
         staticMethods: Py.Types.rangeIteratorStaticMethods,
         debugFn: PyRangeIterator.createDebugInfo(ptr:),
-        deinitialize: PyRangeIterator.deinitialize(ptr:)
+        deinitialize: PyRangeIterator.deinitialize(_:ptr:)
       )
 
       self.reversed = memory.newType(
@@ -741,7 +741,7 @@ extension Py {
         instanceSizeWithoutTail: PyReversed.layout.size,
         staticMethods: Py.Types.reversedStaticMethods,
         debugFn: PyReversed.createDebugInfo(ptr:),
-        deinitialize: PyReversed.deinitialize(ptr:)
+        deinitialize: PyReversed.deinitialize(_:ptr:)
       )
 
       self.set = memory.newType(
@@ -757,7 +757,7 @@ extension Py {
         instanceSizeWithoutTail: PySet.layout.size,
         staticMethods: Py.Types.setStaticMethods,
         debugFn: PySet.createDebugInfo(ptr:),
-        deinitialize: PySet.deinitialize(ptr:)
+        deinitialize: PySet.deinitialize(_:ptr:)
       )
 
       self.set_iterator = memory.newType(
@@ -773,7 +773,7 @@ extension Py {
         instanceSizeWithoutTail: PySetIterator.layout.size,
         staticMethods: Py.Types.setIteratorStaticMethods,
         debugFn: PySetIterator.createDebugInfo(ptr:),
-        deinitialize: PySetIterator.deinitialize(ptr:)
+        deinitialize: PySetIterator.deinitialize(_:ptr:)
       )
 
       self.slice = memory.newType(
@@ -789,7 +789,7 @@ extension Py {
         instanceSizeWithoutTail: PySlice.layout.size,
         staticMethods: Py.Types.sliceStaticMethods,
         debugFn: PySlice.createDebugInfo(ptr:),
-        deinitialize: PySlice.deinitialize(ptr:)
+        deinitialize: PySlice.deinitialize(_:ptr:)
       )
 
       self.staticmethod = memory.newType(
@@ -805,7 +805,7 @@ extension Py {
         instanceSizeWithoutTail: PyStaticMethod.layout.size,
         staticMethods: Py.Types.staticMethodStaticMethods,
         debugFn: PyStaticMethod.createDebugInfo(ptr:),
-        deinitialize: PyStaticMethod.deinitialize(ptr:)
+        deinitialize: PyStaticMethod.deinitialize(_:ptr:)
       )
 
       self.str = memory.newType(
@@ -821,7 +821,7 @@ extension Py {
         instanceSizeWithoutTail: PyString.layout.size,
         staticMethods: Py.Types.stringStaticMethods,
         debugFn: PyString.createDebugInfo(ptr:),
-        deinitialize: PyString.deinitialize(ptr:)
+        deinitialize: PyString.deinitialize(_:ptr:)
       )
 
       self.str_iterator = memory.newType(
@@ -837,7 +837,7 @@ extension Py {
         instanceSizeWithoutTail: PyStringIterator.layout.size,
         staticMethods: Py.Types.stringIteratorStaticMethods,
         debugFn: PyStringIterator.createDebugInfo(ptr:),
-        deinitialize: PyStringIterator.deinitialize(ptr:)
+        deinitialize: PyStringIterator.deinitialize(_:ptr:)
       )
 
       self.`super` = memory.newType(
@@ -853,7 +853,7 @@ extension Py {
         instanceSizeWithoutTail: PySuper.layout.size,
         staticMethods: Py.Types.superStaticMethods,
         debugFn: PySuper.createDebugInfo(ptr:),
-        deinitialize: PySuper.deinitialize(ptr:)
+        deinitialize: PySuper.deinitialize(_:ptr:)
       )
 
       self.textFile = memory.newType(
@@ -869,7 +869,7 @@ extension Py {
         instanceSizeWithoutTail: PyTextFile.layout.size,
         staticMethods: Py.Types.textFileStaticMethods,
         debugFn: PyTextFile.createDebugInfo(ptr:),
-        deinitialize: PyTextFile.deinitialize(ptr:)
+        deinitialize: PyTextFile.deinitialize(_:ptr:)
       )
 
       self.traceback = memory.newType(
@@ -885,7 +885,7 @@ extension Py {
         instanceSizeWithoutTail: PyTraceback.layout.size,
         staticMethods: Py.Types.tracebackStaticMethods,
         debugFn: PyTraceback.createDebugInfo(ptr:),
-        deinitialize: PyTraceback.deinitialize(ptr:)
+        deinitialize: PyTraceback.deinitialize(_:ptr:)
       )
 
       self.tuple = memory.newType(
@@ -901,7 +901,7 @@ extension Py {
         instanceSizeWithoutTail: PyTuple.layout.size,
         staticMethods: Py.Types.tupleStaticMethods,
         debugFn: PyTuple.createDebugInfo(ptr:),
-        deinitialize: PyTuple.deinitialize(ptr:)
+        deinitialize: PyTuple.deinitialize(_:ptr:)
       )
 
       self.tuple_iterator = memory.newType(
@@ -917,7 +917,7 @@ extension Py {
         instanceSizeWithoutTail: PyTupleIterator.layout.size,
         staticMethods: Py.Types.tupleIteratorStaticMethods,
         debugFn: PyTupleIterator.createDebugInfo(ptr:),
-        deinitialize: PyTupleIterator.deinitialize(ptr:)
+        deinitialize: PyTupleIterator.deinitialize(_:ptr:)
       )
 
       self.zip = memory.newType(
@@ -933,7 +933,7 @@ extension Py {
         instanceSizeWithoutTail: PyZip.layout.size,
         staticMethods: Py.Types.zipStaticMethods,
         debugFn: PyZip.createDebugInfo(ptr:),
-        deinitialize: PyZip.deinitialize(ptr:)
+        deinitialize: PyZip.deinitialize(_:ptr:)
       )
 
       // And now we can set 'bool' (because we have 'self.int').
@@ -950,7 +950,7 @@ extension Py {
         instanceSizeWithoutTail: PyBool.layout.size,
         staticMethods: Py.Types.boolStaticMethods,
         debugFn: PyBool.createDebugInfo(ptr:),
-        deinitialize: PyBool.deinitialize(ptr:)
+        deinitialize: PyBool.deinitialize(_:ptr:)
       )
     }
 

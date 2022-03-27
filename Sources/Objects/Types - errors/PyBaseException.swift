@@ -96,7 +96,7 @@ public struct PyBaseException: PyErrorMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   // MARK: - Debug
 

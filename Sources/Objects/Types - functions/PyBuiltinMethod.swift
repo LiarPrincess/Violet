@@ -44,7 +44,7 @@ public struct PyBuiltinMethod: PyObjectMixin, AbstractBuiltinFunction {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyBuiltinMethod(ptr: ptr)

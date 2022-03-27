@@ -51,7 +51,7 @@ public struct PyClassMethod: PyObjectMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   // MARK: - Debug
 

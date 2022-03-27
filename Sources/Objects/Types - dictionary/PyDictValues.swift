@@ -27,7 +27,7 @@ public struct PyDictValues: PyObjectMixin, AbstractDictView {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize() { }
+  internal func beforeDeinitialize(_ py: Py) { }
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyDictValues(ptr: ptr)
