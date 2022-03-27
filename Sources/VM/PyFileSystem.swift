@@ -4,7 +4,7 @@ import VioletObjects
 
 // cSpell:ignore fileio nameobj
 
-internal class PyFileSystemImpl: PyFileSystem {
+internal class PyFileSystem: PyFileSystemType {
 
   private let fileSystem: FileSystem
 
