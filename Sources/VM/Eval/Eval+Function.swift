@@ -290,7 +290,11 @@ extension Eval {
     let name = self.code.names[nameIndex]
     let object = self.stack.top
 
-    switch self.py.loadMethod(object: object, selector: name) {
+    // The 'allowsCallableFromDict' is crucial here!
+    // Tbh. 'loadMethod' was the main reason why this parameter exists.
+    switch self.py.getMethod(object: object,
+                             selector: name,
+                             allowsCallableFromDict: true) {
     case let .value(o):
       self.stack.top = o
       return .ok

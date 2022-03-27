@@ -8,7 +8,7 @@ import VioletBytecode
 
 // sourcery: pytype = super, isDefault, hasGC, isBaseType
 // sourcery: subclassInstancesHave__dict__
-public struct PySuper: PyObjectMixin, HasCustomGetMethod {
+public struct PySuper: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc = """
