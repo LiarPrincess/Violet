@@ -17,7 +17,7 @@ public func !==(lhs: PyType, rhs: PyType) -> Bool {
 
 // sourcery: pytype = type, isDefault, hasGC, isBaseType, isTypeSubclass
 // sourcery: instancesHave__dict__
-public struct PyType: PyObjectMixin, HasCustomGetMethod {
+public struct PyType: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc = """

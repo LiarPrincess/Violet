@@ -128,17 +128,8 @@ extension Py {
       return .error(e)
     }
   }
-}
 
-// MARK: - Get method
-
-internal protocol HasCustomGetMethod {
-  func getMethod(_ py: Py,
-                 selector: PyString,
-                 allowsCallableFromDict: Bool) -> Py.GetMethodResult
-}
-
-extension Py {
+  // MARK: - Get method
 
   public enum GetMethodResult {
     /// Method found (_yay!_), here is its value (_double yay!_).
@@ -158,28 +149,15 @@ extension Py {
     }
   }
 
-  /// DO NOT USE THIS METHOD!
-  /// It is only there for `LOAD_METHOD` instruction.
-  /// Use `getMethod` instead.
-  ///
-  /// (The difference between `loadMethod` and `getMethod` is that `loadMethod`
-  /// will also include callable properties from `__dict__`.)
-  public func loadMethod(object: PyObject,
-                         selector: PyString) -> GetMethodResult {
-    return self.getMethod(object: object,
-                          selector: selector,
-                          allowsCallableFromDict: true)
-  }
-
   /// int
   /// _PyObject_GetMethod(PyObject *obj, PyObject *name, PyObject **method)
   public func getMethod(object: PyObject,
                         selector: PyString,
                         allowsCallableFromDict: Bool = false) -> GetMethodResult {
-    if let obj = object as? HasCustomGetMethod {
-      return obj.getMethod(self,
-                           selector: selector,
-                           allowsCallableFromDict: allowsCallableFromDict)
+    if let result = self.customGetMethod(object: object,
+                                         selector: selector,
+                                         allowsCallableFromDict: allowsCallableFromDict) {
+      return result
     }
 
     let staticProperty: PyObject?
@@ -224,6 +202,43 @@ extension Py {
 
     let e = self.newAttributeError(object: object, hasNoAttribute: selector)
     return .notFound(e.asBaseException)
+  }
+
+  // TODO: Solve 'customGetMethod' differently?
+  // We can't use protocol, because most of the time the Swift runtime type is
+  // 'PyObject'. We would have to use 'self.cast' to cast to a specific type to
+  // do the protocol check and this is basically the same thing as we are doing
+  // right now.
+
+  private func customGetMethod(object: PyObject,
+                               selector: PyString,
+                               allowsCallableFromDict: Bool) -> GetMethodResult? {
+    // Types have special dispatch because… oh so many reasons!
+    if let type = self.cast.asType(object) {
+      return type.getMethod(self,
+                            selector: selector,
+                            allowsCallableFromDict: allowsCallableFromDict)
+    }
+
+    // The main thing in 'super' is having as special dispatch, sooo…
+    // Also, please notice the pun in the name!
+    if let soup = self.cast.asSuper(object) {
+      return soup.getMethod(self,
+                            selector: selector,
+                            allowsCallableFromDict: allowsCallableFromDict)
+    }
+
+    // Descriptors use a comparision with 'None' to determine if they are either
+    // invoked by an instance binding or a static binding.
+    // Unfortunately, if the object itself is 'None' then this detection won't work.
+    // Alas, my friends, welcome to 'None-Descriptor' hack.
+    if let none = self.cast.asNone(object) {
+      return none.getMethod(self,
+                            selector: selector,
+                            allowsCallableFromDict: allowsCallableFromDict)
+    }
+
+    return nil
   }
 
   // MARK: - Call method

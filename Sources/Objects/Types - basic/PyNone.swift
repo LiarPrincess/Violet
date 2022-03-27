@@ -6,7 +6,7 @@ import VioletCore
 
 // sourcery: pytype = NoneType, isDefault
 /// The Python None object, denoting lack of value.
-public struct PyNone: PyObjectMixin, HasCustomGetMethod {
+public struct PyNone: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil
