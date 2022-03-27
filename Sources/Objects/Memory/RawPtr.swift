@@ -94,6 +94,13 @@ public struct RawPtr: CustomStringConvertible {
   /// - Returns: A pointer to a newly allocated region of memory. The memory is
   ///   allocated, but not initialized.
   public static func allocate(byteCount: Int, alignment: Int) -> RawPtr {
+    // Technically 'malloc(0)' should be allowed, but it is probably an error.
+    // From 'https://www.cplusplus.com/reference/cstdlib/malloc/':
+    //   If size is zero, the return value depends on the particular library
+    //   implementation (it may or may not be a null pointer), but the returned
+    //   pointer shall not be dereferenced.
+    precondition(byteCount != 0, "malloc(0)?")
+    precondition(byteCount > 0, "malloc(<0)")
     let ptr = UnsafeMutableRawPointer.allocate(byteCount: byteCount, alignment: alignment)
     return RawPtr(ptr)
   }

@@ -27,6 +27,7 @@ public struct BufferPtr<TrivialElement>: RandomAccessCollection {
   ///   - count: The number of instances in the buffer. `count` must not be
   ///     negative.
   public init(start: UnsafePointer<TrivialElement>, count: Int) {
+    assert(count >= 0, "BufferPtr with negative count")
     let startMutable = UnsafeMutablePointer(mutating: start)
     self.init(start: startMutable, count: count)
   }

@@ -52,24 +52,6 @@ extension PyFrame {
     }
   }
 
-  // MARK: - Allocate
-
-  internal func allocateBlockStack(_ py: Py, code: PyCode) -> BufferPtr<Block> {
-    // 'Block' is trivial, so we don't have to initalize the memory.
-    let count = Self.maxBlockStackCount
-    let stride = MemoryLayout<Block>.stride
-    let alignment = MemoryLayout<Block>.alignment
-    let rawPtr = PyMemory.allocate(byteCount: count * stride, alignment: alignment)
-    return rawPtr.bind(to: Block.self, count: count)
-  }
-
-  // MARK: - Deallocate
-
-  internal func deallocateBlockStack() {
-    let rawPtr = self.blockStackStorage.deinitialize()
-    rawPtr.deallocate()
-  }
-
   // MARK: - Stack
 
   public struct BlockStackProxy {
@@ -109,8 +91,17 @@ extension PyFrame {
     private let endPointerPtr: Ptr<EndPtr>
 
     internal init(frame: PyFrame) {
-      self.buffer = frame.blockStackStorage
-      self.endPointerPtr = frame.blockStackEndPtr
+      let storage = frame.fastLocalsCellFreeBlockStackStorage
+      self.buffer = storage.blockStack
+      self.endPointerPtr = storage.blockStackEnd
+    }
+
+    internal func initalize() {
+      // 'Block' is trivial, so we don't have to initalize the memory:
+      // self.buffer.initialize <-- Not needed!
+
+      // But we do have to initalize end ptr:
+      self.endPointerPtr.initialize(to: self.buffer.baseAddress)
     }
 
     // MARK: - Peek

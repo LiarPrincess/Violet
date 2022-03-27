@@ -2633,10 +2633,7 @@ extension PyFrame {
     internal let builtinsOffset: Int
     internal let objectStackStorageOffset: Int
     internal let objectStackEndOffset: Int
-    internal let blockStackStorageOffset: Int
-    internal let blockStackEndOffset: Int
-    internal let fastLocalsStorageOffset: Int
-    internal let cellAndFreeVariablesStorageOffset: Int
+    internal let fastLocalsCellFreeBlockStackStoragePtrOffset: Int
     internal let currentInstructionIndexOffset: Int
     internal let nextInstructionIndexOffset: Int
     internal let size: Int
@@ -2654,16 +2651,13 @@ extension PyFrame {
           PyMemory.FieldLayout(from: PyDict.self), // PyFrame.builtins
           PyMemory.FieldLayout(from: BufferPtr<PyObject>.self), // PyFrame.objectStackStorage
           PyMemory.FieldLayout(from: PyFrame.ObjectStackProxy.EndPtr.self), // PyFrame.objectStackEnd
-          PyMemory.FieldLayout(from: BufferPtr<Block>.self), // PyFrame.blockStackStorage
-          PyMemory.FieldLayout(from: PyFrame.BlockStackProxy.EndPtr.self), // PyFrame.blockStackEnd
-          PyMemory.FieldLayout(from: BufferPtr<FastLocal>.self), // PyFrame.fastLocalsStorage
-          PyMemory.FieldLayout(from: BufferPtr<Cell>.self), // PyFrame.cellAndFreeVariablesStorage
+          PyMemory.FieldLayout(from: RawPtr.self), // PyFrame.fastLocalsCellFreeBlockStackStoragePtr
           PyMemory.FieldLayout(from: Int?.self), // PyFrame.currentInstructionIndex
           PyMemory.FieldLayout(from: Int.self) // PyFrame.nextInstructionIndex
         ]
       )
 
-      assert(layout.offsets.count == 13)
+      assert(layout.offsets.count == 10)
       self.codeOffset = layout.offsets[0]
       self.parentOffset = layout.offsets[1]
       self.localsOffset = layout.offsets[2]
@@ -2671,12 +2665,9 @@ extension PyFrame {
       self.builtinsOffset = layout.offsets[4]
       self.objectStackStorageOffset = layout.offsets[5]
       self.objectStackEndOffset = layout.offsets[6]
-      self.blockStackStorageOffset = layout.offsets[7]
-      self.blockStackEndOffset = layout.offsets[8]
-      self.fastLocalsStorageOffset = layout.offsets[9]
-      self.cellAndFreeVariablesStorageOffset = layout.offsets[10]
-      self.currentInstructionIndexOffset = layout.offsets[11]
-      self.nextInstructionIndexOffset = layout.offsets[12]
+      self.fastLocalsCellFreeBlockStackStoragePtrOffset = layout.offsets[7]
+      self.currentInstructionIndexOffset = layout.offsets[8]
+      self.nextInstructionIndexOffset = layout.offsets[9]
       self.size = layout.size
       self.alignment = layout.alignment
     }
@@ -2705,14 +2696,8 @@ extension PyFrame {
   internal var objectStackStoragePtr: Ptr<BufferPtr<PyObject>> { Ptr(self.ptr, offset: Self.layout.objectStackStorageOffset) }
   /// Property: `PyFrame.objectStackEnd`.
   internal var objectStackEndPtr: Ptr<PyFrame.ObjectStackProxy.EndPtr> { Ptr(self.ptr, offset: Self.layout.objectStackEndOffset) }
-  /// Property: `PyFrame.blockStackStorage`.
-  internal var blockStackStoragePtr: Ptr<BufferPtr<Block>> { Ptr(self.ptr, offset: Self.layout.blockStackStorageOffset) }
-  /// Property: `PyFrame.blockStackEnd`.
-  internal var blockStackEndPtr: Ptr<PyFrame.BlockStackProxy.EndPtr> { Ptr(self.ptr, offset: Self.layout.blockStackEndOffset) }
-  /// Property: `PyFrame.fastLocalsStorage`.
-  internal var fastLocalsStoragePtr: Ptr<BufferPtr<FastLocal>> { Ptr(self.ptr, offset: Self.layout.fastLocalsStorageOffset) }
-  /// Property: `PyFrame.cellAndFreeVariablesStorage`.
-  internal var cellAndFreeVariablesStoragePtr: Ptr<BufferPtr<Cell>> { Ptr(self.ptr, offset: Self.layout.cellAndFreeVariablesStorageOffset) }
+  /// Property: `PyFrame.fastLocalsCellFreeBlockStackStoragePtr`.
+  internal var fastLocalsCellFreeBlockStackStoragePtrPtr: Ptr<RawPtr> { Ptr(self.ptr, offset: Self.layout.fastLocalsCellFreeBlockStackStoragePtrOffset) }
   /// Property: `PyFrame.currentInstructionIndex`.
   internal var currentInstructionIndexPtr: Ptr<Int?> { Ptr(self.ptr, offset: Self.layout.currentInstructionIndexOffset) }
   /// Property: `PyFrame.nextInstructionIndex`.
@@ -2748,10 +2733,7 @@ extension PyFrame {
     zelf.builtinsPtr.deinitialize()
     zelf.objectStackStoragePtr.deinitialize()
     zelf.objectStackEndPtr.deinitialize()
-    zelf.blockStackStoragePtr.deinitialize()
-    zelf.blockStackEndPtr.deinitialize()
-    zelf.fastLocalsStoragePtr.deinitialize()
-    zelf.cellAndFreeVariablesStoragePtr.deinitialize()
+    zelf.fastLocalsCellFreeBlockStackStoragePtrPtr.deinitialize()
     zelf.currentInstructionIndexPtr.deinitialize()
     zelf.nextInstructionIndexPtr.deinitialize()
 
