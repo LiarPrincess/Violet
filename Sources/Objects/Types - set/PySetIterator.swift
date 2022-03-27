@@ -52,9 +52,9 @@ public struct PySetIterator: PyObjectMixin {
     let zelf = PySetIterator(ptr: ptr)
     var result = PyObject.DebugMirror(object: zelf)
     let count = zelf.set.elements.count
-    result.append(name: "index", value: zelf.index, includeInShortDescription: true)
-    result.append(name: "count", value: count, includeInShortDescription: true)
-    result.append(name: "initialCount", value: zelf.initialCount, includeInShortDescription: true)
+    result.append(name: "index", value: zelf.index, includeInDescription: true)
+    result.append(name: "count", value: count, includeInDescription: true)
+    result.append(name: "initialCount", value: zelf.initialCount, includeInDescription: true)
     result.append(name: "set", value: zelf.set)
     return result
   }

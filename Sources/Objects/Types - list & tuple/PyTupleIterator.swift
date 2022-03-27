@@ -38,8 +38,8 @@ public struct PyTupleIterator: PyObjectMixin {
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyTupleIterator(ptr: ptr)
     var result = PyObject.DebugMirror(object: zelf)
-    result.append(name: "index", value: zelf.index, includeInShortDescription: true)
-    result.append(name: "count", value: zelf.tuple.count, includeInShortDescription: true)
+    result.append(name: "index", value: zelf.index, includeInDescription: true)
+    result.append(name: "count", value: zelf.tuple.count, includeInDescription: true)
     result.append(name: "tuple", value: zelf.tuple)
     return result
   }

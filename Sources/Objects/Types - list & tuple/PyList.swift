@@ -46,8 +46,8 @@ public struct PyList: PyObjectMixin, AbstractSequence {
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyList(ptr: ptr)
     var result = PyObject.DebugMirror(object: zelf)
-    result.append(name: "count", value: zelf.count, includeInShortDescription: true)
-    result.append(name: "elements", value: zelf.elements, includeInShortDescription: true)
+    result.append(name: "count", value: zelf.count, includeInDescription: true)
+    result.append(name: "elements", value: zelf.elements, includeInDescription: true)
     return result
   }
 

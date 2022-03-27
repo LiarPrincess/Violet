@@ -53,14 +53,55 @@ public struct PyModule: PyObjectMixin {
     let zelf = PyModule(ptr: ptr)
     var result = PyObject.DebugMirror(object: zelf)
 
-    // We don't have 'py' to get all of the fancy stuff:
-    // let name = self.__dict__.get(id: .__name__)
-    // let doc = self.__dict__.get(id: .__doc__)
-    // let package = self.__dict__.get(id: .__package__)
-    // let loader = self.__dict__.get(id: .__loader__)
-    // let spec = self.__dict__.get(id: .__spec__)
-
+    let ps = zelf.getDebugInfoPropertiesFromDict()
+    result.append(name: "__name__", value: ps.__name__ as Any, includeInDescription: true)
+    result.append(name: "__doc__", value: ps.__doc__ as Any)
+    result.append(name: "__package__", value: ps.__package__ as Any, includeInDescription: true)
+    result.append(name: "__loader__", value: ps.__loader__ as Any)
+    result.append(name: "__spec__", value: ps.__spec__ as Any)
     result.append(name: "__dict__", value: zelf.__dict__)
+    return result
+  }
+
+  private struct DebugInfoProperties {
+    fileprivate var __name__: PyObject? = nil
+    fileprivate var __doc__: PyObject? = nil
+    fileprivate var __package__: PyObject? = nil
+    fileprivate var __loader__: PyObject? = nil
+    fileprivate var __spec__: PyObject? = nil
+  }
+
+  private func getDebugInfoPropertiesFromDict() -> DebugInfoProperties {
+    // We don't have 'py' to get all of the interesting entries,
+    // so instead we will iterate '__dict__'.
+    var result = DebugInfoProperties()
+
+    let __dict__: PyDict
+    switch self.__dict__ {
+    case .created(let d):
+      __dict__ = d
+    case .noDict,
+        .notCreated:
+      return result
+    }
+
+    for entry in __dict__.elements {
+      let keyObject = entry.key.object
+      let key = String(describing: keyObject)
+
+      if key.contains("__name__") {
+        result.__name__ = entry.value
+      } else if key.contains("__doc__") {
+        result.__doc__ = entry.value
+      } else if key.contains("__package__") {
+        result.__package__ = entry.value
+      } else if key.contains("__loader__") {
+        result.__loader__ = entry.value
+      } else if key.contains("__spec__") {
+        result.__spec__ = entry.value
+      }
+    }
+
     return result
   }
 

@@ -218,8 +218,8 @@ public struct PyType: PyObjectMixin {
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyType(ptr: ptr)
     var result = PyObject.DebugMirror(object: zelf)
-    result.append(name: "name", value: zelf.name, includeInShortDescription: true)
-    result.append(name: "qualname", value: zelf.qualname, includeInShortDescription: true)
+    result.append(name: "name", value: zelf.name, includeInDescription: true)
+    result.append(name: "qualname", value: zelf.qualname, includeInDescription: true)
     result.append(name: "typeFlags", value: zelf.typeFlags)
     result.append(name: "base", value: zelf.base as Any)
     result.append(name: "bases", value: zelf.bases)

@@ -58,7 +58,7 @@ public struct PyEnumerate: PyObjectMixin {
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyEnumerate(ptr: ptr)
     var result = PyObject.DebugMirror(object: zelf)
-    result.append(name: "nextIndex", value: zelf.nextIndex, includeInShortDescription: true)
+    result.append(name: "nextIndex", value: zelf.nextIndex, includeInDescription: true)
     result.append(name: "iterator", value: zelf.iterator)
     return result
   }

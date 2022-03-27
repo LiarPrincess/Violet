@@ -46,7 +46,7 @@ public struct PyMethod: PyObjectMixin {
     let zelf = PyMethod(ptr: ptr)
     var result = PyObject.DebugMirror(object: zelf)
     PyFunction.fillDebug(zelf: zelf.function, debug: &result)
-    result.append(name: "object", value: zelf.object, includeInShortDescription: true)
+    result.append(name: "object", value: zelf.object, includeInDescription: true)
     return result
   }
 

@@ -45,8 +45,8 @@ public struct PyComplex: PyObjectMixin {
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyComplex(ptr: ptr)
     var result = PyObject.DebugMirror(object: zelf)
-    result.append(name: "real", value: zelf.real, includeInShortDescription: true)
-    result.append(name: "imag", value: zelf.imag, includeInShortDescription: true)
+    result.append(name: "real", value: zelf.real, includeInDescription: true)
+    result.append(name: "imag", value: zelf.imag, includeInDescription: true)
     return result
   }
 
