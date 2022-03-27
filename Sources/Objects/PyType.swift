@@ -616,8 +616,9 @@ public struct PyType: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "mro")
     }
 
-    let mro = zelf.mro.map { $0.asObject }
-    return PyResult(py, tuple: mro)
+    let elements = zelf.mro.map { $0.asObject }
+    let list = py.newList(elements: elements)
+    return PyResult(list)
   }
 
   // MARK: - Subtypes

@@ -114,11 +114,14 @@ class PyTypeTests: PyTestCase {
                          _ expected: [PyType],
                          file: StaticString = #file,
                          line: UInt = #line) {
-    let object = py.newTuple(elements: expected.map { $0.asObject })
-    let __mro__ = self.get(py, object: type, propertyName: "__mro__")
-    self.assertIsEqual(py, left: __mro__, right: object, file: file, line: line)
+    let expectedElements = expected.map { $0.asObject }
 
+    let tuple = py.newTuple(elements: expectedElements)
+    let __mro__ = self.get(py, object: type, propertyName: "__mro__")
+    self.assertIsEqual(py, left: __mro__, right: tuple, file: file, line: line)
+
+    let list = py.newList(elements: expectedElements)
     let mro = self.callMethod(py, object: type, selector: "mro", args: [])
-    self.assertIsEqual(py, left: mro, right: object, file: file, line: line)
+    self.assertIsEqual(py, left: mro, right: list, file: file, line: line)
   }
 }
