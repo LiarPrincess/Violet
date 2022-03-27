@@ -82,7 +82,7 @@ public struct PyFrame: PyObjectMixin {
     ObjectStackProxy(frame: self)
   }
 
-  // MARK: - Block stack
+  // MARK: - Fast locals, cell/free variables, blocks
 
   /// Max static block nesting within a function.
   ///
@@ -90,33 +90,16 @@ public struct PyFrame: PyObjectMixin {
   public static let maxBlockStackCount = 32
 
   // sourcery: storedProperty
-  internal var blockStackStorage: BufferPtr<Block> {
-    self.blockStackStoragePtr.pointee
+  internal var fastLocalsCellFreeBlockStackStoragePtr: RawPtr {
+    // Notice the 'PtrPtr' suffix!
+    // Basically this is a pointer to a property that itself is a pointer.
+    self.fastLocalsCellFreeBlockStackStoragePtrPtr.pointee
   }
 
-  // sourcery: storedProperty
-  /// Pointer to the element AFTER the top of the block stack.
-  ///
-  /// Do not use directly! Use `self.blockStack` instead.
-  internal var blockStackEnd: PyFrame.BlockStackProxy.EndPtr {
-    self.blockStackEndPtr.pointee
-  }
-
-  /// Stack of blocks (`for` loops, `exception` handlers etc.).
-  public var blockStack: BlockStackProxy {
-    BlockStackProxy(frame: self)
-  }
-
-  // MARK: - Fast locals/cell/free
-
-  // sourcery: storedProperty
-  internal var fastLocalsStorage: BufferPtr<FastLocal> {
-    self.fastLocalsStoragePtr.pointee
-  }
-
-  // sourcery: storedProperty
-  internal var cellAndFreeVariablesStorage: BufferPtr<Cell> {
-    self.cellAndFreeVariablesStoragePtr.pointee
+  /// Fast locals, cell/free variables and block stack are stored in a single
+  /// allocation.
+  internal var fastLocalsCellFreeBlockStackStorage: FastLocalsCellFreeBlockStackStorage {
+    FastLocalsCellFreeBlockStackStorage(frame: self)
   }
 
   /// Function args and local variables.
@@ -148,6 +131,9 @@ public struct PyFrame: PyObjectMixin {
   /// of the stack. And no, we will not do this (see `self.fastLocals` comment).
   /// \#hipsters
   public var freeVariables: FreeVariablesProxy { FreeVariablesProxy(frame: self) }
+
+  /// Stack of blocks (`for` loops, `exception` handlers etc.).
+  public var blockStack: BlockStackProxy { BlockStackProxy(frame: self) }
 
   // MARK: - Current instruction
 
@@ -212,20 +198,19 @@ public struct PyFrame: PyObjectMixin {
     self.localsPtr.initialize(to: locals)
     self.globalsPtr.initialize(to: globals)
 
+    let builtins = Self.getBuiltins(py, globals: globals, parent: parent)
+    self.builtinsPtr.initialize(to: builtins)
+
     let objectStack = self.allocateObjectStack(py, code: code)
     self.objectStackStoragePtr.initialize(to: objectStack)
     self.objectStackEndPtr.initialize(to: objectStack.baseAddress)
 
-    let blockStack = self.allocateBlockStack(py, code: code)
-    self.blockStackStoragePtr.initialize(to: blockStack)
-    self.blockStackEndPtr.initialize(to: blockStack.baseAddress)
-
-    let builtins = Self.getBuiltins(py, globals: globals, parent: parent)
-    self.builtinsPtr.initialize(to: builtins)
-
-    // Some things will be initialized later:
-    // - 'self.fastLocalsStoragePtr' in 'self.initializeFastLocals'
-    // - 'self.cellAndFreeVariablesStoragePtr' in 'self.initializeCellAndFreeVariables'
+    let storage = self.allocateFastLocalsCellFreeBlockStackStorage(code: code)
+    self.fastLocalsCellFreeBlockStackStoragePtrPtr.initialize(to: storage)
+    self.fastLocals.initalize()
+    self.cellVariables.initalize(py)
+    self.freeVariables.initalize((py))
+    self.blockStack.initalize()
 
     self.currentInstructionIndexPtr.initialize(to: nil)
     self.nextInstructionIndexPtr.initialize(to: 0)
@@ -249,9 +234,7 @@ public struct PyFrame: PyObjectMixin {
 
   internal func beforeDeinitialize(_ py: Py) {
     self.deallocateObjectStack()
-    self.deallocateBlockStack()
-    self.deallocateFastLocals()
-    self.deallocateCellAndFreeVariables()
+    self.deallocateFastLocalsCellFreeBlockStackStorage()
   }
 
   // MARK: - Debug

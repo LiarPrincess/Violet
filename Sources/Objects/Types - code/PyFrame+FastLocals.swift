@@ -1,57 +1,8 @@
 import VioletBytecode
 
-extension PyCode {
-  fileprivate var fastLocalsCount: Int {
-    return self.variableCount
-  }
-}
-
 extension PyFrame {
 
   public typealias FastLocal = PyObject?
-
-  // MARK: - Initialize
-
-  internal func initializeFastLocals(_ py: Py,
-                                     args: [PyObject],
-                                     kwargs: PyDict?,
-                                     defaults: [PyObject],
-                                     kwDefaults: PyDict?) -> PyBaseException? {
-    let count = code.fastLocalsCount
-    let stride = MemoryLayout<FastLocal>.stride
-    let alignment = MemoryLayout<FastLocal>.alignment
-
-    let rawPtr = PyMemory.allocate(byteCount: count * stride, alignment: alignment)
-    let ptr = rawPtr.bind(to: FastLocal.self, count: count)
-    self.fastLocalsStoragePtr.initialize(to: ptr)
-
-    // 'FillFastLocals' will check if value was filled, so in the beginning
-    // we will set all values to 'nil', otherwise we would read uninitalized
-    // memory.
-    ptr.initialize(repeating: nil)
-
-    // Filling args and locals is actually quite complicated,
-    // so it was moved to separate struct.
-    var helper = FillFastLocals(
-      py,
-      frame: self,
-      args: args,
-      kwargs: kwargs,
-      defaults: defaults,
-      kwDefaults: kwDefaults
-    )
-
-    return helper.run()
-  }
-
-  // MARK: - Deallocate
-
-  internal func deallocateFastLocals() {
-    let ptr = self.fastLocalsStorage.deinitialize()
-    ptr.deallocate()
-  }
-
-  // MARK: - Proxy
 
   public struct FastLocalsProxy {
 
@@ -66,7 +17,36 @@ extension PyFrame {
     }
 
     internal init(frame: PyFrame) {
-      self.ptr = frame.fastLocalsStorage
+      let storage = frame.fastLocalsCellFreeBlockStackStorage
+      self.ptr = storage.fastLocals
+    }
+
+    internal func initalize() {
+      // 'FillFastLocals' will check if value was filled, so in the beginning
+      // we will set all values to 'nil', otherwise we would read uninitalized
+      // memory.
+      self.ptr.initialize(repeating: nil)
+    }
+
+    public func fill(_ py: Py,
+                     code: PyCode,
+                     args: [PyObject],
+                     kwargs: PyDict?,
+                     defaults: [PyObject],
+                     kwDefaults: PyDict?) -> PyBaseException? {
+      // Filling args and locals is actually quite complicated,
+      // so it was moved to separate struct.
+      var helper = FillFastLocals(
+        py,
+        fastLocals: self,
+        code: code,
+        args: args,
+        kwargs: kwargs,
+        defaults: defaults,
+        kwDefaults: kwDefaults
+      )
+
+      return helper.run()
     }
 
     public subscript(index: Int) -> FastLocal {
@@ -98,7 +78,8 @@ extension String {
 private struct FillFastLocals {
 
   private let py: Py
-  private let frame: PyFrame
+  private let code: PyCode
+  private let fastLocals: PyFrame.FastLocalsProxy
   /// Positional arguments as given by the user.
   private let args: [PyObject]
   /// Kwargs as given by the user.
@@ -122,18 +103,16 @@ private struct FillFastLocals {
     return self.code.codeFlags.contains(.varKeywords)
   }
 
-  private var code: PyCode {
-    return self.frame.code
-  }
-
   fileprivate init(_ py: Py,
-                   frame: PyFrame,
+                   fastLocals: PyFrame.FastLocalsProxy,
+                   code: PyCode,
                    args: [PyObject],
                    kwargs: PyDict?,
                    defaults: [PyObject],
                    kwDefaults: PyDict?) {
     self.py = py
-    self.frame = frame
+    self.code = code
+    self.fastLocals = fastLocals
     self.args = args
     self.kwargs = kwargs
     self.defaults = defaults
@@ -173,13 +152,13 @@ private struct FillFastLocals {
   // MARK: - Setters
 
   private func isSet(index: Int) -> Bool {
-    let value = self.frame.fastLocals[index]
+    let value = self.fastLocals[index]
     return value != nil
   }
 
   private func set(index: Int, value: PyObject) {
     assert(!self.isSet(index: index))
-    self.frame.fastLocals[index] = value
+    self.fastLocals[index] = value
   }
 
   /// *args

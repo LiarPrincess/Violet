@@ -3,12 +3,6 @@ import Foundation
 import VioletBytecode
 @testable import VioletObjects
 
-extension PyFrame {
-  fileprivate var blockStackCapacity: Int {
-    return self.blockStackStorage.count
-  }
-}
-
 class PyFrameBlockStackTests: PyTestCase, PyFrameTestsMixin {
 
   typealias Block = PyFrame.Block

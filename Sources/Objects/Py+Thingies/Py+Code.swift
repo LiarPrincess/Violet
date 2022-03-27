@@ -308,15 +308,22 @@ extension Py {
                                      globals: globals,
                                      parent: parent)
 
-    if let error = frame.initializeFastLocals(self,
-                                              args: args,
-                                              kwargs: kwargs,
-                                              defaults: defaults,
-                                              kwDefaults: kwDefaults) {
+    let fastLocals = frame.fastLocals
+    if let error = fastLocals.fill(self,
+                                   code: code,
+                                   args: args,
+                                   kwargs: kwargs,
+                                   defaults: defaults,
+                                   kwDefaults: kwDefaults) {
       return .error(error.asBaseException)
     }
 
-    frame.initializeCellAndFreeVariables(self, closure: closure)
+    let cells = frame.cellVariables
+    cells.fill(code: code, fastLocals: fastLocals)
+
+    let free = frame.freeVariables
+    free.fill(self, code: code, closure: closure)
+
     return .value(frame)
   }
 

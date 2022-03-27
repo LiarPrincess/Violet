@@ -102,10 +102,20 @@ public final class PyMemory {
   public struct FieldLayout {
     public let size: Int
     public let alignment: Int
+    public let repeatCount: Int
 
-    public init<T>(from type: T.Type) {
+    /// `repeatCount` is the number of times `type` is repeated:
+    /// ```c
+    /// struct DinepPrincess {
+    ///     char name[20];
+    /// };
+    /// sizeof (struct DinepPrincess) // 20
+    /// ```
+    public init<T>(from type: T.Type, repeatCount: Int = 1) {
+      assert(repeatCount >= 0)
       self.size = MemoryLayout<T>.size
       self.alignment = MemoryLayout<T>.alignment
+      self.repeatCount = repeatCount
     }
   }
 
@@ -126,7 +136,12 @@ public final class PyMemory {
       for field in fields {
         Self.round(&self.size, alignment: field.alignment)
         self.offsets.append(self.size)
-        self.size += field.size
+
+        for _ in 0..<field.repeatCount {
+          Self.round(&self.size, alignment: field.alignment)
+          self.size += field.size
+        }
+
         self.alignment = Swift.max(self.alignment, field.alignment)
       }
 
