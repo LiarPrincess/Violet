@@ -5,6 +5,21 @@ import VioletObjects
 
 class PyFloatTests: PyTestCase {
 
+  // MARK: - Description
+
+  func test_description() {
+    let py = self.createPy()
+
+    let f0 = py.newFloat(0.0)
+    self.assertDescription(f0, "PyFloat(float, value: 0.0)")
+
+    let f7 = py.newFloat(7.2)
+    self.assertDescription(f7, "PyFloat(float, value: 7.2)")
+
+    let f_13 = py.newFloat(-13.42)
+    self.assertDescription(f_13, "PyFloat(float, value: -13.42)")
+  }
+
   // MARK: - Integer ratio
 
   func test_as_integer_ratio() {

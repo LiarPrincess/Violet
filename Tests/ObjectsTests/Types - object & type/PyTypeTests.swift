@@ -47,6 +47,26 @@ class PyTypeTests: PyTestCase {
     self.assertMro(py, bool, [bool, int, object])
   }
 
+  // MARK: - Description
+
+  func test_description() {
+    let py = self.createPy()
+
+    let object = py.types.object
+    self.assertDescription(object, "PyType(type, flags: [custom1, custom5, custom21], name: 'object', qualname: 'object')")
+
+    let type = py.types.type
+    self.assertDescription(type, "PyType(type, flags: [custom1, custom2, custom5, custom15, custom20], name: 'type', qualname: 'type')")
+
+    let int = py.types.int
+    self.assertDescription(int, "PyType(type, flags: [custom1, custom5, custom8, custom21], name: 'int', qualname: 'int')")
+
+    let bool = py.types.bool
+    self.assertDescription(bool, "PyType(type, flags: [custom5, custom8], name: 'bool', qualname: 'bool')")
+  }
+
+  // MARK: - Asserts
+
   private func assertName(_ py: Py,
                           _ type: PyType,
                           _ expected: String,

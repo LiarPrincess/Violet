@@ -53,15 +53,18 @@ extension PyObjectMixin {
   public var description: String {
     let object = self.asObject
 
-    let hasDescriptionLock = object.flags.isSet(.descriptionLock)
-    if hasDescriptionLock {
-      return "Xxx(\(self.typeName), RECURSIVE ENTRY)"
-    }
-
     let mirror = object.type.debugFn(self.ptr)
     var result = mirror.swiftType
     result.append("(")
     result.append(self.typeName) // python type
+
+    let hasDescriptionLock = object.flags.isSet(.descriptionLock)
+    if hasDescriptionLock {
+      result.append(", RECURSIVE ENTRY, ptr: ")
+      result.append(String(describing: self.ptr))
+      result.append(")")
+      return result
+    }
 
     let flagsString = String(describing: object.flags)
     if flagsString != "[]" {
