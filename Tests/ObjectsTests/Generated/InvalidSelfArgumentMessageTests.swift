@@ -82,6 +82,7 @@ class InvalidSelfArgumentMessageTests: PyTestCase {
     self.assertInvalidSelfArgumentMessage(py, type: type, fn: "__gt__", positionalArgCount: 2)
     self.assertInvalidSelfArgumentMessage(py, type: type, fn: "__ge__", positionalArgCount: 2)
     self.assertInvalidSelfArgumentMessage(py, type: type, fn: "__hash__", positionalArgCount: 1)
+    self.assertInvalidSelfArgumentMessage(py, type: type, fn: "__repr__", positionalArgCount: 1)
     self.assertInvalidSelfArgumentMessage(py, type: type, fn: "__str__", positionalArgCount: 1)
     self.assertInvalidSelfArgumentMessage(py, type: type, fn: "__getattribute__", positionalArgCount: 2)
     self.assertInvalidSelfArgumentMessage(py, type: type, fn: "__len__", positionalArgCount: 1)

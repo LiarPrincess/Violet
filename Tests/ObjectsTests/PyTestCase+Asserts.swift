@@ -6,6 +6,31 @@ import VioletObjects // Do not add '@testable'! We want to do everything 'by the
 
 extension PyTestCase {
 
+  // MARK: - Description
+
+  func assertDescription<T: PyObjectMixin>(_ py: Py,
+                                           _ result: PyResultGen<T>,
+                                           _ expected: String,
+                                           file: StaticString = #file,
+                                           line: UInt = #line) {
+    switch result {
+    case let .value(o):
+      self.assertDescription(o, expected, file: file, line: line)
+    case let .error(e):
+      let reason = self.toString(py, error: e)
+      XCTFail("Result is error: \(reason)", file: file, line: line)
+      return
+    }
+  }
+
+  func assertDescription<T: PyObjectMixin>(_ object: T,
+                                           _ expected: String,
+                                           file: StaticString = #file,
+                                           line: UInt = #line) {
+    let result = String(describing: object)
+    XCTAssertEqual(result, expected, file: file, line: line)
+  }
+
   // MARK: - Repr, str
 
   func assertRepr<T: PyObjectMixin>(_ py: Py,

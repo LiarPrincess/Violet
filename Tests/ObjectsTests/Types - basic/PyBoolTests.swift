@@ -5,6 +5,14 @@ import VioletObjects
 
 class PyBoolTests: PyTestCase {
 
+  // MARK: - Description
+
+  func test_description() {
+    let py = self.createPy()
+    self.assertDescription(py.true, "PyBool(bool, value: 1, isTrue: true)")
+    self.assertDescription(py.false, "PyBool(bool, value: 0, isTrue: false)")
+  }
+
   // MARK: - Repr, str
 
   func test__repr__() {
