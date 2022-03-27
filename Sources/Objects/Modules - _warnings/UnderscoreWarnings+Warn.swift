@@ -166,7 +166,7 @@ extension UnderscoreWarnings {
   }
 
   private func getFrame(level levelArg: Int) -> GetFrameResult {
-    guard let topFrame = self.py.delegate.frame else {
+    guard let topFrame = self.py.delegate.getCurrentlyExecutedFrame(self.py) else {
       return .none
     }
 

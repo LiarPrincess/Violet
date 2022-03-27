@@ -10,19 +10,20 @@ import VioletObjects
 // Python -> ceval.c
 
 /// This type is a dummy namespace for `eval` function, just so we don't pollute
-/// `VM` with all that nonsense (but don't worry, we use `VM` as a 'catch them all'
-/// for all of the code that does not fit anywhere else, so it is still a mess).
+/// `VM/PyDelegate` with all that nonsense (but don't worry, we use them as a
+/// 'catch them all' for all of the code that does not fit anywhere else,
+/// so it is still a mess).
 ///
 /// But wait a sec, it gets even worse:
-/// It will hold a strong reference to `VM`!
-/// So… just do not store `Eval` as property on `VM`.
+/// It will hold a strong reference to `PyDelegate`!
+/// So… just do not store `Eval` as property on `PyDelegate`.
 internal struct Eval {
 
   // MARK: - Properties
 
   internal let py: Py
-  /// Only here so that we can manage `vm.currentlyHandledException`
-  private let vm: VM
+  /// Only here so that we can manage `currentlyHandledException`
+  private let delegate: PyDelegate
   /// You know… the thing that we are evaluating…
   internal let frame: PyFrame
   /// Code to run.
@@ -54,15 +55,15 @@ internal struct Eval {
   internal let freeVariables: PyFrame.FreeVariablesProxy
 
   internal var currentlyHandledException: PyBaseException? {
-    get { self.vm.currentlyHandledException }
-    nonmutating set { self.vm.currentlyHandledException =  newValue }
+    get { self.delegate.currentlyHandledException }
+    nonmutating set { self.delegate.currentlyHandledException =  newValue }
   }
 
   // MARK: - Init
 
-  internal init(vm: VM, frame: PyFrame) {
-    self.py = vm.py
-    self.vm = vm
+  internal init(_ py: Py, delegate: PyDelegate, frame: PyFrame) {
+    self.py = py
+    self.delegate = delegate
     self.frame = frame
     self.code = frame.code
 

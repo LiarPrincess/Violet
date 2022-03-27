@@ -1,10 +1,12 @@
 // swiftlint:disable function_parameter_count
 
 /// Access to dynamic (runtime-dependent) data.
-public protocol PyDelegate: AnyObject {
+public protocol PyDelegateType: AnyObject {
 
-  /// Currently executing frame.
-  var frame: PyFrame? { get }
+  /// Currently executed frame.
+  ///
+  /// Used for filling stack traces on exceptions etc.
+  func getCurrentlyExecutedFrame(_ py: Py) -> PyFrame?
 
   /// Currently handled exception.
   ///
@@ -24,10 +26,11 @@ public protocol PyDelegate: AnyObject {
   /// until you get to the exception which has `getContext()` set to `nil`.
   ///
   /// CPython: `PyThreadState.exc_info`
-  var currentlyHandledException: PyBaseException? { get }
+  func getCurrentlyHandledException(_ py: Py) -> PyBaseException?
 
   /// Evaluate given code object.
-  func eval(name: PyString?,
+  func eval(_ py: Py,
+            name: PyString?,
             qualname: PyString?,
             code: PyCode,
 

@@ -179,6 +179,12 @@ extension VM {
     VM.unimplemented()
   }
 
+  // MARK: - Helpers - eval
+
+  internal func eval(code: PyCode, globals: PyDict, locals: PyDict) -> PyResult {
+    return self.delegate.eval(self.py, code: code, globals: globals, locals: locals)
+  }
+
   // MARK: - Helpers - Stream write
 
   internal enum WriteToStreamResult {

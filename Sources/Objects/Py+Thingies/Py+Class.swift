@@ -193,18 +193,17 @@ extension Py {
   // MARK: - Eval
 
   private func eval(fn: PyFunction, locals: PyDict) -> PyResult {
-    return self.delegate.eval(
-      name: nil,
-      qualname: nil,
-      code: fn.code,
-      args: [],
-      kwargs: nil,
-      defaults: [],
-      kwDefaults: nil,
-      globals: fn.globals,
-      locals: locals,
-      closure: fn.closure
-    )
+    return self.delegate.eval(self,
+                              name: nil,
+                              qualname: nil,
+                              code: fn.code,
+                              args: [],
+                              kwargs: nil,
+                              defaults: [],
+                              kwDefaults: nil,
+                              globals: fn.globals,
+                              locals: locals,
+                              closure: fn.closure)
   }
 
   // MARK: - __class__

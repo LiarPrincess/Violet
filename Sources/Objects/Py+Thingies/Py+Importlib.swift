@@ -252,18 +252,17 @@ extension Py {
     }
 
     // Run the module code, using 'module.__dict__' as env
-    let result = self.delegate.eval(
-      name: nil,
-      qualname: nil,
-      code: code,
-      args: [],
-      kwargs: nil,
-      defaults: [],
-      kwDefaults: nil,
-      globals: dict,
-      locals: dict,
-      closure: nil
-    )
+    let result = self.delegate.eval(self,
+                                    name: nil,
+                                    qualname: nil,
+                                    code: code,
+                                    args: [],
+                                    kwargs: nil,
+                                    defaults: [],
+                                    kwDefaults: nil,
+                                    globals: dict,
+                                    locals: dict,
+                                    closure: nil)
 
     switch result {
     case .value:

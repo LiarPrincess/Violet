@@ -37,7 +37,8 @@ extension ExecEval {
     }
 
     if globals.get(py, id: .__builtins__) == nil {
-      let builtins = py.delegate.frame?.builtins ?? py.builtins.__dict__
+      let frame = py.delegate.getCurrentlyExecutedFrame(py)
+      let builtins = frame?.builtins ?? py.builtins.__dict__
       globals.set(py, id: .__builtins__, value: builtins.asObject)
     }
 
@@ -49,20 +50,19 @@ extension ExecEval {
       return .error(e)
     }
 
-    return py.delegate.eval(
-      name: nil,
-      qualname: nil,
-      code: code,
+    return py.delegate.eval(py,
+                            name: nil,
+                            qualname: nil,
+                            code: code,
 
-      args: [],
-      kwargs: nil,
-      defaults: [],
-      kwDefaults: nil,
+                            args: [],
+                            kwargs: nil,
+                            defaults: [],
+                            kwDefaults: nil,
 
-      globals: globals,
-      locals: locals,
-      closure: nil
-    )
+                            globals: globals,
+                            locals: locals,
+                            closure: nil)
   }
 }
 

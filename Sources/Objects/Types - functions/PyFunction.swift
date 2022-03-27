@@ -590,20 +590,17 @@ public struct PyFunction: PyObjectMixin {
     let argsDefaults = zelf.defaults?.elements ?? []
     let locals = py.newDict()
 
-    let result = py.delegate.eval(
-      name: zelf.name,
-      qualname: zelf.qualname,
-      code: zelf.code,
-
-      args: args,
-      kwargs: kwargsCopy,
-      defaults: argsDefaults,
-      kwDefaults: zelf.kwDefaults,
-
-      globals: zelf.globals,
-      locals: locals,
-      closure: zelf.closure
-    )
+    let result = py.delegate.eval(py,
+                                  name: zelf.name,
+                                  qualname: zelf.qualname,
+                                  code: zelf.code,
+                                  args: args,
+                                  kwargs: kwargsCopy,
+                                  defaults: argsDefaults,
+                                  kwDefaults: zelf.kwDefaults,
+                                  globals: zelf.globals,
+                                  locals: locals,
+                                  closure: zelf.closure)
 
     return result
   }

@@ -114,7 +114,7 @@ extension Py {
                                         column: column,
                                         text: text)
 
-    let frame = self.delegate.frame
+    let frame = self.delegate.getCurrentlyExecutedFrame(self)
     let registry: UnderscoreWarnings.WarningRegistry
     switch self._warnings.getWarningRegistry(frame: frame) {
     case let .value(r): registry = r

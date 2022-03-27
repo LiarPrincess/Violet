@@ -105,7 +105,7 @@ public struct Py: CustomStringConvertible {
   // sourcery: storedProperty
   public var config: PyConfig { self.configPtr.pointee }
   // sourcery: storedProperty
-  public var delegate: PyDelegate { self.delegatePtr.pointee }
+  public var delegate: PyDelegateType { self.delegatePtr.pointee }
   // sourcery: storedProperty
   public var fileSystem: PyFileSystem { self.fileSystemPtr.pointee }
 
@@ -125,7 +125,7 @@ public struct Py: CustomStringConvertible {
   public let ptr: RawPtr
 
   public init(config: PyConfig,
-              delegate: PyDelegate,
+              delegate: PyDelegateType,
               fileSystem: PyFileSystem) {
     checkInvariants()
 
