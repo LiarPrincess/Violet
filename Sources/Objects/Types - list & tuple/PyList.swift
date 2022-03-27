@@ -597,7 +597,12 @@ public struct PyList: PyObjectMixin, AbstractSequence {
       return Self.invalidZelfArgument(py, zelf, "__iadd__")
     }
 
-    return Self.extend(py, zelf: zelf, iterable: other)
+    switch Self.extend(py, zelf: zelf, iterable: other) {
+    case .value:
+      return PyResult(zelf)
+    case .error(let e):
+      return .error(e)
+    }
   }
 
   // sourcery: pymethod = __mul__
