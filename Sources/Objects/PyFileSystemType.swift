@@ -35,7 +35,7 @@ public enum PyFileSystemReaddirResult {
 ///
 /// Requires `AnyObject` to avoid cycle if the owner of `Py`
 /// is also set as fileSystem.
-public protocol PyFileSystem: AnyObject {
+public protocol PyFileSystemType: AnyObject {
 
   // MARK: - Cwd
 

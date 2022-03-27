@@ -8,7 +8,7 @@ public final class VM {
 
   public let py: Py
   internal let delegate: PyDelegate
-  internal let fileSystem = PyFileSystemImpl(fileSystem: .default)
+  internal let fileSystem = PyFileSystem(fileSystem: .default)
 
   public init(arguments: Arguments, environment: Environment) {
     let executablePath = Bundle.main.executablePath ??

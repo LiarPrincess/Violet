@@ -3,7 +3,7 @@ import FileSystem
 import VioletCore
 import VioletObjects
 
-class FakeFileSystem: PyFileSystem {
+class FakeFileSystem: PyFileSystemType {
 
   var currentWorkingDirectory = Path(string: "cwd")
 
