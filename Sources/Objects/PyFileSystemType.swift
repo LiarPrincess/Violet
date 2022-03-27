@@ -55,9 +55,9 @@ public protocol PyFileSystemType: AnyObject {
   // MARK: - Open
 
   /// Open file with given `fd`.
-  func open(_ py: Py, fd: Int32, mode: FileMode) -> PyResultGen<FileDescriptorType>
+  func open(_ py: Py, fd: Int32, mode: FileMode) -> PyResultGen<PyFileDescriptorType>
   /// Open file at given `path`.
-  func open(_ py: Py, path: Path, mode: FileMode) -> PyResultGen<FileDescriptorType>
+  func open(_ py: Py, path: Path, mode: FileMode) -> PyResultGen<PyFileDescriptorType>
 
   // MARK: - Stat
 
@@ -161,7 +161,7 @@ public protocol PyFileSystemType: AnyObject {
 
 // MARK: - Default implementations
 
-extension PyFileSystem {
+extension PyFileSystemType {
 
   public func read(_ py: Py, fd: Int32) -> PyResultGen<Data> {
     switch self.open(py, fd: fd, mode: .read) {
@@ -181,7 +181,7 @@ extension PyFileSystem {
     }
   }
 
-  private func readToEnd(_ py: Py, fd: FileDescriptorType) -> PyResultGen<Data> {
+  private func readToEnd(_ py: Py, fd: PyFileDescriptorType) -> PyResultGen<Data> {
     return fd.readToEnd(py)
   }
 }

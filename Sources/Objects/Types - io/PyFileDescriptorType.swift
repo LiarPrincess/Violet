@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol FileDescriptorType {
+public protocol PyFileDescriptorType {
 
   /// Raw descriptor value.
   /// It should be set to `-1` when the file is closed.

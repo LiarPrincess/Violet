@@ -96,7 +96,7 @@ extension Py {
   }
 
   public func newTextFile(name: String?,
-                          fd: FileDescriptorType,
+                          fd: PyFileDescriptorType,
                           mode: FileMode,
                           encoding: PyString.Encoding,
                           errorHandling: PyString.ErrorHandling,
@@ -114,7 +114,7 @@ extension Py {
 
   private struct OpenedFileDescriptor {
     let path: Path?
-    let value: FileDescriptorType
+    let value: PyFileDescriptorType
   }
 
   private func openFileDescriptor(

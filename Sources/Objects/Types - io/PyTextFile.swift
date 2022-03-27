@@ -39,7 +39,7 @@ public struct PyTextFile: PyObjectMixin {
   // sourcery: storedProperty
   internal var name: String? { self.namePtr.pointee }
   // sourcery: storedProperty
-  internal var fd: FileDescriptorType { self.fdPtr.pointee }
+  internal var fd: PyFileDescriptorType { self.fdPtr.pointee }
   // sourcery: storedProperty
   internal var mode: FileMode { self.modePtr.pointee }
   // sourcery: storedProperty
@@ -69,7 +69,7 @@ public struct PyTextFile: PyObjectMixin {
   internal func initialize(_ py: Py,
                            type: PyType,
                            name: String?,
-                           fd: FileDescriptorType,
+                           fd: PyFileDescriptorType,
                            mode: FileMode,
                            encoding: PyString.Encoding,
                            errorHandling: PyString.ErrorHandling,
