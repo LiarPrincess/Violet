@@ -181,7 +181,7 @@ extension Sys {
   }
 
   internal func getFrame(depth: BigInt) -> PyResultGen<PyFrame> {
-    guard let initialFrame = self.py.delegate.frame else {
+    guard let initialFrame = self.py.delegate.getCurrentlyExecutedFrame(self.py) else {
       return .runtimeError(self.py, message: "_getFrame(): no current frame")
     }
 

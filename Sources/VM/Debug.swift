@@ -71,11 +71,11 @@ internal enum Debug {
 #endif
   }
 
-  internal static func frameEnd(_ py: Py, _ frame: PyFrame) {
+  internal static func frameEnd(_ py: Py, _ frame: PyFrame, result: PyResult) {
 #if DEBUG
     guard Self.isEnabledAndAfterImportlib else { return }
     let name = py.strString(frame.code.name)
-    print("--- Frame end: \(name) ---")
+    print("--- Frame end: \(name) -> \(result) ---")
 #endif
   }
 
@@ -90,11 +90,13 @@ internal enum Debug {
       return
     }
 
-    print("  Stack:")
-    for index in 0..<stack.count {
-      let peekIndex = stack.count - index - 1
+    let count = stack.count
+    print("  Stack (count: \(count)):")
+
+    for index in 0..<count {
+      let peekIndex = count - index - 1
       let value = stack.peek(peekIndex)
-      print("    \(value)")
+      print("    \(index): \(value)")
     }
 #endif
   }
@@ -110,9 +112,11 @@ internal enum Debug {
       return
     }
 
-    print("  Blocks:")
-    for index in 0..<stack.count {
-      let peekIndex = stack.count - index - 1
+    let count = stack.count
+    print("  Blocks (count: \(count)):")
+
+    for index in 0..<count {
+      let peekIndex = count - index - 1
       let value = stack.peek(peekIndex)
       print("    \(value)")
     }

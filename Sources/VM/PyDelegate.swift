@@ -1,9 +1,6 @@
+import Foundation
 import VioletCore
-import VioletBytecode
 import VioletObjects
-
-// swiftlint:disable function_parameter_count
-// ^^^ Well… yep… we will need this one
 
 extension PyFrame {
   internal static func ===(lhs: PyFrame?, rhs: PyFrame) -> Bool {
@@ -15,15 +12,40 @@ extension PyFrame {
   }
 }
 
-extension VM {
+internal class PyDelegate: PyDelegateType {
+
+  // MARK: - Frames
+
+  /// Stack of currently executed frames.
+  ///
+  /// Current frame is last.
+  private var frames = [PyFrame]()
+
+  internal func getCurrentlyExecutedFrame(_ py: Py) -> PyFrame? {
+    return self.frames.last
+  }
+
+  // MARK: - Currently handled exception
+
+  internal var currentlyHandledException: PyBaseException?
+
+  internal func getCurrentlyHandledException(_ py: Py) -> PyBaseException? {
+    return self.currentlyHandledException
+  }
+
+  // MARK: - Eval
 
   /// Run given code object using specified environment.
   ///
   /// CPython:
   /// PyObject *
   /// PyEval_EvalCode(PyObject *co, PyObject *globals, PyObject *locals)
-  public func eval(code: PyCode, globals: PyDict, locals: PyDict) -> PyResult {
-    return self.eval(name: nil,
+  internal func eval(_ py: Py,
+                     code: PyCode,
+                     globals: PyDict,
+                     locals: PyDict) -> PyResult {
+    return self.eval(py,
+                     name: nil,
                      qualname: nil,
                      code: code,
                      args: [],
@@ -37,37 +59,36 @@ extension VM {
 
   /// Run given code object using specified environment.
   ///
-  /// Required by `PyDelegate`.
-  ///
   /// CPython:
   /// PyObject *
   /// _PyEval_EvalCodeWithName(PyObject *_co, PyObject *globals, PyObject *locals…)
-  public func eval(name: PyString?,
-                   qualname: PyString?,
-                   code: PyCode,
-                   args: [PyObject],
-                   kwargs: PyDict?,
-                   defaults: [PyObject],
-                   kwDefaults: PyDict?,
-                   globals: PyDict,
-                   locals: PyDict,
-                   closure: PyTuple?) -> PyResult {
-    if let e = self.checkRecursionLimit() {
+  internal func eval(_ py: Py,
+                     name: PyString?,
+                     qualname: PyString?,
+                     code: PyCode,
+                     args: [PyObject],
+                     kwargs: PyDict?,
+                     defaults: [PyObject],
+                     kwDefaults: PyDict?,
+                     globals: PyDict,
+                     locals: PyDict,
+                     closure: PyTuple?) -> PyResult {
+    if let e = self.checkRecursionLimit(py) {
       return .error(e)
     }
 
     // We don't support zombie frames, we always create new one.
     let frame: PyFrame
     let parent = self.frames.last
-    switch self.py.newFrame(parent: parent,
-                            code: code,
-                            args: args,
-                            kwargs: kwargs,
-                            defaults: defaults,
-                            kwDefaults: kwDefaults,
-                            locals: locals,
-                            globals: globals,
-                            closure: closure) {
+    switch py.newFrame(parent: parent,
+                       code: code,
+                       args: args,
+                       kwargs: kwargs,
+                       defaults: defaults,
+                       kwDefaults: kwDefaults,
+                       locals: locals,
+                       globals: globals,
+                       closure: closure) {
     case let .value(f): frame = f
     case let .error(e): return .error(e)
     }
@@ -75,19 +96,19 @@ extension VM {
     // TODO: Everything below following line in CPython:
     /* Handle generator/coroutine/asynchronous generator */
 
-    Debug.frameStart(self.py, frame)
+    Debug.frameStart(py, frame)
 
     self.frames.push(frame)
-    let result = Eval(vm: self, frame: frame).run()
+    let result = Eval(py, delegate: self, frame: frame).run()
     let popFrame = self.frames.popLast()
     assert(popFrame === frame)
 
-    Debug.frameEnd(self.py, frame)
+    Debug.frameEnd(py, frame, result: result)
 
     return result
   }
 
-  private func checkRecursionLimit() -> PyBaseException? {
+  private func checkRecursionLimit(_ py: Py) -> PyBaseException? {
     // 'sys.recursionLimit' is not only for recursion!
     // It also applies to non-recursive calls.
     // In this sense it is more like 'max call stack depth'.
@@ -102,12 +123,12 @@ extension VM {
     //
     // print(f'f{fn_count}()')
 
-    let recursionLimit = self.py.sys.recursionLimit
+    let recursionLimit = py.sys.recursionLimit
     let depth = self.frames.count
     let depthPlusNewFrame = depth + 1
 
     if depthPlusNewFrame > recursionLimit.value {
-      let error = self.py.newRecursionError()
+      let error = py.newRecursionError()
       return error.asBaseException
     }
 

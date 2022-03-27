@@ -2,18 +2,19 @@ import Foundation
 import VioletCore
 import VioletObjects
 
-class FakeDelegate: PyDelegate {
+class FakeDelegate: PyDelegateType {
 
-  var frame: PyFrame? {
+  func getCurrentlyExecutedFrame(_ py: Py) -> PyFrame? {
     shouldNotBeCalled()
   }
 
-  var currentlyHandledException: PyBaseException? {
+  func getCurrentlyHandledException(_ py: Py) -> PyBaseException? {
     shouldNotBeCalled()
   }
 
   // swiftlint:disable:next function_parameter_count
-  func eval(name: PyString?,
+  func eval(_ py: Py,
+            name: PyString?,
             qualname: PyString?,
             code: PyCode,
 

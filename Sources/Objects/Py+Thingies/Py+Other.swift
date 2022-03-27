@@ -131,7 +131,7 @@ extension Py {
   /// static PyObject *
   /// _dir_locals(void)
   private func localsDir() -> PyResult {
-    guard let frame = self.delegate.frame else {
+    guard let frame = self.delegate.getCurrentlyExecutedFrame(self) else {
       return .systemError(self, message: "frame does not exist")
     }
 

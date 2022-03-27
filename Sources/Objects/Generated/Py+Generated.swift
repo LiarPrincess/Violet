@@ -83,7 +83,7 @@ extension Py {
           PyMemory.FieldLayout(from: Py.Types.self), // types
           PyMemory.FieldLayout(from: Py.ErrorTypes.self), // errorTypes
           PyMemory.FieldLayout(from: PyConfig.self), // config
-          PyMemory.FieldLayout(from: PyDelegate.self), // delegate
+          PyMemory.FieldLayout(from: PyDelegateType.self), // delegate
           PyMemory.FieldLayout(from: PyFileSystem.self), // fileSystem
           PyMemory.FieldLayout(from: PyMemory.self), // memory
           PyMemory.FieldLayout(from: PyCast.self), // cast
@@ -181,7 +181,7 @@ extension Py {
   /// Property: `Py.config`.
   internal var configPtr: Ptr<PyConfig> { Ptr(self.ptr, offset: Self.layout.configOffset) }
   /// Property: `Py.delegate`.
-  internal var delegatePtr: Ptr<PyDelegate> { Ptr(self.ptr, offset: Self.layout.delegateOffset) }
+  internal var delegatePtr: Ptr<PyDelegateType> { Ptr(self.ptr, offset: Self.layout.delegateOffset) }
   /// Property: `Py.fileSystem`.
   internal var fileSystemPtr: Ptr<PyFileSystem> { Ptr(self.ptr, offset: Self.layout.fileSystemOffset) }
   /// Property: `Py.memory`.

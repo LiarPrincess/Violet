@@ -107,7 +107,7 @@ extension Py {
     overrideCurrent: Bool
   ) {
     // No current -> nothing to do
-    guard let current = self.delegate.currentlyHandledException else {
+    guard let current = self.delegate.getCurrentlyHandledException(self) else {
       return
     }
 

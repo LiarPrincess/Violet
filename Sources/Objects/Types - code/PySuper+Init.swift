@@ -55,7 +55,7 @@ extension PySuper {
   }
 
   private static func getObjectAndTypeFromFrame(_ py: Py) -> PyResultGen<ObjectAndType> {
-    guard let frame = py.delegate.frame else {
+    guard let frame = py.delegate.getCurrentlyExecutedFrame(py) else {
       return .runtimeError(py, message: "super(): no current frame")
     }
 
