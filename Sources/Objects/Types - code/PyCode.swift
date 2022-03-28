@@ -30,7 +30,17 @@ public struct PyCode: PyObjectMixin {
   /// Code object from colpiler.
   ///
   /// Available only in `DEBUG`.
-  public var codeObject: PyCode.CodeObject { self.codeObjectPtr.pointee }
+  public var codeObject: PyCode.CodeObject {
+    // We need to '#if' to silence compiler warning:
+    // 'Property is accessed but result is unused'.
+    // ^^ This is not exactly true, but I guess that having a 'Void' computed
+    //    property is a but surprising to a compiler.
+#if DEBUG
+    return self.codeObjectPtr.pointee
+#else
+    return // Void
+#endif
+  }
 
   // MARK: - Names
 
@@ -100,7 +110,7 @@ public struct PyCode: PyObjectMixin {
   // sourcery: storedProperty
   /// Absolute jump targets.
   /// E.g. label `5` will move us to instruction at `self.labels[5]` index.
-  public var labels: [CodeObject.Label] { self.labelsPtr.pointee }
+  public var labels: [VioletBytecode.CodeObject.Label] { self.labelsPtr.pointee }
 
   // MARK: - Names
 
@@ -199,10 +209,10 @@ public struct PyCode: PyObjectMixin {
   // MARK: - Flags
 
   /// Various flags used during the compilation process.
-  public private(set) var codeFlags: CodeObject.Flags {
+  public private(set) var codeFlags: VioletBytecode.CodeObject.Flags {
     get {
       let custom = self.flags.customUInt16
-      return CodeObject.Flags(rawValue: custom)
+      return VioletBytecode.CodeObject.Flags(rawValue: custom)
     }
     nonmutating set {
       let raw = newValue.rawValue
@@ -229,7 +239,7 @@ public struct PyCode: PyObjectMixin {
     self.codeObjectPtr.initialize(to: ())
 #endif
 
-    let totalArgs = PyCode.countArguments(code: code)
+    let totalArgs = Self.countArguments(code: code)
     assert(code.variableNames.count >= totalArgs)
 
     let name = py.intern(string: code.name)
@@ -263,7 +273,7 @@ public struct PyCode: PyObjectMixin {
     self.codeFlags = code.flags
   }
 
-  private static func countArguments(code: CodeObject) -> Int {
+  private static func countArguments(code: VioletBytecode.CodeObject) -> Int {
     let argCount = code.argCount
     let kwOnlyArgCount = code.kwOnlyArgCount
     let variableCount = code.variableNames.count
@@ -277,7 +287,10 @@ public struct PyCode: PyObjectMixin {
     return variableCount + 1
   }
 
-  private static func toObject(_ py: Py, constant: CodeObject.Constant) -> PyObject {
+  private static func toObject(
+    _ py: Py,
+    constant: VioletBytecode.CodeObject.Constant
+  ) -> PyObject {
     switch constant {
     case .true: return py.true.asObject
     case .false: return py.false.asObject
