@@ -199,8 +199,8 @@ internal struct Eval {
     Debug.stack(stack: self.blockStack)
     Debug.instruction(code: self.code, index: self.frame.nextInstructionIndex)
 
-    if Signals.hasKeyboardInterrupt {
-      Signals.hasKeyboardInterrupt = false // Reset flag, very important!
+    if self.delegate.hasKeyboardInterrupt {
+      self.delegate.hasKeyboardInterrupt = false // Reset flag, very important!
       let error = self.py.newKeyboardInterrupt()
       return .exception(error.asBaseException)
     }

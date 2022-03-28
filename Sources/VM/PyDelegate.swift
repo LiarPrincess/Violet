@@ -14,6 +14,8 @@ extension PyFrame {
 
 internal class PyDelegate: PyDelegateType {
 
+  internal var hasKeyboardInterrupt = false
+
   // MARK: - Frames
 
   /// Stack of currently executed frames.
