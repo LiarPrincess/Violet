@@ -160,8 +160,8 @@ public struct Py: CustomStringConvertible {
     // Common objects.
     // We will create those objects with valid 'type' pointers, but the type
     // itself is not currently filled (no methods in '__dict__' etc).
-    self.truePtr.initialize(to: memory.newBool(self, type: types.bool, value: true))
-    self.falsePtr.initialize(to: memory.newBool(self, type: types.bool, value: false))
+    self.truePtr.initialize(to: memory.newBool(self, type: types.bool, value: .init(true)))
+    self.falsePtr.initialize(to: memory.newBool(self, type: types.bool, value: .init(false)))
     self.nonePtr.initialize(to: memory.newNone(self, type: types.none))
     self.notImplementedPtr.initialize(to: memory.newNotImplemented(self, type: types.notImplemented))
     self.ellipsisPtr.initialize(to: memory.newEllipsis(self, type: types.ellipsis))

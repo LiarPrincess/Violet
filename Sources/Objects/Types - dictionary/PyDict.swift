@@ -31,8 +31,9 @@ public struct PyDict: PyObjectMixin {
 
   // sourcery: storedProperty
   internal var elements: PyDict.OrderedDictionary {
-    get { self.elementsPtr.pointee }
-    nonmutating _modify { yield &self.elementsPtr.pointee }
+    // Do not add 'nonmutating set/_modify' - the compiler could get confused
+    // sometimes. Use 'self.elementsPtr.pointee' for modification.
+    self.elementsPtr.pointee
   }
 
   internal var count: Int {
@@ -324,7 +325,7 @@ public struct PyDict: PyObjectMixin {
   }
 
   internal func set(_ py: Py, key: Key, value: PyObject) -> SetResult {
-    switch self.elements.insert(py, key: key, value: value) {
+    switch self.elementsPtr.pointee.insert(py, key: key, value: value) {
     case .inserted,
          .updated:
       return .ok
@@ -369,7 +370,7 @@ public struct PyDict: PyObjectMixin {
   }
 
   internal func del(_ py: Py, key: Key) -> DelResult {
-    switch self.elements.remove(py, key: key) {
+    switch self.elementsPtr.pointee.remove(py, key: key) {
     case .value(let o):
       return .value(o)
     case .notFound:
@@ -439,7 +440,7 @@ public struct PyDict: PyObjectMixin {
     case let .error(e): return .error(e)
     }
 
-    switch zelf.elements.insert(py, key: key, value: value) {
+    switch zelf.elementsPtr.pointee.insert(py, key: key, value: value) {
     case .inserted,
          .updated:
       return .none(py)
@@ -465,7 +466,7 @@ public struct PyDict: PyObjectMixin {
     case let .error(e): return .error(e)
     }
 
-    switch zelf.elements.remove(py, key: key) {
+    switch zelf.elementsPtr.pointee.remove(py, key: key) {
     case .value:
       return .none(py)
     case .notFound:
@@ -597,7 +598,7 @@ public struct PyDict: PyObjectMixin {
       return .value(o)
     case .notFound:
       let value = `default` ?? py.none.asObject
-      switch zelf.elements.insert(py, key: key, value: value) {
+      switch zelf.elementsPtr.pointee.insert(py, key: key, value: value) {
       case .inserted,
            .updated:
         return .value(value)
@@ -659,7 +660,7 @@ public struct PyDict: PyObjectMixin {
       return Self.invalidZelfArgument(py, zelf, "clear")
     }
 
-    zelf.elements.clear()
+    zelf.elementsPtr.pointee.clear()
     return .none(py)
   }
 
@@ -737,7 +738,7 @@ public struct PyDict: PyObjectMixin {
     case let .error(e): return .error(e)
     }
 
-    switch zelf.elements.remove(py, key: key) {
+    switch zelf.elementsPtr.pointee.remove(py, key: key) {
     case .value(let o):
       return .value(o)
     case .notFound:
@@ -766,7 +767,7 @@ public struct PyDict: PyObjectMixin {
       return .keyError(py, message: "popitem(): dictionary is empty")
     }
 
-    _ = zelf.elements.remove(py, key: last.key)
+    _ = zelf.elementsPtr.pointee.remove(py, key: last.key)
 
     let key = last.key.object
     let value = last.value

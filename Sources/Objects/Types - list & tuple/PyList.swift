@@ -25,8 +25,9 @@ public struct PyList: PyObjectMixin, AbstractSequence {
 
   // sourcery: storedProperty
   internal var elements: [PyObject] {
-    get { self.elementsPtr.pointee }
-    nonmutating _modify { yield &self.elementsPtr.pointee }
+    // Do not add 'nonmutating set/_modify' - the compiler could get confused
+    // sometimes. Use 'self.elementsPtr.pointee' for modification.
+    self.elementsPtr.pointee
   }
 
   public let ptr: RawPtr
@@ -258,14 +259,14 @@ public struct PyList: PyObjectMixin, AbstractSequence {
 
   internal func setItem(_ py: Py, index: PyObject, value: PyObject) -> PyResult {
     return SetItemImpl.setItem(py,
-                               target: &self.elements,
+                               target: &self.elementsPtr.pointee,
                                index: index,
                                value: value)
   }
 
   internal func setItem(_ py: Py, index: Int, value: PyObject) -> PyResult {
     return SetItemImpl.setItem(py,
-                               target: &self.elements,
+                               target: &self.elementsPtr.pointee,
                                index: index,
                                value: value)
   }
@@ -285,7 +286,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
       return Self.invalidZelfArgument(py, zelf, "__delitem__")
     }
 
-    return DelItemImpl.delItem(py, target: &zelf.elements, index: index)
+    return DelItemImpl.delItem(py, target: &zelf.elementsPtr.pointee, index: index)
   }
 
   // MARK: - Append, prepend, insert
@@ -301,12 +302,12 @@ public struct PyList: PyObjectMixin, AbstractSequence {
   }
 
   internal func append(object: PyObject) {
-    self.elements.append(object)
+    self.elementsPtr.pointee.append(object)
   }
 
   // This is not a Python method, but it is used by other types
   internal func prepend(object: PyObject) {
-    self.elements.insert(object, at: 0)
+    self.elementsPtr.pointee.insert(object, at: 0)
   }
 
   internal static let insertDoc = """
@@ -360,7 +361,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
       index = zelf.count
     }
 
-    zelf.elements.insert(object, at: index)
+    zelf.elementsPtr.pointee.insert(object, at: index)
   }
 
   // MARK: - Extend
@@ -379,7 +380,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
     // We do not want to end with half-baked product!
     switch py.toArray(iterable: iterable) {
     case let .value(elements):
-      zelf.elements.append(contentsOf: elements)
+      zelf.elementsPtr.pointee.append(contentsOf: elements)
       return .none(py)
     case let .error(e):
       return .error(e)
@@ -405,7 +406,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
 
     switch Self.findIndex(py, zelf: zelf, object: object) {
     case .index(let index):
-      zelf.elements.remove(at: index)
+      zelf.elementsPtr.pointee.remove(at: index)
       return .none(py)
     case .notFound:
       return .valueError(py, message: "list.remove(x): x not in list")
@@ -493,7 +494,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
       return .indexError(py, message: "pop index out of range")
     }
 
-    let result = zelf.elements.remove(at: index)
+    let result = zelf.elementsPtr.pointee.remove(at: index)
     return .value(result)
   }
 
@@ -556,7 +557,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
       return Self.invalidZelfArgument(py, zelf, "reverse")
     }
 
-    zelf.elements.reverse()
+    zelf.elementsPtr.pointee.reverse()
     return .none(py)
   }
 
@@ -568,7 +569,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
       return Self.invalidZelfArgument(py, zelf, "clear")
     }
 
-    zelf.elements.removeAll()
+    zelf.elementsPtr.pointee.removeAll()
     return .none(py)
   }
 
@@ -623,7 +624,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
 
     switch Self.abstractParseMulCount(py, object: other) {
     case .value(let int):
-      Self.abstractMul(elements: &zelf.elements, count: int)
+      Self.abstractMul(elements: &zelf.elementsPtr.pointee, count: int)
       return PyResult(zelf)
     case .notImplemented:
       return .notImplemented(py)

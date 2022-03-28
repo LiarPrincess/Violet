@@ -38,7 +38,7 @@ extension PyList {
     // []
     // []
     var copy = self.elements
-    self.elements = []
+    self.elementsPtr.pointee = []
 
     // Cache keys (for a brief moment we will use 3*memory).
     var keyedElements: [ElementWithKey]
@@ -46,13 +46,13 @@ extension PyList {
     case let .value(k):
       keyedElements = k
     case let .error(e):
-      self.elements = copy // Go back to elements before keys.
+      self.elementsPtr.pointee = copy // Go back to elements before keys.
       return .error(e)
     }
 
     let hasAddedElementsDuringKey = !self.isEmpty
     if hasAddedElementsDuringKey {
-      self.elements = copy // Go back to elements before keys.
+      self.elementsPtr.pointee = copy // Go back to elements before keys.
       let error = Self.createListModifiedDuringSortError(py)
       return .error(error)
     }
@@ -64,7 +64,7 @@ extension PyList {
     let hasAddedElementsDuringSort = !self.isEmpty
 
     // Even if the sort fails we will assign partially sorted elements.
-    self.elements = keyedElements.map { $0.element }
+    self.elementsPtr.pointee = keyedElements.map { $0.element }
 
     if let e = sortError {
       return .error(e)

@@ -30,8 +30,9 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
 
   // sourcery: storedProperty
   internal var elements: Data {
-    get { self.elementsPtr.pointee }
-    nonmutating _modify { yield &self.elementsPtr.pointee }
+    // Do not add 'nonmutating set/_modify' - the compiler could get confused
+    // sometimes. Use 'self.elementsPtr.pointee' for modification.
+    self.elementsPtr.pointee
   }
 
   internal var isEmpty: Bool {
@@ -237,7 +238,10 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
       return Self.invalidZelfArgument(py, zelf, "__setitem__")
     }
 
-    return SetItemImpl.setItem(py, target: &zelf.elements, index: index, value: value)
+    return SetItemImpl.setItem(py,
+                               target: &zelf.elementsPtr.pointee,
+                               index: index,
+                               value: value)
   }
 
   private enum DelItemImpl: DelItemHelper {
@@ -253,7 +257,9 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
       return Self.invalidZelfArgument(py, zelf, "__delitem__")
     }
 
-    return DelItemImpl.delItem(py, target: &zelf.elements, index: index)
+    return DelItemImpl.delItem(py,
+                               target: &zelf.elementsPtr.pointee,
+                               index: index)
   }
 
   // MARK: - Properties
@@ -705,7 +711,7 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
       return .error(e.asBaseException)
     }
 
-    zelf.elements.append(otherElements)
+    zelf.elementsPtr.pointee.append(otherElements)
     return PyResult(zelf)
   }
 
@@ -733,7 +739,7 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
 
     // swiftlint:disable:next empty_count
     if count <= 0 {
-      zelf.elements = Data()
+      zelf.elementsPtr.pointee = Data()
       return PyResult(zelf)
     }
 
@@ -743,7 +749,7 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
     }
 
     let capacity = zelf.count * count
-    zelf.elements.reserveCapacity(capacity)
+    zelf.elementsPtr.pointee.reserveCapacity(capacity)
 
     // 'abc' * 2 = 'abcabc'
     // This means that we have to append 'count - 1' times
@@ -754,7 +760,7 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
     for _ in 0..<appendCount {
       for index in 0..<elementCount {
         let element = zelf.elements[index]
-        zelf.elements.append(element)
+        zelf.elementsPtr.pointee.append(element)
       }
     }
 
@@ -793,7 +799,7 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
 
     switch Self.asByte(py, object: object) {
     case let .value(byte):
-      zelf.elements.append(byte)
+      zelf.elementsPtr.pointee.append(byte)
       return .none(py)
     case let .error(e):
       return .error(e)
@@ -811,7 +817,7 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
     // Do not modify `zelf.elements` until we finished iteration!
     switch Self.getElementsFromIterable(py, iterable: iterable) {
     case .bytes(let data):
-      zelf.elements.append(data)
+      zelf.elementsPtr.pointee.append(data)
       return .none(py)
     case .notIterable:
       let message = "can't extend bytearray with \(iterable.typeName)"
@@ -884,7 +890,7 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
       index = self.count
     }
 
-    self.elements.insert(byte, at: index)
+    self.elementsPtr.pointee.insert(byte, at: index)
   }
 
   // MARK: - Remove
@@ -911,7 +917,7 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
         return .valueError(py, message: "value not found in bytearray")
       }
 
-      zelf.elements.remove(at: index)
+      zelf.elementsPtr.pointee.remove(at: index)
       return .none(py)
 
     case let .error(e):
@@ -961,7 +967,7 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
       return .indexError(py, message: "pop index out of range")
     }
 
-    let result = zelf.elements.remove(at: index)
+    let result = zelf.elementsPtr.pointee.remove(at: index)
     return PyResult(py, result)
   }
 
@@ -1000,7 +1006,7 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
       return Self.invalidZelfArgument(py, zelf, "clear")
     }
 
-    zelf.elements = Data()
+    zelf.elementsPtr.pointee = Data()
     return .none(py)
   }
 
@@ -1019,7 +1025,7 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
       return Self.invalidZelfArgument(py, zelf, "reverse")
     }
 
-    zelf.elements.reverse()
+    zelf.elementsPtr.pointee.reverse()
     return .none(py)
   }
 
@@ -1086,7 +1092,7 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
 
       switch Self.abstract__new__(py, object: object, encoding: encoding, errors: errors) {
       case let .value(data):
-        zelf.elements = data
+        zelf.elementsPtr.pointee = data
         return .none(py)
       case let .error(e):
         return .error(e)
