@@ -86,8 +86,8 @@ public struct PyType: PyObjectMixin {
   internal var deinitialize: DeinitializeFn { self.deinitializePtr.pointee }
 
   /// `PyObject.flags` that are only available on `type` instances.
-  internal var typeFlags: TypeFlags {
-    get { return TypeFlags(objectFlags: self.flags) }
+  internal var typeFlags: Flags {
+    get { return Flags(objectFlags: self.flags) }
     set { self.flags.setCustomFlags(from: newValue.objectFlags) }
   }
 
@@ -106,7 +106,7 @@ public struct PyType: PyObjectMixin {
                            type: PyType,
                            name: String,
                            qualname: String,
-                           flags: PyType.TypeFlags,
+                           flags: PyType.Flags,
                            base: PyType?,
                            bases: [PyType],
                            mroWithoutSelf: [PyType],
@@ -143,9 +143,9 @@ public struct PyType: PyObjectMixin {
   /// They are the 1st python objects that we allocate and at the point of calling
   /// this methods they are UNINITIALIZED!
   internal static func initialize(typeType: PyType,
-                                  typeTypeFlags: PyType.TypeFlags,
+                                  typeTypeFlags: PyType.Flags,
                                   objectType: PyType,
-                                  objectTypeFlags: PyType.TypeFlags) {
+                                  objectTypeFlags: PyType.Flags) {
     // Just a reminder:
     //             | Type     | Base       | MRO
     // object type | typeType | nil        | [self]
@@ -185,7 +185,7 @@ public struct PyType: PyObjectMixin {
   /// It assumes that base properties are already initialized.
   private func initializeProperties(name: String,
                                     qualname: String,
-                                    flags: PyType.TypeFlags,
+                                    flags: PyType.Flags,
                                     base: PyType?,
                                     bases: [PyType],
                                     mroWithoutSelf: [PyType],

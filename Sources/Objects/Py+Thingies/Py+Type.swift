@@ -8,7 +8,7 @@ extension Py {
 
   public func newType(name: String,
                       qualname: String,
-                      flags: PyType.TypeFlags,
+                      flags: PyType.Flags,
                       base: PyType,
                       mro: MethodResolutionOrder,
                       instanceSizeWithoutTail: Int,

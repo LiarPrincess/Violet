@@ -2,26 +2,26 @@
 
 extension PyType {
 
-  public struct TypeFlags: CustomStringConvertible, ExpressibleByArrayLiteral {
+  public struct Flags: CustomStringConvertible, ExpressibleByArrayLiteral {
 
-    public static let isHeapTypeFlag = TypeFlags(objectFlags: .custom0)
-    public static let isBaseTypeFlag = TypeFlags(objectFlags: .custom1)
-    public static let hasGCFlag = TypeFlags(objectFlags: .custom2)
-    public static let isAbstractFlag = TypeFlags(objectFlags: .custom3)
-    public static let hasFinalizeFlag = TypeFlags(objectFlags: .custom4)
-    public static let isDefaultFlag = TypeFlags(objectFlags: .custom5)
+    public static let isHeapTypeFlag = Flags(objectFlags: .custom0)
+    public static let isBaseTypeFlag = Flags(objectFlags: .custom1)
+    public static let hasGCFlag = Flags(objectFlags: .custom2)
+    public static let isAbstractFlag = Flags(objectFlags: .custom3)
+    public static let hasFinalizeFlag = Flags(objectFlags: .custom4)
+    public static let isDefaultFlag = Flags(objectFlags: .custom5)
 
-    public static let isLongSubclassFlag = TypeFlags(objectFlags: .custom8)
-    public static let isListSubclassFlag = TypeFlags(objectFlags: .custom9)
-    public static let isTupleSubclassFlag = TypeFlags(objectFlags: .custom10)
-    public static let isBytesSubclassFlag = TypeFlags(objectFlags: .custom11)
-    public static let isUnicodeSubclassFlag = TypeFlags(objectFlags: .custom12)
-    public static let isDictSubclassFlag = TypeFlags(objectFlags: .custom13)
-    public static let isBaseExceptionSubclassFlag = TypeFlags(objectFlags: .custom14)
-    public static let isTypeSubclassFlag = TypeFlags(objectFlags: .custom15)
+    public static let isLongSubclassFlag = Flags(objectFlags: .custom8)
+    public static let isListSubclassFlag = Flags(objectFlags: .custom9)
+    public static let isTupleSubclassFlag = Flags(objectFlags: .custom10)
+    public static let isBytesSubclassFlag = Flags(objectFlags: .custom11)
+    public static let isUnicodeSubclassFlag = Flags(objectFlags: .custom12)
+    public static let isDictSubclassFlag = Flags(objectFlags: .custom13)
+    public static let isBaseExceptionSubclassFlag = Flags(objectFlags: .custom14)
+    public static let isTypeSubclassFlag = Flags(objectFlags: .custom15)
 
-    public static let instancesHave__dict__Flag = TypeFlags(objectFlags: .custom20)
-    public static let subclassInstancesHave__dict__Flag = TypeFlags(objectFlags: .custom21)
+    public static let instancesHave__dict__Flag = Flags(objectFlags: .custom20)
+    public static let subclassInstancesHave__dict__Flag = Flags(objectFlags: .custom21)
 
     internal private(set) var objectFlags: PyObject.Flags
 
@@ -35,8 +35,8 @@ extension PyType {
       self.objectFlags = objectFlags
     }
 
-    public init(arrayLiteral elements: PyType.TypeFlags...) {
-      self = TypeFlags()
+    public init(arrayLiteral elements: PyType.Flags...) {
+      self = Flags()
 
       for flag in elements {
         self.set(flag, value: true)
@@ -49,7 +49,7 @@ extension PyType {
       var result = "["
       var isFirst = true
 
-      func appendIfSet(_ flag: TypeFlags, name: String) {
+      func appendIfSet(_ flag: Flags, name: String) {
         guard self.objectFlags.isSet(flag.objectFlags) else {
           return
         }
@@ -235,13 +235,13 @@ extension PyType {
     // MARK: - Methods
 
     /// Is given flag set?
-    private func isSet(_ flag: TypeFlags) -> Bool {
+    private func isSet(_ flag: Flags) -> Bool {
       let objectFlags = flag.objectFlags
       return self.objectFlags.isSet(objectFlags)
     }
 
     /// Append/remove given flag.
-    internal mutating func set(_ flag: TypeFlags, value: Bool) {
+    internal mutating func set(_ flag: Flags, value: Bool) {
       let objectFlags = flag.objectFlags
       self.objectFlags.set(objectFlags, value: value)
     }
