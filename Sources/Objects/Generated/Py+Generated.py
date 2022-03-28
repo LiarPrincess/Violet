@@ -25,7 +25,6 @@ if __name__ == '__main__':
     print('import BigInt')
     print('import VioletCore')
     print('import VioletBytecode')
-    print('import VioletCompiler')
     print()
     print('extension Py {')
 

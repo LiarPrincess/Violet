@@ -1,5 +1,4 @@
 import VioletCore
-import VioletCompiler
 
 extension Sys {
 
@@ -42,7 +41,7 @@ extension Sys {
       return self.arguments.inspectInteractively || env
     }
 
-    public var optimize: Compiler.OptimizationLevel {
+    public var optimize: Py.OptimizationLevel {
       let env = self.environment?.optimize ?? .none
       return Swift.max(self.arguments.optimize, env)
     }

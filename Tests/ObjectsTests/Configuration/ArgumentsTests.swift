@@ -1,7 +1,6 @@
 import XCTest
 import Foundation
 import FileSystem
-import VioletCompiler
 @testable import VioletObjects
 
 // swiftlint:disable file_length
@@ -175,7 +174,7 @@ class ArgumentsTests: XCTestCase {
   // MARK: - Optimization levels
 
   func test_optimization() {
-    let values: [String: Compiler.OptimizationLevel] = [
+    let values: [String: Py.OptimizationLevel] = [
       "-O": .O,
       "-OO": .OO
     ]

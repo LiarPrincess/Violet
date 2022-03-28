@@ -276,11 +276,12 @@ extension VM {
   }
 
   private func compileInteractive(input: String) -> CompileInteractiveResult {
-    let compileResult = self.py.compile(source: input,
-                                        filename: "<stdin>",
-                                        mode: .interactive)
-
-    switch compileResult {
+    let optimize = self.py.sys.flags.optimize
+    switch self.delegate.compileImpl(self.py,
+                                     source: input,
+                                     filename: "<stdin>",
+                                     mode: .interactive,
+                                     optimize: optimize) {
     case let .code(code):
       return .code(code)
 

@@ -1,10 +1,7 @@
 import Foundation
 import BigInt
 import VioletCore
-import VioletLexer
-import VioletParser
 import VioletBytecode
-import VioletCompiler
 
 // MARK: - Assert size
 
@@ -60,13 +57,6 @@ internal func checkInvariants() {
 
   // 4 line + 4 column = 8
   assertSize(type: SourceLocation.self, expected: 8)
-
-  // Token: 17 kind + 3 padding (?) + 8 start + 8 end = 36
-  // Token.Kind: 16 string payload + 1 tag = 17
-  // Tokens are quite big, but we have only 2 or 3 of them at the same time
-  // (not a whole array etc.).
-  assertSize(type: Token.self, expected: 36)
-  assertSize(type: Token.Kind.self, expected: 17)
 
   //            | size alignment | offset | object_size object_alignment
   // type       |    8         8 |      0 |           8                8
