@@ -29,9 +29,10 @@ var runner = TestRunner(
 // ========================
 
 let rustTestDir = fileSystem.join(path: testDir, element: "RustPython")
-runner.runAllTests(
+runner.runTests(
   from: rustTestDir,
-  skipping: [
+  only: [], // Use this if you want to execute only a single test.
+  skip: [
     "code.py" // We do not support all properties
   ]
 )
@@ -41,9 +42,10 @@ runner.runAllTests(
 // ====================
 
 let violetTestDir = fileSystem.join(path: testDir, element: "Violet")
-runner.runAllTests(
+runner.runTests(
   from: violetTestDir,
-  skipping: [
+  only: [],
+  skip: [
     "Carlo_Verre_hack.py" // User can modify a builtin type if they try hard enough
   ]
 )

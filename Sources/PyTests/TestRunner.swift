@@ -46,10 +46,11 @@ struct TestRunner {
 
   // MARK: - Run all tests
 
-  mutating func runAllTests(from dir: Path, skipping: [String] = []) {
+  mutating func runTests(from dir: Path, only: [String], skip: [String]) {
     var entries = fileSystem.readdirOrTrap(path: dir)
     entries.sort()
 
+    let hasOnly = !only.isEmpty
     for filename in entries {
       let path = fileSystem.join(path: dir, element: filename)
       let stat = fileSystem.statOrTrap(path: path)
@@ -63,21 +64,20 @@ struct TestRunner {
         continue
       }
 
-      let isSkipped = skipping.contains { $0 == filename }
-      if isSkipped {
-        continue
-      }
+      let isOnly = only.contains { $0 == filename }
+      let isSkipped = skip.contains { $0 == filename }
+      let isExecuted = hasOnly ? isOnly : !isSkipped
 
-      let dirName = fileSystem.basename(path: dir)
-      let testName = "\(dirName) - \(filename)"
-      self.runTest(name: testName, path: path)
+      if isExecuted {
+        let dirName = fileSystem.basename(path: dir)
+        let testName = "\(dirName) - \(filename)"
+        self.runTest(name: testName, path: path)
+      }
     }
   }
 
   // MARK: - Run test
 
-  /// This will leak memory on every call!
-  /// (because we do not have GC to break circular references)
   mutating func runTest(name: String, path: Path) {
     print(name)
     let test = Test(name: name, path: path)
@@ -87,6 +87,8 @@ struct TestRunner {
     arguments.script = path
 
     let vm = VM(arguments: arguments, environment: environment)
+    let py = vm.py
+
     switch vm.run() {
     case .done:
       print("  ✔ Success")
@@ -95,15 +97,15 @@ struct TestRunner {
 
     case .systemExit(let object):
       let status: String = {
-        if PyCast.isNone(object) {
+        if py.cast.isNone(object) {
           return "None"
         }
 
-        if let pyInt = PyCast.asInt(object) {
+        if let pyInt = py.cast.asInt(object) {
           return String(describing: pyInt.value)
         }
 
-        return Py.reprOrGenericString(object: object)
+        return py.reprOrGenericString(object)
       }()
 
       print("  ✔ Success (SystemExit: \(status))")
@@ -113,14 +115,14 @@ struct TestRunner {
     case .error(let error):
       // Try to print error to original 'stdout'
       let stdout: PyTextFile
-      switch Py.sys.get__stdout__() {
+      switch py.sys.get__stdout__() {
       case let .value(f): stdout = f
       case let .error(e): trap("'__stdout__' is missing: \(e)")
       }
 
       // 'printRecursive' ignores any new errors
       print("  ✖ Error:")
-      Py.printRecursiveIgnoringErrors(error: error, file: stdout)
+      py.printRecursiveIgnoringErrors(file: stdout, error: error)
       self.failedTests.append(test)
 
       if self.stopAtFirstFailedTest {

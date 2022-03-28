@@ -95,7 +95,7 @@ public final class Sys: PyModuleImplementation {
     let i = Configure.implementation
     let iv = i.version
     let pythonVersion = "Python \(p.major).\(p.minor).\(p.micro)"
-    let implementationVersion = "(\(i.name) \(iv.major).\(iv.minor).\(iv.micro))"
+    let implementationVersion = "\(i.name) \(iv.major).\(iv.minor).\(iv.micro)"
     return "\(pythonVersion) (\(implementationVersion))"
   }()
 
