@@ -24,7 +24,7 @@ import VioletCore
 // which may not yet exist.
 //
 // Stage 2: Fill type objects ('fill__dict__()' method)
-// When all of the types are initalized we can finally fill dictionaries.
+// When all of the types are initialized we can finally fill dictionaries.
 
 extension Py {
 

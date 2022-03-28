@@ -33,7 +33,7 @@ extension PyFrameTestsMixin {
   }
 
   func createCode(_ py: Py) -> PyCode {
-    let builer = CodeObjectBuilder(
+    let builder = CodeObjectBuilder(
       name: "NAME",
       qualifiedName: "QUALIFIED_NAME",
       filename: "FILENAME",
@@ -47,7 +47,7 @@ extension PyFrameTestsMixin {
       firstLine: 0
     )
 
-    let codeObject = builer.finalize()
+    let codeObject = builder.finalize()
     return py.newCode(code: codeObject)
   }
 }

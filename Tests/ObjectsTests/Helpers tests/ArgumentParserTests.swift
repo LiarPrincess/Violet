@@ -437,7 +437,7 @@ class ArgumentParserTests: PyTestCase {
 
     switch parser.bind(py, args: args, kwargs: kwargs) {
     case .value:
-      XCTFail("Binding succeded.", file: file, line: line)
+      XCTFail("Binding succeeded.", file: file, line: line)
       return nil
     case .error(let e):
       return e

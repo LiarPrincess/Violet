@@ -667,9 +667,9 @@ public struct PyFloat: PyObjectMixin {
     if !mod.isZero {
       // Ensure the 'div' has the same sign as the 'right'
       let isRightNegative = right < 0
-      let isModNegaitve = mod < 0
+      let isModNegative = mod < 0
 
-      if isRightNegative != isModNegaitve {
+      if isRightNegative != isModNegative {
         mod += right
         div -= 1.0
       }

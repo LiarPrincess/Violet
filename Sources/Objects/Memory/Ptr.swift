@@ -47,7 +47,7 @@ public struct Ptr<Pointee> {
     self.value.initialize(to: pointee)
   }
 
-  /// Deinitializes the value represented by this pointer.
+  /// Deinitialize the value represented by this pointer.
   ///
   /// The region of memory pointed by this pointer must be initialized to `Pointee`
   /// type first. After calling `deinitialize`, the memory is uninitialized,

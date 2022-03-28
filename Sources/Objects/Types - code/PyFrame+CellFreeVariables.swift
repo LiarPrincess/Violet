@@ -19,7 +19,7 @@ extension PyFrame {
       self.ptr = storage.cellVariables
     }
 
-    internal func initalize(_ py: Py) {
+    internal func initialize(_ py: Py) {
       self.ptr.initialize { _ in py.newCell(content: nil) }
     }
 
@@ -54,7 +54,7 @@ extension PyFrame {
       self.ptr = storage.freeVariables
     }
 
-    internal func initalize(_ py: Py) {
+    internal func initialize(_ py: Py) {
       // Everything will be taken from 'closure' in 'self.fill'
     }
 

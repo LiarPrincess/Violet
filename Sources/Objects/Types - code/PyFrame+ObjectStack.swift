@@ -3,7 +3,7 @@ extension PyFrame {
   // MARK: - Allocate
 
   internal func allocateObjectStack(_ py: Py, code: PyCode) -> BufferPtr<PyObject> {
-    // 'PyObject' is trivial, so we don't have to initalize the memory.
+    // 'PyObject' is trivial, so we don't have to initialize the memory.
     let count = Swift.max(code.predictedObjectStackCount, 128)
     return Self.allocateBuffer(count: count)
   }

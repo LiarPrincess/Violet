@@ -338,7 +338,7 @@ public struct PyType: PyObjectMixin {
     // Otherwise we get it from '__doc__', possible cases:
     // - if the type allows its instances to have '__doc__' then the object that
     //   we get from '__dict__' is a 'property'. In this case we will call 'fget'
-    //   of this property and maybe get something usefull (or an TypeError).
+    //   of this property and maybe get something useful (or an TypeError).
     // - if the type does not permit '__doc__' then the thing stored in '__dict__'
     //   is an 'str' that describes this type.
     let dict = zelf.getDict(py)
