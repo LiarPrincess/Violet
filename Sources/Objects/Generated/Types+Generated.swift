@@ -9,7 +9,7 @@ import BigInt
 import VioletCore
 import VioletBytecode
 
-// swiftlint:disable empty_count
+// swiftlint:disable discouraged_optional_boolean
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
 // swiftlint:disable function_parameter_count
@@ -14451,4 +14451,3 @@ extension PyMemory {
     return result
   }
 }
-

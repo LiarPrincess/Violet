@@ -77,6 +77,7 @@ extension PyDelegate {
     }
   }
 
+  // swiftlint:disable:next function_body_length
   internal func compileImpl(_ py: Py,
                             source: String,
                             filename: String,

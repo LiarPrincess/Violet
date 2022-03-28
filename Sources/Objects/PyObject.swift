@@ -166,6 +166,7 @@ public struct PyObject: PyObjectMixin {
   /// Custom `Mirror` with debug information.
   public struct DebugMirror {
 
+    // swiftlint:disable:next nesting
     public struct Property {
       public let name: String
       public let value: Any

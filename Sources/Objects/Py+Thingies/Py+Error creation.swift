@@ -3,6 +3,7 @@ import BigInt
 import FileSystem
 import VioletCore
 
+// swiftlint:disable discouraged_optional_boolean
 // swiftlint:disable file_length
 // cSpell:ignore bltinmod
 
@@ -175,11 +176,15 @@ extension Py {
     return self.newOSError(errno: errno, path: p)
   }
 
+  // swiftlint:disable function_body_length
+
   /// void
   /// _PyExc_Init(PyObject *bltinmod) <-- seriously check this
   ///
   /// https://docs.python.org/3/library/exceptions.html#OSError
   private func createOSError(errno: Int32, filename: String?) -> PyOSError {
+// swiftlint:enable function_body_length
+
     // 'ENOENT' handles its arguments differently than other
     if errno == ENOENT {
       let error = self.newFileNotFoundError(filename: filename)

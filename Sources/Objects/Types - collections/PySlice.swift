@@ -41,7 +41,11 @@ public struct PySlice: PyObjectMixin {
 
   // MARK: - Initialize/deinitialize
 
-  internal func initialize(_ py: Py, type: PyType, start: PyObject, stop: PyObject, step: PyObject) {
+  internal func initialize(_ py: Py,
+                           type: PyType,
+                           start: PyObject,
+                           stop: PyObject,
+                           step: PyObject) {
     self.initializeBase(py, type: type)
     self.startPtr.initialize(to: start)
     self.stopPtr.initialize(to: stop)
@@ -167,6 +171,7 @@ public struct PySlice: PyObjectMixin {
     return .allValuesEqual
   }
 
+  // swiftlint:disable:next function_parameter_count
   private static func compare(_ py: Py,
                               zelf: PyObject,
                               other: PyObject,
@@ -326,15 +331,20 @@ public struct PySlice: PyObjectMixin {
     internal var step: BigInt
   }
 
+// swiftlint:disable function_body_length
+
   /// int _PySlice_GetLongIndices(PySliceObject *self, PyObject *length, ...)
   ///
   /// Compute slice indices given a slice and length.
   /// Used by slice.indices and range object slicing.
   /// Assumes that `len` is a nonnegative.
-  internal static func getLongIndices(_ py: Py,
-                                      zelf: PySlice,
-                                      length: BigInt) -> PyResultGen<GetLongIndicesResult> {
-    // swiftlint:disable:previous function_body_length
+  internal static func getLongIndices(
+    _ py: Py,
+    zelf: PySlice,
+    length: BigInt
+  ) -> PyResultGen<GetLongIndicesResult> {
+// swiftlint:enable function_body_length
+
     assert(length.isPositiveOrZero)
 
     // Convert step to an integer; raise for zero step.

@@ -149,11 +149,14 @@ extension Py {
     }
   }
 
+// swiftlint:disable function_body_length
   /// int
   /// _PyObject_GetMethod(PyObject *obj, PyObject *name, PyObject **method)
   public func getMethod(object: PyObject,
                         selector: PyString,
                         allowsCallableFromDict: Bool = false) -> GetMethodResult {
+// swiftlint:enable function_body_length
+
     if let result = self.customGetMethod(object: object,
                                          selector: selector,
                                          allowsCallableFromDict: allowsCallableFromDict) {

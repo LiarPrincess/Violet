@@ -184,6 +184,8 @@ public struct PyFrame: PyObjectMixin {
 
   // MARK: - Initialize/deinitialize
 
+// swiftlint:disable function_parameter_count
+
   /// PyFrameObject* _Py_HOT_FUNCTION
   /// _PyFrame_New_NoTrack(PyThreadState *tstate, PyCodeObject *code,
   internal func initialize(_ py: Py,
@@ -192,6 +194,8 @@ public struct PyFrame: PyObjectMixin {
                            locals: PyDict,
                            globals: PyDict,
                            parent: PyFrame?) {
+// swiftlint:enable function_parameter_count
+
     self.initializeBase(py, type: type)
     self.codePtr.initialize(to: code)
     self.parentPtr.initialize(to: parent)

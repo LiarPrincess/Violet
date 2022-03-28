@@ -8,11 +8,6 @@ public enum HashResult {
   case invalidSelfArgument(PyObject, String)
   case error(PyBaseException)
 
-  internal static func createUnhashableError(_ py: Py,
-                                             object: PyObject) -> PyTypeError {
-    return py.newUnhashableObjectError(object: object)
-  }
-
   internal static func createInvalidSelfArgumentError(
     _ py: Py,
     object: PyObject,
@@ -32,7 +27,7 @@ extension PyResult {
       self = PyResult(py, hash)
 
     case let .unhashable(object):
-      let error = HashResult.createUnhashableError(py, object: object)
+      let error = py.newUnhashableObjectError(object: object)
       self = .error(error.asBaseException)
 
     case let .invalidSelfArgument(object, expectedType):

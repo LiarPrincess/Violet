@@ -183,6 +183,7 @@ public struct PyBool: PyObjectMixin {
 
   // MARK: - Operations
 
+  // swiftlint:disable function_parameter_count
   private static func binaryOperation(
     _ py: Py,
     zelf: PyObject,

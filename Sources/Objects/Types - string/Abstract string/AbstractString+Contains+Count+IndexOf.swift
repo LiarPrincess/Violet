@@ -135,6 +135,7 @@ extension AbstractString {
                                 findFn: Self.rfindHelper(string:value:))
   }
 
+  // swiftlint:disable:next function_parameter_count
   private static func indexOfTemplate(
     _ py: Py,
     zelf: PyObject,

@@ -25,7 +25,6 @@ public struct PyStopIteration: PyErrorMixin {
     self.ptr = ptr
   }
 
-  // swiftlint:disable:next function_parameter_count
   internal func initialize(
     _ py: Py,
     type: PyType,
@@ -47,7 +46,6 @@ public struct PyStopIteration: PyErrorMixin {
     self.valuePtr.initialize(to: value)
   }
 
-  // swiftlint:disable:next function_parameter_count
   internal func initialize(
     _ py: Py,
     type: PyType,

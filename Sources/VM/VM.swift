@@ -3,7 +3,8 @@ import FileSystem
 import VioletCore
 import VioletObjects
 
-// swiftlint:disable:next type_name
+// swiftlint:disable weak_delegate
+
 public final class VM {
 
   public let py: Py

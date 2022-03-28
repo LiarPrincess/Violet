@@ -1,3 +1,5 @@
+// swiftlint:disable file_length
+
 // Most of this type body is inside '/Generated/FunctionWrapper.swift'.
 // Here we have only the hand-written cases.
 extension FunctionWrapper {

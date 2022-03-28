@@ -26,6 +26,10 @@ if __name__ == '__main__':
     print('import VioletCore')
     print('import VioletBytecode')
     print()
+
+    print('// swiftlint:disable function_body_length')
+    print('// swiftlint:disable line_length')
+    print()
     print('extension Py {')
 
     # ==============

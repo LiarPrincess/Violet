@@ -1,7 +1,5 @@
 import BigInt
 
-// swiftlint:disable type_name
-
 internal enum AbstractStringFindResult<C: Collection> {
   case index(index: C.Index, position: BigInt)
   case notFound
@@ -133,6 +131,7 @@ extension AbstractString {
 
   // MARK: - Template
 
+  // swiftlint:disable:next function_parameter_count
   private static func template(
     _ py: Py,
     zelf: Self,

@@ -38,7 +38,6 @@ public struct PyImportError: PyErrorMixin {
     self.ptr = ptr
   }
 
-  // swiftlint:disable:next function_parameter_count
   internal func initialize(
     _ py: Py,
     type: PyType,
@@ -70,7 +69,6 @@ public struct PyImportError: PyErrorMixin {
     self.modulePathPtr.initialize(to: modulePath)
   }
 
-  // swiftlint:disable:next function_parameter_count
   internal func initialize(
     _ py: Py,
     type: PyType,

@@ -83,6 +83,7 @@ extension PyObjectMixin {
     return result
   }
 
+  // swiftlint:disable:next cyclomatic_complexity function_body_length
   private func append(string: inout String, property: PyObject.DebugMirror.Property) {
     string.append(", ")
     string.append(property.name)

@@ -8,6 +8,7 @@ extension Py {
 
   // MARK: - New
 
+  // swiftlint:disable:next function_parameter_count
   public func newType(name: String,
                       qualname: String,
                       flags: PyType.Flags,

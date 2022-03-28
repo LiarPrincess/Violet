@@ -2,6 +2,7 @@ import Foundation
 import VioletCore
 import VioletBytecode
 
+// swiftlint:disable file_length
 // cSpell:ignore tstate
 
 // In CPython:
@@ -137,7 +138,7 @@ extension Py {
     return .typeError(self, message: message)
   }
 
-  // MARK: -  Static method
+  // MARK: - Static method
 
   public func newStaticMethod(callable: PyBuiltinFunction) -> PyStaticMethod {
     let object = callable.asObject
@@ -154,7 +155,7 @@ extension Py {
     return self.memory.newStaticMethod(self, type: type, callable: callable)
   }
 
-  // MARK: -  Class method
+  // MARK: - Class method
 
   public func newClassMethod(callable: PyBuiltinFunction) -> PyClassMethod {
     let object = callable.asObject
@@ -286,6 +287,8 @@ extension Py {
 
   // MARK: - Frame
 
+  // swiftlint:disable function_parameter_count
+
   /// PyFrameObject* _Py_HOT_FUNCTION
   /// _PyFrame_New_NoTrack(PyThreadState *tstate, PyCodeObject *code,
   public func newFrame(parent: PyFrame?,
@@ -297,6 +300,8 @@ extension Py {
                        locals: PyDict,
                        globals: PyDict,
                        closure: PyTuple?) -> PyResultGen<PyFrame> {
+// swiftlint:enable function_parameter_count
+
     let type = self.types.frame
     let frame = self.memory.newFrame(self,
                                      type: type,

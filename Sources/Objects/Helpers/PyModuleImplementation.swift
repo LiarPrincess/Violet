@@ -1,6 +1,5 @@
 import VioletCore
 
-// swiftlint:disable file_length
 // cSpell:ignore Scooby
 
 /// Helper for classes that will be used as a `Python` module implementation.

@@ -1,6 +1,3 @@
-// swiftlint:disable fatal_error_message
-// swiftlint:disable unavailable_function
-
 public final class PyMemory {
 
   private var firstAllocatedObject: PyObject?

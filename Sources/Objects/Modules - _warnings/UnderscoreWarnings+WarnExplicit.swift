@@ -1,5 +1,7 @@
 import VioletCore
 
+// swiftlint:disable file_length
+
 // In CPython:
 // Python -> _warnings.c
 // https://docs.python.org/3/library/warnings.html#warnings.warn_explicit
@@ -7,7 +9,7 @@ import VioletCore
 
 extension UnderscoreWarnings {
 
-  // swiftlint:disable function_parameter_count
+  // swiftlint:disable:next function_parameter_count
   public func warnExplicit(message: PyObject,
                            category: PyType,
                            filename: PyString,
@@ -15,8 +17,6 @@ extension UnderscoreWarnings {
                            module: PyString?,
                            source: PyObject?,
                            registry: WarningRegistry) -> PyBaseException? {
-    // swiftlint:enable function_parameter_count
-
     let warning = self.createWarning(
       message: message,
       category: category,

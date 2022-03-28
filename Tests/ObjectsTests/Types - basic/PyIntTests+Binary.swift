@@ -3,6 +3,9 @@ import Foundation
 import FileSystem
 import VioletObjects
 
+// swiftlint:disable function_parameter_count
+// swiftlint:disable file_length
+
 extension PyIntTests {
 
   // MARK: - Add, sub, mul
@@ -281,6 +284,8 @@ extension PyIntTests {
 
   // MARK: - Helpers
 
+  // swiftlint:disable line_length
+
   private func assertAdd(_ py: Py, left: Int, right: Int, expected: Int, file: StaticString = #file, line: UInt = #line) {
     self.assertBinaryOperation(py, left: left, right: right, expected: expected, fn: Py.add, file: file, line: line)
   }
@@ -368,6 +373,8 @@ extension PyIntTests {
   private func assertXorTypeError(_ py: Py, left: Int?, right: Int?, message: String, file: StaticString = #file, line: UInt = #line) {
     self.assertBinaryOperationTypeError(py, left: left, right: right, message: message, fn: Py.xor, file: file, line: line)
   }
+
+  // swiftlint:enable line_length
 
   typealias BinaryOperation = (Py) -> (PyObject, PyObject) -> PyResult
 

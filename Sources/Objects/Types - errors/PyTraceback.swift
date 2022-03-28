@@ -1,5 +1,7 @@
 import VioletCore
 
+// swiftlint:disable file_length
+
 // In CPython:
 // Python -> traceback.c
 // https://docs.python.org/3/library/traceback.html
@@ -48,6 +50,7 @@ public struct PyTraceback: PyObjectMixin {
     self.ptr = ptr
   }
 
+  // swiftlint:disable:next function_parameter_count
   internal func initialize(_ py: Py,
                            type: PyType,
                            next: PyTraceback?,
@@ -261,6 +264,7 @@ public struct PyTraceback: PyObjectMixin {
     }
   }
 
+  // swiftlint:disable:next function_parameter_count
   private static func __new__(_ py: Py,
                               type: PyType,
                               next _next: PyObject,

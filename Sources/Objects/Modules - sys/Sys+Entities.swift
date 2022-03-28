@@ -132,6 +132,7 @@ extension Sys {
   /// ```
   public struct VersionInfo {
 
+    // swiftlint:disable:next nesting
     public enum ReleaseLevel: CustomStringConvertible {
       case alpha
       case beta

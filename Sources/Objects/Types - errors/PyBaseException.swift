@@ -6,15 +6,11 @@ import VioletCore
 // https://docs.python.org/3.7/c-api/exceptions.html
 // https://www.python.org/dev/peps/pep-0415/#proposal
 
+// swiftlint:disable static_operator
 // swiftlint:disable file_length
 
-public func === (lhs: PyBaseException, rhs: PyBaseException) -> Bool {
-  return lhs.ptr === rhs.ptr
-}
-
-public func !== (lhs: PyBaseException, rhs: PyBaseException) -> Bool {
-  return lhs.ptr !== rhs.ptr
-}
+public func === (lhs: PyBaseException, rhs: PyBaseException) -> Bool { lhs.ptr === rhs.ptr }
+public func !== (lhs: PyBaseException, rhs: PyBaseException) -> Bool { lhs.ptr !== rhs.ptr }
 
 // sourcery: pyerrortype = BaseException, isDefault, isBaseType, hasGC
 // sourcery: isBaseExceptionSubclass, instancesHave__dict__
@@ -76,7 +72,6 @@ public struct PyBaseException: PyErrorMixin {
     self.ptr = ptr
   }
 
-  // swiftlint:disable:next function_parameter_count
   internal func initialize(
     _ py: Py,
     type: PyType,

@@ -10,12 +10,12 @@ public enum CompareResult {
   case error(PyBaseException)
 
   public enum Operation: String {
-    case __eq__ = "__eq__"
-    case __ne__ = "__ne__"
-    case __lt__ = "__lt__"
-    case __le__ = "__le__"
-    case __gt__ = "__gt__"
-    case __ge__ = "__ge__"
+    case __eq__
+    case __ne__
+    case __lt__
+    case __le__
+    case __gt__
+    case __ge__
   }
 
   // swiftlint:disable:next discouraged_optional_boolean

@@ -2,6 +2,12 @@ included:
   - Sources
   - Tests
 
+type_name:
+  excluded:
+    - Py
+    - VM
+    - Lazy__dict__
+
 # Try to stay below 80
 line_length:
   warning: 100
@@ -177,7 +183,6 @@ only_rules:
   - multiline_parameters
   - nimble_operator
   - no_extension_access_modifier
-  - number_separator
   - object_literal
   - operator_usage_whitespace
   - optional_enum_case_matching
@@ -244,6 +249,7 @@ only_rules:
   # - no_grouping_extension
   # - nslocalizedstring_key # only for iOS
   # - nslocalizedstring_require_bundle # only for iOS
+  # - number_separator # We have SwiftFormat for this
   # - prefer_nimble # We are using 'XCTAssert'
   # - prefixed_toplevel_constant
   # - private_subject # we do not use 'Combine'

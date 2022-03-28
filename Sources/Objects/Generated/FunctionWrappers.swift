@@ -6,7 +6,6 @@
 
 // swiftlint:disable type_name
 // swiftlint:disable identifier_name
-// swiftlint:disable vertical_whitespace_closing_braces
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
 // swiftlint:disable file_length
@@ -1298,4 +1297,3 @@ public struct FunctionWrapper: CustomStringConvertible {
     self.kind = .type_ObjectOpt_ObjectOpt_ObjectOpt_to_Result(wrapper)
   }
 }
-

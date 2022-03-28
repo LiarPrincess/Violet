@@ -18,7 +18,7 @@ extension PyFrame {
       GenericField(Cell.self, repeatCount: cellVariableCount), // 2: cells
       GenericField(Cell.self, repeatCount: freeVariableCount), // 3: free
       GenericField(BlockStackEnd.self), // 4: blockStackEnd
-      GenericField(Block.self, repeatCount: blockStackCount), // 5: blockStack
+      GenericField(Block.self, repeatCount: blockStackCount) // 5: blockStack
     ])
 
     assert(layout.offsets.count == 6)
@@ -64,6 +64,7 @@ extension PyFrame {
   /// allocation.
   internal struct FastLocalsCellFreeBlockStackStorage {
 
+    // swiftlint:disable:next nesting
     fileprivate struct Metadata {
       fileprivate let fastLocalsOffset: Int
       fileprivate let fastLocalsCount: Int

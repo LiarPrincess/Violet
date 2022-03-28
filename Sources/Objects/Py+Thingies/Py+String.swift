@@ -2,7 +2,6 @@ import Foundation
 import FileSystem
 import VioletCore
 
-// swiftlint:disable file_length
 // cSpell:ignore uxxxx Uxxxxxxxx
 
 // In CPython:
