@@ -160,23 +160,23 @@ extension PyType {
     // Create type object
     let name = args.name.value
 
-    var typeFlags = TypeFlags()
-    typeFlags.isDefault = true
-    typeFlags.isHeapType = true
-    typeFlags.isBaseType = true
-    typeFlags.hasFinalize = true
-    typeFlags.hasGC = base.typeFlags.hasGC
+    var flags = Flags()
+    flags.isDefault = true
+    flags.isHeapType = true
+    flags.isBaseType = true
+    flags.hasFinalize = true
+    flags.hasGC = base.typeFlags.hasGC
 
-    typeFlags.isLongSubclass = base.typeFlags.isLongSubclass
-    typeFlags.isListSubclass = base.typeFlags.isListSubclass
-    typeFlags.isTupleSubclass = base.typeFlags.isTupleSubclass
-    typeFlags.isBytesSubclass = base.typeFlags.isBytesSubclass
-    typeFlags.isUnicodeSubclass = base.typeFlags.isUnicodeSubclass
-    typeFlags.isDictSubclass = base.typeFlags.isDictSubclass
-    typeFlags.isBaseExceptionSubclass = base.typeFlags.isBaseExceptionSubclass
-    typeFlags.isTypeSubclass = base.typeFlags.isTypeSubclass
+    flags.isLongSubclass = base.typeFlags.isLongSubclass
+    flags.isListSubclass = base.typeFlags.isListSubclass
+    flags.isTupleSubclass = base.typeFlags.isTupleSubclass
+    flags.isBytesSubclass = base.typeFlags.isBytesSubclass
+    flags.isUnicodeSubclass = base.typeFlags.isUnicodeSubclass
+    flags.isDictSubclass = base.typeFlags.isDictSubclass
+    flags.isBaseExceptionSubclass = base.typeFlags.isBaseExceptionSubclass
+    flags.isTypeSubclass = base.typeFlags.isTypeSubclass
 
-    typeFlags.instancesHave__dict__ = base.typeFlags.instancesHave__dict__
+    flags.instancesHave__dict__ = base.typeFlags.instancesHave__dict__
       || base.typeFlags.subclassInstancesHave__dict__
 
     let staticMethods = PyStaticCall.KnownNotOverriddenMethods(
@@ -190,7 +190,7 @@ extension PyType {
       type: metatype, // <- Important!
       name: name,
       qualname: name, // May be overridden later (if we have it in dict)
-      flags: typeFlags,
+      flags: flags,
       base: base,
       bases: mro.baseClasses,
       mroWithoutSelf: mro.resolutionOrder,

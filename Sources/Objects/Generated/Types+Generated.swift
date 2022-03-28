@@ -6210,7 +6210,7 @@ extension PyMemory {
                       type: PyType,
                       name: String,
                       qualname: String,
-                      flags: PyType.TypeFlags,
+                      flags: PyType.Flags,
                       base: PyType?,
                       bases: [PyType],
                       mroWithoutSelf: [PyType],
