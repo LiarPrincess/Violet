@@ -28,6 +28,13 @@ public protocol PyDelegateType: AnyObject {
   /// CPython: `PyThreadState.exc_info`
   func getCurrentlyHandledException(_ py: Py) -> PyBaseException?
 
+  /// Compile `source`.
+  func compile(_ py: Py,
+               source: String,
+               filename: String,
+               mode: Py.ParserMode,
+               optimize: Py.OptimizationLevel) -> PyResultGen<PyCode>
+
   /// Evaluate given code object.
   func eval(_ py: Py,
             name: PyString?,

@@ -80,7 +80,11 @@ let package = Package(
     .testTarget(name: "VioletBytecodeTests", dependencies: ["VioletBytecode"], path: "Tests/BytecodeTests"),
 
     // Python objects (+ part of runtime)
-    .target(name: "VioletObjects", dependencies: ["VioletCompiler", "ArgumentParser", "UnicodeData", "FileSystem"], path: "Sources/Objects"),
+    // IMPORTANT: 'Objects' do not depend on 'Compiler', only 'Bytecode'!
+    // This means that technically we could create PyObjects during compilation
+    // to avoid costly translation 'Swift types' -> 'Python types' later.
+    // But this is not done.
+    .target(name: "VioletObjects", dependencies: ["VioletBytecode", "ArgumentParser", "UnicodeData", "FileSystem"], path: "Sources/Objects"),
     .testTarget(name: "VioletObjectsTests", dependencies: ["VioletObjects"], path: "Tests/ObjectsTests"),
 
     // Bytecode interpretation (+ remaining part of the Python runtime)

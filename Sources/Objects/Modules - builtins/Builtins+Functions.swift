@@ -932,14 +932,13 @@ extension Builtins {
       let dontInherit = binding.optional(at: 4)
       let optimize = binding.optional(at: 5)
 
-      let compileResult = py.compile(source: source,
-                                     filename: filename,
-                                     mode: mode,
-                                     flags: flags,
-                                     dontInherit: dontInherit,
-                                     optimize: optimize)
+      let result = py.compile(source: source,
+                              filename: filename,
+                              mode: mode,
+                              flags: flags,
+                              dontInherit: dontInherit,
+                              optimize: optimize)
 
-      let result = compileResult.asResult()
       return PyResult(result)
 
     case let .error(e):

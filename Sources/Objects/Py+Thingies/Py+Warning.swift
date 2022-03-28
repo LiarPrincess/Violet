@@ -1,9 +1,6 @@
 import Foundation
 import BigInt
 import VioletCore
-import VioletLexer
-import VioletParser
-import VioletCompiler
 
 // In CPython:
 // Python -> _warnings.c
@@ -62,33 +59,6 @@ extension Py {
   }
 
   // MARK: - Syntax
-
-  public func warn(filename: String, warning: LexerWarning) -> PyBaseException? {
-    let text = String(describing: warning)
-    let location = warning.location
-    return self.warnSyntax(filename: filename,
-                           line: location.line,
-                           column: location.column,
-                           text: text)
-  }
-
-  public func warn(filename: String, warning: ParserWarning) -> PyBaseException? {
-    let text = String(describing: warning)
-    let location = warning.location
-    return self.warnSyntax(filename: filename,
-                           line: location.line,
-                           column: location.column,
-                           text: text)
-  }
-
-  public func warn(filename: String, warning: CompilerWarning) -> PyBaseException? {
-    let text = String(describing: warning)
-    let location = warning.location
-    return self.warnSyntax(filename: filename,
-                           line: location.line,
-                           column: location.column,
-                           text: text)
-  }
 
   public func warnSyntax(filename: String,
                          line: SourceLine,

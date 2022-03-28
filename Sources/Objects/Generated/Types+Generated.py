@@ -400,7 +400,6 @@ import Foundation
 import BigInt
 import VioletCore
 import VioletBytecode
-import VioletCompiler
 
 // swiftlint:disable empty_count
 // swiftlint:disable line_length

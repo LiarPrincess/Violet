@@ -1,16 +1,13 @@
 import Foundation
 import VioletCore
-import VioletLexer
-import VioletParser
 import VioletBytecode
-import VioletCompiler
 
 // MARK: - Abstract
 
 private protocol ExecEval {
 
   static var filename: String { get }
-  static var parserMode: Parser.Mode { get }
+  static var parserMode: Py.ParserMode { get }
 
   static func createLocalsNotDictError(type: String) -> String
   static func createGlobalsNotDictError(type: String) -> String
@@ -154,12 +151,10 @@ extension ExecEval {
     switch py.getString(object: arg, encoding: .default) {
     case .string(_, let source),
          .bytes(_, let source):
-      let compileResult = py.compile(source: source,
-                                     filename: Self.filename,
-                                     mode: Self.parserMode,
-                                     optimize: Compiler.OptimizationLevel.none)
-
-      return compileResult.asResult()
+      return py.compile(source: source,
+                        filename: Self.filename,
+                        mode: Self.parserMode,
+                        optimize: .none)
 
     case .byteDecodingError:
       return .typeError(py, message: Self.sourceArgumentHasInvalidTypeError)
@@ -176,7 +171,7 @@ extension Py {
   private struct Exec: ExecEval {
 
     fileprivate static let filename = "exec"
-    fileprivate static let parserMode = Parser.Mode.fileInput
+    fileprivate static let parserMode = Py.ParserMode.fileInput
 
     fileprivate static func createLocalsNotDictError(type: String) -> String {
       return "exec() locals must be a dict, not \(type)"
@@ -217,7 +212,7 @@ extension Py {
   private struct Eval: ExecEval {
 
     fileprivate static let filename = "eval"
-    fileprivate static let parserMode = Parser.Mode.eval
+    fileprivate static let parserMode = Py.ParserMode.eval
 
     fileprivate static func createLocalsNotDictError(type: String) -> String {
       return "locals must be a mapping"

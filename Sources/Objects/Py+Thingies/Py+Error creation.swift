@@ -2,9 +2,6 @@ import Foundation
 import BigInt
 import FileSystem
 import VioletCore
-import VioletLexer
-import VioletParser
-import VioletCompiler
 
 // swiftlint:disable file_length
 // cSpell:ignore bltinmod
@@ -545,85 +542,6 @@ extension Py {
   }
 
   // MARK: - Syntax error
-
-  public func newSyntaxError(filename: String, error: LexerError) -> PySyntaxError {
-    let message = String(describing: error.kind)
-    let lineno = BigInt(error.location.line)
-    let offset = BigInt(error.location.column)
-    let text = String(describing: error)
-    let printFileAndLine = true
-
-    switch error.kind {
-    case .tooManyIndentationLevels,
-         .noMatchingDedent:
-      let error = self.newIndentationError(message: message,
-                                           filename: filename,
-                                           lineno: lineno,
-                                           offset: offset,
-                                           text: text,
-                                           printFileAndLine: printFileAndLine)
-      return PySyntaxError(ptr: error.ptr)
-    default:
-      return self.newSyntaxError(message: message,
-                                 filename: filename,
-                                 lineno: lineno,
-                                 offset: offset,
-                                 text: text,
-                                 printFileAndLine: printFileAndLine)
-    }
-  }
-
-  public func newSyntaxError(filename: String, error: ParserError) -> PySyntaxError {
-    let message = String(describing: error.kind)
-    let lineno = BigInt(error.location.line)
-    let offset = BigInt(error.location.column)
-    let text = String(describing: error)
-    let printFileAndLine = true
-
-    switch error.kind {
-    case let .unexpectedToken(token, expected: expected):
-      let gotUnexpectedIndent = token == .indent || token == .dedent
-      let missingIndent = expected.contains { $0 == .indent || $0 == .dedent }
-
-      guard gotUnexpectedIndent || missingIndent else {
-        break
-      }
-
-      let error = self.newIndentationError(message: message,
-                                           filename: filename,
-                                           lineno: lineno,
-                                           offset: offset,
-                                           text: text,
-                                           printFileAndLine: printFileAndLine)
-
-      return PySyntaxError(ptr: error.ptr)
-
-    default:
-      break
-    }
-
-    return self.newSyntaxError(message: message,
-                               filename: filename,
-                               lineno: lineno,
-                               offset: offset,
-                               text: text,
-                               printFileAndLine: printFileAndLine)
-  }
-
-  public func newSyntaxError(filename: String, error: CompilerError) -> PySyntaxError {
-    let message = String(describing: error.kind)
-    let lineno = BigInt(error.location.line)
-    let offset = BigInt(error.location.column)
-    let text = String(describing: error)
-    let printFileAndLine = true
-
-    return self.newSyntaxError(message: message,
-                               filename: filename,
-                               lineno: lineno,
-                               offset: offset,
-                               text: text,
-                               printFileAndLine: printFileAndLine)
-  }
 
   // swiftlint:disable:next function_parameter_count
   public func newSyntaxError(message: String?,

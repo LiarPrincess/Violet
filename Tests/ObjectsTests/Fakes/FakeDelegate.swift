@@ -12,6 +12,14 @@ class FakeDelegate: PyDelegateType {
     shouldNotBeCalled()
   }
 
+  func compile(_ py: Py,
+               source: String,
+               filename: String,
+               mode: Py.ParserMode,
+               optimize: Py.OptimizationLevel) -> PyResultGen<PyCode> {
+    shouldNotBeCalled()
+  }
+
   // swiftlint:disable:next function_parameter_count
   func eval(_ py: Py,
             name: PyString?,

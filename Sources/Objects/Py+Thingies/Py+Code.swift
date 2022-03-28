@@ -1,9 +1,6 @@
 import Foundation
 import VioletCore
-import VioletLexer
-import VioletParser
 import VioletBytecode
-import VioletCompiler
 
 // cSpell:ignore tstate
 

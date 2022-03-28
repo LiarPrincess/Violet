@@ -1,6 +1,5 @@
 import Foundation
 import FileSystem
-import VioletCompiler
 
 // Descriptions taken from: https://docs.python.org/3.7/using/cmdline.html
 
@@ -44,7 +43,7 @@ public struct Environment {
   /// If this is set to a non-empty string it is equivalent to specifying
   /// the `-O` option.
   /// If set to an integer, it is equivalent to specifying `-O` multiple times.
-  public var optimize = Compiler.OptimizationLevel.none
+  public var optimize = Py.OptimizationLevel.none
 
   /// PYTHONWARNINGS
   ///

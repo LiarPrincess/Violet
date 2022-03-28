@@ -1,6 +1,5 @@
 import XCTest
 import Foundation
-import VioletCompiler
 @testable import VioletObjects
 
 class SysFlagsTests: XCTestCase {
@@ -54,7 +53,7 @@ class SysFlagsTests: XCTestCase {
   // MARK: - Optimizations
 
   func test_optimizations_arg_setToNone_alwaysUsesEnv() {
-    let presets: [Compiler.OptimizationLevel] = [.none, .O, .OO]
+    let presets: [Py.OptimizationLevel] = [.none, .O, .OO]
 
     for value in presets {
       var args = Arguments()
@@ -70,7 +69,7 @@ class SysFlagsTests: XCTestCase {
   }
 
   func test_optimizations_arg_setToO_withEnv_setToNone_orO_isAlwaysOO() {
-    let presets: [Compiler.OptimizationLevel] = [.none, .O]
+    let presets: [Py.OptimizationLevel] = [.none, .O]
 
     for value in presets {
       var args = Arguments()
@@ -98,7 +97,7 @@ class SysFlagsTests: XCTestCase {
   }
 
   func test_optimizations_arg_setToOO_isAlwaysOO() {
-    let presets: [Compiler.OptimizationLevel] = [.none, .O, .OO]
+    let presets: [Py.OptimizationLevel] = [.none, .O, .OO]
 
     for value in presets {
       var args = Arguments()
@@ -114,7 +113,7 @@ class SysFlagsTests: XCTestCase {
   }
 
   func test_optimizations_ignoreEnv() {
-    let presets: [Compiler.OptimizationLevel] = [.none, .O, .OO]
+    let presets: [Py.OptimizationLevel] = [.none, .O, .OO]
 
     for value in presets {
       var args = Arguments()

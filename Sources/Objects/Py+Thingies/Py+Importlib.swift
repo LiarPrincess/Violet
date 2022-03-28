@@ -1,7 +1,6 @@
 import Foundation
 import FileSystem
 import VioletCore
-import VioletParser
 
 // swiftlint:disable file_length
 
@@ -137,10 +136,10 @@ extension Py {
     }
 
     let code: PyCode
-    let compileResult = self.compile(path: path, mode: .fileInput)
+    let compileResult = self.compile(path: path, mode: .fileInput, optimize: .fromSys)
     let specPath = ModuleSpecWithPath(spec: spec, path: path)
 
-    switch compileResult.asResult() {
+    switch compileResult {
     case let .value(c): code = c
     case let .error(e):
       let message = "can't compile \(spec.name)"

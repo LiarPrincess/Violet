@@ -8,7 +8,6 @@ import Foundation
 import BigInt
 import VioletCore
 import VioletBytecode
-import VioletCompiler
 
 extension Py {
 
