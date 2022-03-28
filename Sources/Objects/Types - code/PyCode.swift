@@ -27,7 +27,7 @@ public struct PyCode: PyObjectMixin {
 #endif
 
   // sourcery: storedProperty
-  /// Code object from colpiler.
+  /// Code object from compiler.
   ///
   /// Available only in `DEBUG`.
   public var codeObject: PyCode.CodeObject {

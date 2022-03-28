@@ -50,7 +50,7 @@ extension PyTestCase {
                                                      line: UInt) {
     // We have to get property from '__dict__', otherwise if the property
     // exists on 'type instance' we would get the value from the type.
-    // For example: 'builtinBunction' has a '__name__' property.
+    // For example: 'builtinFunction' has a '__name__' property.
     // If we tried to just 'type.__name__' we would get the name of the type.
     let typeDict = py.get__dict__(type: type).asObject
     let nameObject = py.newString(name).asObject

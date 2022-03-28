@@ -34,7 +34,7 @@ public struct PyString: PyObjectMixin, AbstractString {
 
   private static let invalidCount = -1
   // Empty string has hash '0', but this is trivial to recalculate.
-  // If any other string hashes to '0' then we will accept defeat and recalcualte
+  // If any other string hashes to '0' then we will accept defeat and recalculate
   // it on every call. It is still better than not caching at all.
   private static let invalidHash = PyHash.zero
 

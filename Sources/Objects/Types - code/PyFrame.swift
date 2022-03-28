@@ -2,7 +2,7 @@ import VioletCore
 import VioletBytecode
 
 // swiftformat:disable redundantType
-// cSpell:ignore localsplus fastlocals valuestack tstate
+// cSpell:ignore MAXBLOCKS localsplus fastlocals valuestack tstate
 // swiftlint:disable file_length
 
 // In CPython:
@@ -207,10 +207,10 @@ public struct PyFrame: PyObjectMixin {
 
     let storage = self.allocateFastLocalsCellFreeBlockStackStorage(code: code)
     self.fastLocalsCellFreeBlockStackStoragePtrPtr.initialize(to: storage)
-    self.fastLocals.initalize()
-    self.cellVariables.initalize(py)
-    self.freeVariables.initalize((py))
-    self.blockStack.initalize()
+    self.fastLocals.initialize()
+    self.cellVariables.initialize(py)
+    self.freeVariables.initialize((py))
+    self.blockStack.initialize()
 
     self.currentInstructionIndexPtr.initialize(to: nil)
     self.nextInstructionIndexPtr.initialize(to: 0)

@@ -21,9 +21,9 @@ extension PyFrame {
       self.ptr = storage.fastLocals
     }
 
-    internal func initalize() {
+    internal func initialize() {
       // 'FillFastLocals' will check if value was filled, so in the beginning
-      // we will set all values to 'nil', otherwise we would read uninitalized
+      // we will set all values to 'nil', otherwise we would read uninitialized
       // memory.
       self.ptr.initialize(repeating: nil)
     }

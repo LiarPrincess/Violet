@@ -60,7 +60,7 @@ public struct BufferPtr<TrivialElement>: RandomAccessCollection {
   /// the values frm `source`.
   ///
   /// After calling `initialize(from:)` the initial `source.count` elements are
-  /// initialized. The rest of the elements are left uninitalized.
+  /// initialized. The rest of the elements are left uninitialized.
   ///
   /// - Parameters:
   ///   - source: A pointer to the values to copy. The memory region
@@ -84,7 +84,7 @@ public struct BufferPtr<TrivialElement>: RandomAccessCollection {
     }
   }
 
-  /// Deinitializes the specified all values in buffer.
+  /// Deinitialize all values in buffer.
   ///
   /// The region of memory starting at this pointer and covering `count`
   /// instances of the pointer's `Pointee` type must be initialized. After

@@ -96,11 +96,11 @@ extension PyFrame {
       self.endPointerPtr = storage.blockStackEnd
     }
 
-    internal func initalize() {
-      // 'Block' is trivial, so we don't have to initalize the memory:
+    internal func initialize() {
+      // 'Block' is trivial, so we don't have to initialize the memory:
       // self.buffer.initialize <-- Not needed!
 
-      // But we do have to initalize end ptr:
+      // But we do have to initialize end ptr:
       self.endPointerPtr.initialize(to: self.buffer.baseAddress)
     }
 

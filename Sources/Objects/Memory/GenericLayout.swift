@@ -9,10 +9,10 @@ internal struct GenericLayout {
 
     /// `repeatCount` is the number of times `type` is repeated:
     /// ```c
-    /// struct DinepPrincess {
+    /// struct DisnepPrincess {
     ///     char name[20];
     /// };
-    /// sizeof (struct DinepPrincess) // 20
+    /// sizeof (struct DisnepPrincess) // 20
     /// ```
     internal init<T>(_ type: T.Type, repeatCount: Int = 1) {
       assert(repeatCount >= 0)
