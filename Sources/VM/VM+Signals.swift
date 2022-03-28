@@ -1,8 +1,9 @@
-/* MARKER
 import Foundation
 import VioletCore
 import VioletObjects
 
+// swiftlint:disable type_name
+// swiftformat:disable wrapAttributes
 // cSpell:ignore signalmodule sighandler sigflags PyMODINIT
 
 // In CPython:
@@ -14,13 +15,19 @@ import VioletObjects
 // This may be helpful:
 // https://www.gnu.org/software/libc/manual/html_node/Signal-Handling.html#Signal-Handling
 
-// MARK: - State
+// MARK: - Global state
 
-/// We can't store this in VM because we can't access closure variables
-/// in functions marked with '@convention(c)'.
-internal enum Signals {
-  /// `SIGINT`
-  internal static var hasKeyboardInterrupt = false
+private struct WeakBox {
+  fileprivate weak var vm: VM?
+}
+
+private var vms = [WeakBox]()
+
+private func handleKeyboardInterrupt(signum: Int32) {
+  assert(signum == SIGINT)
+  for vm in vms {
+    vm.vm?.delegate.hasKeyboardInterrupt = true
+  }
 }
 
 // MARK: - Main
@@ -29,22 +36,29 @@ extension VM {
 
   /// PyMODINIT_FUNC
   /// PyInit__signal(void)
-  internal func registerSignalHandlers() -> PyBaseException? {
-    let e = register(SIGINT, flags: .restart) { signum in
-      assert(signum == SIGINT)
-      Signals.hasKeyboardInterrupt = true
+  internal func registerSignalHandlers() -> PySystemError? {
+    let box = WeakBox(vm: self)
+    vms.append(box)
+
+    switch register(SIGINT, flags: .restart, handler: handleKeyboardInterrupt(signum:)) {
+    case .ok:
+      break
+    case .unsupportedPlatform:
+      let message = "Unable to register signal handlers on this platform"
+      return self.py.newSystemError(message: message)
+    case .error:
+      let details = String(errno: errno) ?? "<unknown error>"
+      let message = "Unable to set signal handler: \(details)"
+      return self.py.newSystemError(message: message)
     }
 
-    return e
+    return nil
   }
 }
 
 // MARK: - Helpers
 
-// swiftlint:disable type_name
-// swiftformat:disable wrapAttributes
-
-/// Normally this is an `C` extension.
+/// The same as thing as `Foundation.sig_`.
 private typealias sighandler_t = @convention(c) (Int32) -> Void
 
 private struct sigflags_t: OptionSet {
@@ -69,9 +83,15 @@ private struct sigflags_t: OptionSet {
   static let restart = sigflags_t(rawValue: SA_RESTART)
 }
 
+private enum RegisterResult {
+  case ok
+  case unsupportedPlatform
+  case error
+}
+
 private func register(_ signum: Int32,
                       flags: sigflags_t,
-                      handler: @escaping sighandler_t) -> PyBaseException? {
+                      handler: @escaping sighandler_t) -> RegisterResult {
   var action = sigaction()
 
   // sighandler_t sa_handler
@@ -82,8 +102,7 @@ private func register(_ signum: Int32,
   #elseif os(Linux)
   action.__sigaction_handler = .init(sa_handler: handler)
   #else
-  let msg = "Unable to register signal handlers on this platform"
-  return Py.newSystemError(msg: msg)
+  return .unsupportedPlatform
   #endif
 
   // sigset_t sa_mask
@@ -96,12 +115,8 @@ private func register(_ signum: Int32,
 
   var oldAction = sigaction()
   if sigaction(SIGINT, &action, &oldAction) != 0 {
-    let details = String(errno: errno) ?? "<unknown error>"
-    let msg = "Unable to set signal handler: \(details)"
-    return Py.newSystemError(msg: msg)
+    return .error
   }
 
-  return nil
+  return .ok
 }
-
-*/
