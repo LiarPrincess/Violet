@@ -30,8 +30,36 @@ extension Eval {
   /// Pushes the value associated with `name` onto the stack.
   internal func loadName(nameIndex: Int) -> InstructionResult {
     let name = self.code.names[nameIndex]
-    let dicts = [self.locals, self.globals, self.builtins]
-    return self.load(dicts: dicts, name: name)
+
+    switch self.load(self.locals, name: name) {
+    case .value(let o):
+      self.stack.push(o)
+      return .ok
+    case .notFound:
+      break // try in the next 'dict'
+    case .error(let e):
+      return .exception(e)
+    }
+
+    switch self.load(self.globals, name: name) {
+    case .value(let o):
+      self.stack.push(o)
+      return .ok
+    case .notFound:
+      break // try in the next 'dict'
+    case .error(let e):
+      return .exception(e)
+    }
+
+    switch self.load(self.builtins, name: name) {
+    case .value(let o):
+      self.stack.push(o)
+      return .ok
+    case .notFound:
+      return self.nameError(name)
+    case .error(let e):
+      return .exception(e)
+    }
   }
 
   /// Implements `del name`.
@@ -138,8 +166,26 @@ extension Eval {
   /// Loads the global named `name` onto the stack.
   internal func loadGlobal(nameIndex: Int) -> InstructionResult {
     let name = self.code.names[nameIndex]
-    let dicts = [self.globals, self.builtins]
-    return self.load(dicts: dicts, name: name)
+
+    switch self.load(self.globals, name: name) {
+    case .value(let o):
+      self.stack.push(o)
+      return .ok
+    case .notFound:
+      break // try in the next 'dict'
+    case .error(let e):
+      return .exception(e)
+    }
+
+    switch self.load(self.builtins, name: name) {
+    case .value(let o):
+      self.stack.push(o)
+      return .ok
+    case .notFound:
+      return self.nameError(name)
+    case .error(let e):
+      return .exception(e)
+    }
   }
 
   /// Works as DeleteName, but deletes a global name.
@@ -333,28 +379,6 @@ extension Eval {
 
   // MARK: - Helpers
 
-  private func store(_ dict: PyDict,
-                     name: PyString,
-                     value: PyObject) -> InstructionResult {
-    if self.isExactlyDictNotSubclass(dict) {
-      switch dict.set(self.py, key: name, value: value) {
-      case .ok:
-        return .ok
-      case .error(let e):
-        return .exception(e)
-      }
-    }
-
-    let dictObject = dict.asObject
-    let nameObject = name.asObject
-    switch self.py.setItem(object: dictObject, index: nameObject, value: value) {
-    case .value:
-      return .ok
-    case .error(let e):
-      return .exception(e)
-    }
-  }
-
   private func load(_ dict: PyDict, name: PyString) -> PyDict.GetResult {
     if self.isExactlyDictNotSubclass(dict) {
       return dict.get(self.py, key: name)
@@ -377,20 +401,26 @@ extension Eval {
     }
   }
 
-  private func load(dicts: [PyDict], name: PyString) -> InstructionResult {
-    for dict in dicts {
-      switch self.load(dict, name: name) {
-      case .value(let o):
-        self.stack.push(o)
+  private func store(_ dict: PyDict,
+                     name: PyString,
+                     value: PyObject) -> InstructionResult {
+    if self.isExactlyDictNotSubclass(dict) {
+      switch dict.set(self.py, key: name, value: value) {
+      case .ok:
         return .ok
-      case .notFound:
-        break // try in the next 'dict'
       case .error(let e):
         return .exception(e)
       }
     }
 
-    return self.nameError(name)
+    let dictObject = dict.asObject
+    let nameObject = name.asObject
+    switch self.py.setItem(object: dictObject, index: nameObject, value: value) {
+    case .value:
+      return .ok
+    case .error(let e):
+      return .exception(e)
+    }
   }
 
   private func del(_ dict: PyDict, name: PyString) -> InstructionResult {
