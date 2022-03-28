@@ -24,7 +24,7 @@ internal enum PushFinallyReason {
 
   // MARK: - Marker values
 
-  private struct Marker {
+  private enum Marker {
     fileprivate static let `return` = BigInt(0)
     fileprivate static let `break` = BigInt(1)
     fileprivate static let `continue` = BigInt(2)
@@ -85,7 +85,7 @@ internal enum PushFinallyReason {
     case .break:
       stack.push(Self.toObject(py, marker: Marker.break))
     case .continue(loopStartLabelIndex: let index):
-      let indexPy = py.newInt(index)  // int -> PyInt conversion needed
+      let indexPy = py.newInt(index) // int -> PyInt conversion needed
       stack.push(indexPy.asObject)
       stack.push(Self.toObject(py, marker: Marker.continue))
     case .continuePy(loopStartLabelIndex: let index):

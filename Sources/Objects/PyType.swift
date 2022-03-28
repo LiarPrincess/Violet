@@ -7,11 +7,11 @@ import VioletCore
 // Objects -> typeobject.c
 // https://docs.python.org/3/c-api/typeobj.html
 
-public func ===(lhs: PyType, rhs: PyType) -> Bool {
+public func === (lhs: PyType, rhs: PyType) -> Bool {
   return lhs.ptr === rhs.ptr
 }
 
-public func !==(lhs: PyType, rhs: PyType) -> Bool {
+public func !== (lhs: PyType, rhs: PyType) -> Bool {
   return lhs.ptr !== rhs.ptr
 }
 
@@ -211,7 +211,7 @@ public struct PyType: PyObjectMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize(_ py: Py) { }
+  internal func beforeDeinitialize(_ py: Py) {}
 
   // MARK: - Debug
 

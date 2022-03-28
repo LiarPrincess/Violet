@@ -27,7 +27,7 @@ public struct PyDictKeys: PyObjectMixin, AbstractDictView {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize(_ py: Py) { }
+  internal func beforeDeinitialize(_ py: Py) {}
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyDictKeys(ptr: ptr)
@@ -113,7 +113,7 @@ public struct PyDictKeys: PyObjectMixin, AbstractDictView {
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResult {
+  internal static func __len__(_ py: Py, zelf: PyObject) -> PyResult {
     return Self.abstract__len__(py, zelf: zelf)
   }
 

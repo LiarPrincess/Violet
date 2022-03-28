@@ -143,7 +143,7 @@ extension PyFloat {
       return .error(error.asBaseException)
     }
 
-    switch parseInfinityOrNan(py, string: string) {
+    switch self.parseInfinityOrNan(py, string: string) {
     case .value(let d): return .value(d)
     case .notInfinityOrNan: break // Try other
     case .error(let e): return .error(e)
@@ -151,18 +151,18 @@ extension PyFloat {
 
     // Format: [sign] ['0x'] integer ['.' fraction] ['p' exponent]
 
-    let sign = parseSign(string: &string)
+    let sign = self.parseSign(string: &string)
     _ = string.advanceIf("0x") // if not then nop
 
     // Integer and fraction are strings of hexadecimal (!) digits
-    let integer = parseInteger(string: &string)
-    let fraction = parseFraction(string: &string)
+    let integer = self.parseInteger(string: &string)
+    let fraction = self.parseFraction(string: &string)
 
     // Skipping the 'insane' check from CPython, because we are lazy
 
     // Exponent is decimal
     let exponent: Int
-    switch parseExponent(py, string: &string) {
+    switch self.parseExponent(py, string: &string) {
     case .value(let e): exponent = e
     case .none: exponent = 0
     case .error(let e): return .error(e)
@@ -174,7 +174,7 @@ extension PyFloat {
       return .error(error.asBaseException)
     }
 
-    return combine(py, sign: sign, integer: integer, fraction: fraction, exponent: exponent)
+    return self.combine(py, sign: sign, integer: integer, fraction: fraction, exponent: exponent)
   }
 
   // MARK: - FromHexString
@@ -298,7 +298,7 @@ extension PyFloat {
   /// _Py_parse_inf_or_nan(const char *p, char **endptr)
   private static func parseInfinityOrNan(_ py: Py, string: FromHexString) -> InfinityOrNan {
     var copy = string
-    let sign = parseSign(string: &copy)
+    let sign = self.parseSign(string: &copy)
 
     if copy.advanceIf("inf") {
       _ = copy.advanceIf("inity")
@@ -358,7 +358,7 @@ extension PyFloat {
       return .none
     }
 
-    let sign = parseSign(string: &string)
+    let sign = self.parseSign(string: &string)
     let digitScalars = string.advance { isDecimal(scalar: $0) ? $0 : nil }
 
     if digitScalars.isEmpty {
@@ -408,10 +408,10 @@ extension PyFloat {
       return .error(error.asBaseException)
     }
 
-    let integer = ltrimZero(digits: _integer)
-    let fraction = rtrimZero(digits: _fraction)
+    let integer = self.ltrimZero(digits: _integer)
+    let fraction = self.rtrimZero(digits: _fraction)
 
-    let isCoeffZero = isCoefficientZero(integer: integer, fraction: fraction)
+    let isCoeffZero = self.isCoefficientZero(integer: integer, fraction: fraction)
     if isCoeffZero || _exponent < LONG_MIN / 2 {
       return .value(0.0)
     }
@@ -466,8 +466,8 @@ extension PyFloat {
 
   private static func isCoefficientZero(integer: HexDigits.SubSequence,
                                  fraction: HexDigits.SubSequence?) -> Bool {
-    let isIntegerZero = integer.allSatisfy(isZero(hex:))
-    let isFractionZero = fraction?.allSatisfy(isZero(hex:)) ?? true
+    let isIntegerZero = integer.allSatisfy(self.isZero(hex:))
+    let isFractionZero = fraction?.allSatisfy(self.isZero(hex:)) ?? true
     return isIntegerZero && isFractionZero
   }
 
@@ -488,16 +488,16 @@ extension PyFloat {
   }
 
   private static func ltrimZero(digits: HexDigits) -> HexDigits.SubSequence {
-    return digits.drop(while: isZero(hex:))
+    return digits.drop(while: self.isZero(hex:))
   }
 
   // Overload for optional
   private static func rtrimZero(digits: HexDigits?) -> HexDigits.SubSequence? {
-    return digits.map(rtrimZero(digits:))
+    return digits.map(self.rtrimZero(digits:))
   }
 
   private static func rtrimZero(digits: HexDigits) -> HexDigits.SubSequence {
-    return digits.dropLast(while: isZero(hex:))
+    return digits.dropLast(while: self.isZero(hex:))
   }
 
   // MARK: - Errors

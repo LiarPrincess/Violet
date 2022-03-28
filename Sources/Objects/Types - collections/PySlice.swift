@@ -49,7 +49,7 @@ public struct PySlice: PyObjectMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize(_ py: Py) { }
+  internal func beforeDeinitialize(_ py: Py) {}
 
   // MARK: - Debug
 
@@ -72,7 +72,7 @@ public struct PySlice: PyObjectMixin {
 
     return Self.isEqual(py, zelf: zelf, other: other)
   }
-  
+
   // sourcery: pymethod = __ne__
   internal static func __ne__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     guard let zelf = Self.downcast(py, zelf) else {

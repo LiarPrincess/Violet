@@ -121,8 +121,8 @@ class PyFloatTests: PyTestCase {
 
   func test__pow__() {
     let py = self.createPy()
-    self.assertPow(py, base: 3.1, exp: 5.7, expected: 632.064872663979)
-    self.assertPow(py, base: 5.7, exp: 3.1, expected: 220.40023466591268)
+    self.assertPow(py, base: 3.1, exp: 5.7, expected: 632.064_872_663_979)
+    self.assertPow(py, base: 5.7, exp: 3.1, expected: 220.40_023_466_591_268)
   }
 
   private func assertPow(_ py: Py,

@@ -141,7 +141,7 @@ internal enum IndexHelper {
   /// PyObject *
   /// PyNumber_Index(PyObject *item)
   /// ```
-  internal static func pyInt(_ py: Py,object: PyObject) -> PyIntIndex {
+  internal static func pyInt(_ py: Py, object: PyObject) -> PyIntIndex {
     if let int = py.cast.asExactlyInt(object) {
       return .value(int)
     }

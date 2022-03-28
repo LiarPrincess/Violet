@@ -23,7 +23,6 @@ extension Py {
       return self.emptyTuple
     }
 
-
     let type = self.types.tuple
     return self.memory.newTuple(self, type: type, elements: elements)
   }

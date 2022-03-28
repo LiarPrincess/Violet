@@ -40,7 +40,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize(_ py: Py) { }
+  internal func beforeDeinitialize(_ py: Py) {}
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PySet(ptr: ptr)
@@ -118,7 +118,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
     return zelf.withReprLock {
       switch Self.abstractJoinElementsForRepr(py, zelf: zelf) {
       case let .value(elements):
-        let result = "{" + elements + "}"  // no 'set'!
+        let result = "{" + elements + "}" // no 'set'!
         return PyResult(py, result)
       case let .error(e):
         return .error(e)
@@ -149,7 +149,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResult {
+  internal static func __len__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__len__")
     }
@@ -386,7 +386,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
 
     switch Self.createElement(py, object: object) {
     case let .value(element):
-      return self.remove(py, zelf:zelf, element: element)
+      return self.remove(py, zelf: zelf, element: element)
     case let .error(e):
       return .error(e)
     }
@@ -520,7 +520,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  internal static  func __init__(_ py: Py,
+  internal static func __init__(_ py: Py,
                                  zelf: PyObject,
                                  args: [PyObject],
                                  kwargs: PyDict?) -> PyResult {

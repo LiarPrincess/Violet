@@ -170,7 +170,6 @@ extension Sys {
     return PyResult(result)
   }
 
-
   /// sys._getframe([depth])
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys._getframe).
   internal func getFrame(depth: PyObject?) -> PyResultGen<PyFrame> {

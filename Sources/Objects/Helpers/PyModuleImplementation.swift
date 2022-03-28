@@ -158,7 +158,6 @@ extension PyModuleImplementation {
     return self.py.newTypeError(message: message)
   }
 
-
   internal func createPropertyTypeError<T>(_ name: Properties,
                                            got object: PyObject,
                                            expectedType: String) -> PyResultGen<T> {

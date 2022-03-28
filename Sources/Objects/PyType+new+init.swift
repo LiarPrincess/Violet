@@ -669,7 +669,7 @@ extension PyType {
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  internal static  func __init__(_ py: Py,
+  internal static func __init__(_ py: Py,
                                  zelf: PyObject,
                                  args: [PyObject],
                                  kwargs: PyDict?) -> PyResult {

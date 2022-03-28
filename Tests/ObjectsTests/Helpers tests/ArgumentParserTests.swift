@@ -297,7 +297,6 @@ class ArgumentParserTests: PyTestCase {
     XCTAssertEqual(binding.requiredCount, 0)
     XCTAssertEqual(binding.optionalCount, 2)
 
-
     let optional0 = binding.optional(at: 0)
     XCTAssertNil(optional0)
 

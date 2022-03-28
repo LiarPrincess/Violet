@@ -61,7 +61,7 @@ extension Eval {
   private func exceptionMatch(left: PyObject, right: PyObject) -> PyResult {
     let error: PyBaseException?
     if let rightTuple = self.py.cast.asTuple(right) {
-      error = py.forEach(tuple: rightTuple) { (_, object) in
+      error = py.forEach(tuple: rightTuple) { _, object in
         if let e = self.guaranteeExceptionType(object) {
           return .error(e)
         }

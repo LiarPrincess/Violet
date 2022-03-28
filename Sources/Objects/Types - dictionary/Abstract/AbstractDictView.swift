@@ -174,7 +174,7 @@ extension AbstractDictView {
     }
 
     if zelf.hasReprLock {
-      return PyResult(py, interned:  "...")
+      return PyResult(py, interned: "...")
     }
 
     return zelf.withReprLock {

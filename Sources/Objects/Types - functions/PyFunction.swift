@@ -132,7 +132,7 @@ public struct PyFunction: PyObjectMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize(_ py: Py) { }
+  internal func beforeDeinitialize(_ py: Py) {}
 
   // MARK: - Debug
 

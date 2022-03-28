@@ -63,7 +63,7 @@ extension AbstractBuiltinFunction {
     if Self.downcast(py, zelf) == nil {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, .__le__)
     }
-    
+
     return .notImplemented
   }
 

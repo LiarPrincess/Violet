@@ -71,7 +71,6 @@ extension Py {
     return self.newAttributeError(message: message)
   }
 
-
   /// Attribute is read-only.
   public func newAttributeError(object: PyObject,
                                 attributeIsReadOnly name: PyString) -> PyAttributeError {

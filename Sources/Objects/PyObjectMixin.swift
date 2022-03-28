@@ -101,7 +101,7 @@ extension PyObjectMixin {
       return
     }
 
-    if let optionalType = property.value as? Optional<PyType> {
+    if let optionalType = property.value as? PyType? {
       if let type = optionalType {
         append(type: type)
       } else {
@@ -110,7 +110,7 @@ extension PyObjectMixin {
       return
     }
 
-    if let types = property.value as? Array<PyType> {
+    if let types = property.value as? [PyType] {
       string.append("[")
       for (index, type) in types.enumerated() {
         if index != 0 {

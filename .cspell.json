@@ -99,6 +99,7 @@
     // Violet
     "Evergarden", // “Violet Evergarden” is the full character name
     "pytype",
+    "pybase",
     "pyerrortype",
     "pymethod",
     "pytypedoc",

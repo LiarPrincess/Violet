@@ -31,7 +31,7 @@ internal struct GenericLayout {
     self.alignment = initialAlignment
 
     self.offsets = [Int]()
-    offsets.reserveCapacity(fields.count)
+    self.offsets.reserveCapacity(fields.count)
 
     for field in fields {
       Self.round(&self.size, alignment: field.alignment)

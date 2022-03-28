@@ -149,7 +149,7 @@ public final class Sys: PyModuleImplementation {
     self.py = py
     self.__dict__ = py.newDict()
 
-    self.recursionLimit = py.newInt(1000)
+    self.recursionLimit = py.newInt(1_000)
     self.flags = Flags(config: py.config)
     self.defaultEncodingString = py.newString(Self.defaultEncoding)
 
@@ -172,7 +172,7 @@ public final class Sys: PyModuleImplementation {
     self.setOrTrap(.platform, value: self.py.newString(Self.platform))
     self.setOrTrap(.copyright, value: copyright)
     self.setOrTrap(.hash_info, value: self.createInitialHashInfo())
-    self.setOrTrap(.tracebacklimit, value: self.py.newInt(1000))
+    self.setOrTrap(.tracebacklimit, value: self.py.newInt(1_000))
     self.setOrTrap(.maxsize, value: self.py.newInt(Int.max))
     self.setOrTrap(.warnoptions, value: self.createInitialWarnOptions())
 

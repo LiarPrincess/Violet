@@ -3,7 +3,7 @@ import VioletCore
 import VioletObjects
 
 extension PyFrame {
-  internal static func ===(lhs: PyFrame?, rhs: PyFrame) -> Bool {
+  internal static func === (lhs: PyFrame?, rhs: PyFrame) -> Bool {
     guard let lhs = lhs else {
       return false
     }

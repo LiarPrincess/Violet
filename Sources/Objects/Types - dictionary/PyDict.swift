@@ -53,7 +53,7 @@ public struct PyDict: PyObjectMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize(_ py: Py) { }
+  internal func beforeDeinitialize(_ py: Py) {}
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyDict(ptr: ptr)
@@ -166,11 +166,11 @@ public struct PyDict: PyObjectMixin {
     }
 
     if zelf.elements.isEmpty {
-      return PyResult(py, interned:  "{}")
+      return PyResult(py, interned: "{}")
     }
 
     if zelf.hasReprLock {
-      return PyResult(py, interned:  "{...}")
+      return PyResult(py, interned: "{...}")
     }
 
     return zelf.withReprLock {
@@ -221,7 +221,7 @@ public struct PyDict: PyObjectMixin {
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResult {
+  internal static func __len__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__len__")
     }
@@ -909,7 +909,7 @@ public struct PyDict: PyObjectMixin {
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  internal static  func __init__(_ py: Py,
+  internal static func __init__(_ py: Py,
                                  zelf: PyObject,
                                  args: [PyObject],
                                  kwargs: PyDict?) -> PyResult {
