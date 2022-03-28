@@ -3,7 +3,7 @@ import Foundation
 import VioletBytecode
 import VioletObjects
 
-protocol PyFrameTestsMixin: PyTestCase { }
+protocol PyFrameTestsMixin: PyTestCase {}
 
 extension PyFrameTestsMixin {
 

@@ -23,7 +23,7 @@ class PyFrameObjectStackTests: PyTestCase, PyFrameTestsMixin {
 
   // MARK: - Push
 
-  private let expectedCapacities = [128, 256, 512, 768, 1024]
+  private let expectedCapacities = [128, 256, 512, 768, 1_024]
 
   func test_push() {
     let py = self.createPy()

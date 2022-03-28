@@ -122,7 +122,7 @@ public struct PyTextFile: PyObjectMixin {
       var result = "<TextFile"
 
       if let n = zelf.name {
-        result.append(" name=" )
+        result.append(" name=")
         result.append(n)
       }
 
@@ -285,7 +285,6 @@ public struct PyTextFile: PyObjectMixin {
     let result = zelf.isWritable
     return PyResult(py, result)
   }
-
 
   // sourcery: pymethod = write
   /// static PyObject *

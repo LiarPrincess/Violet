@@ -127,10 +127,10 @@ extension PyFloatTests {
     self.assertMod(py, left: 3.1, right: -7.5, expected: -4.4)
     self.assertMod(py, left: -3.1, right: -7.5, expected: -3.1)
 
-    self.assertMod(py, left: 7.5, right: 3.1, expected: 1.2999999999999998)
-    self.assertMod(py, left: -7.5, right: 3.1, expected: 1.8000000000000003)
-    self.assertMod(py, left: 7.5, right: -3.1, expected: -1.8000000000000003)
-    self.assertMod(py, left: -7.5, right: -3.1, expected: -1.2999999999999998)
+    self.assertMod(py, left: 7.5, right: 3.1, expected: 1.2_999_999_999_999_998)
+    self.assertMod(py, left: -7.5, right: 3.1, expected: 1.8_000_000_000_000_003)
+    self.assertMod(py, left: 7.5, right: -3.1, expected: -1.8_000_000_000_000_003)
+    self.assertMod(py, left: -7.5, right: -3.1, expected: -1.2_999_999_999_999_998)
 
     let messageR = "unsupported operand type(s) for %: 'float' and 'NoneType'"
     self.assertModTypeError(py, left: 3.1, right: .none, message: messageR)
@@ -149,10 +149,10 @@ extension PyFloatTests {
     self.assertDivMod(py, left: 3.1, right: -7.5, div: -1.0, mod: -4.4)
     self.assertDivMod(py, left: -3.1, right: -7.5, div: 0.0, mod: -3.1)
 
-    self.assertDivMod(py, left: 7.5, right: 3.1, div: 2.0, mod: 1.2999999999999998)
-    self.assertDivMod(py, left: -7.5, right: 3.1, div: -3.0, mod: 1.8000000000000003)
-    self.assertDivMod(py, left: 7.5, right: -3.1, div: -3.0, mod: -1.8000000000000003)
-    self.assertDivMod(py, left: -7.5, right: -3.1, div: 2.0, mod: -1.2999999999999998)
+    self.assertDivMod(py, left: 7.5, right: 3.1, div: 2.0, mod: 1.2_999_999_999_999_998)
+    self.assertDivMod(py, left: -7.5, right: 3.1, div: -3.0, mod: 1.8_000_000_000_000_003)
+    self.assertDivMod(py, left: 7.5, right: -3.1, div: -3.0, mod: -1.8_000_000_000_000_003)
+    self.assertDivMod(py, left: -7.5, right: -3.1, div: 2.0, mod: -1.2_999_999_999_999_998)
 
     let messageR = "unsupported operand type(s) for divmod(): 'float' and 'NoneType'"
     self.assertDivModTypeError(py, left: 3.1, right: .none, message: messageR)

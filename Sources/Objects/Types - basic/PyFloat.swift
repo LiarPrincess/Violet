@@ -40,7 +40,7 @@ public struct PyFloat: PyObjectMixin {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize(_ py: Py) { }
+  internal func beforeDeinitialize(_ py: Py) {}
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyFloat(ptr: ptr)
@@ -76,7 +76,7 @@ public struct PyFloat: PyObjectMixin {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, .__lt__)
     }
 
-    return FloatCompareHelper.isLess(py, left:zelf.value, right: other)
+    return FloatCompareHelper.isLess(py, left: zelf.value, right: other)
   }
 
   // sourcery: pymethod = __le__
@@ -85,7 +85,7 @@ public struct PyFloat: PyObjectMixin {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, .__le__)
     }
 
-    return FloatCompareHelper.isLessEqual(py, left:zelf.value, right: other)
+    return FloatCompareHelper.isLessEqual(py, left: zelf.value, right: other)
   }
 
   // sourcery: pymethod = __gt__
@@ -94,7 +94,7 @@ public struct PyFloat: PyObjectMixin {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, .__gt__)
     }
 
-    return FloatCompareHelper.isGreater(py, left:zelf.value, right: other)
+    return FloatCompareHelper.isGreater(py, left: zelf.value, right: other)
   }
 
   // sourcery: pymethod = __ge__
@@ -103,7 +103,7 @@ public struct PyFloat: PyObjectMixin {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ge__)
     }
 
-    return FloatCompareHelper.isGreaterEqual(py, left:zelf.value, right: other)
+    return FloatCompareHelper.isGreaterEqual(py, left: zelf.value, right: other)
   }
 
   // MARK: - Hashable
@@ -227,7 +227,6 @@ public struct PyFloat: PyObjectMixin {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__getattribute__")
     }
-
 
     return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
   }
@@ -681,7 +680,7 @@ public struct PyFloat: PyObjectMixin {
     // Snap quotient to nearest integral value
     var floordiv: Double
     if !div.isZero {
-      floordiv = Foundation.floor(div);
+      floordiv = Foundation.floor(div)
       if div - floordiv > 0.5 {
         floordiv += 1.0
       }
@@ -696,10 +695,10 @@ public struct PyFloat: PyObjectMixin {
   // MARK: - Round
 
   /// See comment in `round(_:zelf:nDigits: PyObject?)`.
-  private static let roundDigitCountMax = Int(Double(DBL_MANT_DIG - DBL_MIN_EXP) * 0.301_03)
+  private static let roundDigitCountMax = Int(Double(DBL_MANT_DIG - DBL_MIN_EXP) * 0.30_103)
 
   /// See comment in `round(_:zelf:nDigits: PyObject?)`.
-  private static let roundDigitCountMin = -Int(Double(DBL_MAX_EXP + 1) * 0.301_03)
+  private static let roundDigitCountMin = -Int(Double(DBL_MAX_EXP + 1) * 0.30_103)
 
   internal static let roundDoc = """
     __round__($self, ndigits=None, /)

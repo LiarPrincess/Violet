@@ -25,15 +25,15 @@ class PyIntTests: PyTestCase {
   func test__pow__() {
     let py = self.createPy()
 
-    self.assertPow(py, base: 3, exp: 11, mod: .none, expected: 177147)
-    self.assertPow(py, base: 3, exp: -11, mod: .none, expected: 5.645029269476762e-06)
-    self.assertPow(py, base: -3, exp: 11, mod: .none, expected: -177147)
-    self.assertPow(py, base: -3, exp: -11, mod: .none, expected: -5.645029269476762e-06)
+    self.assertPow(py, base: 3, exp: 11, mod: .none, expected: 177_147)
+    self.assertPow(py, base: 3, exp: -11, mod: .none, expected: 5.645_029_269_476_762e-06)
+    self.assertPow(py, base: -3, exp: 11, mod: .none, expected: -177_147)
+    self.assertPow(py, base: -3, exp: -11, mod: .none, expected: -5.645_029_269_476_762e-06)
 
-    self.assertPow(py, base: 11, exp:  3, mod: .none, expected: 1331)
-    self.assertPow(py, base: 11, exp: -3, mod: .none, expected: 0.0007513148009015778)
-    self.assertPow(py, base: -11, exp:  3, mod: .none, expected: -1331)
-    self.assertPow(py, base: -11, exp: -3, mod: .none, expected: -0.0007513148009015778)
+    self.assertPow(py, base: 11, exp: 3, mod: .none, expected: 1_331)
+    self.assertPow(py, base: 11, exp: -3, mod: .none, expected: 0.0_007_513_148_009_015_778)
+    self.assertPow(py, base: -11, exp: 3, mod: .none, expected: -1_331)
+    self.assertPow(py, base: -11, exp: -3, mod: .none, expected: -0.0_007_513_148_009_015_778)
 
     let messageE = "unsupported operand type(s) for ** or pow(): 'int' and 'NoneType'"
     self.assertPowTypeError(py, base: 3, exp: .none, mod: .none, message: messageE)

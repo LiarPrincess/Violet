@@ -35,7 +35,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize(_ py: Py) { }
+  internal func beforeDeinitialize(_ py: Py) {}
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyTuple(ptr: ptr)
@@ -111,7 +111,6 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
     return .value(x &+ 97_531)
   }
 
-
   // MARK: - String
 
   // sourcery: pymethod = __repr__
@@ -186,7 +185,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResult {
+  internal static func __len__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__len__")
     }

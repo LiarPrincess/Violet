@@ -65,9 +65,9 @@ extension Py {
     case .value(let s) where s.isEmpty:
       str = "\n"
     case .value(let s):
-      str =  ": " + s + "\n"
+      str = ": " + s + "\n"
     case .error:
-      str =  ": <exception str() failed>\n"
+      str = ": <exception str() failed>\n"
     }
 
     return file.write(self, string: str)

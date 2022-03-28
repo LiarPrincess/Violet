@@ -391,7 +391,7 @@ extension Builtins {
         return .error(error)
       }
 
-      return.none(py)
+      return .none(py)
 
     case let .error(e):
       return .error(e)

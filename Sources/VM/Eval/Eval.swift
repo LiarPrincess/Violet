@@ -56,7 +56,7 @@ internal struct Eval {
 
   internal var currentlyHandledException: PyBaseException? {
     get { self.delegate.currentlyHandledException }
-    nonmutating set { self.delegate.currentlyHandledException =  newValue }
+    nonmutating set { self.delegate.currentlyHandledException = newValue }
   }
 
   // MARK: - Init

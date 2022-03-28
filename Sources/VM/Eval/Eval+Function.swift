@@ -176,7 +176,7 @@ extension Eval {
       return .value(result)
     }
 
-    let error = self.py.forEach(tuple: names) { (index, name) in
+    let error = self.py.forEach(tuple: names) { index, name in
       let value = values[index]
       switch result.set(self.py, key: name, value: value) {
       case .ok:

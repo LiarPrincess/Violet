@@ -27,7 +27,7 @@ public struct OrderedDictionary<Value> {
 
   public struct Key: CustomStringConvertible {
 
-    /// The hash value. 
+    /// The hash value.
     ///
     /// - Warning:
     /// Value should be either immutable or mutation should not change hash.
@@ -150,25 +150,25 @@ public struct OrderedDictionary<Value> {
   // MARK: - Properties
 
   /// Data held in dictionary.
-  internal fileprivate(set) var entries: [EntryOrDeleted]
+  internal private(set) var entries: [EntryOrDeleted]
   /// Actual hash table of `self.size` entries. Holds indices from `self.entries`.
   /// Indices must be: `0 <= index < usableFraction(self.size)`.
   ///
   /// Having separate `indices` and `entries` is good for cache.
-  fileprivate var indices: [EntryIndex]
+  private var indices: [EntryIndex]
 
   /// Number of used entries in `self.indices`.
   /// Basically number of valid entry indices in `self.indices`.
-  fileprivate var used: Int
+  private var used: Int
   /// Number of usable entries in `self.indices`.
   /// Basically: `usableFraction(self.size) `- number of valid entry indices
   /// in `self.indices`.
-  fileprivate var usable: Int
+  private var usable: Int
   /// Size of the hash table. It must be a power of 2.
   ///
   /// - Warning:
   /// This is not a number of items in dictionary! Use `self.used` for that.
-  fileprivate var size: Int {
+  private var size: Int {
     return self.indices.count
   }
 

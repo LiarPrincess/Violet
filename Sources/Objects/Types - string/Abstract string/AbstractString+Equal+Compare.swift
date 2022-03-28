@@ -36,7 +36,7 @@ extension AbstractString {
     let isEqual = Self.abstractIsEqual(py, zelf: zelf, other: other)
     return isEqual.not
   }
-  
+
   private static func abstractIsEqual(_ py: Py,
                                       zelf: Self,
                                       other: PyObject) -> CompareResult {

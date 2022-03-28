@@ -100,7 +100,7 @@ public struct PyString: PyObjectMixin, AbstractString {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize(_ py: Py) { }
+  internal func beforeDeinitialize(_ py: Py) {}
 
   // MARK: - Debug
 
@@ -302,7 +302,7 @@ public struct PyString: PyObjectMixin, AbstractString {
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResult {
+  internal static func __len__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__len__")
     }

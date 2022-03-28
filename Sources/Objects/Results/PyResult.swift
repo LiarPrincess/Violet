@@ -133,7 +133,7 @@ public enum PyResult {
     }
   }
 
-  public init<T: PyObjectMixin>(_ py: Py, _ value: Optional<T>) {
+  public init<T: PyObjectMixin>(_ py: Py, _ value: T?) {
     switch value {
     case .some(let o):
       self = .value(o.asObject)

@@ -42,7 +42,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
   }
 
   // Nothing to do here.
-  internal func beforeDeinitialize(_ py: Py) { }
+  internal func beforeDeinitialize(_ py: Py) {}
 
   internal static func createDebugInfo(ptr: RawPtr) -> PyObject.DebugMirror {
     let zelf = PyBytes(ptr: ptr)
@@ -149,7 +149,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal static func __len__(_ py: Py, zelf: PyObject)-> PyResult {
+  internal static func __len__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__len__")
     }

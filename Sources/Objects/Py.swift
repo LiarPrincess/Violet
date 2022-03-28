@@ -130,7 +130,7 @@ public struct Py: CustomStringConvertible {
     checkInvariants()
 
     self.ptr = PyMemory.allocatePy()
-    
+
     self.configPtr.initialize(to: config)
     self.delegatePtr.initialize(to: delegate)
     self.fileSystemPtr.initialize(to: fileSystem)

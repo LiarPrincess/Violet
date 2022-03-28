@@ -209,7 +209,7 @@ public struct PyFrame: PyObjectMixin {
     self.fastLocalsCellFreeBlockStackStoragePtrPtr.initialize(to: storage)
     self.fastLocals.initialize()
     self.cellVariables.initialize(py)
-    self.freeVariables.initialize((py))
+    self.freeVariables.initialize(py)
     self.blockStack.initialize()
 
     self.currentInstructionIndexPtr.initialize(to: nil)

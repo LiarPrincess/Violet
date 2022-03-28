@@ -52,7 +52,7 @@ class PyStringTests: PyTestCase {
                         _ str: PyString,
                         file: StaticString = #file,
                         line: UInt = #line) -> PyHash? {
-    switch py.hash(object: str.asObject ) {
+    switch py.hash(object: str.asObject) {
     case let .value(hash):
       return hash
     case let .error(e):
