@@ -130,7 +130,8 @@ def print_type_extension(t: TypeInfo):
             initial_alignment = base_swift_type_name + '.layout.alignment'
 
         print(f'    internal init() {{')
-        print(f'      let layout = PyMemory.GenericLayout(')
+        print(f'      assert(MemoryLayout<{swift_type_name}>.size == MemoryLayout<RawPtr>.size, "Only \'RawPtr\' should be stored.")')
+        print(f'      let layout = GenericLayout(')
         print(f'        initialOffset: {initial_offset},')
         print(f'        initialAlignment: {initial_alignment},')
         print('        fields: [')
@@ -139,7 +140,7 @@ def print_type_extension(t: TypeInfo):
             is_last = index == len(properties_t) - 1
             comma = '' if is_last else ','
             declared_in = '' if p.declared_in_type is None else p.declared_in_type.swift_type_name + '.'
-            print(f'          PyMemory.FieldLayout(from: {p.swift_type}.self){comma} // {declared_in}{p.swift_name}')
+            print(f'          GenericLayout.Field({p.swift_type}.self){comma} // {declared_in}{p.swift_name}')
 
         print('        ]')
         print('      )')

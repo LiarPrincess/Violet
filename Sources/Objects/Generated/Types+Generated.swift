@@ -157,13 +157,14 @@ extension PyBuiltinFunction {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyBuiltinFunction>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: FunctionWrapper.self), // PyBuiltinFunction.function
-          PyMemory.FieldLayout(from: PyObject?.self), // PyBuiltinFunction.module
-          PyMemory.FieldLayout(from: String?.self) // PyBuiltinFunction.doc
+          GenericLayout.Field(FunctionWrapper.self), // PyBuiltinFunction.function
+          GenericLayout.Field(PyObject?.self), // PyBuiltinFunction.module
+          GenericLayout.Field(String?.self) // PyBuiltinFunction.doc
         ]
       )
 
@@ -281,14 +282,15 @@ extension PyBuiltinMethod {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyBuiltinMethod>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: FunctionWrapper.self), // PyBuiltinMethod.function
-          PyMemory.FieldLayout(from: PyObject.self), // PyBuiltinMethod.object
-          PyMemory.FieldLayout(from: PyObject?.self), // PyBuiltinMethod.module
-          PyMemory.FieldLayout(from: String?.self) // PyBuiltinMethod.doc
+          GenericLayout.Field(FunctionWrapper.self), // PyBuiltinMethod.function
+          GenericLayout.Field(PyObject.self), // PyBuiltinMethod.object
+          GenericLayout.Field(PyObject?.self), // PyBuiltinMethod.module
+          GenericLayout.Field(String?.self) // PyBuiltinMethod.doc
         ]
       )
 
@@ -409,11 +411,12 @@ extension PyByteArray {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyByteArray>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: Data.self) // PyByteArray.elements
+          GenericLayout.Field(Data.self) // PyByteArray.elements
         ]
       )
 
@@ -513,12 +516,13 @@ extension PyByteArrayIterator {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyByteArrayIterator>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyByteArray.self), // PyByteArrayIterator.bytes
-          PyMemory.FieldLayout(from: Int.self) // PyByteArrayIterator.index
+          GenericLayout.Field(PyByteArray.self), // PyByteArrayIterator.bytes
+          GenericLayout.Field(Int.self) // PyByteArrayIterator.index
         ]
       )
 
@@ -621,11 +625,12 @@ extension PyBytes {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyBytes>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: Data.self) // PyBytes.elements
+          GenericLayout.Field(Data.self) // PyBytes.elements
         ]
       )
 
@@ -725,12 +730,13 @@ extension PyBytesIterator {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyBytesIterator>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyBytes.self), // PyBytesIterator.bytes
-          PyMemory.FieldLayout(from: Int.self) // PyBytesIterator.index
+          GenericLayout.Field(PyBytes.self), // PyBytesIterator.bytes
+          GenericLayout.Field(Int.self) // PyBytesIterator.index
         ]
       )
 
@@ -834,12 +840,13 @@ extension PyCallableIterator {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyCallableIterator>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject.self), // PyCallableIterator.callable
-          PyMemory.FieldLayout(from: PyObject.self) // PyCallableIterator.sentinel
+          GenericLayout.Field(PyObject.self), // PyCallableIterator.callable
+          GenericLayout.Field(PyObject.self) // PyCallableIterator.sentinel
         ]
       )
 
@@ -948,11 +955,12 @@ extension PyCell {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyCell>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject?.self) // PyCell.content
+          GenericLayout.Field(PyObject?.self) // PyCell.content
         ]
       )
 
@@ -1051,11 +1059,12 @@ extension PyClassMethod {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyClassMethod>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject?.self) // PyClassMethod.callable
+          GenericLayout.Field(PyObject?.self) // PyClassMethod.callable
         ]
       )
 
@@ -1169,26 +1178,27 @@ extension PyCode {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyCode>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyCode.CodeObject.self), // PyCode.codeObject
-          PyMemory.FieldLayout(from: PyString.self), // PyCode.name
-          PyMemory.FieldLayout(from: PyString.self), // PyCode.qualifiedName
-          PyMemory.FieldLayout(from: PyString.self), // PyCode.filename
-          PyMemory.FieldLayout(from: [Instruction].self), // PyCode.instructions
-          PyMemory.FieldLayout(from: SourceLine.self), // PyCode.firstLine
-          PyMemory.FieldLayout(from: [SourceLine].self), // PyCode.instructionLines
-          PyMemory.FieldLayout(from: [PyObject].self), // PyCode.constants
-          PyMemory.FieldLayout(from: [CodeObject.Label].self), // PyCode.labels
-          PyMemory.FieldLayout(from: [PyString].self), // PyCode.names
-          PyMemory.FieldLayout(from: [MangledName].self), // PyCode.variableNames
-          PyMemory.FieldLayout(from: [MangledName].self), // PyCode.cellVariableNames
-          PyMemory.FieldLayout(from: [MangledName].self), // PyCode.freeVariableNames
-          PyMemory.FieldLayout(from: Int.self), // PyCode.argCount
-          PyMemory.FieldLayout(from: Int.self), // PyCode.kwOnlyArgCount
-          PyMemory.FieldLayout(from: Int.self) // PyCode.predictedObjectStackCount
+          GenericLayout.Field(PyCode.CodeObject.self), // PyCode.codeObject
+          GenericLayout.Field(PyString.self), // PyCode.name
+          GenericLayout.Field(PyString.self), // PyCode.qualifiedName
+          GenericLayout.Field(PyString.self), // PyCode.filename
+          GenericLayout.Field([Instruction].self), // PyCode.instructions
+          GenericLayout.Field(SourceLine.self), // PyCode.firstLine
+          GenericLayout.Field([SourceLine].self), // PyCode.instructionLines
+          GenericLayout.Field([PyObject].self), // PyCode.constants
+          GenericLayout.Field([CodeObject.Label].self), // PyCode.labels
+          GenericLayout.Field([PyString].self), // PyCode.names
+          GenericLayout.Field([MangledName].self), // PyCode.variableNames
+          GenericLayout.Field([MangledName].self), // PyCode.cellVariableNames
+          GenericLayout.Field([MangledName].self), // PyCode.freeVariableNames
+          GenericLayout.Field(Int.self), // PyCode.argCount
+          GenericLayout.Field(Int.self), // PyCode.kwOnlyArgCount
+          GenericLayout.Field(Int.self) // PyCode.predictedObjectStackCount
         ]
       )
 
@@ -1348,12 +1358,13 @@ extension PyComplex {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyComplex>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: Double.self), // PyComplex.real
-          PyMemory.FieldLayout(from: Double.self) // PyComplex.imag
+          GenericLayout.Field(Double.self), // PyComplex.real
+          GenericLayout.Field(Double.self) // PyComplex.imag
         ]
       )
 
@@ -1462,11 +1473,12 @@ extension PyDict {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyDict>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyDict.OrderedDictionary.self) // PyDict.elements
+          GenericLayout.Field(PyDict.OrderedDictionary.self) // PyDict.elements
         ]
       )
 
@@ -1567,13 +1579,14 @@ extension PyDictItemIterator {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyDictItemIterator>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyDict.self), // PyDictItemIterator.dict
-          PyMemory.FieldLayout(from: Int.self), // PyDictItemIterator.index
-          PyMemory.FieldLayout(from: Int.self) // PyDictItemIterator.initialCount
+          GenericLayout.Field(PyDict.self), // PyDictItemIterator.dict
+          GenericLayout.Field(Int.self), // PyDictItemIterator.index
+          GenericLayout.Field(Int.self) // PyDictItemIterator.initialCount
         ]
       )
 
@@ -1680,11 +1693,12 @@ extension PyDictItems {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyDictItems>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyDict.self) // PyDictItems.dict
+          GenericLayout.Field(PyDict.self) // PyDictItems.dict
         ]
       )
 
@@ -1785,13 +1799,14 @@ extension PyDictKeyIterator {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyDictKeyIterator>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyDict.self), // PyDictKeyIterator.dict
-          PyMemory.FieldLayout(from: Int.self), // PyDictKeyIterator.index
-          PyMemory.FieldLayout(from: Int.self) // PyDictKeyIterator.initialCount
+          GenericLayout.Field(PyDict.self), // PyDictKeyIterator.dict
+          GenericLayout.Field(Int.self), // PyDictKeyIterator.index
+          GenericLayout.Field(Int.self) // PyDictKeyIterator.initialCount
         ]
       )
 
@@ -1898,11 +1913,12 @@ extension PyDictKeys {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyDictKeys>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyDict.self) // PyDictKeys.dict
+          GenericLayout.Field(PyDict.self) // PyDictKeys.dict
         ]
       )
 
@@ -2003,13 +2019,14 @@ extension PyDictValueIterator {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyDictValueIterator>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyDict.self), // PyDictValueIterator.dict
-          PyMemory.FieldLayout(from: Int.self), // PyDictValueIterator.index
-          PyMemory.FieldLayout(from: Int.self) // PyDictValueIterator.initialCount
+          GenericLayout.Field(PyDict.self), // PyDictValueIterator.dict
+          GenericLayout.Field(Int.self), // PyDictValueIterator.index
+          GenericLayout.Field(Int.self) // PyDictValueIterator.initialCount
         ]
       )
 
@@ -2116,11 +2133,12 @@ extension PyDictValues {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyDictValues>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyDict.self) // PyDictValues.dict
+          GenericLayout.Field(PyDict.self) // PyDictValues.dict
         ]
       )
 
@@ -2299,12 +2317,13 @@ extension PyEnumerate {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyEnumerate>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject.self), // PyEnumerate.iterator
-          PyMemory.FieldLayout(from: BigInt.self) // PyEnumerate.nextIndex
+          GenericLayout.Field(PyObject.self), // PyEnumerate.iterator
+          GenericLayout.Field(BigInt.self) // PyEnumerate.nextIndex
         ]
       )
 
@@ -2414,12 +2433,13 @@ extension PyFilter {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyFilter>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject.self), // PyFilter.fn
-          PyMemory.FieldLayout(from: PyObject.self) // PyFilter.iterator
+          GenericLayout.Field(PyObject.self), // PyFilter.fn
+          GenericLayout.Field(PyObject.self) // PyFilter.iterator
         ]
       )
 
@@ -2528,11 +2548,12 @@ extension PyFloat {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyFloat>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: Double.self) // PyFloat.value
+          GenericLayout.Field(Double.self) // PyFloat.value
         ]
       )
 
@@ -2640,20 +2661,21 @@ extension PyFrame {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyFrame>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyCode.self), // PyFrame.code
-          PyMemory.FieldLayout(from: PyFrame?.self), // PyFrame.parent
-          PyMemory.FieldLayout(from: PyDict.self), // PyFrame.locals
-          PyMemory.FieldLayout(from: PyDict.self), // PyFrame.globals
-          PyMemory.FieldLayout(from: PyDict.self), // PyFrame.builtins
-          PyMemory.FieldLayout(from: BufferPtr<PyObject>.self), // PyFrame.objectStackStorage
-          PyMemory.FieldLayout(from: PyFrame.ObjectStackProxy.EndPtr.self), // PyFrame.objectStackEnd
-          PyMemory.FieldLayout(from: RawPtr.self), // PyFrame.fastLocalsCellFreeBlockStackStoragePtr
-          PyMemory.FieldLayout(from: Int?.self), // PyFrame.currentInstructionIndex
-          PyMemory.FieldLayout(from: Int.self) // PyFrame.nextInstructionIndex
+          GenericLayout.Field(PyCode.self), // PyFrame.code
+          GenericLayout.Field(PyFrame?.self), // PyFrame.parent
+          GenericLayout.Field(PyDict.self), // PyFrame.locals
+          GenericLayout.Field(PyDict.self), // PyFrame.globals
+          GenericLayout.Field(PyDict.self), // PyFrame.builtins
+          GenericLayout.Field(BufferPtr<PyObject>.self), // PyFrame.objectStackStorage
+          GenericLayout.Field(PyFrame.ObjectStackProxy.EndPtr.self), // PyFrame.objectStackEnd
+          GenericLayout.Field(RawPtr.self), // PyFrame.fastLocalsCellFreeBlockStackStoragePtr
+          GenericLayout.Field(Int?.self), // PyFrame.currentInstructionIndex
+          GenericLayout.Field(Int.self) // PyFrame.nextInstructionIndex
         ]
       )
 
@@ -2798,11 +2820,12 @@ extension PyFrozenSet {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyFrozenSet>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: OrderedSet.self) // PyFrozenSet.elements
+          GenericLayout.Field(OrderedSet.self) // PyFrozenSet.elements
         ]
       )
 
@@ -2910,20 +2933,21 @@ extension PyFunction {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyFunction>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyString.self), // PyFunction.name
-          PyMemory.FieldLayout(from: PyString.self), // PyFunction.qualname
-          PyMemory.FieldLayout(from: PyString?.self), // PyFunction.doc
-          PyMemory.FieldLayout(from: PyObject.self), // PyFunction.module
-          PyMemory.FieldLayout(from: PyCode.self), // PyFunction.code
-          PyMemory.FieldLayout(from: PyDict.self), // PyFunction.globals
-          PyMemory.FieldLayout(from: PyTuple?.self), // PyFunction.defaults
-          PyMemory.FieldLayout(from: PyDict?.self), // PyFunction.kwDefaults
-          PyMemory.FieldLayout(from: PyTuple?.self), // PyFunction.closure
-          PyMemory.FieldLayout(from: PyDict?.self) // PyFunction.annotations
+          GenericLayout.Field(PyString.self), // PyFunction.name
+          GenericLayout.Field(PyString.self), // PyFunction.qualname
+          GenericLayout.Field(PyString?.self), // PyFunction.doc
+          GenericLayout.Field(PyObject.self), // PyFunction.module
+          GenericLayout.Field(PyCode.self), // PyFunction.code
+          GenericLayout.Field(PyDict.self), // PyFunction.globals
+          GenericLayout.Field(PyTuple?.self), // PyFunction.defaults
+          GenericLayout.Field(PyDict?.self), // PyFunction.kwDefaults
+          GenericLayout.Field(PyTuple?.self), // PyFunction.closure
+          GenericLayout.Field(PyDict?.self) // PyFunction.annotations
         ]
       )
 
@@ -3068,11 +3092,12 @@ extension PyInt {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyInt>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: BigInt.self) // PyInt.value
+          GenericLayout.Field(BigInt.self) // PyInt.value
         ]
       )
 
@@ -3172,12 +3197,13 @@ extension PyIterator {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyIterator>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject.self), // PyIterator.sequence
-          PyMemory.FieldLayout(from: Int.self) // PyIterator.index
+          GenericLayout.Field(PyObject.self), // PyIterator.sequence
+          GenericLayout.Field(Int.self) // PyIterator.index
         ]
       )
 
@@ -3280,11 +3306,12 @@ extension PyList {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyList>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: [PyObject].self) // PyList.elements
+          GenericLayout.Field([PyObject].self) // PyList.elements
         ]
       )
 
@@ -3384,12 +3411,13 @@ extension PyListIterator {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyListIterator>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyList.self), // PyListIterator.list
-          PyMemory.FieldLayout(from: Int.self) // PyListIterator.index
+          GenericLayout.Field(PyList.self), // PyListIterator.list
+          GenericLayout.Field(Int.self) // PyListIterator.index
         ]
       )
 
@@ -3493,12 +3521,13 @@ extension PyListReverseIterator {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyListReverseIterator>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyList.self), // PyListReverseIterator.list
-          PyMemory.FieldLayout(from: Int.self) // PyListReverseIterator.index
+          GenericLayout.Field(PyList.self), // PyListReverseIterator.list
+          GenericLayout.Field(Int.self) // PyListReverseIterator.index
         ]
       )
 
@@ -3602,12 +3631,13 @@ extension PyMap {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyMap>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject.self), // PyMap.fn
-          PyMemory.FieldLayout(from: [PyObject].self) // PyMap.iterators
+          GenericLayout.Field(PyObject.self), // PyMap.fn
+          GenericLayout.Field([PyObject].self) // PyMap.iterators
         ]
       )
 
@@ -3717,12 +3747,13 @@ extension PyMethod {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyMethod>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyFunction.self), // PyMethod.function
-          PyMemory.FieldLayout(from: PyObject.self) // PyMethod.object
+          GenericLayout.Field(PyFunction.self), // PyMethod.function
+          GenericLayout.Field(PyObject.self) // PyMethod.object
         ]
       )
 
@@ -4158,14 +4189,15 @@ extension PyObject {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyObject>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: 0,
         initialAlignment: 0,
         fields: [
-          PyMemory.FieldLayout(from: PyType.self), // PyObject.type
-          PyMemory.FieldLayout(from: PyMemory.ObjectHeader.self), // PyObject.memoryInfo
-          PyMemory.FieldLayout(from: PyObject.Lazy__dict__.self), // PyObject.__dict__
-          PyMemory.FieldLayout(from: PyObject.Flags.self) // PyObject.flags
+          GenericLayout.Field(PyType.self), // PyObject.type
+          GenericLayout.Field(PyMemory.ObjectHeader.self), // PyObject.memoryInfo
+          GenericLayout.Field(PyObject.Lazy__dict__.self), // PyObject.__dict__
+          GenericLayout.Field(PyObject.Flags.self) // PyObject.flags
         ]
       )
 
@@ -4237,14 +4269,15 @@ extension PyProperty {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyProperty>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject?.self), // PyProperty._get
-          PyMemory.FieldLayout(from: PyObject?.self), // PyProperty._set
-          PyMemory.FieldLayout(from: PyObject?.self), // PyProperty._del
-          PyMemory.FieldLayout(from: PyObject?.self) // PyProperty.doc
+          GenericLayout.Field(PyObject?.self), // PyProperty._get
+          GenericLayout.Field(PyObject?.self), // PyProperty._set
+          GenericLayout.Field(PyObject?.self), // PyProperty._del
+          GenericLayout.Field(PyObject?.self) // PyProperty.doc
         ]
       )
 
@@ -4368,14 +4401,15 @@ extension PyRange {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyRange>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyInt.self), // PyRange.start
-          PyMemory.FieldLayout(from: PyInt.self), // PyRange.stop
-          PyMemory.FieldLayout(from: PyInt.self), // PyRange.step
-          PyMemory.FieldLayout(from: PyInt.self) // PyRange.length
+          GenericLayout.Field(PyInt.self), // PyRange.start
+          GenericLayout.Field(PyInt.self), // PyRange.stop
+          GenericLayout.Field(PyInt.self), // PyRange.step
+          GenericLayout.Field(PyInt.self) // PyRange.length
         ]
       )
 
@@ -4497,14 +4531,15 @@ extension PyRangeIterator {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyRangeIterator>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: BigInt.self), // PyRangeIterator.start
-          PyMemory.FieldLayout(from: BigInt.self), // PyRangeIterator.step
-          PyMemory.FieldLayout(from: BigInt.self), // PyRangeIterator.length
-          PyMemory.FieldLayout(from: BigInt.self) // PyRangeIterator.index
+          GenericLayout.Field(BigInt.self), // PyRangeIterator.start
+          GenericLayout.Field(BigInt.self), // PyRangeIterator.step
+          GenericLayout.Field(BigInt.self), // PyRangeIterator.length
+          GenericLayout.Field(BigInt.self) // PyRangeIterator.index
         ]
       )
 
@@ -4624,12 +4659,13 @@ extension PyReversed {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyReversed>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject.self), // PyReversed.sequence
-          PyMemory.FieldLayout(from: Int.self) // PyReversed.index
+          GenericLayout.Field(PyObject.self), // PyReversed.sequence
+          GenericLayout.Field(Int.self) // PyReversed.index
         ]
       )
 
@@ -4738,11 +4774,12 @@ extension PySet {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PySet>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: OrderedSet.self) // PySet.elements
+          GenericLayout.Field(OrderedSet.self) // PySet.elements
         ]
       )
 
@@ -4843,13 +4880,14 @@ extension PySetIterator {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PySetIterator>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyAnySet.self), // PySetIterator.set
-          PyMemory.FieldLayout(from: Int.self), // PySetIterator.index
-          PyMemory.FieldLayout(from: Int.self) // PySetIterator.initialCount
+          GenericLayout.Field(PyAnySet.self), // PySetIterator.set
+          GenericLayout.Field(Int.self), // PySetIterator.index
+          GenericLayout.Field(Int.self) // PySetIterator.initialCount
         ]
       )
 
@@ -4969,13 +5007,14 @@ extension PySlice {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PySlice>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject.self), // PySlice.start
-          PyMemory.FieldLayout(from: PyObject.self), // PySlice.stop
-          PyMemory.FieldLayout(from: PyObject.self) // PySlice.step
+          GenericLayout.Field(PyObject.self), // PySlice.start
+          GenericLayout.Field(PyObject.self), // PySlice.stop
+          GenericLayout.Field(PyObject.self) // PySlice.step
         ]
       )
 
@@ -5090,11 +5129,12 @@ extension PyStaticMethod {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyStaticMethod>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject?.self) // PyStaticMethod.callable
+          GenericLayout.Field(PyObject?.self) // PyStaticMethod.callable
         ]
       )
 
@@ -5195,13 +5235,14 @@ extension PyString {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyString>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: Int.self), // PyString.cachedCount
-          PyMemory.FieldLayout(from: PyHash.self), // PyString.cachedHash
-          PyMemory.FieldLayout(from: String.self) // PyString.value
+          GenericLayout.Field(Int.self), // PyString.cachedCount
+          GenericLayout.Field(PyHash.self), // PyString.cachedHash
+          GenericLayout.Field(String.self) // PyString.value
         ]
       )
 
@@ -5309,12 +5350,13 @@ extension PyStringIterator {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyStringIterator>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyString.self), // PyStringIterator.string
-          PyMemory.FieldLayout(from: Int.self) // PyStringIterator.index
+          GenericLayout.Field(PyString.self), // PyStringIterator.string
+          GenericLayout.Field(Int.self) // PyStringIterator.index
         ]
       )
 
@@ -5419,13 +5461,14 @@ extension PySuper {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PySuper>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyType?.self), // PySuper.thisClass
-          PyMemory.FieldLayout(from: PyObject?.self), // PySuper.object
-          PyMemory.FieldLayout(from: PyType?.self) // PySuper.objectType
+          GenericLayout.Field(PyType?.self), // PySuper.thisClass
+          GenericLayout.Field(PyObject?.self), // PySuper.object
+          GenericLayout.Field(PyType?.self) // PySuper.objectType
         ]
       )
 
@@ -5544,15 +5587,16 @@ extension PyTextFile {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyTextFile>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: String?.self), // PyTextFile.name
-          PyMemory.FieldLayout(from: PyFileDescriptorType.self), // PyTextFile.fd
-          PyMemory.FieldLayout(from: FileMode.self), // PyTextFile.mode
-          PyMemory.FieldLayout(from: PyString.Encoding.self), // PyTextFile.encoding
-          PyMemory.FieldLayout(from: PyString.ErrorHandling.self) // PyTextFile.errorHandling
+          GenericLayout.Field(String?.self), // PyTextFile.name
+          GenericLayout.Field(PyFileDescriptorType.self), // PyTextFile.fd
+          GenericLayout.Field(FileMode.self), // PyTextFile.mode
+          GenericLayout.Field(PyString.Encoding.self), // PyTextFile.encoding
+          GenericLayout.Field(PyString.ErrorHandling.self) // PyTextFile.errorHandling
         ]
       )
 
@@ -5684,14 +5728,15 @@ extension PyTraceback {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyTraceback>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyTraceback?.self), // PyTraceback.next
-          PyMemory.FieldLayout(from: PyFrame.self), // PyTraceback.frame
-          PyMemory.FieldLayout(from: PyInt.self), // PyTraceback.lastInstruction
-          PyMemory.FieldLayout(from: PyInt.self) // PyTraceback.lineNo
+          GenericLayout.Field(PyTraceback?.self), // PyTraceback.next
+          GenericLayout.Field(PyFrame.self), // PyTraceback.frame
+          GenericLayout.Field(PyInt.self), // PyTraceback.lastInstruction
+          GenericLayout.Field(PyInt.self) // PyTraceback.lineNo
         ]
       )
 
@@ -5812,11 +5857,12 @@ extension PyTuple {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyTuple>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: [PyObject].self) // PyTuple.elements
+          GenericLayout.Field([PyObject].self) // PyTuple.elements
         ]
       )
 
@@ -5916,12 +5962,13 @@ extension PyTupleIterator {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyTupleIterator>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyTuple.self), // PyTupleIterator.tuple
-          PyMemory.FieldLayout(from: Int.self) // PyTupleIterator.index
+          GenericLayout.Field(PyTuple.self), // PyTupleIterator.tuple
+          GenericLayout.Field(Int.self) // PyTupleIterator.index
         ]
       )
 
@@ -6034,21 +6081,22 @@ extension PyType {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyType>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: String.self), // PyType.name
-          PyMemory.FieldLayout(from: String.self), // PyType.qualname
-          PyMemory.FieldLayout(from: PyObject?.self), // PyType.doc
-          PyMemory.FieldLayout(from: PyType?.self), // PyType.base
-          PyMemory.FieldLayout(from: [PyType].self), // PyType.bases
-          PyMemory.FieldLayout(from: [PyType].self), // PyType.mro
-          PyMemory.FieldLayout(from: [PyType].self), // PyType.subclasses
-          PyMemory.FieldLayout(from: Int.self), // PyType.instanceSizeWithoutTail
-          PyMemory.FieldLayout(from: PyStaticCall.KnownNotOverriddenMethods.self), // PyType.staticMethods
-          PyMemory.FieldLayout(from: DebugFn.self), // PyType.debugFn
-          PyMemory.FieldLayout(from: DeinitializeFn.self) // PyType.deinitialize
+          GenericLayout.Field(String.self), // PyType.name
+          GenericLayout.Field(String.self), // PyType.qualname
+          GenericLayout.Field(PyObject?.self), // PyType.doc
+          GenericLayout.Field(PyType?.self), // PyType.base
+          GenericLayout.Field([PyType].self), // PyType.bases
+          GenericLayout.Field([PyType].self), // PyType.mro
+          GenericLayout.Field([PyType].self), // PyType.subclasses
+          GenericLayout.Field(Int.self), // PyType.instanceSizeWithoutTail
+          GenericLayout.Field(PyStaticCall.KnownNotOverriddenMethods.self), // PyType.staticMethods
+          GenericLayout.Field(DebugFn.self), // PyType.debugFn
+          GenericLayout.Field(DeinitializeFn.self) // PyType.deinitialize
         ]
       )
 
@@ -6211,11 +6259,12 @@ extension PyZip {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyZip>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: [PyObject].self) // PyZip.iterators
+          GenericLayout.Field([PyObject].self) // PyZip.iterators
         ]
       )
 
@@ -6674,14 +6723,15 @@ extension PyBaseException {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyBaseException>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyObject.layout.size,
         initialAlignment: PyObject.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyTuple.self), // PyBaseException.args
-          PyMemory.FieldLayout(from: PyTraceback?.self), // PyBaseException.traceback
-          PyMemory.FieldLayout(from: PyBaseException?.self), // PyBaseException.cause
-          PyMemory.FieldLayout(from: PyBaseException?.self) // PyBaseException.context
+          GenericLayout.Field(PyTuple.self), // PyBaseException.args
+          GenericLayout.Field(PyTraceback?.self), // PyBaseException.traceback
+          GenericLayout.Field(PyBaseException?.self), // PyBaseException.cause
+          GenericLayout.Field(PyBaseException?.self) // PyBaseException.context
         ]
       )
 
@@ -8829,13 +8879,14 @@ extension PyImportError {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyImportError>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyException.layout.size,
         initialAlignment: PyException.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject?.self), // PyImportError.msg
-          PyMemory.FieldLayout(from: PyObject?.self), // PyImportError.moduleName
-          PyMemory.FieldLayout(from: PyObject?.self) // PyImportError.modulePath
+          GenericLayout.Field(PyObject?.self), // PyImportError.msg
+          GenericLayout.Field(PyObject?.self), // PyImportError.moduleName
+          GenericLayout.Field(PyObject?.self) // PyImportError.modulePath
         ]
       )
 
@@ -12009,11 +12060,12 @@ extension PyStopIteration {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PyStopIteration>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyException.layout.size,
         initialAlignment: PyException.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject.self) // PyStopIteration.value
+          GenericLayout.Field(PyObject.self) // PyStopIteration.value
         ]
       )
 
@@ -12180,16 +12232,17 @@ extension PySyntaxError {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PySyntaxError>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyException.layout.size,
         initialAlignment: PyException.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject?.self), // PySyntaxError.msg
-          PyMemory.FieldLayout(from: PyObject?.self), // PySyntaxError.filename
-          PyMemory.FieldLayout(from: PyObject?.self), // PySyntaxError.lineno
-          PyMemory.FieldLayout(from: PyObject?.self), // PySyntaxError.offset
-          PyMemory.FieldLayout(from: PyObject?.self), // PySyntaxError.text
-          PyMemory.FieldLayout(from: PyObject?.self) // PySyntaxError.printFileAndLine
+          GenericLayout.Field(PyObject?.self), // PySyntaxError.msg
+          GenericLayout.Field(PyObject?.self), // PySyntaxError.filename
+          GenericLayout.Field(PyObject?.self), // PySyntaxError.lineno
+          GenericLayout.Field(PyObject?.self), // PySyntaxError.offset
+          GenericLayout.Field(PyObject?.self), // PySyntaxError.text
+          GenericLayout.Field(PyObject?.self) // PySyntaxError.printFileAndLine
         ]
       )
 
@@ -12619,11 +12672,12 @@ extension PySystemExit {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<PySystemExit>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: PyBaseException.layout.size,
         initialAlignment: PyBaseException.layout.alignment,
         fields: [
-          PyMemory.FieldLayout(from: PyObject?.self) // PySystemExit.code
+          GenericLayout.Field(PyObject?.self) // PySystemExit.code
         ]
       )
 

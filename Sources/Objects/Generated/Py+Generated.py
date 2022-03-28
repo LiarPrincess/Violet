@@ -55,7 +55,8 @@ if __name__ == '__main__':
     print()
 
     print(f'    internal init() {{')
-    print(f'      let layout = PyMemory.GenericLayout(')
+    print(f'      assert(MemoryLayout<Py>.size == MemoryLayout<RawPtr>.size, "Only \'RawPtr\' should be stored.")')
+    print(f'      let layout = GenericLayout(')
     print(f'        initialOffset: 0,')
     print(f'        initialAlignment: 0,')
     print('        fields: [')
@@ -63,7 +64,7 @@ if __name__ == '__main__':
     for index, p in enumerate(layout_properties):
         is_last = index == len(layout_properties) - 1
         comma = '' if is_last else ','
-        print(f'          PyMemory.FieldLayout(from: {p.swift_type}.self){comma} // {p.swift_name}')
+        print(f'          GenericLayout.Field({p.swift_type}.self){comma} // {p.swift_name}')
 
     print('        ]')
     print('      )')
