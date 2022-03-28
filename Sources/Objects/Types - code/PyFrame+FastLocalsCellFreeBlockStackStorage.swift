@@ -1,6 +1,6 @@
 extension PyFrame {
 
-  private typealias FieldLayout = PyMemory.FieldLayout
+  private typealias GenericField = GenericLayout.Field
   private typealias BlockStackEnd = BlockStackProxy.EndPtr
   private typealias Metadata = FastLocalsCellFreeBlockStackStorage.Metadata
 
@@ -12,13 +12,13 @@ extension PyFrame {
     let freeVariableCount = code.freeVariableCount
     let blockStackCount = Self.maxBlockStackCount
 
-    let layout = PyMemory.GenericLayout(initialOffset: 0, initialAlignment: 0, fields: [
-      FieldLayout(from: FastLocalsCellFreeBlockStackStorage.Metadata.self), // 0: metadata
-      FieldLayout(from: FastLocal.self, repeatCount: fastLocalsCount), // 1: fastLocals
-      FieldLayout(from: Cell.self, repeatCount: cellVariableCount), // 2: cells
-      FieldLayout(from: Cell.self, repeatCount: freeVariableCount), // 3: free
-      FieldLayout(from: BlockStackEnd.self), // 4: blockStackEnd
-      FieldLayout(from: Block.self, repeatCount: blockStackCount), // 5: blockStack
+    let layout = GenericLayout(initialOffset: 0, initialAlignment: 0, fields: [
+      GenericField(FastLocalsCellFreeBlockStackStorage.Metadata.self), // 0: metadata
+      GenericField(FastLocal.self, repeatCount: fastLocalsCount), // 1: fastLocals
+      GenericField(Cell.self, repeatCount: cellVariableCount), // 2: cells
+      GenericField(Cell.self, repeatCount: freeVariableCount), // 3: free
+      GenericField(BlockStackEnd.self), // 4: blockStackEnd
+      GenericField(Block.self, repeatCount: blockStackCount), // 5: blockStack
     ])
 
     assert(layout.offsets.count == 6)

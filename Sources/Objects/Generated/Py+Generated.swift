@@ -54,40 +54,41 @@ extension Py {
     internal let alignment: Int
 
     internal init() {
-      let layout = PyMemory.GenericLayout(
+      assert(MemoryLayout<Py>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+      let layout = GenericLayout(
         initialOffset: 0,
         initialAlignment: 0,
         fields: [
-          PyMemory.FieldLayout(from: PyBool.self), // true
-          PyMemory.FieldLayout(from: PyBool.self), // false
-          PyMemory.FieldLayout(from: PyNone.self), // none
-          PyMemory.FieldLayout(from: PyNotImplemented.self), // notImplemented
-          PyMemory.FieldLayout(from: PyEllipsis.self), // ellipsis
-          PyMemory.FieldLayout(from: PyTuple.self), // emptyTuple
-          PyMemory.FieldLayout(from: PyString.self), // emptyString
-          PyMemory.FieldLayout(from: PyBytes.self), // emptyBytes
-          PyMemory.FieldLayout(from: PyFrozenSet.self), // emptyFrozenSet
-          PyMemory.FieldLayout(from: IdString.Collection.self), // idStrings
-          PyMemory.FieldLayout(from: [PyInt].self), // internedInts
-          PyMemory.FieldLayout(from: [UseScalarsToHashString: PyString].self), // internedStrings
-          PyMemory.FieldLayout(from: Builtins.self), // builtins
-          PyMemory.FieldLayout(from: Sys.self), // sys
-          PyMemory.FieldLayout(from: UnderscoreImp.self), // _imp
-          PyMemory.FieldLayout(from: UnderscoreWarnings.self), // _warnings
-          PyMemory.FieldLayout(from: UnderscoreOS.self), // _os
-          PyMemory.FieldLayout(from: PyModule.self), // builtinsModule
-          PyMemory.FieldLayout(from: PyModule.self), // sysModule
-          PyMemory.FieldLayout(from: PyModule.self), // _impModule
-          PyMemory.FieldLayout(from: PyModule.self), // _warningsModule
-          PyMemory.FieldLayout(from: PyModule.self), // _osModule
-          PyMemory.FieldLayout(from: Py.Types.self), // types
-          PyMemory.FieldLayout(from: Py.ErrorTypes.self), // errorTypes
-          PyMemory.FieldLayout(from: PyConfig.self), // config
-          PyMemory.FieldLayout(from: PyDelegateType.self), // delegate
-          PyMemory.FieldLayout(from: PyFileSystemType.self), // fileSystem
-          PyMemory.FieldLayout(from: PyMemory.self), // memory
-          PyMemory.FieldLayout(from: PyCast.self), // cast
-          PyMemory.FieldLayout(from: Hasher.self) // hasher
+          GenericLayout.Field(PyBool.self), // true
+          GenericLayout.Field(PyBool.self), // false
+          GenericLayout.Field(PyNone.self), // none
+          GenericLayout.Field(PyNotImplemented.self), // notImplemented
+          GenericLayout.Field(PyEllipsis.self), // ellipsis
+          GenericLayout.Field(PyTuple.self), // emptyTuple
+          GenericLayout.Field(PyString.self), // emptyString
+          GenericLayout.Field(PyBytes.self), // emptyBytes
+          GenericLayout.Field(PyFrozenSet.self), // emptyFrozenSet
+          GenericLayout.Field(IdString.Collection.self), // idStrings
+          GenericLayout.Field([PyInt].self), // internedInts
+          GenericLayout.Field([UseScalarsToHashString: PyString].self), // internedStrings
+          GenericLayout.Field(Builtins.self), // builtins
+          GenericLayout.Field(Sys.self), // sys
+          GenericLayout.Field(UnderscoreImp.self), // _imp
+          GenericLayout.Field(UnderscoreWarnings.self), // _warnings
+          GenericLayout.Field(UnderscoreOS.self), // _os
+          GenericLayout.Field(PyModule.self), // builtinsModule
+          GenericLayout.Field(PyModule.self), // sysModule
+          GenericLayout.Field(PyModule.self), // _impModule
+          GenericLayout.Field(PyModule.self), // _warningsModule
+          GenericLayout.Field(PyModule.self), // _osModule
+          GenericLayout.Field(Py.Types.self), // types
+          GenericLayout.Field(Py.ErrorTypes.self), // errorTypes
+          GenericLayout.Field(PyConfig.self), // config
+          GenericLayout.Field(PyDelegateType.self), // delegate
+          GenericLayout.Field(PyFileSystemType.self), // fileSystem
+          GenericLayout.Field(PyMemory.self), // memory
+          GenericLayout.Field(PyCast.self), // cast
+          GenericLayout.Field(Hasher.self) // hasher
         ]
       )
 
