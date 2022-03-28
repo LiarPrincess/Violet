@@ -1,6 +1,7 @@
 import Foundation
 import VioletCore
 
+// swiftlint:disable function_body_length
 // swiftlint:disable file_length
 // cSpell:ignore floatobject TOHEX ffffp inity
 
@@ -465,7 +466,7 @@ extension PyFloat {
   }
 
   private static func isCoefficientZero(integer: HexDigits.SubSequence,
-                                 fraction: HexDigits.SubSequence?) -> Bool {
+                                        fraction: HexDigits.SubSequence?) -> Bool {
     let isIntegerZero = integer.allSatisfy(self.isZero(hex:))
     let isFractionZero = fraction?.allSatisfy(self.isZero(hex:)) ?? true
     return isIntegerZero && isFractionZero

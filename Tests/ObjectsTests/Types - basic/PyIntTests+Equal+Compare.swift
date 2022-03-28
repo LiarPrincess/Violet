@@ -3,6 +3,8 @@ import Foundation
 import FileSystem
 import VioletObjects
 
+// swiftlint:disable function_parameter_count
+
 extension PyIntTests {
 
   // MARK: - Equal
@@ -221,6 +223,8 @@ extension PyIntTests {
 
   // MARK: - Helpers
 
+  // swiftlint:disable line_length
+
   private func assertIsEqual(_ py: Py, left: Int, right: Int, expected: Bool, file: StaticString = #file, line: UInt = #line) {
     self.assertCompareOperation(py, left: left, right: right, expected: expected, fn: Py.isEqual, file: file, line: line)
   }
@@ -261,13 +265,15 @@ extension PyIntTests {
     self.assertBinaryOperationTypeError(py, left: left, right: right, message: message, fn: Py.isGreaterEqual, file: file, line: line)
   }
 
+  // swiftlint:enable line_length
+
   func assertCompareOperation(_ py: Py,
-                             left: Int,
-                             right: Int,
-                             expected: Bool,
-                             fn: BinaryOperation,
-                             file: StaticString,
-                             line: UInt) {
+                              left: Int,
+                              right: Int,
+                              expected: Bool,
+                              fn: BinaryOperation,
+                              file: StaticString,
+                              line: UInt) {
     let leftObject = py.newInt(left).asObject
     let rightObject = py.newInt(right).asObject
     let result = fn(py)(leftObject, rightObject)

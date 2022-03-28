@@ -1,5 +1,6 @@
 import VioletBytecode
 
+// swiftlint:disable file_length
 // cSpell:ignore typeobject cmeth
 
 // In CPython:

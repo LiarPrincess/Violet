@@ -4,6 +4,8 @@ import FileSystem
 import VioletCore
 import VioletBytecode
 
+// swiftlint:disable function_parameter_count
+
 // In CPython:
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html

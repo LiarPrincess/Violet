@@ -2,6 +2,8 @@ import Foundation
 import BigInt
 import VioletCore
 
+// swiftlint:disable file_length
+
 // In CPython:
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html

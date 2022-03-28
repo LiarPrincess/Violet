@@ -2,6 +2,7 @@ import Foundation
 import BigInt
 import VioletCore
 
+// swiftlint:disable static_operator
 // swiftlint:disable file_length
 // cSpell:ignore longobject divrem
 
@@ -1052,6 +1053,7 @@ public struct PyInt: PyObjectMixin {
     }
   }
 
+  // swiftlint:disable:next function_body_length
   private static func __new__(_ py: Py,
                               type: PyType,
                               object: PyObject?,
@@ -1069,12 +1071,9 @@ public struct PyInt: PyObjectMixin {
     guard let base = base else {
       let parsed = Self.new(py, fromObjectWithoutBase: object)
       switch parsed {
-      case .pyInt(let pyInt):
-        return Self.allocate(py, type: type, value: pyInt)
-      case .bigInt(let value):
-        return Self.allocate(py, type: type, value: value)
-      case .error(let e):
-        return .error(e)
+      case .pyInt(let pyInt): return Self.allocate(py, type: type, value: pyInt)
+      case .bigInt(let value): return Self.allocate(py, type: type, value: value)
+      case .error(let e): return .error(e)
       }
     }
 
@@ -1102,8 +1101,7 @@ public struct PyInt: PyObjectMixin {
     case .value(let value):
       return Self.allocate(py, type: type, value: value)
     case .notString:
-      let message = "int() can't convert non-string with explicit base"
-      return .typeError(py, message: message)
+      return .typeError(py, message: "int() can't convert non-string with explicit base")
     case .error(let e):
       return .error(e)
     }

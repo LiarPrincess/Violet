@@ -1,6 +1,5 @@
 import VioletCore
 
-// swiftlint:disable:next type_name
 internal enum AbstractStringPartitionResult<C: Collection> {
   /// Separator was found.
   ///

@@ -95,6 +95,7 @@ extension AbstractString {
 
   // MARK: - Just template
 
+  // swiftlint:disable:next function_parameter_count
   private static func justTemplate(_ py: Py,
                                    zelf: PyObject,
                                    width widthObject: PyObject,

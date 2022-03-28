@@ -1,3 +1,5 @@
+// swiftlint:disable empty_count
+
 /// A pointer for accessing a continuous allocation of `TrivialElement` instances.
 ///
 /// - Important: `TrivialElement` has to be a trivial type:

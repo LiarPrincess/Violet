@@ -33,7 +33,7 @@ class ArgumentParserTests: PyTestCase {
   func test_init_argumentCount_moreNamesThanInFormat_fails() {
     // 3 arguments, but 2 in format
     guard let message = self.createError(arguments: ["", "elsa", "anna"],
-                                   format: "|OO:frozen") else {
+                                         format: "|OO:frozen") else {
       return
     }
 

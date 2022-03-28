@@ -7,11 +7,11 @@
 import BigInt
 import VioletCore
 
+// swiftlint:disable function_parameter_count
+// swiftlint:disable vertical_whitespace_closing_braces
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
-// swiftlint:disable trailing_comma
-// swiftlint:disable discouraged_optional_boolean
-// swiftlint:disable vertical_whitespace_closing_braces
+// swiftlint:disable closure_body_length
 // swiftlint:disable file_length
 
 // Type initialization order:

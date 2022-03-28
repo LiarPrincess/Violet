@@ -203,6 +203,7 @@ public final class Sys: PyModuleImplementation {
     self.setOrTrap(.modules, value: self.py.newDict())
     self.setOrTrap(.builtin_module_names, value: self.py.emptyTuple)
 
+    // swiftlint:disable line_length
     self.setOrTrap(.displayhook, doc: Self.displayhookDoc, fn: Self.displayhook(_:object:))
     self.setOrTrap(.excepthook, doc: Self.excepthookDoc, fn: Self.excepthook(_:type:value:traceback:))
 
@@ -212,6 +213,7 @@ public final class Sys: PyModuleImplementation {
     self.setOrTrap(.getrecursionlimit, doc: Self.getRecursionLimitDoc, fn: Self.getrecursionlimit(_:))
     self.setOrTrap(.setrecursionlimit, doc: Self.setRecursionLimitDoc, fn: Self.setrecursionlimit(_:limit:))
     self.setOrTrap(._getframe, doc: Self.getFrameDoc, fn: Self._getframe(_:depth:))
+    // swiftlint:enable line_length
   }
 
   // MARK: - Properties

@@ -337,6 +337,7 @@ extension AbstractString {
 
   // MARK: - Template
 
+  // swiftlint:disable:next function_parameter_count
   private static func template(
     _ py: Py,
     zelf: PyObject,
@@ -368,6 +369,7 @@ extension AbstractString {
     }
   }
 
+  // swiftlint:disable:next function_parameter_count
   private static func template(
     _ py: Py,
     zelf: Self,

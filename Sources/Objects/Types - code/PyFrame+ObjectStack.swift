@@ -1,3 +1,5 @@
+// swiftlint:disable empty_count
+
 extension PyFrame {
 
   // MARK: - Allocate
@@ -30,6 +32,7 @@ extension PyFrame {
 
   public struct ObjectStackProxy {
 
+    // swiftlint:disable:next nesting
     internal typealias EndPtr = UnsafeMutablePointer<PyObject>
 
     /// Top of the stack.

@@ -101,8 +101,7 @@ extension AbstractBuiltinFunction {
 
   // MARK: - Properties
 
-  internal static func abstract__name__(_ py: Py,
-                                       zelf: PyObject) -> PyResult {
+  internal static func abstract__name__(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__name__")
     }

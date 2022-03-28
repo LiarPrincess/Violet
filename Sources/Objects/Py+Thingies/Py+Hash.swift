@@ -2,6 +2,7 @@
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
+// swiftlint:disable function_body_length
 // cSpell:ignore unhashable
 
 extension Py {
@@ -17,7 +18,7 @@ extension Py {
       case let .value(hash):
         return .value(hash)
       case let .unhashable(object):
-        let error = HashResult.createUnhashableError(self, object: object)
+        let error = self.newUnhashableObjectError(object: object)
         return .error(error.asBaseException)
       case let .invalidSelfArgument(object, expectedType):
         let error = HashResult.createInvalidSelfArgumentError(self,

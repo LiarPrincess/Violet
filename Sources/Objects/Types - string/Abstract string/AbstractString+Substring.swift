@@ -1,5 +1,3 @@
-// swiftlint:disable type_name
-
 /// Substring that remembers it's `start` and `end` index.
 internal struct AbstractStringSubstring<C: Collection> {
 

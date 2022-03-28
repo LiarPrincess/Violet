@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 // cSpell:ignore descrobject getx setx delx del'ing
 
 // In CPython:
@@ -83,6 +84,7 @@ public struct PyProperty: PyObjectMixin {
 
   // MARK: - Initialize/deinitialize
 
+  // swiftlint:disable:next function_parameter_count
   internal func initialize(_ py: Py,
                            type: PyType,
                            get: PyObject?,

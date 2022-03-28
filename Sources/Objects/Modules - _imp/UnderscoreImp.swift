@@ -27,8 +27,8 @@ public final class UnderscoreImp: PyModuleImplementation {
 
   // MARK: - Fill dict
 
-  // swiftlint:disable:next function_body_length
   private func fill__dict__() {
+    // swiftlint:disable line_length
     self.setOrTrap(.lock_held, doc: Self.lockHeldDoc, fn: Self.lock_held(_:))
     self.setOrTrap(.acquire_lock, doc: Self.acquireLockDoc, fn: Self.acquire_lock(_:))
     self.setOrTrap(.release_lock, doc: Self.releaseLockDoc, fn: Self.release_lock(_:))
@@ -49,6 +49,7 @@ public final class UnderscoreImp: PyModuleImplementation {
     self.setOrTrap(.check_hash_based_pycs, doc: Self.checkHashBasedPycsDoc, fn: Self.check_hash_based_pycs(_:))
     self.setOrTrap(._fix_co_filename, doc: Self.fixCoFilenameDoc, fn: Self._fix_co_filename(_:code:path:))
     self.setOrTrap(.extension_suffixes, doc: Self.extensionSuffixesDoc, fn: Self.extension_suffixes(_:))
+    // swiftlint:enable line_length
   }
 
   // MARK: - Spec helpers

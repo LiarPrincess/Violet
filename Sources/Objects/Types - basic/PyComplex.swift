@@ -447,6 +447,7 @@ public struct PyComplex: PyObjectMixin {
                              isZelfBase: false)
   }
 
+  // swiftlint:disable function_parameter_count
   private static func powOperation(_ py: Py,
                                    zelf: PyObject,
                                    other: PyObject,

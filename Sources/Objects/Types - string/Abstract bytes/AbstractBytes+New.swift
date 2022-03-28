@@ -1,6 +1,5 @@
 import Foundation
 
-// swiftlint:disable:next type_name
 private enum AbstractBytesFromCountResult {
   case bytes(Data)
   case tryOther

@@ -1,5 +1,6 @@
 import VioletCore
 
+// swiftlint:disable static_operator
 // swiftlint:disable file_length
 // cSpell:ignore typeobject
 
@@ -7,13 +8,8 @@ import VioletCore
 // Objects -> typeobject.c
 // https://docs.python.org/3/c-api/typeobj.html
 
-public func === (lhs: PyType, rhs: PyType) -> Bool {
-  return lhs.ptr === rhs.ptr
-}
-
-public func !== (lhs: PyType, rhs: PyType) -> Bool {
-  return lhs.ptr !== rhs.ptr
-}
+public func === (lhs: PyType, rhs: PyType) -> Bool { lhs.ptr === rhs.ptr }
+public func !== (lhs: PyType, rhs: PyType) -> Bool { lhs.ptr !== rhs.ptr }
 
 // sourcery: pytype = type, isDefault, hasGC, isBaseType, isTypeSubclass
 // sourcery: instancesHave__dict__
@@ -181,6 +177,8 @@ public struct PyType: PyObjectMixin {
     objectType.subclassesPtr.pointee.append(typeType)
   }
 
+  // swiftlint:disable function_parameter_count
+
   /// Initialize type properties.
   /// It assumes that base properties are already initialized.
   private func initializeProperties(name: String,
@@ -194,6 +192,8 @@ public struct PyType: PyObjectMixin {
                                     staticMethods: PyStaticCall.KnownNotOverriddenMethods,
                                     debugFn: @escaping PyType.DebugFn,
                                     deinitialize: @escaping PyType.DeinitializeFn) {
+    // swiftlint:enable function_parameter_count
+
     let mro = [self] + mroWithoutSelf
     self.namePtr.initialize(to: name)
     self.qualnamePtr.initialize(to: qualname)

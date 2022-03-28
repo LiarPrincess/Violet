@@ -3,6 +3,8 @@ import Foundation
 import FileSystem
 import VioletObjects
 
+// swiftlint:disable function_parameter_count
+
 extension PyFloatTests {
 
   // MARK: - Add, sub, mul
@@ -182,6 +184,8 @@ extension PyFloatTests {
 
   // MARK: - Helpers
 
+  // swiftlint:disable line_length
+
   private func assertAdd(_ py: Py, left: Double, right: Double, expected: Double, file: StaticString = #file, line: UInt = #line) {
     self.assertBinaryOperation(py, left: left, right: right, expected: expected, fn: Py.add, file: file, line: line)
   }
@@ -233,6 +237,8 @@ extension PyFloatTests {
   private func assertDivModTypeError(_ py: Py, left: Double?, right: Double?, message: String, file: StaticString = #file, line: UInt = #line) {
     self.assertBinaryOperationTypeError(py, left: left, right: right, message: message, fn: Py.divMod, file: file, line: line)
   }
+
+  // swiftlint:enable line_length
 
   typealias BinaryOperation = (Py) -> (PyObject, PyObject) -> PyResult
 

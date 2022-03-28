@@ -17,6 +17,7 @@ extension Sys {
     Return the string itself or the previously interned string object with the
     same value."
     """
+
   internal static func intern(_ py: Py, string: PyObject) -> PyResult {
     let result = py.sys.intern(string)
     return PyResult(result)

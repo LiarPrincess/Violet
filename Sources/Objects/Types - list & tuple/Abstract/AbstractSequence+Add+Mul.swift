@@ -1,5 +1,7 @@
 import BigInt
 
+// swiftlint:disable empty_count
+
 internal enum AbstractSequenceMulCount {
   case value(BigInt)
   case notImplemented

@@ -56,6 +56,7 @@ extension PyFrame {
 
   public struct BlockStackProxy {
 
+    // swiftlint:disable nesting
     internal typealias EndPtr = UnsafeMutablePointer<Block>
 
     /// Top-most block.

@@ -101,7 +101,6 @@ public struct PySyntaxError: PyErrorMixin {
     self.printFileAndLinePtr.initialize(to: printFileAndLine)
   }
 
-  // swiftlint:disable:next function_parameter_count
   internal func initialize(
     _ py: Py,
     type: PyType,

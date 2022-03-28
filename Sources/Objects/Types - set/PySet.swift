@@ -522,9 +522,9 @@ public struct PySet: PyObjectMixin, AbstractSet {
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
-                                 zelf: PyObject,
-                                 args: [PyObject],
-                                 kwargs: PyDict?) -> PyResult {
+                                zelf: PyObject,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "__init__")
     }

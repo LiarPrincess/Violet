@@ -9,6 +9,9 @@ import BigInt
 import VioletCore
 import VioletBytecode
 
+// swiftlint:disable function_body_length
+// swiftlint:disable line_length
+
 extension Py {
 
   // MARK: - Layout

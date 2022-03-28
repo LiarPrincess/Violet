@@ -3,6 +3,7 @@ import VioletCore
 import VioletBytecode
 import VioletObjects
 
+// swiftlint:disable weak_delegate
 // swiftlint:disable file_length
 // cSpell:ignore ceval localsplus
 

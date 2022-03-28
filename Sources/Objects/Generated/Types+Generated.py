@@ -48,7 +48,7 @@ extension PyMemory {{
 
     return (objectType, typeType)
   }}
-}}
+}}\
 ''')
 
 # ===================
@@ -385,7 +385,6 @@ def print_type_extension(t: TypeInfo):
         print('  }')
 
     print('}')
-    print()
 
 
 # ============
@@ -401,7 +400,7 @@ import BigInt
 import VioletCore
 import VioletBytecode
 
-// swiftlint:disable empty_count
+// swiftlint:disable discouraged_optional_boolean
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
 // swiftlint:disable function_parameter_count
@@ -425,6 +424,7 @@ import VioletBytecode
     print_type_and_object_types_init(all_types)
 
     for t in all_types:
+        print()
         print_type_extension(t)
 
 if __name__ == '__main__':

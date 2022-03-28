@@ -9,6 +9,10 @@ import Foundation
 import FileSystem
 import VioletObjects
 
+// swiftlint:disable line_length
+// swiftlint:disable function_body_length
+// swiftlint:disable file_length
+
 class InvalidSelfArgumentMessageTests: PyTestCase {
 
   func test_bool() {

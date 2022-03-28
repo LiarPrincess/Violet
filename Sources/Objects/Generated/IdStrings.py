@@ -196,8 +196,7 @@ if __name__ == '__main__':
 
 import VioletCore
 
-// swiftlint:disable force_unwrapping
-// swiftlint:disable implicitly_unwrapped_optional
+// swiftlint:disable nesting
 // swiftlint:disable file_length
 // swiftlint:disable function_body_length
 
@@ -233,12 +232,12 @@ public struct IdString: CustomStringConvertible {{
     # ====================
 
     print('  public var description: String {')
-    print('    switch self.index{')
+    print('    switch self.index {')
 
     for index, id in enumerate(ids):
-        print(f'   case {index}: return "{id}"')
+        print(f'    case {index}: return "{id}"')
 
-    print(f'   default: trap("Unexpected IdString index: \(self.index).")')
+    print('    default: trap("Unexpected IdString index: \(self.index).")')
     print('    }')
     print('  }')
     print()

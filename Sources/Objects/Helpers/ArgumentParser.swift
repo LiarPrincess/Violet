@@ -92,14 +92,11 @@ internal struct ArgumentParser {
     case error(String)
   }
 
-  internal static func create(arguments: [String],
-                              format: String) -> CreateResult {
+  internal static func create(arguments: [String], format: String) -> CreateResult {
     let name: String
     switch ArgumentParser.extractFunctionName(format: format) {
-    case let .value(n):
-      name = n
-    case let .error(message):
-      return .error(message)
+    case let .value(n): name = n
+    case let .error(message): return .error(message)
     }
 
     let firstKeywordArgIndex = arguments.firstIndex { !$0.isEmpty }

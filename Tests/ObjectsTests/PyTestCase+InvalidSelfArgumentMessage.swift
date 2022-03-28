@@ -4,6 +4,8 @@ import BigInt
 import FileSystem
 import VioletObjects // Do not add '@testable'! We want to do everything 'by the book'.
 
+// swiftlint:disable function_parameter_count
+
 extension PyTestCase {
 
   // MARK: - Properties

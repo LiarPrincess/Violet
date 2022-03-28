@@ -3,6 +3,9 @@ import Foundation
 import FileSystem
 import VioletObjects
 
+// swiftlint:disable line_length
+// swiftlint:disable function_body_length
+
 class PyTypeTests: PyTestCase {
 
   // MARK: - Builtin types

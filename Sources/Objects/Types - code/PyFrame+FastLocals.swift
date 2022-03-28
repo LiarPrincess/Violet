@@ -1,5 +1,7 @@
 import VioletBytecode
 
+// swiftlint:disable file_length
+
 extension PyFrame {
 
   public typealias FastLocal = PyObject?
@@ -28,6 +30,7 @@ extension PyFrame {
       self.ptr.initialize(repeating: nil)
     }
 
+    // swiftlint:disable function_parameter_count
     public func fill(_ py: Py,
                      code: PyCode,
                      args: [PyObject],
@@ -194,7 +197,6 @@ private struct FillFastLocals {
 
   // MARK: - Kwargs
 
-  // swiftlint:disable:next function_body_length
   private mutating func fillFromKwargs() -> PyBaseException? {
     // Create a dictionary for keyword parameters (**kwargs)
     // We have to do this even if we were not called with **kwargs.
@@ -209,7 +211,6 @@ private struct FillFastLocals {
     }
 
     // Handle keyword arguments
-    // swiftlint:disable:next closure_body_length
     return self.py.forEach(dict: kwargs) { key, value in
       guard let keyword = self.py.cast.asString(key) else {
         let error = self.newTypeError("keywords must be strings")

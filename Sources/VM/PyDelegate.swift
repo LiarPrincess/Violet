@@ -59,6 +59,8 @@ internal class PyDelegate: PyDelegateType {
                      closure: nil)
   }
 
+  // swiftlint:disable function_parameter_count
+
   /// Run given code object using specified environment.
   ///
   /// CPython:

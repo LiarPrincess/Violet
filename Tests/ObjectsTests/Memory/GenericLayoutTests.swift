@@ -14,7 +14,7 @@ class GenericLayoutTests: XCTestCase {
         GenericLayout.Field(Int8.self), // offset: 4, size: 1
         GenericLayout.Field(Int8.self), // offset: 5, size: 1
         GenericLayout.Field(Int16.self), // offset: 6, size: 2
-        GenericLayout.Field(Int64.self), // offset: 8, size: 8
+        GenericLayout.Field(Int64.self) // offset: 8, size: 8
       ]
     )
 
@@ -34,7 +34,7 @@ class GenericLayoutTests: XCTestCase {
         GenericLayout.Field(Int16.self), // offset: 6, size: 2
         GenericLayout.Field(Int8.self), // offset: 8, size: 1
         // hole 7 to align 9 -> 16
-        GenericLayout.Field(Int64.self), // offset: 16, size: 8
+        GenericLayout.Field(Int64.self) // offset: 16, size: 8
       ]
     )
 
@@ -53,7 +53,7 @@ class GenericLayoutTests: XCTestCase {
         GenericLayout.Field(Int8.self), // offset: 5, size: 1
         GenericLayout.Field(Int16.self, repeatCount: 5), // offset: 6, size: 2x5
         // hole 1 to align(5 + 2x5) -> 16
-        GenericLayout.Field(Int64.self), // offset: 16, size: 8
+        GenericLayout.Field(Int64.self) // offset: 16, size: 8
       ]
     )
 

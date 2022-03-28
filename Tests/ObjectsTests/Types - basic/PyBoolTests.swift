@@ -3,6 +3,9 @@ import Foundation
 import FileSystem
 import VioletObjects
 
+// swiftlint:disable function_parameter_count
+// swiftlint:disable discouraged_optional_boolean
+
 class PyBoolTests: PyTestCase {
 
   // MARK: - Description
@@ -82,6 +85,7 @@ class PyBoolTests: PyTestCase {
 
   // MARK: - Helpers
 
+  // swiftlint:disable line_length
   private func assertAnd(_ py: Py, left: Bool, right: Bool, expected: Bool, file: StaticString = #file, line: UInt = #line) {
     self.assertBinaryOperation(py, left: left, right: right, expected: expected, fn: Py.and, file: file, line: line)
   }
@@ -105,6 +109,8 @@ class PyBoolTests: PyTestCase {
   private func assertXorTypeError(_ py: Py, left: Bool?, right: Bool?, message: String, file: StaticString = #file, line: UInt = #line) {
     self.assertBinaryOperationTypeError(py, left: left, right: right, message: message, fn: Py.xor, file: file, line: line)
   }
+
+  // swiftlint:enable line_length
 
   private typealias BinaryOperation = (Py) -> (PyObject, PyObject) -> PyResult
 

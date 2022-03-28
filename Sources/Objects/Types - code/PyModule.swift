@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 // cSpell:ignore moduleobject getattro
 
 // In CPython:
@@ -64,11 +65,11 @@ public struct PyModule: PyObjectMixin {
   }
 
   private struct DebugInfoProperties {
-    fileprivate var __name__: PyObject? = nil
-    fileprivate var __doc__: PyObject? = nil
-    fileprivate var __package__: PyObject? = nil
-    fileprivate var __loader__: PyObject? = nil
-    fileprivate var __spec__: PyObject? = nil
+    fileprivate var __name__: PyObject?
+    fileprivate var __doc__: PyObject?
+    fileprivate var __package__: PyObject?
+    fileprivate var __loader__: PyObject?
+    fileprivate var __spec__: PyObject?
   }
 
   private func getDebugInfoPropertiesFromDict() -> DebugInfoProperties {

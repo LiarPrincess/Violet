@@ -17,7 +17,6 @@ if __name__ == '__main__':
 
 // swiftlint:disable type_name
 // swiftlint:disable identifier_name
-// swiftlint:disable vertical_whitespace_closing_braces
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
 // swiftlint:disable file_length
@@ -252,4 +251,3 @@ public struct FunctionWrapper: CustomStringConvertible {{\
 
     # 'struct FunctionWrapper' end
     print('}')
-    print()

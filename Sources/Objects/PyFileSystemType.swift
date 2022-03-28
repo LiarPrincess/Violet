@@ -2,7 +2,6 @@ import Foundation
 import FileSystem
 import VioletCore
 
-// swiftlint:disable type_name
 // cSpell:ignore asdf
 
 // MARK: - Stat

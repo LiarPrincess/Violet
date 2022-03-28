@@ -6,9 +6,9 @@
 
 import VioletCore
 
+// swiftlint:disable function_parameter_count
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
-// swiftlint:disable trailing_comma
 // swiftlint:disable vertical_whitespace_closing_braces
 // swiftlint:disable file_length
 
