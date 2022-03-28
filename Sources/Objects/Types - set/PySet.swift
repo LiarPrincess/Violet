@@ -24,8 +24,9 @@ public struct PySet: PyObjectMixin, AbstractSet {
 
   // sourcery: storedProperty
   internal var elements: OrderedSet {
-    get { self.elementsPtr.pointee }
-    nonmutating _modify { yield &self.elementsPtr.pointee }
+    // Do not add 'nonmutating set/_modify' - the compiler could get confused
+    // sometimes. Use 'self.elementsPtr.pointee' for modification.
+    self.elementsPtr.pointee
   }
 
   public let ptr: RawPtr
@@ -318,7 +319,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
   internal func add(_ py: Py, object: PyObject) -> PyBaseException? {
     switch Self.createElement(py, object: object) {
     case let .value(element):
-      switch self.elements.insert(py, element: element) {
+      switch self.elementsPtr.pointee.insert(py, element: element) {
       case .inserted,
            .updated:
         return nil
@@ -354,7 +355,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
     switch Self.getElements(py, iterable: iterable) {
     case let .value(set):
       for element in set {
-        switch self.elements.insert(py, element: element) {
+        switch self.elementsPtr.pointee.insert(py, element: element) {
         case .inserted,
              .updated:
           break
@@ -393,7 +394,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
   }
 
   private static func remove(_ py: Py, zelf: PySet, element: Element) -> PyResult {
-    switch zelf.elements.remove(py, element: element) {
+    switch zelf.elementsPtr.pointee.remove(py, element: element) {
     case .ok:
       return .none(py)
     case .notFound:
@@ -420,7 +421,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
 
     switch Self.createElement(py, object: object) {
     case let .value(element):
-      switch zelf.elements.remove(py, element: element) {
+      switch zelf.elementsPtr.pointee.remove(py, element: element) {
       case .ok,
            .notFound:
         return .none(py)
@@ -445,7 +446,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
       return Self.invalidZelfArgument(py, zelf, "clear")
     }
 
-    zelf.elements.clear()
+    zelf.elementsPtr.pointee.clear()
     return .none(py)
   }
 

@@ -189,7 +189,7 @@ extension PyDict {
                                   key: Key,
                                   value: PyObject,
                                   onKeyDuplicate: OnUpdateKeyDuplicate) -> PyBaseException? {
-    switch self.elements.insert(py, key: key, value: value) {
+    switch self.elementsPtr.pointee.insert(py, key: key, value: value) {
     case .inserted:
       return nil
     case .updated:
