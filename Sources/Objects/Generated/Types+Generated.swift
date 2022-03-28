@@ -1190,7 +1190,7 @@ extension PyCode {
           GenericLayout.Field(SourceLine.self), // PyCode.firstLine
           GenericLayout.Field([SourceLine].self), // PyCode.instructionLines
           GenericLayout.Field([PyObject].self), // PyCode.constants
-          GenericLayout.Field([CodeObject.Label].self), // PyCode.labels
+          GenericLayout.Field([VioletBytecode.CodeObject.Label].self), // PyCode.labels
           GenericLayout.Field([PyString].self), // PyCode.names
           GenericLayout.Field([MangledName].self), // PyCode.variableNames
           GenericLayout.Field([MangledName].self), // PyCode.cellVariableNames
@@ -1249,7 +1249,7 @@ extension PyCode {
   /// Property: `PyCode.constants`.
   internal var constantsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Self.layout.constantsOffset) }
   /// Property: `PyCode.labels`.
-  internal var labelsPtr: Ptr<[CodeObject.Label]> { Ptr(self.ptr, offset: Self.layout.labelsOffset) }
+  internal var labelsPtr: Ptr<[VioletBytecode.CodeObject.Label]> { Ptr(self.ptr, offset: Self.layout.labelsOffset) }
   /// Property: `PyCode.names`.
   internal var namesPtr: Ptr<[PyString]> { Ptr(self.ptr, offset: Self.layout.namesOffset) }
   /// Property: `PyCode.variableNames`.
