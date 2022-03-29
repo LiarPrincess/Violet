@@ -6,16 +6,16 @@ import importlib.util
 
 def get_types():
     module_name = 'get_types'
-    module_path = os.path.join('Sourcery', 'get_types.py')
+    module_path = os.path.join('Sourcery', 'TypeInfo_get.py')
     module = load_file_from_objects_generated(module_name, module_path)
     return module.get_types()
 
 
 def get_static_methods():
     module_name = 'Static_methods'
-    module_path = os.path.join('Static_methods', 'method_definitions.py')
+    module_path = os.path.join('Helpers', 'StaticMethod.py')
     module = load_file_from_objects_generated(module_name, module_path)
-    return module.STATIC_METHODS
+    return module.ALL_STATIC_METHODS
 
 
 def load_file_from_objects_generated(module_name: str, relative_path: str):

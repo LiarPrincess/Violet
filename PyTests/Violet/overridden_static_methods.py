@@ -47,87 +47,6 @@ index_value = 1234
 hash_value = 42
 dir_value = ['__dir__']
 
-# ==============
-# === object ===
-# ==============
-
-class MyObject(object):
-
-    def __repr__(self):
-        return '__repr__'
-
-    def __str__(self):
-        return '__str__'
-
-    def __hash__(self):
-        global hash_value
-        return hash_value
-
-    def __dir__(self):
-        global dir_value
-        return dir_value
-
-    def __eq__(self, o):
-        return o == '__eq__'
-
-    def __ne__(self, o):
-        return o == '__ne__'
-
-    def __lt__(self, o):
-        return o == '__lt__'
-
-    def __le__(self, o):
-        return o == '__le__'
-
-    def __gt__(self, o):
-        return o == '__gt__'
-
-    def __ge__(self, o):
-        return o == '__ge__'
-
-    def __getattribute__(self, name):
-        global attribute_name
-        if name == attribute_name:
-            global set_global_value
-            set_global_value('MyObject', '__getattribute__')
-            return None
-        return super().__getattribute__(name)
-
-    def __setattr__(self, name, value):
-        global attribute_name
-        if name == attribute_name:
-            global set_global_value
-            set_global_value('MyObject', '__setattr__')
-            return None
-        return super().__setattr__(name, value)
-
-    def __delattr__(self, name):
-        global attribute_name
-        if name == attribute_name:
-            global set_global_value
-            set_global_value('MyObject', '__delattr__')
-            return None
-        return super().__delattr__(name)
-
-
-o = MyObject()
-assert repr(o) == '__repr__'
-assert str(o) == '__str__'
-assert hash(o) == hash_value
-assert dir(o) == dir_value
-assert o == '__eq__'
-assert o != '__ne__'
-assert o < '__lt__'
-assert o <= '__le__'
-assert o > '__gt__'
-assert o >= '__ge__'
-getattr(o, attribute_name)
-assert is_global_value_set('MyObject', '__getattribute__')
-setattr(o, attribute_name, 42)
-assert is_global_value_set('MyObject', '__setattr__')
-delattr(o, attribute_name)
-assert is_global_value_set('MyObject', '__delattr__')
-
 # =================
 # === bytearray ===
 # =================
@@ -1539,6 +1458,87 @@ setattr(o, attribute_name, 42)
 assert is_global_value_set('MySimpleNamespace', '__setattr__')
 delattr(o, attribute_name)
 assert is_global_value_set('MySimpleNamespace', '__delattr__')
+
+# ==============
+# === object ===
+# ==============
+
+class MyObject(object):
+
+    def __repr__(self):
+        return '__repr__'
+
+    def __str__(self):
+        return '__str__'
+
+    def __hash__(self):
+        global hash_value
+        return hash_value
+
+    def __dir__(self):
+        global dir_value
+        return dir_value
+
+    def __eq__(self, o):
+        return o == '__eq__'
+
+    def __ne__(self, o):
+        return o == '__ne__'
+
+    def __lt__(self, o):
+        return o == '__lt__'
+
+    def __le__(self, o):
+        return o == '__le__'
+
+    def __gt__(self, o):
+        return o == '__gt__'
+
+    def __ge__(self, o):
+        return o == '__ge__'
+
+    def __getattribute__(self, name):
+        global attribute_name
+        if name == attribute_name:
+            global set_global_value
+            set_global_value('MyObject', '__getattribute__')
+            return None
+        return super().__getattribute__(name)
+
+    def __setattr__(self, name, value):
+        global attribute_name
+        if name == attribute_name:
+            global set_global_value
+            set_global_value('MyObject', '__setattr__')
+            return None
+        return super().__setattr__(name, value)
+
+    def __delattr__(self, name):
+        global attribute_name
+        if name == attribute_name:
+            global set_global_value
+            set_global_value('MyObject', '__delattr__')
+            return None
+        return super().__delattr__(name)
+
+
+o = MyObject()
+assert repr(o) == '__repr__'
+assert str(o) == '__str__'
+assert hash(o) == hash_value
+assert dir(o) == dir_value
+assert o == '__eq__'
+assert o != '__ne__'
+assert o < '__lt__'
+assert o <= '__le__'
+assert o > '__gt__'
+assert o >= '__ge__'
+getattr(o, attribute_name)
+assert is_global_value_set('MyObject', '__getattribute__')
+setattr(o, attribute_name, 42)
+assert is_global_value_set('MyObject', '__setattr__')
+delattr(o, attribute_name)
+assert is_global_value_set('MyObject', '__delattr__')
 
 # ================
 # === property ===
