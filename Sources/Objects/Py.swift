@@ -3,7 +3,6 @@ import BigInt
 import FileSystem
 import VioletCore
 
-// swiftlint:disable file_length
 // cSpell:ignore longobject
 
 /// `Py` represents a `Python` context.

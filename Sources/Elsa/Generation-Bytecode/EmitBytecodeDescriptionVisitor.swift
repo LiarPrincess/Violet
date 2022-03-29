@@ -19,9 +19,6 @@ class EmitBytecodeDescriptionVisitor: BytecodeFileVisitor {
     print("import VioletCore")
     print("import Foundation")
     print()
-
-    print("// swiftlint:disable file_length")
-    print()
   }
 
   // MARK: - Enum

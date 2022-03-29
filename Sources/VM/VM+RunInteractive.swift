@@ -6,8 +6,6 @@ import VioletObjects
 // In CPython:
 // Python -> main.c
 
-// swiftlint:disable file_length
-
 extension VM {
 
   // MARK: - Interactive without args

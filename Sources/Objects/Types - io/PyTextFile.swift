@@ -1,7 +1,6 @@
 import Foundation
 
 // cSpell:ignore textio
-// swiftlint:disable file_length
 
 // In CPython:
 // Modules -> _io -> textio.c

@@ -2,8 +2,6 @@ import Foundation
 import FileSystem
 import VioletCore
 
-// swiftlint:disable file_length
-
 /// Importlib module spec, so that we can share code between
 /// `importlib` and `importlib_external`.
 private struct ModuleSpec {

@@ -1,7 +1,5 @@
 import VioletCore
 
-// swiftlint:disable file_length
-
 // In CPython:
 // Python -> traceback.c
 // https://docs.python.org/3/library/traceback.html

@@ -2,8 +2,6 @@ import XCTest
 import VioletCore
 @testable import BigInt
 
-// swiftlint:disable file_length
-
 private typealias Word = BigIntStorage.Word
 
 class BigIntHeapPropertyTests: XCTestCase {

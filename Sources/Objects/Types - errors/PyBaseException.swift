@@ -7,7 +7,6 @@ import VioletCore
 // https://www.python.org/dev/peps/pep-0415/#proposal
 
 // swiftlint:disable static_operator
-// swiftlint:disable file_length
 
 public func === (lhs: PyBaseException, rhs: PyBaseException) -> Bool { lhs.ptr === rhs.ptr }
 public func !== (lhs: PyBaseException, rhs: PyBaseException) -> Bool { lhs.ptr !== rhs.ptr }

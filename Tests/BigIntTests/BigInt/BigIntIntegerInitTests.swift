@@ -1,8 +1,6 @@
 import XCTest
 @testable import BigInt
 
-// swiftlint:disable file_length
-
 private typealias Word = BigIntHeap.Word
 
 /// This class tests `BigInt -> Swift.Integer` inits!

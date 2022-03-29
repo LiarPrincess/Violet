@@ -5,8 +5,6 @@ import VioletBytecode
 // In CPython:
 // Python -> symtable.c
 
-// swiftlint:disable file_length
-
 extension SymbolTableBuilderImpl {
 
   internal func visit(_ node: Expression) throws {

@@ -1,6 +1,5 @@
 import VioletBytecode
 
-// swiftlint:disable file_length
 // cSpell:ignore classobject getattro
 
 // In CPython:

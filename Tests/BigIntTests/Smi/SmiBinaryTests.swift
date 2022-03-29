@@ -1,8 +1,6 @@
 import XCTest
 @testable import BigInt
 
-// swiftlint:disable file_length
-
 private typealias Storage = Smi.Storage
 
 private let max = Storage.max

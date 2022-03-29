@@ -1,7 +1,6 @@
 import VioletCore
 import Rapunzel
 
-// swiftlint:disable file_length
 // swiftlint:disable vertical_parameter_alignment_on_call
 
 extension ASTPrinter {

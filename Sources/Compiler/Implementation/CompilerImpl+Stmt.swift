@@ -6,8 +6,6 @@ import VioletBytecode
 // In CPython:
 // Python -> compile.c
 
-// swiftlint:disable file_length
-
 extension CompilerImpl {
 
   /// compiler_visit_stmt(struct compiler *c, stmt_ty s)

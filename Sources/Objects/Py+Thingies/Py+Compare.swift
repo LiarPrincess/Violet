@@ -5,7 +5,6 @@ import VioletCore
 // https://docs.python.org/3/library/functions.html
 
 // swiftlint:disable type_name
-// swiftlint:disable file_length
 
 // MARK: - Abstract
 

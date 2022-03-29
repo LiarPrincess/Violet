@@ -2,7 +2,6 @@ import Foundation
 import BigInt
 import VioletCore
 
-// swiftlint:disable file_length
 // cSpell:ignore bytesobject
 
 // In CPython:

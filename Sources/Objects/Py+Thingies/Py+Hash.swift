@@ -2,7 +2,6 @@
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-// swiftlint:disable function_body_length
 // cSpell:ignore unhashable
 
 extension Py {

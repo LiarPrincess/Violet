@@ -7,7 +7,6 @@
 // swiftlint:disable type_name
 // swiftlint:disable identifier_name
 // swiftlint:disable line_length
-// swiftlint:disable function_body_length
 // swiftlint:disable file_length
 
 /// Wraps a Swift function callable from Python context.

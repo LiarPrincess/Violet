@@ -3,8 +3,6 @@ import BigInt
 import FileSystem
 import VioletCore
 
-// swiftlint:disable file_length
-
 /// Result of a `Python` operation.
 /// Use this instead of `PyResultGen<PyObject>` (no generic -> better performance).
 ///

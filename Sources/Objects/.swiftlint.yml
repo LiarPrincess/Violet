@@ -1,0 +1,10 @@
+# 'Objects' module is quite complicated,
+# so we will relax some rules:
+
+function_body_length:
+  warning: 35
+  error:   40
+
+file_length:
+  warning: 700
+  error:   1000

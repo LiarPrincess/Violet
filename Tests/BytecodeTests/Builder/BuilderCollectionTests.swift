@@ -3,8 +3,6 @@ import BigInt
 import VioletCore
 @testable import VioletBytecode
 
-// swiftlint:disable file_length
-
 class BuilderCollectionTests: XCTestCase {
 
   // MARK: - Tuple

@@ -1,7 +1,5 @@
 import Foundation
 
-// swiftlint:disable file_length
-
 class Parser {
 
   private let lexer: Lexer

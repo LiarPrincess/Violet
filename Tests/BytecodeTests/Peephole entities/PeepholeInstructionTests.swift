@@ -1,8 +1,6 @@
 import XCTest
 @testable import VioletBytecode
 
-// swiftlint:disable file_length
-
 // MARK: - Asserts
 
 private func XCTAssertInstruction(_ instruction: PeepholeInstruction,

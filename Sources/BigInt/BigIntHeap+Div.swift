@@ -1,5 +1,3 @@
-// swiftlint:disable file_length
-
 // Sources:
 // - V8 (google-javascript-thingie): 'src/objects/bigint.cc'
 // - Knuth "The Art of Computer Programming vol 2" - 4.3.1 - Algorithm D

@@ -4,8 +4,6 @@ import VioletParser
 import VioletBytecode
 @testable import VioletCompiler
 
-// swiftlint:disable file_length
-
 /// Use './Scripts/dump' for reference.
 class CompileImportFrom: CompileTestCase {
 

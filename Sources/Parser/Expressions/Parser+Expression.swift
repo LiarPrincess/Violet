@@ -1,8 +1,6 @@
 import VioletCore
 import VioletLexer
 
-// swiftlint:disable file_length
-
 extension Parser {
 
   // MARK: - Test

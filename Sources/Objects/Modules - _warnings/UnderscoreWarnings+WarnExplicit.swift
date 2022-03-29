@@ -1,7 +1,5 @@
 import VioletCore
 
-// swiftlint:disable file_length
-
 // In CPython:
 // Python -> _warnings.c
 // https://docs.python.org/3/library/warnings.html#warnings.warn_explicit

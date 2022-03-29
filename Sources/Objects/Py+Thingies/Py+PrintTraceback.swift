@@ -4,7 +4,6 @@ import FileSystem
 import UnicodeData
 import VioletCore
 
-// swiftlint:disable file_length
 // cSpell:ignore printinternal displayline
 
 // In CPython:

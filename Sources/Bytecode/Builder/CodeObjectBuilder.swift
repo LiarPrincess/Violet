@@ -1,6 +1,5 @@
 import VioletCore
 
-// swiftlint:disable file_length
 // cSpell:ignore finalise
 
 /// Helper for adding new instructions to `CodeObject`.

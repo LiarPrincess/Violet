@@ -6,7 +6,6 @@ class EmitBytecodeFilledVisitor: BytecodeFileVisitor {
     print()
 
     print("// swiftlint:disable line_length")
-    print("// swiftlint:disable file_length")
     print()
 
     print("extension \(Self.instructionEnumName) {")

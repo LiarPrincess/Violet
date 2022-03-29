@@ -1,4 +1,3 @@
-// swiftlint:disable file_length
 // cSpell:ignore descrobject getx setx delx del'ing
 
 // In CPython:

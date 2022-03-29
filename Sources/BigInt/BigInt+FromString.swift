@@ -1,7 +1,5 @@
 // Some code was taken from: https://github.com/attaswift/BigInt
 
-// swiftlint:disable file_length
-
 // MARK: - String.init
 
 extension String {

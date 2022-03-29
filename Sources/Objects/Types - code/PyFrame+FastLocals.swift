@@ -1,7 +1,5 @@
 import VioletBytecode
 
-// swiftlint:disable file_length
-
 extension PyFrame {
 
   public typealias FastLocal = PyObject?

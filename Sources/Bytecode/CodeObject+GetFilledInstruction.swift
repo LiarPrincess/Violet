@@ -1,6 +1,5 @@
 // This file is basically a one giant 'switch' on every instruction.
 // swiftlint:disable function_body_length
-// swiftlint:disable file_length
 
 extension CodeObject {
 

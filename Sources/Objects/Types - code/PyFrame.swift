@@ -3,7 +3,6 @@ import VioletBytecode
 
 // swiftformat:disable redundantType
 // cSpell:ignore MAXBLOCKS localsplus fastlocals valuestack tstate
-// swiftlint:disable file_length
 
 // In CPython:
 // Objects -> frameobject.c

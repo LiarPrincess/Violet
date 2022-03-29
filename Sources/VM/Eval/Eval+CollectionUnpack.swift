@@ -1,8 +1,6 @@
 import VioletBytecode
 import VioletObjects
 
-// swiftlint:disable file_length
-
 extension Eval {
 
   // MARK: - Unpack tuple/list

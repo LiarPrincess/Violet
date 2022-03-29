@@ -2,8 +2,6 @@ import XCTest
 import VioletCore
 @testable import VioletObjects
 
-// swiftlint:disable file_length
-
 class ArgumentParserTests: PyTestCase {
 
   // MARK: - Init - name

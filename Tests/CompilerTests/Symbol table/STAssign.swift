@@ -3,8 +3,6 @@ import VioletCore
 import VioletParser
 @testable import VioletCompiler
 
-// swiftlint:disable file_length
-
 /// Basic checks for assigns, without nested scopes.
 /// Just so we know that we visit all children.
 /// Use 'Tools/dump_symtable.py' for reference.

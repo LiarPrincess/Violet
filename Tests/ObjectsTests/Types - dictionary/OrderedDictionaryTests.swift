@@ -3,7 +3,6 @@ import VioletCore
 @testable import VioletObjects
 
 // swiftlint:disable number_separator
-// swiftlint:disable file_length
 // swiftformat:disable numberFormatting
 
 private let minsize = 8

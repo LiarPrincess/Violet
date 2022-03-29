@@ -4,7 +4,6 @@ import FileSystem
 import VioletCore
 
 // swiftlint:disable discouraged_optional_boolean
-// swiftlint:disable file_length
 // cSpell:ignore bltinmod
 
 // In CPython:

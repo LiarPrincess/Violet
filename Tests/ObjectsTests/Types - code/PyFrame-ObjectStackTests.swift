@@ -3,8 +3,6 @@ import Foundation
 import VioletBytecode
 @testable import VioletObjects
 
-// swiftlint:disable file_length
-
 extension PyFrame {
   fileprivate var objectStackCapacity: Int {
     return self.objectStackStorage.count

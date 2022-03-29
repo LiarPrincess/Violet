@@ -4,8 +4,6 @@
 import VioletCore
 import Foundation
 
-// swiftlint:disable file_length
-
 extension Instruction.StringConversion: CustomStringConvertible {
   public var description: String {
     switch self {

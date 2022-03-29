@@ -1053,7 +1053,6 @@ public struct PyInt: PyObjectMixin {
     }
   }
 
-  // swiftlint:disable:next function_body_length
   private static func __new__(_ py: Py,
                               type: PyType,
                               object: PyObject?,

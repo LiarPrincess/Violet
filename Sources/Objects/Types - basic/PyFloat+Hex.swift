@@ -1,8 +1,6 @@
 import Foundation
 import VioletCore
 
-// swiftlint:disable function_body_length
-// swiftlint:disable file_length
 // cSpell:ignore floatobject TOHEX ffffp inity
 
 // In CPython:
