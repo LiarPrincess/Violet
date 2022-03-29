@@ -7,6 +7,7 @@ SORTED_IMPORTS = [
     'import ArgumentParser',
     'import SwiftSyntax',
 
+    'import LibAriel',
     'import BigInt',
     'import FileSystem',
     'import UnicodeData',
@@ -18,6 +19,7 @@ SORTED_IMPORTS = [
     'import VioletObjects',
     'import VioletVM',
 
+    '@testable import LibAriel',
     '@testable import BigInt',
     '@testable import FileSystem',
     '@testable import UnicodeData',
@@ -100,7 +102,7 @@ def get_import_line_index(line: str):
     line_strip = line.strip()
 
     for index, candidate in enumerate(SORTED_IMPORTS):
-        if candidate == line_strip:
+        if line_strip.startswith(candidate):
             return index
 
     assert False, f"\n\nWild '{line_strip}' appears! 'sort_swift_imports' is ineffective!"

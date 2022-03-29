@@ -1,7 +1,7 @@
-import SwiftSyntax
 import Foundation
-import FileSystem
+import SwiftSyntax
 import LibAriel
+import FileSystem
 
 let arguments = Arguments.parseOrExit()
 
