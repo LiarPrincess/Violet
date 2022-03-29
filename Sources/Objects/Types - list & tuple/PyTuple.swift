@@ -309,7 +309,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
     let isBuiltin = type === py.types.tuple
     let result: PyTuple = isBuiltin ?
       py.newTuple(elements: elements) :
-      py.memory.newTuple(py, type: type, elements: elements)
+      py.memory.newTuple(type: type, elements: elements)
 
     return PyResult(result)
   }

@@ -130,7 +130,7 @@ public struct PyMap: PyObjectMixin {
       }
     }
 
-    let result = py.memory.newMap(py, type: type, fn: fn, iterators: iters)
+    let result = py.memory.newMap(type: type, fn: fn, iterators: iters)
     return PyResult(result)
   }
 }

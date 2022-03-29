@@ -79,7 +79,7 @@ public struct PyKeyboardInterrupt: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newKeyboardInterrupt(py, type: type, args: argsTuple)
+    let result = py.memory.newKeyboardInterrupt(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -161,7 +161,7 @@ public struct PyGeneratorExit: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newGeneratorExit(py, type: type, args: argsTuple)
+    let result = py.memory.newGeneratorExit(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -243,7 +243,7 @@ public struct PyException: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newException(py, type: type, args: argsTuple)
+    let result = py.memory.newException(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -325,7 +325,7 @@ public struct PyStopAsyncIteration: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newStopAsyncIteration(py, type: type, args: argsTuple)
+    let result = py.memory.newStopAsyncIteration(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -407,7 +407,7 @@ public struct PyArithmeticError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newArithmeticError(py, type: type, args: argsTuple)
+    let result = py.memory.newArithmeticError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -489,7 +489,7 @@ public struct PyFloatingPointError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newFloatingPointError(py, type: type, args: argsTuple)
+    let result = py.memory.newFloatingPointError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -571,7 +571,7 @@ public struct PyOverflowError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newOverflowError(py, type: type, args: argsTuple)
+    let result = py.memory.newOverflowError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -653,7 +653,7 @@ public struct PyZeroDivisionError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newZeroDivisionError(py, type: type, args: argsTuple)
+    let result = py.memory.newZeroDivisionError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -735,7 +735,7 @@ public struct PyAssertionError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newAssertionError(py, type: type, args: argsTuple)
+    let result = py.memory.newAssertionError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -817,7 +817,7 @@ public struct PyAttributeError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newAttributeError(py, type: type, args: argsTuple)
+    let result = py.memory.newAttributeError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -899,7 +899,7 @@ public struct PyBufferError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newBufferError(py, type: type, args: argsTuple)
+    let result = py.memory.newBufferError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -981,7 +981,7 @@ public struct PyEOFError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newEOFError(py, type: type, args: argsTuple)
+    let result = py.memory.newEOFError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -1085,7 +1085,7 @@ public struct PyModuleNotFoundError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newModuleNotFoundError(py, type: type, args: argsTuple)
+    let result = py.memory.newModuleNotFoundError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -1167,7 +1167,7 @@ public struct PyLookupError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newLookupError(py, type: type, args: argsTuple)
+    let result = py.memory.newLookupError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -1249,7 +1249,7 @@ public struct PyIndexError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newIndexError(py, type: type, args: argsTuple)
+    let result = py.memory.newIndexError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -1331,7 +1331,7 @@ public struct PyMemoryError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newMemoryError(py, type: type, args: argsTuple)
+    let result = py.memory.newMemoryError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -1413,7 +1413,7 @@ public struct PyNameError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newNameError(py, type: type, args: argsTuple)
+    let result = py.memory.newNameError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -1495,7 +1495,7 @@ public struct PyUnboundLocalError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newUnboundLocalError(py, type: type, args: argsTuple)
+    let result = py.memory.newUnboundLocalError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -1577,7 +1577,7 @@ public struct PyOSError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newOSError(py, type: type, args: argsTuple)
+    let result = py.memory.newOSError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -1659,7 +1659,7 @@ public struct PyBlockingIOError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newBlockingIOError(py, type: type, args: argsTuple)
+    let result = py.memory.newBlockingIOError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -1741,7 +1741,7 @@ public struct PyChildProcessError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newChildProcessError(py, type: type, args: argsTuple)
+    let result = py.memory.newChildProcessError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -1823,7 +1823,7 @@ public struct PyConnectionError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newConnectionError(py, type: type, args: argsTuple)
+    let result = py.memory.newConnectionError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -1905,7 +1905,7 @@ public struct PyBrokenPipeError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newBrokenPipeError(py, type: type, args: argsTuple)
+    let result = py.memory.newBrokenPipeError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -1987,7 +1987,7 @@ public struct PyConnectionAbortedError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newConnectionAbortedError(py, type: type, args: argsTuple)
+    let result = py.memory.newConnectionAbortedError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -2069,7 +2069,7 @@ public struct PyConnectionRefusedError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newConnectionRefusedError(py, type: type, args: argsTuple)
+    let result = py.memory.newConnectionRefusedError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -2151,7 +2151,7 @@ public struct PyConnectionResetError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newConnectionResetError(py, type: type, args: argsTuple)
+    let result = py.memory.newConnectionResetError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -2233,7 +2233,7 @@ public struct PyFileExistsError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newFileExistsError(py, type: type, args: argsTuple)
+    let result = py.memory.newFileExistsError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -2315,7 +2315,7 @@ public struct PyFileNotFoundError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newFileNotFoundError(py, type: type, args: argsTuple)
+    let result = py.memory.newFileNotFoundError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -2397,7 +2397,7 @@ public struct PyInterruptedError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newInterruptedError(py, type: type, args: argsTuple)
+    let result = py.memory.newInterruptedError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -2479,7 +2479,7 @@ public struct PyIsADirectoryError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newIsADirectoryError(py, type: type, args: argsTuple)
+    let result = py.memory.newIsADirectoryError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -2561,7 +2561,7 @@ public struct PyNotADirectoryError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newNotADirectoryError(py, type: type, args: argsTuple)
+    let result = py.memory.newNotADirectoryError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -2643,7 +2643,7 @@ public struct PyPermissionError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newPermissionError(py, type: type, args: argsTuple)
+    let result = py.memory.newPermissionError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -2725,7 +2725,7 @@ public struct PyProcessLookupError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newProcessLookupError(py, type: type, args: argsTuple)
+    let result = py.memory.newProcessLookupError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -2807,7 +2807,7 @@ public struct PyTimeoutError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newTimeoutError(py, type: type, args: argsTuple)
+    let result = py.memory.newTimeoutError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -2889,7 +2889,7 @@ public struct PyReferenceError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newReferenceError(py, type: type, args: argsTuple)
+    let result = py.memory.newReferenceError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -2971,7 +2971,7 @@ public struct PyRuntimeError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newRuntimeError(py, type: type, args: argsTuple)
+    let result = py.memory.newRuntimeError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -3053,7 +3053,7 @@ public struct PyNotImplementedError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newNotImplementedError(py, type: type, args: argsTuple)
+    let result = py.memory.newNotImplementedError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -3135,7 +3135,7 @@ public struct PyRecursionError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newRecursionError(py, type: type, args: argsTuple)
+    let result = py.memory.newRecursionError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -3245,7 +3245,7 @@ public struct PyIndentationError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newIndentationError(py, type: type, args: argsTuple)
+    let result = py.memory.newIndentationError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -3355,7 +3355,7 @@ public struct PyTabError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newTabError(py, type: type, args: argsTuple)
+    let result = py.memory.newTabError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -3440,7 +3440,7 @@ public struct PySystemError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newSystemError(py, type: type, args: argsTuple)
+    let result = py.memory.newSystemError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -3522,7 +3522,7 @@ public struct PyTypeError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newTypeError(py, type: type, args: argsTuple)
+    let result = py.memory.newTypeError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -3604,7 +3604,7 @@ public struct PyValueError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newValueError(py, type: type, args: argsTuple)
+    let result = py.memory.newValueError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -3686,7 +3686,7 @@ public struct PyUnicodeError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newUnicodeError(py, type: type, args: argsTuple)
+    let result = py.memory.newUnicodeError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -3768,7 +3768,7 @@ public struct PyUnicodeDecodeError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newUnicodeDecodeError(py, type: type, args: argsTuple)
+    let result = py.memory.newUnicodeDecodeError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -3850,7 +3850,7 @@ public struct PyUnicodeEncodeError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newUnicodeEncodeError(py, type: type, args: argsTuple)
+    let result = py.memory.newUnicodeEncodeError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -3932,7 +3932,7 @@ public struct PyUnicodeTranslateError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newUnicodeTranslateError(py, type: type, args: argsTuple)
+    let result = py.memory.newUnicodeTranslateError(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -4014,7 +4014,7 @@ public struct PyWarning: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newWarning(py, type: type, args: argsTuple)
+    let result = py.memory.newWarning(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -4096,7 +4096,7 @@ public struct PyDeprecationWarning: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newDeprecationWarning(py, type: type, args: argsTuple)
+    let result = py.memory.newDeprecationWarning(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -4179,7 +4179,7 @@ public struct PyPendingDeprecationWarning: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newPendingDeprecationWarning(py, type: type, args: argsTuple)
+    let result = py.memory.newPendingDeprecationWarning(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -4261,7 +4261,7 @@ public struct PyRuntimeWarning: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newRuntimeWarning(py, type: type, args: argsTuple)
+    let result = py.memory.newRuntimeWarning(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -4343,7 +4343,7 @@ public struct PySyntaxWarning: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newSyntaxWarning(py, type: type, args: argsTuple)
+    let result = py.memory.newSyntaxWarning(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -4425,7 +4425,7 @@ public struct PyUserWarning: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newUserWarning(py, type: type, args: argsTuple)
+    let result = py.memory.newUserWarning(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -4508,7 +4508,7 @@ public struct PyFutureWarning: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newFutureWarning(py, type: type, args: argsTuple)
+    let result = py.memory.newFutureWarning(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -4590,7 +4590,7 @@ public struct PyImportWarning: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newImportWarning(py, type: type, args: argsTuple)
+    let result = py.memory.newImportWarning(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -4673,7 +4673,7 @@ public struct PyUnicodeWarning: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newUnicodeWarning(py, type: type, args: argsTuple)
+    let result = py.memory.newUnicodeWarning(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -4756,7 +4756,7 @@ public struct PyBytesWarning: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newBytesWarning(py, type: type, args: argsTuple)
+    let result = py.memory.newBytesWarning(type: type, args: argsTuple)
     return PyResult(result)
   }
 
@@ -4838,7 +4838,7 @@ public struct PyResourceWarning: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newResourceWarning(py, type: type, args: argsTuple)
+    let result = py.memory.newResourceWarning(type: type, args: argsTuple)
     return PyResult(result)
   }
 

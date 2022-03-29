@@ -59,7 +59,7 @@ extension Py {
     switch self.hasMethod(object: object, selector: .__getitem__) {
     case .value(true):
       let type = self.types.iterator
-      let iter = self.memory.newIterator(self, type: type, sequence: object)
+      let iter = self.memory.newIterator(type: type, sequence: object)
       return PyResult(iter)
     case .value(false):
       let message = "'\(object.typeName)' object is not an iterable"
@@ -83,8 +83,7 @@ extension Py {
     }
 
     let type = self.types.callable_iterator
-    let result = self.memory.newCallableIterator(self,
-                                                 type: type,
+    let result = self.memory.newCallableIterator(type: type,
                                                  callable: object,
                                                  sentinel: sentinel)
 

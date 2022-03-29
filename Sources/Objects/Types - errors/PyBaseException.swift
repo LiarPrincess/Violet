@@ -629,7 +629,7 @@ public struct PyBaseException: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newBaseException(py, type: type, args: argsTuple)
+    let result = py.memory.newBaseException(type: type, args: argsTuple)
     return PyResult(result)
   }
 

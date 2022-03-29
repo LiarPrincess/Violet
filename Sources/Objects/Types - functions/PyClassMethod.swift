@@ -149,7 +149,7 @@ public struct PyClassMethod: PyObjectMixin {
                                type: PyType,
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
-    let result = py.memory.newClassMethod(py, type: type, callable: nil)
+    let result = py.memory.newClassMethod(type: type, callable: nil)
     return PyResult(result)
   }
 

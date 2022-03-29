@@ -350,8 +350,7 @@ public struct PyProperty: PyObjectMixin {
                                type: PyType,
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
-    let result = py.memory.newProperty(py,
-                                       type: type,
+    let result = py.memory.newProperty(type: type,
                                        get: nil,
                                        set: nil,
                                        del: nil,

@@ -209,7 +209,7 @@ public struct PyImportError: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newImportError(py, type: type, args: argsTuple)
+    let result = py.memory.newImportError(type: type, args: argsTuple)
     return PyResult(result)
   }
 

@@ -18,7 +18,7 @@ extension Py {
     }
 
     let type = self.types.str
-    return self.memory.newString(self, type: type, value: value)
+    return self.memory.newString(type: type, value: value)
   }
 
   public func newString(scalar: UnicodeScalar) -> PyString {
@@ -62,7 +62,7 @@ extension Py {
 
   public func newStringIterator(string: PyString) -> PyStringIterator {
     let type = self.types.str_iterator
-    return self.memory.newStringIterator(self, type: type, string: string)
+    return self.memory.newStringIterator(type: type, string: string)
   }
 
   // MARK: - Bytes
@@ -73,24 +73,24 @@ extension Py {
     }
 
     let type = self.types.bytes
-    return self.memory.newBytes(self, type: type, elements: elements)
+    return self.memory.newBytes(type: type, elements: elements)
   }
 
   public func newBytesIterator(bytes: PyBytes) -> PyBytesIterator {
     let type = self.types.bytes_iterator
-    return self.memory.newBytesIterator(self, type: type, bytes: bytes)
+    return self.memory.newBytesIterator(type: type, bytes: bytes)
   }
 
   // MARK: - Byte array
 
   public func newByteArray(_ elements: Data) -> PyByteArray {
     let type = self.types.bytearray
-    return self.memory.newByteArray(self, type: type, elements: elements)
+    return self.memory.newByteArray(type: type, elements: elements)
   }
 
   public func newByteArrayIterator(bytes: PyByteArray) -> PyByteArrayIterator {
     let type = self.types.bytearray_iterator
-    return self.memory.newByteArrayIterator(self, type: type, bytes: bytes)
+    return self.memory.newByteArrayIterator(type: type, bytes: bytes)
   }
 
   // MARK: - Get string

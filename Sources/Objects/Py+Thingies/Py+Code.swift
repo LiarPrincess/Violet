@@ -17,8 +17,7 @@ extension Py {
                                  module: PyObject?,
                                  doc: String?) -> PyBuiltinFunction {
     let type = self.types.builtinFunction
-    return self.memory.newBuiltinFunction(self,
-                                          type: type,
+    return self.memory.newBuiltinFunction(type: type,
                                           function: fn,
                                           module: module,
                                           doc: doc)
@@ -31,8 +30,7 @@ extension Py {
                                module: PyObject?,
                                doc: String?) -> PyBuiltinMethod {
     let type = self.types.builtinMethod
-    return self.memory.newBuiltinMethod(self,
-                                        type: type,
+    return self.memory.newBuiltinMethod(type: type,
                                         function: fn,
                                         object: object,
                                         module: module,
@@ -83,8 +81,7 @@ extension Py {
                           annotations: PyObject?) -> PyResultGen<PyFunction> {
     let type = self.types.function
     let module = globals.get(self, id: .__name__) ?? self.none.asObject
-    let result = self.memory.newFunction(self,
-                                         type: type,
+    let result = self.memory.newFunction(type: type,
                                          qualname: qualname,
                                          module: module,
                                          code: code,
@@ -117,7 +114,7 @@ extension Py {
 
   public func newMethod(fn: PyFunction, object: PyObject) -> PyMethod {
     let type = self.types.method
-    return self.memory.newMethod(self, type: type, function: fn, object: object)
+    return self.memory.newMethod(type: type, function: fn, object: object)
   }
 
   public func newMethod(fn: PyObject, object: PyObject) -> PyResult {
@@ -152,7 +149,7 @@ extension Py {
 
   private func newStaticMethod(callable: PyObject) -> PyStaticMethod {
     let type = self.types.staticmethod
-    return self.memory.newStaticMethod(self, type: type, callable: callable)
+    return self.memory.newStaticMethod(type: type, callable: callable)
   }
 
   // MARK: - Class method
@@ -169,7 +166,7 @@ extension Py {
 
   private func newClassMethod(callable: PyObject) -> PyClassMethod {
     let type = self.types.classmethod
-    return self.memory.newClassMethod(self, type: type, callable: callable)
+    return self.memory.newClassMethod(type: type, callable: callable)
   }
 
   // MARK: - Property
@@ -185,8 +182,7 @@ extension Py {
     let _doc = doc.map(self.newString(_:))
 
     let type = self.types.property
-    return self.memory.newProperty(self,
-                                   type: type,
+    return self.memory.newProperty(type: type,
                                    get: _get,
                                    set: _set,
                                    del: _del,
@@ -249,11 +245,7 @@ extension Py {
 
   public func newModule(name: PyObject, doc: PyObject?, dict: PyDict?) -> PyModule {
     let type = self.types.module
-    return self.memory.newModule(self,
-                                 type: type,
-                                 name: name,
-                                 doc: doc,
-                                 __dict__: dict)
+    return self.memory.newModule(type: type, name: name, doc: doc, __dict__: dict)
   }
 
   public enum ModuleName {
@@ -282,7 +274,7 @@ extension Py {
 
   public func newCode(code: CodeObject) -> PyCode {
     let type = self.types.code
-    return self.memory.newCode(self, type: type, code: code)
+    return self.memory.newCode(type: type, code: code)
   }
 
   // MARK: - Frame
@@ -303,8 +295,7 @@ extension Py {
 // swiftlint:enable function_parameter_count
 
     let type = self.types.frame
-    let frame = self.memory.newFrame(self,
-                                     type: type,
+    let frame = self.memory.newFrame(type: type,
                                      code: code,
                                      locals: locals,
                                      globals: globals,
@@ -335,8 +326,7 @@ extension Py {
                        object: PyObject?,
                        objectType: PyType?) -> PySuper {
     let type = self.types.super
-    return self.memory.newSuper(self,
-                                type: type,
+    return self.memory.newSuper(type: type,
                                 requestedType: requestedType,
                                 object: object,
                                 objectType: objectType)
@@ -346,7 +336,7 @@ extension Py {
 
   public func newCell(content: PyObject?) -> PyCell {
     let type = self.types.cell
-    return self.memory.newCell(self, type: type, content: content)
+    return self.memory.newCell(type: type, content: content)
   }
 
   // MARK: - Is abstract method

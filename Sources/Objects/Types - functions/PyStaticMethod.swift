@@ -141,7 +141,7 @@ public struct PyStaticMethod: PyObjectMixin {
                                type: PyType,
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
-    let result = py.memory.newStaticMethod(py, type: type, callable: nil)
+    let result = py.memory.newStaticMethod(type: type, callable: nil)
     return PyResult(result)
   }
 

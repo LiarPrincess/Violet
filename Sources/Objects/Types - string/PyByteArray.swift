@@ -1060,7 +1060,7 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
     let isBuiltin = type === py.types.bytes
     let result = isBuiltin ?
       py.newByteArray(elements) :
-      py.memory.newByteArray(py, type: type, elements: elements)
+      py.memory.newByteArray(type: type, elements: elements)
 
     return PyResult(result)
   }

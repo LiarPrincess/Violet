@@ -111,7 +111,7 @@ extension Py {
     let message = "\(text) (\(filename), line \(line), offset: \(column))"
     let args = self.createErrorArgs(message: message)
     let type = self.errorTypes.syntaxWarning
-    return self.memory.newSyntaxWarning(self, type: type, args: args)
+    return self.memory.newSyntaxWarning(type: type, args: args)
   }
 
   public func newSyntaxWarning(filename: PyString,
@@ -140,7 +140,7 @@ extension Py {
       let message = self.intern(string: message)
       let args = self.createErrorArgs(message: message)
       let type = self.errorTypes.bytesWarning
-      let error = self.memory.newBytesWarning(self, type: type, args: args)
+      let error = self.memory.newBytesWarning(type: type, args: args)
       return error.asBaseException
     }
   }

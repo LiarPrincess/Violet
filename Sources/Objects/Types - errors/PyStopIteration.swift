@@ -125,7 +125,7 @@ public struct PyStopIteration: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newStopIteration(py, type: type, args: argsTuple)
+    let result = py.memory.newStopIteration(type: type, args: argsTuple)
     return PyResult(result)
   }
 

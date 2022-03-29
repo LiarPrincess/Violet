@@ -218,7 +218,7 @@ public struct PyNamespace: PyObjectMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let dict = py.newDict()
-    let result = py.memory.newNamespace(py, type: type, __dict__: dict)
+    let result = py.memory.newNamespace(type: type, __dict__: dict)
     return PyResult(result)
   }
 

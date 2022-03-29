@@ -325,6 +325,12 @@ def print_type_extension(t: TypeInfo):
         arguments: List[str] = []
         call_arguments: List[str] = []
         for index, arg in enumerate(init_arguments):
+            if index == 0:
+                # Do not include 'Py' in arguments
+                assert arg.typ == 'Py'
+                call_arguments.append('self.py')
+                continue
+
             label = '' if arg.label is None else arg.label + ' '
             default_value =  '' if arg.default_value is None else ' = ' + arg.default_value
             arguments.append(f'{label}{arg.name}: {arg.typ}{default_value}')
@@ -346,7 +352,7 @@ def print_type_extension(t: TypeInfo):
 
         for index, arg in enumerate(arguments):
             is_first = index == 0
-            is_last = index == len(init_arguments) - 1
+            is_last = index == len(arguments) - 1
             comma = '' if is_last else ','
 
             if is_single_line:
@@ -367,7 +373,7 @@ def print_type_extension(t: TypeInfo):
 
         for index, arg in enumerate(call_arguments):
             is_first = index == 0
-            is_last = index == len(init_arguments) - 1
+            is_last = index == len(call_arguments) - 1
             comma = '' if is_last else ','
 
             if is_single_line:

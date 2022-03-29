@@ -130,7 +130,7 @@ public struct PyZip: PyObjectMixin {
       }
     }
 
-    let result = py.memory.newZip(py, type: type, iterators: iters)
+    let result = py.memory.newZip(type: type, iterators: iters)
     return PyResult(result)
   }
 }

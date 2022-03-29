@@ -98,7 +98,6 @@ extension Py {
       let memory = py.memory
 
       self.baseException = memory.newType(
-        py,
         type: typeType,
         name: "BaseException",
         qualname: "BaseException",
@@ -114,7 +113,6 @@ extension Py {
       )
 
       self.systemExit = memory.newType(
-        py,
         type: typeType,
         name: "SystemExit",
         qualname: "SystemExit",
@@ -130,7 +128,6 @@ extension Py {
       )
 
       self.keyboardInterrupt = memory.newType(
-        py,
         type: typeType,
         name: "KeyboardInterrupt",
         qualname: "KeyboardInterrupt",
@@ -146,7 +143,6 @@ extension Py {
       )
 
       self.generatorExit = memory.newType(
-        py,
         type: typeType,
         name: "GeneratorExit",
         qualname: "GeneratorExit",
@@ -162,7 +158,6 @@ extension Py {
       )
 
       self.exception = memory.newType(
-        py,
         type: typeType,
         name: "Exception",
         qualname: "Exception",
@@ -178,7 +173,6 @@ extension Py {
       )
 
       self.stopIteration = memory.newType(
-        py,
         type: typeType,
         name: "StopIteration",
         qualname: "StopIteration",
@@ -194,7 +188,6 @@ extension Py {
       )
 
       self.stopAsyncIteration = memory.newType(
-        py,
         type: typeType,
         name: "StopAsyncIteration",
         qualname: "StopAsyncIteration",
@@ -210,7 +203,6 @@ extension Py {
       )
 
       self.arithmeticError = memory.newType(
-        py,
         type: typeType,
         name: "ArithmeticError",
         qualname: "ArithmeticError",
@@ -226,7 +218,6 @@ extension Py {
       )
 
       self.floatingPointError = memory.newType(
-        py,
         type: typeType,
         name: "FloatingPointError",
         qualname: "FloatingPointError",
@@ -242,7 +233,6 @@ extension Py {
       )
 
       self.overflowError = memory.newType(
-        py,
         type: typeType,
         name: "OverflowError",
         qualname: "OverflowError",
@@ -258,7 +248,6 @@ extension Py {
       )
 
       self.zeroDivisionError = memory.newType(
-        py,
         type: typeType,
         name: "ZeroDivisionError",
         qualname: "ZeroDivisionError",
@@ -274,7 +263,6 @@ extension Py {
       )
 
       self.assertionError = memory.newType(
-        py,
         type: typeType,
         name: "AssertionError",
         qualname: "AssertionError",
@@ -290,7 +278,6 @@ extension Py {
       )
 
       self.attributeError = memory.newType(
-        py,
         type: typeType,
         name: "AttributeError",
         qualname: "AttributeError",
@@ -306,7 +293,6 @@ extension Py {
       )
 
       self.bufferError = memory.newType(
-        py,
         type: typeType,
         name: "BufferError",
         qualname: "BufferError",
@@ -322,7 +308,6 @@ extension Py {
       )
 
       self.eofError = memory.newType(
-        py,
         type: typeType,
         name: "EOFError",
         qualname: "EOFError",
@@ -338,7 +323,6 @@ extension Py {
       )
 
       self.importError = memory.newType(
-        py,
         type: typeType,
         name: "ImportError",
         qualname: "ImportError",
@@ -354,7 +338,6 @@ extension Py {
       )
 
       self.moduleNotFoundError = memory.newType(
-        py,
         type: typeType,
         name: "ModuleNotFoundError",
         qualname: "ModuleNotFoundError",
@@ -370,7 +353,6 @@ extension Py {
       )
 
       self.lookupError = memory.newType(
-        py,
         type: typeType,
         name: "LookupError",
         qualname: "LookupError",
@@ -386,7 +368,6 @@ extension Py {
       )
 
       self.indexError = memory.newType(
-        py,
         type: typeType,
         name: "IndexError",
         qualname: "IndexError",
@@ -402,7 +383,6 @@ extension Py {
       )
 
       self.keyError = memory.newType(
-        py,
         type: typeType,
         name: "KeyError",
         qualname: "KeyError",
@@ -418,7 +398,6 @@ extension Py {
       )
 
       self.memoryError = memory.newType(
-        py,
         type: typeType,
         name: "MemoryError",
         qualname: "MemoryError",
@@ -434,7 +413,6 @@ extension Py {
       )
 
       self.nameError = memory.newType(
-        py,
         type: typeType,
         name: "NameError",
         qualname: "NameError",
@@ -450,7 +428,6 @@ extension Py {
       )
 
       self.unboundLocalError = memory.newType(
-        py,
         type: typeType,
         name: "UnboundLocalError",
         qualname: "UnboundLocalError",
@@ -466,7 +443,6 @@ extension Py {
       )
 
       self.osError = memory.newType(
-        py,
         type: typeType,
         name: "OSError",
         qualname: "OSError",
@@ -482,7 +458,6 @@ extension Py {
       )
 
       self.blockingIOError = memory.newType(
-        py,
         type: typeType,
         name: "BlockingIOError",
         qualname: "BlockingIOError",
@@ -498,7 +473,6 @@ extension Py {
       )
 
       self.childProcessError = memory.newType(
-        py,
         type: typeType,
         name: "ChildProcessError",
         qualname: "ChildProcessError",
@@ -514,7 +488,6 @@ extension Py {
       )
 
       self.connectionError = memory.newType(
-        py,
         type: typeType,
         name: "ConnectionError",
         qualname: "ConnectionError",
@@ -530,7 +503,6 @@ extension Py {
       )
 
       self.brokenPipeError = memory.newType(
-        py,
         type: typeType,
         name: "BrokenPipeError",
         qualname: "BrokenPipeError",
@@ -546,7 +518,6 @@ extension Py {
       )
 
       self.connectionAbortedError = memory.newType(
-        py,
         type: typeType,
         name: "ConnectionAbortedError",
         qualname: "ConnectionAbortedError",
@@ -562,7 +533,6 @@ extension Py {
       )
 
       self.connectionRefusedError = memory.newType(
-        py,
         type: typeType,
         name: "ConnectionRefusedError",
         qualname: "ConnectionRefusedError",
@@ -578,7 +548,6 @@ extension Py {
       )
 
       self.connectionResetError = memory.newType(
-        py,
         type: typeType,
         name: "ConnectionResetError",
         qualname: "ConnectionResetError",
@@ -594,7 +563,6 @@ extension Py {
       )
 
       self.fileExistsError = memory.newType(
-        py,
         type: typeType,
         name: "FileExistsError",
         qualname: "FileExistsError",
@@ -610,7 +578,6 @@ extension Py {
       )
 
       self.fileNotFoundError = memory.newType(
-        py,
         type: typeType,
         name: "FileNotFoundError",
         qualname: "FileNotFoundError",
@@ -626,7 +593,6 @@ extension Py {
       )
 
       self.interruptedError = memory.newType(
-        py,
         type: typeType,
         name: "InterruptedError",
         qualname: "InterruptedError",
@@ -642,7 +608,6 @@ extension Py {
       )
 
       self.isADirectoryError = memory.newType(
-        py,
         type: typeType,
         name: "IsADirectoryError",
         qualname: "IsADirectoryError",
@@ -658,7 +623,6 @@ extension Py {
       )
 
       self.notADirectoryError = memory.newType(
-        py,
         type: typeType,
         name: "NotADirectoryError",
         qualname: "NotADirectoryError",
@@ -674,7 +638,6 @@ extension Py {
       )
 
       self.permissionError = memory.newType(
-        py,
         type: typeType,
         name: "PermissionError",
         qualname: "PermissionError",
@@ -690,7 +653,6 @@ extension Py {
       )
 
       self.processLookupError = memory.newType(
-        py,
         type: typeType,
         name: "ProcessLookupError",
         qualname: "ProcessLookupError",
@@ -706,7 +668,6 @@ extension Py {
       )
 
       self.timeoutError = memory.newType(
-        py,
         type: typeType,
         name: "TimeoutError",
         qualname: "TimeoutError",
@@ -722,7 +683,6 @@ extension Py {
       )
 
       self.referenceError = memory.newType(
-        py,
         type: typeType,
         name: "ReferenceError",
         qualname: "ReferenceError",
@@ -738,7 +698,6 @@ extension Py {
       )
 
       self.runtimeError = memory.newType(
-        py,
         type: typeType,
         name: "RuntimeError",
         qualname: "RuntimeError",
@@ -754,7 +713,6 @@ extension Py {
       )
 
       self.notImplementedError = memory.newType(
-        py,
         type: typeType,
         name: "NotImplementedError",
         qualname: "NotImplementedError",
@@ -770,7 +728,6 @@ extension Py {
       )
 
       self.recursionError = memory.newType(
-        py,
         type: typeType,
         name: "RecursionError",
         qualname: "RecursionError",
@@ -786,7 +743,6 @@ extension Py {
       )
 
       self.syntaxError = memory.newType(
-        py,
         type: typeType,
         name: "SyntaxError",
         qualname: "SyntaxError",
@@ -802,7 +758,6 @@ extension Py {
       )
 
       self.indentationError = memory.newType(
-        py,
         type: typeType,
         name: "IndentationError",
         qualname: "IndentationError",
@@ -818,7 +773,6 @@ extension Py {
       )
 
       self.tabError = memory.newType(
-        py,
         type: typeType,
         name: "TabError",
         qualname: "TabError",
@@ -834,7 +788,6 @@ extension Py {
       )
 
       self.systemError = memory.newType(
-        py,
         type: typeType,
         name: "SystemError",
         qualname: "SystemError",
@@ -850,7 +803,6 @@ extension Py {
       )
 
       self.typeError = memory.newType(
-        py,
         type: typeType,
         name: "TypeError",
         qualname: "TypeError",
@@ -866,7 +818,6 @@ extension Py {
       )
 
       self.valueError = memory.newType(
-        py,
         type: typeType,
         name: "ValueError",
         qualname: "ValueError",
@@ -882,7 +833,6 @@ extension Py {
       )
 
       self.unicodeError = memory.newType(
-        py,
         type: typeType,
         name: "UnicodeError",
         qualname: "UnicodeError",
@@ -898,7 +848,6 @@ extension Py {
       )
 
       self.unicodeDecodeError = memory.newType(
-        py,
         type: typeType,
         name: "UnicodeDecodeError",
         qualname: "UnicodeDecodeError",
@@ -914,7 +863,6 @@ extension Py {
       )
 
       self.unicodeEncodeError = memory.newType(
-        py,
         type: typeType,
         name: "UnicodeEncodeError",
         qualname: "UnicodeEncodeError",
@@ -930,7 +878,6 @@ extension Py {
       )
 
       self.unicodeTranslateError = memory.newType(
-        py,
         type: typeType,
         name: "UnicodeTranslateError",
         qualname: "UnicodeTranslateError",
@@ -946,7 +893,6 @@ extension Py {
       )
 
       self.warning = memory.newType(
-        py,
         type: typeType,
         name: "Warning",
         qualname: "Warning",
@@ -962,7 +908,6 @@ extension Py {
       )
 
       self.deprecationWarning = memory.newType(
-        py,
         type: typeType,
         name: "DeprecationWarning",
         qualname: "DeprecationWarning",
@@ -978,7 +923,6 @@ extension Py {
       )
 
       self.pendingDeprecationWarning = memory.newType(
-        py,
         type: typeType,
         name: "PendingDeprecationWarning",
         qualname: "PendingDeprecationWarning",
@@ -994,7 +938,6 @@ extension Py {
       )
 
       self.runtimeWarning = memory.newType(
-        py,
         type: typeType,
         name: "RuntimeWarning",
         qualname: "RuntimeWarning",
@@ -1010,7 +953,6 @@ extension Py {
       )
 
       self.syntaxWarning = memory.newType(
-        py,
         type: typeType,
         name: "SyntaxWarning",
         qualname: "SyntaxWarning",
@@ -1026,7 +968,6 @@ extension Py {
       )
 
       self.userWarning = memory.newType(
-        py,
         type: typeType,
         name: "UserWarning",
         qualname: "UserWarning",
@@ -1042,7 +983,6 @@ extension Py {
       )
 
       self.futureWarning = memory.newType(
-        py,
         type: typeType,
         name: "FutureWarning",
         qualname: "FutureWarning",
@@ -1058,7 +998,6 @@ extension Py {
       )
 
       self.importWarning = memory.newType(
-        py,
         type: typeType,
         name: "ImportWarning",
         qualname: "ImportWarning",
@@ -1074,7 +1013,6 @@ extension Py {
       )
 
       self.unicodeWarning = memory.newType(
-        py,
         type: typeType,
         name: "UnicodeWarning",
         qualname: "UnicodeWarning",
@@ -1090,7 +1028,6 @@ extension Py {
       )
 
       self.bytesWarning = memory.newType(
-        py,
         type: typeType,
         name: "BytesWarning",
         qualname: "BytesWarning",
@@ -1106,7 +1043,6 @@ extension Py {
       )
 
       self.resourceWarning = memory.newType(
-        py,
         type: typeType,
         name: "ResourceWarning",
         qualname: "ResourceWarning",
