@@ -202,7 +202,6 @@ type
     __dictoffset__
     __flags__
     __itemsize__
-    __prepare__
     __text_signature__
     __weakrefoffset__
 

@@ -367,7 +367,6 @@ public struct PyTextFile: PyObjectMixin {
   }
 
   // sourcery: pymethod = close
-
   internal static func close(_ py: Py, zelf: PyObject) -> PyResult {
     guard let zelf = Self.downcast(py, zelf) else {
       return Self.invalidZelfArgument(py, zelf, "close")
