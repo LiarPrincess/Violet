@@ -87,6 +87,8 @@ ariel:
 gen:
 	./Sources/Objects/Generated/run.sh
 	@echo
+	./Tests/ObjectsTests/Generated/run.sh
+	@echo
 	./Scripts/unimplemented_builtins/refresh.sh
 	@echo
 	./PyTests/generate_tests.sh
@@ -115,6 +117,7 @@ spell:
 		"./Sources/**" \
 		"./Tests/**" \
 		"./Lib/**" \
+		"./Documentation/**" \
 		"./PyTests/**" \
 		"./Scripts/**" \
 		"./Code of Conduct.md" \

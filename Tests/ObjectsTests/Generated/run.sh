@@ -15,6 +15,5 @@ TESTS_GENERATED=$(get_abs_filename ./Tests/ObjectsTests/Generated)
 # To be able to import from './Sources/Objects/Generated'
 cd "$OBJECTS_GENERATED"
 
-echo "=== Tests ==="
-echo "- InvalidSelfArgumentMessageTests.swift"
+echo "- InvalidSelfArgumentMessageTests.swift - error message when downcasting of the 1st method argument failed"
 python3 "$TESTS_GENERATED/InvalidSelfArgumentMessageTests.py" > "$TESTS_GENERATED/InvalidSelfArgumentMessageTests.swift"
