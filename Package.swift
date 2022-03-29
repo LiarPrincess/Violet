@@ -27,8 +27,8 @@ let package = Package(
     // We try to avoid adding new dependencies because… oh so many reasons!
     // Tbh. I’m still not sure if we can trust this ‘apple’ person…
     .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "0.4.0")),
-    // 0.50300.0 -> swift-5.3-RELEASE	-> Xcode 12.0
-    .package(url: "https://github.com/apple/swift-syntax.git", .exact("0.50300.0"))
+    // 0.50500.0 -> swift-5.5-RELEASE -> Xcode 13.0
+    .package(url: "https://github.com/apple/swift-syntax.git", .exact("0.50500.0"))
   ],
   targets: [
 
@@ -88,7 +88,8 @@ let package = Package(
     .testTarget(name: "VioletObjectsTests", dependencies: ["VioletObjects"], path: "Tests/ObjectsTests"),
 
     // Bytecode interpretation (+ remaining part of the Python runtime)
-    .target(name: "VioletVM", dependencies: ["VioletObjects"], path: "Sources/VM"),
+    // And here we inject 'Compiler' to 'Objects'.
+    .target(name: "VioletVM", dependencies: ["VioletCompiler", "VioletObjects"], path: "Sources/VM"),
     .testTarget(name: "VioletVMTests", dependencies: ["VioletVM"], path: "Tests/VMTests"),
 
     // Main executable
