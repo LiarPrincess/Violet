@@ -18,8 +18,8 @@ function_body_length:
   error:   35
 
 file_length:
-  warning: 300
-  error:   350
+  warning: 500
+  error:   550
 
 # It is a compiler after all:
 cyclomatic_complexity:

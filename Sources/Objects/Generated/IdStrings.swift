@@ -7,7 +7,6 @@
 import VioletCore
 
 // swiftlint:disable nesting
-// swiftlint:disable file_length
 // swiftlint:disable function_body_length
 
 /// Predefined commonly used `__dict__` keys.

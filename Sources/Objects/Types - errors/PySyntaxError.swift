@@ -2,8 +2,6 @@ import BigInt
 import FileSystem
 import VioletCore
 
-// swiftlint:disable file_length
-
 // In CPython:
 // Objects -> exceptions.c
 // Lib->test->exception_hierarchy.txt <-- this is amazing

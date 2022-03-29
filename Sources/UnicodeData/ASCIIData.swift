@@ -1,5 +1,3 @@
-// swiftlint:disable file_length
-
 // Use following code:
 //
 // if __name__ == '__main__':

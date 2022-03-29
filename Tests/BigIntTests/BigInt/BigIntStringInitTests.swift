@@ -1,8 +1,6 @@
 import XCTest
 @testable import BigInt
 
-// swiftlint:disable file_length
-
 private typealias Word = BigIntStorage.Word
 private typealias WordsExpected = (words: [Word], expected: String)
 

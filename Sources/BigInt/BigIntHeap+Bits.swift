@@ -1,5 +1,4 @@
 // swiftlint:disable function_body_length
-// swiftlint:disable file_length
 
 // Most of the code was taken from mini-gmp: https://gmplib.org
 // GMP function name is in the comment above method.

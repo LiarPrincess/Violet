@@ -4,7 +4,6 @@ import FileSystem
 import VioletObjects
 
 // swiftlint:disable function_parameter_count
-// swiftlint:disable file_length
 
 extension PyIntTests {
 

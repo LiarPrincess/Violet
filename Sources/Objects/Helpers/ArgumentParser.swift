@@ -1,6 +1,5 @@
 import VioletCore
 
-// swiftlint:disable file_length
 // cSpell:ignore modsupport vgetargskeywordsfast kwnames kwtuple
 
 // In CPython:

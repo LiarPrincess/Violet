@@ -2,7 +2,6 @@ import BigInt
 import VioletCore
 
 // swiftlint:disable yoda_condition
-// swiftlint:disable file_length
 // cSpell:ignore rangeobject
 
 // In CPython:

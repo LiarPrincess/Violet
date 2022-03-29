@@ -11,8 +11,6 @@
 // This file is full of dark arcane magic (mostly involving bit operations)!
 // Listen to this for best effect: https://youtu.be/ML0XFlWkEvk?t=298.
 
-// swiftlint:disable file_length
-
 // MARK: - Magic spells
 
 // For 4-bit words:

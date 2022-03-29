@@ -2,7 +2,6 @@ import Foundation
 
 // swiftlint:disable force_unwrapping
 // swiftlint:disable implicitly_unwrapped_optional
-// swiftlint:disable file_length
 
 #if canImport(Darwin)
 import Darwin

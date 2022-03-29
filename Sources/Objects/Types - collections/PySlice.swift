@@ -1,7 +1,6 @@
 import BigInt
 import VioletCore
 
-// swiftlint:disable file_length
 // cSpell:ignore sliceobject
 
 // In CPython:

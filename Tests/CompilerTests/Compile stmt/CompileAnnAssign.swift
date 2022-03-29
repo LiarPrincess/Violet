@@ -5,7 +5,6 @@ import VioletBytecode
 @testable import VioletCompiler
 
 // swiftlint:disable function_body_length
-// swiftlint:disable file_length
 // cSpell:ignore subscr whozits whatzits
 
 /// Use './Scripts/dump' for reference.

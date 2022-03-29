@@ -3,7 +3,6 @@ import VioletCore
 import VioletParser
 @testable import VioletCompiler
 
-// swiftlint:disable file_length
 // cSpell:ignore asname
 
 // MARK: - Asserts

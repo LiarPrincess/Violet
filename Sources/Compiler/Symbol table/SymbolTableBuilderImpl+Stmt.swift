@@ -4,7 +4,6 @@ import VioletParser
 // In CPython:
 // Python -> symtable.c
 
-// swiftlint:disable file_length
 // cSpell:ignore withitem excepthandler
 
 extension SymbolTableBuilderImpl {

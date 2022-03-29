@@ -2,7 +2,6 @@ import Foundation
 import VioletCore
 import VioletBytecode
 
-// swiftlint:disable file_length
 // cSpell:ignore tstate
 
 // In CPython:

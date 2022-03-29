@@ -5,7 +5,6 @@ import Foundation
 import VioletCore
 
 // swiftlint:disable line_length
-// swiftlint:disable file_length
 
 extension Instruction {
 

@@ -1,7 +1,6 @@
 import VioletCore
 import VioletBytecode
 
-// swiftlint:disable file_length
 // swiftlint:disable function_body_length
 
 // In CPython:

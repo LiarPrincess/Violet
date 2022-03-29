@@ -2,8 +2,6 @@ import Foundation
 import BigInt
 import VioletCore
 
-// swiftlint:disable file_length
-
 // In CPython:
 // Objects -> codeobject.c // cSpell:disable-line
 

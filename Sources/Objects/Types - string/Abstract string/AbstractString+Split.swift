@@ -1,5 +1,3 @@
-// swiftlint:disable file_length
-
 // MARK: - Collection extensions
 
 extension Collection where Element: Equatable {
@@ -202,7 +200,6 @@ extension AbstractString {
                          onSeparatorSplit: Self.rsplit(_:zelf:separator:maxCount:))
   }
 
-  // swiftlint:disable:next function_body_length
   private static func rsplit(_ py: Py,
                              zelf: Self,
                              separator: Elements,

@@ -2,7 +2,6 @@ import VioletCore
 import VioletParser
 import VioletBytecode
 
-// swiftlint:disable file_length
 // cSpell:ignore ssize fblock fblocktype basicblock
 
 // In CPython:

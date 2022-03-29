@@ -3,7 +3,6 @@ import FileSystem
 import VioletCore
 import VioletObjects
 
-// swiftlint:disable file_length
 // cSpell:ignore unwinded
 
 // In CPython:

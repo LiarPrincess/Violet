@@ -2,7 +2,6 @@ import Foundation
 import VioletCore
 
 // cSpell:ignore typeobject
-// swiftlint:disable file_length
 
 // In CPython:
 // Objects -> object.c

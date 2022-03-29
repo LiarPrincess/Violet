@@ -1,4 +1,3 @@
-// swiftlint:disable file_length
 // cSpell:ignore initimport sysmod
 
 // In CPython:
@@ -289,7 +288,6 @@ extension Py {
 
   // MARK: - Handle 'from'
 
-  // swiftlint:disable:next function_body_length
   private func handleFromList(name: PyString,
                               absName: PyString,
                               level: PyInt,

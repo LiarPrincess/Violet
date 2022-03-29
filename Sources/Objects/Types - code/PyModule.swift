@@ -1,4 +1,3 @@
-// swiftlint:disable file_length
 // cSpell:ignore moduleobject getattro
 
 // In CPython:

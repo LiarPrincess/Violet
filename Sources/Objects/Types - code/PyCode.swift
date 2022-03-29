@@ -1,7 +1,6 @@
 import VioletCore
 import VioletBytecode
 
-// swiftlint:disable file_length
 // cSpell:ignore codeobject
 
 // In CPython:

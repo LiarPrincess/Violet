@@ -1,7 +1,6 @@
 import VioletCore
 
 // swiftlint:disable function_body_length
-// swiftlint:disable file_length
 
 private struct PyTypeNewArgs {
   /// First argument in `__new__` invocation

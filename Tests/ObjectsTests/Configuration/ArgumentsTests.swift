@@ -3,8 +3,6 @@ import Foundation
 import FileSystem
 @testable import VioletObjects
 
-// swiftlint:disable file_length
-
 private func XCTAssertEqual(_ lhs: Arguments,
                             _ rhs: Arguments,
                             file: StaticString = #file,

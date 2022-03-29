@@ -1,7 +1,5 @@
 import VioletLexer
 
-// swiftlint:disable file_length
-
 // Really regretting that we don't have proper union types in Swift
 // (but not really sure how would that work).
 // We can also use `case token(Token.Kind)`, but in most common use case

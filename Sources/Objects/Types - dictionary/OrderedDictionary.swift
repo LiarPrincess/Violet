@@ -1,6 +1,5 @@
 import VioletCore
 
-// swiftlint:disable file_length
 // cSpell:ignore dictobject pertub insertdict lookdict dictresize
 
 // In CPython:

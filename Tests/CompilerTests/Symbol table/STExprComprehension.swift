@@ -3,7 +3,6 @@ import VioletCore
 import VioletParser
 @testable import VioletCompiler
 
-// swiftlint:disable file_length
 // swiftlint:disable function_body_length
 
 /// Basic checks for comprehension, without nested scopes.

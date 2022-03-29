@@ -5,7 +5,6 @@ import VioletBytecode
 @testable import VioletCompiler
 
 // swiftlint:disable function_body_length
-// swiftlint:disable file_length
 
 /// Use 'Scripts/dump_dis.py' for reference.
 class CompileClosureTests: CompileTestCase {
