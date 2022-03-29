@@ -91,6 +91,7 @@ public struct PyMethod: PyObjectMixin {
     }
   }
 
+  // sourcery: pymethod = __lt__
   internal static func __lt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     if Self.downcast(py, zelf) == nil {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, .__lt__)
@@ -99,6 +100,7 @@ public struct PyMethod: PyObjectMixin {
     return .notImplemented
   }
 
+  // sourcery: pymethod = __le__
   internal static func __le__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     if Self.downcast(py, zelf) == nil {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, .__le__)
@@ -107,6 +109,7 @@ public struct PyMethod: PyObjectMixin {
     return .notImplemented
   }
 
+  // sourcery: pymethod = __gt__
   internal static func __gt__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     if Self.downcast(py, zelf) == nil {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, .__gt__)
@@ -115,6 +118,7 @@ public struct PyMethod: PyObjectMixin {
     return .notImplemented
   }
 
+  // sourcery: pymethod = __ge__
   internal static func __ge__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
     if Self.downcast(py, zelf) == nil {
       return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ge__)

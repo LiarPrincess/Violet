@@ -30,7 +30,7 @@ def get_types_from_objects_generated():
     sys.path.append(generated_dir_path)
 
     module_name = 'get_types'
-    module_path = os.path.join(generated_dir_path, 'Sourcery', 'get_types.py')
+    module_path = os.path.join(generated_dir_path, 'Sourcery', 'TypeInfo_get.py')
 
     spec = importlib.util.spec_from_file_location(module_name, module_path)
     module = importlib.util.module_from_spec(spec)
