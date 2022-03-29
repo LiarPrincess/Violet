@@ -102,8 +102,7 @@ extension Py {
                           errorHandling: PyString.ErrorHandling,
                           closeOnDealloc: Bool) -> PyTextFile {
     let type = self.types.textFile
-    return self.memory.newTextFile(self,
-                                   type: type,
+    return self.memory.newTextFile(type: type,
                                    name: name,
                                    fd: fd,
                                    mode: mode,

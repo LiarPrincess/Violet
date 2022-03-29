@@ -19,7 +19,7 @@ extension Py {
 
   public func newNamespace(dict: PyDict) -> PyNamespace {
     let type = self.types.simpleNamespace
-    return self.memory.newNamespace(self, type: type, __dict__: dict)
+    return self.memory.newNamespace(type: type, __dict__: dict)
   }
 
   // MARK: - Dict

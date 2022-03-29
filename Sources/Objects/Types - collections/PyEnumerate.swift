@@ -182,8 +182,7 @@ public struct PyEnumerate: PyObjectMixin {
     case let .error(e): return .error(e)
     }
 
-    let result = py.memory.newEnumerate(py,
-                                        type: type,
+    let result = py.memory.newEnumerate(type: type,
                                         iterator: iter,
                                         initialIndex: initialIndex)
 

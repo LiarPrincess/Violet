@@ -20,7 +20,7 @@ extension Py {
   public func newTypeError(message: String) -> PyTypeError {
     let type = self.errorTypes.typeError
     let args = self.createErrorArgs(message: message)
-    return self.memory.newTypeError(self, type: type, args: args)
+    return self.memory.newTypeError(type: type, args: args)
   }
 
   public func newInvalidSelfArgumentError(object: PyObject,
@@ -37,7 +37,7 @@ extension Py {
   public func newValueError(message: String) -> PyValueError {
     let type = self.errorTypes.valueError
     let args = self.createErrorArgs(message: message)
-    return self.memory.newValueError(self, type: type, args: args)
+    return self.memory.newValueError(type: type, args: args)
   }
 
   // MARK: - Index error
@@ -46,7 +46,7 @@ extension Py {
   public func newIndexError(message: String) -> PyIndexError {
     let type = self.errorTypes.indexError
     let args = self.createErrorArgs(message: message)
-    return self.memory.newIndexError(self, type: type, args: args)
+    return self.memory.newIndexError(type: type, args: args)
   }
 
   // MARK: - Attribute error
@@ -55,7 +55,7 @@ extension Py {
   public func newAttributeError(message: String) -> PyAttributeError {
     let type = self.errorTypes.attributeError
     let args = self.createErrorArgs(message: message)
-    return self.memory.newAttributeError(self, type: type, args: args)
+    return self.memory.newAttributeError(type: type, args: args)
   }
 
   /// Attribute not found.
@@ -92,14 +92,14 @@ extension Py {
   public func newZeroDivisionError(message: String) -> PyZeroDivisionError {
     let type = self.errorTypes.zeroDivisionError
     let args = self.createErrorArgs(message: message)
-    return self.memory.newZeroDivisionError(self, type: type, args: args)
+    return self.memory.newZeroDivisionError(type: type, args: args)
   }
 
   /// Result too large to be represented.
   public func newOverflowError(message: String) -> PyOverflowError {
     let type = self.errorTypes.overflowError
     let args = self.createErrorArgs(message: message)
-    return self.memory.newOverflowError(self, type: type, args: args)
+    return self.memory.newOverflowError(type: type, args: args)
   }
 
   // MARK: - System
@@ -108,7 +108,7 @@ extension Py {
   public func newSystemError(message: String) -> PySystemError {
     let type = self.errorTypes.systemError
     let args = self.createErrorArgs(message: message)
-    return self.memory.newSystemError(self, type: type, args: args)
+    return self.memory.newSystemError(type: type, args: args)
   }
 
   // MARK: - System exit
@@ -116,7 +116,7 @@ extension Py {
   /// Request to exit from the interpreter.
   public func newSystemExit(code: PyObject?) -> PySystemExit {
     let type = self.errorTypes.systemExit
-    return self.memory.newSystemExit(self, type: type, code: code)
+    return self.memory.newSystemExit(type: type, code: code)
   }
 
   // MARK: - Runtime error
@@ -125,7 +125,7 @@ extension Py {
   public func newRuntimeError(message: String) -> PyRuntimeError {
     let type = self.errorTypes.runtimeError
     let args = self.createErrorArgs(message: message)
-    return self.memory.newRuntimeError(self, type: type, args: args)
+    return self.memory.newRuntimeError(type: type, args: args)
   }
 
   // MARK: - OS error
@@ -136,7 +136,7 @@ extension Py {
   public func newOSError(message: String) -> PyOSError {
     let type = self.errorTypes.osError
     let args = self.createErrorArgs(message: message)
-    return self.memory.newOSError(self, type: type, args: args)
+    return self.memory.newOSError(type: type, args: args)
   }
 
   /// Base class for I/O related errors.
@@ -248,77 +248,77 @@ extension Py {
 
   private func newBlockingIOError(args: PyTuple) -> PyBlockingIOError {
     let type = self.errorTypes.blockingIOError
-    return self.memory.newBlockingIOError(self, type: type, args: args)
+    return self.memory.newBlockingIOError(type: type, args: args)
   }
 
   private func newBrokenPipeError(args: PyTuple) -> PyBrokenPipeError {
     let type = self.errorTypes.brokenPipeError
-    return self.memory.newBrokenPipeError(self, type: type, args: args)
+    return self.memory.newBrokenPipeError(type: type, args: args)
   }
 
   private func newChildProcessError(args: PyTuple) -> PyChildProcessError {
     let type = self.errorTypes.childProcessError
-    return self.memory.newChildProcessError(self, type: type, args: args)
+    return self.memory.newChildProcessError(type: type, args: args)
   }
 
   private func newConnectionAbortedError(args: PyTuple) -> PyConnectionAbortedError {
     let type = self.errorTypes.connectionAbortedError
-    return self.memory.newConnectionAbortedError(self, type: type, args: args)
+    return self.memory.newConnectionAbortedError(type: type, args: args)
   }
 
   private func newConnectionRefusedError(args: PyTuple) -> PyConnectionRefusedError {
     let type = self.errorTypes.connectionRefusedError
-    return self.memory.newConnectionRefusedError(self, type: type, args: args)
+    return self.memory.newConnectionRefusedError(type: type, args: args)
   }
 
   private func newConnectionResetError(args: PyTuple) -> PyConnectionResetError {
     let type = self.errorTypes.connectionResetError
-    return self.memory.newConnectionResetError(self, type: type, args: args)
+    return self.memory.newConnectionResetError(type: type, args: args)
   }
 
   private func newFileExistsError(args: PyTuple) -> PyFileExistsError {
     let type = self.errorTypes.fileExistsError
-    return self.memory.newFileExistsError(self, type: type, args: args)
+    return self.memory.newFileExistsError(type: type, args: args)
   }
 
   private func newFileNotFoundError(args: PyTuple) -> PyFileNotFoundError {
     let type = self.errorTypes.fileNotFoundError
-    return self.memory.newFileNotFoundError(self, type: type, args: args)
+    return self.memory.newFileNotFoundError(type: type, args: args)
   }
 
   private func newIsADirectoryError(args: PyTuple) -> PyIsADirectoryError {
     let type = self.errorTypes.isADirectoryError
-    return self.memory.newIsADirectoryError(self, type: type, args: args)
+    return self.memory.newIsADirectoryError(type: type, args: args)
   }
 
   private func newNotADirectoryError(args: PyTuple) -> PyNotADirectoryError {
     let type = self.errorTypes.notADirectoryError
-    return self.memory.newNotADirectoryError(self, type: type, args: args)
+    return self.memory.newNotADirectoryError(type: type, args: args)
   }
 
   private func newInterruptedError(args: PyTuple) -> PyInterruptedError {
     let type = self.errorTypes.interruptedError
-    return self.memory.newInterruptedError(self, type: type, args: args)
+    return self.memory.newInterruptedError(type: type, args: args)
   }
 
   private func newPermissionError(args: PyTuple) -> PyPermissionError {
     let type = self.errorTypes.permissionError
-    return self.memory.newPermissionError(self, type: type, args: args)
+    return self.memory.newPermissionError(type: type, args: args)
   }
 
   private func newProcessLookupError(args: PyTuple) -> PyProcessLookupError {
     let type = self.errorTypes.processLookupError
-    return self.memory.newProcessLookupError(self, type: type, args: args)
+    return self.memory.newProcessLookupError(type: type, args: args)
   }
 
   private func newTimeoutError(args: PyTuple) -> PyTimeoutError {
     let type = self.errorTypes.timeoutError
-    return self.memory.newTimeoutError(self, type: type, args: args)
+    return self.memory.newTimeoutError(type: type, args: args)
   }
 
   private func newOSError(args: PyTuple) -> PyOSError {
     let type = self.errorTypes.osError
-    return self.memory.newOSError(self, type: type, args: args)
+    return self.memory.newOSError(type: type, args: args)
   }
 
   private func createOSErrorArgs(errno: Int32, filename: String?) -> PyTuple {
@@ -379,7 +379,7 @@ extension Py {
     let argsTuple = self.newTuple(elements: args)
     let type = self.errorTypes.fileNotFoundError
 
-    return self.memory.newFileNotFoundError(self, type: type, args: argsTuple)
+    return self.memory.newFileNotFoundError(type: type, args: argsTuple)
   }
 
   // MARK: - Key error
@@ -398,7 +398,7 @@ extension Py {
 
   private func createKeyError(args: PyTuple) -> PyKeyError {
     let type = self.errorTypes.keyError
-    return self.memory.newKeyError(self, type: type, args: args)
+    return self.memory.newKeyError(type: type, args: args)
   }
 
   // MARK: - Lookup error
@@ -407,7 +407,7 @@ extension Py {
   public func newLookupError(message: String) -> PyLookupError {
     let type = self.errorTypes.lookupError
     let args = self.createErrorArgs(message: message)
-    return self.memory.newLookupError(self, type: type, args: args)
+    return self.memory.newLookupError(type: type, args: args)
   }
 
   // MARK: - Stop iteration
@@ -416,7 +416,7 @@ extension Py {
   public func newStopIteration(value: PyObject?) -> PyStopIteration {
     let type = self.errorTypes.stopIteration
     let valueArg = value?.asObject ?? self.none.asObject
-    return self.memory.newStopIteration(self, type: type, value: valueArg)
+    return self.memory.newStopIteration(type: type, value: valueArg)
   }
 
   // MARK: - Name errors
@@ -425,7 +425,7 @@ extension Py {
   public func newNameError(message: String) -> PyNameError {
     let type = self.errorTypes.nameError
     let args = self.createErrorArgs(message: message)
-    return self.memory.newNameError(self, type: type, args: args)
+    return self.memory.newNameError(type: type, args: args)
   }
 
   /// Local name referenced but not bound to a value.
@@ -433,7 +433,7 @@ extension Py {
     let message = "local variable '\(variableName)' referenced before assignment"
     let args = self.createErrorArgs(message: message)
     let type = self.errorTypes.unboundLocalError
-    return self.memory.newUnboundLocalError(self, type: type, args: args)
+    return self.memory.newUnboundLocalError(type: type, args: args)
   }
 
   // MARK: - Unicode encoding
@@ -463,7 +463,7 @@ extension Py {
     let message = "'\(encoding)' codec can't decode data"
     let args = self.createErrorArgs(message: message)
     let type = self.errorTypes.unicodeDecodeError
-    let error = self.memory.newUnicodeDecodeError(self, type: type, args: args)
+    let error = self.memory.newUnicodeDecodeError(type: type, args: args)
 
     let dict = error.asBaseException.getDict(self)
     dict.set(self, id: .object, value: bytes.asObject)
@@ -487,7 +487,7 @@ extension Py {
     let message = "'\(encoding)' codec can't encode data"
     let args = self.createErrorArgs(message: message)
     let type = self.errorTypes.unicodeEncodeError
-    let error = self.memory.newUnicodeEncodeError(self, type: type, args: args)
+    let error = self.memory.newUnicodeEncodeError(type: type, args: args)
 
     let dict = error.asBaseException.getDict(self)
     dict.set(self, id: .object, value: string.asObject)
@@ -508,7 +508,7 @@ extension Py {
   public func newAssertionError(message: String) -> PyAssertionError {
     let type = self.errorTypes.assertionError
     let args = self.createErrorArgs(message: message)
-    return self.memory.newAssertionError(self, type: type, args: args)
+    return self.memory.newAssertionError(type: type, args: args)
   }
 
   // MARK: - Import error
@@ -530,8 +530,7 @@ extension Py {
     let moduleNameObject = moduleName.map(self.newString(_:))
     let modulePathObject = modulePath.map(self.newString(_:))
     let type = self.errorTypes.importError
-    return self.memory.newImportError(self,
-                                      type: type,
+    return self.memory.newImportError(type: type,
                                       msg: messageObject.asObject,
                                       moduleName: moduleNameObject?.asObject,
                                       modulePath: modulePathObject?.asObject)
@@ -542,7 +541,7 @@ extension Py {
   public func newEOFError(message: String) -> PyEOFError {
     let type = self.errorTypes.eofError
     let args = self.createErrorArgs(message: message)
-    return self.memory.newEOFError(self, type: type, args: args)
+    return self.memory.newEOFError(type: type, args: args)
   }
 
   // MARK: - Syntax error
@@ -577,8 +576,7 @@ extension Py {
                              text: PyString?,
                              printFileAndLine: PyBool?) -> PySyntaxError {
     let type = self.errorTypes.syntaxError
-    return self.memory.newSyntaxError(self,
-                                      type: type,
+    return self.memory.newSyntaxError(type: type,
                                       msg: message?.asObject,
                                       filename: filename?.asObject,
                                       lineno: lineno?.asObject,
@@ -618,8 +616,7 @@ extension Py {
                                   text: PyString?,
                                   printFileAndLine: PyBool?) -> PyIndentationError {
     let type = self.errorTypes.indentationError
-    return self.memory.newIndentationError(self,
-                                           type: type,
+    return self.memory.newIndentationError(type: type,
                                            msg: message?.asObject,
                                            filename: filename?.asObject,
                                            lineno: lineno?.asObject,
@@ -633,7 +630,7 @@ extension Py {
   public func newKeyboardInterrupt() -> PyKeyboardInterrupt {
     let args = self.emptyTuple
     let type = self.errorTypes.keyboardInterrupt
-    return self.memory.newKeyboardInterrupt(self, type: type, args: args)
+    return self.memory.newKeyboardInterrupt(type: type, args: args)
   }
 
   // MARK: - Recursion
@@ -642,7 +639,7 @@ extension Py {
     let message = self.intern(string: "maximum recursion depth exceeded")
     let args = self.createErrorArgs(message: message)
     let type = self.errorTypes.recursionError
-    return self.memory.newRecursionError(self, type: type, args: args)
+    return self.memory.newRecursionError(type: type, args: args)
   }
 
   // MARK: - Factory from type

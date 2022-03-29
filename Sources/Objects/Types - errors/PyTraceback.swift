@@ -298,8 +298,7 @@ public struct PyTraceback: PyObjectMixin {
       return .typeError(py, message: message)
     }
 
-    let result = py.memory.newTraceback(py,
-                                        type: type,
+    let result = py.memory.newTraceback(type: type,
                                         next: next,
                                         frame: frame,
                                         lastInstruction: lastInstruction,

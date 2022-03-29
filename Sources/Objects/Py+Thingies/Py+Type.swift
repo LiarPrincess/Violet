@@ -19,8 +19,7 @@ extension Py {
                       debugFn: @escaping PyType.DebugFn,
                       deinitialize: @escaping PyType.DeinitializeFn) -> PyType {
     let metatype = self.types.type
-    return self.memory.newType(self,
-                               type: metatype,
+    return self.memory.newType(type: metatype,
                                name: name,
                                qualname: qualname,
                                flags: flags,

@@ -184,7 +184,7 @@ public struct {swift_type_name}: PyErrorMixin {{
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {{
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.{py_memory_function_name}(py, type: type, args: argsTuple)
+    let result = py.memory.{py_memory_function_name}(type: type, args: argsTuple)
     return PyResult(result)
   }}
 

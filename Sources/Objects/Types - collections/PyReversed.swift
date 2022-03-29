@@ -181,7 +181,7 @@ public struct PyReversed: PyObjectMixin {
     case let .error(e): return .error(e)
     }
 
-    let result = py.memory.newReversed(py, type: type, sequence: object, count: count)
+    let result = py.memory.newReversed(type: type, sequence: object, count: count)
     return PyResult(result)
   }
 

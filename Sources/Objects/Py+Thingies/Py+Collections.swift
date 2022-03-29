@@ -24,7 +24,7 @@ extension Py {
     }
 
     let type = self.types.tuple
-    return self.memory.newTuple(self, type: type, elements: elements)
+    return self.memory.newTuple(type: type, elements: elements)
   }
 
   /// PyObject * PyList_AsTuple(PyObject *v)
@@ -49,7 +49,7 @@ extension Py {
 
   public func newIterator(tuple: PyTuple) -> PyTupleIterator {
     let type = self.types.tuple_iterator
-    return self.memory.newTupleIterator(self, type: type, tuple: tuple)
+    return self.memory.newTupleIterator(type: type, tuple: tuple)
   }
 
   // MARK: - List
@@ -62,7 +62,7 @@ extension Py {
   /// PyObject * PyList_New(Py_ssize_t size)
   public func newList(elements: [PyObject]) -> PyList {
     let type = self.types.list
-    return self.memory.newList(self, type: type, elements: elements)
+    return self.memory.newList(type: type, elements: elements)
   }
 
   public func newList(iterable: PyObject) -> PyResultGen<PyList> {
@@ -88,12 +88,12 @@ extension Py {
 
   public func newIterator(list: PyList) -> PyListIterator {
     let type = self.types.list_iterator
-    return self.memory.newListIterator(self, type: type, list: list)
+    return self.memory.newListIterator(type: type, list: list)
   }
 
   public func newReverseIterator(list: PyList) -> PyListReverseIterator {
     let type = self.types.list_reverseiterator
-    return self.memory.newListReverseIterator(self, type: type, list: list)
+    return self.memory.newListReverseIterator(type: type, list: list)
   }
 
   // MARK: - Set
@@ -105,7 +105,7 @@ extension Py {
 
   internal func newSet(elements: PySet.OrderedSet) -> PySet {
     let type = self.types.set
-    return self.memory.newSet(self, type: type, elements: elements)
+    return self.memory.newSet(type: type, elements: elements)
   }
 
   /// PyObject * PySet_New(PyObject *iterable)
@@ -159,7 +159,7 @@ extension Py {
 
   public func newIterator(set: PySet) -> PySetIterator {
     let type = self.types.set_iterator
-    return self.memory.newSetIterator(self, type: type, set: set)
+    return self.memory.newSetIterator(type: type, set: set)
   }
 
   // MARK: - Frozen set
@@ -174,7 +174,7 @@ extension Py {
     }
 
     let type = self.types.frozenset
-    return self.memory.newFrozenSet(self, type: type, elements: elements)
+    return self.memory.newFrozenSet(type: type, elements: elements)
   }
 
   public func newFrozenSet(elements args: [PyObject]) -> PyResultGen<PyFrozenSet> {
@@ -184,7 +184,7 @@ extension Py {
 
  public func newIterator(set: PyFrozenSet) -> PySetIterator {
    let type = self.types.set_iterator
-   return self.memory.newSetIterator(self, type: type, frozenSet: set)
+   return self.memory.newSetIterator(type: type, frozenSet: set)
  }
 
   // MARK: - Dictionary
@@ -196,7 +196,7 @@ extension Py {
 
   internal func newDict(elements: PyDict.OrderedDictionary) -> PyDict {
     let type = self.types.dict
-    return self.memory.newDict(self, type: type, elements: elements)
+    return self.memory.newDict(type: type, elements: elements)
   }
 
   public struct DictionaryElement {
@@ -282,32 +282,32 @@ extension Py {
 
   public func newDictKeys(dict: PyDict) -> PyDictKeys {
     let type = self.types.dict_keys
-    return self.memory.newDictKeys(self, type: type, dict: dict)
+    return self.memory.newDictKeys(type: type, dict: dict)
   }
 
   public func newDictItems(dict: PyDict) -> PyDictItems {
     let type = self.types.dict_items
-    return self.memory.newDictItems(self, type: type, dict: dict)
+    return self.memory.newDictItems(type: type, dict: dict)
   }
 
   public func newDictValues(dict: PyDict) -> PyDictValues {
     let type = self.types.dict_values
-    return self.memory.newDictValues(self, type: type, dict: dict)
+    return self.memory.newDictValues(type: type, dict: dict)
   }
 
   public func newIterator(keys dict: PyDict) -> PyDictKeyIterator {
     let type = self.types.dict_keyiterator
-    return self.memory.newDictKeyIterator(self, type: type, dict: dict)
+    return self.memory.newDictKeyIterator(type: type, dict: dict)
   }
 
   public func newIterator(items dict: PyDict) -> PyDictItemIterator {
     let type = self.types.dict_itemiterator
-    return self.memory.newDictItemIterator(self, type: type, dict: dict)
+    return self.memory.newDictItemIterator(type: type, dict: dict)
   }
 
   public func newIterator(values dict: PyDict) -> PyDictValueIterator {
     let type = self.types.dict_valueiterator
-    return self.memory.newDictValueIterator(self, type: type, dict: dict)
+    return self.memory.newDictValueIterator(type: type, dict: dict)
   }
 
   // MARK: - Keys
@@ -373,12 +373,7 @@ extension Py {
     }
 
     let type = self.types.range
-    let result = self.memory.newRange(self,
-                                      type: type,
-                                      start: start,
-                                      stop: stop,
-                                      step: step)
-
+    let result = self.memory.newRange(type: type, start: start, stop: stop, step: step)
     return .value(result)
   }
 
@@ -438,8 +433,7 @@ extension Py {
                                step: BigInt,
                                length: BigInt) -> PyRangeIterator {
     let type = self.types.range_iterator
-    return self.memory.newRangeIterator(self,
-                                        type: type,
+    return self.memory.newRangeIterator(type: type,
                                         start: start,
                                         step: step,
                                         length: length)
@@ -462,8 +456,7 @@ extension Py {
     }
 
     let type = self.types.enumerate
-    let result = self.memory.newEnumerate(self,
-                                          type: type,
+    let result = self.memory.newEnumerate(type: type,
                                           iterator: iterator,
                                           initialIndex: initialIndex)
 
@@ -482,8 +475,7 @@ extension Py {
                        step: PyObject? = nil) -> PySlice {
     let type = self.types.slice
     let none = self.none.asObject
-    return self.memory.newSlice(self,
-                                type: type,
+    return self.memory.newSlice(type: type,
                                 start: start ?? none,
                                 stop: stop ?? none,
                                 step: step ?? none)

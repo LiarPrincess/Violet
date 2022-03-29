@@ -724,7 +724,7 @@ public struct PyComplex: PyObjectMixin {
     let isBuiltin = Self.isBuiltinComplexType(py, type: type)
     let result = isBuiltin ?
       py.newComplex(real: value.real, imag: value.imag) :
-      py.memory.newComplex(py, type: type, real: value.real, imag: value.imag)
+      py.memory.newComplex(type: type, real: value.real, imag: value.imag)
 
     return PyResult(result)
   }

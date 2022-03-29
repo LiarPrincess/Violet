@@ -22,7 +22,7 @@ extension Py {
 
     let big = BigInt(value)
     let type = self.types.int
-    return self.memory.newInt(self, type: type, value: big)
+    return self.memory.newInt(type: type, value: big)
   }
 
   public func newInt(_ value: BigInt) -> PyInt {
@@ -31,7 +31,7 @@ extension Py {
     }
 
     let type = self.types.int
-    return self.memory.newInt(self, type: type, value: value)
+    return self.memory.newInt(type: type, value: value)
   }
 
   /// PyObject *
@@ -56,14 +56,14 @@ extension Py {
 
   public func newFloat(_ value: Double) -> PyFloat {
     let type = self.types.float
-    return self.memory.newFloat(self, type: type, value: value)
+    return self.memory.newFloat(type: type, value: value)
   }
 
   // MARK: - Complex
 
   public func newComplex(real: Double, imag: Double) -> PyComplex {
     let type = self.types.complex
-    return self.memory.newComplex(self, type: type, real: real, imag: imag)
+    return self.memory.newComplex(type: type, real: real, imag: imag)
   }
 
   // MARK: - Round

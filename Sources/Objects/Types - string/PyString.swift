@@ -972,7 +972,7 @@ public struct PyString: PyObjectMixin, AbstractString {
     let isBuiltin = type === py.types.str
     let result = isBuiltin ?
       py.newString(value) :
-      py.memory.newString(py, type: type, value: value)
+      py.memory.newString(type: type, value: value)
 
     return PyResult(result)
   }

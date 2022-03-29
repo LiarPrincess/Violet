@@ -3,10 +3,16 @@ public final class PyMemory {
   private var firstAllocatedObject: PyObject?
   private var lastAllocatedObject: PyObject?
 
+  internal let py: Py
+
   #if DEBUG
   private var allocatedObjectCount = 0
   private var destroyedObjectCount = 0
   #endif
+
+  internal init(_ py: Py) {
+    self.py = py
+  }
 
   // MARK: - Object
 
@@ -45,7 +51,7 @@ public final class PyMemory {
     return RawPtr.allocate(byteCount: byteCount, alignment: alignment)
   }
 
-  public func destroy(_ py: Py, object: PyObject) {
+  public func destroy(object: PyObject) {
     let ptr = object.ptr
 
     // 1. Remove it from the list.
@@ -65,7 +71,7 @@ public final class PyMemory {
 
     // 2. Deinitialize & deallocate.
     // A new object may be allocated during 'deinitialize'!
-    object.type.deinitialize(py, ptr)
+    object.type.deinitialize(self.py, ptr)
     object.ptr.deallocate()
 
 #if DEBUG
@@ -86,7 +92,7 @@ public final class PyMemory {
 
     // Remember that objects may be created in the 'deinitialize' functions!
     while let object = memory.lastAllocatedObject {
-      memory.destroy(py, object: object)
+      memory.destroy(object: object)
     }
 
     py.deinitialize()

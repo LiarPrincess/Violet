@@ -902,7 +902,7 @@ public struct PyDict: PyObjectMixin {
     let isBuiltin = type === py.types.dict
     let dict = isBuiltin ?
       py.newDict(elements: elements) :
-      py.memory.newDict(py, type: type, elements: elements)
+      py.memory.newDict(type: type, elements: elements)
 
     return .value(dict.asObject)
   }

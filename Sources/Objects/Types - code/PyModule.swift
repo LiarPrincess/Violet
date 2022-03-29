@@ -351,7 +351,7 @@ public struct PyModule: PyObjectMixin {
                                type: PyType,
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
-    let result = py.memory.newModule(py, type: type, name: nil, doc: nil, __dict__: nil)
+    let result = py.memory.newModule(type: type, name: nil, doc: nil, __dict__: nil)
     return PyResult(result)
   }
 

@@ -944,7 +944,7 @@ public struct PyFloat: PyObjectMixin {
     let isBuiltin = Self.isBuiltinFloatType(py, type: type)
     let result = isBuiltin ?
       py.newFloat(value) :
-      py.memory.newFloat(py, type: type, value: value)
+      py.memory.newFloat(type: type, value: value)
 
     return PyResult(result)
   }

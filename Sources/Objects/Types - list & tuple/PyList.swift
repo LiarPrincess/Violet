@@ -645,7 +645,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
     // (if we even have interned 'list').
     let result: PyList = isBuiltin ?
     py.newList(elements: elements) :
-    py.memory.newList(py, type: type, elements: elements)
+    py.memory.newList(type: type, elements: elements)
 
     return PyResult(result)
   }

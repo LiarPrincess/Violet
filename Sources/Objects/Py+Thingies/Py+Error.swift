@@ -131,8 +131,7 @@ extension Py {
     let type = self.types.traceback
     let instruction = self.newInt(frame.currentInstructionIndex ?? 0)
     let line = self.newInt(frame.currentInstructionLine)
-    return self.memory.newTraceback(self,
-                                    type: type,
+    return self.memory.newTraceback(type: type,
                                     next: next,
                                     frame: frame,
                                     lastInstruction: instruction,

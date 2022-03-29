@@ -1128,7 +1128,7 @@ public struct PyInt: PyObjectMixin {
     let isBuiltin = Self.isBuiltinIntType(py, type: type)
     let result = isBuiltin ?
       py.newInt(value) :
-      py.memory.newInt(py, type: type, value: value)
+      py.memory.newInt(type: type, value: value)
 
     return PyResult(result)
   }

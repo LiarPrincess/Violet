@@ -288,8 +288,7 @@ public struct PySuper: PyObjectMixin {
                                type: PyType,
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
-    let result = py.memory.newSuper(py,
-                                    type: type,
+    let result = py.memory.newSuper(type: type,
                                     requestedType: nil,
                                     object: nil,
                                     objectType: nil)

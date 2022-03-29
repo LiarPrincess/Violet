@@ -145,7 +145,7 @@ public struct PyFilter: PyObjectMixin {
     case let .error(e): return .error(e)
     }
 
-    let result = py.memory.newFilter(py, type: type, fn: fn, iterator: iter)
+    let result = py.memory.newFilter(type: type, fn: fn, iterator: iter)
     return PyResult(result)
   }
 }

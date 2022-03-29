@@ -134,7 +134,7 @@ public struct Py: CustomStringConvertible {
     self.delegatePtr.initialize(to: delegate)
     self.fileSystemPtr.initialize(to: fileSystem)
 
-    let memory = PyMemory()
+    let memory = PyMemory(self)
     let hasher = Hasher(key0: config.hashKey0, key1: config.hashKey1)
     self.memoryPtr.initialize(to: memory)
     self.hasherPtr.initialize(to: hasher)
@@ -158,16 +158,20 @@ public struct Py: CustomStringConvertible {
 
     // Common objects.
     // We will create those objects with valid 'type' pointers, but the type
-    // itself is not currently filled (no methods in '__dict__' etc).
-    self.truePtr.initialize(to: memory.newBool(self, type: types.bool, value: .init(true)))
-    self.falsePtr.initialize(to: memory.newBool(self, type: types.bool, value: .init(false)))
-    self.nonePtr.initialize(to: memory.newNone(self, type: types.none))
-    self.notImplementedPtr.initialize(to: memory.newNotImplemented(self, type: types.notImplemented))
-    self.ellipsisPtr.initialize(to: memory.newEllipsis(self, type: types.ellipsis))
-    self.emptyTuplePtr.initialize(to: memory.newTuple(self, type: types.tuple, elements: []))
-    self.emptyStringPtr.initialize(to: memory.newString(self, type: types.str, value: ""))
-    self.emptyBytesPtr.initialize(to: memory.newBytes(self, type: types.bytes, elements: Data()))
-    self.emptyFrozenSetPtr.initialize(to: memory.newFrozenSet(self, type: types.frozenset, elements: .init()))
+    // itself not filled (no methods in '__dict__' etc).
+    // Disable 'redundantSelf' otherwise it would insert 'value: self.true'.
+    // swiftformat:disable redundantSelf
+    self.truePtr.initialize(to: memory.newBool(type: types.bool, value: true))
+    self.falsePtr.initialize(to: memory.newBool(type: types.bool, value: false))
+    self.nonePtr.initialize(to: memory.newNone(type: types.none))
+    self.notImplementedPtr.initialize(to: memory.newNotImplemented(type: types.notImplemented))
+    self.ellipsisPtr.initialize(to: memory.newEllipsis(type: types.ellipsis))
+    self.emptyTuplePtr.initialize(to: memory.newTuple(type: types.tuple, elements: []))
+    self.emptyStringPtr.initialize(to: memory.newString(type: types.str, value: ""))
+    self.emptyBytesPtr.initialize(to: memory.newBytes(type: types.bytes, elements: Data()))
+    self.emptyFrozenSetPtr
+      .initialize(to: memory.newFrozenSet(type: types.frozenset, elements: OrderedSet()))
+    // swiftformat:enable redundantSelf
 
     // Predefined commonly used '__dict__' keys:
     let idStrings = IdString.Collection(self)
@@ -175,7 +179,7 @@ public struct Py: CustomStringConvertible {
 
     // When filling 'type.__dict__' we will also start interning values:
     let internedInts = Self.internedIntRange.map { int in
-      memory.newInt(self, type: types.int, value: BigInt(int))
+      memory.newInt(type: types.int, value: BigInt(int))
     }
 
     self.internedIntsPtr.initialize(to: internedInts)

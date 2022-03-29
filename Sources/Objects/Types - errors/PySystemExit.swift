@@ -129,7 +129,7 @@ public struct PySystemExit: PyErrorMixin {
                                args: [PyObject],
                                kwargs: PyDict?) -> PyResult {
     let argsTuple = py.newTuple(elements: args)
-    let result = py.memory.newSystemExit(py, type: type, args: argsTuple)
+    let result = py.memory.newSystemExit(type: type, args: argsTuple)
     return PyResult(result)
   }
 

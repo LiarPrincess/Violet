@@ -186,7 +186,6 @@ extension PyType {
     )
 
     let type = py.memory.newType(
-      py,
       type: metatype, // <- Important!
       name: name,
       qualname: name, // May be overridden later (if we have it in dict)

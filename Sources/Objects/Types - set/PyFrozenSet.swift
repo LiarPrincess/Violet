@@ -359,7 +359,7 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
 
     let result: PyFrozenSet = isBuiltin ?
       py.newFrozenSet(elements: elements) :
-      py.memory.newFrozenSet(py, type: type, elements: elements)
+      py.memory.newFrozenSet(type: type, elements: elements)
 
     return PyResult(result)
   }

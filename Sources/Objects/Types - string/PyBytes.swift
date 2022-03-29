@@ -693,7 +693,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
     let isBuiltin = type === py.types.bytes
     let result = isBuiltin ?
       py.newBytes(elements) : // There is a potential to re-use interned value!
-      py.memory.newBytes(py, type: type, elements: elements)
+      py.memory.newBytes(type: type, elements: elements)
 
     return PyResult(result)
   }

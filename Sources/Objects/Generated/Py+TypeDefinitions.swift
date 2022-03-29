@@ -105,7 +105,6 @@ extension Py {
       // Btw. 'self.bool' has to be last because it uses 'self.int' as base!
 
       self.builtinFunction = memory.newType(
-        py,
         type: self.type,
         name: "builtinFunction",
         qualname: "builtinFunction",
@@ -121,7 +120,6 @@ extension Py {
       )
 
       self.builtinMethod = memory.newType(
-        py,
         type: self.type,
         name: "builtinMethod",
         qualname: "builtinMethod",
@@ -137,7 +135,6 @@ extension Py {
       )
 
       self.bytearray = memory.newType(
-        py,
         type: self.type,
         name: "bytearray",
         qualname: "bytearray",
@@ -153,7 +150,6 @@ extension Py {
       )
 
       self.bytearray_iterator = memory.newType(
-        py,
         type: self.type,
         name: "bytearray_iterator",
         qualname: "bytearray_iterator",
@@ -169,7 +165,6 @@ extension Py {
       )
 
       self.bytes = memory.newType(
-        py,
         type: self.type,
         name: "bytes",
         qualname: "bytes",
@@ -185,7 +180,6 @@ extension Py {
       )
 
       self.bytes_iterator = memory.newType(
-        py,
         type: self.type,
         name: "bytes_iterator",
         qualname: "bytes_iterator",
@@ -201,7 +195,6 @@ extension Py {
       )
 
       self.callable_iterator = memory.newType(
-        py,
         type: self.type,
         name: "callable_iterator",
         qualname: "callable_iterator",
@@ -217,7 +210,6 @@ extension Py {
       )
 
       self.cell = memory.newType(
-        py,
         type: self.type,
         name: "cell",
         qualname: "cell",
@@ -233,7 +225,6 @@ extension Py {
       )
 
       self.classmethod = memory.newType(
-        py,
         type: self.type,
         name: "classmethod",
         qualname: "classmethod",
@@ -249,7 +240,6 @@ extension Py {
       )
 
       self.code = memory.newType(
-        py,
         type: self.type,
         name: "code",
         qualname: "code",
@@ -265,7 +255,6 @@ extension Py {
       )
 
       self.complex = memory.newType(
-        py,
         type: self.type,
         name: "complex",
         qualname: "complex",
@@ -281,7 +270,6 @@ extension Py {
       )
 
       self.dict = memory.newType(
-        py,
         type: self.type,
         name: "dict",
         qualname: "dict",
@@ -297,7 +285,6 @@ extension Py {
       )
 
       self.dict_itemiterator = memory.newType(
-        py,
         type: self.type,
         name: "dict_itemiterator",
         qualname: "dict_itemiterator",
@@ -313,7 +300,6 @@ extension Py {
       )
 
       self.dict_items = memory.newType(
-        py,
         type: self.type,
         name: "dict_items",
         qualname: "dict_items",
@@ -329,7 +315,6 @@ extension Py {
       )
 
       self.dict_keyiterator = memory.newType(
-        py,
         type: self.type,
         name: "dict_keyiterator",
         qualname: "dict_keyiterator",
@@ -345,7 +330,6 @@ extension Py {
       )
 
       self.dict_keys = memory.newType(
-        py,
         type: self.type,
         name: "dict_keys",
         qualname: "dict_keys",
@@ -361,7 +345,6 @@ extension Py {
       )
 
       self.dict_valueiterator = memory.newType(
-        py,
         type: self.type,
         name: "dict_valueiterator",
         qualname: "dict_valueiterator",
@@ -377,7 +360,6 @@ extension Py {
       )
 
       self.dict_values = memory.newType(
-        py,
         type: self.type,
         name: "dict_values",
         qualname: "dict_values",
@@ -393,7 +375,6 @@ extension Py {
       )
 
       self.ellipsis = memory.newType(
-        py,
         type: self.type,
         name: "ellipsis",
         qualname: "ellipsis",
@@ -409,7 +390,6 @@ extension Py {
       )
 
       self.enumerate = memory.newType(
-        py,
         type: self.type,
         name: "enumerate",
         qualname: "enumerate",
@@ -425,7 +405,6 @@ extension Py {
       )
 
       self.filter = memory.newType(
-        py,
         type: self.type,
         name: "filter",
         qualname: "filter",
@@ -441,7 +420,6 @@ extension Py {
       )
 
       self.float = memory.newType(
-        py,
         type: self.type,
         name: "float",
         qualname: "float",
@@ -457,7 +435,6 @@ extension Py {
       )
 
       self.frame = memory.newType(
-        py,
         type: self.type,
         name: "frame",
         qualname: "frame",
@@ -473,7 +450,6 @@ extension Py {
       )
 
       self.frozenset = memory.newType(
-        py,
         type: self.type,
         name: "frozenset",
         qualname: "frozenset",
@@ -489,7 +465,6 @@ extension Py {
       )
 
       self.function = memory.newType(
-        py,
         type: self.type,
         name: "function",
         qualname: "function",
@@ -505,7 +480,6 @@ extension Py {
       )
 
       self.int = memory.newType(
-        py,
         type: self.type,
         name: "int",
         qualname: "int",
@@ -521,7 +495,6 @@ extension Py {
       )
 
       self.iterator = memory.newType(
-        py,
         type: self.type,
         name: "iterator",
         qualname: "iterator",
@@ -537,7 +510,6 @@ extension Py {
       )
 
       self.list = memory.newType(
-        py,
         type: self.type,
         name: "list",
         qualname: "list",
@@ -553,7 +525,6 @@ extension Py {
       )
 
       self.list_iterator = memory.newType(
-        py,
         type: self.type,
         name: "list_iterator",
         qualname: "list_iterator",
@@ -569,7 +540,6 @@ extension Py {
       )
 
       self.list_reverseiterator = memory.newType(
-        py,
         type: self.type,
         name: "list_reverseiterator",
         qualname: "list_reverseiterator",
@@ -585,7 +555,6 @@ extension Py {
       )
 
       self.map = memory.newType(
-        py,
         type: self.type,
         name: "map",
         qualname: "map",
@@ -601,7 +570,6 @@ extension Py {
       )
 
       self.method = memory.newType(
-        py,
         type: self.type,
         name: "method",
         qualname: "method",
@@ -617,7 +585,6 @@ extension Py {
       )
 
       self.module = memory.newType(
-        py,
         type: self.type,
         name: "module",
         qualname: "module",
@@ -633,7 +600,6 @@ extension Py {
       )
 
       self.simpleNamespace = memory.newType(
-        py,
         type: self.type,
         name: "SimpleNamespace",
         qualname: "SimpleNamespace",
@@ -649,7 +615,6 @@ extension Py {
       )
 
       self.none = memory.newType(
-        py,
         type: self.type,
         name: "NoneType",
         qualname: "NoneType",
@@ -665,7 +630,6 @@ extension Py {
       )
 
       self.notImplemented = memory.newType(
-        py,
         type: self.type,
         name: "NotImplementedType",
         qualname: "NotImplementedType",
@@ -681,7 +645,6 @@ extension Py {
       )
 
       self.property = memory.newType(
-        py,
         type: self.type,
         name: "property",
         qualname: "property",
@@ -697,7 +660,6 @@ extension Py {
       )
 
       self.range = memory.newType(
-        py,
         type: self.type,
         name: "range",
         qualname: "range",
@@ -713,7 +675,6 @@ extension Py {
       )
 
       self.range_iterator = memory.newType(
-        py,
         type: self.type,
         name: "range_iterator",
         qualname: "range_iterator",
@@ -729,7 +690,6 @@ extension Py {
       )
 
       self.reversed = memory.newType(
-        py,
         type: self.type,
         name: "reversed",
         qualname: "reversed",
@@ -745,7 +705,6 @@ extension Py {
       )
 
       self.set = memory.newType(
-        py,
         type: self.type,
         name: "set",
         qualname: "set",
@@ -761,7 +720,6 @@ extension Py {
       )
 
       self.set_iterator = memory.newType(
-        py,
         type: self.type,
         name: "set_iterator",
         qualname: "set_iterator",
@@ -777,7 +735,6 @@ extension Py {
       )
 
       self.slice = memory.newType(
-        py,
         type: self.type,
         name: "slice",
         qualname: "slice",
@@ -793,7 +750,6 @@ extension Py {
       )
 
       self.staticmethod = memory.newType(
-        py,
         type: self.type,
         name: "staticmethod",
         qualname: "staticmethod",
@@ -809,7 +765,6 @@ extension Py {
       )
 
       self.str = memory.newType(
-        py,
         type: self.type,
         name: "str",
         qualname: "str",
@@ -825,7 +780,6 @@ extension Py {
       )
 
       self.str_iterator = memory.newType(
-        py,
         type: self.type,
         name: "str_iterator",
         qualname: "str_iterator",
@@ -841,7 +795,6 @@ extension Py {
       )
 
       self.`super` = memory.newType(
-        py,
         type: self.type,
         name: "super",
         qualname: "super",
@@ -857,7 +810,6 @@ extension Py {
       )
 
       self.textFile = memory.newType(
-        py,
         type: self.type,
         name: "TextFile",
         qualname: "TextFile",
@@ -873,7 +825,6 @@ extension Py {
       )
 
       self.traceback = memory.newType(
-        py,
         type: self.type,
         name: "traceback",
         qualname: "traceback",
@@ -889,7 +840,6 @@ extension Py {
       )
 
       self.tuple = memory.newType(
-        py,
         type: self.type,
         name: "tuple",
         qualname: "tuple",
@@ -905,7 +855,6 @@ extension Py {
       )
 
       self.tuple_iterator = memory.newType(
-        py,
         type: self.type,
         name: "tuple_iterator",
         qualname: "tuple_iterator",
@@ -921,7 +870,6 @@ extension Py {
       )
 
       self.zip = memory.newType(
-        py,
         type: self.type,
         name: "zip",
         qualname: "zip",
@@ -938,7 +886,6 @@ extension Py {
 
       // And now we can set 'bool' (because we have 'self.int').
       self.bool = memory.newType(
-        py,
         type: self.type,
         name: "bool",
         qualname: "bool",

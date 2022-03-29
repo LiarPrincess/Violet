@@ -513,7 +513,7 @@ public struct PySet: PyObjectMixin, AbstractSet {
 
     let result: PySet = isBuiltin ?
       py.newSet(elements: elements) :
-      py.memory.newSet(py, type: type, elements: elements)
+      py.memory.newSet(type: type, elements: elements)
 
     return PyResult(result)
   }
