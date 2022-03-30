@@ -190,7 +190,7 @@ tuplesubscript(PyTupleObject* self, PyObject* item)
 }
 ```
 
-This technique is also used for Linux [errno](https://www.man7.org/linux/man-pages/man3/errno.3.html):
+This technique is also used for Unix [errno](https://www.man7.org/linux/man-pages/man3/errno.3.html):
 > The <errno.h> header file defines the integer variable errno, which is set by system calls and some library functions in the event of an error to indicate what went wrong.
 >
 > (...)
@@ -381,6 +381,10 @@ So, which one did we choose?
   The main difficulty when using this method is that it requires a lot of typing (mostly `switch` statements). While we *could* write Swift preprocessor to solve this, it is hardly worth the effort (also c'mon…). Btw. I'm not trying to be *that* person, but [Rust has solved it](https://doc.rust-lang.org/rust-by-example/std/result/question_mark.html) ([this](https://www.lpalmieri.com/posts/error-handling-rust/#the-error-trait) is also good). Btw. they have macros.
 
   Anyway, this is the winner. Yay!
+
+  Btw. we did a small modification, so that we have a separate:
+  - `PyResultGen<Wrapped>` - either `Wrapped` or `PyBaseException`.
+  - `PyResult` - either `PyObject` or `PyBaseException`. This is basically the same thing as `PyResultGen<PyObject>`, but without generics, so the compiler should be able to emit better code.
 
 ## Side-notes
 

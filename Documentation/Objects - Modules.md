@@ -27,37 +27,74 @@ From all of those modules only the `importlib` is implemented in Python, all of 
 
 ## Implementation
 
-The obvious answer would be to create a subclass of `PyModule` class for every implemented module. Unfortunately this has a conceptual problem where a class contains methods from both `PyModule` and from specific implementation.
-
-The better way is to create a separate class to store all of the module properties/functions and then create a `PyModule` instance that refers to them. To do this we will pre-specialize function to module implementation object (by partial application) and then store it inside `PyModule.__dict__` as a Python object:
+For every module we will create an implementation `class` to store all of the module properties/functions and then create a `PyModule` instance that refers to them:
 
 ```Swift
-public final class Sys {
+public final class Sys: PyModuleImplementation {
 
-  /// sys.setrecursionlimit(limit)
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.setrecursionlimit).
-  public func setRecursionLimit(limit: PyObject) -> PyResult<PyNone> {
-    // Logic needed to set 'self.recursionLimit'…
+  internal static let moduleName = "sys"
+  internal static let doc = "Things…"
+
+  /// This dict will be used inside our `PyModule` instance.
+  internal let __dict__: PyDict
+  internal let py: Py
+
+  /// Create `Python` module based on this object.
+  internal func createModule() -> PyModule {
+    return self.py.newModule(name: Self.moduleName,
+                             doc: Self.doc,
+                             dict: self.__dict__)
+  }
+
+  internal func fill__dict__() {
+    let ps1 = self.py.newString(">>> ")
+    let ps2 = self.py.newString("... ")
+    self.setOrTrap(.ps1, value: ps1)
+    self.setOrTrap(.ps2, value: ps2)
+
+    self.setOrTrap(.getrecursionlimit, doc: Self.getRecursionLimitDoc, fn: Self.getrecursionlimit(_:))
+    self.setOrTrap(.setrecursionlimit, doc: Self.setRecursionLimitDoc, fn: Self.setrecursionlimit(_:limit:))
+
+    // And so on…
   }
 }
 ```
 
-Now we can extract `Sys.setRecursionLimit(limit:)`:
-
+Then we store both `PyModule` and its implementation on `py`:
 ```Swift
-// original :: (self: Sys) -> (limit: PyObject) -> PyResult<PyNone>
-let original = Sys.setRecursionLimit(limit:)
+public struct Py: CustomStringConvertible {
+  // sourcery: storedProperty
+  /// Python `sys` module.
+  public var sys: Sys { self.sysPtr.pointee }
+  // sourcery: storedProperty
+  /// `self.sys` but as a Python module (`PyModule`).
+  public var sysModule: PyModule { self.sysModulePtr.pointee }
+}
 ```
 
-This is kinda weird, but it means: *given an instance of `Sys` (as denoted by `(self: Sys)`) I will give you a function from `(limit: PyObject)` to `PyResult<PyNone>`”*:
+To implement an method we implement it as an `static` function that will interact with module implementation stored on `py`:
 
 ```Swift
-let sys = Sys()
-// specialized :: (limit: PyObject) -> PyResult<PyNone>
-let specialized = original(sys)
-```
+extension Sys {
 
-This is exactly the type that should be stored as `setrecursionlimit` inside in Python `sys` module. Now we just need to wrap it inside `builtinFunction` object and put it inside `__dict__`.
+  internal static func getrecursionlimit(_ py: Py) -> PyResult {
+    let result = py.sys.recursionLimit // <- HERE
+    return PyResult(result)
+  }
+
+  internal static func setrecursionlimit(_ py: Py, limit: PyObject) -> PyResult {
+    if let error = py.sys.setRecursionLimit(limit) {  // <- HERE
+      return .error(error)
+    }
+
+    return .none(py)
+  }
+
+    public func setRecursionLimit(_ limit: PyObject) -> PyBaseException? {
+      // Things…
+  }
+}
+```
 
 ## PyModuleImplementation
 
@@ -86,7 +123,7 @@ public final class Sys: PyModuleImplementation {
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.ps1).
   ///
   /// String specifying the primary prompt of the interpreter.
-  public func getPS1() -> PyResult<PyObject> {
+  public func getPS1() -> PyResult {
     return self.get(.ps1)
   }
 

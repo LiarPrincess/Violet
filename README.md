@@ -6,10 +6,6 @@ Violet is one of those Swift <-> Python interop thingies, except that this time 
 
 If something is not working, you have an interesting idea or maybe just a question, then you can start an issue or discussion. You can also contact us on twitter [@itBrokeAgain](https://twitter.com/itBrokeAgain) (optimism, yay!).
 
-
-> Currently the most pressing issue is [designing a new object model](https://github.com/LiarPrincess/Violet/issues/1) (representation of a single Python object in the memory). This does not require any specific Python/Violet knowledge. Any contributions are welcome! (Yes, you do not need to write the code, just commenting in this thead would be a massive help.)
-
-
 - [Violet](#violet)
   - [Requirements](#requirements)
   - [Features](#features)
@@ -23,9 +19,13 @@ If something is not working, you have an interesting idea or maybe just a questi
 
 - 64 bit - for `BigInt` and (probably, maybe, I think) hash
 - Platform:
-    - macOS - tested on 10.15.6 (Catalina) + Xcode 12.0 (Swift 5.3)
+    - macOS - tested on:
+      - 10.15.6 (Catalina) + Xcode 12.0 (Swift 5.3)
+      - 11.6.2 (BigSur) + Xcode 13.0 (Swift 5.5)
     - Ubuntu - tested on 21.04 + Swift 5.4.2
     - Docker - tested on `swift:latest` (5.4.2) on Ubuntu 21.04
+
+The whole Violet was written on 2014 rMBP (lowest spec: 8GB of ram + 128 GB storage), so it is safe to say that there are no other requirements (in other words: if your machine is less than 8 years old then you are probably fine). Although, in terms of raw compilation speed the Ubuntu with Intel Pentium G4560 (4GB of ram + some cheap SSD) was about 2 times faster than MacBook.
 
 ## Features
 
@@ -37,19 +37,13 @@ See `Documentation` directory for a list of known unimplemented features. There 
 
 ## Future plans
 
-Our current goal was to ramp up the Python functionality coverage, which mostly meant passing as many Python tests (`PyTests`) as possible. This gives us us a safety net for any future regressions.
-
-Next we will try to improve code-base by solving any shortcuts we took:
-
-- New object model (representation of a single Python object in a memory) - currently we are using Swift objects to represent Python instances, for example Swift `PyInt` object represents a Python `int` instance. There are better ways to do this, but this is a bit longer conversation in Swift. For details see [this issue](https://github.com/LiarPrincess/Violet/issues/1).
-
-- New method representation - currently we just wrap a Swift method in a `PyBuiltinFunction` and put it inside type `__dict__`. For example: `int.add` (implemented in Swift as `PyInt.add(:_)` with following signature: `(PyInt) -> (PyObject) -> PyResult<PyObject>`) is put inside `int.__dict__`. This can be simplified a bit, but it depends on the object model, so it has to wait.
-
-- Garbage collection and memory management - as we said: currently use Swift class instances to represent Python objects, which means that we are forced to use Swift ARC to manage object lifetime. Unfortunately this does not solve reference cycles (which we have, for example: `object` type has `type` type and `type` type is a subclass of `object`, not to mention that `type` type has `type` as its type), but for now we will ignore this… (how convenient!).
+- **Garbage collection** is a nifty feature. Currently we allocate objects, but the only way to deallocate them is to call `py.destroy()` which destroys the whole Python context (and all of the objects that it owns).
 
     Btw. please remember to use [with statement](https://www.python.org/dev/peps/pep-0343/) to manage resources, do not rely on object lifetime (especially for the file descriptors).
 
-- [V8-style isolates](https://chromium.googlesource.com/v8/v8.git/+/refs/heads/main/src/execution/isolate.h#502) - currently the Python context is represented as a global static `Py` (something like: `Py.newInt(2)` or `Py.add(lhs, rhs)`). This makes unit testing difficult and prevents us from having multiple VM instances running on the same thread (without using [thread local storage](https://en.wikipedia.org/wiki/Thread-local_storage)). Ideally we would create multiple `Py` instances and use them as a separate Python contexts.
+- **Tail allocated `tuples`**. Currently we store `tuple` elements inside Swift array (`elements: [PyObject]`). The better idea would be to allocate more space *after* the tuple and store elements there (this is called [flexible array  member](https://en.wikipedia.org/wiki/Flexible_array_member) in `C`). This saves a pointer indirection and is better for cache, since we can fit a few first elements in the same line as `type`, `__dict__` etc. We can also do this for other immutable container types:
+  - `str` - currently native Swift `String`. This would force us to implement our own `String` type - not hard, but takes a lot of time.
+  - `int` - currently our own `BigInt` implementation (which does store values in `Int32` range inside the pointer).
 
 ## Sources
 
@@ -58,11 +52,13 @@ Core modules
     - Contains things like `NonEmptyArray`, `SourceLocation`, [SipHash](https://131002.net/siphash/), `trap` and `unreachable`.
 - **BigInt** — our implementation of unlimited integers
     - While it implements all of the operations expected of `BigInt` type, in reality it mostly focuses on performance of small integers — Python has only one `int` type and small numbers are most common.
-    - Under the hood it is a union (via [tagged pointer](https://en.wikipedia.org/wiki/Tagged_pointer)) of `Int32` (called `Smi`, after [V8](https://github.com/v8/v8)) and a heap allocation (magnitude + sign representation) with ARC for garbage collection.
+    - Under the hood it is a union (via [tagged pointer](https://en.wikipedia.org/wiki/Tagged_pointer)) of `Int32` (called `Smi`, after [V8](https://github.com/v8/v8)) and a heap allocation (magnitude + sign representation) with ARC for garbage collection. << That's mouthful 💤
     - While the whole Violet tries to be as easy-to-read/accessible as possible, this does not apply to `BigInt` module. Numbers are hard, and for some reason humanity decided that “division” is a thing.
 - **FileSystem** — our version of `Foundation.FileManager`.
+    - Code quality varies. Most of the time it was “ehh… I need to implement another IO thing”. Then, later, all of those “ehs…” were put into a single module. In so-called meantime the wild [swift-system 🐯](https://github.com/apple/swift-system) appeared, so maybe it is time to use it?
     - Main reason why we do not support other platforms (Windows etc.).
 - **UnicodeData** — apparently we also bundle our own Unicode database, because why not…
+  - This is [kind of important](https://hsivonen.fi/string-length/).
 
 Violet
 - **VioletLexer** — transforms Python source code into a stream of tokens.
@@ -70,15 +66,27 @@ Violet
     - Yet Another [Recursive Descent Parser](https://en.wikipedia.org/wiki/Recursive_descent_parser) with minor hacks for ambiguous grammar.
     - `AST` type definitions are generated by `Elsa` module from `Elsa definitions/ast.letitgo`.
 - **VioletBytecode** — instruction set of our VM.
-    - 2-bytes per instruction.
+    - 2-bytes per `enum Instruction`. There are a few interesting cases, like `.formatValue(conversion: StringConversion, hasFormat: Bool)` (where `StringConversion` is an `enum` with 4 possible values), but the compiler is expected to deal with it.
     - No relative jumps, only absolute (via additional `labels` array).
-    - `Instruction` enum is generated by `Elsa` module from `Elsa definitions/opcodes.letitgo`.
+    - Instruction set is generated by `Elsa` module from `Elsa definitions/opcodes.letitgo`.
     - Use `CodeObjectBuilder` to create `CodeObjects`  (whoa… what a surprise!).
-    - Includes a tiny [peephole optimizer](https://en.wikipedia.org/wiki/Peephole_optimization), because sometimes the semantics depends on it (for example for [short-circuit evaluation](https://en.wikipedia.org/wiki/Short-circuit_evaluation)) .
-- **VioletCompiler** — responsible for transforming `AST` (from `Parser`) into `CodeObjects` (from `Bytecode`).
+    - Includes a tiny [peephole optimizer](https://en.wikipedia.org/wiki/Peephole_optimization), because sometimes the semantics depends on it (for example for [short-circuit evaluation](https://en.wikipedia.org/wiki/Short-circuit_evaluation)).
+- **VioletCompiler** — responsible for transforming `Parser.AST` into `Bytecode.CodeObject`.
 - **VioletObjects** — contains all of the Python objects and modules.
-    - `Py` represents a Python context. Common usage: `Py.newInt(2)` or `Py.add(lhs, rhs)`.
-    - Contains `int`, `str`, `list` and 100+ other Python types. Python object is represented as a Swift `class` instance (this will probably change in the future, but for now it is “ok”, since the whole subject is is a bit complicated in Swift). Read the docs in the `Documentation` directory!
+    - `Py` represents a Python context. Common usage: `py.newInt(2)` or `py.add(lhs, rhs)`.
+    - Contains `int`, `str`, `list` and 100+ other Python types.
+    - Python object is represented as a Swift `struct` with a single `ptr: RawPtr` stored property. The `ptr` points to a heap allocated storage with custom layout. Layout is generated by [Sourcery](https://github.com/krzysztofzablocki/Sourcery) using `sourcery: storedProperty` annotations. Read the docs in the `Documentation` directory!
+
+        ```Swift
+        // sourcery: pytype = int
+        public struct PyInt: PyObjectMixin {
+          // sourcery: storedProperty
+          public var value: BigInt { self.valuePtr.pointee }
+
+          public let ptr: RawPtr
+        }
+        ```
+
     - Contains modules required to bootstrap Python: `builtins`, `sys`, `_imp`, `_os` and `_warnings`.
     - Does not contain `importlib` and `importlib_external` modules, because those are written in Python. They are a little bit different than CPython versions (we have 80% of the code, but only 20% of the functionality <great-success-meme.gif>).
     - `PyResult<Wrapped> = Wrapped | PyBaseException` is used for error handling.
@@ -94,6 +102,7 @@ Tools/support
 - **Rapunzel** — pretty printer based on “[A prettier printer](http://homepages.inf.ed.ac.uk/wadler/papers/prettier/prettier.pdf)” by Philip Wadler.
     - Used to print `AST` in digestible manner.
 - **Ariel** — prints module interface - all of the `open`/`public` declarations.
+  - You can see the example output [here](Scripts/ariel_output).
 
 ## Tests
 

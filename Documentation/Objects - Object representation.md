@@ -1,3 +1,5 @@
+<!-- cSpell:ignore memorylayouttoffsetof -->
+
 # Objects
 
 This file describes a Violet representation of a single Python object.
@@ -10,12 +12,11 @@ It is recommended to read the “Sourcery annotations” documentation first.
   - [Violet](#violet)
   - [Problems (and solutions)](#problems-and-solutions)
     - [`__dict__` presence](#__dict__-presence)
-    - [`pymethod` override](#pymethod-override)
-    - [`object` type is full of overridden `pymethods`](#object-type-is-full-of-overridden-pymethods)
     - [Memory layout](#memory-layout)
+    - [Type casting](#type-casting)
   - [Alternatives](#alternatives)
     - [`struct` + type punning](#struct--type-punning)
-    - [Manual alignment](#manual-alignment)
+    - [`MemoryLayout<T>.offset(of: key)`](#memorylayouttoffsetof-key)
     - [Using `C`](#using-c)
 
 ## Requirements
@@ -149,54 +150,196 @@ _Py_NewReference((PyObject *)(result)) // reference count book-keeping
 
 ## Violet
 
-While we could try copy the CPython approach (more about this in “Alternatives” section), at first we will try a bit simpler representation. Our main goal would be ramp up Python functionality coverage without worrying about unnecessary details (like memory management) and later transition to more optimised solution (hoping that our tests will catch any regressions).
+In Swift we can't copy the CPython approach because the language does not guarantee that the memory layout will be the same as declaration order, there are also has some problems when we start nesting `structs` (more about this in “Alternatives” section).
 
-The main rule is quite simple:
-> For every Python `type` there is a Swift `class` that covers its functionality. For example Python `int` type is represented as Swift `PyInt` class.
-> This also means that our Swift class hierarchy will reflect Python type hierarchy.
-> Glue code required to make everything work is generated automatically (see “Sourcery annotations” documentation).
+Instead we will calculate offsets manually and by “manually” I mean we will use code generation (the `sourcery` annotations).
 
-Pros:
+For example this is how `object` and `int` look like:
 
-- This makes writing new types and methods trivial — this is important since we have more than 120 types and 780 methods to implement. However complicated the “glue” is, it can be written/generated once and we will forget about it.
+```Swift
+// sourcery: pytype = object, isDefault, isBaseType
+// sourcery: subclassInstancesHave__dict__
+/// Top of the `Python` type hierarchy.
+public struct PyObject: PyObjectMixin {
 
-- It is extremely idiomatic — it is as if we were implementing Python objects using Swift. There is no “mental translation step” where programmer has to think about memory representation etc.
+  // sourcery: storedProperty
+  /// Also known as `klass`, but we are using CPython naming convention.
+  public var type: PyType {
+    return self.typePtr.pointee
+  }
 
-      For example this is how `int.__add__` method is implemented (`sourcery` annotations are used for code generation, `Py` represents python context):
+  // sourcery: storedProperty
+  /// Things that `PyMemory` asked us to hold.
+  internal var memoryInfo: PyMemory.ObjectHeader {
+    get { return self.memoryInfoPtr.pointee }
+    nonmutating set { self.memoryInfoPtr.pointee = newValue }
+  }
 
-      ```Swift
-      // sourcery: pytype = int, isDefault, isBaseType, isLongSubclass
-      public class PyInt: PyObject {
+  // sourcery: storedProperty
+  /// Internal dictionary of attributes for the specific instance.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    return self.__dict__Ptr.pointee
+  }
 
-        public let value: BigInt
+  // sourcery: storedProperty
+  /// Various flags that describe the current state of the `PyObject`.
+  public var flags: PyObject.Flags {
+    get { return self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
 
-        // sourcery: pymethod = __add__
-        public func add(_ other: PyObject) -> PyResult<PyObject> {
-          guard let other = PyCast.asInt(other) else {
-            return .value(Py.notImplemented)
-          }
+  public let ptr: RawPtr
 
-          let result = self.value + other.value
-          return .value(Py.newInt(result))
-        }
-      }
-      ```
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
+  }
 
-- Easy to pick up - Python `type` is just a Swift `class`, so as long as you are familiar with Swift `classes` you can contribute to Violet. Meanwhile, in other representations we would have to use more advanced features (like `UnsafePointers`). They are not scary _per se_, but definitely less popular than `classes`).
+  internal func initialize(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    self.typePtr.initialize(to: type)
+    // Initialize other fields…
+  }
 
-Cons:
+  // Nothing to do here.
+  internal func beforeDeinitialize(_ py: Py) {}
+}
 
-- Wasted memory on Swift metadata - each Swift object holds an reference to its Swift type. We do not need this since we also store an reference to Python type which serves similar function.
+// sourcery: pytype = int, isDefault, isBaseType, isLongSubclass
+// sourcery: subclassInstancesHave__dict__
+public struct PyInt: PyObjectMixin {
 
-- Forced Swift memory management - ARC is “not the best” solution when working with circular references (which we have). For now we will just accept this, but this means that we could possibly waste a lot of memory.
+  // sourcery: storedProperty
+  // Do not add 'set' to 'self.value' - we cache most used ints!
+  public var value: BigInt { self.valuePtr.pointee }
 
-- We have to perfectly reproduce Python type hierarchy inside Swift which can cause some problems if the 2 languages have different view on a certain behavior (spoiler: they have).
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
+  }
 
-If you think:
+  internal func initialize(_ py: Py, type: PyType, value: BigInt) {
+    self.initializeBase(py, type: type)
+    self.valuePtr.initialize(to: value)
+  }
 
-> Hmm… it looks like they started from using Swift objects to represent Python objects and then did everything to make it work.
+  // Nothing to do here.
+  internal func beforeDeinitialize(_ py: Py) {}
+}
+```
 
-Then… yes, this is more-or-less what happened. You just can’t beat the simplicity and easiness of writing new code with this approach (even with all of its drawbacks).
+Main things:
+- each Python type is represented as a `struct` with `Py` prefix. For example `PyObject`, `PyType` and `PyBool`.
+- each `struct` contains a single stored property `ptr: RawPtr` initalized in `init(ptr: RawPtr)`. This pointer points to heap allocated memory that stores the *actual stored properties*.
+- *actual stored properties* are Swift computed properties with `sourcery: storedProperty` annotations. Code generation is used to transform those annotations into an actual memory layout giving us `Ptr` properties. For example `value: BigInt` -> `valuePtr: Ptr<BigInt>`, where `valuePtr` is a `self.ptr + layout.valueOffset`.
+- each type has to have at least 1 `initialize` function: `func initialize(_ py: Py, other args…)`. This function is called just after memory allocation to initialize memory for an instance.
+- each type has exactly 1 `beforeDeinitialize` function: `func beforeDeinitialize(_ py: Py)`. This function is called just before object is destroyed. This allows you to close file descriptors or deallocate any unmanaged memory.
+
+Anyway, following code will be generated for `int` (`Sources/Objects/Generated/Types+Generated.swift`):
+
+```Swift
+extension PyInt {
+
+  /// Name of the type in Python.
+  public static let pythonTypeName = "int"
+
+  /// Arrangement of fields in memory.
+  ///
+  /// This type was automatically generated based on `PyInt` properties
+  /// with `sourcery: storedProperty` annotation.
+  internal struct Layout {
+    internal let valueOffset: Int
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      assert(MemoryLayout<PyInt>.size == MemoryLayout<RawPtr>.size, "Only 'RawPtr' should be stored.")
+
+      let layout = GenericLayout(
+        initialOffset: PyObject.layout.size,
+        initialAlignment: PyObject.layout.alignment,
+        fields: [
+          GenericLayout.Field(BigInt.self) // PyInt.value
+        ]
+      )
+
+      assert(layout.offsets.count == 1)
+      self.valueOffset = layout.offsets[0]
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  /// Arrangement of fields in memory.
+  internal static let layout = Layout()
+
+  /// Property from base class: `PyObject.type`.
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: PyObject.layout.typeOffset) }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__Ptr: Ptr<PyObject.Lazy__dict__> { Ptr(self.ptr, offset: PyObject.layout.__dict__Offset) }
+  /// Property from base class: `PyObject.flags`.
+  internal var flagsPtr: Ptr<PyObject.Flags> { Ptr(self.ptr, offset: PyObject.layout.flagsOffset) }
+  /// Property: `PyInt.value`.
+  internal var valuePtr: Ptr<BigInt> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
+
+  /// Property from base class: `PyObject.type`.
+  internal var type: PyType { self.typePtr.pointee }
+  /// Property from base class: `PyObject.__dict__`.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    get { self.__dict__Ptr.pointee }
+    nonmutating set { self.__dict__Ptr.pointee = newValue }
+  }
+  /// Property from base class: `PyObject.flags`.
+  internal var flags: PyObject.Flags {
+    get { self.flagsPtr.pointee }
+    nonmutating set { self.flagsPtr.pointee = newValue }
+  }
+
+  internal func initializeBase(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let base = PyObject(ptr: self.ptr)
+    base.initialize(py, type: type, __dict__: __dict__)
+  }
+
+  internal static func deinitialize(_ py: Py, ptr: RawPtr) {
+    let zelf = PyInt(ptr: ptr)
+    zelf.beforeDeinitialize(py)
+
+    // Call 'deinitialize' on all of our own properties.
+    zelf.valuePtr.deinitialize()
+
+    // Call 'deinitialize' on base type.
+    // This will also call base type 'beforeDeinitialize'.
+    PyObject.deinitialize(py, ptr: ptr)
+  }
+
+  internal static func downcast(_ py: Py, _ object: PyObject) -> PyInt? {
+    return py.cast.asInt(object)
+  }
+
+  internal static func invalidZelfArgument(_ py: Py,
+                                           _ object: PyObject,
+                                           _ fnName: String) -> PyResult {
+    let error = py.newInvalidSelfArgumentError(object: object,
+                                               expectedType: Self.pythonTypeName,
+                                               fnName: fnName)
+
+    return .error(error.asBaseException)
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `int` type.
+  public func newInt(type: PyType, value: BigInt) -> PyInt {
+    let typeLayout = PyInt.layout
+    let ptr = self.allocateObject(size: typeLayout.size, alignment: typeLayout.alignment)
+
+    let result = PyInt(ptr: ptr)
+    result.initialize(self.py, type: type, value: value)
+
+    return result
+  }
+}
+```
+
+Ugh… that was long and complicated. But luckily it was generated for us.
 
 ## Problems (and solutions)
 
@@ -231,15 +374,10 @@ How do we translate this into our object representation?
 
 #### Solutions
 
-- Dynamically allocate class instances: if the object has `__dict__` then allocate more space.
-- For each class that does not have a `__dict__` create a subclass that hast it. Then when creating a new object (`__new__` method) use the `__dict__` version if we are allocating subclass.
-- Put `__dict__` in every object. Then, on every use, perform a runtime check to see if this object can access it. If the check fails we will pretend that the `__dict__` does not exists.
+- Dynamically calculate the instance size: if the object has `__dict__` then allocate more space.
+- Put `__dict__` in every object. On every use, perform a runtime check to see if this object can access it. If the check fails we will pretend that the `__dict__` does not exists.
 
-Option 1 — not possible in Swift — all of the class instances have to have exactly the same size.
-
-Option 2 — only the objects that actually have a `__dict__` would get it. The main problem with this method is that it is quite non-intuitive and complicated to explain. It also spans across the whole code base (every `__new__` method, every `__dict__` access etc.) which makes it difficult to maintain. Btw. we did actually implement this, but later we decided to go with:
-
-Option 3 — this is the simplest option, so we went with it. It increases the size of each object by a single word, but whatever…
+We went with option 2 — it is way simpler. It increases the size of each object by a single word, but whatever…
 
 #### Flags on type
 
@@ -268,56 +406,57 @@ As we can see `int` does not have an access to `__dict__`, so we can’t use the
 // sourcery: pytype = int, isDefault, isBaseType, isLongSubclass
 // sourcery: subclassInstancesHave__dict__
 /// All integers are implemented as “long” integer objects.
-public class PyInt: PyObject {
+public struct PyInt: PyObjectMixin {
   // Things…
 }
 ```
 
-#### Attribute access
-
-To speed up the lookup process we will copy the `__dict__` flag from type to every instance (so that we do not need to fetch the type every time):
+The whole magic happens on `PyObject`:
 
 ```Swift
-public class PyObject: CustomStringConvertible {
+// sourcery: pytype = object, isDefault, isBaseType
+// sourcery: subclassInstancesHave__dict__
+/// Top of the `Python` type hierarchy.
+public struct PyObject: PyObjectMixin {
 
-  internal final var has__dict__: Bool {
-    return self.flags.isSet(.has__dict__)
+  internal enum Lazy__dict__ {
+    /// There is no spoon… (aka. `self.type` does not allow `__dict__`)
+    case noDict
+    /// `__dict__` is available, but not yet created
+    case notCreated
+    case created(PyDict)
   }
 
-  // Called when creating an instance.
-  private final func copyFlagsFromType() {
-    let typeFlags = self.type.typeFlags
-
-    let has__dict__ = typeFlags.instancesHave__dict__
-    self.flags.set(.has__dict__, to: has__dict__)
-  }
-}
-```
-
-Then if we wanted to get/set certain attribute (or just access `__dict__`) we just check the flag:
-
-```Swift
-/// Returns the **builtin** (!!!!) `__dict__` instance.
-///
-/// Extreme edge case: object has `__dict__` attribute:
-/// ```py
-/// >>> class C():
-/// ...     def __init__(self):
-/// ...             self.__dict__ = { 'a': 1 }
-/// ...
-/// >>> c = C()
-/// >>> c.__dict__
-/// {'a': 1}
-/// ```
-/// This is actually `dict` stored as '\_\_dict\_\_' in real '\_\_dict\_\_'.
-/// In such situation this function returns real '\_\_dict\_\_'
-/// (not the user property!).
-public func get__dict__(object: PyObject) -> PyDict? {
-  if object.has__dict__ {
-    return object.__dict__
+  // sourcery: storedProperty
+  /// Internal dictionary of attributes for the specific instance.
+  internal var __dict__: PyObject.Lazy__dict__ {
+    // We don't want 'nonmutating set' on this field!
+    // See the comment above 'get__dict__' for details.
+    return self.__dict__Ptr.pointee
   }
 
-  return nil
+  internal func get__dict__(_ py: Py) -> PyDict? {
+    // 'switch' on 'self.__dict__'
+  }
+
+  internal func set__dict__(_ value: PyDict) {
+    self.__dict__Ptr.pointee = .created(value)
+  }
+
+  internal func initialize(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
+    let lazy__dict__: Lazy__dict__
+    if let value = __dict__ {
+      lazy__dict__ = .created(value)
+    } else if type.typeFlags.instancesHave__dict__ {
+      lazy__dict__ = .notCreated
+    } else {
+      lazy__dict__ = .noDict
+    }
+
+    self.__dict__Ptr.initialize(to: lazy__dict__)
+
+    // Other things…
+  }
 }
 ```
 
@@ -340,109 +479,6 @@ Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
 AttributeError: 'int' object has no attribute '__dict__'
 ```
-
-### `pymethod` override
-
-`pymethod` is our [Sourcery](https://github.com/krzysztofzablocki/Sourcery) annotation for Swift method implementing Python method. The problem arises when we override such method in a subclass:
-
-> When calling a base class method on a subclass instance Swift will call the subclass override.
-
-```Swift
-class PyInt {
-  func and() { print("int.and") }
-}
-
-class PyBool: PyInt {
-  override func and() { print("bool.and") }
-}
-
-let intInstance = PyInt()
-intInstance.and() // 'int.and', as expected
-
-let boolInstance = PyBool()
-boolInstance.and() // 'bool.and', as expected
-
-let f = PyInt.and // This is what our “glue code” will do to fill `int.__dict__`
-f(intInstance)() // 'int.and', as expected
-f(boolInstance)() // 'bool.and'! 'int.and' was expected, since we took 'f' from 'PyInt'
-```
-
-How often does this happen?
-- `int` and `bool`: `__and__`, `__rand__`, `__or__`, `__ror__`, `__xor__`, `__rxor__`
-- exceptions - a lot of methods are overridden, most notably `__new__` and `__init__`
-
-How to solve it?
-
-Since most of our code naturally avoids this issue (only 6 methods on `bool` matter, because we automatically generate the code for exceptions), we can just use different selectors:
-
-```Swift
-class PyIntFixed {
-  func and(zelf: PyIntFixed) { print("int.and") }
-}
-
-class PyBoolFixed: PyIntFixed {
-  func andBool(zelf: PyBoolFixed) { print("bool.and") }
-}
-
-let intFixedInstance = PyIntFixed()
-let boolFixedInstance = PyBoolFixed()
-
-let g = PyIntFixed.and(int:)
-g(intFixedInstance) // 'int.and', as expected
-g(boolFixedInstance) // 'int.and', as expected
-```
-
-### `object` type is full of overridden `pymethods`
-
-(Partially connected to the above.)
-
-Python `object` type (root of the type hierarchy) contains a lot of methods that could be overridden in subclasses (for example: `__eq__`, `__ne__`, `__lt__`, `__le__`, `__gt__`, `__ge__`, `__hash__`, `__repr__`, `__str__`, `__dir__`, `__getattribute__`, `__setattr__`, `__delattr__`, `__init__`).
-
-We could put them inside `PyObject` class, but apart from the “overridden `pymethod` problem” there is also a conceptual issue:
-> `PyObject` will be on top of our Swift class hierarchy (for example: it would be the type stored on the VM stack) and also it would contain Python methods. Those 2 usages are not related in any way, so it feels weird to put them inside single class.
-
-To solve this we will put all of those methods in a separate class (not connected to our `PyObject` type hierarchy) and use them to fill `__dict__` inside `object` type (tbh. we did this before we even knew that overridden `pymethods` are a problem).
-
-It works like this:
-
-- `PyObject.swift` — top-most `class` in a Swift class hierarchy
-    - responsible for basic memory layout of every Python object
-    - stored on the VM stack
-    - does not contain any methods attached to Python `object` type
-
-      ```Swift
-      public class PyObject {
-        internal let type: PyType
-        internal var flags: PyObject.Flags = []
-
-        internal init(type: PyType) {
-          self.type = type
-        }
-      }
-      ```
-
-- `PyObjectType.swift`
-    - stores methods attached to Python `object` type (the ones used when filling `object` type `__dict__`)
-
-          ```Swift
-          // sourcery: default, isBaseType
-          /// Container for things attached to `object` type
-          /// (root of `Python` type hierarchy).
-          internal enum PyObjectType {
-
-            // sourcery: pymethod = __eq__
-            internal static func isEqual(zelf: PyObject,
-                                        other: PyObject) -> CompareResult {
-              if zelf === other {
-                return .value(true)
-              }
-
-              return .notImplemented
-            }
-
-            // Other methods here…
-          }
-          ```
 
 ### Memory layout
 
@@ -527,135 +563,110 @@ typedef struct {
 
 Anyway, merger of those 2 types would have to store both `digit ob_digit[1]` (from `int`) and `wchar_t *wstr` (from `str`). _Technically_ this is _possible_, but it is so complicated that nobody is going to do this (basically the whole language implementation would have to be designed around it).
 
-#### Memory layout in Violet
+#### Violet solution
+On each `PyType` store the size in memory (`instanceSizeWithoutTail: Int`).
 
-Going back to Violet, this is how we represent `int`, `bool` and `str`:
+Then when creating new type:
+1. For each `type` find the `base` type responsible for `instanceSizeWithoutTail`:
 
-```Swift
-public class PyObject {
-  private var _type: PyType!
-  internal var flags: PyObjectFlags
-}
+    ```Swift
+    private static func getBaseTypeResponsibleForSize(startingFrom type: PyType) -> PyType {
+      var result = type
+      var resultSize = result.instanceSizeWithoutTail
 
-// sourcery: pytype = int, isDefault, isBaseType, isLongSubclass
-public class PyInt: PyObject {
-  public let value: BigInt
-}
-
-// sourcery: pytype = bool, isDefault
-public class PyBool: PyInt {
-  // No new fields compared to 'PyInt'
-}
-
-// sourcery: pytype = str, isDefault, isBaseType, unicodeSubclass
-public class PyString: PyObject {
-  internal let value: String
-}
-```
-
-#### Solution
-
-How can we discover whether the base classes have an instance layout conflict?
-
-What we need to do is to look at the fields that are added in a given `PyObject` subclass:
-- Are we adding new fields to a parent `class`? — we need to somehow denote the new memory layout. For example, `PyInt` has different memory layout than `PyObject` since it adds `value: BigInt` field.
-- Do we use the same fields as the parent `class`? — reuse parent layout. For example, both `PyInt` and `PyBool` use the same layout because `PyBool` does not add any new fields to `PyInt`.
-
-This is how the actual implementation looks like:
-
-```Swift
-extension PyType {
-
-  /// Layout of a given type in memory.
-  /// If types share the same layout then it means that they look exactly
-  /// the same in memory.
-  ///
-  /// We don't actually need a list of fields etc.
-  /// We will just use identity.
-  public class MemoryLayout {
-    /// Layout of the parent type.
-    private let base: MemoryLayout?
-
-    /// Fields:
-    /// - `_type: PyType!`
-    /// - `flags: PyObjectFlags`
-    public static let PyObject = MemoryLayout()
-    /// Fields:
-    /// - `value: BigInt`
-    public static let PyInt = MemoryLayout(base: MemoryLayout.PyObject)
-    /// `PyBool` uses the same layout as it s base type (`PyInt`).
-    public static let PyBool = MemoryLayout.PyInt
-    /// Fields:
-    /// - `data: PyStringData`
-    public static let PyString = MemoryLayout(base: MemoryLayout.PyObject)
-  }
-}
-```
-
-Then when creating new `type` we will check if all of the base classes have the same layout (it is also allowed for one layout to extend other layout, in which case the layout with the most fields wins). The type that contains this layout is called _solid base_:
-
-```Swift
-extension PyType {
-
-  /// Solid base - traverse class hierarchy (from derived to base)
-  /// until we reach something with defined layout.
-  ///
-  /// For example:
-  ///   Given:   Bool -> Int -> Object
-  ///   Returns: Int layout
-  ///   Reason: 'Bool' and 'Int' have the same layout (single BigInt property),
-  ///            but 'Int' and 'Object' have different layouts.
-  ///
-  /// static PyTypeObject *
-  /// best_base(PyObject *bases)
-  private static func getSolidBase(bases: [PyType]) -> PyResult<PyType> {
-    assert(bases.any)
-
-    var result: PyType?
-
-    for candidate in bases {
-      guard let currentResult = result else {
-        result = candidate
-        continue
+      while let base = result.base, base.instanceSizeWithoutTail == resultSize {
+        result = base
+        resultSize = base.instanceSizeWithoutTail
       }
 
-      let layout = candidate.layout
-      if layout.isEqual(to: currentResult.layout) {
-        // do nothing…
-        // class A(int): pass
-        // class B(int): pass
-        // class C(A, B): pass <- equal layout of A and B
-      } else if layout.isAddingNewProperties(to: currentResult.layout) {
-        result = candidate
-      } else if currentResult.layout.isAddingNewProperties(to: layout) {
-        // nothing, 'currentResult' has already more fields
-      } else {
-        // we are in different 'branches' of layout hierarchy
-        return .typeError("multiple bases have instance lay-out conflict")
-      }
+      return result
     }
+    ```
 
-    // We can force unwrap because we checked 'bases.any' at the top.
-    // swiftlint:disable:next force_unwrapping
-    return .value(result!)
+2. Check the relationship of those types:
+- if one is a subclass of the other - it is “ok”. For example: `int` and `object` are “ok” because `int` is a subclass of `object`. In other words: `int` adds new stored properties to `object`.
+- if there is no relationship then we have a layout conflict. For example: `int` and `str` are “not ok”.
+
+### Type casting
+
+Since for each type we have a different Swift type then how do we cast between them?
+
+#### Casting to `PyObject`
+
+Each type conforms to `PyObjectMixin` which gives us `asObject` property:
+
+```Swift
+/// Common things for all of the Python objects.
+public protocol PyObjectMixin: CustomStringConvertible {
+  /// Pointer to an object.
+  ///
+  /// Each object starts with the same fields as `PyObject`.
+  var ptr: RawPtr { get }
+}
+
+extension PyObjectMixin {
+
+  /// [Convenience] Convert this object to `PyObject`.
+  public var asObject: PyObject {
+    return PyObject(ptr: self.ptr)
   }
 }
 ```
 
-Going back to our `class Elsa(int, str)` example:
-1. Call `getSolidBase(bases:)` with `[int, str]` as arguments
-2. Set `int` as a `result`
-3. Check if `str` and `int` have the same layout
-    - _no_
-4. Check if `str` layout is adding new properties to `int`
-    - the answer is _no_ because `str` and `int` are completely unrelated layouts (although both of them are based on `object` layout, but then they branch out in different directions)
-5. Check if `int` layout is adding new properties to `str`
-    - again _no_
-6. Those are 2 unrelated layouts -> error
+#### Downcasting
+
+```Swift
+if let int = py.cast.asInt(object) {
+  things…
+}
+```
+
+`py.cast` is generated automatically:
+
+```Swift
+public struct PyCast {
+
+  private let types: Py.Types
+  private let errorTypes: Py.ErrorTypes
+
+  internal init(types: Py.Types, errorTypes: Py.ErrorTypes) {
+    self.types = types
+    self.errorTypes = errorTypes
+  }
+
+  private func isInstance(_ object: PyObject, of type: PyType) -> Bool {
+    return object.type.isSubtype(of: type)
+  }
+
+  private func isExactlyInstance(_ object: PyObject, of type: PyType) -> Bool {
+    return object.type === type
+  }
+
+  /// Is this object an instance of `int` (or its subclass)?
+  public func isInt(_ object: PyObject) -> Bool {
+    // 'int' checks are so common that we have a special flag for it.
+    let typeFlags = object.type.typeFlags
+    return typeFlags.isLongSubclass
+  }
+
+  /// Is this object an instance of `int` (but not its subclass)?
+  public func isExactlyInt(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: self.types.int)
+  }
+
+  /// Cast this object to `PyInt` if it is an `int` (or its subclass).
+  public func asInt(_ object: PyObject) -> PyInt? {
+    return self.isInt(object) ? PyInt(ptr: object.ptr) : nil
+  }
+
+  /// Cast this object to `PyInt` if it is an `int` (but not its subclass).
+  public func asExactlyInt(_ object: PyObject) -> PyInt? {
+    return self.isExactlyInt(object) ? PyInt(ptr: object.ptr) : nil
+  }
+}
+```
 
 ## Alternatives
-
-This section contains alternatives to our “Swift object is a Python object” approach.
 
 ### `struct` + type punning
 
@@ -672,6 +683,8 @@ struct PyObjectHeader {
   private let padding = UInt32.max
 }
 
+// This struct describes the memory layout.
+// Later we will allocate it in the heap: Ptr<PyObject> and Ptr<PyInt>.
 struct PyObject {
   var header: PyObjectHeader
 }
@@ -723,15 +736,21 @@ To implement them in Violet we just store `elements: [PyObject]`:
 // sourcery: subclassInstancesHave__dict__
 /// This instance of PyTypeObject represents the Python tuple type;
 /// it is the same object as tuple in the Python layer.
-public final class PyTuple: PyObject, AbstractSequence {
-  public let elements: [PyObject]
+public struct PyTuple: PyObjectMixin, AbstractSequence {
+  // sourcery: storedProperty
+  internal var elements: [PyObject] {
+    self.elementsPtr.pointee
+  }
 }
 
 // sourcery: pytype = list, isDefault, hasGC, isBaseType, isListSubclass
 // sourcery: subclassInstancesHave__dict__
 /// This subtype of PyObject represents a Python list object.
-public final class PyList: PyObject, AbstractSequence {
-  internal var elements: [PyObject]
+public struct PyList: PyObjectMixin, AbstractSequence {
+  // sourcery: storedProperty
+  internal var elements: [PyObject] {
+    self.elementsPtr.pointee
+  }
 }
 ```
 
@@ -895,29 +914,11 @@ PyList_New(Py_ssize_t size)
 
 Anyway, going back to alternative Python object representations:
 
-### Manual alignment
+### `MemoryLayout<T>.offset(of: key)`
 
-We can just allocate a block of memory and manually assign where do each field start and end:
+Technically Swift has [`MemoryLayout<T>.offset(of: key)`](https://developer.apple.com/documentation/swift/memorylayout/2996397-offset), but to use it we would have to create `struct` for every Python type (it would be responsible for layout + offsets) and then create a `extension` to `Ptr<StructType>` to access properties with given offsets.
 
-```Swift
-struct PyInt {
-
-  private let ptr: UnsafePointer
-
-  // `PyObjectHeader` holds `type/flags` (and maybe `__dict__`).
-  internal var header: PyObjectHeader {
-    return PyObjectHeader(ptr: self.ptr)
-  }
-
-  // Without using [flexible array member](https://en.wikipedia.org/wiki/Flexible_array_member)
-  internal var value: BigInt {
-    let ptr = self.ptr + PyObjectHeader.size
-    return ptr.pointee
-  }
-}
-```
-
-This a bit complicated, so it will not be described here in detail (also, there is a new episode of [Penthouse](https://www.imdb.com/title/tt13067118/) available, so…).
+I think that our solution is a bit simpler.
 
 ### Using `C`
 

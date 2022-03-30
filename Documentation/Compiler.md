@@ -1,3 +1,5 @@
+<!-- cSpell:ignore compilerimpl -->
+
 # Compiler
 
 Compiler is responsible for transforming `AST` (from the “Parser” module) to `CodeObjects` (from the “Bytecode” module).
