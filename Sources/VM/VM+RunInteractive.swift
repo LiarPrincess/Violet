@@ -67,8 +67,12 @@ extension VM {
   private func sayHi() -> PyBaseException? {
     let hi = """
     Please note that interactive mode is not a priority in Violet development
-    and some things may not be working (most notably arrow keys, you will get
-    an 'UnicodeDecodeError' if you use them).
+    and some things may not be working. This includes:
+    - arrow keys - we are reading raw <stdin>, so they will be interpreted
+      as characters.
+    - Xcode autocompletion - if Xcode automatically adds closing brace then
+      you still have to type it manually.
+
     Use 'exit()' or 'quit()' to exit.
 
     \(Sys.version)

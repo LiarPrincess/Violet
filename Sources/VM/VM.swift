@@ -21,7 +21,7 @@ public final class VM {
       environment: environment,
       executablePath: Path(string: executablePath),
       standardInput: PyFileDescriptor(fd: .standardInput, path: "stdin"),
-      standardOutput: PyFileDescriptor(fd: .standardOutput, path: "stdin"),
+      standardOutput: PyFileDescriptor(fd: .standardOutput, path: "stdout"),
       standardError: PyFileDescriptor(fd: .standardError, path: "stderr")
     )
 
