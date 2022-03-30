@@ -1,3 +1,5 @@
+<!-- cSpell:ignore extendedarg -->
+
 # Bytecode
 
 Bytecode is an instruction set of our VM.
@@ -121,7 +123,7 @@ Instructions with argument that will never need extended argument:
 
 Instructions that may need extended argument:
 - Collection builders — this includes: `BuildTuple`, `BuildList`, `BuildSet`, `BuildMap`, `BuildString` and a ton of other instructions. In this case we need to store the number of elements to pop from the stack and place inside of the collection. But often do we need to create a collection with more than 256 elements? And even then, using a single extended argument would give us 65536 elements.
-- Jumps — this includes: `JumpAbsolute`, `PopJumpIfX`, `JumpIfXOrPop`, loops, exceptions and `SetupWith`. We can hold a target instruction index (which would require a lot of `extendedArgs`, since most code object have more than 255 instructions). But we can also hold an index inside of an auxiliary array (named `CodeObject.labels`) that holds jump targets. Most code object will contain less than 255 jumps, which means that they would not require `extendedArg`. This will also simplify code in peephole optimiser since all of our jumps targets are stored in one place. Oh… yeah… all of our jumps are absolute (more about this later).
+- Jumps — this includes: `JumpAbsolute`, `PopJumpIfX`, `JumpIfXOrPop`, loops, exceptions and `SetupWith`. We can hold a target instruction index (which would require a lot of `extendedArgs`, since most code object have more than 255 instructions). But we can also hold an index inside of an auxiliary array (named `CodeObject.labels`) that holds jump targets. Most code object will contain less than 255 jumps, which means that they would not require `extendedArg`. This will also simplify code in peephole optimizer since all of our jumps targets are stored in one place. Oh… yeah… all of our jumps are absolute (more about this later).
 - `load`, `store` and `delete` — those are interesting because they need to store the name which is a `String`. `Strings` are massive in Swift (way bigger than `UInt64`), so yet again we will create an auxiliary array just for them (named `CodeObject.names`). Alternative design would be to store the name on the stack and then call `load` without arguments. However, this implies object allocation with some additional stack operations. Since we know the name during the compilation we can avoid it.
 
 ### Trivia: Gameboy instruction set

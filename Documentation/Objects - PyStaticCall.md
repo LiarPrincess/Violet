@@ -46,13 +46,10 @@ This is rather slow (and really annoying when you have to go through this in `ll
 
       internal struct GetLengthWrapper {
 
-        internal let fn: (PyObject) -> BigInt
+        internal let fn: (Py, PyObject) -> PyResult
 
-        internal init<T: PyObject>(_ fn: @escaping (T) -> () -> BigInt) {
-          self.fn = { (arg0: PyObject) in
-            let zelf = forceCast(object: arg0, as: T.self)
-            return fn(zelf)()
-          }
+        internal init(_ fn: @escaping (Py, PyObject) -> PyResult) {
+          self.fn = fn
         }
       }
     }
@@ -62,7 +59,7 @@ This is rather slow (and really annoying when you have to go through this in `ll
 
     ```Swift
     // sourcery: pytype = type
-    public final class PyType: PyObject {
+    public struct PyType: PyObjectMixin {
 
       private var name: String
       private var qualname: String
@@ -79,13 +76,13 @@ This is rather slow (and really annoying when you have to go through this in `ll
     `builtins.len` implementation:
 
     ```Swift
-    extension PyInstance {
+    extension Py {
 
       /// len(s)
       /// See [this](https://docs.python.org/3/library/functions.html#len)
-      public func len(iterable: PyObject) -> PyResult<PyObject> {
-        if let result = PyStaticCall.__len__(iterable) {
-          return .value(self.newInt(result))
+      public func len(iterable: PyObject) -> PyResult {
+        if let result = PyStaticCall.__len__(self, iterable: iterable) {
+          return result
         }
 
         switch self.callMethod(object: iterable, selector: .__len__) {
@@ -105,7 +102,7 @@ This is rather slow (and really annoying when you have to go through this in `ll
 
     ```Swift
     internal enum PyStaticCall {
-      internal static func __len__(_ object: PyObject) -> BigInt? {
+      internal static func __len__(_ py: Py, iterable: PyObject) -> PyResult? {
         if let method = object.type.staticMethods.__len__?.fn {
           return method(object)
         }

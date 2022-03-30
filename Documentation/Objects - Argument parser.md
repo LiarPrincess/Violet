@@ -54,7 +54,7 @@ This is how you would use parsed arguments:
 
 ```Swift
 // sourcery: pytype = int, isDefault, isBaseType, isLongSubclass
-public class PyInt: PyObject {
+public struct PyInt: PyObjectMixin {
 
   private static let newArguments = ArgumentParser.createOrTrap(
     arguments: ["", "base"],
@@ -62,10 +62,11 @@ public class PyInt: PyObject {
   )
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyIntNew(type: PyType,
-                                args: [PyObject],
-                                kwargs: PyDict?) -> PyResult<PyInt> {
-    switch self.newArguments.bind(args: args, kwargs: kwargs) {
+  internal static func __new__(_ py: Py,
+                               type: PyType,
+                               args: [PyObject],
+                               kwargs: PyDict?) -> PyResult {
+    switch Self.newArguments.bind(py, args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
       assert(binding.optionalCount == 2, "Invalid optional argument count.")

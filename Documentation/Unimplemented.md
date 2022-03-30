@@ -22,7 +22,7 @@ There is also a separate file that list all of the missing things from Python `b
     >>> f'elsa: {f"{elsa}"}' # supported - level 1 nesting
     >>> f'elsa: {f"""{f"{elsa}"}"""}' # not supported - level 2 nesting
     ```
-    
+
 - **expression in formatted string format specifier** (huh… thats mouthful) — it is “ok” to use expressions in formatted strings, just not in format specifiers. For example:
 
     ```py
@@ -30,7 +30,7 @@ There is also a separate file that list all of the missing things from Python `b
     >>> f"width: {width}" # supported
     >>> f"Let it {'go':>{width}}!" # not supported
     ```
-    
+
 ## Compiler
 
 All of the those things are supported in lever and parser, but will fail in the compiler:
@@ -55,6 +55,6 @@ All of the those things are supported in lever and parser, but will fail in the 
 
 - **frozen modules** — kind of ironic given that one of our modules is named Elsa and we have tons of other Disnep references.
 
-- **garbage collection** - we currently use Swift class instances to represent Python objects (for example: instance of `PyInt` represents `int` object in Python), which means that we use Swift ARC to manage object lifetime. This does not solve reference cycles, but we will ignore this… (how convenient!)
+- **garbage collection** - we create all objects without carrying about memory. Later, `py.destroy()` will deallocate them all. There is no *destroy-object-during-runtime* feature.
 
 - **[PEP 401 -- BDFL Retirement](https://www.python.org/dev/peps/pep-0401)** - requires variadic generics which Swift does not support. This means that `barry_as_FLUFL` import will not be recognized (sorry Barry…).

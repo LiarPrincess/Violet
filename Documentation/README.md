@@ -14,7 +14,7 @@
 - **Bytecode - Instructions** — every bytecode instruction with explanation.
     - Overall our instruction set is very similar to the CPython one.
 
-- **Objects - Py** — `Py` represents a Python context. It is used to create and manipulate Python objects (for example `‌Py.newInt(2)` or `Py.add(lhs, rhs)`).
+- **Objects - Py** — `Py` represents a Python context. It is used to create and manipulate Python objects (for example `‌py.newInt(2)` or `py.add(lhs, rhs)`).
     - Describes initialisation of Python context (arguments, environment, IO streams etc.).
     - Contains various tips, quirks and idioms of `Py`.
 
@@ -22,7 +22,7 @@
 
 - **Objects - Sourcery annotations** — explanation of all of the `// sourcery: pytype|pymethod|pystaticmethod|pyclassmethod|pyproperty` comments.
 
-- **Objects - Object representation** — discussion about representation of a single Python object in memory. Contains the reasoning behind our (oh so weird…) `Swift object = Python object` model.
+- **Objects - Object representation** — discussion about representation of a single Python object in memory.
 
 Other files are… there if you need them, but they are not that important.
 
