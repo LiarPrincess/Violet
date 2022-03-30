@@ -3,9 +3,9 @@ import Foundation
 import FileSystem
 import VioletObjects
 
-extension PyFloatTests {
+class PyFloatUnaryTests: PyTestCase {
 
-  // MARK: - Type conversion
+  // MARK: - Bool
 
   func test__bool__() {
     let py = self.createPy()
@@ -32,6 +32,8 @@ extension PyFloatTests {
     self.assertIsTrue(py, object: valueObject, expected: expected, file: file, line: line)
   }
 
+  // MARK: - Int
+
   func test__int__() {
     let py = self.createPy()
     self.assertInt(py, value: 0.0, expected: 0)
@@ -51,7 +53,32 @@ extension PyFloatTests {
     self.assertIsEqual(py, left: result, right: expectedObject, file: file, line: line)
   }
 
-  // MARK: - Imag
+  // MARK: - Trunc
+
+  func test__trunc__() {
+    let py = self.createPy()
+    self.assertTrunc(py, 3.1, expected: 3)
+    self.assertTrunc(py, -3.1, expected: -3)
+    self.assertTrunc(py, 7.5, expected: 7)
+    self.assertTrunc(py, -7.5, expected: -7)
+  }
+
+  private func assertTrunc(_ py: Py,
+                           _ value: Double,
+                           expected: Int,
+                           file: StaticString = #file,
+                           line: UInt = #line) {
+    let valueObject = py.newFloat(value).asObject
+    let result = self.callMethod(py,
+                                 object: valueObject,
+                                 selector: "__trunc__",
+                                 args: [])
+
+    let expectedObject = py.newInt(expected).asObject
+    self.assertIsEqual(py, left: result, right: expectedObject, file: file, line: line)
+  }
+
+  // MARK: - Real
 
   func test_real() {
     let py = self.createPy()
@@ -68,6 +95,8 @@ extension PyFloatTests {
     let result = self.get(py, object: valueObject, propertyName: "real")
     self.assertIsEqual(py, left: result, right: valueObject, file: file, line: line)
   }
+
+  // MARK: - Imag
 
   func test_imag() {
     let py = self.createPy()
@@ -87,6 +116,8 @@ extension PyFloatTests {
     self.assertIsEqual(py, left: result, right: expectedObject, file: file, line: line)
   }
 
+  // MARK: - Conjugate
+
   func test_conjugate() {
     let py = self.createPy()
     self.assertConjugate(py, value: 0.0)
@@ -103,7 +134,7 @@ extension PyFloatTests {
     self.assertIsEqual(py, left: result, right: valueObject, file: file, line: line)
   }
 
-  // MARK: - Sign
+  // MARK: - Positive
 
   func test__pos__() {
     let py = self.createPy()
@@ -126,6 +157,8 @@ extension PyFloatTests {
     self.assertIsEqual(py, left: result, right: expectedObject, file: file, line: line)
   }
 
+  // MARK: - Negative
+
   func test__neg__() {
     let py = self.createPy()
     self.assertNegative(py, value: 0.0, expected: 0.0)
@@ -146,6 +179,8 @@ extension PyFloatTests {
     let expectedObject = py.newFloat(expected)
     self.assertIsEqual(py, left: result, right: expectedObject, file: file, line: line)
   }
+
+  // MARK: - Abs
 
   func test__abs__() {
     let py = self.createPy()

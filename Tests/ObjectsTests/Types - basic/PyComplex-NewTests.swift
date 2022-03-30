@@ -2,11 +2,11 @@ import XCTest
 import VioletCore
 @testable import VioletObjects
 
-extension PyComplexTests {
+class PyComplexNewTests: PyTestCase {
 
   // MARK: - New from string
 
-  func test_new_fromString_empty_fails() {
+  func test_fromString_empty_fails() {
     guard let message = self.parseError("") else {
       return
     }
@@ -14,7 +14,7 @@ extension PyComplexTests {
     XCTAssertEqual(message, "complex() arg is a malformed string")
   }
 
-  func test_new_fromString_real() {
+  func test_fromString_real() {
     guard let noSign = self.parse("123.4") else { return }
     XCTAssertEqual(noSign.real, 123.4)
     XCTAssertEqual(noSign.imag, 0.0)
@@ -36,7 +36,7 @@ extension PyComplexTests {
     XCTAssertEqual(dotEnding.imag, 0)
   }
 
-  func test_new_fromString_imag() {
+  func test_fromString_imag() {
     guard let noSign = self.parse("123.4j") else { return }
     XCTAssertEqual(noSign.real, 0.0)
     XCTAssertEqual(noSign.imag, 123.4)
@@ -58,7 +58,7 @@ extension PyComplexTests {
     XCTAssertEqual(dotEnding.imag, 123)
   }
 
-  func test_new_fromString_real_imag() {
+  func test_fromString_real_imag() {
     guard let plusPlus = self.parse("123.4+56.7j") else { return }
     XCTAssertEqual(plusPlus.real, 123.4)
     XCTAssertEqual(plusPlus.imag, 56.7)

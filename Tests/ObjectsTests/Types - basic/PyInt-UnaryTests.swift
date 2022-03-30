@@ -3,9 +3,9 @@ import Foundation
 import FileSystem
 import VioletObjects
 
-extension PyIntTests {
+class PyIntUnaryTests: PyTestCase {
 
-  // MARK: - Type conversion
+  // MARK: - Bool
 
   func test__bool__() {
     let py = self.createPy()
@@ -25,7 +25,7 @@ extension PyIntTests {
     self.assertIsTrue(py, object: valueObject, expected: expected, file: file, line: line)
   }
 
-  // MARK: - Imag
+  // MARK: - Real
 
   func test_real() {
     let py = self.createPy()
@@ -54,6 +54,8 @@ extension PyIntTests {
     self.assertImag(py, value: -5)
   }
 
+  // MARK: - Imag
+
   private func assertImag(_ py: Py,
                           value: Int,
                           file: StaticString = #file,
@@ -64,6 +66,8 @@ extension PyIntTests {
     let expectedObject = py.newInt(0)
     self.assertIsEqual(py, left: result, right: expectedObject, file: file, line: line)
   }
+
+  // MARK: - Conjugate
 
   func test_conjugate() {
     let py = self.createPy()
@@ -83,7 +87,7 @@ extension PyIntTests {
     self.assertIsEqual(py, left: result, right: valueObject, file: file, line: line)
   }
 
-  // MARK: - Sign
+  // MARK: - Positive
 
   func test__pos__() {
     let py = self.createPy()
@@ -106,6 +110,8 @@ extension PyIntTests {
     self.assertIsEqual(py, left: result, right: expectedObject, file: file, line: line)
   }
 
+  // MARK: - Negative
+
   func test__neg__() {
     let py = self.createPy()
     self.assertNegative(py, value: 0, expected: 0)
@@ -126,6 +132,8 @@ extension PyIntTests {
     let expectedObject = py.newInt(expected)
     self.assertIsEqual(py, left: result, right: expectedObject, file: file, line: line)
   }
+
+  // MARK: - Abs
 
   func test__abs__() {
     let py = self.createPy()

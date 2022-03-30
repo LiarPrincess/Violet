@@ -5,7 +5,7 @@ import VioletObjects
 
 // swiftlint:disable function_parameter_count
 
-extension PyFloatTests {
+class PyFloatEqualCompareTests: PyTestCase {
 
   // MARK: - Equal
 
@@ -42,6 +42,8 @@ extension PyFloatTests {
     self.assertIsEqual(py, left: none, right: f3, expected: false)
   }
 
+  // MARK: - Not equal
+
   func test__ne__() {
     let py = self.createPy()
 
@@ -75,7 +77,7 @@ extension PyFloatTests {
     self.assertIsNotEqual(py, left: none, right: f3)
   }
 
-  // MARK: - Compare
+  // MARK: - Less
 
   func test__lt__() {
     let py = self.createPy()
@@ -113,6 +115,8 @@ extension PyFloatTests {
     self.assertIsLessTypeError(py, left: .none, right: 5.7, message: messageL)
   }
 
+  // MARK: - Less equal
+
   func test__le__() {
     let py = self.createPy()
 
@@ -149,6 +153,8 @@ extension PyFloatTests {
     self.assertIsLessEqualTypeError(py, left: .none, right: 5.7, message: messageL)
   }
 
+  // MARK: - Greater
+
   func test__gt__() {
     let py = self.createPy()
 
@@ -184,6 +190,8 @@ extension PyFloatTests {
     self.assertIsGreaterTypeError(py, left: .none, right: 3.1, message: messageL)
     self.assertIsGreaterTypeError(py, left: .none, right: 5.7, message: messageL)
   }
+
+  // MARK: - Greater equal
 
   func test__ge__() {
     let py = self.createPy()
@@ -267,6 +275,8 @@ extension PyFloatTests {
 
   // swiftlint:enable line_length
 
+  typealias BinaryOperation = (Py) -> (PyObject, PyObject) -> PyResult
+
   func assertCompareOperation(_ py: Py,
                               left: Double,
                               right: Double,
@@ -280,5 +290,19 @@ extension PyFloatTests {
 
     let expectedObject = py.newBool(expected)
     self.assertIsEqual(py, left: result, right: expectedObject, file: file, line: line)
+  }
+
+  func assertBinaryOperationTypeError(_ py: Py,
+                                      left: Double?,
+                                      right: Double?,
+                                      message: String,
+                                      fn: BinaryOperation,
+                                      file: StaticString,
+                                      line: UInt) {
+    let leftObject = left.map { py.newFloat($0).asObject } ?? py.none.asObject
+    let rightObject = right.map { py.newFloat($0).asObject } ?? py.none.asObject
+
+    let result = fn(py)(leftObject, rightObject)
+    self.assertTypeError(py, error: result, message: message, file: file, line: line)
   }
 }

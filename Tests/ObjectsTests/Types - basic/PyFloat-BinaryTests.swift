@@ -5,7 +5,7 @@ import VioletObjects
 
 // swiftlint:disable function_parameter_count
 
-extension PyFloatTests {
+class PyFloatBinaryTests: PyTestCase {
 
   // MARK: - Add, sub, mul
 

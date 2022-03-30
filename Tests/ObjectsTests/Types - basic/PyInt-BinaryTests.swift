@@ -5,9 +5,9 @@ import VioletObjects
 
 // swiftlint:disable function_parameter_count
 
-extension PyIntTests {
+class PyIntBinaryTests: PyTestCase {
 
-  // MARK: - Add, sub, mul
+  // MARK: - Add
 
   func test__add__() {
     let py = self.createPy()
@@ -31,6 +31,8 @@ extension PyIntTests {
     self.assertAddTypeError(py, left: .none, right: 7, message: messageL)
   }
 
+  // MARK: - Sub
+
   func test__sub__() {
     let py = self.createPy()
 
@@ -52,6 +54,8 @@ extension PyIntTests {
     self.assertSubTypeError(py, left: .none, right: 3, message: messageL)
     self.assertSubTypeError(py, left: .none, right: 7, message: messageL)
   }
+
+  // MARK: - Mul
 
   func test__mul__() {
     let py = self.createPy()
@@ -75,7 +79,7 @@ extension PyIntTests {
     self.assertMulTypeError(py, left: .none, right: 7, message: messageL)
   }
 
-  // MARK: - Div
+  // MARK: - Truediv
 
   func test__truediv__() {
     let py = self.createPy()
@@ -113,6 +117,8 @@ extension PyIntTests {
     self.assertIsEqual(py, left: result, right: expectedObject, file: file, line: line)
   }
 
+  // MARK: - Floordiv
+
   func test__floordiv__() {
     let py = self.createPy()
 
@@ -135,6 +141,8 @@ extension PyIntTests {
     self.assertFloorDivTypeError(py, left: .none, right: 7, message: messageL)
   }
 
+  // MARK: - Mod
+
   func test__mod__() {
     let py = self.createPy()
 
@@ -156,6 +164,8 @@ extension PyIntTests {
     self.assertModTypeError(py, left: .none, right: 3, message: messageL)
     self.assertModTypeError(py, left: .none, right: 7, message: messageL)
   }
+
+  // MARK: - Divmod
 
   func test__divmod__() {
     let py = self.createPy()
@@ -196,7 +206,7 @@ extension PyIntTests {
     self.assertIsEqual(py, left: result, right: tuple, file: file, line: line)
   }
 
-  // MARK: - Shift
+  // MARK: - Shifts
 
   func test__lshift__() {
     let py = self.createPy()
@@ -228,7 +238,7 @@ extension PyIntTests {
     self.assertRshiftTypeError(py, left: .none, right: 7, message: messageL)
   }
 
-  // MARK: - Bit
+  // MARK: - And
 
   func test__and__() {
     let py = self.createPy()
@@ -247,6 +257,8 @@ extension PyIntTests {
     self.assertAndTypeError(py, left: .none, right: 7, message: messageL)
   }
 
+  // MARK: - Or
+
   func test__or__() {
     let py = self.createPy()
 
@@ -263,6 +275,8 @@ extension PyIntTests {
     self.assertOrTypeError(py, left: .none, right: 3, message: messageL)
     self.assertOrTypeError(py, left: .none, right: 7, message: messageL)
   }
+
+  // MARK: - Xor
 
   func test__xor__() {
     let py = self.createPy()
