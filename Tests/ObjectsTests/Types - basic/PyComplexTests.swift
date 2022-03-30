@@ -4,8 +4,6 @@ import VioletObjects
 
 class PyComplexTests: PyTestCase {
 
-  // MARK: - Description
-
   func test_description() {
     let py = self.createPy()
 

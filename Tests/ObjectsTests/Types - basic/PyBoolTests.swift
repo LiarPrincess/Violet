@@ -30,7 +30,7 @@ class PyBoolTests: PyTestCase {
     self.assertStr(py, object: py.false, expected: "False")
   }
 
-  // MARK: - Bit
+  // MARK: - And
 
   func test__and__() {
     let py = self.createPy()
@@ -49,6 +49,8 @@ class PyBoolTests: PyTestCase {
     self.assertAndTypeError(py, left: .none, right: false, message: messageL)
   }
 
+  // MARK: - Or
+
   func test__or__() {
     let py = self.createPy()
 
@@ -65,6 +67,8 @@ class PyBoolTests: PyTestCase {
     self.assertOrTypeError(py, left: .none, right: true, message: messageL)
     self.assertOrTypeError(py, left: .none, right: false, message: messageL)
   }
+
+  // MARK: - Xor
 
   func test__xor__() {
     let py = self.createPy()
