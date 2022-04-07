@@ -78,11 +78,8 @@ elsa:
 	swift run Elsa
 
 # Dump module interface (all of the open/public declarations).
-#
-# If you get compilation errors then check the Xcode version against dependencies
-# in 'Package.swift'.
 ariel:
-	./Scripts/ariel_output/create_files.sh
+	./Documentation/Module exports/create_files.sh
 
 # Generate code inside 'Objects' module.
 # It will print detailed steps, which makes it a great way to learn how Violet
