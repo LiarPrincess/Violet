@@ -2,13 +2,6 @@
 
 import PackageDescription
 
-// Ariel uses 'swift-syntax' which is only available on mac.
-#if os(macOS)
-let hasAriel = true
-#else
-let hasAriel = false
-#endif
-
 // ================
 // === Products ===
 // ================
@@ -29,11 +22,6 @@ var products: [Product] = [
   .library(name: "Rapunzel", targets: ["Rapunzel"])
 ]
 
-if hasAriel {
-  // Tool to dump module interface (all of the 'public' and 'open' declarations).
-  products.append(.executable(name: "Ariel", targets: ["Ariel"]))
-}
-
 // ====================
 // === Dependencies ===
 // ====================
@@ -43,11 +31,6 @@ if hasAriel {
 var dependencies: [Package.Dependency] = [
   .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "0.4.0"))
 ]
-
-if hasAriel {
-  // 0.50500.0 -> swift-5.5-RELEASE -> Xcode 13.0
-  dependencies.append(.package(url: "https://github.com/apple/swift-syntax.git", .exact("0.50500.0")))
-}
 
 // ===============
 // === Targets ===
@@ -125,18 +108,6 @@ var targets: [Target] = [
   .target(name: "Rapunzel", dependencies: []),
   .testTarget(name: "RapunzelTests", dependencies: ["Rapunzel"]),
 ]
-
-if hasAriel {
-  // Tool to dump module interface (all of the 'public' and 'open' declarations).
-  // We need a separate 'LibAriel' to be able to write unit tests.
-  //
-  // Just run 'make ariel' in repository root.
-  targets.append(contentsOf:[
-    .target(name: "LibAriel", dependencies: ["SwiftSyntax", "ArgumentParser", "FileSystem"]),
-    .target(name: "Ariel", dependencies: ["LibAriel"]),
-    .testTarget(name: "ArielTests", dependencies: ["LibAriel"])
-  ])
-}
 
 // ===============
 // === Package ===
