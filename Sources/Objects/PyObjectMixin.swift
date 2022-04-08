@@ -93,21 +93,13 @@ extension PyObjectMixin {
     // === Type ===
     // ============
 
-    func append(type: PyType) {
+    // If we go with 'func append(type: PyType)' then Swift 5.3 will fail to compile.
+    func appendType(_ type: PyType) {
       string.append(type.name)
     }
 
     if let type = property.value as? PyType {
-      append(type: type)
-      return
-    }
-
-    if let optionalType = property.value as? PyType? {
-      if let type = optionalType {
-        append(type: type)
-      } else {
-        string.append("nil")
-      }
+      appendType(type)
       return
     }
 
@@ -118,7 +110,7 @@ extension PyObjectMixin {
           string.append(", ")
         }
 
-        append(type: type)
+        appendType(type)
       }
 
       string.append("]")
@@ -138,7 +130,7 @@ extension PyObjectMixin {
     // === String ===
     // ==============
 
-    func append(string s: String) {
+    func appendString(_ s: String) {
       // This will not work on optional string, but whatever.
       string.append("'")
 
@@ -160,12 +152,12 @@ extension PyObjectMixin {
     }
 
     if let s = property.value as? String {
-      append(string: s)
+      appendString(s)
       return
     }
 
     if let s = property.value as? PyString {
-      append(string: s.value)
+      appendString(s.value)
       return
     }
 
