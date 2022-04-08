@@ -156,9 +156,9 @@ public struct PyString: PyObjectMixin, AbstractString {
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.pythonTypeName)
+  internal static func __hash__(_ py: Py, zelf _zelf: PyObject) -> HashResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return .invalidSelfArgument(_zelf, Self.pythonTypeName)
     }
 
     let result = zelf.getHash(py)
@@ -176,9 +176,9 @@ public struct PyString: PyObjectMixin, AbstractString {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__repr__")
+  internal static func __repr__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__repr__")
     }
 
     let result = zelf.repr()
@@ -270,9 +270,9 @@ public struct PyString: PyObjectMixin, AbstractString {
   }
 
   // sourcery: pymethod = __str__
-  internal static func __str__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__str__")
+  internal static func __str__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__str__")
     }
 
     // We are immutable!
@@ -290,10 +290,10 @@ public struct PyString: PyObjectMixin, AbstractString {
 
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
-                                        zelf: PyObject,
+                                        zelf _zelf: PyObject,
                                         name: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__getattribute__")
     }
 
     return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
@@ -302,9 +302,9 @@ public struct PyString: PyObjectMixin, AbstractString {
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal static func __len__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__len__")
+  internal static func __len__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__len__")
     }
 
     let result = zelf.count
@@ -325,9 +325,11 @@ public struct PyString: PyObjectMixin, AbstractString {
   // MARK: - Get item
 
   // sourcery: pymethod = __getitem__
-  internal static func __getitem__(_ py: Py, zelf: PyObject, index: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__getitem__")
+  internal static func __getitem__(_ py: Py,
+                                   zelf _zelf: PyObject,
+                                   index: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__getitem__")
     }
 
     return Self.getItem(py, zelf: zelf, index: index)
@@ -379,9 +381,9 @@ public struct PyString: PyObjectMixin, AbstractString {
    """
 
   // sourcery: pymethod = isdecimal, doc = isdecimalDoc
-  internal static func isdecimal(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "isdecimal")
+  internal static func isdecimal(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "isdecimal")
     }
 
     let result = !zelf.isEmpty && zelf.elements.allSatisfy(Self.isDecimal(element:))
@@ -408,9 +410,9 @@ public struct PyString: PyObjectMixin, AbstractString {
    """
 
   // sourcery: pymethod = isidentifier, doc = isidentifierDoc
-  internal static func isidentifier(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "isidentifier")
+  internal static func isidentifier(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "isidentifier")
     }
 
     /// https://docs.python.org/3/library/stdtypes.html#str.isidentifier
@@ -443,9 +445,9 @@ public struct PyString: PyObjectMixin, AbstractString {
    """
 
   // sourcery: pymethod = isnumeric, doc = isnumericDoc
-  internal static func isnumeric(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "isnumeric")
+  internal static func isnumeric(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "isnumeric")
     }
 
     let result = !zelf.isEmpty && zelf.elements.allSatisfy(Self.isNumeric(element:))
@@ -460,9 +462,9 @@ public struct PyString: PyObjectMixin, AbstractString {
    """
 
   // sourcery: pymethod = isprintable, doc = isprintableDoc
-  internal static func isprintable(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "isprintable")
+  internal static func isprintable(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "isprintable")
     }
 
     // We do not have to check if 'self.elements.isEmpty'!
@@ -696,9 +698,9 @@ public struct PyString: PyObjectMixin, AbstractString {
   }
 
   // sourcery: pymethod = casefold
-  internal static func casefold(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "casefold")
+  internal static func casefold(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "casefold")
     }
 
     var builder = Builder(capacity: zelf.count)
@@ -876,9 +878,9 @@ public struct PyString: PyObjectMixin, AbstractString {
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__iter__")
+  internal static func __iter__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__iter__")
     }
 
     let result = py.newStringIterator(string: zelf)

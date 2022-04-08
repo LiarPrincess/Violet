@@ -17,20 +17,20 @@ extension AbstractString {
   // MARK: - Equality
 
   internal static func abstract__eq__(_ py: Py,
-                                      zelf: PyObject,
+                                      zelf _zelf: PyObject,
                                       other: PyObject) -> CompareResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__eq__)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return .invalidSelfArgument(_zelf, Self.pythonTypeName, .__eq__)
     }
 
     return Self.abstractIsEqual(py, zelf: zelf, other: other)
   }
 
   internal static func abstract__ne__(_ py: Py,
-                                      zelf: PyObject,
+                                      zelf _zelf: PyObject,
                                       other: PyObject) -> CompareResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ne__)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return .invalidSelfArgument(_zelf, Self.pythonTypeName, .__ne__)
     }
 
     let isEqual = Self.abstractIsEqual(py, zelf: zelf, other: other)
@@ -64,10 +64,10 @@ extension AbstractString {
   // MARK: - Compare
 
   internal static func abstract__lt__(_ py: Py,
-                                      zelf: PyObject,
+                                      zelf _zelf: PyObject,
                                       other: PyObject) -> CompareResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__lt__)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return .invalidSelfArgument(_zelf, Self.pythonTypeName, .__lt__)
     }
 
     let result = Self.compare(py, zelf: zelf, other: other)
@@ -75,10 +75,10 @@ extension AbstractString {
   }
 
   internal static func abstract__le__(_ py: Py,
-                                      zelf: PyObject,
+                                      zelf _zelf: PyObject,
                                       other: PyObject) -> CompareResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__le__)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return .invalidSelfArgument(_zelf, Self.pythonTypeName, .__le__)
     }
 
     let result = Self.compare(py, zelf: zelf, other: other)
@@ -86,10 +86,10 @@ extension AbstractString {
   }
 
   internal static func abstract__gt__(_ py: Py,
-                                      zelf: PyObject,
+                                      zelf _zelf: PyObject,
                                       other: PyObject) -> CompareResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__gt__)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return .invalidSelfArgument(_zelf, Self.pythonTypeName, .__gt__)
     }
 
     let result = Self.compare(py, zelf: zelf, other: other)
@@ -97,10 +97,10 @@ extension AbstractString {
   }
 
   internal static func abstract__ge__(_ py: Py,
-                                      zelf: PyObject,
+                                      zelf _zelf: PyObject,
                                       other: PyObject) -> CompareResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ge__)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return .invalidSelfArgument(_zelf, Self.pythonTypeName, .__ge__)
     }
 
     let result = Self.compare(py, zelf: zelf, other: other)

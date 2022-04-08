@@ -90,10 +90,10 @@ extension AbstractBuiltinFunction {
   // MARK: - Attributes
 
   internal static func abstract__getattribute__(_ py: Py,
-                                                zelf: PyObject,
+                                                zelf _zelf: PyObject,
                                                 name: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__getattribute__")
     }
 
     return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
@@ -101,9 +101,10 @@ extension AbstractBuiltinFunction {
 
   // MARK: - Properties
 
-  internal static func abstract__name__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__name__")
+  internal static func abstract__name__(_ py: Py,
+                                        zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__name__")
     }
 
     let result = zelf.getName(py)
@@ -116,9 +117,9 @@ extension AbstractBuiltinFunction {
   }
 
   internal static func abstract__doc__(_ py: Py,
-                                       zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__doc__")
+                                       zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__doc__")
     }
 
     guard let doc = zelf.doc else {
@@ -130,9 +131,9 @@ extension AbstractBuiltinFunction {
   }
 
   internal static func abstract__text_signature__(_ py: Py,
-                                                  zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__text_signature__")
+                                                  zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__text_signature__")
     }
 
     guard let doc = zelf.doc,
@@ -144,9 +145,9 @@ extension AbstractBuiltinFunction {
   }
 
   internal static func abstract__module__(_ py: Py,
-                                          zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__module__")
+                                          zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__module__")
     }
 
     guard let moduleObject = zelf.module else {

@@ -30,10 +30,10 @@ private struct GetItemSliceBuilder: GetItemSliceBuilderType {
 extension AbstractSequence {
 
   internal static func abstract__getitem__(_ py: Py,
-                                           zelf: PyObject,
+                                           zelf _zelf: PyObject,
                                            index: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__getitem__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__getitem__")
     }
 
     switch GetItemImpl.getItem(py, source: zelf.elements, index: index) {

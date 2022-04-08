@@ -81,10 +81,10 @@ public struct PyTraceback: PyObjectMixin {
 
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
-                                        zelf: PyObject,
+                                        zelf _zelf: PyObject,
                                         name: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__getattribute__")
     }
 
     return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
@@ -120,9 +120,9 @@ public struct PyTraceback: PyObjectMixin {
   // MARK: - Frame
 
   // sourcery: pyproperty = tb_frame
-  internal static func tb_frame(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "tb_frame")
+  internal static func tb_frame(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "tb_frame")
     }
 
     let result = zelf.getFrame()
@@ -136,9 +136,9 @@ public struct PyTraceback: PyObjectMixin {
   // MARK: - Last instruction
 
   // sourcery: pyproperty = tb_lasti
-  internal static func tb_lasti(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "tb_lasti")
+  internal static func tb_lasti(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "tb_lasti")
     }
 
     let result = zelf.getLastInstruction()
@@ -152,9 +152,9 @@ public struct PyTraceback: PyObjectMixin {
   // MARK: - Line number
 
   // sourcery: pyproperty = tb_lineno
-  internal static func tb_lineno(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "tb_lineno")
+  internal static func tb_lineno(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "tb_lineno")
     }
 
     let result = zelf.getLineNo()
@@ -168,9 +168,9 @@ public struct PyTraceback: PyObjectMixin {
   // MARK: - Next
 
   // sourcery: pyproperty = tb_next, setter
-  internal static func tb_next(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "tb_next")
+  internal static func tb_next(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "tb_next")
     }
 
     let result = zelf.getNext()
@@ -182,10 +182,10 @@ public struct PyTraceback: PyObjectMixin {
   }
 
   internal static func tb_next(_ py: Py,
-                               zelf: PyObject,
+                               zelf _zelf: PyObject,
                                value: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "tb_next")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "tb_next")
     }
 
     guard let value = value else {

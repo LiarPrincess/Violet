@@ -68,9 +68,9 @@ public struct PyBool: PyObjectMixin {
     return Self.toString(py, zelf: zelf, fnName: "__str__")
   }
 
-  private static func toString(_ py: Py, zelf: PyObject, fnName: String) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, fnName)
+  private static func toString(_ py: Py, zelf _zelf: PyObject, fnName: String) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, fnName)
     }
 
     let result = zelf.isTrue ? "True" : "False"
@@ -186,14 +186,14 @@ public struct PyBool: PyObjectMixin {
   // swiftlint:disable function_parameter_count
   private static func binaryOperation(
     _ py: Py,
-    zelf: PyObject,
+    zelf _zelf: PyObject,
     other: PyObject,
     fnName: String,
     fn: (Bool, Bool) -> Bool,
     intFn: (Py, PyObject, PyObject) -> PyResult
   ) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, fnName)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, fnName)
     }
 
     guard let other = Self.downcast(py, other) else {

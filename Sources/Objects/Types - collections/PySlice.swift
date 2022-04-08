@@ -68,18 +68,22 @@ public struct PySlice: PyObjectMixin {
   // MARK: - Equatable, comparable
 
   // sourcery: pymethod = __eq__
-  internal static func __eq__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__eq__)
+  internal static func __eq__(_ py: Py,
+                              zelf _zelf: PyObject,
+                              other: PyObject) -> CompareResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return .invalidSelfArgument(_zelf, Self.pythonTypeName, .__eq__)
     }
 
     return Self.isEqual(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __ne__
-  internal static func __ne__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ne__)
+  internal static func __ne__(_ py: Py,
+                              zelf _zelf: PyObject,
+                              other: PyObject) -> CompareResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return .invalidSelfArgument(_zelf, Self.pythonTypeName, .__ne__)
     }
 
     let isEqual = Self.isEqual(py, zelf: zelf, other: other)
@@ -172,13 +176,13 @@ public struct PySlice: PyObjectMixin {
 
   // swiftlint:disable:next function_parameter_count
   private static func compare(_ py: Py,
-                              zelf: PyObject,
+                              zelf _zelf: PyObject,
                               other: PyObject,
                               operation: CompareResult.Operation,
                               compareFn: (PyObject, PyObject) -> PyResultGen<Bool>,
                               onEqual: Bool) -> CompareResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.pythonTypeName, operation)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return .invalidSelfArgument(_zelf, Self.pythonTypeName, operation)
     }
 
     switch Self.getFirstNonEqualValues(py, zelf: zelf, other: other) {
@@ -198,9 +202,9 @@ public struct PySlice: PyObjectMixin {
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.pythonTypeName)
+  internal static func __hash__(_ py: Py, zelf _zelf: PyObject) -> HashResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return .invalidSelfArgument(_zelf, Self.pythonTypeName)
     }
 
     return .unhashable(zelf.asObject)
@@ -209,9 +213,9 @@ public struct PySlice: PyObjectMixin {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__repr__")
+  internal static func __repr__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__repr__")
     }
 
     let start: String
@@ -240,10 +244,10 @@ public struct PySlice: PyObjectMixin {
 
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
-                                        zelf: PyObject,
+                                        zelf _zelf: PyObject,
                                         name: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__getattribute__")
     }
 
     return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
@@ -259,27 +263,27 @@ public struct PySlice: PyObjectMixin {
   // MARK: - Start, stop, step
 
   // sourcery: pyproperty = start
-  internal static func start(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "start")
+  internal static func start(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "start")
     }
 
     return PyResult(zelf.start)
   }
 
   // sourcery: pyproperty = stop
-  internal static func stop(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "stop")
+  internal static func stop(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "stop")
     }
 
     return PyResult(zelf.stop)
   }
 
   // sourcery: pyproperty = step
-  internal static func step(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "step")
+  internal static func step(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "step")
     }
 
     return PyResult(zelf.step)
@@ -291,10 +295,10 @@ public struct PySlice: PyObjectMixin {
   /// static PyObject*
   /// slice_indices(PySliceObject* self, PyObject* len)
   internal static func indices(_ py: Py,
-                               zelf: PyObject,
+                               zelf _zelf: PyObject,
                                length: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "indices")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "indices")
     }
 
     let lengthInt: BigInt

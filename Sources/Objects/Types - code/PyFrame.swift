@@ -256,9 +256,9 @@ public struct PyFrame: PyObjectMixin {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__repr__")
+  internal static func __repr__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__repr__")
     }
 
     let ptr = zelf.ptr
@@ -280,10 +280,10 @@ public struct PyFrame: PyObjectMixin {
 
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
-                                        zelf: PyObject,
+                                        zelf _zelf: PyObject,
                                         name: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__getattribute__")
     }
 
     return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
@@ -291,11 +291,11 @@ public struct PyFrame: PyObjectMixin {
 
   // sourcery: pymethod = __setattr__
   internal static func __setattr__(_ py: Py,
-                                   zelf: PyObject,
+                                   zelf _zelf: PyObject,
                                    name: PyObject,
                                    value: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__setattr__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__setattr__")
     }
 
     return AttributeHelper.setAttribute(py, object: zelf.asObject, name: name, value: value)
@@ -303,10 +303,10 @@ public struct PyFrame: PyObjectMixin {
 
   // sourcery: pymethod = __delattr__
   internal static func __delattr__(_ py: Py,
-                                   zelf: PyObject,
+                                   zelf _zelf: PyObject,
                                    name: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__delattr__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__delattr__")
     }
 
     return AttributeHelper.delAttribute(py, object: zelf.asObject, name: name)
@@ -315,9 +315,9 @@ public struct PyFrame: PyObjectMixin {
   // MARK: - Properties
 
   // sourcery: pyproperty = f_back
-  internal static func f_back(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "f_back")
+  internal static func f_back(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "f_back")
     }
 
     if let parent = zelf.parent {
@@ -328,27 +328,27 @@ public struct PyFrame: PyObjectMixin {
   }
 
   // sourcery: pyproperty = f_builtins
-  internal static func f_builtins(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "f_builtins")
+  internal static func f_builtins(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "f_builtins")
     }
 
     return PyResult(zelf.builtins)
   }
 
   // sourcery: pyproperty = f_globals
-  internal static func f_globals(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "f_globals")
+  internal static func f_globals(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "f_globals")
     }
 
     return PyResult(zelf.globals)
   }
 
   // sourcery: pyproperty = f_locals
-  internal static func f_locals(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "f_locals")
+  internal static func f_locals(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "f_locals")
     }
 
     if let e = zelf.copyFastToLocals(py) {
@@ -359,18 +359,18 @@ public struct PyFrame: PyObjectMixin {
   }
 
   // sourcery: pyproperty = f_code
-  internal static func f_code(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "f_code")
+  internal static func f_code(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "f_code")
     }
 
     return PyResult(zelf.code)
   }
 
   // sourcery: pyproperty = f_lasti
-  internal static func f_lasti(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "f_lasti")
+  internal static func f_lasti(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "f_lasti")
     }
 
     let result = zelf.currentInstructionIndex ?? 0
@@ -378,9 +378,9 @@ public struct PyFrame: PyObjectMixin {
   }
 
   // sourcery: pyproperty = f_lineno
-  internal static func f_lineno(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "f_lineno")
+  internal static func f_lineno(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "f_lineno")
     }
 
     let result = Int(zelf.currentInstructionLine)

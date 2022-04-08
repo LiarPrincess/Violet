@@ -12,11 +12,11 @@ extension AbstractSequence {
   // MARK: - Add
 
   internal static func abstract__add__(_ py: Py,
-                                       zelf: PyObject,
+                                       zelf _zelf: PyObject,
                                        other: PyObject,
                                        isTuple: Bool) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__add__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__add__")
     }
 
     guard let other = Self.downcast(py, other) else {
@@ -49,22 +49,22 @@ extension AbstractSequence {
   // MARK: - Mul
 
   internal static func abstract__mul__(_ py: Py,
-                                       zelf: PyObject,
+                                       zelf _zelf: PyObject,
                                        other: PyObject,
                                        isTuple: Bool) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__mul__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__mul__")
     }
 
     return Self.common__mul__(py, zelf: zelf, other: other, isTuple: isTuple)
   }
 
   internal static func abstract__rmul__(_ py: Py,
-                                        zelf: PyObject,
+                                        zelf _zelf: PyObject,
                                         other: PyObject,
                                         isTuple: Bool) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__rmul__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__rmul__")
     }
 
     return Self.common__mul__(py, zelf: zelf, other: other, isTuple: isTuple)

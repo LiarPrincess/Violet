@@ -231,9 +231,9 @@ public struct PyType: PyObjectMixin {
   // MARK: - Name
 
   // sourcery: pyproperty = __name__, setter
-  internal static func __name__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__name__")
+  internal static func __name__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__name__")
     }
 
     let name = zelf.getNameString()
@@ -253,9 +253,11 @@ public struct PyType: PyObjectMixin {
     return self.name
   }
 
-  internal static func __name__(_ py: Py, zelf: PyObject, value: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__name__")
+  internal static func __name__(_ py: Py,
+                                zelf _zelf: PyObject,
+                                value: PyObject?) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__name__")
     }
 
     let object: PyObject
@@ -276,9 +278,9 @@ public struct PyType: PyObjectMixin {
   // MARK: - Qualname
 
   // sourcery: pyproperty = __qualname__, setter
-  internal static func __qualname__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__qualname__'")
+  internal static func __qualname__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__qualname__'")
     }
 
     let qualname = zelf.getQualnameString()
@@ -293,9 +295,11 @@ public struct PyType: PyObjectMixin {
     return self.getNameString()
   }
 
-  internal static func __qualname__(_ py: Py, zelf: PyObject, value: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__qualname__")
+  internal static func __qualname__(_ py: Py,
+                                    zelf _zelf: PyObject,
+                                    value: PyObject?) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__qualname__")
     }
 
     switch zelf.setQualname(py, value: value) {
@@ -325,9 +329,9 @@ public struct PyType: PyObjectMixin {
   // MARK: - Doc
 
   // sourcery: pyproperty = __doc__, setter
-  internal static func __doc__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__doc__")
+  internal static func __doc__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__doc__")
     }
 
     // If we are a builtin type then we have our 'doc' stored:
@@ -353,9 +357,11 @@ public struct PyType: PyObjectMixin {
     return .value(doc)
   }
 
-  internal static func __doc__(_ py: Py, zelf: PyObject, value: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__doc__")
+  internal static func __doc__(_ py: Py,
+                               zelf _zelf: PyObject,
+                               value: PyObject?) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__doc__")
     }
 
     let object: PyObject
@@ -388,9 +394,9 @@ public struct PyType: PyObjectMixin {
   // MARK: - Module
 
   // sourcery: pyproperty = __module__, setter
-  internal static func __module__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__module__")
+  internal static func __module__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__module__")
     }
 
     switch zelf.getModuleNameRaw(py) {
@@ -476,9 +482,11 @@ public struct PyType: PyObjectMixin {
     return .builtins
   }
 
-  internal static func __module__(_ py: Py, zelf: PyObject, value: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__module__")
+  internal static func __module__(_ py: Py,
+                                  zelf _zelf: PyObject,
+                                  value: PyObject?) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__module__")
     }
 
     switch zelf.setModule(py, value: value) {
@@ -504,9 +512,9 @@ public struct PyType: PyObjectMixin {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__dict__")
+  internal static func __dict__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__dict__")
     }
 
     let result = zelf.getDict(py)
@@ -538,9 +546,9 @@ public struct PyType: PyObjectMixin {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__repr__")
+  internal static func __repr__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__repr__")
     }
 
     switch zelf.getModuleName(py) {
@@ -558,9 +566,9 @@ public struct PyType: PyObjectMixin {
   // MARK: - Base
 
   // sourcery: pyproperty = __base__
-  internal static func __base__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__base__")
+  internal static func __base__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__base__")
     }
 
     guard let base = zelf.base else {
@@ -573,18 +581,20 @@ public struct PyType: PyObjectMixin {
   // MARK: - Bases
 
   // sourcery: pyproperty = __bases__, setter
-  internal static func __bases__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__bases__")
+  internal static func __bases__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__bases__")
     }
 
     let bases = zelf.bases.map { $0.asObject }
     return PyResult(py, tuple: bases)
   }
 
-  internal static func __bases__(_ py: Py, zelf: PyObject, value: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__bases__")
+  internal static func __bases__(_ py: Py,
+                                 zelf _zelf: PyObject,
+                                 value: PyObject?) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__bases__")
     }
 
     // Violet currently does not support this
@@ -594,9 +604,9 @@ public struct PyType: PyObjectMixin {
   // MARK: - Mro
 
   // sourcery: pyproperty = __mro__
-  internal static func __mro__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__mro__")
+  internal static func __mro__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__mro__")
     }
 
     let mro = zelf.mro.map { $0.asObject }
@@ -611,9 +621,9 @@ public struct PyType: PyObjectMixin {
     """
 
   // sourcery: pymethod = mro, doc = mroDoc
-  internal static func mro(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "mro")
+  internal static func mro(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "mro")
     }
 
     let elements = zelf.mro.map { $0.asObject }
@@ -625,10 +635,10 @@ public struct PyType: PyObjectMixin {
 
   // sourcery: pymethod = __subclasscheck__
   internal static func __subclasscheck__(_ py: Py,
-                                         zelf: PyObject,
+                                         zelf _zelf: PyObject,
                                          object: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__subclasscheck__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__subclasscheck__")
     }
 
     let result = zelf.isSubtype(py, of: object)
@@ -650,10 +660,10 @@ public struct PyType: PyObjectMixin {
 
   // sourcery: pymethod = __instancecheck__
   internal static func __instancecheck__(_ py: Py,
-                                         zelf: PyObject,
+                                         zelf _zelf: PyObject,
                                          object: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__instancecheck__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__instancecheck__")
     }
 
     let result = object.type.isSubtype(of: zelf)
@@ -661,9 +671,9 @@ public struct PyType: PyObjectMixin {
   }
 
   // sourcery: pymethod = __subclasses__
-  internal static func __subclasses__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__subclasses__")
+  internal static func __subclasses__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__subclasses__")
     }
 
     let subclasses = zelf.subclasses.map { $0.asObject }
@@ -699,10 +709,10 @@ public struct PyType: PyObjectMixin {
 
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
-                                        zelf: PyObject,
+                                        zelf _zelf: PyObject,
                                         name: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__getattribute__")
     }
 
     switch AttributeHelper.extractName(py, name: name) {
@@ -772,11 +782,11 @@ public struct PyType: PyObjectMixin {
 
   // sourcery: pymethod = __setattr__
   internal static func __setattr__(_ py: Py,
-                                   zelf: PyObject,
+                                   zelf _zelf: PyObject,
                                    name: PyObject,
                                    value: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__setattr__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__setattr__")
     }
 
     if let error = zelf.preventSetAttributeOnBuiltin(py) {
@@ -819,10 +829,10 @@ public struct PyType: PyObjectMixin {
 
   // sourcery: pymethod = __delattr__
   internal static func __delattr__(_ py: Py,
-                                   zelf: PyObject,
+                                   zelf _zelf: PyObject,
                                    name: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__delattr__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__delattr__")
     }
 
     return zelf.setAttribute(py, name: name, value: nil)
@@ -856,9 +866,10 @@ public struct PyType: PyObjectMixin {
   ///
   /// We deliberately don't suck up its __class__, as methods belonging to the
   /// metaclass would probably be more confusing than helpful.
-  internal static func __dir__(_ py: Py, zelf: PyObject) -> PyResultGen<DirResult> {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(py, zelf, Self.pythonTypeName)
+  internal static func __dir__(_ py: Py,
+                               zelf _zelf: PyObject) -> PyResultGen<DirResult> {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return .invalidSelfArgument(py, _zelf, Self.pythonTypeName)
     }
 
     return zelf.dir(py)
@@ -936,11 +947,11 @@ public struct PyType: PyObjectMixin {
   /// static PyObject *
   /// type_call(PyTypeObject *type, PyObject *args, PyObject *kwds)
   internal static func __call__(_ py: Py,
-                                zelf: PyObject,
+                                zelf _zelf: PyObject,
                                 args: [PyObject],
                                 kwargs: PyDict?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__call__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__call__")
     }
 
     return zelf.call(py, args: args, kwargs: kwargs)

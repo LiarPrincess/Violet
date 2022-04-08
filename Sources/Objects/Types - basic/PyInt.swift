@@ -113,12 +113,12 @@ public struct PyInt: PyObjectMixin {
   }
 
   private static func compareOperation(_ py: Py,
-                                       zelf: PyObject,
+                                       zelf _zelf: PyObject,
                                        other: PyObject,
                                        op: CompareResult.Operation,
                                        fn: (PyInt, PyInt) -> Bool) -> CompareResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.pythonTypeName, op)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return .invalidSelfArgument(_zelf, Self.pythonTypeName, op)
     }
 
     guard let other = Self.downcast(py, other) else {
@@ -132,9 +132,9 @@ public struct PyInt: PyObjectMixin {
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.pythonTypeName)
+  internal static func __hash__(_ py: Py, zelf _zelf: PyObject) -> HashResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return .invalidSelfArgument(_zelf, Self.pythonTypeName)
     }
 
     let result = zelf.hash(py)
@@ -159,9 +159,11 @@ public struct PyInt: PyObjectMixin {
 
   private static let stringInternRange: ClosedRange<BigInt> = -10...256
 
-  private static func toString(_ py: Py, zelf: PyObject, fnName: String) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, fnName)
+  private static func toString(_ py: Py,
+                               zelf _zelf: PyObject,
+                               fnName: String) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, fnName)
     }
 
     let value = zelf.value
@@ -177,9 +179,9 @@ public struct PyInt: PyObjectMixin {
   // MARK: - As bool/int/float/index
 
   // sourcery: pymethod = __bool__
-  internal static func __bool__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__bool__")
+  internal static func __bool__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__bool__")
     }
 
     let result = zelf.value.isTrue
@@ -192,9 +194,9 @@ public struct PyInt: PyObjectMixin {
   }
 
   // sourcery: pymethod = __float__
-  internal static func __float__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__float__")
+  internal static func __float__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__float__")
     }
 
     switch Self.asDouble(py, int: zelf.value) {
@@ -252,10 +254,10 @@ public struct PyInt: PyObjectMixin {
 
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
-                                        zelf: PyObject,
+                                        zelf _zelf: PyObject,
                                         name: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__getattribute__")
     }
 
     return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
@@ -374,11 +376,11 @@ public struct PyInt: PyObjectMixin {
 
   // sourcery: pymethod = __pow__
   internal static func __pow__(_ py: Py,
-                               zelf: PyObject,
+                               zelf _zelf: PyObject,
                                exp: PyObject,
                                mod: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__pow__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__pow__")
     }
 
     guard let exp = Self.downcast(py, exp) else {
@@ -427,11 +429,11 @@ public struct PyInt: PyObjectMixin {
 
   // sourcery: pymethod = __rpow__
   internal static func __rpow__(_ py: Py,
-                                zelf: PyObject,
+                                zelf _zelf: PyObject,
                                 base: PyObject,
                                 mod: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__rpow__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__rpow__")
     }
 
     guard let base = Self.downcast(py, base) else {
@@ -541,12 +543,12 @@ public struct PyInt: PyObjectMixin {
   /// static PyObject *
   /// long_true_divide(PyObject *v, PyObject *w)
   private static func truedivOperation(_ py: Py,
-                                       zelf: PyObject,
+                                       zelf _zelf: PyObject,
                                        other: PyObject,
                                        fnName: String,
                                        isZelfLeft: Bool) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, fnName)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, fnName)
     }
 
     guard let other = Self.downcast(py, other) else {
@@ -601,12 +603,12 @@ public struct PyInt: PyObjectMixin {
   }
 
   private static func floordivOperation(_ py: Py,
-                                        zelf: PyObject,
+                                        zelf _zelf: PyObject,
                                         other: PyObject,
                                         fnName: String,
                                         isZelfLeft: Bool) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, fnName)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, fnName)
     }
 
     guard let other = Self.downcast(py, other) else {
@@ -645,12 +647,12 @@ public struct PyInt: PyObjectMixin {
   }
 
   private static func modOperation(_ py: Py,
-                                   zelf: PyObject,
+                                   zelf _zelf: PyObject,
                                    other: PyObject,
                                    fnName: String,
                                    isZelfLeft: Bool) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, fnName)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, fnName)
     }
 
     guard let other = Self.downcast(py, other) else {
@@ -689,12 +691,12 @@ public struct PyInt: PyObjectMixin {
   }
 
   private static func divModOperation(_ py: Py,
-                                      zelf: PyObject,
+                                      zelf _zelf: PyObject,
                                       other: PyObject,
                                       fnName: String,
                                       isZelfLeft: Bool) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, fnName)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, fnName)
     }
 
     guard let other = Self.downcast(py, other) else {
@@ -797,12 +799,12 @@ public struct PyInt: PyObjectMixin {
   }
 
   private static func lshiftOperation(_ py: Py,
-                                      zelf: PyObject,
+                                      zelf _zelf: PyObject,
                                       other: PyObject,
                                       fnName: String,
                                       isZelfValue: Bool) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, fnName)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, fnName)
     }
 
     guard let other = Self.downcast(py, other) else {
@@ -849,12 +851,12 @@ public struct PyInt: PyObjectMixin {
   }
 
   private static func rshiftOperation(_ py: Py,
-                                      zelf: PyObject,
+                                      zelf _zelf: PyObject,
                                       other: PyObject,
                                       fnName: String,
                                       isZelfValue: Bool) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, fnName)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, fnName)
     }
 
     guard let other = Self.downcast(py, other) else {
@@ -917,10 +919,10 @@ public struct PyInt: PyObjectMixin {
   /// static PyObject *
   /// long_round(PyObject *self, PyObject *args)
   internal static func __round__(_ py: Py,
-                                 zelf: PyObject,
+                                 zelf _zelf: PyObject,
                                  nDigits _nDigits: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__round__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__round__")
     }
 
     let nDigits: BigInt
@@ -1275,10 +1277,10 @@ public struct PyInt: PyObjectMixin {
 
   /// Operation that returns ourself.
   private static func identityOperation(_ py: Py,
-                                        zelf: PyObject,
+                                        zelf _zelf: PyObject,
                                         fnName: String) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, fnName)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, fnName)
     }
 
     // Normally we could return ourself (as in: exactly the same object as 'zelf').
@@ -1296,11 +1298,11 @@ public struct PyInt: PyObjectMixin {
 
   /// Operation that returns an `int`
   private static func intOperation(_ py: Py,
-                                   zelf: PyObject,
+                                   zelf _zelf: PyObject,
                                    fnName: String,
                                    fn: (BigInt) -> Int) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, fnName)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, fnName)
     }
 
     let result = fn(zelf.value)
@@ -1308,11 +1310,11 @@ public struct PyInt: PyObjectMixin {
   }
 
   private static func unaryOperation(_ py: Py,
-                                     zelf: PyObject,
+                                     zelf _zelf: PyObject,
                                      fnName: String,
                                      fn: (BigInt) -> BigInt) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, fnName)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, fnName)
     }
 
     let result = fn(zelf.value)
@@ -1320,12 +1322,12 @@ public struct PyInt: PyObjectMixin {
   }
 
   private static func binaryOperation(_ py: Py,
-                                      zelf: PyObject,
+                                      zelf _zelf: PyObject,
                                       other: PyObject,
                                       fnName: String,
                                       fn: (BigInt, BigInt) -> BigInt) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, fnName)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, fnName)
     }
 
     guard let other = Self.downcast(py, other) else {

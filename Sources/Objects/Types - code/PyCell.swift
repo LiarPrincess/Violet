@@ -169,9 +169,9 @@ public struct PyCell: PyObjectMixin {
 
   /// Btw. general rule: `nil` is less.
   private static func compare(_ py: Py,
-                              zelf: PyObject,
+                              zelf _zelf: PyObject,
                               other: PyObject) -> CellCompareResult {
-    guard let zelf = Self.downcast(py, zelf) else {
+    guard let zelf = Self.downcast(py, _zelf) else {
       return .invalidSelfArgument
     }
 
@@ -194,9 +194,9 @@ public struct PyCell: PyObjectMixin {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__repr__")
+  internal static func __repr__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__repr__")
     }
 
     let ptr = zelf.ptr
@@ -214,10 +214,10 @@ public struct PyCell: PyObjectMixin {
 
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
-                                        zelf: PyObject,
+                                        zelf _zelf: PyObject,
                                         name: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__getattribute__")
     }
 
     return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)

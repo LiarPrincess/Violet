@@ -85,9 +85,9 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.pythonTypeName)
+  internal static func __hash__(_ py: Py, zelf _zelf: PyObject) -> HashResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return .invalidSelfArgument(_zelf, Self.pythonTypeName)
     }
 
     return Self.calculateHash(py, elements: zelf.elements)
@@ -113,9 +113,9 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__repr__")
+  internal static func __repr__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__repr__")
     }
 
     switch zelf.repr(py) {
@@ -165,10 +165,10 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
 
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
-                                        zelf: PyObject,
+                                        zelf _zelf: PyObject,
                                         name: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__getattribute__")
     }
 
     return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
@@ -184,9 +184,9 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal static func __len__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__len__")
+  internal static func __len__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__len__")
     }
 
     let result = zelf.count
@@ -228,9 +228,9 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__iter__")
+  internal static func __iter__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__iter__")
     }
 
     let result = py.newIterator(tuple: zelf)

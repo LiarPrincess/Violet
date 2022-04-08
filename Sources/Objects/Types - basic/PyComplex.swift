@@ -53,18 +53,22 @@ public struct PyComplex: PyObjectMixin {
   // MARK: - Equatable, comparable
 
   // sourcery: pymethod = __eq__
-  internal static func __eq__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__eq__)
+  internal static func __eq__(_ py: Py,
+                              zelf _zelf: PyObject,
+                              other: PyObject) -> CompareResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return .invalidSelfArgument(_zelf, Self.pythonTypeName, .__eq__)
     }
 
     return Self.isEqual(py, zelf: zelf, other: other)
   }
 
   // sourcery: pymethod = __ne__
-  internal static func __ne__(_ py: Py, zelf: PyObject, other: PyObject) -> CompareResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ne__)
+  internal static func __ne__(_ py: Py,
+                              zelf _zelf: PyObject,
+                              other: PyObject) -> CompareResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return .invalidSelfArgument(_zelf, Self.pythonTypeName, .__ne__)
     }
 
     let isEqual = Self.isEqual(py, zelf: zelf, other: other)
@@ -132,9 +136,9 @@ public struct PyComplex: PyObjectMixin {
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal static func __hash__(_ py: Py, zelf: PyObject) -> HashResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.pythonTypeName)
+  internal static func __hash__(_ py: Py, zelf _zelf: PyObject) -> HashResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return .invalidSelfArgument(_zelf, Self.pythonTypeName)
     }
 
     let realHash = py.hasher.hash(zelf.real)
@@ -164,9 +168,11 @@ public struct PyComplex: PyObjectMixin {
     return Self.toString(py, zelf: zelf, fnName: "__str__")
   }
 
-  private static func toString(_ py: Py, zelf: PyObject, fnName: String) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, fnName)
+  private static func toString(_ py: Py,
+                               zelf _zelf: PyObject,
+                               fnName: String) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, fnName)
     }
 
     let real = zelf.real
@@ -201,9 +207,9 @@ public struct PyComplex: PyObjectMixin {
   // MARK: - As bool/int/float
 
   // sourcery: pymethod = __bool__
-  internal static func __bool__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__bool__")
+  internal static func __bool__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__bool__")
     }
 
     let bothZero = zelf.real.isZero && zelf.imag.isZero
@@ -232,9 +238,9 @@ public struct PyComplex: PyObjectMixin {
   // MARK: - Imaginary
 
   // sourcery: pyproperty = real
-  internal static func real(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "real")
+  internal static func real(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "real")
     }
 
     let result = zelf.real
@@ -242,9 +248,9 @@ public struct PyComplex: PyObjectMixin {
   }
 
   // sourcery: pyproperty = imag
-  internal static func imag(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "imag")
+  internal static func imag(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "imag")
     }
 
     let result = zelf.imag
@@ -273,10 +279,10 @@ public struct PyComplex: PyObjectMixin {
 
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
-                                        zelf: PyObject,
+                                        zelf _zelf: PyObject,
                                         name: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__getattribute__")
     }
 
     return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
@@ -311,9 +317,9 @@ public struct PyComplex: PyObjectMixin {
   // MARK: - Abs
 
   // sourcery: pymethod = __abs__
-  internal static func __abs__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__abs__")
+  internal static func __abs__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__abs__")
     }
 
     let real = zelf.real
@@ -449,13 +455,13 @@ public struct PyComplex: PyObjectMixin {
 
   // swiftlint:disable function_parameter_count
   private static func powOperation(_ py: Py,
-                                   zelf: PyObject,
+                                   zelf _zelf: PyObject,
                                    other: PyObject,
                                    mod: PyObject?,
                                    fnName: String,
                                    isZelfBase: Bool) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, fnName)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, fnName)
     }
 
     guard py.cast.isNilOrNone(mod) else {
@@ -524,12 +530,12 @@ public struct PyComplex: PyObjectMixin {
   }
 
   private static func truedivOperation(_ py: Py,
-                                       zelf: PyObject,
+                                       zelf _zelf: PyObject,
                                        other: PyObject,
                                        fnName: String,
                                        isZelfLeft: Bool) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, fnName)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, fnName)
     }
 
     switch Self.asComplex(py, object: other) {
@@ -561,7 +567,9 @@ public struct PyComplex: PyObjectMixin {
   private static let floordivError = "can't take floor of complex number."
 
   // sourcery: pymethod = __floordiv__
-  internal static func __floordiv__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
+  internal static func __floordiv__(_ py: Py,
+                                    zelf: PyObject,
+                                    other: PyObject) -> PyResult {
     guard Self.downcast(py, zelf) != nil else {
       return Self.invalidZelfArgument(py, zelf, "__floordiv__")
     }
@@ -570,7 +578,9 @@ public struct PyComplex: PyObjectMixin {
   }
 
   // sourcery: pymethod = __rfloordiv__
-  internal static func __rfloordiv__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
+  internal static func __rfloordiv__(_ py: Py,
+                                     zelf: PyObject,
+                                     other: PyObject) -> PyResult {
     guard Self.downcast(py, zelf) != nil else {
       return Self.invalidZelfArgument(py, zelf, "__rfloordiv__")
     }
@@ -583,7 +593,9 @@ public struct PyComplex: PyObjectMixin {
   private static let modError = "can't mod complex numbers."
 
   // sourcery: pymethod = __mod__
-  internal static func __mod__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
+  internal static func __mod__(_ py: Py,
+                               zelf: PyObject,
+                               other: PyObject) -> PyResult {
     guard Self.downcast(py, zelf) != nil else {
       return Self.invalidZelfArgument(py, zelf, "__mod__")
     }
@@ -592,7 +604,9 @@ public struct PyComplex: PyObjectMixin {
   }
 
   // sourcery: pymethod = __rmod__
-  internal static func __rmod__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
+  internal static func __rmod__(_ py: Py,
+                                zelf: PyObject,
+                                other: PyObject) -> PyResult {
     guard Self.downcast(py, zelf) != nil else {
       return Self.invalidZelfArgument(py, zelf, "__rmod__")
     }
@@ -605,7 +619,9 @@ public struct PyComplex: PyObjectMixin {
   private static let divmodError = "can't take floor or mod of complex number."
 
   // sourcery: pymethod = __divmod__
-  internal static func __divmod__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
+  internal static func __divmod__(_ py: Py,
+                                  zelf: PyObject,
+                                  other: PyObject) -> PyResult {
     guard Self.downcast(py, zelf) != nil else {
       return Self.invalidZelfArgument(py, zelf, "__divmod__")
     }
@@ -614,7 +630,9 @@ public struct PyComplex: PyObjectMixin {
   }
 
   // sourcery: pymethod = __rdivmod__
-  internal static func __rdivmod__(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
+  internal static func __rdivmod__(_ py: Py,
+                                   zelf: PyObject,
+                                   other: PyObject) -> PyResult {
     guard Self.downcast(py, zelf) != nil else {
       return Self.invalidZelfArgument(py, zelf, "__rdivmod__")
     }
@@ -625,9 +643,9 @@ public struct PyComplex: PyObjectMixin {
   // MARK: - NewArgs
 
   // sourcery: pymethod = __getnewargs__
-  internal static func __getnewargs__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__getnewargs__")
+  internal static func __getnewargs__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__getnewargs__")
     }
 
     let real = py.newFloat(zelf.real)
@@ -886,11 +904,11 @@ public struct PyComplex: PyObjectMixin {
   }
 
   private static func unaryOperation(_ py: Py,
-                                     zelf: PyObject,
+                                     zelf _zelf: PyObject,
                                      fnName: String,
                                      fn: (Raw) -> Raw) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, fnName)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, fnName)
     }
 
     let zelfRaw = Raw(zelf)
@@ -899,12 +917,12 @@ public struct PyComplex: PyObjectMixin {
   }
 
   private static func binaryOperation(_ py: Py,
-                                      zelf: PyObject,
+                                      zelf _zelf: PyObject,
                                       other: PyObject,
                                       fnName: String,
                                       fn: (Raw, Raw) -> Raw) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, fnName)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, fnName)
     }
 
     switch Self.asComplex(py, object: other) {

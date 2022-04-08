@@ -169,9 +169,9 @@ public struct {swift_type_name}: PyErrorMixin {{
   }}
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {{
-    guard let zelf = Self.downcast(py, zelf) else {{
-      return Self.invalidZelfArgument(py, zelf, "__dict__")
+  internal static func __dict__(_ py: Py, zelf _zelf: PyObject) -> PyResult {{
+    guard let zelf = Self.downcast(py, _zelf) else {{
+      return Self.invalidZelfArgument(py, _zelf, "__dict__")
     }}
 
     let result = zelf.asBaseException.getDict(py)
@@ -190,11 +190,11 @@ public struct {swift_type_name}: PyErrorMixin {{
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
-                                zelf: PyObject,
+                                zelf _zelf: PyObject,
                                 args: [PyObject],
                                 kwargs: PyDict?) -> PyResult {{
-    guard let zelf = Self.downcast(py, zelf) else {{
-      return Self.invalidZelfArgument(py, zelf, "__init__")
+    guard let zelf = Self.downcast(py, _zelf) else {{
+      return Self.invalidZelfArgument(py, _zelf, "__init__")
     }}
 
     let zelfAsObject = zelf.asObject

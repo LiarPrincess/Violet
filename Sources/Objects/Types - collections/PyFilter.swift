@@ -54,10 +54,10 @@ public struct PyFilter: PyObjectMixin {
 
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
-                                        zelf: PyObject,
+                                        zelf _zelf: PyObject,
                                         name: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__getattribute__")
     }
 
     return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
@@ -66,9 +66,9 @@ public struct PyFilter: PyObjectMixin {
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__iter__")
+  internal static func __iter__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__iter__")
     }
 
     return PyResult(zelf)
@@ -77,9 +77,9 @@ public struct PyFilter: PyObjectMixin {
   // MARK: - Next
 
   // sourcery: pymethod = __next__
-  internal static func __next__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__next__")
+  internal static func __next__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__next__")
     }
 
     let useTrivialBoolCheck = py.cast.isNone(zelf.fn) || py.cast.isBool(zelf.fn)

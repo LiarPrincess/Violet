@@ -6,11 +6,11 @@ private let splitLinesArguments = ArgumentParser.createOrTrap(
 extension AbstractString {
 
   internal static func abstractSplitLines(_ py: Py,
-                                          zelf: PyObject,
+                                          zelf _zelf: PyObject,
                                           args: [PyObject],
                                           kwargs: PyDict?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "splitlines")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "splitlines")
     }
 
     switch splitLinesArguments.bind(py, args: args, kwargs: kwargs) {

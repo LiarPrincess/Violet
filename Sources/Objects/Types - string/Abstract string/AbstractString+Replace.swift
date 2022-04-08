@@ -1,12 +1,12 @@
 extension AbstractString {
 
   internal static func abstractReplace(_ py: Py,
-                                       zelf: PyObject,
+                                       zelf _zelf: PyObject,
                                        old oldObject: PyObject,
                                        new newObject: PyObject,
                                        count countObject: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "replace")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "replace")
     }
 
     guard let old = Self.getElements(py, object: oldObject) else {

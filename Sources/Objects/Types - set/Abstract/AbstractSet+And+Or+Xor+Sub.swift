@@ -3,20 +3,20 @@ extension AbstractSet {
   // MARK: - And
 
   internal static func abstract__and__(_ py: Py,
-                                       zelf: PyObject,
+                                       zelf _zelf: PyObject,
                                        other: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__and__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__and__")
     }
 
     return Self.and(py, zelf: zelf, other: other)
   }
 
   internal static func abstract__rand__(_ py: Py,
-                                        zelf: PyObject,
+                                        zelf _zelf: PyObject,
                                         other: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__rand__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__rand__")
     }
 
     return Self.and(py, zelf: zelf, other: other)
@@ -39,20 +39,20 @@ extension AbstractSet {
   // MARK: - Or
 
   internal static func abstract__or__(_ py: Py,
-                                      zelf: PyObject,
+                                      zelf _zelf: PyObject,
                                       other: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__or__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__or__")
     }
 
     return Self.or(py, zelf: zelf, other: other)
   }
 
   internal static func abstract__ror__(_ py: Py,
-                                       zelf: PyObject,
+                                       zelf _zelf: PyObject,
                                        other: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__ror__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__ror__")
     }
 
     return Self.or(py, zelf: zelf, other: other)
@@ -75,20 +75,20 @@ extension AbstractSet {
   // MARK: - Xor
 
   internal static func abstract__xor__(_ py: Py,
-                                       zelf: PyObject,
+                                       zelf _zelf: PyObject,
                                        other: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__xor__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__xor__")
     }
 
     return Self.xor(py, zelf: zelf, other: other)
   }
 
   internal static func abstract__rxor__(_ py: Py,
-                                        zelf: PyObject,
+                                        zelf _zelf: PyObject,
                                         other: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__rxor__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__rxor__")
     }
 
     return Self.xor(py, zelf: zelf, other: other)
@@ -111,20 +111,20 @@ extension AbstractSet {
   // MARK: - Sub
 
   internal static func abstract__sub__(_ py: Py,
-                                       zelf: PyObject,
+                                       zelf _zelf: PyObject,
                                        other: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__sub__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__sub__")
     }
 
     return Self.sub(py, zelf: zelf, other: other)
   }
 
   internal static func abstract__rsub__(_ py: Py,
-                                        zelf: PyObject,
+                                        zelf _zelf: PyObject,
                                         other: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__rsub__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__rsub__")
     }
 
     return Self.sub(py, zelf: zelf, other: other)

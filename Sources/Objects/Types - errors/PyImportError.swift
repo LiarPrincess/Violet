@@ -113,9 +113,9 @@ public struct PyImportError: PyErrorMixin {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__dict__")
+  internal static func __dict__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__dict__")
     }
 
     let result = zelf.asBaseException.getDict(py)
@@ -125,9 +125,9 @@ public struct PyImportError: PyErrorMixin {
   // MARK: - String
 
   // sourcery: pymethod = __str__
-  internal static func __str__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__str__")
+  internal static func __str__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__str__")
     }
 
     // If we have 'msg' then use it.
@@ -144,17 +144,19 @@ public struct PyImportError: PyErrorMixin {
   // MARK: - Msg
 
   // sourcery: pyproperty = msg, setter
-  internal static func msg(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "msg")
+  internal static func msg(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "msg")
     }
 
     return PyResult(py, zelf.msg)
   }
 
-  internal static func msg(_ py: Py, zelf: PyObject, value: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "msg")
+  internal static func msg(_ py: Py,
+                           zelf _zelf: PyObject,
+                           value: PyObject?) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "msg")
     }
 
     zelf.msg = value
@@ -164,17 +166,19 @@ public struct PyImportError: PyErrorMixin {
   // MARK: - Name
 
   // sourcery: pyproperty = name, setter
-  internal static func name(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "name")
+  internal static func name(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "name")
     }
 
     return PyResult(py, zelf.moduleName)
   }
 
-  internal static func name(_ py: Py, zelf: PyObject, value: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "name")
+  internal static func name(_ py: Py,
+                            zelf _zelf: PyObject,
+                            value: PyObject?) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "name")
     }
 
     zelf.moduleName = value
@@ -184,17 +188,19 @@ public struct PyImportError: PyErrorMixin {
   // MARK: - Path
 
   // sourcery: pyproperty = path, setter
-  internal static func path(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "path")
+  internal static func path(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "path")
     }
 
     return PyResult(py, zelf.modulePath)
   }
 
-  internal static func path(_ py: Py, zelf: PyObject, value: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "path")
+  internal static func path(_ py: Py,
+                            zelf _zelf: PyObject,
+                            value: PyObject?) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "path")
     }
 
     zelf.modulePath = value
@@ -222,11 +228,11 @@ public struct PyImportError: PyErrorMixin {
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
-                                zelf: PyObject,
+                                zelf _zelf: PyObject,
                                 args: [PyObject],
                                 kwargs: PyDict?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__init__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__init__")
     }
 
     // Run 'super.pyInit' before our custom code, to avoid situation where

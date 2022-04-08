@@ -85,9 +85,9 @@ public struct PyBuiltinFunction: PyObjectMixin, AbstractBuiltinFunction {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__repr__")
+  internal static func __repr__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__repr__")
     }
 
     let result = "<built-in function \(zelf.name)>"
@@ -98,10 +98,10 @@ public struct PyBuiltinFunction: PyObjectMixin, AbstractBuiltinFunction {
 
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
-                                        zelf: PyObject,
+                                        zelf _zelf: PyObject,
                                         name: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__getattribute__")
     }
 
     return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
@@ -122,9 +122,9 @@ public struct PyBuiltinFunction: PyObjectMixin, AbstractBuiltinFunction {
   }
 
   // sourcery: pyproperty = __qualname__
-  internal static func __qualname__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__qualname__")
+  internal static func __qualname__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__qualname__")
     }
 
     let result = zelf.name
@@ -159,11 +159,11 @@ public struct PyBuiltinFunction: PyObjectMixin, AbstractBuiltinFunction {
 
   // sourcery: pymethod = __get__
   internal static func __get__(_ py: Py,
-                               zelf: PyObject,
+                               zelf _zelf: PyObject,
                                object: PyObject,
                                type: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__get__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__get__")
     }
 
     if py.isDescriptorStaticMarker(object) {
@@ -193,11 +193,11 @@ public struct PyBuiltinFunction: PyObjectMixin, AbstractBuiltinFunction {
   /// static PyObject *
   /// slot_tp_call(PyObject *self, PyObject *args, PyObject *kwds)
   internal static func __call__(_ py: Py,
-                                zelf: PyObject,
+                                zelf _zelf: PyObject,
                                 args: [PyObject],
                                 kwargs: PyDict?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__call__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__call__")
     }
 
     return zelf.function.call(py, args: args, kwargs: kwargs)

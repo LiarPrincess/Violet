@@ -10,12 +10,12 @@ extension AbstractString {
   // MARK: - Find
 
   internal static func abstractFind(_ py: Py,
-                                    zelf: PyObject,
+                                    zelf _zelf: PyObject,
                                     object: PyObject,
                                     start: PyObject?,
                                     end: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "find")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "find")
     }
 
     return Self.template(py,
@@ -67,12 +67,12 @@ extension AbstractString {
   // MARK: - RFind
 
   internal static func abstractRfind(_ py: Py,
-                                     zelf: PyObject,
+                                     zelf _zelf: PyObject,
                                      object: PyObject,
                                      start: PyObject?,
                                      end: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "rfind")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "rfind")
     }
 
     return Self.template(py,

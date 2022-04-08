@@ -108,9 +108,9 @@ public struct PyTextFile: PyObjectMixin {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__repr__")
+  internal static func __repr__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__repr__")
     }
 
     if zelf.hasReprLock {
@@ -156,9 +156,9 @@ public struct PyTextFile: PyObjectMixin {
   }
 
   // sourcery: pymethod = readable
-  internal static func readable(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "readable")
+  internal static func readable(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "readable")
     }
 
     let result = zelf.isReadable
@@ -166,9 +166,9 @@ public struct PyTextFile: PyObjectMixin {
   }
 
   // sourcery: pymethod = readline
-  internal static func readline(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "readline")
+  internal static func readline(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "readline")
     }
 
     let result = zelf.readLine(py)
@@ -192,10 +192,10 @@ public struct PyTextFile: PyObjectMixin {
   /// static PyObject *
   /// _io_TextIOWrapper_read_impl(textio *self, Py_ssize_t n)
   internal static func read(_ py: Py,
-                            zelf: PyObject,
+                            zelf _zelf: PyObject,
                             size: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "read")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "read")
     }
 
     guard let size = size else {
@@ -276,9 +276,9 @@ public struct PyTextFile: PyObjectMixin {
   }
 
   // sourcery: pymethod = writable
-  internal static func writable(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "writable")
+  internal static func writable(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "writable")
     }
 
     let result = zelf.isWritable
@@ -289,10 +289,10 @@ public struct PyTextFile: PyObjectMixin {
   /// static PyObject *
   /// _io_TextIOWrapper_write_impl(textio *self, Py_ssize_t n)
   internal static func write(_ py: Py,
-                             zelf: PyObject,
+                             zelf _zelf: PyObject,
                              object: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "write")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "write")
     }
 
     if let e = zelf.write(py, object: object) {
@@ -333,9 +333,9 @@ public struct PyTextFile: PyObjectMixin {
   // MARK: - Flush
 
   // sourcery: pymethod = flush
-  internal static func flush(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "flush")
+  internal static func flush(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "flush")
     }
 
     if let error = zelf.flush(py) {
@@ -356,9 +356,9 @@ public struct PyTextFile: PyObjectMixin {
   }
 
   // sourcery: pymethod = closed
-  internal static func closed(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "closed")
+  internal static func closed(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "closed")
     }
 
     let result = zelf.isClosed
@@ -366,9 +366,9 @@ public struct PyTextFile: PyObjectMixin {
   }
 
   // sourcery: pymethod = close
-  internal static func close(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "close")
+  internal static func close(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "close")
     }
 
     if let error = zelf.close(py) {
@@ -394,9 +394,9 @@ public struct PyTextFile: PyObjectMixin {
   // MARK: - Del
 
   // sourcery: pymethod = __del__
-  internal static func __del__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__del__")
+  internal static func __del__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__del__")
     }
 
     // Example when this matters:
@@ -428,9 +428,9 @@ public struct PyTextFile: PyObjectMixin {
   // Those things are defined in IOBase
 
   // sourcery: pymethod = __enter__
-  internal static func __enter__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__enter__")
+  internal static func __enter__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__enter__")
     }
 
     // 'FileDescriptorType' is responsible for actually opening file.
@@ -441,12 +441,12 @@ public struct PyTextFile: PyObjectMixin {
 
   // sourcery: pymethod = __exit__
   internal static func __exit__(_ py: Py,
-                                zelf: PyObject,
+                                zelf _zelf: PyObject,
                                 exceptionType: PyObject,
                                 exception: PyObject,
                                 traceback: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__exit__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__exit__")
     }
 
     // Remember that if we return 'truthy' value (yes, we JavasScript now)

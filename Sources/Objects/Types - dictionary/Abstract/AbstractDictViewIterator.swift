@@ -22,10 +22,10 @@ extension AbstractDictViewIterator {
 
   // sourcery: pymethod = __getattribute__
   internal static func abstract__getattribute__(_ py: Py,
-                                                zelf: PyObject,
+                                                zelf _zelf: PyObject,
                                                 name: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__getattribute__")
     }
 
     return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
@@ -33,9 +33,9 @@ extension AbstractDictViewIterator {
 
   // MARK: - __iter__
 
-  internal static func abstract__iter__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__iter__")
+  internal static func abstract__iter__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__iter__")
     }
 
     return PyResult(zelf)
@@ -45,9 +45,10 @@ extension AbstractDictViewIterator {
 
   internal typealias Entry = PyDict.OrderedDictionary.Entry
 
-  internal static func abstract__next__(_ py: Py, zelf: PyObject) -> PyResultGen<Entry> {
-    guard let zelf = Self.downcast(py, zelf) else {
-      let error = self.invalidZelfArgumentError(py, zelf, "__next__")
+  internal static func abstract__next__(_ py: Py,
+                                        zelf _zelf: PyObject) -> PyResultGen<Entry> {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      let error = self.invalidZelfArgumentError(py, _zelf, "__next__")
       return .error(error.asBaseException)
     }
 
@@ -80,9 +81,10 @@ extension AbstractDictViewIterator {
 
   // MARK: - __length_hint__
 
-  internal static func abstract__length_hint__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__length_hint__")
+  internal static func abstract__length_hint__(_ py: Py,
+                                               zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__length_hint__")
     }
 
     let count = zelf.dict.elements.count

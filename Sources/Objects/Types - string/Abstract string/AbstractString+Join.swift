@@ -3,10 +3,10 @@ extension AbstractString {
   /// >>> '@'.join(['A', 'B', 'C'])
   /// 'A@B@C'
   internal static func abstractJoin(_ py: Py,
-                                    zelf: PyObject,
+                                    zelf _zelf: PyObject,
                                     iterable: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "join")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "join")
     }
 
     let capacity = Self.approximateCapacity(py, zelf: zelf, iterable: iterable)

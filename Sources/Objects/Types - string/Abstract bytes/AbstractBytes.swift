@@ -45,20 +45,20 @@ extension AbstractBytes {
   /// static PyObject*
   /// bytes_richcompare(PyBytesObject *a, PyBytesObject *b, int op)
   internal static func abstract__eq__bytes(_ py: Py,
-                                           zelf: PyObject,
+                                           zelf _zelf: PyObject,
                                            other: PyObject) -> CompareResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__eq__)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return .invalidSelfArgument(_zelf, Self.pythonTypeName, .__eq__)
     }
 
     return Self.isEqualBytes(py, zelf: zelf, other: other)
   }
 
   internal static func abstract__ne__bytes(_ py: Py,
-                                           zelf: PyObject,
+                                           zelf _zelf: PyObject,
                                            other: PyObject) -> CompareResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(zelf, Self.pythonTypeName, .__ne__)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return .invalidSelfArgument(_zelf, Self.pythonTypeName, .__ne__)
     }
 
     let isEqual = Self.isEqualBytes(py, zelf: zelf, other: other)
@@ -97,11 +97,11 @@ extension AbstractBytes {
   // MARK: - Repr, str
 
   internal static func abstract__repr__(_ py: Py,
-                                        zelf: PyObject,
+                                        zelf _zelf: PyObject,
                                         prefix: String,
                                         suffix: String) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__repr__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__repr__")
     }
 
     return Self.toString(py, zelf: zelf, prefix: prefix, suffix: suffix)
@@ -110,9 +110,9 @@ extension AbstractBytes {
   /// static PyObject *
   /// bytes_str(PyObject *op)
   internal static func abstract__str__(_ py: Py,
-                                       zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__str__")
+                                       zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__str__")
     }
 
     if let e = py.warnBytesIfEnabled(message: "str() on a bytes instance") {

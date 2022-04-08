@@ -108,9 +108,9 @@ public struct PyModule: PyObjectMixin {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  internal static func __dict__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__dict__")
+  internal static func __dict__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__dict__")
     }
 
     let result = zelf.getDict(py)
@@ -130,9 +130,9 @@ public struct PyModule: PyObjectMixin {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__repr__")
+  internal static func __repr__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__repr__")
     }
 
     switch zelf.getNameString(py) {
@@ -192,10 +192,10 @@ public struct PyModule: PyObjectMixin {
 
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
-                                        zelf: PyObject,
+                                        zelf _zelf: PyObject,
                                         name: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__getattribute__")
     }
 
     return zelf.getAttribute(py, name: name)
@@ -256,11 +256,11 @@ public struct PyModule: PyObjectMixin {
 
   // sourcery: pymethod = __setattr__
   internal static func __setattr__(_ py: Py,
-                                   zelf: PyObject,
+                                   zelf _zelf: PyObject,
                                    name: PyObject,
                                    value: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__setattr__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__setattr__")
     }
 
     return zelf.setAttribute(py, name: name, value: value)
@@ -291,10 +291,10 @@ public struct PyModule: PyObjectMixin {
 
   // sourcery: pymethod = __delattr__
   internal static func __delattr__(_ py: Py,
-                                   zelf: PyObject,
+                                   zelf _zelf: PyObject,
                                    name: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__delattr__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__delattr__")
     }
 
     return AttributeHelper.delAttribute(py, object: zelf.asObject, name: name)
@@ -310,9 +310,9 @@ public struct PyModule: PyObjectMixin {
   // MARK: - Dir
 
   // sourcery: pymethod = __dir__
-  internal static func __dir__(_ py: Py, zelf: PyObject) -> PyResultGen<DirResult> {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return .invalidSelfArgument(py, zelf, Self.pythonTypeName)
+  internal static func __dir__(_ py: Py, zelf _zelf: PyObject) -> PyResultGen<DirResult> {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return .invalidSelfArgument(py, _zelf, Self.pythonTypeName)
     }
 
     // Do not add 'self.type' dir!
@@ -363,11 +363,11 @@ public struct PyModule: PyObjectMixin {
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
-                                zelf: PyObject,
+                                zelf _zelf: PyObject,
                                 args: [PyObject],
                                 kwargs: PyDict?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__init__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__init__")
     }
 
     switch PyModule.initArguments.bind(py, args: args, kwargs: kwargs) {
