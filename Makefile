@@ -11,7 +11,7 @@ all: build
 
 .PHONY: build build-r
 .PHONY: run run-r
-.PHONY: test
+.PHONY: test linuxmain
 .PHONY: pytest pytest-r
 .PHONY: clean
 
@@ -29,6 +29,10 @@ run-r:
 
 test:
 	swift test
+
+# For Swift 5.3. Use on macOS!
+linuxmain:
+	swift test --generate-linuxmain
 
 pytest:
 	swift run PyTests

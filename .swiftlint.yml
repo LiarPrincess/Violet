@@ -2,6 +2,10 @@ included:
   - Sources
   - Tests
 
+excluded:
+  - Tests/LinuxMain.swift
+  - Tests/**/XCTestManifests.swift
+
 type_name:
   excluded:
     - Py
