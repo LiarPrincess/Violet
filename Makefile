@@ -53,22 +53,27 @@ clean:
 # ============
 
 .PHONY: docker-test docker-pytest
+.PHONY: docker-test-old docker-pytest-old
+
+DOCKER_OPTIONS=--rm \
+		--volume "$(PWD):$(PWD)" \
+		--workdir "$(PWD)"
+
+# https://hub.docker.com/_/swift/
+DOCKER_LATEST=swift:latest
+DOCKER_OLD=swift:5.3.2
 
 docker-test:
-	docker run \
-		--rm \
-		--volume "$(PWD):$(PWD)" \
-		--workdir "$(PWD)" \
-		swift:latest \
-		bash -c 'make test'
+	docker run $(DOCKER_OPTIONS) $(DOCKER_LATEST) bash -c 'make test'
 
 docker-pytest:
-	docker run \
-		--rm \
-		--volume "$(PWD):$(PWD)" \
-		--workdir "$(PWD)" \
-		swift:latest \
-		bash -c 'make pytest-r'
+	docker run $(DOCKER_OPTIONS) $(DOCKER_LATEST) bash -c 'make pytest-r'
+
+docker-test-old:
+	docker run $(DOCKER_OPTIONS) $(DOCKER_OLD) bash -c 'make test'
+
+docker-pytest-old:
+	docker run $(DOCKER_OPTIONS) $(DOCKER_OLD) bash -c 'make pytest-r'
 
 # =====================
 # == Code generation ==
