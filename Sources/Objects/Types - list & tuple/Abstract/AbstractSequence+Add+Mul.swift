@@ -13,15 +13,15 @@ extension AbstractSequence {
 
   internal static func abstract__add__(_ py: Py,
                                        zelf _zelf: PyObject,
-                                       other: PyObject,
+                                       other _other: PyObject,
                                        isTuple: Bool) -> PyResult {
     guard let zelf = Self.downcast(py, _zelf) else {
       return Self.invalidZelfArgument(py, _zelf, "__add__")
     }
 
-    guard let other = Self.downcast(py, other) else {
+    guard let other = Self.downcast(py, _other) else {
       let selfType = Self.pythonTypeName
-      let otherType = other.typeName
+      let otherType = _other.typeName
       let message = "can only concatenate \(selfType) (not '\(otherType)') to \(selfType)"
       return .typeError(py, message: message)
     }

@@ -187,7 +187,7 @@ public struct PyBool: PyObjectMixin {
   private static func binaryOperation(
     _ py: Py,
     zelf _zelf: PyObject,
-    other: PyObject,
+    other _other: PyObject,
     fnName: String,
     fn: (Bool, Bool) -> Bool,
     intFn: (Py, PyObject, PyObject) -> PyResult
@@ -196,8 +196,8 @@ public struct PyBool: PyObjectMixin {
       return Self.invalidZelfArgument(py, _zelf, fnName)
     }
 
-    guard let other = Self.downcast(py, other) else {
-      return intFn(py, zelf.asObject, other)
+    guard let other = Self.downcast(py, _other) else {
+      return intFn(py, zelf.asObject, _other)
     }
 
     let result = fn(zelf.isTrue, other.isTrue)

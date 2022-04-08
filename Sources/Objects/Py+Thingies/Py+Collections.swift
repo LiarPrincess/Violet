@@ -260,9 +260,9 @@ extension Py {
     return self.add(dict: dict, key: keyObject, value: value)
   }
 
-  public func add(dict: PyObject, key: PyObject, value: PyObject) -> PyBaseException? {
-    guard let dict = self.cast.asDict(dict) else {
-      let message = "expected dict, but received a '\(dict.typeName)'"
+  public func add(dict _dict: PyObject, key: PyObject, value: PyObject) -> PyBaseException? {
+    guard let dict = self.cast.asDict(_dict) else {
+      let message = "expected dict, but received a '\(_dict.typeName)'"
       let error = self.newTypeError(message: message)
       return error.asBaseException
     }
