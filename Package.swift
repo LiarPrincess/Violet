@@ -6,7 +6,7 @@ import PackageDescription
 // === Products ===
 // ================
 
-var products: [Product] = [
+let products: [Product] = [
   // Main executable.
   .executable(name: "Violet", targets: ["Violet"]),
   // Executable for running tests written in Python (from 'PyTest' directory).
@@ -28,7 +28,7 @@ var products: [Product] = [
 
 // We try to avoid adding new dependencies because… oh so many reasons!
 // Tbh. I’m still not sure if we can trust this ‘apple’ person…
-var dependencies: [Package.Dependency] = [
+let dependencies: [Package.Dependency] = [
   .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "0.4.0"))
 ]
 
@@ -39,7 +39,7 @@ var dependencies: [Package.Dependency] = [
 // IMPORTANT:
 // Module names have 'Violet' prefix, but directories do not
 // (for example: 'VioletParser' module is inside 'Sources/Parser' directory)!
-var targets: [Target] = [
+let targets: [Target] = [
 
   // Shared module that all of the other modules depend on.
   .target(name: "VioletCore", dependencies: [], path: "Sources/Core"),

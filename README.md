@@ -18,12 +18,18 @@ If something is not working, you have an interesting idea or maybe just a questi
 ## Requirements
 
 - 64 bit - for `BigInt` and (probably, maybe, I think) hash
-- Platform:
-    - macOS - tested on:
-      - 10.15.6 (Catalina) + Xcode 12.0 (Swift 5.3)
-      - 11.6.2 (BigSur) + Xcode 13.0 (Swift 5.5)
-    - Ubuntu - tested on 21.04 + Swift 5.4.2
-    - Docker - tested on `swift:latest` (5.4.2) on Ubuntu 21.04
+- Platforms
+    - macOS
+      - Intel
+        - 11.6.2 (BigSur) + Xcode 12.4 (Swift 5.3.2)
+        - 11.6.2 (BigSur) + Xcode 13.0 (Swift 5.5)
+      - Apple
+        - ⚠️ Not tested! I don't have M1. ⚠️
+    - Ubuntu
+      - 21.04 + Swift 5.4.2 - use `make test` and `make pytest`
+    - Docker
+      - `swift:latest` (5.6.0) - use `make docker-test` and `make docker-pytest`
+      - `swift:5.3.2` - use `make docker-test-old` and `make docker-pytest-old` (Swift 5.4 is the first version that has `--generate-linuxmain` built-in)
 
 The whole Violet was written on 2014 rMBP (lowest spec: 8GB of ram + 128 GB storage), so it is safe to say that there are no other requirements (in other words: if your machine is less than 8 years old then you are probably fine). Although, in terms of raw compilation speed the Ubuntu with Intel Pentium G4560 (4GB of ram + some cheap SSD) was about 2 times faster than MacBook.
 
