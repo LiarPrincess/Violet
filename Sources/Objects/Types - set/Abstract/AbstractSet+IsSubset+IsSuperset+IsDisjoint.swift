@@ -3,10 +3,10 @@ extension AbstractSet {
   // MARK: - Subset
 
   internal static func abstractIsSubset(_ py: Py,
-                                        zelf: PyObject,
+                                        zelf _zelf: PyObject,
                                         other: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "issubset")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "issubset")
     }
 
     switch Self.getElements(py, iterable: other) {
@@ -39,10 +39,10 @@ extension AbstractSet {
   // MARK: - Superset
 
   internal static func abstractIsSuperset(_ py: Py,
-                                          zelf: PyObject,
+                                          zelf _zelf: PyObject,
                                           other: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "issuperset")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "issuperset")
     }
 
     switch Self.getElements(py, iterable: other) {
@@ -75,10 +75,10 @@ extension AbstractSet {
   // MARK: - Is disjoint
 
   internal static func abstractIsDisjoint(_ py: Py,
-                                          zelf: PyObject,
+                                          zelf _zelf: PyObject,
                                           other: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "isdisjoint")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "isdisjoint")
     }
 
     switch Self.getElements(py, iterable: other) {

@@ -337,15 +337,15 @@ extension AbstractString {
   // swiftlint:disable:next function_parameter_count
   private static func template(
     _ py: Py,
-    zelf: PyObject,
+    zelf _zelf: PyObject,
     args: [PyObject],
     kwargs: PyDict?,
     fnName: String,
     onWhitespaceSplit: (Py, Self, Int) -> [PyObject],
     onSeparatorSplit: (Py, Self, Elements, Int) -> [PyObject]
   ) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, fnName)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, fnName)
     }
 
     switch splitArguments.bind(py, args: args, kwargs: kwargs) {

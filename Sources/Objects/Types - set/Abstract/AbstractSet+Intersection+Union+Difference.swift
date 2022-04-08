@@ -3,10 +3,10 @@ extension AbstractSet {
   // MARK: - Intersection
 
   internal static func abstractIntersection(_ py: Py,
-                                            zelf: PyObject,
+                                            zelf _zelf: PyObject,
                                             other: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "intersection")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "intersection")
     }
 
     switch Self.getElements(py, iterable: other) {
@@ -56,10 +56,10 @@ extension AbstractSet {
   // MARK: - Union
 
   internal static func abstractUnion(_ py: Py,
-                                     zelf: PyObject,
+                                     zelf _zelf: PyObject,
                                      other: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "union")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "union")
     }
 
     switch Self.getElements(py, iterable: other) {
@@ -101,10 +101,10 @@ extension AbstractSet {
   // MARK: - Difference
 
   internal static func abstractDifference(_ py: Py,
-                                          zelf: PyObject,
+                                          zelf _zelf: PyObject,
                                           other: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "difference")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "difference")
     }
 
     switch Self.getElements(py, iterable: other) {
@@ -152,10 +152,10 @@ extension AbstractSet {
   // MARK: - Symmetric difference
 
   internal static func abstractSymmetricDifference(_ py: Py,
-                                                   zelf: PyObject,
+                                                   zelf _zelf: PyObject,
                                                    other: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "symmetric_difference")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "symmetric_difference")
     }
 
     switch Self.getElements(py, iterable: other) {

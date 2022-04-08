@@ -3,10 +3,10 @@ extension AbstractString {
   // MARK: - Add
 
   internal static func abstract__add__(_ py: Py,
-                                       zelf: PyObject,
+                                       zelf _zelf: PyObject,
                                        other: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__add__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__add__")
     }
 
     guard let otherElements = Self.getElements(py, object: other) else {
@@ -32,20 +32,20 @@ extension AbstractString {
   // MARK: - Mul
 
   internal static func abstract__mul__(_ py: Py,
-                                       zelf: PyObject,
+                                       zelf _zelf: PyObject,
                                        other: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__mul__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__mul__")
     }
 
     return Self.mul(py, zelf: zelf, count: other)
   }
 
   internal static func abstract__rmul__(_ py: Py,
-                                        zelf: PyObject,
+                                        zelf _zelf: PyObject,
                                         other: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__rmul__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__rmul__")
     }
 
     return Self.mul(py, zelf: zelf, count: other)

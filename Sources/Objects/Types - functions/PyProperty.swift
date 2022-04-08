@@ -123,10 +123,10 @@ public struct PyProperty: PyObjectMixin {
 
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
-                                        zelf: PyObject,
+                                        zelf _zelf: PyObject,
                                         name: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__getattribute__")
     }
 
     return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
@@ -135,27 +135,27 @@ public struct PyProperty: PyObjectMixin {
   // MARK: - Getters
 
   // sourcery: pyproperty = fget
-  internal static func fget(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "fget")
+  internal static func fget(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "fget")
     }
 
     return PyResult(py, zelf._get)
   }
 
   // sourcery: pyproperty = fset
-  internal static func fset(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "fset")
+  internal static func fset(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "fset")
     }
 
     return PyResult(py, zelf._set)
   }
 
   // sourcery: pyproperty = fdel
-  internal static func fdel(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "fdel")
+  internal static func fdel(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "fdel")
     }
 
     return PyResult(py, zelf._del)
@@ -165,11 +165,11 @@ public struct PyProperty: PyObjectMixin {
 
   // sourcery: pymethod = __get__
   internal static func __get__(_ py: Py,
-                               zelf: PyObject,
+                               zelf _zelf: PyObject,
                                object: PyObject,
                                type: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__get__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__get__")
     }
 
     if py.isDescriptorStaticMarker(object) {
@@ -197,11 +197,11 @@ public struct PyProperty: PyObjectMixin {
 
   // sourcery: pymethod = __set__
   internal static func __set__(_ py: Py,
-                               zelf: PyObject,
+                               zelf _zelf: PyObject,
                                object: PyObject,
                                value: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__set__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__set__")
     }
 
     return Self.setOrDelete(py, zelf: zelf, object: object, value: value)
@@ -233,10 +233,10 @@ public struct PyProperty: PyObjectMixin {
 
   // sourcery: pymethod = __delete__
   internal static func __delete__(_ py: Py,
-                                  zelf: PyObject,
+                                  zelf _zelf: PyObject,
                                   object: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__delete__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__delete__")
     }
 
     let none = py.none.asObject
@@ -246,19 +246,19 @@ public struct PyProperty: PyObjectMixin {
   // MARK: - Doc
 
   // sourcery: pyproperty = __doc__, setter
-  internal static func __doc__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__doc__")
+  internal static func __doc__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__doc__")
     }
 
     return PyResult(py, zelf.doc)
   }
 
   internal static func __doc__(_ py: Py,
-                               zelf: PyObject,
+                               zelf _zelf: PyObject,
                                value: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__doc__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__doc__")
     }
 
     guard let value = value, !py.cast.isNone(value) else {
@@ -276,10 +276,10 @@ public struct PyProperty: PyObjectMixin {
 
   // sourcery: pymethod = getter, doc = getterDoc
   internal static func getter(_ py: Py,
-                              zelf: PyObject,
+                              zelf _zelf: PyObject,
                               value: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "getter")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "getter")
     }
 
     return zelf.copy(py, get: value, set: nil, del: nil)
@@ -289,10 +289,10 @@ public struct PyProperty: PyObjectMixin {
 
   // sourcery: pymethod = setter
   internal static func setter(_ py: Py,
-                              zelf: PyObject,
+                              zelf _zelf: PyObject,
                               value: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "setter")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "setter")
     }
 
     return zelf.copy(py, get: nil, set: value, del: nil)
@@ -302,10 +302,10 @@ public struct PyProperty: PyObjectMixin {
 
   // sourcery: pymethod = deleter
   internal static func deleter(_ py: Py,
-                               zelf: PyObject,
+                               zelf _zelf: PyObject,
                                value: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "deleter")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "deleter")
     }
 
     return zelf.copy(py, get: nil, set: nil, del: value)
@@ -367,11 +367,11 @@ public struct PyProperty: PyObjectMixin {
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
-                                zelf: PyObject,
+                                zelf _zelf: PyObject,
                                 args: [PyObject],
                                 kwargs: PyDict?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__init__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__init__")
     }
 
     switch PyProperty.initArguments.bind(py, args: args, kwargs: kwargs) {

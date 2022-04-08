@@ -7,10 +7,10 @@ extension AbstractString {
   // MARK: - Contains
 
   internal static func abstract__contains__(_ py: Py,
-                                            zelf: PyObject,
+                                            zelf _zelf: PyObject,
                                             object: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__contains__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__contains__")
     }
 
     switch Self.getElementsForFindCountContainsIndexOf(py, object: object) {
@@ -47,12 +47,12 @@ extension AbstractString {
   ///                  const STRINGLIB_CHAR* sub, Py_ssize_t sub_len,
   ///                  Py_ssize_t maxcount)
   internal static func abstractCount(_ py: Py,
-                                     zelf: PyObject,
+                                     zelf _zelf: PyObject,
                                      object: PyObject,
                                      start: PyObject?,
                                      end: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "count")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "count")
     }
 
     let value: Elements
@@ -138,15 +138,15 @@ extension AbstractString {
   // swiftlint:disable:next function_parameter_count
   private static func indexOfTemplate(
     _ py: Py,
-    zelf: PyObject,
+    zelf _zelf: PyObject,
     object: PyObject,
     start: PyObject?,
     end: PyObject?,
     fnName: String,
     findFn: (Elements.SubSequence, Elements) -> AbstractStringFindResult<Elements>
   ) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, fnName)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, fnName)
     }
 
     let value: Elements

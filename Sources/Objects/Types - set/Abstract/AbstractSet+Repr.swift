@@ -1,7 +1,9 @@
 extension AbstractSet {
 
-  internal static func abstractJoinElementsForRepr(_ py: Py,
-                                                   zelf: Self) -> PyResultGen<String> {
+  internal static func abstractJoinElementsForRepr(
+    _ py: Py,
+    zelf: Self
+  ) -> PyResultGen<String> {
     var result = ""
 
     for element in zelf.elements {

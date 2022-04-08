@@ -102,9 +102,9 @@ public struct PySet: PyObjectMixin, AbstractSet {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__repr__")
+  internal static func __repr__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__repr__")
     }
 
     if zelf.elements.isEmpty {
@@ -130,10 +130,10 @@ public struct PySet: PyObjectMixin, AbstractSet {
 
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
-                                        zelf: PyObject,
+                                        zelf _zelf: PyObject,
                                         name: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__getattribute__")
     }
 
     return AttributeHelper.getAttribute(py, object: zelf.asObject, name: name)
@@ -149,9 +149,9 @@ public struct PySet: PyObjectMixin, AbstractSet {
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal static func __len__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__len__")
+  internal static func __len__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__len__")
     }
 
     let result = zelf.count
@@ -303,9 +303,11 @@ public struct PySet: PyObjectMixin, AbstractSet {
     """
 
   // sourcery: pymethod = add, doc = addDoc
-  internal static func add(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "add")
+  internal static func add(_ py: Py,
+                           zelf _zelf: PyObject,
+                           other: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "add")
     }
 
     if let error = zelf.add(py, object: other) {
@@ -338,9 +340,11 @@ public struct PySet: PyObjectMixin, AbstractSet {
     """
 
   // sourcery: pymethod = update, doc = updateDoc
-  internal static func update(_ py: Py, zelf: PyObject, other: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "update")
+  internal static func update(_ py: Py,
+                              zelf _zelf: PyObject,
+                              other: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "update")
     }
 
     if let e = zelf.update(py, fromIterable: other) {
@@ -379,9 +383,11 @@ public struct PySet: PyObjectMixin, AbstractSet {
     """
 
   // sourcery: pymethod = remove, doc = removeDoc
-  internal static func remove(_ py: Py, zelf: PyObject, object: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "remove")
+  internal static func remove(_ py: Py,
+                              zelf _zelf: PyObject,
+                              object: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "remove")
     }
 
     switch Self.createElement(py, object: object) {
@@ -413,9 +419,11 @@ public struct PySet: PyObjectMixin, AbstractSet {
     """
 
   // sourcery: pymethod = discard, doc = discardDoc
-  internal static func discard(_ py: Py, zelf: PyObject, object: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "discard")
+  internal static func discard(_ py: Py,
+                               zelf _zelf: PyObject,
+                               object: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "discard")
     }
 
     switch Self.createElement(py, object: object) {
@@ -440,9 +448,9 @@ public struct PySet: PyObjectMixin, AbstractSet {
     """
 
   // sourcery: pymethod = clear, doc = clearDoc
-  internal static func clear(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "clear")
+  internal static func clear(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "clear")
     }
 
     zelf.elementsPtr.pointee.clear()
@@ -454,9 +462,9 @@ public struct PySet: PyObjectMixin, AbstractSet {
   internal static let copyDoc = "Return a shallow copy of a set."
 
   // sourcery: pymethod = copy, doc = copyDoc
-  internal static func copy(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "copy")
+  internal static func copy(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "copy")
     }
 
     let result = py.newSet(elements: zelf.elements)
@@ -471,9 +479,9 @@ public struct PySet: PyObjectMixin, AbstractSet {
     """
 
   // sourcery: pymethod = pop, doc = popDoc
-  internal static func pop(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "pop")
+  internal static func pop(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "pop")
     }
 
     guard let lastElement = zelf.elements.last else {
@@ -491,9 +499,9 @@ public struct PySet: PyObjectMixin, AbstractSet {
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__iter__")
+  internal static func __iter__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__iter__")
     }
 
     let result = py.newIterator(set: zelf)
@@ -521,11 +529,11 @@ public struct PySet: PyObjectMixin, AbstractSet {
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
-                                zelf: PyObject,
+                                zelf _zelf: PyObject,
                                 args: [PyObject],
                                 kwargs: PyDict?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__init__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__init__")
     }
 
     if let e = ArgumentParser.noKwargsOrError(py,

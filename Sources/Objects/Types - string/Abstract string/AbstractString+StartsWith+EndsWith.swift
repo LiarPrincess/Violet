@@ -76,15 +76,15 @@ extension AbstractString {
   // swiftlint:disable:next function_parameter_count
   private static func template(
     _ py: Py,
-    zelf: PyObject,
+    zelf _zelf: PyObject,
     element: PyObject,
     start: PyObject?,
     end: PyObject?,
     fnName: String,
     checkSubstring: (AbstractStringSubstring<Elements>, Elements) -> Bool
   ) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, fnName)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, fnName)
     }
 
     let substring: AbstractStringSubstring<Elements>

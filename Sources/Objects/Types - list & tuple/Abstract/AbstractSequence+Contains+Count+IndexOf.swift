@@ -11,10 +11,10 @@ extension AbstractSequence {
   // MARK: - Contains
 
   internal static func abstract__contains__(_ py: Py,
-                                            zelf: PyObject,
+                                            zelf _zelf: PyObject,
                                             object: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__contains__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__contains__")
     }
 
     for element in zelf.elements {
@@ -36,10 +36,10 @@ extension AbstractSequence {
   // MARK: - Count
 
   internal static func abstractCount(_ py: Py,
-                                     zelf: PyObject,
+                                     zelf _zelf: PyObject,
                                      object: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "count")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "count")
     }
 
     var result = BigInt()
@@ -61,12 +61,12 @@ extension AbstractSequence {
   // MARK: - Index of
 
   internal static func abstractIndex(_ py: Py,
-                                     zelf: PyObject,
+                                     zelf _zelf: PyObject,
                                      object: PyObject,
                                      start: PyObject?,
                                      end: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "index")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "index")
     }
 
     let subsequence: SubSequence

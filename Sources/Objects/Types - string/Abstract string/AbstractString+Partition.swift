@@ -42,13 +42,13 @@ extension AbstractString {
 
   private static func template(
     _ py: Py,
-    zelf: PyObject,
+    zelf _zelf: PyObject,
     separator separatorObject: PyObject,
     fnName: String,
     findSeparator: (Self, Elements) -> AbstractStringFindResult<Elements>
   ) -> AbstractStringPartitionResult<Elements> {
-    guard let zelf = Self.downcast(py, zelf) else {
-      let error = py.newInvalidSelfArgumentError(object: zelf,
+    guard let zelf = Self.downcast(py, _zelf) else {
+      let error = py.newInvalidSelfArgumentError(object: _zelf,
                                                  expectedType: Self.pythonTypeName,
                                                  fnName: fnName)
 

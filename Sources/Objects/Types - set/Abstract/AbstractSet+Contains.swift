@@ -1,10 +1,10 @@
 extension AbstractSet {
 
   internal static func abstract__contains__(_ py: Py,
-                                            zelf: PyObject,
+                                            zelf _zelf: PyObject,
                                             object: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__contains__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__contains__")
     }
 
     switch Self.createElement(py, object: object) {

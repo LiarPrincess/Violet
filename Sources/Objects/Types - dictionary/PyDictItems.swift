@@ -137,10 +137,10 @@ public struct PyDictItems: PyObjectMixin, AbstractDictView {
 
   // sourcery: pymethod = __contains__
   internal static func __contains__(_ py: Py,
-                                    zelf: PyObject,
+                                    zelf _zelf: PyObject,
                                     object: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__contains__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__contains__")
     }
 
     guard let tuple = py.cast.asTuple(object), tuple.count == 2 else {
@@ -163,9 +163,9 @@ public struct PyDictItems: PyObjectMixin, AbstractDictView {
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal static func __iter__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__iter__")
+  internal static func __iter__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__iter__")
     }
 
     let result = py.newIterator(items: zelf.dict)

@@ -97,13 +97,13 @@ extension AbstractString {
 
   // swiftlint:disable:next function_parameter_count
   private static func justTemplate(_ py: Py,
-                                   zelf: PyObject,
+                                   zelf _zelf: PyObject,
                                    width widthObject: PyObject,
                                    fillChar fillCharObject: PyObject?,
                                    fnName: String,
                                    justFn: (Self, Int, Element) -> Builder) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, fnName)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, fnName)
     }
 
     let width: Int
@@ -164,10 +164,10 @@ extension AbstractString {
   // MARK: - ZFill
 
   internal static func abstractZFill(_ py: Py,
-                                     zelf: PyObject,
+                                     zelf _zelf: PyObject,
                                      width widthObject: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "zfill")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "zfill")
     }
 
     guard let widthPyInt = py.cast.asInt(widthObject) else {

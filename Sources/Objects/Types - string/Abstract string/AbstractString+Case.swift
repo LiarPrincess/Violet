@@ -2,9 +2,9 @@ extension AbstractString {
 
   // MARK: - Lower case
 
-  internal static func abstractLower(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "lower")
+  internal static func abstractLower(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "lower")
     }
 
     var builder = Builder(capacity: zelf.count)
@@ -21,9 +21,9 @@ extension AbstractString {
 
   // MARK: - Upper case
 
-  internal static func abstractUpper(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "upper")
+  internal static func abstractUpper(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "upper")
     }
 
     var builder = Builder(capacity: zelf.count)
@@ -40,9 +40,9 @@ extension AbstractString {
 
   // MARK: - Title case
 
-  internal static func abstractTitle(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "title")
+  internal static func abstractTitle(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "title")
     }
 
     var builder = Builder(capacity: zelf.count)
@@ -67,9 +67,9 @@ extension AbstractString {
 
   // MARK: - Swap case
 
-  internal static func abstractSwapcase(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "swapcase")
+  internal static func abstractSwapcase(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "swapcase")
     }
 
     var builder = Builder(capacity: zelf.count)
@@ -96,9 +96,9 @@ extension AbstractString {
 
   // MARK: - Capitalize
 
-  internal static func abstractCapitalize(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "capitalize")
+  internal static func abstractCapitalize(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "capitalize")
     }
 
     // Capitalize only the first scalar:

@@ -81,9 +81,9 @@ public struct PySuper: PyObjectMixin {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func __repr__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__repr__")
+  internal static func __repr__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__repr__")
     }
 
     let typeName = zelf.thisClass?.getNameString() ?? "NULL"
@@ -101,10 +101,10 @@ public struct PySuper: PyObjectMixin {
 
   // sourcery: pymethod = __getattribute__
   internal static func __getattribute__(_ py: Py,
-                                        zelf: PyObject,
+                                        zelf _zelf: PyObject,
                                         name: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__getattribute__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__getattribute__")
     }
 
     guard let startType = zelf.objectType else {
@@ -203,9 +203,9 @@ public struct PySuper: PyObjectMixin {
   internal static let thisClassDoc = "the class invoking super()"
 
   // sourcery: pyproperty = __thisclass__, doc = thisClassDoc
-  internal static func __thisclass__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__thisclass__")
+  internal static func __thisclass__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__thisclass__")
     }
 
     let result = zelf.thisClass?.asObject ?? py.none.asObject
@@ -215,9 +215,9 @@ public struct PySuper: PyObjectMixin {
   internal static let selfDoc = "the instance invoking super(); may be None"
 
   // sourcery: pyproperty = __self__, doc = selfDoc
-  internal static func __self__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__self__")
+  internal static func __self__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__self__")
     }
 
     let result = zelf.object?.asObject ?? py.none.asObject
@@ -227,9 +227,9 @@ public struct PySuper: PyObjectMixin {
   internal static let selfClassDoc = "the type of the instance invoking super(); may be None"
 
   // sourcery: pyproperty = __self_class__, doc = selfClassDoc
-  internal static func __self_class__(_ py: Py, zelf: PyObject) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__self_class__")
+  internal static func __self_class__(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__self_class__")
     }
 
     let result = zelf.objectType?.asObject ?? py.none.asObject
@@ -240,11 +240,11 @@ public struct PySuper: PyObjectMixin {
 
   // sourcery: pymethod = __get__
   internal static func __get__(_ py: Py,
-                               zelf: PyObject,
+                               zelf _zelf: PyObject,
                                object: PyObject,
                                type: PyObject?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__get__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__get__")
     }
 
     // Basically 'py.cast.isNone(object)'
@@ -304,11 +304,11 @@ public struct PySuper: PyObjectMixin {
 
   // sourcery: pymethod = __init__
   internal static func __init__(_ py: Py,
-                                zelf: PyObject,
+                                zelf _zelf: PyObject,
                                 args: [PyObject],
                                 kwargs: PyDict?) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, "__init__")
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "__init__")
     }
 
     if let e = ArgumentParser.noKwargsOrError(py,

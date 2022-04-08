@@ -70,14 +70,14 @@ extension AbstractString {
   // swiftlint:disable:next function_parameter_count
   private static func template(
     _ py: Py,
-    zelf: PyObject,
+    zelf _zelf: PyObject,
     chars: PyObject?,
     fnName: String,
     onStripWhitespace: (Self) -> Elements.SubSequence,
     onStripChars: (Self, Set<Element>) -> Elements.SubSequence
   ) -> PyResult {
-    guard let zelf = Self.downcast(py, zelf) else {
-      return Self.invalidZelfArgument(py, zelf, fnName)
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, fnName)
     }
 
     // No chars (or 'None') -> whitespace mode
