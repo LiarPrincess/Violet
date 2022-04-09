@@ -29,7 +29,7 @@ If something is not working, you have an interesting idea or maybe just a questi
       - 21.04 + Swift 5.4.2 - use `make test` and `make pytest`
     - Docker
       - `swift:latest` (5.6.0) - use `make docker-test` and `make docker-pytest`
-      - `swift:5.3.2` - use `make docker-test-old` and `make docker-pytest-old` (Swift 5.4 is the first version that has `--generate-linuxmain` built-in)
+      - `swift:5.3.2` - use `make docker-test-old` and `make docker-pytest-old`
 
 The whole Violet was written on 2014 rMBP (lowest spec: 8GB of ram + 128 GB storage), so it is safe to say that there are no other requirements (in other words: if your machine is less than 8 years old then you are probably fine). Although, in terms of raw compilation speed the Ubuntu with Intel Pentium G4560 (4GB of ram + some cheap SSD) was about 2 times faster than MacBook.
 
