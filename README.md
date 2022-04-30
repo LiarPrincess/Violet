@@ -21,10 +21,10 @@ If something is not working, you have an interesting idea or maybe just a questi
 - Platforms
     - macOS
       - Intel
-        - 11.6.2 (BigSur) + Xcode 12.4 (Swift 5.3.2)
-        - 11.6.2 (BigSur) + Xcode 13.0 (Swift 5.5)
+        - 11.6.2 (Big Sur) + Xcode 12.4 (Swift 5.3.2)
+        - 11.6.2 (Big Sur) + Xcode 13.0 (Swift 5.5)
       - Apple
-        - ⚠️ Not tested! I don't have M1. ⚠️
+        - 12.3.1 (Monterey) + Xcode 13.3.1 (Swift 5.5.3)
     - Ubuntu
       - 21.04 + Swift 5.4.2 - use `make test` and `make pytest`
     - Docker
