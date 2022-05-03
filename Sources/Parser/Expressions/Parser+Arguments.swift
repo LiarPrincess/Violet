@@ -208,10 +208,10 @@ extension Parser {
   private func parsePosOnlySeparator(ir: inout ArgumentsIR) throws {
     assert(self.peek.kind == .slash)
     guard case .none = ir.vararg else {
-      throw self.error(.argsAfterKwargs)
+      throw self.error(.posOnlyAfterVarargs)
     }
     guard ir.kwarg == nil else {
-      throw self.error(.varargsAfterKwargs)
+      throw self.error(.posOnlyAfterKwargs)
     }
     ir.end = self.peek.end // slash end
     try self.advance() // /

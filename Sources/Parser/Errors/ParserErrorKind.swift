@@ -12,6 +12,10 @@ public enum ParserErrorKind: Equatable {
   case duplicateVarargs
   /// Duplicate keyworded variable length argument (the one with '**').
   case duplicateKwargs
+  /// Positional only separator after variable length argument (the one with '*').
+  case posOnlyAfterVarargs
+  /// Positional only separator after keyworded variable length argument (the one with '**').
+  case posOnlyAfterKwargs
   /// Argument after keyworded variable length argument (the one with '**').
   case argsAfterKwargs
   /// Non-keyworded variable length argument (the one with '*') after
@@ -110,6 +114,10 @@ extension ParserErrorKind: CustomStringConvertible {
       return "Duplicate non-keyworded variable length argument (the one with '*')."
     case .duplicateKwargs:
       return "Duplicate keyworded variable length argument (the one with '**')."
+    case .posOnlyAfterVarargs:
+      return "Positional only separator after variable length argument (the one with '*')"
+    case .posOnlyAfterKwargs:
+      return "Positional only separator after keyworded variable length argument (the one with '**')"
     case .argsAfterKwargs:
       return "Argument after keyworded variable length argument (the one with '**')."
     case .varargsAfterKwargs:
