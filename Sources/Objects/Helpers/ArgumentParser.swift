@@ -333,12 +333,12 @@ internal struct ArgumentParser {
                      args: [PyObject],
                      kwargs: [String: PyObject]) -> PyResultGen<Binding> {
     if args.count + kwargs.count > self.argumentCount {
-      let error = self.tooMuchArgumentsError(py, args: args, kwargs: kwargs)
+      let error = self.tooManyArgumentsError(py, args: args, kwargs: kwargs)
       return .error(error.asBaseException)
     }
 
     if args.count > self.maxPositionalArgCount {
-      let error = self.tooMuchPositionalArgumentsError(py, args: args)
+      let error = self.tooManyPositionalArgumentsError(py, args: args)
       return .error(error.asBaseException)
     }
 
@@ -391,7 +391,7 @@ internal struct ArgumentParser {
 
   // MARK: - Parsing errors
 
-  private func tooMuchArgumentsError(_ py: Py,
+  private func tooManyArgumentsError(_ py: Py,
                                      args: [PyObject],
                                      kwargs: [String: PyObject]) -> PyTypeError {
     let providedCount = args.count + kwargs.count
@@ -407,7 +407,7 @@ internal struct ArgumentParser {
     return py.newTypeError(message: message)
   }
 
-  private func tooMuchPositionalArgumentsError(_ py: Py,
+  private func tooManyPositionalArgumentsError(_ py: Py,
                                                args: [PyObject]) -> PyTypeError {
     assert(args.count > self.maxPositionalArgCount)
 

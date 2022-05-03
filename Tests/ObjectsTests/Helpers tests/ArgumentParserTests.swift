@@ -84,7 +84,7 @@ class ArgumentParserTests: PyTestCase {
 
   // MARK: - Bind - too much arguments
 
-  func test_bind_count_tooMuch_args() {
+  func test_bind_count_tooMany_args() {
     let py = self.createPy()
 
     let value0 = py.newInt(1).asObject
@@ -106,7 +106,7 @@ class ArgumentParserTests: PyTestCase {
     )
   }
 
-  func test_bind_count_tooMuch_argsKwargs() {
+  func test_bind_count_tooMany_argsKwargs() {
     let py = self.createPy()
 
     let value0 = py.newInt(1).asObject

@@ -7,8 +7,8 @@ extension ArgumentParserTests {
     // to regenerate.
     static let __allTests__ArgumentParserTests = [
         ("test_bind_argumentGivenBy_argsAndKwargs_fails", test_bind_argumentGivenBy_argsAndKwargs_fails),
-        ("test_bind_count_tooMuch_args", test_bind_count_tooMuch_args),
-        ("test_bind_count_tooMuch_argsKwargs", test_bind_count_tooMuch_argsKwargs),
+        ("test_bind_count_tooMany_args", test_bind_count_tooMany_args),
+        ("test_bind_count_tooMany_argsKwargs", test_bind_count_tooMany_argsKwargs),
         ("test_bind_extraneousKwarg_fails", test_bind_extraneousKwarg_fails),
         ("test_bind_missingRequiredArg_fails", test_bind_missingRequiredArg_fails),
         ("test_bind_optional_arg", test_bind_optional_arg),

@@ -334,8 +334,8 @@ private struct FillFastLocals {
   /// static void
   /// too_many_positional(PyCodeObject *co, Py_ssize_t given, ...)
   private func checkPositionalCount() -> PyBaseException? {
-    let hasTooMuchArgs = self.args.count > self.code.argCount
-    guard hasTooMuchArgs && !self.hasVarArgs else {
+    let hasTooManyArgs = self.args.count > self.code.argCount
+    guard hasTooManyArgs && !self.hasVarArgs else {
       return nil
     }
 
