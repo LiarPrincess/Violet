@@ -14,6 +14,7 @@ public final class CodeObjectBuilder {
   public let freeVariableNames: [MangledName]
   public let cellVariableNames: [MangledName]
   public let argCount: Int
+  public let posOnlyArgCount: Int
   public let kwOnlyArgCount: Int
   public let firstLine: SourceLine
 
@@ -38,6 +39,7 @@ public final class CodeObjectBuilder {
               freeVariableNames: [MangledName],
               cellVariableNames: [MangledName],
               argCount: Int,
+              posOnlyArgCount: Int,
               kwOnlyArgCount: Int,
               firstLine: SourceLine) {
     self.name = name
@@ -49,6 +51,7 @@ public final class CodeObjectBuilder {
     self.freeVariableNames = freeVariableNames
     self.cellVariableNames = cellVariableNames
     self.argCount = argCount
+    self.posOnlyArgCount = posOnlyArgCount
     self.kwOnlyArgCount = kwOnlyArgCount
     self.firstLine = firstLine
 
@@ -110,6 +113,7 @@ public final class CodeObjectBuilder {
                       freeVariableNames: self.freeVariableNames,
                       cellVariableNames: self.cellVariableNames,
                       argCount: self.argCount,
+                      posOnlyArgCount: self.posOnlyArgCount,
                       kwOnlyArgCount: self.kwOnlyArgCount)
   }
 

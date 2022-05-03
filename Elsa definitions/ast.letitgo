@@ -721,6 +721,8 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- When a function is called, positional arguments are mapped
   -- to these parameters based solely on their position.
   Argument* args,
+  -- Count of positional-only arguments.
+  Int posOnlyArgCount,
   -- Default values for positional arguments.
   -- If there are fewer defaults, they correspond to the last *n* arguments.
   -- - Important: The default value is evaluated only **once**.

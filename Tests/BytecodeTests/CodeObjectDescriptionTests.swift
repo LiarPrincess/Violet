@@ -29,6 +29,7 @@ class CodeObjectDescriptionTests: XCTestCase {
       freeVariableNames: [anna],
       cellVariableNames: [kristoff],
       argCount: 2013, // Year
+      posOnlyArgCount: 1, // Series number
       kwOnlyArgCount: 102, // Duration (in minutes)
       firstLine: SourceLine(2) // Oscars: 'Animated Feature Film' and 'Music'
     )
@@ -44,6 +45,7 @@ class CodeObjectDescriptionTests: XCTestCase {
     Kind: Module
     Flags: [generator]
     Arg count: 2013
+    Positional only arg count: 1
     Keyword only arg count: 102
     First line: 2
 
@@ -62,6 +64,7 @@ class CodeObjectDescriptionTests: XCTestCase {
       freeVariableNames: [anna],
       cellVariableNames: [kristoff],
       argCount: 2018, // Year
+      posOnlyArgCount: 2, // Series number
       kwOnlyArgCount: 103, // Duration (in minutes)
       firstLine: SourceLine(1) // Oscar nominations: Music
     )
@@ -91,6 +94,7 @@ class CodeObjectDescriptionTests: XCTestCase {
     Kind: Module
     Flags: [generator]
     Arg count: 2018
+    Positional only arg count: 2
     Keyword only arg count: 103
     First line: 1
 

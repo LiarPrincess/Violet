@@ -136,7 +136,7 @@ public struct PyCode: PyObjectMixin {
   /// - kwds argument name (i.e., **kwargs)
   /// - any other local variable names.
   ///
-  /// So you need to look at `argCount`, `kwOnlyArgCount` and `codeFlags`
+  /// So you need to look at `argCount`, `posOnlyArgCount`, `kwOnlyArgCount` and `codeFlags`
   /// to fully interpret this
   ///
   /// This value is taken directly from the SymbolTable.
@@ -189,6 +189,11 @@ public struct PyCode: PyObjectMixin {
   /// including those with default values (but excluding `*args`).
   /// CPython: `co_argcount`.
   public var argCount: Int { self.argCountPtr.pointee }
+
+  // sourcery: storedProperty
+  /// The number of positional only arguments the code object expects to receive,
+  /// CPython: `co_posonlyargcount`.
+  public var posOnlyArgCount: Int { self.posOnlyArgCountPtr.pointee }
 
   // sourcery: storedProperty
   /// The number of keyword arguments the code object can receive.
@@ -266,6 +271,7 @@ public struct PyCode: PyObjectMixin {
     self.freeVariableNamesPtr.initialize(to: code.freeVariableNames)
 
     self.argCountPtr.initialize(to: code.argCount)
+    self.posOnlyArgCountPtr.initialize(to: code.posOnlyArgCount)
     self.kwOnlyArgCountPtr.initialize(to: code.kwOnlyArgCount)
     self.predictedObjectStackCountPtr.initialize(to: 0)
 
@@ -487,6 +493,15 @@ public struct PyCode: PyObjectMixin {
     }
 
     return PyResult(py, zelf.argCount)
+  }
+
+  // sourcery: pyproperty = co_posonlyargcount
+  internal static func co_posonlyargcount(_ py: Py, zelf _zelf: PyObject) -> PyResult {
+    guard let zelf = Self.downcast(py, _zelf) else {
+      return Self.invalidZelfArgument(py, _zelf, "co_posonlyargcount")
+    }
+
+    return PyResult(py, zelf.posOnlyArgCount)
   }
 
   // sourcery: pyproperty = co_kwonlyargcount

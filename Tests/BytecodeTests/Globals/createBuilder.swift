@@ -11,6 +11,7 @@ func createBuilder(
   freeVariableNames: [MangledName] = [],
   cellVariableNames: [MangledName] = [],
   argCount: Int = 0,
+  posOnlyArgCount: Int = 0,
   kwOnlyArgCount: Int = 0,
   firstLine: SourceLine = SourceLocation.start.line
 ) -> CodeObjectBuilder {
@@ -23,6 +24,7 @@ func createBuilder(
                            freeVariableNames: freeVariableNames,
                            cellVariableNames: cellVariableNames,
                            argCount: argCount,
+                           posOnlyArgCount: posOnlyArgCount,
                            kwOnlyArgCount: kwOnlyArgCount,
                            firstLine: firstLine)
 }

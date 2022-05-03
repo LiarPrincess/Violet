@@ -115,18 +115,17 @@ with assert_raises(TypeError):
     f(**x, **y)
 
 
-# VIOLET: This is not a valid Python code!
-# def f(a, b, /, c, d, *, e, f):
-#     return a + b + c + d + e + f
+def f(a, b, /, c, d, *, e, f):
+    return a + b + c + d + e + f
 
-# assert f(1,2,3,4,e=5,f=6) == 21
-# assert f(1,2,3,d=4,e=5,f=6) == 21
-# assert f(1,2,c=3,d=4,e=5,f=6) == 21
-# with assert_raises(TypeError):
-#     f(1,b=2,c=3,d=4,e=5,f=6)
-# with assert_raises(TypeError):
-#     f(a=1,b=2,c=3,d=4,e=5,f=6)
-# with assert_raises(TypeError):
-#     f(1,2,3,4,5,f=6)
-# with assert_raises(TypeError):
-#     f(1,2,3,4,5,6)
+assert f(1,2,3,4,e=5,f=6) == 21
+assert f(1,2,3,d=4,e=5,f=6) == 21
+assert f(1,2,c=3,d=4,e=5,f=6) == 21
+with assert_raises(TypeError):
+    f(1,b=2,c=3,d=4,e=5,f=6)
+with assert_raises(TypeError):
+    f(a=1,b=2,c=3,d=4,e=5,f=6)
+with assert_raises(TypeError):
+    f(1,2,3,4,5,f=6)
+with assert_raises(TypeError):
+    f(1,2,3,4,5,6)

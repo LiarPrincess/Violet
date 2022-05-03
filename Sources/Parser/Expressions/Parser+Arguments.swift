@@ -15,6 +15,8 @@ private struct ArgumentsIR {
   fileprivate var args: [Argument] = []
   /// Default values for positional arguments.
   fileprivate var defaults: [Expression] = []
+  /// Positional only arguments count. nil means 0.
+  fileprivate var posOnlyArgCount: Int?
   /// Non-keyworded variable length arguments.
   fileprivate var vararg: Vararg = .none
   /// Parameters which occur after the '*args'.
@@ -34,6 +36,7 @@ private struct ArgumentsIR {
 
   fileprivate func compile(using builder: inout ASTBuilder) -> Arguments {
     return builder.arguments(args: self.args,
+                             posOnlyArgCount: self.posOnlyArgCount ?? 0,
                              defaults: self.defaults,
                              vararg: self.vararg,
                              kwOnlyArgs: self.kwOnlyArgs,
@@ -140,6 +143,7 @@ extension Parser {
     while self.peek.kind != closingToken {
       switch self.peek.kind {
       case .identifier: try self.parseArgument(ir: &ir, parseArg: parseArg)
+      case .slash: try self.parsePosOnlySeparator(ir: &ir)
       case .star: try self.parseVarargs(ir: &ir, parseArg: parseArg)
       case .starStar: try self.parseKwargs(ir: &ir, parseArg: parseArg)
       default:
@@ -199,6 +203,19 @@ extension Parser {
         ir.kwOnlyDefaults.append(implicitNone)
       }
     }
+  }
+
+  private func parsePosOnlySeparator(ir: inout ArgumentsIR) throws {
+    assert(self.peek.kind == .slash)
+    guard case .none = ir.vararg else {
+      throw self.error(.argsAfterKwargs)
+    }
+    guard ir.kwarg == nil else {
+      throw self.error(.varargsAfterKwargs)
+    }
+    ir.end = self.peek.end // slash end
+    try self.advance() // /
+    ir.posOnlyArgCount = ir.args.count
   }
 
   /// `'*' [vfpdef]`

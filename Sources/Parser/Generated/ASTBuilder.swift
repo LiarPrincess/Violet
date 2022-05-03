@@ -1182,6 +1182,7 @@ public struct ASTBuilder {
 
   public mutating func arguments(
     args: [Argument],
+    posOnlyArgCount: Int,
     defaults: [Expression],
     vararg: Vararg,
     kwOnlyArgs: [Argument],
@@ -1193,6 +1194,7 @@ public struct ASTBuilder {
     return Arguments(
       id: self.getNextId(),
       args: args,
+      posOnlyArgCount: posOnlyArgCount,
       defaults: defaults,
       vararg: vararg,
       kwOnlyArgs: kwOnlyArgs,
