@@ -1163,6 +1163,7 @@ extension PyCode {
     internal let cellVariableNamesOffset: Int
     internal let freeVariableNamesOffset: Int
     internal let argCountOffset: Int
+    internal let posOnlyArgCountOffset: Int
     internal let kwOnlyArgCountOffset: Int
     internal let predictedObjectStackCountOffset: Int
     internal let size: Int
@@ -1188,12 +1189,13 @@ extension PyCode {
           GenericLayout.Field([MangledName].self), // PyCode.cellVariableNames
           GenericLayout.Field([MangledName].self), // PyCode.freeVariableNames
           GenericLayout.Field(Int.self), // PyCode.argCount
+          GenericLayout.Field(Int.self), // PyCode.posOnlyArgCount
           GenericLayout.Field(Int.self), // PyCode.kwOnlyArgCount
           GenericLayout.Field(Int.self) // PyCode.predictedObjectStackCount
         ]
       )
 
-      assert(layout.offsets.count == 16)
+      assert(layout.offsets.count == 17)
       self.codeObjectOffset = layout.offsets[0]
       self.nameOffset = layout.offsets[1]
       self.qualifiedNameOffset = layout.offsets[2]
@@ -1208,8 +1210,9 @@ extension PyCode {
       self.cellVariableNamesOffset = layout.offsets[11]
       self.freeVariableNamesOffset = layout.offsets[12]
       self.argCountOffset = layout.offsets[13]
-      self.kwOnlyArgCountOffset = layout.offsets[14]
-      self.predictedObjectStackCountOffset = layout.offsets[15]
+      self.posOnlyArgCountOffset = layout.offsets[14]
+      self.kwOnlyArgCountOffset = layout.offsets[15]
+      self.predictedObjectStackCountOffset = layout.offsets[16]
       self.size = layout.size
       self.alignment = layout.alignment
     }
@@ -1252,6 +1255,8 @@ extension PyCode {
   internal var freeVariableNamesPtr: Ptr<[MangledName]> { Ptr(self.ptr, offset: Self.layout.freeVariableNamesOffset) }
   /// Property: `PyCode.argCount`.
   internal var argCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.argCountOffset) }
+  /// Property: `PyCode.posOnlyArgCount`.
+  internal var posOnlyArgCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.posOnlyArgCountOffset) }
   /// Property: `PyCode.kwOnlyArgCount`.
   internal var kwOnlyArgCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Self.layout.kwOnlyArgCountOffset) }
   /// Property: `PyCode.predictedObjectStackCount`.

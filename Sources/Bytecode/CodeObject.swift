@@ -269,7 +269,7 @@ public final class CodeObject: Equatable {
   /// - keyword argument name (i.e., **kwargs)
   /// - any other local variable names.
   ///
-  /// So you need to look at `argCount`, `kwOnlyArgCount` and `codeFlags`
+  /// So you need to look at `argCount`, `posOnlyArgCount`, `kwOnlyArgCount` and `codeFlags`
   /// to fully interpret this
   ///
   /// This value is taken directly from the SymbolTable.
@@ -300,6 +300,9 @@ public final class CodeObject: Equatable {
   /// Argument count (excluding `*args`).
   /// CPython: `co_argcount`.
   public let argCount: Int
+  /// Positional only argument count.
+  /// CPython: `co_posonlyargcount`.
+  public let posOnlyArgCount: Int
   /// Keyword only argument count.
   /// CPython: `co_kwonlyargcount`.
   public let kwOnlyArgCount: Int
@@ -321,6 +324,7 @@ public final class CodeObject: Equatable {
                 freeVariableNames: [MangledName],
                 cellVariableNames: [MangledName],
                 argCount: Int,
+                posOnlyArgCount: Int,
                 kwOnlyArgCount: Int) {
     self.name = name
     self.qualifiedName = qualifiedName
@@ -337,6 +341,7 @@ public final class CodeObject: Equatable {
     self.freeVariableNames = freeVariableNames
     self.cellVariableNames = cellVariableNames
     self.argCount = argCount
+    self.posOnlyArgCount = posOnlyArgCount
     self.kwOnlyArgCount = kwOnlyArgCount
   }
 

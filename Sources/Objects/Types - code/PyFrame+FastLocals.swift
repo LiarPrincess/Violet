@@ -223,6 +223,11 @@ private struct FillFastLocals {
           continue
         }
 
+        guard index >= self.code.posOnlyArgCount else {
+          let error = self.newTypeError("got some positional-only arguments passed as keyword arguments: '\(keyword)'")
+          return .error(error)
+        }
+
         guard !self.isSet(index: index) else {
           let error = self.newTypeError("got multiple values for argument '\(keyword)'")
           return .error(error)

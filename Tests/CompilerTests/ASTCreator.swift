@@ -1152,6 +1152,7 @@ extension ASTCreator {
     return Arguments(
       id: self.id,
       args: args,
+      posOnlyArgCount: 0,
       defaults: defaults,
       vararg: vararg,
       kwOnlyArgs: kwOnlyArgs,

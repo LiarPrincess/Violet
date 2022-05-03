@@ -21,10 +21,12 @@ extension CompilerImpl {
                                    location: location)
 
     let argCount = node.args.args.count
+    let posOnlyArgCount = node.args.posOnlyArgCount
     let kwOnlyArgCount = node.args.kwOnlyArgs.count
 
     let codeObject = try self.inNewCodeObject(node: node,
                                               argCount: argCount,
+                                              posOnlyArgCount: posOnlyArgCount,
                                               kwOnlyArgCount: kwOnlyArgCount) {
       assert(self.builder.kind == .lambda)
 
@@ -57,10 +59,12 @@ extension CompilerImpl {
                               location: location)
 
     let argCount = node.args.args.count
+    let posOnlyArgCount = node.args.posOnlyArgCount
     let kwOnlyArgCount = node.args.kwOnlyArgs.count
 
     let codeObject = try self.inNewCodeObject(node: node,
                                               argCount: argCount,
+                                              posOnlyArgCount: posOnlyArgCount,
                                               kwOnlyArgCount: kwOnlyArgCount) {
       assert(self.builder.kind == .function)
       try self.visitBody(body: node.body, onDoc: .appendToConstants)

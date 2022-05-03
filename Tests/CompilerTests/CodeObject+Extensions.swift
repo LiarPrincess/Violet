@@ -24,6 +24,7 @@ extension CodeObject {
                                     freeVariableNames: [],
                                     cellVariableNames: [],
                                     argCount: 0,
+                                    posOnlyArgCount: 0,
                                     kwOnlyArgCount: 0,
                                     firstLine: 0)
 

@@ -11,6 +11,7 @@ extension CodeObject: CustomStringConvertible {
       Kind: \(self.kind)
       Flags: \(self.flags)
       Arg count: \(self.argCount)
+      Positional only arg count: \(self.posOnlyArgCount)
       Keyword only arg count: \(self.kwOnlyArgCount)
       First line: \(self.firstLine)
 

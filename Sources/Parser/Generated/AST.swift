@@ -2734,6 +2734,8 @@ public struct Arguments: ASTNode, CustomStringConvertible {
   /// When a function is called, positional arguments are mapped
   /// to these parameters based solely on their position.
   public var args: [Argument]
+  /// Count of positional only arguments of 'args'
+  public var posOnlyArgCount: Int
   /// Default values for positional arguments.
   /// If there are fewer defaults, they correspond to the last *n* arguments.
   /// - Important: The default value is evaluated only **once**.
@@ -2767,6 +2769,7 @@ public struct Arguments: ASTNode, CustomStringConvertible {
   public init(
     id: ASTNodeId,
     args: [Argument],
+    posOnlyArgCount: Int,
     defaults: [Expression],
     vararg: Vararg,
     kwOnlyArgs: [Argument],
@@ -2777,6 +2780,7 @@ public struct Arguments: ASTNode, CustomStringConvertible {
   ) {
     self.id = id
     self.args = args
+    self.posOnlyArgCount = posOnlyArgCount
     self.defaults = defaults
     self.vararg = vararg
     self.kwOnlyArgs = kwOnlyArgs

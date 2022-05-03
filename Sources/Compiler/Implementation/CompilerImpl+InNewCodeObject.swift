@@ -21,6 +21,7 @@ extension CompilerImpl {
   ) rethrows -> CodeObject {
     return try self.inNewCodeObject(node: node,
                                     argCount: 0,
+                                    posOnlyArgCount: 0,
                                     kwOnlyArgCount: 0,
                                     emitInstructions: block)
   }
@@ -33,11 +34,13 @@ extension CompilerImpl {
   internal func inNewCodeObject<N: ASTNode>(
     node: N,
     argCount: Int,
+    posOnlyArgCount: Int,
     kwOnlyArgCount: Int,
     emitInstructions block: () throws -> Void
   ) rethrows -> CodeObject {
     self.enterScope(node: node,
                     argCount: argCount,
+                    posOnlyArgCount: posOnlyArgCount,
                     kwOnlyArgCount: kwOnlyArgCount)
 
     try block()
@@ -54,6 +57,7 @@ extension CompilerImpl {
   /// compiler_enter_scope(struct compiler *c, identifier name, ...)
   private func enterScope<N: ASTNode>(node: N,
                                       argCount: Int,
+                                      posOnlyArgCount: Int,
                                       kwOnlyArgCount: Int) {
 
     guard let scope = self.symbolTable.scopeByNode[node] else {
@@ -75,6 +79,7 @@ extension CompilerImpl {
                                     freeVariableNames: symbolNames.free,
                                     cellVariableNames: symbolNames.cell,
                                     argCount: argCount,
+                                    posOnlyArgCount: posOnlyArgCount,
                                     kwOnlyArgCount: kwOnlyArgCount,
                                     firstLine: node.start.line)
 
