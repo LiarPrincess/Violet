@@ -32,8 +32,6 @@ function printUnaryOperationTest(
   values: bigint[],
   op: UnaryOperation
 ) {
-  const isDiv = name.startsWith('div') || name.startsWith('mod');
-
   console.log(`  func test_${name}() {`);
   for (const value of values) {
     const expected = op(value);
