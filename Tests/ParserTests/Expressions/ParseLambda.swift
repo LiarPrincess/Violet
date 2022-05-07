@@ -27,6 +27,7 @@ class ParseLambda: XCTestCase {
         Args
           Arguments(start: 8:8, end: 8:8)
             Args: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg: none
             KwOnlyArgs: none
@@ -60,6 +61,7 @@ class ParseLambda: XCTestCase {
               Arg
                 Name: zucchini
                 Annotation: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg: none
             KwOnlyArgs: none
@@ -93,6 +95,7 @@ class ParseLambda: XCTestCase {
               Arg
                 Name: zucchini
                 Annotation: none
+            PosOnlyArgCount: 0
             Defaults
               FloatExpr(context: Load, start: 10:10, end: 11:16)
                 Value: 1.0
@@ -131,6 +134,7 @@ class ParseLambda: XCTestCase {
               Arg
                 Name: tomato
                 Annotation: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg: none
             KwOnlyArgs: none
@@ -169,6 +173,7 @@ class ParseLambda: XCTestCase {
               Arg
                 Name: tomato
                 Annotation: none
+            PosOnlyArgCount: 0
             Defaults
               FloatExpr(context: Load, start: 14:14, end: 15:20)
                 Value: 1.0
@@ -201,6 +206,47 @@ class ParseLambda: XCTestCase {
     }
   }
 
+  // MARK: - Positional only
+
+  /// lambda zucchini, /, tomato: "Ratatouille"
+  func test_positionalOnly() {
+    let parser = createExprParser(
+      createToken(.lambda,                 start: loc0, end: loc1),
+      createToken(.identifier("zucchini"), start: loc6, end: loc7),
+      createToken(.comma,                  start: loc8, end: loc9),
+      createToken(.slash,                  start: loc10, end: loc11),
+      createToken(.comma,                  start: loc12, end: loc13),
+      createToken(.identifier("tomato"),   start: loc14, end: loc15),
+      createToken(.colon,                  start: loc16, end: loc17),
+      createToken(.string("Ratatouille"),  start: loc18, end: loc19)
+    )
+
+    guard let ast = parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 19:24)
+      LambdaExpr(context: Load, start: 0:0, end: 19:24)
+        Args
+          Arguments(start: 6:6, end: 15:20)
+            Args
+              Arg
+                Name: zucchini
+                Annotation: none
+              Arg
+                Name: tomato
+                Annotation: none
+            PosOnlyArgCount: 1
+            Defaults: none
+            Vararg: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg: none
+        Body
+          StringExpr(context: Load, start: 18:18, end: 19:24)
+            String: 'Ratatouille'
+    """)
+  }
+
   // MARK: - Variadic
 
   /// lambda *zucchini: "Ratatouille"
@@ -221,6 +267,7 @@ class ParseLambda: XCTestCase {
         Args
           Arguments(start: 6:6, end: 9:14)
             Args: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg
               Named
@@ -258,6 +305,7 @@ class ParseLambda: XCTestCase {
         Args
           Arguments(start: 6:6, end: 17:22)
             Args: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg
               Named
@@ -298,6 +346,7 @@ class ParseLambda: XCTestCase {
         Args
           Arguments(start: 6:6, end: 13:18)
             Args: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg
               Named
@@ -355,6 +404,7 @@ class ParseLambda: XCTestCase {
         Args
           Arguments(start: 6:6, end: 11:16)
             Args: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg: unnamed
             KwOnlyArgs
@@ -405,6 +455,7 @@ class ParseLambda: XCTestCase {
         Args
           Arguments(start: 6:6, end: 9:14)
             Args: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg: none
             KwOnlyArgs: none
@@ -438,6 +489,7 @@ class ParseLambda: XCTestCase {
         Args
           Arguments(start: 6:6, end: 11:16)
             Args: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg: none
             KwOnlyArgs: none
@@ -501,6 +553,7 @@ class ParseLambda: XCTestCase {
               Arg
                 Name: zucchini
                 Annotation: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg
               Named

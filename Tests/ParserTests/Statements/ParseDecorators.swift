@@ -315,6 +315,7 @@ class ParseDecorators: XCTestCase {
         Args
           Arguments(start: 12:12, end: 12:12)
             Args: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg: none
             KwOnlyArgs: none
@@ -356,6 +357,7 @@ class ParseDecorators: XCTestCase {
         Args
           Arguments(start: 14:14, end: 14:14)
             Args: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg: none
             KwOnlyArgs: none
