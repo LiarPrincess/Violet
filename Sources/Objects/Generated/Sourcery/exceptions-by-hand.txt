@@ -8,7 +8,7 @@
 
 ErrorType|PyBaseException|BaseException|
 
-SwiftInit|initialize(    _ py: Py,    type: PyType,    args: PyTuple,    traceback: PyTraceback? = nil,    cause: PyBaseException? = nil,    context: PyBaseException? = nil,    suppressContext: Bool = PyBaseException.defaultSuppressContext  )
+SwiftInit|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
 
 
 
@@ -18,8 +18,8 @@ SwiftInit|initialize(    _ py: Py,    type: PyType,    args: PyTuple,    traceba
 
 ErrorType|PyImportError|ImportError|Exception
 
-SwiftInit|initialize(    _ py: Py,    type: PyType,    msg: PyObject?,    moduleName: PyObject?,    modulePath: PyObject?,    traceback: PyTraceback? = nil,    cause: PyBaseException? = nil,    context: PyBaseException? = nil,    suppressContext: Bool = PyBaseException.defaultSuppressContext  )
-SwiftInit|initialize(    _ py: Py,    type: PyType,    args: PyTuple,    traceback: PyTraceback? = nil,    cause: PyBaseException? = nil,    context: PyBaseException? = nil,    suppressContext: Bool = PyBaseException.defaultSuppressContext  )
+SwiftInit|initialize(_ py: Py, type: PyType, msg: PyObject?, moduleName: PyObject?, modulePath: PyObject?, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+SwiftInit|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
 
 
 
@@ -29,7 +29,7 @@ SwiftInit|initialize(    _ py: Py,    type: PyType,    args: PyTuple,    traceba
 
 ErrorType|PyKeyError|KeyError|LookupError
 
-SwiftInit|initialize(    _ py: Py,    type: PyType,    args: PyTuple,    traceback: PyTraceback? = nil,    cause: PyBaseException? = nil,    context: PyBaseException? = nil,    suppressContext: Bool = PyBaseException.defaultSuppressContext  )
+SwiftInit|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
 
 
 
@@ -39,8 +39,8 @@ SwiftInit|initialize(    _ py: Py,    type: PyType,    args: PyTuple,    traceba
 
 ErrorType|PyStopIteration|StopIteration|Exception
 
-SwiftInit|initialize(    _ py: Py,    type: PyType,    value: PyObject,    traceback: PyTraceback? = nil,    cause: PyBaseException? = nil,    context: PyBaseException? = nil,    suppressContext: Bool = PyBaseException.defaultSuppressContext  )
-SwiftInit|initialize(    _ py: Py,    type: PyType,    args: PyTuple,    traceback: PyTraceback? = nil,    cause: PyBaseException? = nil,    context: PyBaseException? = nil,    suppressContext: Bool = PyBaseException.defaultSuppressContext  )
+SwiftInit|initialize(_ py: Py, type: PyType, value: PyObject, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+SwiftInit|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
 
 
 
@@ -50,8 +50,8 @@ SwiftInit|initialize(    _ py: Py,    type: PyType,    args: PyTuple,    traceba
 
 ErrorType|PySyntaxError|SyntaxError|Exception
 
-SwiftInit|initialize(    _ py: Py,    type: PyType,    msg: PyObject?,    filename: PyObject?,    lineno: PyObject?,    offset: PyObject?,    text: PyObject?,    printFileAndLine: PyObject?,    traceback: PyTraceback? = nil,    cause: PyBaseException? = nil,    context: PyBaseException? = nil,    suppressContext: Bool = PyBaseException.defaultSuppressContext  )
-SwiftInit|initialize(    _ py: Py,    type: PyType,    args: PyTuple,    traceback: PyTraceback? = nil,    cause: PyBaseException? = nil,    context: PyBaseException? = nil,    suppressContext: Bool = PyBaseException.defaultSuppressContext  )
+SwiftInit|initialize(_ py: Py, type: PyType, msg: PyObject?, filename: PyObject?, lineno: PyObject?, offset: PyObject?, text: PyObject?, printFileAndLine: PyObject?, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+SwiftInit|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
 
 
 
@@ -61,6 +61,6 @@ SwiftInit|initialize(    _ py: Py,    type: PyType,    args: PyTuple,    traceba
 
 ErrorType|PySystemExit|SystemExit|BaseException
 
-SwiftInit|initialize(    _ py: Py,    type: PyType,    code: PyObject?,    traceback: PyTraceback? = nil,    cause: PyBaseException? = nil,    context: PyBaseException? = nil,    suppressContext: Bool = PyBaseException.defaultSuppressContext  )
-SwiftInit|initialize(    _ py: Py,    type: PyType,    args: PyTuple,    traceback: PyTraceback? = nil,    cause: PyBaseException? = nil,    context: PyBaseException? = nil,    suppressContext: Bool = PyBaseException.defaultSuppressContext  )
+SwiftInit|initialize(_ py: Py, type: PyType, code: PyObject?, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+SwiftInit|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
 

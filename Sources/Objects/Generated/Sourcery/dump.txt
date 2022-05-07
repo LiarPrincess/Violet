@@ -1,0 +1,4169 @@
+
+
+
+
+
+
+SwiftStoredPropertyOnPy|`true`|PyBool
+SwiftStoredPropertyOnPy|`false`|PyBool
+SwiftStoredPropertyOnPy|none|PyNone
+SwiftStoredPropertyOnPy|notImplemented|PyNotImplemented
+SwiftStoredPropertyOnPy|ellipsis|PyEllipsis
+SwiftStoredPropertyOnPy|emptyTuple|PyTuple
+SwiftStoredPropertyOnPy|emptyString|PyString
+SwiftStoredPropertyOnPy|emptyBytes|PyBytes
+SwiftStoredPropertyOnPy|emptyFrozenSet|PyFrozenSet
+SwiftStoredPropertyOnPy|idStrings|IdString.Collection
+SwiftStoredPropertyOnPy|internedInts|[PyInt]
+SwiftStoredPropertyOnPy|internedStrings|[UseScalarsToHashString: PyString]
+SwiftStoredPropertyOnPy|builtins|Builtins
+SwiftStoredPropertyOnPy|sys|Sys
+SwiftStoredPropertyOnPy|_imp|UnderscoreImp
+SwiftStoredPropertyOnPy|_warnings|UnderscoreWarnings
+SwiftStoredPropertyOnPy|_os|UnderscoreOS
+SwiftStoredPropertyOnPy|builtinsModule|PyModule
+SwiftStoredPropertyOnPy|sysModule|PyModule
+SwiftStoredPropertyOnPy|_impModule|PyModule
+SwiftStoredPropertyOnPy|_warningsModule|PyModule
+SwiftStoredPropertyOnPy|_osModule|PyModule
+SwiftStoredPropertyOnPy|types|Py.Types
+SwiftStoredPropertyOnPy|errorTypes|Py.ErrorTypes
+SwiftStoredPropertyOnPy|config|PyConfig
+SwiftStoredPropertyOnPy|delegate|PyDelegateType
+SwiftStoredPropertyOnPy|fileSystem|PyFileSystemType
+SwiftStoredPropertyOnPy|memory|PyMemory
+SwiftStoredPropertyOnPy|cast|PyCast
+SwiftStoredPropertyOnPy|hasher|Hasher
+
+
+
+############
+# bool
+############
+
+Type|PyBool|bool|int
+
+Annotation|isDefault
+Annotation|isLongSubclass
+Annotation|pybase
+Annotation|pytype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, value: Bool)
+
+PyProperty|__class__||
+
+
+PyMethod|__repr__|__repr__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__str__|__str__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__and__|__and__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rand__|__rand__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__or__|__or__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__ror__|__ror__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__xor__|__xor__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rxor__|__rxor__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# builtinFunction
+############
+
+Type|PyBuiltinFunction|builtinFunction|
+
+Annotation|hasGC
+Annotation|isDefault
+Annotation|pytype
+
+
+SwiftStoredProperty|function|FunctionWrapper|0|
+SwiftStoredProperty|module|PyObject?|0|
+SwiftStoredProperty|doc|String?|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, function: FunctionWrapper, module: PyObject?, doc: String?)
+
+PyProperty|__class__||
+PyProperty|__name__||
+PyProperty|__qualname__||
+PyProperty|__doc__||
+PyProperty|__text_signature__||
+PyProperty|__module__||
+PyProperty|__self__||
+
+
+PyMethod|__eq__|__eq__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ne__|__ne__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__lt__|__lt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__le__|__le__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__gt__|__gt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ge__|__ge__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__repr__|__repr__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__get__|__get__(_ py: Py, zelf _zelf: PyObject, object: PyObject, type: PyObject?)|PyResult|
+PyMethod|__call__|__call__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+
+############
+# builtinMethod
+############
+
+Type|PyBuiltinMethod|builtinMethod|
+
+Annotation|hasGC
+Annotation|isDefault
+Annotation|pytype
+
+
+SwiftStoredProperty|function|FunctionWrapper|0|
+SwiftStoredProperty|object|PyObject|0|
+SwiftStoredProperty|module|PyObject?|0|
+SwiftStoredProperty|doc|String?|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, function: FunctionWrapper, object: PyObject, module: PyObject?, doc: String?)
+
+PyProperty|__class__||
+PyProperty|__name__||
+PyProperty|__qualname__||
+PyProperty|__doc__||
+PyProperty|__text_signature__||
+PyProperty|__module__||
+PyProperty|__self__||
+
+
+PyMethod|__eq__|__eq__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ne__|__ne__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__lt__|__lt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__le__|__le__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__gt__|__gt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ge__|__ge__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__repr__|__repr__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__get__|__get__(_ py: Py, zelf _zelf: PyObject, object: PyObject, type: PyObject?)|PyResult|
+PyMethod|__call__|__call__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+
+############
+# bytearray
+############
+
+Type|PyByteArray|bytearray|
+
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pytype
+Annotation|subclassInstancesHave__dict__
+
+Doc|doc
+
+SwiftStoredProperty|elements|Data|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, elements: Data)
+
+PyProperty|__class__||
+
+
+PyMethod|__eq__|__eq__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ne__|__ne__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__lt__|__lt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__le__|__le__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__gt__|__gt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ge__|__ge__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__hash__|__hash__(_ py: Py, zelf _zelf: PyObject)|HashResult|
+PyMethod|__repr__|__repr__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__str__|__str__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__len__|__len__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__contains__|__contains__(_ py: Py, zelf: PyObject, object: PyObject)|PyResult|
+PyMethod|__getitem__|__getitem__(_ py: Py, zelf _zelf: PyObject, index: PyObject)|PyResult|
+PyMethod|__setitem__|__setitem__(_ py: Py, zelf _zelf: PyObject, index: PyObject, value: PyObject)|PyResult|
+PyMethod|__delitem__|__delitem__(_ py: Py, zelf _zelf: PyObject, index: PyObject)|PyResult|
+PyMethod|isalnum|isalnum(_ py: Py, zelf: PyObject)|PyResult|isalnumDoc
+PyMethod|isalpha|isalpha(_ py: Py, zelf: PyObject)|PyResult|isalphaDoc
+PyMethod|isascii|isascii(_ py: Py, zelf: PyObject)|PyResult|isasciiDoc
+PyMethod|isdigit|isdigit(_ py: Py, zelf: PyObject)|PyResult|isdigitDoc
+PyMethod|islower|islower(_ py: Py, zelf: PyObject)|PyResult|islowerDoc
+PyMethod|isspace|isspace(_ py: Py, zelf: PyObject)|PyResult|isspaceDoc
+PyMethod|istitle|istitle(_ py: Py, zelf: PyObject)|PyResult|istitleDoc
+PyMethod|isupper|isupper(_ py: Py, zelf: PyObject)|PyResult|isupperDoc
+PyMethod|startswith|startswith(_ py: Py, zelf: PyObject, prefix: PyObject, start: PyObject?, end: PyObject?)|PyResult|startswithDoc
+PyMethod|endswith|endswith(_ py: Py, zelf: PyObject, suffix: PyObject, start: PyObject?, end: PyObject?)|PyResult|endswithDoc
+PyMethod|strip|strip(_ py: Py, zelf: PyObject, chars: PyObject?)|PyResult|stripDoc
+PyMethod|lstrip|lstrip(_ py: Py, zelf: PyObject, chars: PyObject?)|PyResult|lstripDoc
+PyMethod|rstrip|rstrip(_ py: Py, zelf: PyObject, chars: PyObject?)|PyResult|rstripDoc
+PyMethod|find|find(_ py: Py, zelf: PyObject, object: PyObject, start: PyObject?, end: PyObject?)|PyResult|findDoc
+PyMethod|rfind|rfind(_ py: Py, zelf: PyObject, object: PyObject, start: PyObject?, end: PyObject?)|PyResult|rfindDoc
+PyMethod|index|index(_ py: Py, zelf: PyObject, object: PyObject, start: PyObject?, end: PyObject?)|PyResult|indexDoc
+PyMethod|rindex|rindex(_ py: Py, zelf: PyObject, object: PyObject, start: PyObject?, end: PyObject?)|PyResult|rindexDoc
+PyMethod|lower|lower(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|upper|upper(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|title|title(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|swapcase|swapcase(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|capitalize|capitalize(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|center|center(_ py: Py, zelf: PyObject, width: PyObject, fillChar: PyObject?)|PyResult|
+PyMethod|ljust|ljust(_ py: Py, zelf: PyObject, width: PyObject, fillChar: PyObject?)|PyResult|
+PyMethod|rjust|rjust(_ py: Py, zelf: PyObject, width: PyObject, fillChar: PyObject?)|PyResult|
+PyMethod|split|split(_ py: Py, zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+PyMethod|rsplit|rsplit(_ py: Py, zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+PyMethod|splitlines|splitlines(_ py: Py, zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+PyMethod|partition|partition(_ py: Py, zelf: PyObject, separator: PyObject)|PyResult|
+PyMethod|rpartition|rpartition(_ py: Py, zelf: PyObject, separator: PyObject)|PyResult|
+PyMethod|expandtabs|expandtabs(_ py: Py, zelf: PyObject, tabSize: PyObject?)|PyResult|
+PyMethod|count|count(_ py: Py, zelf: PyObject, object: PyObject, start: PyObject?, end: PyObject?)|PyResult|countDoc
+PyMethod|join|join(_ py: Py, zelf: PyObject, iterable: PyObject)|PyResult|
+PyMethod|replace|replace(_ py: Py, zelf: PyObject, old: PyObject, new: PyObject, count: PyObject?)|PyResult|
+PyMethod|zfill|zfill(_ py: Py, zelf: PyObject, width: PyObject)|PyResult|
+PyMethod|__add__|__add__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__iadd__|__iadd__(_ py: Py, zelf _zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__mul__|__mul__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rmul__|__rmul__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__imul__|__imul__(_ py: Py, zelf _zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|append|append(_ py: Py, zelf _zelf: PyObject, object: PyObject)|PyResult|appendDoc
+PyMethod|extend|extend(_ py: Py, zelf _zelf: PyObject, iterable: PyObject)|PyResult|
+PyMethod|insert|insert(_ py: Py, zelf _zelf: PyObject, index: PyObject, object: PyObject)|PyResult|insertDoc
+PyMethod|remove|remove(_ py: Py, zelf _zelf: PyObject, object: PyObject)|PyResult|removeDoc
+PyMethod|pop|pop(_ py: Py, zelf _zelf: PyObject, index indexObject: PyObject?)|PyResult|popDoc
+PyMethod|clear|clear(_ py: Py, zelf _zelf: PyObject)|PyResult|clearDoc
+PyMethod|reverse|reverse(_ py: Py, zelf _zelf: PyObject)|PyResult|reverseDoc
+PyMethod|copy|copy(_ py: Py, zelf _zelf: PyObject)|PyResult|copyDoc
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# bytearray_iterator
+############
+
+Type|PyByteArrayIterator|bytearray_iterator|
+
+Annotation|hasGC
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|bytes|PyByteArray|0|
+SwiftStoredProperty|index|Int|1|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, bytes: PyByteArray)
+
+PyProperty|__class__||
+
+
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__next__|__next__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__length_hint__|__length_hint__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# bytes
+############
+
+Type|PyBytes|bytes|
+
+Annotation|isBaseType
+Annotation|isBytesSubclass
+Annotation|isDefault
+Annotation|pytype
+Annotation|subclassInstancesHave__dict__
+
+Doc|doc
+
+SwiftStoredProperty|elements|Data|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, elements: Data)
+
+PyProperty|__class__||
+
+
+PyMethod|__eq__|__eq__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ne__|__ne__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__lt__|__lt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__le__|__le__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__gt__|__gt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ge__|__ge__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__hash__|__hash__(_ py: Py, zelf _zelf: PyObject)|HashResult|
+PyMethod|__repr__|__repr__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__str__|__str__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__len__|__len__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__contains__|__contains__(_ py: Py, zelf: PyObject, object: PyObject)|PyResult|
+PyMethod|__getitem__|__getitem__(_ py: Py, zelf _zelf: PyObject, index: PyObject)|PyResult|
+PyMethod|isalnum|isalnum(_ py: Py, zelf: PyObject)|PyResult|isalnumDoc
+PyMethod|isalpha|isalpha(_ py: Py, zelf: PyObject)|PyResult|isalphaDoc
+PyMethod|isascii|isascii(_ py: Py, zelf: PyObject)|PyResult|isasciiDoc
+PyMethod|isdigit|isdigit(_ py: Py, zelf: PyObject)|PyResult|isdigitDoc
+PyMethod|islower|islower(_ py: Py, zelf: PyObject)|PyResult|islowerDoc
+PyMethod|isspace|isspace(_ py: Py, zelf: PyObject)|PyResult|isspaceDoc
+PyMethod|istitle|istitle(_ py: Py, zelf: PyObject)|PyResult|istitleDoc
+PyMethod|isupper|isupper(_ py: Py, zelf: PyObject)|PyResult|isupperDoc
+PyMethod|startswith|startswith(_ py: Py, zelf: PyObject, prefix: PyObject, start: PyObject?, end: PyObject?)|PyResult|startswithDoc
+PyMethod|endswith|endswith(_ py: Py, zelf: PyObject, suffix: PyObject, start: PyObject?, end: PyObject?)|PyResult|endswithDoc
+PyMethod|strip|strip(_ py: Py, zelf: PyObject, chars: PyObject?)|PyResult|stripDoc
+PyMethod|lstrip|lstrip(_ py: Py, zelf: PyObject, chars: PyObject?)|PyResult|lstripDoc
+PyMethod|rstrip|rstrip(_ py: Py, zelf: PyObject, chars: PyObject?)|PyResult|rstripDoc
+PyMethod|find|find(_ py: Py, zelf: PyObject, object: PyObject, start: PyObject?, end: PyObject?)|PyResult|findDoc
+PyMethod|rfind|rfind(_ py: Py, zelf: PyObject, object: PyObject, start: PyObject?, end: PyObject?)|PyResult|rfindDoc
+PyMethod|index|index(_ py: Py, zelf: PyObject, object: PyObject, start: PyObject?, end: PyObject?)|PyResult|indexDoc
+PyMethod|rindex|rindex(_ py: Py, zelf: PyObject, object: PyObject, start: PyObject?, end: PyObject?)|PyResult|rindexDoc
+PyMethod|lower|lower(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|upper|upper(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|title|title(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|swapcase|swapcase(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|capitalize|capitalize(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|center|center(_ py: Py, zelf: PyObject, width: PyObject, fillChar: PyObject?)|PyResult|
+PyMethod|ljust|ljust(_ py: Py, zelf: PyObject, width: PyObject, fillChar: PyObject?)|PyResult|
+PyMethod|rjust|rjust(_ py: Py, zelf: PyObject, width: PyObject, fillChar: PyObject?)|PyResult|
+PyMethod|split|split(_ py: Py, zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+PyMethod|rsplit|rsplit(_ py: Py, zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+PyMethod|splitlines|splitlines(_ py: Py, zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+PyMethod|partition|partition(_ py: Py, zelf: PyObject, separator: PyObject)|PyResult|
+PyMethod|rpartition|rpartition(_ py: Py, zelf: PyObject, separator: PyObject)|PyResult|
+PyMethod|expandtabs|expandtabs(_ py: Py, zelf: PyObject, tabSize: PyObject?)|PyResult|
+PyMethod|count|count(_ py: Py, zelf: PyObject, object: PyObject, start: PyObject?, end: PyObject?)|PyResult|countDoc
+PyMethod|join|join(_ py: Py, zelf: PyObject, iterable: PyObject)|PyResult|
+PyMethod|replace|replace(_ py: Py, zelf: PyObject, old: PyObject, new: PyObject, count: PyObject?)|PyResult|
+PyMethod|zfill|zfill(_ py: Py, zelf: PyObject, width: PyObject)|PyResult|
+PyMethod|__add__|__add__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__mul__|__mul__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rmul__|__rmul__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# bytes_iterator
+############
+
+Type|PyBytesIterator|bytes_iterator|
+
+Annotation|hasGC
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|bytes|PyBytes|0|
+SwiftStoredProperty|index|Int|1|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, bytes: PyBytes)
+
+PyProperty|__class__||
+
+
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__next__|__next__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__length_hint__|__length_hint__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# callable_iterator
+############
+
+Type|PyCallableIterator|callable_iterator|
+
+Annotation|hasGC
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|callable|PyObject|0|
+SwiftStoredProperty|sentinel|PyObject|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, callable: PyObject, sentinel: PyObject)
+
+PyProperty|__class__||
+
+
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__next__|__next__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+
+
+
+
+############
+# cell
+############
+
+Type|PyCell|cell|
+
+Annotation|hasGC
+Annotation|isDefault
+Annotation|pytype
+
+
+SwiftStoredProperty|content|PyObject?|1|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, content: PyObject?)
+
+
+
+PyMethod|__eq__|__eq__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ne__|__ne__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__lt__|__lt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__le__|__le__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__gt__|__gt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ge__|__ge__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__repr__|__repr__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+
+
+
+
+############
+# classmethod
+############
+
+Type|PyClassMethod|classmethod|
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|callable|PyObject?|1|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, callable: PyObject?)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+PyProperty|__func__||
+
+
+PyMethod|__get__|__get__(_ py: Py, zelf _zelf: PyObject, object: PyObject, type: PyObject?)|PyResult|
+PyMethod|__isabstractmethod__|__isabstractmethod__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# code
+############
+
+Type|PyCode|code|
+
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|codeObject|PyCode.CodeObject|0|
+SwiftStoredProperty|name|PyString|0|
+SwiftStoredProperty|qualifiedName|PyString|0|
+SwiftStoredProperty|filename|PyString|0|
+SwiftStoredProperty|instructions|[Instruction]|0|
+SwiftStoredProperty|firstLine|SourceLine|0|
+SwiftStoredProperty|instructionLines|[SourceLine]|0|
+SwiftStoredProperty|constants|[PyObject]|0|
+SwiftStoredProperty|labels|[VioletBytecode.CodeObject.Label]|0|
+SwiftStoredProperty|names|[PyString]|0|
+SwiftStoredProperty|variableNames|[MangledName]|0|
+SwiftStoredProperty|cellVariableNames|[MangledName]|0|
+SwiftStoredProperty|freeVariableNames|[MangledName]|0|
+SwiftStoredProperty|argCount|Int|0|
+SwiftStoredProperty|kwOnlyArgCount|Int|0|
+SwiftStoredProperty|predictedObjectStackCount|Int|1|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, code: VioletBytecode.CodeObject)
+
+PyProperty|__class__||
+PyProperty|co_name||
+PyProperty|co_filename||
+PyProperty|co_firstlineno||
+PyProperty|co_argcount||
+PyProperty|co_kwonlyargcount||
+PyProperty|co_nlocals||
+
+
+PyMethod|__eq__|__eq__(_ py: Py, zelf _zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ne__|__ne__(_ py: Py, zelf _zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__lt__|__lt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__le__|__le__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__gt__|__gt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ge__|__ge__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__hash__|__hash__(_ py: Py, zelf _zelf: PyObject)|HashResult|
+PyMethod|__repr__|__repr__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+
+
+
+
+############
+# complex
+############
+
+Type|PyComplex|complex|
+
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pytype
+Annotation|subclassInstancesHave__dict__
+
+Doc|doc
+
+SwiftStoredProperty|real|Double|0|
+SwiftStoredProperty|imag|Double|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, real: Double, imag: Double)
+
+PyProperty|real||
+PyProperty|imag||
+PyProperty|__class__||
+
+
+PyMethod|__eq__|__eq__(_ py: Py, zelf _zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ne__|__ne__(_ py: Py, zelf _zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__lt__|__lt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__le__|__le__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__gt__|__gt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ge__|__ge__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__hash__|__hash__(_ py: Py, zelf _zelf: PyObject)|HashResult|
+PyMethod|__repr__|__repr__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__str__|__str__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__bool__|__bool__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__int__|__int__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__float__|__float__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|conjugate|conjugate(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__pos__|__pos__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__neg__|__neg__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__abs__|__abs__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__add__|__add__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__radd__|__radd__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__sub__|__sub__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rsub__|__rsub__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__mul__|__mul__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rmul__|__rmul__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__pow__|__pow__(_ py: Py, zelf: PyObject, exp: PyObject, mod: PyObject?)|PyResult|
+PyMethod|__rpow__|__rpow__(_ py: Py, zelf: PyObject, base: PyObject, mod: PyObject?)|PyResult|
+PyMethod|__truediv__|__truediv__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rtruediv__|__rtruediv__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__floordiv__|__floordiv__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rfloordiv__|__rfloordiv__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__mod__|__mod__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rmod__|__rmod__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__divmod__|__divmod__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rdivmod__|__rdivmod__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__getnewargs__|__getnewargs__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# dict
+############
+
+Type|PyDict|dict|
+
+Annotation|hasGC
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|isDictSubclass
+Annotation|pytype
+Annotation|subclassInstancesHave__dict__
+
+Doc|doc
+
+SwiftStoredProperty|elements|PyDict.OrderedDictionary|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, elements: PyDict.OrderedDictionary)
+
+PyProperty|__class__||
+
+
+PyMethod|__eq__|__eq__(_ py: Py, zelf _zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ne__|__ne__(_ py: Py, zelf _zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__lt__|__lt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__le__|__le__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__gt__|__gt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ge__|__ge__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__hash__|__hash__(_ py: Py, zelf _zelf: PyObject)|HashResult|
+PyMethod|__repr__|__repr__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__len__|__len__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__getitem__|__getitem__(_ py: Py, zelf _zelf: PyObject, index: PyObject)|PyResult|
+PyMethod|__setitem__|__setitem__(_ py: Py, zelf _zelf: PyObject, index: PyObject, value: PyObject)|PyResult|
+PyMethod|__delitem__|__delitem__(_ py: Py, zelf _zelf: PyObject, index: PyObject)|PyResult|
+PyMethod|get|get(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|getWithDefaultDoc
+PyMethod|setdefault|setdefault(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|setDefaultDoc
+PyMethod|__contains__|__contains__(_ py: Py, zelf _zelf: PyObject, object: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|clear|clear(_ py: Py, zelf _zelf: PyObject)|PyResult|clearDoc
+PyMethod|update|update(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+PyMethod|copy|copy(_ py: Py, zelf _zelf: PyObject)|PyResult|copyDoc
+PyMethod|pop|pop(_ py: Py, zelf _zelf: PyObject, index: PyObject, default: PyObject?)|PyResult|popDoc
+PyMethod|popitem|popitem(_ py: Py, zelf _zelf: PyObject)|PyResult|popitemDoc
+PyMethod|keys|keys(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|items|items(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|values|values(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyClassMethod|fromkeys|fromkeys(_ py: Py, type: PyType, iterable: PyObject, value: PyObject?)|PyResult|
+
+
+############
+# dict_itemiterator
+############
+
+Type|PyDictItemIterator|dict_itemiterator|
+
+Annotation|hasGC
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|dict|PyDict|0|
+SwiftStoredProperty|index|Int|1|
+SwiftStoredProperty|initialCount|Int|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, dict: PyDict)
+
+PyProperty|__class__||
+
+
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__next__|__next__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__length_hint__|__length_hint__(_ py: Py, zelf: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# dict_items
+############
+
+Type|PyDictItems|dict_items|
+
+Annotation|hasGC
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|dict|PyDict|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, dict: PyDict)
+
+PyProperty|__class__||
+
+
+PyMethod|__eq__|__eq__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ne__|__ne__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__lt__|__lt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__le__|__le__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__gt__|__gt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ge__|__ge__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__hash__|__hash__(_ py: Py, zelf: PyObject)|HashResult|
+PyMethod|__repr__|__repr__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__len__|__len__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__contains__|__contains__(_ py: Py, zelf _zelf: PyObject, object: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# dict_keyiterator
+############
+
+Type|PyDictKeyIterator|dict_keyiterator|
+
+Annotation|hasGC
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|dict|PyDict|0|
+SwiftStoredProperty|index|Int|1|
+SwiftStoredProperty|initialCount|Int|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, dict: PyDict)
+
+PyProperty|__class__||
+
+
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__next__|__next__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__length_hint__|__length_hint__(_ py: Py, zelf: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# dict_keys
+############
+
+Type|PyDictKeys|dict_keys|
+
+Annotation|hasGC
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|dict|PyDict|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, dict: PyDict)
+
+PyProperty|__class__||
+
+
+PyMethod|__eq__|__eq__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ne__|__ne__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__lt__|__lt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__le__|__le__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__gt__|__gt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ge__|__ge__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__hash__|__hash__(_ py: Py, zelf: PyObject)|HashResult|
+PyMethod|__repr__|__repr__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__len__|__len__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__contains__|__contains__(_ py: Py, zelf _zelf: PyObject, object: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# dict_valueiterator
+############
+
+Type|PyDictValueIterator|dict_valueiterator|
+
+Annotation|hasGC
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|dict|PyDict|0|
+SwiftStoredProperty|index|Int|1|
+SwiftStoredProperty|initialCount|Int|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, dict: PyDict)
+
+PyProperty|__class__||
+
+
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__next__|__next__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__length_hint__|__length_hint__(_ py: Py, zelf: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# dict_values
+############
+
+Type|PyDictValues|dict_values|
+
+Annotation|hasGC
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|dict|PyDict|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, dict: PyDict)
+
+PyProperty|__class__||
+
+
+PyMethod|__repr__|__repr__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__len__|__len__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+
+
+
+
+############
+# ellipsis
+############
+
+Type|PyEllipsis|ellipsis|
+
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType)
+
+PyProperty|__class__||
+
+
+PyMethod|__repr__|__repr__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__reduce__|__reduce__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# enumerate
+############
+
+Type|PyEnumerate|enumerate|
+
+Annotation|hasGC
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pytype
+Annotation|subclassInstancesHave__dict__
+
+Doc|doc
+
+SwiftStoredProperty|iterator|PyObject|0|
+SwiftStoredProperty|nextIndex|BigInt|1|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, iterator: PyObject, initialIndex: BigInt)
+
+PyProperty|__class__||
+
+
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__next__|__next__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# filter
+############
+
+Type|PyFilter|filter|
+
+Annotation|hasGC
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pytype
+Annotation|subclassInstancesHave__dict__
+
+Doc|doc
+
+SwiftStoredProperty|fn|PyObject|0|
+SwiftStoredProperty|iterator|PyObject|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, fn: PyObject, iterator: PyObject)
+
+PyProperty|__class__||
+
+
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__next__|__next__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# float
+############
+
+Type|PyFloat|float|
+
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pytype
+Annotation|subclassInstancesHave__dict__
+
+Doc|doc
+
+SwiftStoredProperty|value|Double|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, value: Double)
+
+PyProperty|real||
+PyProperty|imag||
+PyProperty|__class__||
+
+
+PyMethod|__eq__|__eq__(_ py: Py, zelf _zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ne__|__ne__(_ py: Py, zelf _zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__lt__|__lt__(_ py: Py, zelf _zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__le__|__le__(_ py: Py, zelf _zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__gt__|__gt__(_ py: Py, zelf _zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ge__|__ge__(_ py: Py, zelf _zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__hash__|__hash__(_ py: Py, zelf _zelf: PyObject)|HashResult|
+PyMethod|__repr__|__repr__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__str__|__str__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__bool__|__bool__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__int__|__int__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__float__|__float__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|conjugate|conjugate(_ py: Py, zelf: PyObject)|PyResult|conjugateDoc
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__pos__|__pos__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__neg__|__neg__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__abs__|__abs__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|is_integer|is_integer(_ py: Py, zelf _zelf: PyObject)|PyResult|isIntegerDoc
+PyMethod|as_integer_ratio|as_integer_ratio(_ py: Py, zelf _zelf: PyObject)|PyResult|asIntegerRatioDoc
+PyMethod|__add__|__add__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__radd__|__radd__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__sub__|__sub__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rsub__|__rsub__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__mul__|__mul__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rmul__|__rmul__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__pow__|__pow__(_ py: Py, zelf: PyObject, exp: PyObject, mod: PyObject?)|PyResult|
+PyMethod|__rpow__|__rpow__(_ py: Py, zelf: PyObject, base: PyObject, mod: PyObject?)|PyResult|
+PyMethod|__truediv__|__truediv__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rtruediv__|__rtruediv__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__floordiv__|__floordiv__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rfloordiv__|__rfloordiv__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__mod__|__mod__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rmod__|__rmod__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__divmod__|__divmod__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rdivmod__|__rdivmod__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__round__|__round__(_ py: Py, zelf _zelf: PyObject, nDigits: PyObject?)|PyResult|roundDoc
+PyMethod|__trunc__|__trunc__(_ py: Py, zelf _zelf: PyObject)|PyResult|truncDoc
+PyMethod|hex|hex(_ py: Py, zelf _zelf: PyObject)|PyResult|hexDoc
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|newDoc
+
+PyClassMethod|fromhex|fromhex(_ py: Py, type: PyType, value: PyObject)|PyResult|fromHexDoc
+
+
+############
+# frame
+############
+
+Type|PyFrame|frame|
+
+Annotation|hasGC
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|code|PyCode|0|
+SwiftStoredProperty|parent|PyFrame?|0|
+SwiftStoredProperty|locals|PyDict|0|
+SwiftStoredProperty|globals|PyDict|0|
+SwiftStoredProperty|builtins|PyDict|0|
+SwiftStoredProperty|objectStackStorage|BufferPtr<PyObject>|0|
+SwiftStoredProperty|objectStackEnd|PyFrame.ObjectStackProxy.EndPtr|0|
+SwiftStoredProperty|fastLocalsCellFreeBlockStackStoragePtr|RawPtr|0|
+SwiftStoredProperty|currentInstructionIndex|Int?|1|
+SwiftStoredProperty|nextInstructionIndex|Int|1|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, code: PyCode, locals: PyDict, globals: PyDict, parent: PyFrame?)
+
+PyProperty|__class__||
+PyProperty|f_back||
+PyProperty|f_builtins||
+PyProperty|f_globals||
+PyProperty|f_locals||
+PyProperty|f_code||
+PyProperty|f_lasti||
+PyProperty|f_lineno||
+
+
+PyMethod|__repr__|__repr__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__setattr__|__setattr__(_ py: Py, zelf _zelf: PyObject, name: PyObject, value: PyObject?)|PyResult|
+PyMethod|__delattr__|__delattr__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+
+
+
+
+############
+# frozenset
+############
+
+Type|PyFrozenSet|frozenset|
+
+Annotation|hasGC
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pytype
+Annotation|subclassInstancesHave__dict__
+
+Doc|doc
+
+SwiftStoredProperty|elements|OrderedSet|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, elements: OrderedSet)
+
+PyProperty|__class__||
+
+
+PyMethod|__eq__|__eq__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ne__|__ne__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__lt__|__lt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__le__|__le__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__gt__|__gt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ge__|__ge__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__hash__|__hash__(_ py: Py, zelf _zelf: PyObject)|HashResult|
+PyMethod|__repr__|__repr__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__len__|__len__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__contains__|__contains__(_ py: Py, zelf: PyObject, object: PyObject)|PyResult|
+PyMethod|__and__|__and__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rand__|__rand__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__or__|__or__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__ror__|__ror__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__xor__|__xor__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rxor__|__rxor__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__sub__|__sub__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rsub__|__rsub__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|issubset|issubset(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|isSubsetDoc
+PyMethod|issuperset|issuperset(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|isSupersetDoc
+PyMethod|isdisjoint|isdisjoint(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|isDisjointDoc
+PyMethod|intersection|intersection(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|intersectionDoc
+PyMethod|union|union(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|unionDoc
+PyMethod|difference|difference(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|differenceDoc
+PyMethod|symmetric_difference|symmetric_difference(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|symmetricDifferenceDoc
+PyMethod|copy|copy(_ py: Py, zelf _zelf: PyObject)|PyResult|copyDoc
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# function
+############
+
+Type|PyFunction|function|
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|name|PyString|1|
+SwiftStoredProperty|qualname|PyString|1|
+SwiftStoredProperty|doc|PyString?|1|
+SwiftStoredProperty|module|PyObject|1|
+SwiftStoredProperty|code|PyCode|1|
+SwiftStoredProperty|globals|PyDict|1|
+SwiftStoredProperty|defaults|PyTuple?|1|
+SwiftStoredProperty|kwDefaults|PyDict?|1|
+SwiftStoredProperty|closure|PyTuple?|1|
+SwiftStoredProperty|annotations|PyDict?|1|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, qualname: PyString?, module: PyObject, code: PyCode, globals: PyDict)
+
+PyProperty|__class__||
+PyProperty|__name__|1|
+PyProperty|__qualname__|1|
+PyProperty|__defaults__|1|
+PyProperty|__kwdefaults__|1|
+PyProperty|__closure__|1|
+PyProperty|__globals__|1|
+PyProperty|__annotations__|1|
+PyProperty|__code__|1|
+PyProperty|__doc__|1|
+PyProperty|__module__|1|
+PyProperty|__dict__||
+
+
+PyMethod|__repr__|__repr__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__get__|__get__(_ py: Py, zelf _zelf: PyObject, object: PyObject, type: PyObject?)|PyResult|
+PyMethod|__call__|__call__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+
+############
+# int
+############
+
+Type|PyInt|int|
+
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|isLongSubclass
+Annotation|pytype
+Annotation|subclassInstancesHave__dict__
+
+Doc|doc
+
+SwiftStoredProperty|value|BigInt|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, value: BigInt)
+
+PyProperty|__class__||
+PyProperty|real||
+PyProperty|imag||
+PyProperty|numerator||
+PyProperty|denominator||
+
+
+PyMethod|__eq__|__eq__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ne__|__ne__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__lt__|__lt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__le__|__le__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__gt__|__gt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ge__|__ge__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__hash__|__hash__(_ py: Py, zelf _zelf: PyObject)|HashResult|
+PyMethod|__repr__|__repr__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__str__|__str__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__bool__|__bool__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__int__|__int__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__float__|__float__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__index__|__index__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|conjugate|conjugate(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__pos__|__pos__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__neg__|__neg__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__invert__|__invert__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__abs__|__abs__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__trunc__|__trunc__(_ py: Py, zelf: PyObject)|PyResult|truncDoc
+PyMethod|__floor__|__floor__(_ py: Py, zelf: PyObject)|PyResult|floorDoc
+PyMethod|__ceil__|__ceil__(_ py: Py, zelf: PyObject)|PyResult|ceilDoc
+PyMethod|__add__|__add__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__radd__|__radd__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__sub__|__sub__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rsub__|__rsub__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__mul__|__mul__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rmul__|__rmul__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|bit_length|bit_length(_ py: Py, zelf: PyObject)|PyResult|bitLengthDoc
+PyMethod|__pow__|__pow__(_ py: Py, zelf _zelf: PyObject, exp: PyObject, mod: PyObject?)|PyResult|
+PyMethod|__rpow__|__rpow__(_ py: Py, zelf _zelf: PyObject, base: PyObject, mod: PyObject?)|PyResult|
+PyMethod|__truediv__|__truediv__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rtruediv__|__rtruediv__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__floordiv__|__floordiv__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rfloordiv__|__rfloordiv__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__mod__|__mod__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rmod__|__rmod__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__divmod__|__divmod__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rdivmod__|__rdivmod__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__lshift__|__lshift__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rlshift__|__rlshift__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rshift__|__rshift__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rrshift__|__rrshift__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__and__|__and__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rand__|__rand__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__or__|__or__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__ror__|__ror__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__xor__|__xor__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rxor__|__rxor__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__round__|__round__(_ py: Py, zelf _zelf: PyObject, nDigits _nDigits: PyObject?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# iterator
+############
+
+Type|PyIterator|iterator|
+
+Annotation|hasGC
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|sequence|PyObject|0|
+SwiftStoredProperty|index|Int|1|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, sequence: PyObject)
+
+PyProperty|__class__||
+
+
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__next__|__next__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__length_hint__|__length_hint__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+
+
+
+
+############
+# list
+############
+
+Type|PyList|list|
+
+Annotation|hasGC
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|isListSubclass
+Annotation|pytype
+Annotation|subclassInstancesHave__dict__
+
+Doc|doc
+
+SwiftStoredProperty|elements|[PyObject]|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, elements: [PyObject])
+
+PyProperty|__class__||
+
+
+PyMethod|__eq__|__eq__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ne__|__ne__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__lt__|__lt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__le__|__le__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__gt__|__gt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ge__|__ge__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__hash__|__hash__(_ py: Py, zelf _zelf: PyObject)|HashResult|
+PyMethod|__repr__|__repr__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__len__|__len__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__contains__|__contains__(_ py: Py, zelf: PyObject, object: PyObject)|PyResult|
+PyMethod|count|count(_ py: Py, zelf: PyObject, object: PyObject)|PyResult|
+PyMethod|index|index(_ py: Py, zelf: PyObject, object: PyObject, start: PyObject?, end: PyObject?)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__reversed__|__reversed__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__getitem__|__getitem__(_ py: Py, zelf: PyObject, index: PyObject)|PyResult|
+PyMethod|__setitem__|__setitem__(_ py: Py, zelf _zelf: PyObject, index: PyObject, value: PyObject)|PyResult|
+PyMethod|__delitem__|__delitem__(_ py: Py, zelf _zelf: PyObject, index: PyObject)|PyResult|
+PyMethod|append|append(_ py: Py, zelf _zelf: PyObject, object: PyObject)|PyResult|
+PyMethod|insert|insert(_ py: Py, zelf _zelf: PyObject, index: PyObject, object: PyObject)|PyResult|insertDoc
+PyMethod|extend|extend(_ py: Py, zelf _zelf: PyObject, iterable: PyObject)|PyResult|
+PyMethod|remove|remove(_ py: Py, zelf _zelf: PyObject, object: PyObject)|PyResult|removeDoc
+PyMethod|pop|pop(_ py: Py, zelf _zelf: PyObject, index: PyObject?)|PyResult|
+PyMethod|sort|sort(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|sortDoc
+PyMethod|reverse|reverse(_ py: Py, zelf _zelf: PyObject)|PyResult|reverseDoc
+PyMethod|clear|clear(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|copy|copy(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__add__|__add__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__iadd__|__iadd__(_ py: Py, zelf _zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__mul__|__mul__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rmul__|__rmul__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__imul__|__imul__(_ py: Py, zelf _zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# list_iterator
+############
+
+Type|PyListIterator|list_iterator|
+
+Annotation|hasGC
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|list|PyList|0|
+SwiftStoredProperty|index|Int|1|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, list: PyList)
+
+PyProperty|__class__||
+
+
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__next__|__next__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__length_hint__|__length_hint__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# list_reverseiterator
+############
+
+Type|PyListReverseIterator|list_reverseiterator|
+
+Annotation|hasGC
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|list|PyList|0|
+SwiftStoredProperty|index|Int|1|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, list: PyList)
+
+PyProperty|__class__||
+
+
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__next__|__next__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__length_hint__|__length_hint__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# map
+############
+
+Type|PyMap|map|
+
+Annotation|hasGC
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pytype
+Annotation|subclassInstancesHave__dict__
+
+Doc|doc
+
+SwiftStoredProperty|fn|PyObject|0|
+SwiftStoredProperty|iterators|[PyObject]|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, fn: PyObject, iterators: [PyObject])
+
+PyProperty|__class__||
+
+
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__next__|__next__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# method
+############
+
+Type|PyMethod|method|
+
+Annotation|hasGC
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|function|PyFunction|0|
+SwiftStoredProperty|object|PyObject|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, function: PyFunction, object: PyObject)
+
+PyProperty|__class__||
+PyProperty|__doc__||
+
+
+PyMethod|__eq__|__eq__(_ py: Py, zelf _zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ne__|__ne__(_ py: Py, zelf _zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__lt__|__lt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__le__|__le__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__gt__|__gt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ge__|__ge__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__repr__|__repr__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__hash__|__hash__(_ py: Py, zelf _zelf: PyObject)|HashResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__setattr__|__setattr__(_ py: Py, zelf _zelf: PyObject, name: PyObject, value: PyObject?)|PyResult|
+PyMethod|__delattr__|__delattr__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__func__|__func__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__self__|__self__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__get__|__get__(_ py: Py, zelf _zelf: PyObject, object: PyObject, type: PyObject?)|PyResult|
+PyMethod|__call__|__call__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+
+############
+# module
+############
+
+Type|PyModule|module|
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, name: PyObject?, doc: PyObject?, __dict__: PyDict? = nil)
+
+PyProperty|__dict__||
+PyProperty|__class__||
+
+
+PyMethod|__repr__|__repr__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__setattr__|__setattr__(_ py: Py, zelf _zelf: PyObject, name: PyObject, value: PyObject?)|PyResult|
+PyMethod|__delattr__|__delattr__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__dir__|__dir__(_ py: Py, zelf _zelf: PyObject)|PyResultGen<DirResult>|
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# SimpleNamespace
+############
+
+Type|PyNamespace|SimpleNamespace|
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, __dict__: PyDict?)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__eq__|__eq__(_ py: Py, zelf _zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ne__|__ne__(_ py: Py, zelf _zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__lt__|__lt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__le__|__le__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__gt__|__gt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ge__|__ge__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__repr__|__repr__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__setattr__|__setattr__(_ py: Py, zelf _zelf: PyObject, name: PyObject, value: PyObject?)|PyResult|
+PyMethod|__delattr__|__delattr__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# NoneType
+############
+
+Type|PyNone|NoneType|
+
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType)
+
+PyProperty|__class__||
+
+
+PyMethod|__repr__|__repr__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__bool__|__bool__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# NotImplementedType
+############
+
+Type|PyNotImplemented|NotImplementedType|
+
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType)
+
+PyProperty|__class__||
+
+
+PyMethod|__repr__|__repr__(_ py: Py, zelf: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# object
+############
+
+Type|PyObject|object|
+
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pytype
+Annotation|subclassInstancesHave__dict__
+
+Doc|doc
+
+SwiftStoredProperty|type|PyType|0|
+SwiftStoredProperty|memoryInfo|PyMemory.ObjectHeader|1|1
+SwiftStoredProperty|__dict__|PyObject.Lazy__dict__|0|
+SwiftStoredProperty|flags|PyObject.Flags|1|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, __dict__: PyDict? = nil)
+
+PyProperty|__class__||
+
+
+PyMethod|__eq__|__eq__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ne__|__ne__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__lt__|__lt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__le__|__le__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__gt__|__gt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ge__|__ge__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__hash__|__hash__(_ py: Py, zelf: PyObject)|HashResult|
+PyMethod|__repr__|__repr__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__str__|__str__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__format__|__format__(_ py: Py, zelf: PyObject, spec: PyObject)|PyResult|
+PyMethod|__dir__|__dir__(_ py: Py, zelf: PyObject)|PyResultGen<DirResult>|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__setattr__|__setattr__(_ py: Py, zelf: PyObject, name: PyObject, value: PyObject?)|PyResult|
+PyMethod|__delattr__|__delattr__(_ py: Py, zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__init_subclass__|__init_subclass__(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|__init__|__init__(_ py: Py, zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyClassMethod|__subclasshook__|__subclasshook__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+############
+# property
+############
+
+Type|PyProperty|property|
+
+Annotation|hasGC
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pytype
+Annotation|subclassInstancesHave__dict__
+
+Doc|doc
+
+SwiftStoredProperty|_get|PyObject?|1|
+SwiftStoredProperty|_set|PyObject?|1|
+SwiftStoredProperty|_del|PyObject?|1|
+SwiftStoredProperty|doc|PyObject?|1|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, get: PyObject?, set: PyObject?, del: PyObject?, doc: PyObject?)
+
+PyProperty|__class__||
+PyProperty|fget||
+PyProperty|fset||
+PyProperty|fdel||
+PyProperty|__doc__|1|
+
+
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__get__|__get__(_ py: Py, zelf _zelf: PyObject, object: PyObject, type: PyObject?)|PyResult|
+PyMethod|__set__|__set__(_ py: Py, zelf _zelf: PyObject, object: PyObject, value: PyObject)|PyResult|
+PyMethod|__delete__|__delete__(_ py: Py, zelf _zelf: PyObject, object: PyObject)|PyResult|
+PyMethod|getter|getter(_ py: Py, zelf _zelf: PyObject, value: PyObject)|PyResult|getterDoc
+PyMethod|setter|setter(_ py: Py, zelf _zelf: PyObject, value: PyObject)|PyResult|
+PyMethod|deleter|deleter(_ py: Py, zelf _zelf: PyObject, value: PyObject)|PyResult|
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# range
+############
+
+Type|PyRange|range|
+
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|start|PyInt|0|
+SwiftStoredProperty|stop|PyInt|0|
+SwiftStoredProperty|step|PyInt|0|
+SwiftStoredProperty|length|PyInt|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, start: PyInt, stop: PyInt, step: PyInt?)
+
+PyProperty|__class__||
+PyProperty|start||
+PyProperty|stop||
+PyProperty|step||
+
+
+PyMethod|__eq__|__eq__(_ py: Py, zelf _zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ne__|__ne__(_ py: Py, zelf _zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__lt__|__lt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__le__|__le__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__gt__|__gt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ge__|__ge__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__hash__|__hash__(_ py: Py, zelf _zelf: PyObject)|HashResult|
+PyMethod|__repr__|__repr__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__bool__|__bool__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__len__|__len__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__contains__|__contains__(_ py: Py, zelf _zelf: PyObject, object: PyObject)|PyResult|
+PyMethod|__getitem__|__getitem__(_ py: Py, zelf _zelf: PyObject, index: PyObject)|PyResult|
+PyMethod|__reversed__|__reversed__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|count|count(_ py: Py, zelf _zelf: PyObject, object: PyObject)|PyResult|
+PyMethod|index|index(_ py: Py, zelf _zelf: PyObject, object: PyObject)|PyResult|
+PyMethod|__reduce__|__reduce__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# range_iterator
+############
+
+Type|PyRangeIterator|range_iterator|
+
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|start|BigInt|0|
+SwiftStoredProperty|step|BigInt|0|
+SwiftStoredProperty|length|BigInt|0|
+SwiftStoredProperty|index|BigInt|1|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, start: BigInt, step: BigInt, length: BigInt)
+
+PyProperty|__class__||
+
+
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__next__|__next__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__length_hint__|__length_hint__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# reversed
+############
+
+Type|PyReversed|reversed|
+
+Annotation|hasGC
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pytype
+Annotation|subclassInstancesHave__dict__
+
+Doc|doc
+
+SwiftStoredProperty|sequence|PyObject|0|
+SwiftStoredProperty|index|Int|1|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, sequence: PyObject, count: Int)
+
+PyProperty|__class__||
+
+
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__next__|__next__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__length_hint__|__length_hint__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# set
+############
+
+Type|PySet|set|
+
+Annotation|hasGC
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pytype
+Annotation|subclassInstancesHave__dict__
+
+Doc|doc
+
+SwiftStoredProperty|elements|OrderedSet|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, elements: OrderedSet)
+
+PyProperty|__class__||
+
+
+PyMethod|__eq__|__eq__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ne__|__ne__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__lt__|__lt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__le__|__le__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__gt__|__gt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ge__|__ge__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__hash__|__hash__(_ py: Py, zelf: PyObject)|HashResult|
+PyMethod|__repr__|__repr__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__len__|__len__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__contains__|__contains__(_ py: Py, zelf: PyObject, object: PyObject)|PyResult|
+PyMethod|__and__|__and__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rand__|__rand__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__or__|__or__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__ror__|__ror__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__xor__|__xor__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rxor__|__rxor__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__sub__|__sub__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rsub__|__rsub__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|issubset|issubset(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|isSubsetDoc
+PyMethod|issuperset|issuperset(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|isSupersetDoc
+PyMethod|isdisjoint|isdisjoint(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|isDisjointDoc
+PyMethod|intersection|intersection(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|intersectionDoc
+PyMethod|union|union(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|unionDoc
+PyMethod|difference|difference(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|differenceDoc
+PyMethod|symmetric_difference|symmetric_difference(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|symmetricDifferenceDoc
+PyMethod|add|add(_ py: Py, zelf _zelf: PyObject, other: PyObject)|PyResult|addDoc
+PyMethod|update|update(_ py: Py, zelf _zelf: PyObject, other: PyObject)|PyResult|updateDoc
+PyMethod|remove|remove(_ py: Py, zelf _zelf: PyObject, object: PyObject)|PyResult|removeDoc
+PyMethod|discard|discard(_ py: Py, zelf _zelf: PyObject, object: PyObject)|PyResult|discardDoc
+PyMethod|clear|clear(_ py: Py, zelf _zelf: PyObject)|PyResult|clearDoc
+PyMethod|copy|copy(_ py: Py, zelf _zelf: PyObject)|PyResult|copyDoc
+PyMethod|pop|pop(_ py: Py, zelf _zelf: PyObject)|PyResult|popDoc
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# set_iterator
+############
+
+Type|PySetIterator|set_iterator|
+
+Annotation|hasGC
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|set|PyAnySet|0|
+SwiftStoredProperty|index|Int|1|
+SwiftStoredProperty|initialCount|Int|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, set: PySet)
+SwiftInitializer|initialize(_ py: Py, type: PyType, frozenSet: PyFrozenSet)
+
+PyProperty|__class__||
+
+
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__next__|__next__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__length_hint__|__length_hint__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# slice
+############
+
+Type|PySlice|slice|
+
+Annotation|hasGC
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|start|PyObject|0|
+SwiftStoredProperty|stop|PyObject|0|
+SwiftStoredProperty|step|PyObject|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, start: PyObject, stop: PyObject, step: PyObject)
+
+PyProperty|__class__||
+PyProperty|start||
+PyProperty|stop||
+PyProperty|step||
+
+
+PyMethod|__eq__|__eq__(_ py: Py, zelf _zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ne__|__ne__(_ py: Py, zelf _zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__lt__|__lt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__le__|__le__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__gt__|__gt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ge__|__ge__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__hash__|__hash__(_ py: Py, zelf _zelf: PyObject)|HashResult|
+PyMethod|__repr__|__repr__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|indices|indices(_ py: Py, zelf _zelf: PyObject, length: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# staticmethod
+############
+
+Type|PyStaticMethod|staticmethod|
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|callable|PyObject?|1|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, callable: PyObject?)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+PyProperty|__func__||
+
+
+PyMethod|__get__|__get__(_ py: Py, zelf _zelf: PyObject, object: PyObject, type: PyObject?)|PyResult|
+PyMethod|__isabstractmethod__|__isabstractmethod__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# str
+############
+
+Type|PyString|str|
+
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|isUnicodeSubclass
+Annotation|pytype
+Annotation|subclassInstancesHave__dict__
+
+Doc|doc
+
+SwiftStoredProperty|cachedCount|Int|1|
+SwiftStoredProperty|cachedHash|PyHash|1|
+SwiftStoredProperty|value|String|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, value: String)
+
+PyProperty|__class__||
+
+
+PyMethod|__eq__|__eq__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ne__|__ne__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__lt__|__lt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__le__|__le__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__gt__|__gt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ge__|__ge__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__hash__|__hash__(_ py: Py, zelf _zelf: PyObject)|HashResult|
+PyMethod|__repr__|__repr__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__str__|__str__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__len__|__len__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__contains__|__contains__(_ py: Py, zelf: PyObject, object: PyObject)|PyResult|
+PyMethod|__getitem__|__getitem__(_ py: Py, zelf _zelf: PyObject, index: PyObject)|PyResult|
+PyMethod|isalnum|isalnum(_ py: Py, zelf: PyObject)|PyResult|isalnumDoc
+PyMethod|isalpha|isalpha(_ py: Py, zelf: PyObject)|PyResult|isalphaDoc
+PyMethod|isascii|isascii(_ py: Py, zelf: PyObject)|PyResult|isasciiDoc
+PyMethod|isdecimal|isdecimal(_ py: Py, zelf _zelf: PyObject)|PyResult|isdecimalDoc
+PyMethod|isdigit|isdigit(_ py: Py, zelf: PyObject)|PyResult|isdigitDoc
+PyMethod|isidentifier|isidentifier(_ py: Py, zelf _zelf: PyObject)|PyResult|isidentifierDoc
+PyMethod|islower|islower(_ py: Py, zelf: PyObject)|PyResult|islowerDoc
+PyMethod|isnumeric|isnumeric(_ py: Py, zelf _zelf: PyObject)|PyResult|isnumericDoc
+PyMethod|isprintable|isprintable(_ py: Py, zelf _zelf: PyObject)|PyResult|isprintableDoc
+PyMethod|isspace|isspace(_ py: Py, zelf: PyObject)|PyResult|isspaceDoc
+PyMethod|istitle|istitle(_ py: Py, zelf: PyObject)|PyResult|istitleDoc
+PyMethod|isupper|isupper(_ py: Py, zelf: PyObject)|PyResult|isupperDoc
+PyMethod|startswith|startswith(_ py: Py, zelf: PyObject, prefix: PyObject, start: PyObject?, end: PyObject?)|PyResult|startswithDoc
+PyMethod|endswith|endswith(_ py: Py, zelf: PyObject, suffix: PyObject, start: PyObject?, end: PyObject?)|PyResult|endswithDoc
+PyMethod|strip|strip(_ py: Py, zelf: PyObject, chars: PyObject?)|PyResult|stripDoc
+PyMethod|lstrip|lstrip(_ py: Py, zelf: PyObject, chars: PyObject?)|PyResult|lstripDoc
+PyMethod|rstrip|rstrip(_ py: Py, zelf: PyObject, chars: PyObject?)|PyResult|rstripDoc
+PyMethod|find|find(_ py: Py, zelf: PyObject, object: PyObject, start: PyObject?, end: PyObject?)|PyResult|findDoc
+PyMethod|rfind|rfind(_ py: Py, zelf: PyObject, object: PyObject, start: PyObject?, end: PyObject?)|PyResult|rfindDoc
+PyMethod|index|index(_ py: Py, zelf: PyObject, object: PyObject, start: PyObject?, end: PyObject?)|PyResult|indexDoc
+PyMethod|rindex|rindex(_ py: Py, zelf: PyObject, object: PyObject, start: PyObject?, end: PyObject?)|PyResult|rindexDoc
+PyMethod|lower|lower(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|upper|upper(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|title|title(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|swapcase|swapcase(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|capitalize|capitalize(_ py: Py, zelf: PyObject)|PyResult|
+PyMethod|casefold|casefold(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|center|center(_ py: Py, zelf: PyObject, width: PyObject, fillChar: PyObject?)|PyResult|
+PyMethod|ljust|ljust(_ py: Py, zelf: PyObject, width: PyObject, fillChar: PyObject?)|PyResult|
+PyMethod|rjust|rjust(_ py: Py, zelf: PyObject, width: PyObject, fillChar: PyObject?)|PyResult|
+PyMethod|split|split(_ py: Py, zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+PyMethod|rsplit|rsplit(_ py: Py, zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+PyMethod|splitlines|splitlines(_ py: Py, zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+PyMethod|partition|partition(_ py: Py, zelf: PyObject, separator: PyObject)|PyResult|
+PyMethod|rpartition|rpartition(_ py: Py, zelf: PyObject, separator: PyObject)|PyResult|
+PyMethod|expandtabs|expandtabs(_ py: Py, zelf: PyObject, tabSize: PyObject?)|PyResult|
+PyMethod|count|count(_ py: Py, zelf: PyObject, object: PyObject, start: PyObject?, end: PyObject?)|PyResult|countDoc
+PyMethod|join|join(_ py: Py, zelf: PyObject, iterable: PyObject)|PyResult|
+PyMethod|replace|replace(_ py: Py, zelf: PyObject, old: PyObject, new: PyObject, count: PyObject?)|PyResult|
+PyMethod|zfill|zfill(_ py: Py, zelf: PyObject, width: PyObject)|PyResult|
+PyMethod|__add__|__add__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__mul__|__mul__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rmul__|__rmul__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# str_iterator
+############
+
+Type|PyStringIterator|str_iterator|
+
+Annotation|hasGC
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|string|PyString|0|
+SwiftStoredProperty|index|Int|1|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, string: PyString)
+
+PyProperty|__class__||
+
+
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__next__|__next__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__length_hint__|__length_hint__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# super
+############
+
+Type|PySuper|super|
+
+Annotation|hasGC
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pytype
+Annotation|subclassInstancesHave__dict__
+
+Doc|doc
+
+SwiftStoredProperty|thisClass|PyType?|1|
+SwiftStoredProperty|object|PyObject?|1|
+SwiftStoredProperty|objectType|PyType?|1|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, requestedType: PyType?, object: PyObject?, objectType: PyType?)
+
+PyProperty|__class__||
+PyProperty|__thisclass__||thisClassDoc
+PyProperty|__self__||selfDoc
+PyProperty|__self_class__||selfClassDoc
+
+
+PyMethod|__repr__|__repr__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__get__|__get__(_ py: Py, zelf _zelf: PyObject, object: PyObject, type: PyObject?)|PyResult|
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# TextFile
+############
+
+Type|PyTextFile|TextFile|
+
+Annotation|hasFinalize
+Annotation|hasGC
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|name|String?|0|
+SwiftStoredProperty|fd|PyFileDescriptorType|0|
+SwiftStoredProperty|mode|FileMode|0|
+SwiftStoredProperty|encoding|PyString.Encoding|0|
+SwiftStoredProperty|errorHandling|PyString.ErrorHandling|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, name: String?, fd: PyFileDescriptorType, mode: FileMode, encoding: PyString.Encoding, errorHandling: PyString.ErrorHandling, closeOnDealloc: Bool)
+
+PyProperty|__class__||
+
+
+PyMethod|__repr__|__repr__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|readable|readable(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|readline|readline(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|read|read(_ py: Py, zelf _zelf: PyObject, size: PyObject?)|PyResult|
+PyMethod|writable|writable(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|write|write(_ py: Py, zelf _zelf: PyObject, object: PyObject)|PyResult|
+PyMethod|flush|flush(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|closed|closed(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|close|close(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__del__|__del__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__enter__|__enter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__exit__|__exit__(_ py: Py, zelf _zelf: PyObject, exceptionType: PyObject, exception: PyObject, traceback: PyObject)|PyResult|
+
+
+
+
+############
+# traceback
+############
+
+Type|PyTraceback|traceback|
+
+Annotation|hasGC
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|next|PyTraceback?|1|
+SwiftStoredProperty|frame|PyFrame|0|
+SwiftStoredProperty|lastInstruction|PyInt|0|
+SwiftStoredProperty|lineNo|PyInt|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, next: PyTraceback?, frame: PyFrame, lastInstruction: PyInt, lineNo: PyInt)
+
+PyProperty|__class__||
+PyProperty|tb_frame||
+PyProperty|tb_lasti||
+PyProperty|tb_lineno||
+PyProperty|tb_next|1|
+
+
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__dir__|__dir__(_ py: Py, zelf: PyObject)|PyResultGen<DirResult>|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# tuple
+############
+
+Type|PyTuple|tuple|
+
+Annotation|hasGC
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|isTupleSubclass
+Annotation|pytype
+Annotation|subclassInstancesHave__dict__
+
+Doc|doc
+
+SwiftStoredProperty|elements|[PyObject]|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, elements: [PyObject])
+
+PyProperty|__class__||
+
+
+PyMethod|__eq__|__eq__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ne__|__ne__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__lt__|__lt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__le__|__le__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__gt__|__gt__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__ge__|__ge__(_ py: Py, zelf: PyObject, other: PyObject)|CompareResult|
+PyMethod|__hash__|__hash__(_ py: Py, zelf _zelf: PyObject)|HashResult|
+PyMethod|__repr__|__repr__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__len__|__len__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__contains__|__contains__(_ py: Py, zelf: PyObject, object: PyObject)|PyResult|
+PyMethod|count|count(_ py: Py, zelf: PyObject, object: PyObject)|PyResult|
+PyMethod|index|index(_ py: Py, zelf: PyObject, object: PyObject, start: PyObject?, end: PyObject?)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__getitem__|__getitem__(_ py: Py, zelf: PyObject, index: PyObject)|PyResult|
+PyMethod|__add__|__add__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__mul__|__mul__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+PyMethod|__rmul__|__rmul__(_ py: Py, zelf: PyObject, other: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# tuple_iterator
+############
+
+Type|PyTupleIterator|tuple_iterator|
+
+Annotation|hasGC
+Annotation|isDefault
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|tuple|PyTuple|0|
+SwiftStoredProperty|index|Int|1|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, tuple: PyTuple)
+
+PyProperty|__class__||
+
+
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__next__|__next__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__length_hint__|__length_hint__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# type
+############
+
+Type|PyType|type|
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|isTypeSubclass
+Annotation|pytype
+
+Doc|doc
+
+SwiftStoredProperty|name|String|1|
+SwiftStoredProperty|qualname|String|1|
+SwiftStoredProperty|doc|PyObject?|0|
+SwiftStoredProperty|base|PyType?|0|
+SwiftStoredProperty|bases|[PyType]|0|
+SwiftStoredProperty|mro|[PyType]|0|
+SwiftStoredProperty|subclasses|[PyType]|0|
+SwiftStoredProperty|instanceSizeWithoutTail|Int|0|
+SwiftStoredProperty|staticMethods|PyStaticCall.KnownNotOverriddenMethods|0|
+SwiftStoredProperty|debugFn|DebugFn|0|
+SwiftStoredProperty|deinitialize|DeinitializeFn|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, name: String, qualname: String, flags: PyType.Flags, base: PyType?, bases: [PyType], mroWithoutSelf: [PyType], subclasses: [PyType], instanceSizeWithoutTail: Int, staticMethods: PyStaticCall.KnownNotOverriddenMethods, debugFn: @escaping PyType.DebugFn, deinitialize: @escaping PyType.DeinitializeFn)
+
+PyProperty|__name__|1|
+PyProperty|__qualname__|1|
+PyProperty|__doc__|1|
+PyProperty|__module__|1|
+PyProperty|__dict__||
+PyProperty|__class__||
+PyProperty|__base__||
+PyProperty|__bases__|1|
+PyProperty|__mro__||
+
+
+PyMethod|__repr__|__repr__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|mro|mro(_ py: Py, zelf _zelf: PyObject)|PyResult|mroDoc
+PyMethod|__subclasscheck__|__subclasscheck__(_ py: Py, zelf _zelf: PyObject, object: PyObject)|PyResult|
+PyMethod|__instancecheck__|__instancecheck__(_ py: Py, zelf _zelf: PyObject, object: PyObject)|PyResult|
+PyMethod|__subclasses__|__subclasses__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__setattr__|__setattr__(_ py: Py, zelf _zelf: PyObject, name: PyObject, value: PyObject?)|PyResult|
+PyMethod|__delattr__|__delattr__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__dir__|__dir__(_ py: Py, zelf _zelf: PyObject)|PyResultGen<DirResult>|
+PyMethod|__call__|__call__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyClassMethod|__prepare__|__prepare__(_ py: Py, zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|prepareDoc
+
+
+############
+# zip
+############
+
+Type|PyZip|zip|
+
+Annotation|hasGC
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pytype
+Annotation|subclassInstancesHave__dict__
+
+Doc|doc
+
+SwiftStoredProperty|iterators|[PyObject]|0|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, iterators: [PyObject])
+
+PyProperty|__class__||
+
+
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__iter__|__iter__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__next__|__next__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+
+############
+# ArithmeticError
+############
+
+ErrorType|PyArithmeticError|ArithmeticError|Exception
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# AssertionError
+############
+
+ErrorType|PyAssertionError|AssertionError|Exception
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# AttributeError
+############
+
+ErrorType|PyAttributeError|AttributeError|Exception
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# BaseException
+############
+
+ErrorType|PyBaseException|BaseException|
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pyerrortype
+
+Doc|doc
+
+SwiftStoredProperty|args|PyTuple|1|
+SwiftStoredProperty|traceback|PyTraceback?|1|
+SwiftStoredProperty|cause|PyBaseException?|1|
+SwiftStoredProperty|context|PyBaseException?|1|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__dict__||
+PyProperty|__class__||
+PyProperty|args|1|
+PyProperty|__traceback__|1|
+PyProperty|__cause__|1|getCauseDoc
+PyProperty|__context__|1|getContextDoc
+PyProperty|__suppress_context__|1|
+
+
+PyMethod|__repr__|__repr__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__str__|__str__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__getattribute__|__getattribute__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|__setattr__|__setattr__(_ py: Py, zelf _zelf: PyObject, name: PyObject, value: PyObject?)|PyResult|
+PyMethod|__delattr__|__delattr__(_ py: Py, zelf _zelf: PyObject, name: PyObject)|PyResult|
+PyMethod|with_traceback|with_traceback(_ py: Py, zelf _zelf: PyObject, traceback: PyObject?)|PyResult|withTracebackDoc
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# BlockingIOError
+############
+
+ErrorType|PyBlockingIOError|BlockingIOError|OSError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# BrokenPipeError
+############
+
+ErrorType|PyBrokenPipeError|BrokenPipeError|ConnectionError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# BufferError
+############
+
+ErrorType|PyBufferError|BufferError|Exception
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# BytesWarning
+############
+
+ErrorType|PyBytesWarning|BytesWarning|Warning
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# ChildProcessError
+############
+
+ErrorType|PyChildProcessError|ChildProcessError|OSError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# ConnectionAbortedError
+############
+
+ErrorType|PyConnectionAbortedError|ConnectionAbortedError|ConnectionError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# ConnectionError
+############
+
+ErrorType|PyConnectionError|ConnectionError|OSError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# ConnectionRefusedError
+############
+
+ErrorType|PyConnectionRefusedError|ConnectionRefusedError|ConnectionError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# ConnectionResetError
+############
+
+ErrorType|PyConnectionResetError|ConnectionResetError|ConnectionError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# DeprecationWarning
+############
+
+ErrorType|PyDeprecationWarning|DeprecationWarning|Warning
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# EOFError
+############
+
+ErrorType|PyEOFError|EOFError|Exception
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# Exception
+############
+
+ErrorType|PyException|Exception|BaseException
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# FileExistsError
+############
+
+ErrorType|PyFileExistsError|FileExistsError|OSError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# FileNotFoundError
+############
+
+ErrorType|PyFileNotFoundError|FileNotFoundError|OSError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# FloatingPointError
+############
+
+ErrorType|PyFloatingPointError|FloatingPointError|ArithmeticError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# FutureWarning
+############
+
+ErrorType|PyFutureWarning|FutureWarning|Warning
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# GeneratorExit
+############
+
+ErrorType|PyGeneratorExit|GeneratorExit|BaseException
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# ImportError
+############
+
+ErrorType|PyImportError|ImportError|Exception
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|importErrorDoc
+
+SwiftStoredProperty|msg|PyObject?|1|
+SwiftStoredProperty|moduleName|PyObject?|1|
+SwiftStoredProperty|modulePath|PyObject?|1|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, msg: PyObject?, moduleName: PyObject?, modulePath: PyObject?, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+PyProperty|msg|1|
+PyProperty|name|1|
+PyProperty|path|1|
+
+
+PyMethod|__str__|__str__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# ImportWarning
+############
+
+ErrorType|PyImportWarning|ImportWarning|Warning
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# IndentationError
+############
+
+ErrorType|PyIndentationError|IndentationError|SyntaxError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, msg: PyObject?, filename: PyObject?, lineno: PyObject?, offset: PyObject?, text: PyObject?, printFileAndLine: PyObject?, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# IndexError
+############
+
+ErrorType|PyIndexError|IndexError|LookupError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# InterruptedError
+############
+
+ErrorType|PyInterruptedError|InterruptedError|OSError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# IsADirectoryError
+############
+
+ErrorType|PyIsADirectoryError|IsADirectoryError|OSError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# KeyError
+############
+
+ErrorType|PyKeyError|KeyError|LookupError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|keyErrorDoc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__str__|__str__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# KeyboardInterrupt
+############
+
+ErrorType|PyKeyboardInterrupt|KeyboardInterrupt|BaseException
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# LookupError
+############
+
+ErrorType|PyLookupError|LookupError|Exception
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# MemoryError
+############
+
+ErrorType|PyMemoryError|MemoryError|Exception
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# ModuleNotFoundError
+############
+
+ErrorType|PyModuleNotFoundError|ModuleNotFoundError|ImportError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, msg: PyObject?, moduleName: PyObject?, modulePath: PyObject?, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# NameError
+############
+
+ErrorType|PyNameError|NameError|Exception
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# NotADirectoryError
+############
+
+ErrorType|PyNotADirectoryError|NotADirectoryError|OSError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# NotImplementedError
+############
+
+ErrorType|PyNotImplementedError|NotImplementedError|RuntimeError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# OSError
+############
+
+ErrorType|PyOSError|OSError|Exception
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# OverflowError
+############
+
+ErrorType|PyOverflowError|OverflowError|ArithmeticError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# PendingDeprecationWarning
+############
+
+ErrorType|PyPendingDeprecationWarning|PendingDeprecationWarning|Warning
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# PermissionError
+############
+
+ErrorType|PyPermissionError|PermissionError|OSError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# ProcessLookupError
+############
+
+ErrorType|PyProcessLookupError|ProcessLookupError|OSError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# RecursionError
+############
+
+ErrorType|PyRecursionError|RecursionError|RuntimeError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# ReferenceError
+############
+
+ErrorType|PyReferenceError|ReferenceError|Exception
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# ResourceWarning
+############
+
+ErrorType|PyResourceWarning|ResourceWarning|Warning
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# RuntimeError
+############
+
+ErrorType|PyRuntimeError|RuntimeError|Exception
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# RuntimeWarning
+############
+
+ErrorType|PyRuntimeWarning|RuntimeWarning|Warning
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# StopAsyncIteration
+############
+
+ErrorType|PyStopAsyncIteration|StopAsyncIteration|Exception
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# StopIteration
+############
+
+ErrorType|PyStopIteration|StopIteration|Exception
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|stopIterationDoc
+
+SwiftStoredProperty|value|PyObject|1|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, value: PyObject, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+PyProperty|value|1|
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# SyntaxError
+############
+
+ErrorType|PySyntaxError|SyntaxError|Exception
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|syntaxErrorDoc
+
+SwiftStoredProperty|msg|PyObject?|1|
+SwiftStoredProperty|filename|PyObject?|1|
+SwiftStoredProperty|lineno|PyObject?|1|
+SwiftStoredProperty|offset|PyObject?|1|
+SwiftStoredProperty|text|PyObject?|1|
+SwiftStoredProperty|printFileAndLine|PyObject?|1|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, msg: PyObject?, filename: PyObject?, lineno: PyObject?, offset: PyObject?, text: PyObject?, printFileAndLine: PyObject?, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+PyProperty|msg|1|
+PyProperty|filename|1|
+PyProperty|lineno|1|
+PyProperty|offset|1|
+PyProperty|text|1|
+PyProperty|print_file_and_line|1|
+
+
+PyMethod|__str__|__str__(_ py: Py, zelf _zelf: PyObject)|PyResult|
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# SyntaxWarning
+############
+
+ErrorType|PySyntaxWarning|SyntaxWarning|Warning
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# SystemError
+############
+
+ErrorType|PySystemError|SystemError|Exception
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# SystemExit
+############
+
+ErrorType|PySystemExit|SystemExit|BaseException
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|systemExitDoc
+
+SwiftStoredProperty|code|PyObject?|1|
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, code: PyObject?, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+PyProperty|code|1|
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# TabError
+############
+
+ErrorType|PyTabError|TabError|IndentationError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, msg: PyObject?, filename: PyObject?, lineno: PyObject?, offset: PyObject?, text: PyObject?, printFileAndLine: PyObject?, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# TimeoutError
+############
+
+ErrorType|PyTimeoutError|TimeoutError|OSError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# TypeError
+############
+
+ErrorType|PyTypeError|TypeError|Exception
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# UnboundLocalError
+############
+
+ErrorType|PyUnboundLocalError|UnboundLocalError|NameError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# UnicodeDecodeError
+############
+
+ErrorType|PyUnicodeDecodeError|UnicodeDecodeError|UnicodeError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# UnicodeEncodeError
+############
+
+ErrorType|PyUnicodeEncodeError|UnicodeEncodeError|UnicodeError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# UnicodeError
+############
+
+ErrorType|PyUnicodeError|UnicodeError|ValueError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# UnicodeTranslateError
+############
+
+ErrorType|PyUnicodeTranslateError|UnicodeTranslateError|UnicodeError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# UnicodeWarning
+############
+
+ErrorType|PyUnicodeWarning|UnicodeWarning|Warning
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# UserWarning
+############
+
+ErrorType|PyUserWarning|UserWarning|Warning
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# ValueError
+############
+
+ErrorType|PyValueError|ValueError|Exception
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# Warning
+############
+
+ErrorType|PyWarning|Warning|Exception
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+
+
+############
+# ZeroDivisionError
+############
+
+ErrorType|PyZeroDivisionError|ZeroDivisionError|ArithmeticError
+
+Annotation|hasGC
+Annotation|instancesHave__dict__
+Annotation|isBaseExceptionSubclass
+Annotation|isBaseType
+Annotation|isDefault
+Annotation|pybase
+Annotation|pyerrortype
+
+Doc|doc
+
+
+SwiftInitializer|initialize(_ py: Py, type: PyType, args: PyTuple, traceback: PyTraceback? = nil, cause: PyBaseException? = nil, context: PyBaseException? = nil, suppressContext: Bool = PyBaseException.defaultSuppressContext)
+
+PyProperty|__class__||
+PyProperty|__dict__||
+
+
+PyMethod|__init__|__init__(_ py: Py, zelf _zelf: PyObject, args: [PyObject], kwargs: PyDict?)|PyResult|
+
+PyStaticMethod|__new__|__new__(_ py: Py, type: PyType, args: [PyObject], kwargs: PyDict?)|PyResult|
+
