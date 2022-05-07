@@ -1655,6 +1655,8 @@ extension Py {
       self.add(py, type: type, name: "co_firstlineno", property: co_firstlineno, doc: nil)
       let co_argcount = FunctionWrapper(name: "__get__", fn: PyCode.co_argcount(_:zelf:))
       self.add(py, type: type, name: "co_argcount", property: co_argcount, doc: nil)
+      let co_posonlyargcount = FunctionWrapper(name: "__get__", fn: PyCode.co_posonlyargcount(_:zelf:))
+      self.add(py, type: type, name: "co_posonlyargcount", property: co_posonlyargcount, doc: nil)
       let co_kwonlyargcount = FunctionWrapper(name: "__get__", fn: PyCode.co_kwonlyargcount(_:zelf:))
       self.add(py, type: type, name: "co_kwonlyargcount", property: co_kwonlyargcount, doc: nil)
       let co_nlocals = FunctionWrapper(name: "__get__", fn: PyCode.co_nlocals(_:zelf:))

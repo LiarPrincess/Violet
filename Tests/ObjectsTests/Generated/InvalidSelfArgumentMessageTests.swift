@@ -267,6 +267,7 @@ class InvalidSelfArgumentMessageTests: PyTestCase {
     self.assertInvalidSelfArgumentMessage(py, type: type, getter: "co_filename")
     self.assertInvalidSelfArgumentMessage(py, type: type, getter: "co_firstlineno")
     self.assertInvalidSelfArgumentMessage(py, type: type, getter: "co_argcount")
+    self.assertInvalidSelfArgumentMessage(py, type: type, getter: "co_posonlyargcount")
     self.assertInvalidSelfArgumentMessage(py, type: type, getter: "co_kwonlyargcount")
     self.assertInvalidSelfArgumentMessage(py, type: type, getter: "co_nlocals")
 
