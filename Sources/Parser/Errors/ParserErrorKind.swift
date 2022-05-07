@@ -1,5 +1,6 @@
 import VioletLexer
 
+// swiftlint:disable line_length
 // cSpell:ignore nonbytes
 
 public enum ParserErrorKind: Equatable {

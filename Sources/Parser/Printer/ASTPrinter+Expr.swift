@@ -331,8 +331,6 @@ extension ASTPrinter {
       self.text("Args: none") :
       self.block(title: "Args", lines: node.args.map(self.visit))
 
-    let posOnlyArgCount = self.text("PosOnlyArgCount: \(node.posOnlyArgCount)")
-
     let defaults = node.defaults.isEmpty ?
       self.text("Defaults: none") :
       self.block(title: "Defaults", lines: node.defaults.map(self.visit))
@@ -361,7 +359,7 @@ extension ASTPrinter {
       title: "Arguments(start: \(node.start), end: \(node.end))",
       lines:
         args,
-        posOnlyArgCount,
+        self.text("PosOnlyArgCount: \(node.posOnlyArgCount)"),
         defaults,
         vararg,
         kwOnly,

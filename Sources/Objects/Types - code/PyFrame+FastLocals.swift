@@ -208,7 +208,7 @@ private struct FillFastLocals {
       return nil
     }
 
-    // Handle keyword arguments
+    // swiftlint:disable:next closure_body_length
     return self.py.forEach(dict: kwargs) { key, value in
       guard let keyword = self.py.cast.asString(key) else {
         let error = self.newTypeError("keywords must be strings")
@@ -224,7 +224,8 @@ private struct FillFastLocals {
         }
 
         guard index >= self.code.posOnlyArgCount else {
-          let error = self.newTypeError("got some positional-only arguments passed as keyword arguments: '\(keyword)'")
+          let msg = "got some positional-only arguments passed as keyword arguments: '\(keyword)'"
+          let error = self.newTypeError(msg)
           return .error(error)
         }
 
