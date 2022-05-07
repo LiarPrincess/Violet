@@ -8,7 +8,7 @@ import VioletCompiler
 
 // MARK: - Assert code object
 
-// swiftlint:disable:next function_parameter_count
+// swiftlint:disable:next function_parameter_count function_body_length
 func XCTAssertCodeObject(_ code: CodeObject,
                          name: String,
                          qualifiedName: String,
@@ -16,6 +16,7 @@ func XCTAssertCodeObject(_ code: CodeObject,
                          flags: CodeObject.Flags,
                          instructions: [Instruction.Filled],
                          argCount: Int = 0,
+                         posOnlyArgCount: Int = 0,
                          kwOnlyArgCount: Int = 0,
                          childCodeObjectCount: Int = 0,
                          file: StaticString = #file,
@@ -43,6 +44,11 @@ func XCTAssertCodeObject(_ code: CodeObject,
   XCTAssertEqual(code.argCount,
                  argCount,
                  "Arg count",
+                 file: file,
+                 line: line)
+  XCTAssertEqual(code.posOnlyArgCount,
+                 posOnlyArgCount,
+                 "Positional only arg count",
                  file: file,
                  line: line)
   XCTAssertEqual(code.kwOnlyArgCount,

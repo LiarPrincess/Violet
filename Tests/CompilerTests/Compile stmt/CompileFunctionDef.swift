@@ -472,6 +472,73 @@ class CompileFunctionDef: CompileTestCase {
     )
   }
 
+  // MARK: - Positional only
+
+  /// def cook(zucchini, /, tomato): ratatouille
+  ///
+  ///  0 LOAD_CONST               0 (<code object cook at 0x107c267c0, file "<dis>", line 1>)
+  ///  2 LOAD_CONST               1 ('cook')
+  ///  4 MAKE_FUNCTION            0
+  ///  6 STORE_NAME               0 (cook)
+  ///  8 LOAD_CONST               2 (None)
+  /// 10 RETURN_VALUE
+  /// f <code object cook at 0x107c267c0, file "<dis>", line 1>:
+  ///  0 LOAD_GLOBAL              0 (ratatouille)
+  ///  2 POP_TOP
+  ///  4 LOAD_CONST               0 (None)
+  ///  6 RETURN_VALUE
+  func test_positionalOnly() {
+    let stmt = self.functionDefStmt(
+      name: "cook",
+      args: self.arguments(
+        args: [self.arg(name: "zucchini"), self.arg(name: "tomato")],
+        posOnlyArgCount: 1
+      ),
+      body: [self.identifierStmt(value: "ratatouille")]
+    )
+
+    guard let code = self.compile(stmt: stmt) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(codeObject: .any),
+        .loadConst(string: "cook"),
+        .makeFunction(flags: []),
+        .storeName(name: "cook"),
+        .loadConst(.none),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let functionCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      functionCode,
+      name: "cook",
+      qualifiedName: "cook",
+      kind: .function,
+      flags: [.nested, .newLocals, .optimized],
+      instructions: [
+        .loadGlobal(name: "ratatouille"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ],
+      argCount: 2,
+      posOnlyArgCount: 1
+    )
+  }
+
   // MARK: - Variadic
 
   /// def cook(*zucchini): ratatouille
