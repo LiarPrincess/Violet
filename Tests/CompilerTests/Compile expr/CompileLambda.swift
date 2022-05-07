@@ -335,6 +335,64 @@ class CompileLambda: CompileTestCase {
     )
   }
 
+  // MARK: - Positional only
+
+  /// lambda zucchini, /, tomato: ratatouille
+  ///
+  ///  0 LOAD_CONST               0 (<code object <lambda> at 0x1028b81e0, file "<dis>", line 1>)
+  ///  2 LOAD_CONST               1 ('<lambda>')
+  ///  4 MAKE_FUNCTION            0
+  ///  6 RETURN_VALUE
+  /// f <code object <lambda> at 0x1028b81e0, file "<dis>", line 1>:
+  ///  0 LOAD_GLOBAL              0 (ratatouille)
+  ///  2 RETURN_VALUE
+  func test_positionalOnly() {
+    let expr = self.lambdaExpr(
+      args: self.arguments(
+        args: [self.arg(name: "zucchini"), self.arg(name: "tomato")],
+        posOnlyArgCount: 1
+      ),
+      body: self.identifierExpr(value: "ratatouille")
+    )
+
+    guard let code = self.compile(expr: expr) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(codeObject: .any),
+        .loadConst(string: "<lambda>"),
+        .makeFunction(flags: []),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let lambdaCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      lambdaCode,
+      name: "<lambda>",
+      qualifiedName: "<lambda>",
+      kind: .lambda,
+      flags: [.nested, .newLocals, .optimized],
+      instructions: [
+        .loadGlobal(name: "ratatouille"),
+        .return
+      ],
+      argCount: 2,
+      posOnlyArgCount: 1
+    )
+  }
+
   // MARK: - Variadic
 
   /// lambda *zucchini: ratatouille

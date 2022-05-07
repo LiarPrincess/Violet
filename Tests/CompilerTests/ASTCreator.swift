@@ -1141,6 +1141,7 @@ extension ASTCreator {
 
   internal func arguments(
     args: [Argument] = [],
+    posOnlyArgCount: Int = 0,
     defaults: [Expression] = [],
     vararg: Vararg = .none,
     kwOnlyArgs: [Argument] = [],
@@ -1149,10 +1150,11 @@ extension ASTCreator {
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
   ) -> Arguments {
+    assert(args.count >= posOnlyArgCount)
     return Arguments(
       id: self.id,
       args: args,
-      posOnlyArgCount: 0,
+      posOnlyArgCount: posOnlyArgCount,
       defaults: defaults,
       vararg: vararg,
       kwOnlyArgs: kwOnlyArgs,
