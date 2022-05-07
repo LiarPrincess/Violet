@@ -8,7 +8,7 @@ class BigIntHashTests: XCTestCase {
   private let heaps = generateHeapValues(countButNotReally: 50)
 
   // Values that are in both `smis` and `heaps`.
-  private var common: [BigInt] {
+  private lazy var common: [BigInt] = {
     var result = [BigInt]()
     let smiSet = Set(self.smis)
 
@@ -20,7 +20,7 @@ class BigIntHashTests: XCTestCase {
     }
 
     return result
-  }
+  }()
 
   private var scalars: [UnicodeScalar] = {
     let asciiStart: UInt8 = 0x21 // !
