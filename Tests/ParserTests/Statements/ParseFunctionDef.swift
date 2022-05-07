@@ -31,6 +31,7 @@ class ParseFunctionDef: XCTestCase {
         Args
           Arguments(start: 6:6, end: 6:6)
             Args: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg: none
             KwOnlyArgs: none
@@ -67,6 +68,7 @@ class ParseFunctionDef: XCTestCase {
         Args
           Arguments(start: 6:6, end: 6:6)
             Args: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg: none
             KwOnlyArgs: none
@@ -109,6 +111,7 @@ class ParseFunctionDef: XCTestCase {
               Arg
                 Name: zucchini
                 Annotation: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg: none
             KwOnlyArgs: none
@@ -151,6 +154,7 @@ class ParseFunctionDef: XCTestCase {
                 Annotation
                   IdentifierExpr(context: Load, start: 10:10, end: 11:16)
                     Value: Vegetable
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg: none
             KwOnlyArgs: none
@@ -191,6 +195,7 @@ class ParseFunctionDef: XCTestCase {
               Arg
                 Name: zucchini
                 Annotation: none
+            PosOnlyArgCount: 0
             Defaults
               FloatExpr(context: Load, start: 10:10, end: 11:16)
                 Value: 1.0
@@ -236,6 +241,7 @@ class ParseFunctionDef: XCTestCase {
               Arg
                 Name: tomato
                 Annotation: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg: none
             KwOnlyArgs: none
@@ -281,6 +287,7 @@ class ParseFunctionDef: XCTestCase {
               Arg
                 Name: tomato
                 Annotation: none
+            PosOnlyArgCount: 0
             Defaults
               FloatExpr(context: Load, start: 14:14, end: 15:20)
                 Value: 1.0
@@ -319,6 +326,54 @@ class ParseFunctionDef: XCTestCase {
     }
   }
 
+  // MARK: - Positional only
+
+  /// def cook(zucchini, / , tomato): "Ratatouille"
+  func test_positionalOnly() {
+    let parser = createStmtParser(
+      createToken(.def,                    start: loc0, end: loc1),
+      createToken(.identifier("cook"),     start: loc2, end: loc3),
+      createToken(.leftParen,              start: loc4, end: loc5),
+      createToken(.identifier("zucchini"), start: loc6, end: loc7),
+      createToken(.comma,                  start: loc8, end: loc9),
+      createToken(.slash,                  start: loc10, end: loc11),
+      createToken(.comma,                  start: loc12, end: loc13),
+      createToken(.identifier("tomato"),   start: loc14, end: loc15),
+      createToken(.rightParen,             start: loc16, end: loc17),
+      createToken(.colon,                  start: loc18, end: loc19),
+      createToken(.string("Ratatouille"),  start: loc20, end: loc21)
+    )
+
+    guard let ast = parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 21:26)
+      FunctionDefStmt(start: 0:0, end: 21:26)
+        Name: cook
+        Args
+          Arguments(start: 6:6, end: 15:20)
+            Args
+              Arg
+                Name: zucchini
+                Annotation: none
+              Arg
+                Name: tomato
+                Annotation: none
+            PosOnlyArgCount: 1
+            Defaults: none
+            Vararg: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg: none
+        Body
+          ExprStmt(start: 20:20, end: 21:26)
+            StringExpr(context: Load, start: 20:20, end: 21:26)
+              String: 'Ratatouille'
+        Decorators: none
+        Returns: none
+    """)
+  }
+
   // MARK: - Variadic
 
   /// def cook(*zucchini): "Ratatouille"
@@ -343,6 +398,7 @@ class ParseFunctionDef: XCTestCase {
         Args
           Arguments(start: 6:6, end: 9:14)
             Args: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg
               Named
@@ -387,6 +443,7 @@ class ParseFunctionDef: XCTestCase {
         Args
           Arguments(start: 6:6, end: 17:22)
             Args: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg
               Named
@@ -434,6 +491,7 @@ class ParseFunctionDef: XCTestCase {
         Args
           Arguments(start: 6:6, end: 13:18)
             Args: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg
               Named
@@ -501,6 +559,7 @@ class ParseFunctionDef: XCTestCase {
         Args
           Arguments(start: 6:6, end: 11:16)
             Args: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg: unnamed
             KwOnlyArgs
@@ -561,6 +620,7 @@ class ParseFunctionDef: XCTestCase {
         Args
           Arguments(start: 6:6, end: 9:14)
             Args: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg: none
             KwOnlyArgs: none
@@ -601,6 +661,7 @@ class ParseFunctionDef: XCTestCase {
         Args
           Arguments(start: 6:6, end: 11:16)
             Args: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg: none
             KwOnlyArgs: none
@@ -674,6 +735,7 @@ class ParseFunctionDef: XCTestCase {
               Arg
                 Name: zucchini
                 Annotation: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg
               Named

@@ -28,6 +28,7 @@ class ParseAsync: XCTestCase {
         Args
           Arguments(start: 8:8, end: 8:8)
             Args: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg: none
             KwOnlyArgs: none

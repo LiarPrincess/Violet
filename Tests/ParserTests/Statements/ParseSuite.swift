@@ -45,6 +45,7 @@ class ParseSuite: XCTestCase {
         Args
           Arguments(start: 6:6, end: 6:6)
             Args: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg: none
             KwOnlyArgs: none
@@ -94,6 +95,7 @@ class ParseSuite: XCTestCase {
             Args
               Arguments(start: 16:16, end: 16:16)
                 Args: none
+                PosOnlyArgCount: 0
                 Defaults: none
                 Vararg: none
                 KwOnlyArgs: none
@@ -141,6 +143,7 @@ class ParseSuite: XCTestCase {
         Args
           Arguments(start: 6:6, end: 6:6)
             Args: none
+            PosOnlyArgCount: 0
             Defaults: none
             Vararg: none
             KwOnlyArgs: none
