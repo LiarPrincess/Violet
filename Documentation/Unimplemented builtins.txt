@@ -61,6 +61,8 @@ code
     co_names
     co_stacksize
     co_varnames
+  This should not be here:
+    co_posonlyargcount
 
 complex
   Missing:

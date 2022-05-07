@@ -1299,6 +1299,7 @@ extension PyCode {
     zelf.cellVariableNamesPtr.deinitialize()
     zelf.freeVariableNamesPtr.deinitialize()
     zelf.argCountPtr.deinitialize()
+    zelf.posOnlyArgCountPtr.deinitialize()
     zelf.kwOnlyArgCountPtr.deinitialize()
     zelf.predictedObjectStackCountPtr.deinitialize()
 

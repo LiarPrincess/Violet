@@ -2734,7 +2734,7 @@ public struct Arguments: ASTNode, CustomStringConvertible {
   /// When a function is called, positional arguments are mapped
   /// to these parameters based solely on their position.
   public var args: [Argument]
-  /// Count of positional only arguments of 'args'
+  /// Count of positional-only arguments.
   public var posOnlyArgCount: Int
   /// Default values for positional arguments.
   /// If there are fewer defaults, they correspond to the last *n* arguments.
