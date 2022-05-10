@@ -61,4 +61,21 @@ class GenericLayoutTests: XCTestCase {
     XCTAssertEqual(layout.alignment, 8)
     XCTAssertEqual(layout.offsets, [0, 4, 5, 6, 16])
   }
+
+  func test_object() {
+    let layout = PyObject.layout
+    XCTAssertEqual(layout.typeOffset, 0) // size: 8
+    XCTAssertEqual(layout.memoryInfoOffset, 8) // size: 16
+    XCTAssertEqual(layout.__dict__Offset, 24) // size: 9
+    XCTAssertEqual(layout.flagsOffset, 36) // size: 4
+    XCTAssertEqual(layout.size, 40)
+    XCTAssertEqual(layout.alignment, 8)
+  }
+
+  func test_int() {
+    let layout = PyInt.layout
+    XCTAssertEqual(layout.valueOffset, 40)
+    XCTAssertEqual(layout.size, 48)
+    XCTAssertEqual(layout.alignment, 8)
+  }
 }

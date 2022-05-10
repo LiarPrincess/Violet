@@ -37,9 +37,17 @@ internal struct GenericLayout {
       Self.round(&self.size, alignment: field.alignment)
       self.offsets.append(self.size)
 
-      for _ in 0..<field.repeatCount {
-        Self.round(&self.size, alignment: field.alignment)
+      // If 'repeatCount == 1' then we will not pad after!
+      // It is possible that the next field will fit there.
+      //
+      // If 'repeatCount > 1' then pad, it is simpler. Technically we could pad
+      // everything except for last, but then the mental model is complicatd.
+      if field.repeatCount == 1 {
         self.size += field.size
+      } else {
+        var stride = field.size
+        Self.round(&stride, alignment: field.alignment)
+        self.size += stride * field.repeatCount
       }
 
       self.alignment = Swift.max(self.alignment, field.alignment)
@@ -55,8 +63,8 @@ internal struct GenericLayout {
     // If we align the 'PyObject' then we will get a hole with size 4 after last
     // field. But what if the next field has size 4? We could have used this hole!
     //
-    // In C they would align. This is because of 'taking-pointers-to-nested-structs'
-    // and 'other-complicated-things'.
+    // In C they would align. This is because of 'no-padding-in-arrays',
+    // 'taking-pointers-to-nested-structs' and 'other-complicated-things'.
     // In Swift they would not align (afaik) - just like we do. This makes
     // certain operations illegal, but potentially saves memory.
   }
