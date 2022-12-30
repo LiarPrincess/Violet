@@ -38,16 +38,16 @@ private struct TestCase {
     file: StaticString,
     line: UInt
   ) {
-    if let aInt = BigInt(a) {
-      self.a = aInt
-    } else {
+    do {
+      self.a = try BigInt(a)
+    } catch {
       XCTFail("Unable to parse: '\(a)'.", file: file, line: line)
       return nil
     }
 
-    if let bInt = BigInt(b) {
-      self.b = bInt
-    } else {
+    do {
+      self.b = try BigInt(b)
+    } catch {
       XCTFail("Unable to parse: '\(b)'.", file: file, line: line)
       return nil
     }

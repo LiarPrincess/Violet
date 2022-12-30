@@ -289,7 +289,11 @@ class InitFromStringTests: XCTestCase {
 
   /// Abstraction over `BigInt.init(_:radix:)`.
   private func create(string: String, radix: Int) -> BigInt? {
-    return BigInt(string, radix: radix)
+    do {
+      return try BigInt(string, radix: radix)
+    } catch {
+      return nil
+    }
   }
 
   private func run(suite: TestSuite,

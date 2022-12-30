@@ -9,6 +9,8 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if false
+
 import BigIntModule
 import XCTest
 
@@ -458,3 +460,5 @@ final class BigIntTests: XCTestCase {
     #endif
   }
 }
+
+#endif

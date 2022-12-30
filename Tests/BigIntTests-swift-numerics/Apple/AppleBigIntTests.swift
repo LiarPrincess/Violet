@@ -147,10 +147,7 @@ class AppleBigIntTests: XCTestCase {
   // cSpell:ignore wtkgm UNIZHA
 
   func test_strings() throws {
-    guard let x = BigInt("-171usy24wtkgm", radix: 36) else {
-      XCTFail("Parse failed")
-      return
-    }
+    let x = try BigInt("-171usy24wtkgm", radix: 36)
 
     XCTAssertEqual(
       String(x, radix: 2, uppercase: false),
@@ -160,12 +157,12 @@ class AppleBigIntTests: XCTestCase {
     XCTAssertEqual(String(x, radix: 16, uppercase: false), "-4ea383fdd9da5cd6")
     XCTAssertEqual(String(x, radix: 36, uppercase: false), "-171usy24wtkgm")
 
-    XCTAssertTrue(BigInt("12345") == 12_345)
-    XCTAssertTrue(BigInt("-12345") == -12_345)
+    XCTAssertTrue(try BigInt("12345") == 12_345)
+    XCTAssertTrue(try BigInt("-12345") == -12_345)
 
-    XCTAssertNil(BigInt("-3UNIZHA6PAL30Y", radix: 10))
-    XCTAssertNil(BigInt("---"))
-    XCTAssertNil(BigInt(" 123"))
+    XCTAssertNil(try BigInt("-3UNIZHA6PAL30Y", radix: 10))
+    XCTAssertNil(try BigInt("---"))
+    XCTAssertNil(try BigInt(" 123"))
   }
 
   private func toString(_ value: BigInt, base: Int) -> String {
