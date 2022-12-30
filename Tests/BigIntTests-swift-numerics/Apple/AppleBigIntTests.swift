@@ -10,7 +10,7 @@
 //===----------------------------------------------------------------------===//
 
 import XCTest
-@testable import BigIntModule
+@testable import BigInt
 
 // Tests were partially copied from:
 // https://github.com/apple/swift/blob/master/test/Prototypes/BigInt.swift

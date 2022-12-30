@@ -10,7 +10,7 @@
 //===----------------------------------------------------------------------===//
 
 import XCTest
-@testable import BigIntModule
+@testable import BigInt
 
 private typealias Word = UInt
 private let mostSignificantBitMask = Word(1) << (Word.bitWidth - 1)

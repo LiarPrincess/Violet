@@ -11,7 +11,7 @@
 
 // BinaryMulTests
 import XCTest
-@testable import BigIntModule
+@testable import BigInt
 
 // swiftlint:disable line_length
 // swiftlint:disable number_separator

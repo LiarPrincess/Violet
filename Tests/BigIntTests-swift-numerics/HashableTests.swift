@@ -10,7 +10,7 @@
 //===----------------------------------------------------------------------===//
 
 import XCTest
-@testable import BigIntModule
+@testable import BigInt
 
 // Well… actually… hash and equatable
 class HashableTests: XCTestCase {

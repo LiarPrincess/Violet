@@ -10,7 +10,7 @@
 //===----------------------------------------------------------------------===//
 
 import XCTest
-@testable import BigIntModule
+@testable import BigInt
 
 // swiftlint:disable number_separator
 // swiftlint:disable file_length

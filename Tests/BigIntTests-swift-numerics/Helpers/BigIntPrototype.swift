@@ -10,7 +10,7 @@
 //===----------------------------------------------------------------------===//
 
 import XCTest
-import BigIntModule
+import BigInt
 
 // MARK: - BigIntPrototype
 

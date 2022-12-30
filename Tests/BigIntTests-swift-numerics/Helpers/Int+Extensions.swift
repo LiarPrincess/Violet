@@ -9,7 +9,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-import BigIntModule
+import BigInt
 
 extension SignedInteger {
 

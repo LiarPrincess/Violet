@@ -9,7 +9,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-@testable import BigIntModule
+@testable import BigInt
 
 internal func generateInts(approximateCount: Int) -> [Int] {
   assert(approximateCount > 0, "[generateInts] Negative 'approximateCount'.")

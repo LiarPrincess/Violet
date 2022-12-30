@@ -9,7 +9,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-import BigIntModule
+import BigInt
 
 // swiftlint:disable line_length
 // swiftlint:disable number_separator

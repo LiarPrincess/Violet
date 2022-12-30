@@ -10,7 +10,7 @@
 //===----------------------------------------------------------------------===//
 
 import XCTest
-@testable import BigIntModule
+@testable import BigInt
 
 private typealias TestSuite = StringTestCases.TestSuite
 private typealias TestCase = StringTestCases.TestCase

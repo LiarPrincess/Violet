@@ -10,7 +10,7 @@
 //===----------------------------------------------------------------------===//
 
 import XCTest
-@testable import BigIntModule
+@testable import BigInt
 
 // A lot of those bit shenanigans are based on the following observation:
 //  7<<5 ->  224
