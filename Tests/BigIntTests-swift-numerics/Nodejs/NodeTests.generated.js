@@ -1,4 +1,4 @@
-//===--- NodeTests - generated.js -----------------------------*- swift -*-===//
+//===--- NodeTests.generated.js -------------------------------*- swift -*-===//
 //
 // This source file is part of the Swift Numerics open source project
 //
@@ -13,9 +13,14 @@
 // === Generate numbers ===
 // ========================
 
-/// 2^31 (max signed Int32)
-const smiMax = 2147483647n;
-const smiMin = -2147483648n;
+// For 'int' tests we will use 2^33 range.
+// If we are using tagged pointer to hide small int inside the pointer, then on
+// 64bit platform Int32 is a natural choice. Using Int33 range for tests (linear
+// distribution) makes it so that half of the tests are above and half below
+// Int32 range.
+const pow33 = 8589934592n;
+const smiMax = pow33;
+const smiMin = -pow33;
 
 /**
  * Small integers.
@@ -126,6 +131,7 @@ const bigBigPairs = cartesianProduct(bigInts, bigInts);
  */
 function printUnaryOperationTests(name, op) {
   function print(name, testFn, values, op) {
+    console.log();
     console.log(`  func test_${name}() {`);
 
     for (const value of values) {
@@ -134,14 +140,13 @@ function printUnaryOperationTests(name, op) {
     }
 
     console.log('  }');
-    console.log();
   }
 
   const nameLower = name.toLowerCase();
   const testFn = `self.${nameLower}Test`;
 
-  console.log(`  // MARK: - ${name}`);
   console.log();
+  console.log(`  // MARK: - ${name}`);
 
   print(`${nameLower}_int`, testFn, smallInts, op);
   print(`${nameLower}_big`, testFn, bigInts, op);
@@ -153,9 +158,11 @@ function printUnaryOperationTests(name, op) {
  */
 function printBinaryOperationTests(name, op) {
   function print(name, testFn, values, op) {
+    console.log();
+    console.log(`  func test_${name}() {`);
+
     const isDiv = name.startsWith('div') || name.startsWith('mod');
 
-    console.log(`  func test_${name}() {`);
     for (const { lhs, rhs } of values) {
       if (isDiv && rhs == 0n) {
         continue; // Well.. hello there!
@@ -165,14 +172,13 @@ function printBinaryOperationTests(name, op) {
       console.log(`    ${testFn}(lhs: "${lhs}", rhs: "${rhs}", expecting: "${expected}")`);
     }
     console.log('  }');
-    console.log();
   }
 
   const nameLower = name.toLowerCase();
   const testFn = `self.${nameLower}Test`;
 
-  console.log(`  // MARK: - ${name}`);
   console.log();
+  console.log(`  // MARK: - ${name}`);
 
   print(`${nameLower}_int_int`, testFn, smallSmallPairs, op);
   print(`${nameLower}_int_big`, testFn, smallBigPairs, op);
@@ -182,11 +188,11 @@ function printBinaryOperationTests(name, op) {
 
 function printDivModTests() {
   function print(name, testFn, values) {
-    const isDiv = true;
-
+    console.log();
     console.log(`  func test_${name}() {`);
+
     for (const { lhs, rhs } of values) {
-      if (isDiv && rhs == 0n) {
+      if (rhs == 0n) {
         continue; // Well.. hello there!
       }
 
@@ -195,15 +201,14 @@ function printDivModTests() {
       console.log(`    ${testFn}(lhs: "${lhs}", rhs: "${rhs}", div: "${div}", mod: "${mod}")`);
     }
     console.log('  }');
-    console.log();
   }
 
   const name = 'DivMod';
   const nameLower = 'divMod';
   const testFn = `self.${nameLower}Test`;
 
-  console.log(`  // MARK: - ${name}`);
   console.log();
+  console.log(`  // MARK: - ${name}`);
 
   print(`${nameLower}_int_int`, testFn, smallSmallPairs);
   print(`${nameLower}_int_big`, testFn, smallBigPairs);
@@ -215,7 +220,9 @@ const exponents = [0n, 1n, 2n, 3n, 5n, 10n];
 
 function printPowerTests() {
   function print(name, testFn, values) {
+    console.log();
     console.log(`  func test_${name}() {`);
+
     for (const value of values) {
       for (const exponent of exponents) {
         const result = value ** exponent;
@@ -223,15 +230,14 @@ function printPowerTests() {
       }
     }
     console.log('  }');
-    console.log();
   }
 
   const name = 'Power';
   const nameLower = 'power';
   const testFn = `self.${nameLower}Test`;
 
-  console.log(`  // MARK: - ${name}`);
   console.log();
+  console.log(`  // MARK: - ${name}`);
 
   print(`${nameLower}_int`, testFn, smallInts);
   print(`${nameLower}_big`, testFn, bigInts);
@@ -244,6 +250,7 @@ function printPowerTests() {
  */
 function printShiftOperationTests(name, op) {
   function printShiftTest(name, testFn, values, count, op) {
+    console.log();
     console.log(`  func test_${name}() {`);
 
     for (const value of values) {
@@ -252,7 +259,6 @@ function printShiftOperationTests(name, op) {
     }
 
     console.log('  }');
-    console.log();
   }
 
   const nameLower = name.toLowerCase();
@@ -262,12 +268,11 @@ function printShiftOperationTests(name, op) {
   const word = 64n;
   const moreThanWord = 64n + 64n - 7n;
 
+  console.log();
   console.log(`  // MARK: - Shift ${nameLower}`);
   console.log();
-  console.log(`\
-  // Following tests assume: assert(Word.bitWidth == 64)
-  // Even if this is not the case then the tests should still pass.
-`);
+  console.log(`  // Following tests assume: assert(Word.bitWidth == 64)`);
+  console.log(`  // Even if this is not the case then the tests should still pass.`);
 
   printShiftTest(`shift${name}_int_lessThanWord`, testFn, smallInts, lessThanWord, op);
   printShiftTest(`shift${name}_int_word`, testFn, smallInts, word, op);
@@ -283,7 +288,7 @@ function printShiftOperationTests(name, op) {
 // ============
 
 console.log(`\
-//===--- NodeTests - generated.swift --------------------------*- swift -*-===//
+//===--- NodeTests.generated.swift ----------------------------*- swift -*-===//
 //
 // This source file is part of the Swift Numerics open source project
 //
@@ -294,7 +299,8 @@ console.log(`\
 //
 //===----------------------------------------------------------------------===//
 // Automatically generated. DO NOT EDIT!
-// Use 'node "NodeTests - generated.js" > "NodeTests - generated.swift"' to regenerate.
+// To regenerate:
+// node NodeTests.generated.js > NodeTests.generated.swift
 //===----------------------------------------------------------------------===//
 
 import XCTest
@@ -303,8 +309,7 @@ import XCTest
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
 
-extension NodeTests {
-`);
+extension NodeTests {`);
 
 printUnaryOperationTests('Plus', (a) => a);
 printUnaryOperationTests('Minus', (a) => -a);

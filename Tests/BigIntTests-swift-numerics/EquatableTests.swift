@@ -52,6 +52,7 @@ class EquatableTests: XCTestCase {
 
   func test_zero() {
     let zero = BigInt()
+    assertEqual(zero, zero)
     assertEqual(zero, -zero)
     assertEqual(zero, 2 * zero)
     assertEqual(zero, zero * 2)
@@ -88,8 +89,8 @@ class EquatableTests: XCTestCase {
   }
 
   func test_int_moreThan1Word_isNotEqual() {
-    for int in generateInts(approximateCount: 10) {
-      for p in generateBigInts(approximateCount: 10) {
+    for int in generateInts(approximateCount: 20) {
+      for p in generateBigInts(approximateCount: 20) {
         guard p.magnitude.count > 1 else {
           continue
         }

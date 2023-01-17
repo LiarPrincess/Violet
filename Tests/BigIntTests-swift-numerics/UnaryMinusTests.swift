@@ -26,18 +26,17 @@ class UnaryMinusTests: XCTestCase {
   func test_int() {
     for int in generateInts(approximateCount: 100) {
       // 'Int.min' negation overflows
-      if int == .min {
-        continue
-      }
-
-      let expected = -int
+      // This test code can crash if 'Int.bitWidth > BigIntPrototype.Word.bitWidth'
+      let expected = int == .min ?
+        BigInt(.positive, magnitude: BigIntPrototype.Word(int.magnitude)) :
+        BigInt(-int)
 
       let big = -BigInt(int)
-      XCTAssertTrue(big == expected, "\(big) == \(expected)")
+      XCTAssertEqual(big, expected, "\(big) == \(expected)")
 
       var negated = BigInt(int)
       negated.negate()
-      XCTAssertTrue(negated == expected, "\(negated) == \(expected)")
+      XCTAssertEqual(negated, expected, "\(negated) == \(expected)")
     }
   }
 

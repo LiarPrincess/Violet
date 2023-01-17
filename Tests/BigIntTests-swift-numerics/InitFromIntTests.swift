@@ -12,7 +12,67 @@
 import XCTest
 @testable import BigInt
 
+private func generateTestCases<T: FixedWidthInteger>(type: T.Type) -> [T] {
+  var result: [T] = [0, 1, 42, T.max, T.max - 1, T.min, T.min + 1]
+  result.append(contentsOf: PositivePowersOf2(type: T.self).map { $0.value })
+
+  if T.isSigned {
+    result.append(-1)
+    result.append(-42)
+    result.append(contentsOf: NegativePowersOf2(type: T.self).map { $0.value })
+  }
+
+  return result
+}
+
 class InitFromIntTests: XCTestCase {
+
+  // MARK: - Raw - BigInt(🐰)
+
+  func test_raw_signed() {
+    self.raw_inRange(type: Int8.self)
+    self.raw_inRange(type: Int16.self)
+    self.raw_inRange(type: Int32.self)
+    self.raw_inRange(type: Int64.self)
+    self.raw_inRange(type: Int.self)
+  }
+
+  func test_raw_unsigned() {
+    self.raw_inRange(type: UInt8.self)
+    self.raw_inRange(type: UInt16.self)
+    self.raw_inRange(type: UInt32.self)
+    self.raw_inRange(type: UInt64.self)
+    self.raw_inRange(type: UInt.self)
+  }
+
+  private func raw_inRange<T: FixedWidthInteger>(
+    type: T.Type,
+    file: StaticString = #file,
+    line: UInt = #line
+  ) {
+    for int in generateTestCases(type: T.self) {
+      let big = BigInt(int)
+
+      // String representation should be equal - trivial test for value
+      let intString = String(int, radix: 10, uppercase: false)
+      let bigString = String(big, radix: 10, uppercase: false)
+      XCTAssertEqual(bigString, intString, "BigInt(\(int))", file: file, line: line)
+
+      // T -> BigInt -> T
+      let revert = T(big)
+      XCTAssertEqual(int, revert, "Revert \(int)", file: file, line: line)
+    }
+  }
+
+  func test_raw_big() {
+    // Init from a very big number, may overflow if we assumed that 'UInt64'
+    // is the best we can do. (bless your pure soul 🐰)
+    for p in generateBigInts(approximateCount: 50, maxWordCount: 20) {
+      let big = p.create()
+      let result = BigInt(big)
+      XCTAssertEqual(big, result, "\(big)")
+    }
+  }
 
   // MARK: - Exactly
 
@@ -37,32 +97,20 @@ class InitFromIntTests: XCTestCase {
     file: StaticString = #file,
     line: UInt = #line
   ) {
-    var cases: [T] = [0, 42, T.max, T.max - 1, T.min, T.min + 1]
-    cases.append(contentsOf: PositivePowersOf2(type: T.self).map { $0.value })
-
-    if T.isSigned {
-      cases.append(-1)
-      cases.append(-42)
-      cases.append(contentsOf: NegativePowersOf2(type: T.self).map { $0.value })
-    }
-
-    let typeName = String(describing: T.self)
-
-    for int in cases {
-      let big = BigInt(int)
+    for int in generateTestCases(type: T.self) {
+      guard let big = BigInt(exactly: int) else {
+        XCTFail("BigInt(exactly: \(int))", file: file, line: line)
+        continue
+      }
 
       // String representation should be equal - trivial test for value
       let intString = String(int, radix: 10, uppercase: false)
       let bigString = String(big, radix: 10, uppercase: false)
-      XCTAssertEqual(bigString, intString, "String(radix:)", file: file, line: line)
+      XCTAssertEqual(bigString, intString, "BigInt(exactly: \(int))", file: file, line: line)
 
       // T -> BigInt -> T
       let revert = T(exactly: big)
-      XCTAssertEqual(int,
-                     revert,
-                     "\(typeName) -> BigInt -> \(typeName)(exactly:)",
-                     file: file,
-                     line: line)
+      XCTAssertEqual(int, revert, "Revert \(int)", file: file, line: line)
     }
   }
 
@@ -92,8 +140,8 @@ class InitFromIntTests: XCTestCase {
 
     for n in cases {
       let moreThanMax = max + n
-      let exactly = T(exactly: moreThanMax)
-      XCTAssertNil(exactly, "max + \(n)", file: file, line: line)
+      let result = T(exactly: moreThanMax)
+      XCTAssertNil(result, "max + \(n)", file: file, line: line)
     }
   }
 
@@ -124,8 +172,18 @@ class InitFromIntTests: XCTestCase {
 
     for n in cases {
       let lessThanMin = min - n
-      let exactly = T(exactly: lessThanMin)
-      XCTAssertNil(exactly, "min - \(n)", file: file, line: line)
+      let result = T(exactly: lessThanMin)
+      XCTAssertNil(result, "min - \(n)", file: file, line: line)
+    }
+  }
+
+  func test_exactly_big() {
+    // Init from a very big number, may overflow if we assumed that 'UInt64'
+    // is the best we can do. (bless your pure soul 🐰)
+    for p in generateBigInts(approximateCount: 50, maxWordCount: 20) {
+      let big = p.create()
+      let result = BigInt(exactly: big)
+      XCTAssertEqual(big, result, "\(big)")
     }
   }
 
@@ -152,33 +210,17 @@ class InitFromIntTests: XCTestCase {
     file: StaticString = #file,
     line: UInt = #line
   ) {
-
-    var cases: [T] = [0, 42, T.max, T.max - 1, T.min, T.min + 1]
-    cases.append(contentsOf: PositivePowersOf2(type: T.self).map { $0.value })
-
-    if T.isSigned {
-      cases.append(-1)
-      cases.append(-42)
-      cases.append(contentsOf: NegativePowersOf2(type: T.self).map { $0.value })
-    }
-
-    let typeName = String(describing: T.self)
-
-    for int in cases {
-      let big = BigInt(int)
+    for int in generateTestCases(type: T.self) {
+      let big = BigInt(clamping: int)
 
       // String representation should be equal - trivial test for value
       let intString = String(int, radix: 10, uppercase: false)
       let bigString = String(big, radix: 10, uppercase: false)
-      XCTAssertEqual(bigString, intString, "String(radix:)", file: file, line: line)
+      XCTAssertEqual(bigString, intString, "BigInt(clamping: \(int))", file: file, line: line)
 
       // T -> BigInt -> T
       let revert = T(clamping: big)
-      XCTAssertEqual(int,
-                     revert,
-                     "\(typeName) -> BigInt -> \(typeName)(clamping:)",
-                     file: file,
-                     line: line)
+      XCTAssertEqual(int, revert, "Revert \(int)", file: file, line: line)
     }
   }
 
@@ -209,8 +251,8 @@ class InitFromIntTests: XCTestCase {
 
     for n in cases {
       let moreThanMax = max + n
-      let clamped = T(clamping: moreThanMax)
-      XCTAssertEqual(clamped, maxT, "max + \(n)", file: file, line: line)
+      let result = T(clamping: moreThanMax)
+      XCTAssertEqual(result, maxT, "max + \(n)", file: file, line: line)
     }
   }
 
@@ -242,8 +284,18 @@ class InitFromIntTests: XCTestCase {
 
     for n in cases {
       let lessThanMin = min - n
-      let clamped = T(clamping: lessThanMin)
-      XCTAssertEqual(clamped, minT, "min - \(n)", file: file, line: line)
+      let result = T(clamping: lessThanMin)
+      XCTAssertEqual(result, minT, "min - \(n)", file: file, line: line)
+    }
+  }
+
+  func test_clamping_big() {
+    // Init from a very big number, may overflow if we assumed that 'UInt64'
+    // is the best we can do. (bless your pure soul 🐰)
+    for p in generateBigInts(approximateCount: 50, maxWordCount: 20) {
+      let big = p.create()
+      let result = BigInt(clamping: big)
+      XCTAssertEqual(big, result, "\(big)")
     }
   }
 
@@ -270,33 +322,17 @@ class InitFromIntTests: XCTestCase {
     file: StaticString = #file,
     line: UInt = #line
   ) {
-
-    var cases: [T] = [0, 42, T.max, T.max - 1, T.min, T.min + 1]
-    cases.append(contentsOf: PositivePowersOf2(type: T.self).map { $0.value })
-
-    if T.isSigned {
-      cases.append(-1)
-      cases.append(-42)
-      cases.append(contentsOf: NegativePowersOf2(type: T.self).map { $0.value })
-    }
-
-    let typeName = String(describing: T.self)
-
-    for int in cases {
-      let big = BigInt(int)
+    for int in generateTestCases(type: T.self) {
+      let big = BigInt(truncatingIfNeeded: int)
 
       // String representation should be equal - trivial test for value
       let intString = String(int, radix: 10, uppercase: false)
       let bigString = String(big, radix: 10, uppercase: false)
-      XCTAssertEqual(bigString, intString, "String(radix:)", file: file, line: line)
+      XCTAssertEqual(bigString, intString, "BigInt(truncatingIfNeeded: \(int))", file: file, line: line)
 
       // T -> BigInt -> T
       let revert = T(truncatingIfNeeded: big)
-      XCTAssertEqual(int,
-                     revert,
-                     "\(typeName) -> BigInt -> \(typeName)(truncatingIfNeeded:)",
-                     file: file,
-                     line: line)
+      XCTAssertEqual(int, revert, "Revert \(int)", file: file, line: line)
     }
   }
 
@@ -369,8 +405,8 @@ class InitFromIntTests: XCTestCase {
       // signed:   1000 - 1 = 0111 = max
       // unsigned: 0000 - 1 = 1111 = max
       let value = min - 1
-      let truncated = T(truncatingIfNeeded: value)
-      XCTAssertEqual(truncated, type.max, "min - 1", file: file, line: line)
+      let result = T(truncatingIfNeeded: value)
+      XCTAssertEqual(result, type.max, "min - 1", file: file, line: line)
     }
 
     // signed:   -12 = (1111) 0100 = -12
@@ -387,6 +423,16 @@ class InitFromIntTests: XCTestCase {
       let complement = ~truncated + 1 // no overflow possible
       let truncatedBig = BigInt(complement)
       XCTAssertEqual(truncatedBig, n, "1 << \(T.bitWidth) + \(n)", file: file, line: line)
+    }
+  }
+
+  func test_truncatingIfNeeded_big() {
+    // Init from a very big number, may overflow if in 'init' we assumed that
+    // 'UInt64' is the best we can do. (bless your pure soul 🐰)
+    for p in generateBigInts(approximateCount: 50, maxWordCount: 20) {
+      let big = p.create()
+      let result = BigInt(truncatingIfNeeded: big)
+      XCTAssertEqual(big, result, "\(big)")
     }
   }
 }

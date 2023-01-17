@@ -30,7 +30,7 @@ private func assertEqual(_ lhs: BigInt,
   XCTAssertFalse(lhs < rhs, "\(lhs) < \(rhs)", file: file, line: line)
   XCTAssertTrue(lhs <= rhs, "\(lhs) <= \(rhs)", file: file, line: line)
   XCTAssertFalse(lhs > rhs, "\(lhs) > \(rhs)", file: file, line: line)
-  XCTAssertTrue(lhs >= rhs, "\(lhs) <= \(rhs)", file: file, line: line)
+  XCTAssertTrue(lhs >= rhs, "\(lhs) >= \(rhs)", file: file, line: line)
 }
 
 private func assertLess(_ lhs: BigInt,
@@ -125,8 +125,8 @@ class ComparableTests: XCTestCase {
   }
 
   func test_int_sameSign_moreThan1Word() {
-    for int in generateInts(approximateCount: 10) {
-      for p in generateBigInts(approximateCount: 10) {
+    for int in generateInts(approximateCount: 20) {
+      for p in generateBigInts(approximateCount: 20) {
         guard p.magnitude.count > 1 else {
           continue
         }
@@ -157,7 +157,7 @@ class ComparableTests: XCTestCase {
   }
 
   func test_big_differentSign_negative_isLess() {
-    let ints = generateBigInts(approximateCount: 10)
+    let ints = generateBigInts(approximateCount: 20)
 
     for (p, n) in CartesianProduct(ints) {
       // '0' stays the same after negation

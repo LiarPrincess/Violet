@@ -70,7 +70,11 @@ internal struct BigIntPrototype {
   }
 
   /// `BigInt` -> `BigIntPrototype`.
-  @available(*, deprecated, message: "Use only when writing test cases if you know the correct value and want to have its Prototype.")
+  @available(
+    *,
+    deprecated,
+    message: "Use only when writing test cases to convert BigInt -> Prototype."
+  )
   internal init(_ big: BigInt) {
     var n = abs(big)
 
@@ -113,7 +117,7 @@ internal struct BigIntPrototype {
   /// Collection where each element is a `BigIntPrototype` with one of the words
   /// modified by provided `wordChange`.
   ///
-  /// Used to easly create prototypes with smaller/bigger magnitude.
+  /// Used to easily create prototypes with smaller/bigger magnitude.
   /// Useful for testing `==`, `<`, `>`, `<=` and `>=`.
   internal func withEachMagnitudeWordModified(
     byAdding wordChange: Int

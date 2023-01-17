@@ -15,8 +15,26 @@ import XCTest
 // Well… actually… hash and equatable
 class HashableTests: XCTestCase {
 
-  private let ints = generateInts(approximateCount: 50)
-  private let bigs = generateBigInts(approximateCount: 50)
+  private lazy var ints: [Int] = {
+    let result = generateInts(approximateCount: 50)
+    HashableTests.assertNoDuplicates(result)
+    return result
+  }()
+
+  private lazy var bigs: [BigIntPrototype] = {
+    let result = generateBigInts(approximateCount: 50)
+    HashableTests.assertNoDuplicates(result.map { $0.create() })
+    return result
+  }()
+
+  private static func assertNoDuplicates<T: Equatable>(_ values: [T]) {
+    // We can't use 'Set' because 'Hashable' was not yet proven to work correctly...
+    for (index, lhs) in values.enumerated() {
+      for rhs in values[..<index] {
+        assert(lhs != rhs, "Duplicate: \(lhs). This will break 'count' calculations.")
+      }
+    }
+  }
 
   // Values that are in both `ints` and `bigs`.
   private lazy var common: [BigInt] = {

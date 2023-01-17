@@ -88,7 +88,7 @@ class BinaryMulTests: XCTestCase {
         (aPlus, bPlus), // a * b
         (aPlus, bMinus), // a * (-b)
         (aMinus, bPlus), // -a * b
-        (aMinus, bMinus), // -a * (-b)
+        (aMinus, bMinus) // -a * (-b)
       ]
 
       for (aInt, bInt) in cases {
@@ -311,7 +311,7 @@ class BinaryMulTests: XCTestCase {
   // MARK: - Carry overflow
 
   /// This proves that naive school algorithm will never overflow on 'carry'
-  /// (in sign + magnitude represenation).
+  /// (in sign + magnitude representation).
   ///
   /// Basically, it will `Word.max * Word.max` to get max possible carry,
   /// then it will add it to another `Word.max * Word.max` and so on...

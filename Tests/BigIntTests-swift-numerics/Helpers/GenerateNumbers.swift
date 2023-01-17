@@ -41,14 +41,13 @@ internal func generateBigInts(approximateCount: Int,
                               maxWordCount: Int = 3) -> [BigIntPrototype] {
   assert(approximateCount > 0, "[generateBigInts] Negative 'approximateCount'.")
   assert(maxWordCount > 0, "[generateBigInts] Negative 'maxWordCount'.")
-  typealias Word = BigIntPrototype.Word
 
+  typealias Word = BigIntPrototype.Word
   var result = [BigIntPrototype]()
+
   result.append(BigIntPrototype(.positive, magnitude: [])) //  0
   result.append(BigIntPrototype(.positive, magnitude: [1])) //  1
   result.append(BigIntPrototype(.negative, magnitude: [1])) // -1
-  result.append(BigIntPrototype(.positive, magnitude: [.max])) //  Word.max
-  result.append(BigIntPrototype(.negative, magnitude: [.max])) // -Word.max
 
   // All words = Word.max
   for count in 1...maxWordCount {

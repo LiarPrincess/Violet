@@ -55,7 +55,7 @@ class BinarySubTests: XCTestCase {
         (aPlus, bPlus), // a - b
         (aPlus, bMinus), // a - (-b)
         (aMinus, bPlus), // -a - b
-        (aMinus, bMinus), // -a - (-b)
+        (aMinus, bMinus) // -a - (-b)
       ]
 
       for (aInt, bInt) in cases {

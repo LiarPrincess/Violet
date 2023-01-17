@@ -45,7 +45,7 @@ class BinaryXorTests: XCTestCase {
   }
 
   func test_int_singleWord() {
-    let ints = generateInts(approximateCount: 10)
+    let ints = generateInts(approximateCount: 20)
 
     for (lhsInt, rhsInt) in CartesianProduct(ints) {
       let lhs = BigInt(lhsInt)
@@ -101,14 +101,14 @@ class BinaryXorTests: XCTestCase {
   }
 
   func test_big_singleWord() {
-    let values = generateInts(approximateCount: 10)
+    let values = generateInts(approximateCount: 20)
 
     for (lhsInt, rhsInt) in CartesianProduct(values) {
       let lhsWord = Word(lhsInt.magnitude)
       let rhsWord = Word(rhsInt.magnitude)
 
       let lhs = BigInt(lhsInt.sign, magnitude: lhsWord)
-      let rhs = BigInt(lhsInt.sign, magnitude: rhsWord)
+      let rhs = BigInt(rhsInt.sign, magnitude: rhsWord)
 
       let expected = BigInt(lhsInt ^ rhsInt)
       XCTAssertEqual(lhs ^ rhs, expected, "\(lhsInt) ^ \(rhsInt)")

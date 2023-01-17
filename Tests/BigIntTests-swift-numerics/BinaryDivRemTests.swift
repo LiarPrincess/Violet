@@ -37,7 +37,7 @@ private func assertDiv<Q: SignedInteger, R: SignedInteger>(_ lhs: BigInt,
                                                            remainder _remainder: R,
                                                            file: StaticString = #file,
                                                            line: UInt = #line) {
-  assert(rhs != 0, "[BinaryDivTests] Oooo… div by 0?")
+  assert(rhs != 0, "[BinaryDivTests] Oooo… div by 0? 🐰")
   let quotient = BigInt(_quotient)
   let remainder = BigInt(_remainder)
 
@@ -47,13 +47,24 @@ private func assertDiv<Q: SignedInteger, R: SignedInteger>(_ lhs: BigInt,
   }
 
   let q = lhs / rhs
-  XCTAssertEqual(q, quotient, "[\(lhs)/\(rhs)] Quotient", file: file, line: line)
-
   let r = lhs % rhs
+  XCTAssertEqual(q, quotient, "[\(lhs)/\(rhs)] Quotient", file: file, line: line)
   XCTAssertEqual(r, remainder, "[\(lhs)/\(rhs)] Remainder", file: file, line: line)
 
+  // lhs == q * rhs + r
   let restored = q * rhs + r
-  XCTAssertEqual(restored, lhs, "[\(lhs)/\(rhs)] q * rhs + r", file: file, line: line)
+  XCTAssertEqual(lhs, restored, "[\(lhs)/\(rhs)] lhs == q * rhs + r", file: file, line: line)
+
+  // There are multiple solutions for 'lhs = q * rhs + r':
+  //              | -5//4 | -5%4 |
+  // Python 3.7.4 | -2    |  3   |
+  // Swift 5.3.2  | -1    | -1   | <- we want this (round toward 0)
+  //
+  // Check: |q * rhs| <= |lhs|
+  // In Python: |-2*4| <= |-5| -> 8 <= 5 -> FALSE
+  // In Swift:  |-1*4| <= |-5| -> 4 <= 5 -> TRUE
+  let qRhs = q * rhs
+  XCTAssertLessThanOrEqual(qRhs.magnitude, lhs.magnitude, "[\(lhs)/\(rhs)] |q * rhs| <= |lhs|", file: file, line: line)
 
   let (qq, rr) = lhs.quotientAndRemainder(dividingBy: rhs)
   XCTAssertEqual(qq, quotient, "[\(lhs)/\(rhs)] quotientAndRemainder-Quotient", file: file, line: line)
@@ -187,7 +198,7 @@ class BinaryDivRemTests: XCTestCase {
         (plus, plus), // a / a
         (plus, minus), // a / (-a)
         (minus, plus), // -a / a
-        (minus, minus), // -a / (-a)
+        (minus, minus) // -a / (-a)
       ]
 
       for (aInt, bInt) in cases {

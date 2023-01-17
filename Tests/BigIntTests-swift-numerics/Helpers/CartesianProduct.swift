@@ -19,7 +19,7 @@ internal struct CartesianProduct<T, V>: Sequence {
     private let lhsValues: [T]
     private let rhsValues: [V]
 
-    // Index of the next emmited element
+    // Index of the next emitted element
     private var lhsIndex = 0
     private var rhsIndex = 0
 

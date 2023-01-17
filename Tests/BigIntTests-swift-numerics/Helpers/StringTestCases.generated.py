@@ -1,4 +1,4 @@
-#===--- StringTestCases.py -------------------------------------*- swift -*-===#
+#===--- StringTestCases.generated.py ---------------------------*- swift -*-===#
 #
 # This source file is part of the Swift Numerics open source project
 #
@@ -9,16 +9,18 @@
 #
 #===------------------------------------------------------------------------===#
 
-class Radix:
-    def __init__(self, name: str, num: int, groups: 'list[Group]') -> None:
-        self.name = name
-        self.num = num
-        self.groups = groups
+from dataclasses import dataclass
 
+@dataclass
+class Radix:
+    name: str
+    num: int
+    groups: 'list[Group]'
+
+@dataclass
 class Group:
-    def __init__(self, name: str, strings: 'list[str]') -> None:
-        self.name = name
-        self.strings = strings
+    name: str
+    strings: 'list[str]'
 
 TEST_SUITES = [
     Radix('Binary', 2, [
@@ -240,6 +242,29 @@ TEST_SUITES = [
 POWER = 18446744073709551615 + 1
 
 def main():
+    print('''\
+//===--- StringTestCases.generated.swift ----------------------*- swift -*-===//
+//
+// This source file is part of the Swift Numerics open source project
+//
+// Copyright (c) 2023 Apple Inc. and the Swift Numerics project authors
+// Licensed under Apache License v2.0 with Runtime Library Exception
+//
+// See https://swift.org/LICENSE.txt for license information
+//
+//===----------------------------------------------------------------------===//
+// Automatically generated. DO NOT EDIT!
+// To regenerate:
+// python3 StringTestCases.generated.py > StringTestCases.generated.swift
+//===----------------------------------------------------------------------===//
+
+// swiftlint:disable line_length
+// swiftlint:disable trailing_comma
+// swiftformat:disable numberFormatting
+
+extension StringTestCases {\
+''')
+
     for radix in TEST_SUITES:
         print()
         print(f'  // MARK: - {radix.name}')
@@ -263,6 +288,8 @@ def main():
             print('    ])')
 
         print('  }')
+
+    print('}')
 
 if __name__ == '__main__':
     main()

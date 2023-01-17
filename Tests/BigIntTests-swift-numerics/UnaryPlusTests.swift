@@ -1,4 +1,4 @@
-//===--- UnaryInvertTests.swift -------------------------------*- swift -*-===//
+//===--- UnaryPlusTests.swift ---------------------------------*- swift -*-===//
 //
 // This source file is part of the Swift Numerics open source project
 //
@@ -12,32 +12,21 @@
 import XCTest
 @testable import BigInt
 
-class UnaryInvertTests: XCTestCase {
+class UnaryPlusTests: XCTestCase {
 
   func test_int() {
     for int in generateInts(approximateCount: 100) {
       let big = BigInt(int)
-      let result = ~big
-      let expected = BigInt(~int)
-      XCTAssertEqual(result, expected, "\(int)")
+      let result = +big
+      XCTAssertEqual(result, big, "\(int)")
     }
   }
 
   func test_big() {
     for p in generateBigInts(approximateCount: 100) {
       let big = p.create()
-      let result = ~big
-
-      // We always change sign, '0' becomes '-1'
-      XCTAssertNotEqual(result.isPositive, p.isPositive, "\(big)")
-
-      // 2 complement (equal magnitude opposite sign): (~x) + 1
-      let complement = result + 1
-      XCTAssertEqual(complement.magnitude, big.magnitude, "\(big)")
-
-      // x + (~x) = -1
-      let add = big + result
-      XCTAssertEqual(add, -1, "\(big)")
+      let result = +big
+      XCTAssertEqual(result, big, "\(big)")
     }
   }
 }

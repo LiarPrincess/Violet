@@ -77,7 +77,11 @@ public struct BigInt: SignedInteger,
   }
 
   public init<T: BinaryInteger>(_ value: T) {
-    if let smi = Smi(value) {
+    // Violet is a closed system, so no other >UInt64.max type is present.
+    // Otherwise this would be much more complicated.
+    if let big = value as? BigInt {
+      self = big
+    } else if let smi = Smi(value) {
       self.value = .smi(smi)
     } else {
       let heap = BigIntHeap(value)

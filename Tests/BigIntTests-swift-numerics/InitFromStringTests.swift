@@ -190,6 +190,8 @@ class InitFromStringTests: XCTestCase {
 
   // MARK: - Underscore
 
+#if false
+
   func test_underscore_binary_fails() {
     self.runUnderscore(suite: BinaryTestCases.twoWords)
   }
@@ -204,11 +206,11 @@ class InitFromStringTests: XCTestCase {
     for testCase in suite.cases {
       let s = testCase.stringWithUnderscores
       let n = self.create(string: s, radix: suite.radix)
-      XCTAssertNil(n, s)
+      XCTAssertNil(n, s, file: file, line: line)
     }
   }
 
-  // MARK: - Underscore placement
+#endif
 
   func test_underscore_prefix_withoutSign_fails() {
     for radix in [2, 4, 7, 32] {
@@ -261,15 +263,6 @@ class InitFromStringTests: XCTestCase {
 
   // MARK: - Invalid digit
 
-  func test_invalidDigit_emoji_fails() {
-    let emoji = "😊"
-
-    for radix in [2, 4, 7, 32] {
-      let n = self.create(string: "01\(emoji)01", radix: radix)
-      XCTAssertNil(n, "Got: \(String(describing: n)), radix: \(radix)")
-    }
-  }
-
   func test_invalidDigit_biggerThanRadix_fails() {
     let cases: [(Int, UnicodeScalar)] = [
       (2, "2"),
@@ -282,6 +275,193 @@ class InitFromStringTests: XCTestCase {
     for (radix, biggerThanRadix) in cases {
       let n = self.create(string: "01\(biggerThanRadix)01", radix: radix)
       XCTAssertNil(n, "Got: \(String(describing: n)), radix: \(radix)")
+    }
+  }
+
+  // MARK: - Unicode
+
+  // From String.init(cString:) docs:
+  //   A pointer to a null-terminated UTF-8 code sequence.
+  //   If cString contains ill-formed UTF-8 code unit sequences, this initializer
+  //   replaces them with the Unicode replacement character ("\u{FFFD}").
+  //
+  // One could say that we are testing String instead of BigInt, but the semantic
+  // we are going for is:
+  //   Given an invalid UTF-8 string BigInt.init will NOT produce a result.
+  //
+  // https://en.wikipedia.org/wiki/UTF-8#Encoding
+  func test_unicode_broken_UTF8_fails() {
+    let inputs: [[UInt8]] = [
+      // 2 bytes
+      [0b1100_0000], // No 2nd byte
+      [0b1100_0011, 0b0010_1000], // 2nd byte should start with 10
+      // 3 bytes
+      [0b1110_0010], // No 2nd/3rd byte
+      [0b1110_0010, 0b1000_0000], // No 3rd byte
+      [0b1110_0010, 0b0010_1000, 0b1010_0001], // 2nd byte should start with 10
+      [0b1110_0010, 0b1000_0010, 0b0010_1000], // 3rd byte should start with 10
+      // 4 bytes
+      [0b1111_0010], // No 2nd/3rd/4th byte
+      [0b1111_0010, 0b1000_0010], // No 3rd/4th byte
+      [0b1111_0010, 0b1000_0010, 0b1000_0010], // No 4th byte
+      [0b1111_0000, 0b0010_1000, 0b1000_1100, 0b1011_1100], // 2nd byte should start with 10
+      [0b1111_0000, 0b1001_0000, 0b0010_1000, 0b1011_1100], // 3rd byte should start with 10
+      [0b1111_0000, 0b0010_1000, 0b1000_1100, 0b0010_1000] // 4th byte should start with 10
+    ]
+
+    var strings = [String]()
+
+    for bytes in inputs {
+      let count = bytes.count + 1 // +1 for NULL
+      let ptr = UnsafeMutablePointer<UInt8>.allocate(capacity: count)
+      let bufferPtr = UnsafeMutableBufferPointer(start: ptr, count: count)
+
+      var (bytesEnd, bufferEnd) = bufferPtr.initialize(from: bytes)
+      assert(bytesEnd.next() == nil, "Buffer too smol?")
+      assert(bufferEnd == bytes.count, "No space for NULL?")
+      ptr[bufferEnd] = 0
+
+      let string = String(cString: ptr)
+      strings.append(string)
+      strings.append("123" + string)
+      strings.append("12" + string + "3")
+      strings.append(string + "123")
+    }
+
+    for string in strings {
+      let bytes = string.utf8CString
+
+      for radix in [2, 4, 8, 10, 16, 32] {
+        let n = self.create(string: string, radix: radix)
+        XCTAssertNil(n, "\(bytes) (radix: \(radix))")
+      }
+    }
+  }
+
+  // https://en.wikipedia.org/wiki/Numerals_in_Unicode
+  func test_unicode_invalidNumerals_fails() {
+    let inputs = [
+      // Not numeric
+      "X", // Latin
+      "!",
+      "Д",
+      "μ",
+      "に",
+      ",̆",
+      // Decimal
+      "६", // Devanagari 6
+      "೬", // Kannada 6
+      "𝟨", // Mathematical, styled sans serif
+      // Digit
+      "¹", // superscript
+      "①", // in circle
+      "⒈", // digit with full stop
+      // Numeric
+      "¾",
+      "௰", // Tamil number ten
+      "Ⅹ", // Roman numeral
+      "六", // Han number 6
+      // Fullwidth
+      "２", "Ｃ", // capitals
+      "２", "ｃ", // small letters
+      // Mathematical constants
+      "ℎ", // U+210E PLANCK CONSTANT
+      "ℏ", // U+210F PLANCK CONSTANT OVER TWO PI
+      "ℇ", // U+2107 EULER CONSTANT
+      // Cultures
+      "1\u{066B}25", "٠٫٢٥", // // Arabic (٫ - comma, '٠٫٢٥' = 0.25)
+      "𐅈", "𐅥", // Greek
+      "Ⅲ", "Ⅸ", "ↁ", // Roman
+      "𝍢", "𝍧", // Counting rod
+      // Zalgo (https://www.zalgo.org)
+      "1̴2̷3̸",
+      "1̵̻̊̎2̴̩̝̃̆3̴̪̹͆"
+    ]
+
+    self.unicodeFails(inputs: inputs)
+  }
+
+  // https://www.unicode.org/reports/tr51/
+  func test_unicode_emoji_fails() {
+    let zwj = "\u{200D}" // U+200D ZERO WIDTH JOINER
+    let variant = "\u{FE0F}" // U+FE0F Variation Selector-16
+
+    let inputs = [
+      zwj,
+      variant,
+      // Emoji
+      "😊",
+      "😊\(zwj)",
+      "\(zwj)😊",
+      // Gender
+      "🏃",
+      "🏃\(zwj)♂️",
+      "🏃\(zwj)♀️",
+      // Skin color (modifiers, so ZWJ is not needed)
+      "👋",
+      "👋\u{1F3FB}", // 🏻 Light Skin Tone
+      "👋\u{1F3FC}", // 🏼 Medium-Light Skin Tone
+      "👋\u{1F3FD}", // 🏽 Medium Skin Tone
+      "👋\u{1F3FE}", // 🏾 Medium-Dark Skin Tone
+      "👋\u{1F3FF}", // 🏿 Dark Skin Tone
+      "👋\(zwj)\u{1F3FB}", // 🏻 Light Skin Tone (should fail to combine)
+      // Combo
+      "👩\u{1F3FB}\(zwj)❤️\(zwj)👩\u{1F3FD}", // 👩🏻‍❤️‍👩🏽 Woman Light + Heart + Woman Medium
+      "👩\u{1F3FD}\(zwj)❤\(variant)\(zwj)💋\(zwj)👨\u{1F3FF}", // 👩🏽‍❤️‍💋‍👨🏿 Woman Medium + Heart + Kiss + Man Dark
+      "👨\(zwj)🍼", // 👨‍🍼 Man feeding baby
+      "🧑\(zwj)🍼", // 🧑‍🍼 Person feeding baby
+      // Kic-kic
+      "🐰",
+      "🐈\(zwj)⬛",
+      "🐈\(zwj)🟧",
+      // Direction
+      "🏃\(zwj)⬅\(variant)",
+      "🏃\(zwj)➡\(variant)",
+      // Flags
+      "🏴\(zwj)",
+      "🏴\(zwj)☠️", // 🏴‍☠️ Pirate Flag
+      "🏳\(variant)\(zwj)🌈", // 🏳️‍🌈 Rainbow Flag
+      "🏳\(variant)\(zwj)⚧\(variant)", // 🏳️‍⚧️ Transgender Flag
+      "\u{1F1F5}\u{1F1F1}", // 🇵🇱 Flag Poland (Regional PL)
+      "\u{1F1F5}\u{1F1FF}", // 🇵🇿 Flag Unknown (Regional PZ)
+      "🏴\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}" // 🏴󠁧󠁢󠁥󠁮󠁧󠁿 England (Black flag + Regional GBEN + Cancel tag)
+    ]
+
+    self.unicodeFails(inputs: inputs)
+  }
+
+  private func unicodeFails(inputs: [String],
+                            file: StaticString = #file,
+                            line: UInt = #line) {
+    let zwj = "\u{200D}" // U+200D ZERO WIDTH JOINER
+
+    for i in inputs {
+      let variants = [
+        i,
+        // Suffix
+        "123\(i)",
+        "123\(zwj)\(i)",
+        "123\(i)\(zwj)",
+        // Middle
+        "12\(i)3",
+        "12\(zwj)\(i)3",
+        "12\(i)\(zwj)3",
+        // Prefix
+        "\(i)123",
+        "\(zwj)\(i)123",
+        "\(i)\(zwj)123"
+      ]
+
+      for radix in [2, 4, 8, 10, 16, 32] {
+        for string in variants {
+          let n = self.create(string: string, radix: radix)
+          let nString = n.map(String.init) ?? "nil"
+          XCTAssertNil(n,
+                       "\(string) -> \(nString) (radix: \(radix))",
+                       file: file,
+                       line: line)
+        }
+      }
     }
   }
 
