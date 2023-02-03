@@ -145,10 +145,6 @@ public struct BigInt: SignedInteger,
 
   // MARK: - Unary operators
 
-  public static prefix func + (value: BigInt) -> BigInt {
-    return value
-  }
-
   public static prefix func - (value: BigInt) -> BigInt {
     switch value.value {
     case .smi(let smi):
