@@ -254,7 +254,8 @@ extension BigIntHeap {
     let divisorHighWords = (shiftedDivisor[n - 1], shiftedDivisor[n - 2])
     // This will hold 'divisor * quotientGuess',
     // so that we do not have to allocate on every iteration.
-    var mulBuffer = BigIntStorage(minimumCapacity: n + 1)
+    var mulBuffer = TemporaryWordBuffer(capacity: n + 1)
+    defer { mulBuffer.deallocate() }
 
     // D2. D7.
     // Iterate over the dividend's digit (like the 'grad school' algorithm).
@@ -384,10 +385,10 @@ extension BigIntHeap {
                                  rhs: BigIntStorage,
                                  startIndex: Int) -> Word {
     var carry: Word = 0
+
     for i in 0..<rhs.count {
       let (word1, overflow1) = lhs[startIndex + i].addingReportingOverflow(rhs[i])
       let (word2, overflow2) = word1.addingReportingOverflow(carry)
-
       lhs[startIndex + i] = word2
       carry = (overflow1 ? 1 : 0) + (overflow2 ? 1 : 0)
     }
@@ -400,13 +401,13 @@ extension BigIntHeap {
   ///
   /// Returns the `borrow` (0 or 1).
   private static func inPlaceSub(lhs: inout BigIntStorage,
-                                 rhs: BigIntStorage,
+                                 rhs: TemporaryWordBuffer,
                                  startIndex: Int) -> Word {
     var borrow: Word = 0
+
     for i in 0..<rhs.count {
       let (word1, borrow1) = lhs[startIndex + i].subtractingReportingOverflow(rhs[i])
       let (word2, borrow2) = word1.subtractingReportingOverflow(borrow)
-
       lhs[startIndex + i] = word2
       borrow = (borrow1 ? 1 : 0) + (borrow2 ? 1 : 0)
     }
@@ -418,15 +419,14 @@ extension BigIntHeap {
   /// `result` and `lhs` may be the same BigInt for in-place modification.
   private static func internalMultiply(lhs: BigIntStorage,
                                        rhs: Word,
-                                       into result: inout BigIntStorage) {
+                                       into result: inout TemporaryWordBuffer) {
+    var carry: Word = 0
     result.removeAll()
 
-    var carry: Word = 0
     for i in 0..<lhs.count {
       let (high, low) = lhs[i].multipliedFullWidth(by: rhs)
       let (word, overflow) = low.addingReportingOverflow(carry)
       result.append(word)
-
       carry = high &+ (overflow ? 1 : 0)
     }
 

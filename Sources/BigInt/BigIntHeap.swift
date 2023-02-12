@@ -62,7 +62,7 @@ internal struct BigIntHeap: Equatable, Hashable {
 
   internal init<T: BinaryInteger>(_ value: T) {
     // Assuming that biggest 'BinaryInteger' in Swift is representable by 'Word'.
-    let isNegative = value.isNegative
+    let isNegative = value < .zero
     let magnitude = Word(value.magnitude)
     self.storage = BigIntStorage(isNegative: isNegative, magnitude: magnitude)
   }

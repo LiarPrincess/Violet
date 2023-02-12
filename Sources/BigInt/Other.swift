@@ -1,24 +1,33 @@
-// MARK: - BinaryInteger + predicates
+// MARK: - Integer + predicates
 
-extension BinaryInteger {
+// Yes, this code is repeated 3 times.
+// This is for performance reasons, because even in RELEASE builds we would see:
+// 'protocol witness for FixedWidthInteger...' in instruments.
 
-  internal var isZero: Bool {
-    return self == .zero
-  }
-
+extension Smi.Storage {
+  internal var isZero: Bool { return self == 0 }
   /// Including `0`.
-  internal var isPositive: Bool {
-    return self >= .zero
-  }
-
-  internal var isNegative: Bool {
-    return self < .zero
-  }
+  internal var isPositive: Bool { return self >= 0 }
+  internal var isNegative: Bool { return self < 0 }
 }
 
-// MARK: - FixedWidthInteger + full width
+extension BigIntStorage.Word {
+  internal var isZero: Bool { return self == 0 }
+  /// Including `0`.
+  internal var isPositive: Bool { return self >= 0 }
+  internal var isNegative: Bool { return self < 0 }
+}
 
-extension FixedWidthInteger {
+extension Int {
+  internal var isZero: Bool { return self == 0 }
+  /// Including `0`.
+  internal var isPositive: Bool { return self >= 0 }
+  internal var isNegative: Bool { return self < 0 }
+}
+
+// MARK: - Word + full width
+
+extension BigIntStorage.Word {
 
   internal typealias FullWidthAdd = (carry: Self, result: Self)
 
@@ -55,9 +64,9 @@ extension FixedWidthInteger {
   }
 }
 
-// MARK: - FixedWidthInteger + maxRepresentablePower
+// MARK: - Word + maxRepresentablePower
 
-extension FixedWidthInteger {
+extension BigIntStorage.Word {
 
   /// Returns the highest number that satisfy `radix^n <= 2^Self.bitWidth`
   internal static func maxRepresentablePower(of radix: Int) -> (n: Int, power: Self) {
@@ -77,9 +86,9 @@ extension FixedWidthInteger {
   }
 }
 
-// MARK: - UInt + asSmi
+// MARK: - Word + asSmi
 
-extension UInt {
+extension BigIntStorage.Word {
 
   internal func asSmiIfPossible(isNegative: Bool) -> Smi.Storage? {
     let isPositive = !isNegative

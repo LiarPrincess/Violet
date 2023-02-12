@@ -360,6 +360,26 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
     self.count = 0
   }
 
+  // MARK: - Replace all
+
+  /// Replace all of the `Word`s with the contents of the buffer.
+  internal mutating func replaceAll<C: Collection>(
+    withContentsOf other: C
+  ) where C.Element == Word {
+    let newCount = other.count
+    self.guaranteeUniqueBufferReference(withMinimumCapacity: newCount)
+
+    self.buffer.withUnsafeMutablePointerToElements { startPtr in
+      var ptr = startPtr
+      for word in other {
+        ptr.pointee = word
+        ptr = ptr.successor()
+      }
+    }
+
+    self.count = newCount
+  }
+
   // MARK: - Set
 
   internal mutating func setToZero() {
@@ -442,13 +462,15 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
     }
   }
 
-  internal func checkInvariants(source: StaticString = #function) {
+  internal func checkInvariants() {
+#if DEBUG
     if let last = self.last {
-      assert(last != 0, "\(source): zero prefix in BigInt")
+      assert(last != 0, "zero prefix in BigInt")
     } else {
-      // 'self.data' is empty
-      assert(!self.isNegative, "\(source): isNegative with empty data")
+      // 'self.data' is empty = we are '0'
+      assert(!self.isNegative, "isNegative with empty data")
     }
+#endif
   }
 
   // MARK: - Unique

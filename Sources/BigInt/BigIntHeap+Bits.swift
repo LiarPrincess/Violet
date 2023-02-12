@@ -58,7 +58,6 @@ extension BigIntHeap {
   internal mutating func invert() {
     self.add(other: 1)
     self.negate()
-    self.checkInvariants()
   }
 
   // MARK: - And
