@@ -24,7 +24,8 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
 
   private struct Header {
 
-    fileprivate static let signMask = UInt(1) << (UInt.bitWidth - 1)
+    fileprivate typealias Storage = UInt
+    fileprivate static let signMask = Storage(1) << (Storage.bitWidth - 1)
     fileprivate static let countMask = ~Self.signMask
 
     /// We store both sign and count in a single field.
@@ -40,12 +41,12 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
     /// `-0` could be useful when the user decides to set sign first
     /// and then magnitude. If the current value is `0` then even though user
     /// would set `sign` to negative `Swift` would still treat it as positive (`+0`).
-    fileprivate var signAndCount: UInt
+    fileprivate var signAndCount: Storage
 
     fileprivate init(isNegative: Bool, count: Int) {
       assert(count >= 0)
       let sign = isNegative ? Self.signMask : 0
-      self.signAndCount = sign | count.magnitude
+      self.signAndCount = sign | Storage(count)
     }
   }
 
@@ -178,8 +179,7 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
   }
 
   /// IMPORTANT: Created buffer will contain uninitialized memory!
-  private static func createBuffer(header: Header,
-                                   minimumCapacity: Int) -> Buffer {
+  private static func createBuffer(header: Header, minimumCapacity: Int) -> Buffer {
     // swiftlint:disable:next trailing_closure
     return Buffer(
       bufferClass: LetItGo.self,
@@ -188,8 +188,31 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
     )
   }
 
-  // MARK: - Subscript
+  // MARK: - Word access
 
+  /// Read only access to buffer.
+  internal func withWordsBuffer<R>(_ fn: (UnsafeBufferPointer<Word>) -> R) -> R {
+    return self.buffer.withUnsafeMutablePointerToElements { ptr in
+      let bufferPtr = UnsafeBufferPointer(start: ptr, count: self.count)
+      return fn(bufferPtr)
+    }
+  }
+
+  /// Mutable access to buffer.
+  ///
+  /// Do NOT call any of the potentially reallocating methods (`append` etc.)
+  /// in the closure! They will invalidate the buffer pointer.
+  internal func withMutableWordsBuffer<R>(
+    _ token: UniqueBufferToken,
+    _ fn: (UnsafeMutableBufferPointer<Word>) -> R
+  ) -> R {
+    return self.buffer.withUnsafeMutablePointerToElements { ptr in
+      let bufferPtr = UnsafeMutableBufferPointer(start: ptr, count: self.count)
+      return fn(bufferPtr)
+    }
+  }
+
+  @available(*, deprecated, message: "Use 'with[Mutable]WordsBuffer' instead")
   internal subscript(index: Int) -> Word {
     get {
       self.checkBounds(index: index)
@@ -225,6 +248,18 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
     self.count += 1
   }
 
+  /// Add given `Word` to the buffer.
+  internal mutating func append(_ token: UniqueBufferToken, element: Word) {
+    let newCount = self.count + 1
+    self.reserveCapacity(token, capacity: newCount)
+
+    self.buffer.withUnsafeMutablePointerToElements { ptr in
+      ptr.advanced(by: self.count).pointee = element
+    }
+
+    self.count += 1
+  }
+
   /// Add all of the `Word`s from given collection to the buffer.
   internal mutating func append<C: Collection>(
     contentsOf other: C
@@ -235,6 +270,29 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
 
     let newCount = self.count + other.count
     self.guaranteeUniqueBufferReference(withMinimumCapacity: newCount)
+
+    self.buffer.withUnsafeMutablePointerToElements { startPtr in
+      var ptr = startPtr.advanced(by: self.count)
+      for word in other {
+        ptr.pointee = word
+        ptr = ptr.successor()
+      }
+    }
+
+    self.count = newCount
+  }
+
+  /// Add all of the `Word`s from given collection to the buffer.
+  internal mutating func append<C: Collection>(
+    _ token: UniqueBufferToken,
+    contentsOf other: C
+  ) where C.Element == Word {
+    if other.isEmpty {
+      return
+    }
+
+    let newCount = self.count + other.count
+    self.reserveCapacity(token, capacity: newCount)
 
     self.buffer.withUnsafeMutablePointerToElements { startPtr in
       var ptr = startPtr.advanced(by: self.count)
@@ -352,12 +410,20 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
     self.guaranteeUniqueBufferReference(withMinimumCapacity: capacity)
   }
 
+  internal mutating func reserveCapacity(_ token: UniqueBufferToken, capacity: Int) {
+    self.guaranteeUniqueBufferReference(withMinimumCapacity: capacity)
+  }
+
   // MARK: - Remove all
 
   internal mutating func removeAll() {
     // We do not have to call 'self.guaranteeUniqueBufferReference'
     // because 'self.count' will do it anyway.
     self.count = 0
+  }
+
+  private mutating func removeAll(_ token: UniqueBufferToken) {
+    self.setCount(token, value: 0)
   }
 
   // MARK: - Replace all
@@ -398,6 +464,17 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
       self.removeAll()
       self.isNegative = false
       self.append(value)
+    }
+  }
+
+  /// Set `self` to represent given `UInt`.
+  internal mutating func setTo(_ token: UniqueBufferToken, value: UInt) {
+    if value == 0 {
+      self.setToZero()
+    } else {
+      self.removeAll(token)
+      self.setIsNegative(token, value: false)
+      self.append(token, element: value)
     }
   }
 
@@ -475,9 +552,16 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
 
   // MARK: - Unique
 
-  private mutating func guaranteeUniqueBufferReference() {
+  /// Token confirming exclusive access to buffer.
+  ///
+  /// All of the `mutating` methods will require token as a proof of buffer ownership.
+  internal struct UniqueBufferToken {
+    internal init () {}
+  }
+
+  internal mutating func guaranteeUniqueBufferReference() -> UniqueBufferToken {
     if self.buffer.isUniqueReference() {
-      return
+      return UniqueBufferToken()
     }
 
     // Well… shit
@@ -488,13 +572,14 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
 
     Self.memcpy(dst: new, src: self.buffer, count: self.count)
     self.buffer = new
+    return UniqueBufferToken()
   }
 
   private mutating func guaranteeUniqueBufferReference(
     withMinimumCapacity minimumCapacity: Int
-  ) {
+  ) -> UniqueBufferToken {
     if self.buffer.isUniqueReference() && self.capacity >= minimumCapacity {
-      return
+      return UniqueBufferToken()
     }
 
     // Well… shit, we have to allocate new buffer,
@@ -509,6 +594,7 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
 
     Self.memcpy(dst: new, src: self.buffer, count: self.count)
     self.buffer = new
+    return UniqueBufferToken()
   }
 
   private static func memcpy(dst: Buffer, src: Buffer, count: Int) {

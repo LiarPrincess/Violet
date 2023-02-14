@@ -4,163 +4,185 @@ extension BigIntHeap {
 
   // MARK: - Smi
 
+  /// May REALLOCATE BUFFER -> invalidates tokens
   internal mutating func sub(other: Smi.Storage) {
-    defer { self.checkInvariants() }
-
-    if other.isZero {
-      return
-    }
-
     // Just using '-' may overflow!
-    let word = Word(other.magnitude)
+    let otherMagnitude = Word(other.magnitude)
 
-    if self.isZero {
-      self.storage.append(word)
-      self.storage.isNegative = !other.isNegative
-      return
+    if other.isPositive {
+      self.sub(other: otherMagnitude) // x - y
+    } else {
+      self.add(other: otherMagnitude) // x - (-y) = x + y
     }
-
-    // We can simply add magnitudes when:
-    // - self.isNegative && other.isPositive (for example: -5 - 6 = -11)
-    // - self.isPositive && other.isNegative (for example:  5 - (-6) = 5 + 6 = 11)
-    // which is the same as:
-    if self.isNegative != other.isNegative {
-      Self.addMagnitude(lhs: &self.storage, rhs: word)
-      return
-    }
-
-    // Both have the same sign, for example '1 - 1' or '-2 - (-3)'.
-    self.subSameSign(other: word)
   }
 
   // MARK: - Word
 
+  /// May REALLOCATE BUFFER -> invalidates tokens
   internal mutating func sub(other: Word) {
+    if other.isZero {
+      return
+    }
+
+    // 0 - x = -x
+    if self.isZero {
+      let token = self.storage.guaranteeUniqueBufferReference()
+      self.storage.setTo(token, value: other)
+      self.negate()
+      return
+    }
+
     defer { self.checkInvariants() }
 
-    // Different sign: 'self' negative, 'other' positive: -1 - 2
     if self.isNegative {
-      Self.addMagnitude(lhs: &self.storage, rhs: other)
+      // Different sign: 'self' negative, 'other' positive: -1 - 2
+      let token = self.storage.guaranteeUniqueBufferReference()
+      Self.addMagnitude(token, lhs: &self.storage, rhs: other)
       return
     }
 
-    // Same sign: both positive
-    assert(self.isPositive)
-    self.subSameSign(other: other)
-  }
-
-  /// Case when we have the same sign, for example '1 - 1' or '-2 - (-3)'.
-  /// That means that we may need to cross 0.
-  private mutating func subSameSign(other: Word) {
-    if self.isZero {
-      self.storage.isNegative = true
-      self.storage.append(other)
-      return
-    }
-
+    /// Same sign -> we may need to cross 0.
+    /// For example '1 - 1' or '-2 - (-3)'.
     switch self.compareMagnitude(with: other) {
     case .equal: // 1 - 1
       self.storage.setToZero()
 
     case .less: // 1 - 2 = -(-1 + 2)  = -(2 - 1), we are changing sign
       let changedSign = !self.isNegative
-      let result = other - self.storage[0]
-      self.storage.set(to: result)
-      self.storage.isNegative = changedSign
+      let word = self.storage.withWordsBuffer { $0[0] }
+      let token = self.storage.guaranteeUniqueBufferReference()
+      self.storage.setTo(token, value: other - word)
+      self.storage.setIsNegative(token, value: changedSign)
 
     case .greater: // 2 - 1, sign stays the same
-      Self.subMagnitude(bigger: &self.storage, smaller: other)
+      let token = self.storage.guaranteeUniqueBufferReference()
+      Self.subMagnitude(token, bigger: &self.storage, smaller: other)
       self.fixInvariants() // Fix possible '0' prefix
     }
   }
 
-  internal static func subMagnitude(bigger: inout BigIntStorage,
-                                    smaller: Word) {
+  /// May REALLOCATE BUFFER -> invalidates tokens
+  internal static func subMagnitude(
+    _ biggerToken: UniqueBufferToken,
+    bigger: inout BigIntStorage,
+    smaller: Word
+  ) {
     if smaller.isZero {
       return
     }
 
-    var borrow = smaller
-    for i in 0..<bigger.count {
-      (borrow, bigger[i]) = bigger[i].subtractingFullWidth(borrow)
+    let borrow = bigger.withMutableWordsBuffer(biggerToken) { bigger -> Word in
+      var borrow = smaller
 
-      if borrow == 0 {
-        return
+      for i in 0..<bigger.count {
+        (borrow, bigger[i]) = bigger[i].subtractingFullWidth(borrow)
+
+        if borrow == 0 {
+          return 0
+        }
       }
+
+      return borrow
     }
 
-    trap("subMagnitude: bigger < smaller")
+    if borrow != 0 {
+      trap("subMagnitude: bigger < smaller")
+    }
   }
 
   // MARK: - Heap
 
   internal mutating func sub(other: BigIntHeap) {
-    defer { self.checkInvariants() }
-
     if other.isZero {
       return
     }
 
-    // 0 - x = -x and 0 - (-x) = x
+    // 0 - x = -x
+    // 0 - (-x) = x
     if self.isZero {
       self.storage = other.storage
-      self.storage.isNegative.toggle()
+      self.negate()
       return
     }
+
+    defer { self.checkInvariants() }
 
     // We can simply add magnitudes when:
-    // - self.isNegative && other.isPositive (for example: -5 - 6 = -11)
-    // - self.isPositive && other.isNegative (for example:  5 - (-6) = 5 + 6 = 11)
-    // which is the same as:
+    // - self.isNegative && other.isPositive: -5 - 6 = -11
+    // - self.isPositive && other.isNegative:  5 - (-6) = 5 + 6 = 11
     if self.isNegative != other.isNegative {
-      Self.addMagnitudes(lhs: &self.storage, rhs: other.storage)
+      let token = self.storage.guaranteeUniqueBufferReference()
+      Self.addMagnitudes(token, lhs: &self.storage, rhs: other.storage)
       return
     }
 
-    // Both have the same sign, for example '1 - 1' or '-2 - (-3)'.
-    // That means that we may need to cross 0.
+    // -x - (-y) = -x + y = -(x - y) = -(x + (-y))
+    if self.isNegative && other.isNegative {
+      self.negate() // -x -> x
+      self.add(other: other) // x + (-y)
+      self.negate() // -(x + (-y))
+      self.fixInvariants()
+      return
+    }
+
+    // Same sign -> we may need to cross 0.
+    // For example '1 - 1' or '-2 - (-3)'.
+    assert(self.isPositive && other.isPositive)
+
     switch self.compareMagnitude(with: other) {
     case .equal: // 1 - 1
       self.storage.setToZero()
 
     case .less: // 1 - 2 = -(-1 + 2)  = -(2 - 1), we are changing sign
       let changedSign = !self.isNegative
-
       var otherCopy = other.storage
-      Self.subMagnitudes(bigger: &otherCopy, smaller: self.storage)
+      let otherToken = otherCopy.guaranteeUniqueBufferReference()
+
+      Self.subMagnitudes(otherToken, bigger: &otherCopy, smaller: self.storage)
+      otherCopy.setIsNegative(otherToken, value: changedSign)
+      otherCopy.fixInvariants() // Fix possible '0' prefix
+
       self.storage = otherCopy
 
-      self.storage.isNegative = changedSign
-      self.fixInvariants() // Fix possible '0' prefix
-
     case .greater: // 2 - 1
-      Self.subMagnitudes(bigger: &self.storage, smaller: other.storage)
+      let token = self.storage.guaranteeUniqueBufferReference()
+      Self.subMagnitudes(token, bigger: &self.storage, smaller: other.storage)
       self.fixInvariants() // Fix possible '0' prefix
     }
   }
 
   /// Will NOT look at the sign of any of those numbers!
   /// Only at the magnitude.
-  internal static func subMagnitudes(bigger: inout BigIntStorage,
-                                     smaller: BigIntStorage) {
+  internal static func subMagnitudes(
+    _ biggerToken: UniqueBufferToken,
+    bigger: inout BigIntStorage,
+    smaller: BigIntStorage
+  ) {
     if smaller.isZero {
       return
     }
 
-    var borrow: Word = 0
-    for i in 0..<smaller.count {
-      (borrow, bigger[i]) = bigger[i].subtractingFullWidth(smaller[i], borrow)
-    }
+    let borrow = bigger.withMutableWordsBuffer(biggerToken) { bigger -> Word in
+      return smaller.withWordsBuffer { smaller -> Word in
+        var borrow: Word = 0
 
-    for i in smaller.count..<bigger.count {
-      if borrow == 0 {
-        break
+        for i in 0..<smaller.count {
+          (borrow, bigger[i]) = bigger[i].subtractingFullWidth(smaller[i], borrow)
+        }
+
+        for i in smaller.count..<bigger.count {
+          if borrow == 0 {
+            return 0
+          }
+
+          (borrow, bigger[i]) = bigger[i].subtractingFullWidth(borrow)
+        }
+
+        return borrow
       }
-
-      (borrow, bigger[i]) = bigger[i].subtractingFullWidth(borrow)
     }
 
-    guard borrow == 0 else {
+    if borrow != 0 {
       trap("subMagnitude: bigger < smaller")
     }
   }

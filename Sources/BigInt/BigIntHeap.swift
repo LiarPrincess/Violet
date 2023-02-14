@@ -1,6 +1,8 @@
 internal struct BigIntHeap: Equatable, Hashable {
 
   internal typealias Word = BigIntStorage.Word
+  /// Token confirming exclusive access to buffer.
+  internal typealias UniqueBufferToken = BigIntStorage.UniqueBufferToken
 
   // MARK: - Properties
 
@@ -46,7 +48,7 @@ internal struct BigIntHeap: Equatable, Hashable {
   }
 
   internal var hasMagnitudeOfOne: Bool {
-    return self.storage.count == 1 && self.storage[0] == 1
+    return self.storage.withWordsBuffer { $0.count == 1 && $0[0] == 1 }
   }
 
   // MARK: - Init
@@ -94,7 +96,8 @@ internal struct BigIntHeap: Equatable, Hashable {
       return nil
     }
 
-    let word = self.storage[0]
+    let word = self.storage.withWordsBuffer { $0[0] }
+
     if let storage = word.asSmiIfPossible(isNegative: self.isNegative) {
       return Smi(storage)
     }
