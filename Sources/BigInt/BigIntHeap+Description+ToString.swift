@@ -30,20 +30,22 @@ extension BigIntHeap: CustomStringConvertible {
     }
 
     if self.isPowerOf2(value: radix) {
-      return self.radixIsPowerOfTwo(radix: radix, uppercase: uppercase)
+      return self.storage.withWordsBuffer { words in
+        return Self.radixIsPowerOfTwo(isNegative: self.isNegative,
+                                      words: words,
+                                      radix: radix,
+                                      uppercase: uppercase)
+      }
     }
 
     if self.storage.count == 1 {
-      let word = self.storage[0]
+      let sign = self.isNegative ? "-" : ""
+      let word = self.storage.withWordsBuffer { $0[0] }
       let wordString = String(word, radix: radix, uppercase: uppercase)
-      return self.signString + wordString
+      return sign + wordString
     }
 
     return self.generic(radix: radix, uppercase: uppercase)
-  }
-
-  private var signString: String {
-    return self.isNegative ? "-" : ""
   }
 
   private func isPowerOf2(value: Int) -> Bool {
@@ -53,9 +55,13 @@ extension BigIntHeap: CustomStringConvertible {
   // MARK: - Radix is power of 2
 
   // swiftlint:disable:next function_body_length
-  private func radixIsPowerOfTwo(radix: Int, uppercase: Bool) -> String {
-    assert(!self.isZero)
-
+  private static func radixIsPowerOfTwo(
+    isNegative: Bool,
+    words: UnsafeBufferPointer<Word>,
+    radix: Int,
+    uppercase: Bool
+  ) -> String {
+    assert(!words.isEmpty)
     let characterSet = uppercase ? uppercaseDigits : lowercaseDigits
 
     // We will treat all of our words as a single continuous buffer
@@ -79,15 +85,16 @@ extension BigIntHeap: CustomStringConvertible {
     // For 1st word we will just skip all of the leading '0',
     // but the tricky part is that we still have to align it to 'bitsPerChar'.
     var alreadyProcessedBitCount: Int = {
-      let leadingZeroCount = self.storage[self.storage.count - 1].leadingZeroBitCount
-      let bitWidth = self.storage.count * Word.bitWidth - leadingZeroCount
+      let leadingZeroCount = words[words.count - 1].leadingZeroBitCount
+      let bitWidth = words.count * Word.bitWidth - leadingZeroCount
       let totalCharCount = (bitWidth + bitsPerChar - 1) / bitsPerChar
-      return self.storage.count * Word.bitWidth - totalCharCount * bitsPerChar
+      return words.count * Word.bitWidth - totalCharCount * bitsPerChar
     }()
 
-    var result = self.signString
-    for i in stride(from: self.storage.count - 1, through: 0, by: -1) {
-      let word = self.storage[i]
+    var result = isNegative ? "-" : ""
+
+    for i in stride(from: words.count - 1, through: 0, by: -1) {
+      let word = words[i]
 
       // Extract as many 'chars' as we can from this word
       let usableBitCountInWord = Word.bitWidth - alreadyProcessedBitCount
@@ -107,7 +114,7 @@ extension BigIntHeap: CustomStringConvertible {
 
         let otherWordSplitBitCount = bitsPerChar - thisWordSplitBitCount
         let thisWordPart = word << otherWordSplitBitCount
-        let otherWordPart = self.storage[i - 1] >> (Word.bitWidth - otherWordSplitBitCount)
+        let otherWordPart = words[i - 1] >> (Word.bitWidth - otherWordSplitBitCount)
 
         let charBits = (thisWordPart | otherWordPart) & charMask
         let digit = characterSet[Int(charBits)]
@@ -146,8 +153,8 @@ extension BigIntHeap: CustomStringConvertible {
     }
 
     assert(!remainders.isEmpty)
+    var result = self.isNegative ? "-" : ""
 
-    var result = self.signString
     for (index, remainder) in remainders.reversed().enumerated() {
       let s = String(remainder, radix: radix, uppercase: uppercase)
 
