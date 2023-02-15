@@ -47,7 +47,8 @@ extension BigIntHeap {
       return
     }
 
-    self.storage.isNegative.toggle()
+    let token = self.storage.guaranteeUniqueBufferReference()
+    self.storage.toggleIsNegative(token)
     self.checkInvariants()
   }
 
@@ -56,15 +57,13 @@ extension BigIntHeap {
   /// void
   /// mpz_com (mpz_t r, const mpz_t u)
   internal mutating func invert() {
-    self.add(other: 1)
+    self.add(other: Word(1))
     self.negate()
   }
 
   // MARK: - And
 
   internal mutating func and(other: Smi.Storage) {
-    defer { self.checkInvariants() }
-
     if self.isZero {
       return
     }
@@ -81,11 +80,13 @@ extension BigIntHeap {
       return
     }
 
+    defer { self.checkInvariants() }
+
     // Just using '-' may overflow!
     let otherWord = Word(other.magnitude)
 
     assert(!self.storage.isEmpty, "Unexpected '0'")
-    let selfWord = self.storage[0]
+    let selfWord = self.storage.withWordsBuffer { $0[0] }
 
     self.storage.removeAll()
     self.storage.append(selfWord & otherWord)
@@ -100,8 +101,6 @@ extension BigIntHeap {
   ///
   /// Variable names mostly taken from GMP.
   internal mutating func and(other: BigIntHeap) {
-    defer { self.checkInvariants() }
-
     if self.isZero {
       return
     }
@@ -110,6 +109,8 @@ extension BigIntHeap {
       self.storage.setToZero()
       return
     }
+
+    defer { self.checkInvariants() }
 
     // 'v' is smaller, 'u' is bigger
     let v = self.storage.count <= other.storage.count ? self.storage : other.storage
@@ -127,37 +128,44 @@ extension BigIntHeap {
     // If the smaller input is positive, higher words don't matter.
     let resultCount = v.isPositive ? v.count : u.count
     var result = BigIntStorage(repeating: 0, count: resultCount + Int(bothNegative))
+    let token = result.guaranteeUniqueBufferReference()
 
-    for i in 0..<v.count {
-      let ul = (u[i] ^ uMask) &+ uIsNegative
-      uIsNegative = (ul < uIsNegative).asWord
+    result.withMutableWordsBuffer(token) { result in
+      u.withWordsBuffer { u in
+        v.withWordsBuffer { v in
+          for i in 0..<v.count {
+            let ul = (u[i] ^ uMask) &+ uIsNegative
+            uIsNegative = (ul < uIsNegative).asWord
 
-      let vl = (v[i] ^ vMask) &+ vIsNegative
-      vIsNegative = (vl < vIsNegative).asWord
+            let vl = (v[i] ^ vMask) &+ vIsNegative
+            vIsNegative = (vl < vIsNegative).asWord
 
-      let rl = ((ul & vl) ^ bothNegativeMask) &+ bothNegative
-      bothNegative = (rl < bothNegative).asWord
+            let rl = ((ul & vl) ^ bothNegativeMask) &+ bothNegative
+            bothNegative = (rl < bothNegative).asWord
 
-      result[i] = rl
+            result[i] = rl
+          }
+
+          assert(vIsNegative == 0)
+
+          for i in v.count..<resultCount {
+            let ul = (u[i] ^ uMask) &+ uIsNegative
+            uIsNegative = (ul < uIsNegative).asWord
+
+            let rl = ((ul & vMask) ^ bothNegativeMask) &+ bothNegative
+            bothNegative = (rl < bothNegative).asWord
+
+            result[i] = rl
+          }
+
+          if bothNegative.isTrue {
+            result[resultCount] = bothNegative
+          }
+        }
+      }
     }
 
-    assert(vIsNegative == 0)
-
-    for i in v.count..<resultCount {
-      let ul = (u[i] ^ uMask) &+ uIsNegative
-      uIsNegative = (ul < uIsNegative).asWord
-
-      let rl = ((ul & vMask) ^ bothNegativeMask) &+ bothNegative
-      bothNegative = (rl < bothNegative).asWord
-
-      result[i] = rl
-    }
-
-    if bothNegative.isTrue {
-      result[resultCount] = bothNegative
-    }
-
-    result.isNegative = self.isNegative && other.isNegative
+    result.setIsNegative(token, value: self.isNegative && other.isNegative)
     result.fixInvariants()
     self.storage = result
   }
@@ -165,8 +173,6 @@ extension BigIntHeap {
   // MARK: - Or
 
   internal mutating func or(other: Smi.Storage) {
-    defer { self.checkInvariants() }
-
     if self.isZero {
       self.storage.set(to: Int(other))
       return
@@ -183,11 +189,16 @@ extension BigIntHeap {
       return
     }
 
+    defer { self.checkInvariants() }
+
     // Just using '-' may overflow!
     let otherWord = Word(other.magnitude)
+    let token = self.storage.guaranteeUniqueBufferReference()
 
-    assert(!self.storage.isEmpty, "Unexpected '0'")
-    self.storage[0] |= otherWord
+    self.storage.withMutableWordsBuffer(token) { words in
+      assert(!words.isEmpty, "Unexpected '0'")
+      words[0] |= otherWord
+    }
 
     // 'other' is positive, so no matter what our sign stays the same
     // self.storage.isNegative = no changes
@@ -199,8 +210,6 @@ extension BigIntHeap {
   ///
   /// Variable names mostly taken from GMP.
   internal mutating func or(other: BigIntHeap) {
-    defer { self.checkInvariants() }
-
     if self.isZero {
       self.storage = other.storage
       return
@@ -209,6 +218,8 @@ extension BigIntHeap {
     if other.isZero {
       return
     }
+
+    defer { self.checkInvariants() }
 
     // 'v' is smaller, 'u' is bigger
     let v = self.storage.count <= other.storage.count ? self.storage : other.storage
@@ -226,37 +237,44 @@ extension BigIntHeap {
     // If the smaller input is negative, by sign extension higher words don't matter.
     let resultCount = vMask.isTrue ? v.count : u.count
     var result = BigIntStorage(repeating: 0, count: resultCount + Int(anyNegative))
+    let token = result.guaranteeUniqueBufferReference()
 
-    for i in 0..<v.count {
-      let ul = (u[i] ^ uMask) &+ uIsNegative
-      uIsNegative = (ul < uIsNegative).asWord
+    result.withMutableWordsBuffer(token) { result in
+      u.withWordsBuffer { u in
+        v.withWordsBuffer { v in
+          for i in 0..<v.count {
+            let ul = (u[i] ^ uMask) &+ uIsNegative
+            uIsNegative = (ul < uIsNegative).asWord
 
-      let vl = (v[i] ^ vMask) &+ vIsNegative
-      vIsNegative = (vl < vIsNegative).asWord
+            let vl = (v[i] ^ vMask) &+ vIsNegative
+            vIsNegative = (vl < vIsNegative).asWord
 
-      let rl = ((ul | vl) ^ anyNegativeMask) &+ anyNegative
-      anyNegative = (rl < anyNegative).asWord
+            let rl = ((ul | vl) ^ anyNegativeMask) &+ anyNegative
+            anyNegative = (rl < anyNegative).asWord
 
-      result[i] = rl
+            result[i] = rl
+          }
+
+          assert(vIsNegative == 0)
+
+          for i in v.count..<resultCount {
+            let ul = (u[i] ^ uMask) &+ uIsNegative
+            uIsNegative = (ul < uIsNegative).asWord
+
+            let rl = ((ul | vMask) ^ anyNegativeMask) &+ anyNegative
+            anyNegative = (rl < anyNegative).asWord
+
+            result[i] = rl
+          }
+
+          if anyNegative.isTrue {
+            result[resultCount] = anyNegative
+          }
+        }
+      }
     }
 
-    assert(vIsNegative == 0)
-
-    for i in v.count..<resultCount {
-      let ul = (u[i] ^ uMask) &+ uIsNegative
-      uIsNegative = (ul < uIsNegative).asWord
-
-      let rl = ((ul | vMask) ^ anyNegativeMask) &+ anyNegative
-      anyNegative = (rl < anyNegative).asWord
-
-      result[i] = rl
-    }
-
-    if anyNegative.isTrue {
-      result[resultCount] = anyNegative
-    }
-
-    result.isNegative = self.isNegative || other.isNegative
+    result.setIsNegative(token, value: self.isNegative || other.isNegative)
     result.fixInvariants()
     self.storage = result
   }
@@ -264,8 +282,6 @@ extension BigIntHeap {
   // MARK: - Xor
 
   internal mutating func xor(other: Smi.Storage) {
-    defer { self.checkInvariants() }
-
     if self.isZero {
       self.storage.set(to: Int(other))
       return
@@ -282,11 +298,16 @@ extension BigIntHeap {
       return
     }
 
+    defer { self.checkInvariants() }
+
     // Just using '-' may overflow!
     let otherWord = Word(other.magnitude)
+    let token = self.storage.guaranteeUniqueBufferReference()
 
-    assert(!self.storage.isEmpty, "Unexpected '0'")
-    self.storage[0] ^= otherWord
+    self.storage.withMutableWordsBuffer(token) { words in
+      assert(!words.isEmpty, "Unexpected '0'")
+      words[0] ^= otherWord
+    }
 
     // 'other' is positive, so no matter what our sign stays the same
     // self.storage.isNegative = no changes
@@ -298,8 +319,6 @@ extension BigIntHeap {
   ///
   /// Variable names mostly taken from GMP.
   internal mutating func xor(other: BigIntHeap) {
-    defer { self.checkInvariants() }
-
     if self.isZero {
       self.storage = other.storage
       return
@@ -308,6 +327,8 @@ extension BigIntHeap {
     if other.isZero {
       return
     }
+
+    defer { self.checkInvariants() }
 
     // 'v' is smaller, 'u' is bigger
     let v = self.storage.count <= other.storage.count ? self.storage : other.storage
@@ -324,37 +345,44 @@ extension BigIntHeap {
 
     let resultCount = u.count
     var result = BigIntStorage(repeating: 0, count: resultCount + Int(onlyOneNegative))
+    let token = result.guaranteeUniqueBufferReference()
 
-    for i in 0..<v.count {
-      let ul = (u[i] ^ uMask) &+ uIsNegative
-      uIsNegative = (ul < uIsNegative).asWord
+    result.withMutableWordsBuffer(token) { result in
+      u.withWordsBuffer { u in
+        v.withWordsBuffer { v in
+          for i in 0..<v.count {
+            let ul = (u[i] ^ uMask) &+ uIsNegative
+            uIsNegative = (ul < uIsNegative).asWord
 
-      let vl = (v[i] ^ vMask) &+ vIsNegative
-      vIsNegative = (vl < vIsNegative).asWord
+            let vl = (v[i] ^ vMask) &+ vIsNegative
+            vIsNegative = (vl < vIsNegative).asWord
 
-      let rl = (ul ^ vl ^ onlyOneNegativeMask) &+ onlyOneNegative
-      onlyOneNegative = (rl < onlyOneNegative).asWord
+            let rl = (ul ^ vl ^ onlyOneNegativeMask) &+ onlyOneNegative
+            onlyOneNegative = (rl < onlyOneNegative).asWord
 
-      result[i] = rl
+            result[i] = rl
+          }
+
+          assert(vIsNegative == 0)
+
+          for i in v.count..<resultCount {
+            let ul = (u[i] ^ uMask) &+ uIsNegative
+            uIsNegative = (ul < uIsNegative).asWord
+
+            let rl = (ul ^ uMask) &+ onlyOneNegative
+            onlyOneNegative = (rl < onlyOneNegative).asWord
+
+            result[i] = rl
+          }
+
+          if onlyOneNegative.isTrue {
+            result[resultCount] = onlyOneNegative
+          }
+        }
+      }
     }
 
-    assert(vIsNegative == 0)
-
-    for i in v.count..<resultCount {
-      let ul = (u[i] ^ uMask) &+ uIsNegative
-      uIsNegative = (ul < uIsNegative).asWord
-
-      let rl = (ul ^ uMask) &+ onlyOneNegative
-      onlyOneNegative = (rl < onlyOneNegative).asWord
-
-      result[i] = rl
-    }
-
-    if onlyOneNegative.isTrue {
-      result[resultCount] = onlyOneNegative
-    }
-
-    result.isNegative = self.isNegative != other.isNegative
+    result.setIsNegative(token, value: self.isNegative != other.isNegative)
     result.fixInvariants()
     self.storage = result
   }
