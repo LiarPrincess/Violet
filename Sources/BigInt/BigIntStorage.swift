@@ -502,7 +502,7 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
 
   /// Set `self` to represent given `UInt`.
   ///
-  /// May REALLOCATE BUFFER -> invalidates tokens
+  /// May REALLOCATE BUFFER -> invalidates tokens.
   internal mutating func setTo(_ token: UniqueBufferToken, value: UInt) {
     if value == 0 {
       self.setToZero()
@@ -524,6 +524,17 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
       self.removeAll()
       self.isNegative = value.isNegative
       self.append(value.magnitude)
+    }
+  }
+
+  /// Set `self` to represent given `Int`.
+  internal mutating func setTo(_ token: UniqueBufferToken, value: Int) {
+    if value == 0 {
+      self.setToZero()
+    } else {
+      self.removeAll(token)
+      self.setIsNegative(token, value: value.isNegative)
+      self.append(token, element: value.magnitude)
     }
   }
 
