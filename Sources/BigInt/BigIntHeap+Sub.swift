@@ -4,7 +4,7 @@ extension BigIntHeap {
 
   // MARK: - Smi
 
-  /// May REALLOCATE BUFFER -> invalidates tokens
+  /// May REALLOCATE BUFFER -> invalidates tokens.
   internal mutating func sub(other: Smi.Storage) {
     // Just using '-' may overflow!
     let otherMagnitude = Word(other.magnitude)
@@ -18,7 +18,7 @@ extension BigIntHeap {
 
   // MARK: - Word
 
-  /// May REALLOCATE BUFFER -> invalidates tokens
+  /// May REALLOCATE BUFFER -> invalidates tokens.
   internal mutating func sub(other: Word) {
     if other.isZero {
       return
@@ -61,7 +61,7 @@ extension BigIntHeap {
     }
   }
 
-  /// May REALLOCATE BUFFER -> invalidates tokens
+  /// May REALLOCATE BUFFER -> invalidates tokens.
   internal static func subMagnitude(
     _ biggerToken: UniqueBufferToken,
     bigger: inout BigIntStorage,

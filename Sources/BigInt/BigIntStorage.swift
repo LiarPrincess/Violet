@@ -76,18 +76,28 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
     set {
       // Avoid possible copy in 'self.guaranteeUniqueBufferReference()'.
       // This check is free because we have to get header from the memory anyway.
-      if self.isNegative == newValue {
-        return
+      if self.isNegative != newValue {
+        // We will allow setting 'isNegative' when the value is '0',
+        // just assume that user know what they are doing.
+        let token = self.guaranteeUniqueBufferReference()
+        self.setIsNegative(token, value: newValue)
       }
-
-      // We will allow setting 'isNegative' when the value is '0',
-      // just assume that user know what they are doing.
-
-      self.guaranteeUniqueBufferReference()
-      let sign = newValue ? Header.signMask : 0
-      let count = self.buffer.header.signAndCount & Header.countMask
-      self.buffer.header.signAndCount = sign | count
     }
+  }
+
+  internal mutating func setIsNegative(_ token: UniqueBufferToken, value: Bool) {
+    self.validateToken(token)
+
+    // We will allow setting 'isNegative' when the value is '0',
+    // just assume that user know what they are doing.
+    let sign = value ? Header.signMask : 0
+    let count = self.buffer.header.signAndCount & Header.countMask
+    self.buffer.header.signAndCount = sign | count
+  }
+
+  internal mutating func toggleIsNegative(_ token: UniqueBufferToken) {
+    let current = self.isNegative
+    self.setIsNegative(token, value: !current)
   }
 
   /// `0` is also positive.
@@ -98,22 +108,26 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
 
   internal private(set) var count: Int {
     get {
-      let raw = self.buffer.header.signAndCount & Header.countMask
-      return Int(bitPattern: raw)
+      let signAndCount = self.buffer.header.signAndCount
+      return Int(signAndCount & Header.countMask)
     }
     set {
-      assert(newValue >= 0)
-
       // Avoid possible copy in 'self.guaranteeUniqueBufferReference()'.
       // This check is free because we have to get header from the memory anyway.
-      if self.count == newValue {
-        return
+      if self.count != newValue {
+        let token = self.guaranteeUniqueBufferReference()
+        self.setCount(token, value: newValue)
       }
-
-      self.guaranteeUniqueBufferReference()
-      let sign = self.isNegative ? Header.signMask : 0
-      self.buffer.header.signAndCount = sign | newValue.magnitude
     }
+  }
+
+  private mutating func setCount(_ token: UniqueBufferToken, value: Int) {
+    self.validateToken(token)
+    assert(value >= 0)
+
+    let sign = self.buffer.header.signAndCount & Header.signMask
+    let count = Header.Storage(value)
+    self.buffer.header.signAndCount = sign | count
   }
 
   internal var capacity: Int {
@@ -250,6 +264,8 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
 
   /// Add given `Word` to the buffer.
   internal mutating func append(_ token: UniqueBufferToken, element: Word) {
+    self.validateToken(token)
+
     let newCount = self.count + 1
     self.reserveCapacity(token, capacity: newCount)
 
@@ -411,7 +427,20 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
   }
 
   internal mutating func reserveCapacity(_ token: UniqueBufferToken, capacity: Int) {
-    self.guaranteeUniqueBufferReference(withMinimumCapacity: capacity)
+    self.validateToken(token)
+    assert(capacity > 0)
+
+    let oldCapacity = self.capacity
+
+    if oldCapacity < capacity {
+      let new = Self.createBuffer(
+        header: self.buffer.header,
+        minimumCapacity: capacity
+      )
+
+      Self.memcpy(dst: new, src: self.buffer, count: self.count)
+      self.buffer = new
+    }
   }
 
   // MARK: - Remove all
@@ -429,18 +458,22 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
   // MARK: - Replace all
 
   /// Replace all of the `Word`s with the contents of the buffer.
-  internal mutating func replaceAll<C: Collection>(
-    withContentsOf other: C
-  ) where C.Element == Word {
-    let newCount = other.count
-    self.guaranteeUniqueBufferReference(withMinimumCapacity: newCount)
+  internal mutating func replaceAll(
+    _ token: UniqueBufferToken,
+    withContentsOf other: UnsafeMutableBufferPointer<Word>
+  ) {
+    // From docs:
+    // If the baseAddress of this buffer is nil, the count is zero.
+    // However, a buffer can have a count of zero even with a non-nil base address.
+    guard let otherPtr = other.baseAddress else {
+      return
+    }
 
-    self.buffer.withUnsafeMutablePointerToElements { startPtr in
-      var ptr = startPtr
-      for word in other {
-        ptr.pointee = word
-        ptr = ptr.successor()
-      }
+    let newCount = other.count
+    self.reserveCapacity(token, capacity: newCount)
+
+    self.buffer.withUnsafeMutablePointerToElements { ptr in
+      ptr.assign(from: otherPtr, count: other.count)
     }
 
     self.count = newCount
@@ -468,6 +501,8 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
   }
 
   /// Set `self` to represent given `UInt`.
+  ///
+  /// May REALLOCATE BUFFER -> invalidates tokens
   internal mutating func setTo(_ token: UniqueBufferToken, value: UInt) {
     if value == 0 {
       self.setToZero()
@@ -573,6 +608,12 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
     Self.memcpy(dst: new, src: self.buffer, count: self.count)
     self.buffer = new
     return UniqueBufferToken()
+  }
+
+  private mutating func validateToken(_ token: UniqueBufferToken) {
+    #if DEBUG
+    assert(self.buffer.isUniqueReference())
+    #endif
   }
 
   private mutating func guaranteeUniqueBufferReference(

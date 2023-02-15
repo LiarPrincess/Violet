@@ -2,7 +2,7 @@ extension BigIntHeap {
 
   // MARK: - Smi
 
-  /// May REALLOCATE BUFFER -> invalidates tokens
+  /// May REALLOCATE BUFFER -> invalidates tokens.
   internal mutating func add(other: Smi.Storage) {
     // Just using '-' may overflow!
     let otherMagnitude = Word(other.magnitude)
@@ -16,7 +16,7 @@ extension BigIntHeap {
 
   // MARK: - Word
 
-  /// May REALLOCATE BUFFER -> invalidates tokens
+  /// May REALLOCATE BUFFER -> invalidates tokens.
   internal mutating func add(other: Word) {
     if other.isZero {
       return
@@ -73,7 +73,7 @@ extension BigIntHeap {
 
   // MARK: - Heap
 
-  /// May REALLOCATE BUFFER -> invalidates tokens
+  /// May REALLOCATE BUFFER -> invalidates tokens.
   internal mutating func add(other: BigIntHeap) {
     if other.isZero {
       return
