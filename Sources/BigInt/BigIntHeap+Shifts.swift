@@ -15,31 +15,32 @@ extension BigIntHeap {
   internal mutating func shiftLeft(count: Smi.Storage) {
     defer { self.checkInvariants() }
 
-    let word = Word(count.magnitude)
+    let countMagnitude = Word(count.magnitude)
 
     if count.isPositive {
-      self.shiftLeft(count: word)
+      self.shiftLeft(count: countMagnitude)
     } else {
-      self.shiftRight(count: word)
+      self.shiftRight(count: countMagnitude)
     }
   }
 
   // MARK: - Left - word
 
   internal mutating func shiftLeft(count: Word) {
-    defer { self.checkInvariants() }
-
     if self.isZero || count.isZero {
       return
     }
+
+    defer { self.checkInvariants() }
 
     let wordShift = Int(count / Word(Word.bitWidth))
     let bitShift = Int(count % Word(Word.bitWidth))
 
     let wordCountBeforeShift = self.storage.count
-    self.storage.prepend(0, count: wordShift)
+    let token = self.storage.guaranteeUniqueBufferReference()
+    self.storage.prepend(token, element: 0, count: wordShift)
 
-    // If we are shifting by multiply of 'Word' than we are done.
+    // If we are shifting by multiply of 'Word' then we are done.
     // For example for 4 bit word if we shift by 4, 8, 12 or 16
     // we do not have to do anything else: [1011] << 4 = [1011][0000].
     if bitShift == 0 {
@@ -63,23 +64,25 @@ extension BigIntHeap {
     //   [1011][0000] << 1 = [0001][0110][0000]
 
     // Append word that will be used for shifts from our most significant word.
-    self.storage.append(0) // In example: [0000][1011][0000]
+    self.storage.append(token, element: 0) // In example: [0000][1011][0000]
 
     let lowShift = bitShift // In example: 5 % 4 = 1
     let highShift = Word.bitWidth - lowShift // In example: 4 - 1 = 3
 
-    for i in (0..<wordCountBeforeShift).reversed() {
-      let indexAfterWordShift = i + wordShift
+    self.storage.withMutableWordsBuffer(token) { words in
+      for i in (0..<wordCountBeforeShift).reversed() {
+        let indexAfterWordShift = i + wordShift
 
-      let word = self.storage[indexAfterWordShift] // In example: [1011]
-      let lowPart = word << lowShift // In example: [1011] << 1 = [0110]
-      let highPart = word >> highShift // In example: [1011] >> 3 = [0001]
+        let word = words[indexAfterWordShift] // In example: [1011]
+        let lowPart = word << lowShift // In example: [1011] << 1 = [0110]
+        let highPart = word >> highShift // In example: [1011] >> 3 = [0001]
 
-      let lowIndex = indexAfterWordShift // In example: 1 + 0 = 1, [0000][this][0000]
-      let highIndex = lowIndex + 1 // In example: 1 + 1 = 2, [0000][1011][this]
+        let lowIndex = indexAfterWordShift // In example: 1 + 0 = 1, [0000][this][0000]
+        let highIndex = lowIndex + 1 // In example: 1 + 1 = 2, [0000][1011][this]
 
-      self.storage[lowIndex] = lowPart
-      self.storage[highIndex] = self.storage[highIndex] | highPart
+        words[lowIndex] = lowPart
+        words[highIndex] = words[highIndex] | highPart
+      }
     }
 
     self.fixInvariants()
@@ -88,8 +91,6 @@ extension BigIntHeap {
   // MARK: - Left - heap
 
   internal mutating func shiftLeft(count: BigIntHeap) {
-    defer { self.checkInvariants() }
-
     if count.isZero {
       return
     }
@@ -118,12 +119,12 @@ extension BigIntHeap {
   internal mutating func shiftRight(count: Smi.Storage) {
     defer { self.checkInvariants() }
 
-    let word = Word(count.magnitude)
+    let countMagnitude = Word(count.magnitude)
 
     if count.isPositive {
-      self.shiftRight(count: word)
+      self.shiftRight(count: countMagnitude)
     } else {
-      self.shiftLeft(count: word)
+      self.shiftLeft(count: countMagnitude)
     }
   }
 
@@ -137,12 +138,11 @@ extension BigIntHeap {
   ///     enum mpz_div_round_mode mode)
   internal mutating func shiftRight(count: Word) {
 // swiftlint:enable function_body_length
-
-    defer { self.checkInvariants() }
-
     if self.isZero || count.isZero {
       return
     }
+
+    defer { self.checkInvariants() }
 
     let wordShift = Int(count / Word(Word.bitWidth))
     let bitShift = Int(count % Word(Word.bitWidth))
@@ -173,12 +173,14 @@ extension BigIntHeap {
       return
     }
 
+    let token = self.storage.guaranteeUniqueBufferReference()
+
     // If we are shifting by multiply of 'Word' then we are done.
     // For example for 4 bit word if we shift by 4, 8, 12 or 16
     // we do not have to do anything else: [1011][0000] >> 4 = [1011].
     if bitShift == 0 {
       if needsFloorAdjustmentForNegativeNumbers {
-        self.adjustAfterRightShift()
+        self.adjustAfterRightShift(token)
       }
 
       return
@@ -201,22 +203,24 @@ extension BigIntHeap {
     let highShift = bitShift // In example: 5 % 4 = 1
     let lowShift = Word.bitWidth - highShift // In example: 4 - 1 = 3
 
-    // 'self.storage.count' is the number of words after 'dropFirst',
-    // so this is basically 'for every remaining word'.
-    for i in 0..<self.storage.count {
-      let word = self.storage[i] // In example (for i = 1): [1011]
+    self.storage.withMutableWordsBuffer(token) { words in
+      // 'words.count' is the number of words after 'dropFirst',
+      // so this is basically 'for every remaining word'.
+      for i in 0..<words.count {
+        let word = words[i] // In example (for i = 1): [1011]
 
-      let lowPart = word << lowShift // In example: [1011] << 1 = [0110]
-      let highPart = word >> highShift // In example: [1011] >> 3 = [0001]
+        let lowPart = word << lowShift // In example: [1011] << 1 = [0110]
+        let highPart = word >> highShift // In example: [1011] >> 3 = [0001]
 
-      let highIndex = i // In example: 1 + 1 = 2, [0000][1011][this]
-      let lowIndex = highIndex - 1 // In example: 1 + 0 = 1, [0000][this][0000]
+        let highIndex = i // In example: 1 + 1 = 2, [0000][1011][this]
+        let lowIndex = highIndex - 1 // In example: 1 + 0 = 1, [0000][this][0000]
 
-      self.storage[highIndex] = highPart
+        words[highIndex] = highPart
 
-      // 1st moved word will try to write its 'lowPart' to index '-1'
-      if lowIndex >= 0 {
-        self.storage[lowIndex] = self.storage[lowIndex] | lowPart
+        // 1st moved word will try to write its 'lowPart' to index '-1'
+        if lowIndex >= 0 {
+          words[lowIndex] = words[lowIndex] | lowPart
+        }
       }
     }
 
@@ -229,34 +233,34 @@ extension BigIntHeap {
       // '-1 >> 1000' = '-1'
       self.storage.set(to: -1)
     } else if needsFloorAdjustmentForNegativeNumbers {
-      self.adjustAfterRightShift()
+      self.adjustAfterRightShift(token)
     }
   }
 
   private func hasAnyBitSet(wordShift: Int, bitShift: Int) -> Bool {
-    for i in 0..<wordShift {
-      let word = self.storage[i]
-      if word != 0 {
-        return true
+    return self.storage.withWordsBuffer { words -> Bool in
+      for i in 0..<wordShift {
+        let word = words[i]
+        if word != 0 {
+          return true
+        }
       }
+
+      let word = words[wordShift]
+      let bitsMask = (Word(1) << bitShift) - 1
+      let bits = word & bitsMask
+
+      return bits > 0
     }
-
-    let word = self.storage[wordShift]
-    let bitsMask = (Word(1) << bitShift) - 1
-    let bits = word & bitsMask
-
-    return bits > 0
   }
 
-  private mutating func adjustAfterRightShift() {
-    Self.addMagnitude(lhs: &self.storage, rhs: Word(1))
+  private mutating func adjustAfterRightShift(_ token: UniqueBufferToken) {
+    Self.addMagnitude(token, lhs: &self.storage, rhs: Word(1))
   }
 
   // MARK: - Right - heap
 
   internal mutating func shiftRight(count: BigIntHeap) {
-    defer { self.checkInvariants() }
-
     if count.isZero {
       return
     }
@@ -292,6 +296,6 @@ extension BigIntHeap {
       return nil
     }
 
-    return shiftCount.storage[0]
+    return shiftCount.storage.withWordsBuffer { $0[0] }
   }
 }

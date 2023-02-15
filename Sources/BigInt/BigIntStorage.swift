@@ -373,6 +373,60 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
     self.buffer = new
   }
 
+  /// Add given `Word`  at the start of the buffer specified number of times.
+  internal mutating func prepend(
+    _ token: UniqueBufferToken,
+    element: Word,
+    count: Int
+  ) {
+    assert(count >= 0)
+
+    if count.isZero {
+      return
+    }
+
+    let newCount = self.count + count
+    if self.buffer.isUniqueReference() && self.capacity >= newCount {
+      // Our current buffer is big enough to do the whole operation,
+      // no new allocation is needed.
+
+      self.buffer.withUnsafeMutablePointerToElements { startPtr in
+        // Move current words back
+        let targetPtr = startPtr.advanced(by: count)
+        targetPtr.assign(from: startPtr, count: self.count)
+
+        // Set prefix words to given 'element'
+        startPtr.assign(repeating: element, count: count)
+      }
+
+      self.count = newCount
+      return
+    }
+
+    // We do not have to call 'guaranteeUniqueBufferReference',
+    // because we will be allocating new buffer (which is trivially unique).
+
+    let new = Self.createBuffer(
+      header: Header(isNegative: self.isNegative, count: newCount),
+      minimumCapacity: newCount
+    )
+
+    self.buffer.withUnsafeMutablePointerToElements { selfStartPtr in
+      new.withUnsafeMutablePointerToElements { newStartPtr in
+        // Move current words at the correct (shifted) place
+        let targetPtr = newStartPtr.advanced(by: count)
+        targetPtr.assign(from: selfStartPtr, count: self.count)
+
+        // Set prefix words to given 'element'.
+        // We have to do this even if 'element = 0',
+        // because new buffer contains garbage.
+        newStartPtr.assign(repeating: element, count: count)
+      }
+    }
+
+    self.buffer = new
+  }
+
   // MARK: - Drop first
 
   /// Remove first `k` elements.
