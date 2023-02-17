@@ -270,8 +270,7 @@ internal struct BigIntStorage: Equatable, CustomStringConvertible {
     let oldCount = self.count
     let newCount = oldCount + count
 
-    // TODO: Remove 'self.buffer.isUniqueReference()'
-    if self.buffer.isUniqueReference() && self.capacity >= newCount {
+    if self.capacity >= newCount {
       // Our current buffer is big enough to do the whole operation,
       // no new allocation is needed.
       self.validateToken(token)
@@ -431,10 +430,8 @@ internal struct BigIntStorage: Equatable, CustomStringConvertible {
     return lhs.withWordsBuffer { lhs in
       return rhs.withWordsBuffer { rhs in
         // By hand is faster than: zip(lhs, rhs).allSatisfy { $0.0 == $0.1 }
-        for i in 0..<lhs.count {
-          if lhs[i] != rhs[i] {
-            return false
-          }
+        for i in 0..<lhs.count where lhs[i] != rhs[i] {
+          return false
         }
 
         return true
@@ -523,14 +520,7 @@ internal struct BigIntStorage: Equatable, CustomStringConvertible {
 
 // MARK: - Old
 
-extension BigIntStorage: RandomAccessCollection {
-  internal var startIndex: Int {
-    return 0
-  }
-
-  internal var endIndex: Int {
-    return self.count
-  }
+extension BigIntStorage {
 
   /// Add given `Word` to the buffer.
   internal mutating func append(_ element: Word) {

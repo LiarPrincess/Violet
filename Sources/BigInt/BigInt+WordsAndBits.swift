@@ -95,92 +95,94 @@ extension Smi {
 extension BigIntHeap {
 
   internal var bitWidth: Int {
-    guard let last = self.storage.last else {
-      assert(self.isZero)
-      return bitWidthForZero
+    return self.storage.withWordsBuffer { words -> Int in
+      if words.isEmpty {
+        assert(self.isZero)
+        return bitWidthForZero
+      }
+
+      let lastIndex = words.count - 1
+      let last = words[lastIndex]
+      let wordsWidth = words.count * Word.bitWidth
+      let leadingZeroBitCount = last.leadingZeroBitCount
+
+      func bitWidthForPositive() -> Int {
+        // Positive numbers need leading '0',
+        // because leading '1' marks negative number.
+        let zeroAsSign = 1
+        return wordsWidth - leadingZeroBitCount + zeroAsSign
+      }
+
+      if self.isPositive {
+        return bitWidthForPositive()
+      }
+
+      // For negative numbers we can use the same formula except for the case when
+      // number is power of 2 (magnitude has single '1' and then a lot of '0').
+      // In such case we do not have to add 'zeroAsSign'.
+      //
+      // Look at this (example for 4-bit word):
+      // +------------------------+-------------------------------+
+      // |        positive        |            negative           |
+      // +-----+------+-----------+------+------------+-----------+
+      // | dec | bin  | bit width | -dec |    bin     | bit width |
+      // +-----+------+-----------+------+------------+-----------+
+      // |   7 | 0111 | 4-1+1 = 4 |   -7 |       1001 |         4 |
+      // |   8 | 1000 | 4-0+1 = 5 |   -8 |       1000 | THIS -> 4 |
+      // |   9 | 1001 | 4-0+1 = 5 |   -9 |  1111 0111 |         5 |
+      // +-----+------+-----------+------+------------+-----------+
+      //
+      // There is a bit more detailed explanation below.
+      //
+      // To quickly find powers of 2:
+      // 1. most significant word is power of 2
+      // 2. all other words are 0
+
+      let isLastPowerOf2 = (last & (last - 1)) == 0
+      guard isLastPowerOf2 else {
+        return bitWidthForPositive()
+      }
+
+      // Check for all other words == 0
+      for i in 0..<lastIndex where words[i] != 0 {
+        return bitWidthForPositive()
+      }
+
+      // We are at our special case
+      return wordsWidth - leadingZeroBitCount
+
+      // OLD EXPLANATION:
+      // Two complement:
+      // 1. invert all words
+      // 2. add 1
+      // This 'add 1' step may require additional bit
+      // (example for 4-bit word: 0011 + 1 = 0100, we had 2 bits, now we have 3).
+      //
+      // Step 1: Find word that swallows '+1'
+      // We do not have to do full 2 complement here (it would require allocation),
+      // because there is a faster way:
+      // What we actually need is to find the word that swallows this '+1' after
+      // the inversion. Basically all of the numbers do this except for the word
+      // that has all bits set to 1 (example for 4-bit word: 1111 + 1 = 1 0000).
+      // So… inverse of which number has all bits set to '1'? Well… '0'!
+      // let indexWhichSwallowsPlus1 = self.storage.firstIndex { $0 != 0 } ?? nope
+      //
+      // Step 2: If it was not the last word
+      // If one of our 'inner words' swallowed '1' then we definitely do not need
+      // additional bit. We can just simply invert 'last' and use it as 2 complement:
+      //   let complement = ~last
+      //   let leadingZeroBitCount = complement.leadingZeroBitCount
+      //   return wordsWidth - leadingZeroBitCount
+      //
+      // Step 3: If 'last' is the one that handles '+1' then we may need additional bit
+      // Our last word will handle '+1', we can calculate full 2 complement in place:
+      //   let inverted = ~last
+      //   let complement = inverted + 1 // Will not overflow, because we checked for 0
+      // Now we are in the exactly same same place as 'smi':
+      //   let oneAsSign = 1
+      //   let complementLeadingOneBitCount = (~complement).leadingZeroBitCount
+      //   return wordsWidth - complementLeadingOneBitCount + oneAsSign
     }
-
-    assert(!last.isZero)
-
-    let wordsWidth = self.storage.count * Word.bitWidth
-    let leadingZeroBitCount = last.leadingZeroBitCount
-
-    func bitWidthForPositive() -> Int {
-      // Positive numbers need leading '0',
-      // because leading '1' marks negative number.
-      let zeroAsSign = 1
-      return wordsWidth - leadingZeroBitCount + zeroAsSign
-    }
-
-    if self.isPositive {
-      return bitWidthForPositive()
-    }
-
-    // For negative numbers we can use the same formula except for the case
-    // when number is power of 2 (magnitude has single '1' and then a lot of '0').
-    // In such case we do not have to add 'zeroAsSign'.
-    //
-    // Look at this (example for 4-bit word):
-    // +------------------------+-------------------------------+
-    // |        positive        |            negative           |
-    // +-----+------+-----------+------+------------+-----------+
-    // | dec | bin  | bit width | -dec |    bin     | bit width |
-    // +-----+------+-----------+------+------------+-----------+
-    // |   7 | 0111 | 4-1+1 = 4 |   -7 |       1001 |         4 |
-    // |   8 | 1000 | 4-0+1 = 5 |   -8 |       1000 | THIS -> 4 |
-    // |   9 | 1001 | 4-0+1 = 5 |   -9 |  1111 0111 |         5 |
-    // +-----+------+-----------+------+------------+-----------+
-    //
-    // There is a bit more detailed explanation below.
-    //
-    // To quickly find powers of 2:
-    // 1. most significant word is power of 2
-    // 2. all other words are 0
-
-    let isLastPowerOf2 = (last & (last - 1)) == 0
-    guard isLastPowerOf2 else {
-      return bitWidthForPositive()
-    }
-
-    let hasAllOtherWords0 = self.storage.dropLast().allSatisfy { $0 == 0 }
-    guard hasAllOtherWords0 else {
-      return bitWidthForPositive()
-    }
-
-    // We are at our special case
-    return wordsWidth - leadingZeroBitCount
-
-    // OLD EXPLANATION:
-    // Two complement:
-    // 1. invert all words
-    // 2. add 1
-    // This 'add 1' step may require additional bit
-    // (example for 4-bit word: 0011 + 1 = 0100, we had 2 bits, now we have 3).
-    //
-    // Step 1: Find word that swallows '+1'
-    // We do not have to do full 2 complement here (it would require allocation),
-    // because there is a faster way:
-    // What we actually need is to find the word that swallows this '+1' after
-    // the inversion. Basically all of the numbers do this except for the word
-    // that has all bits set to 1 (example for 4-bit word: 1111 + 1 = 1 0000).
-    // So… inverse of which number has all bits set to '1'? Well… '0'!
-    // let indexWhichSwallowsPlus1 = self.storage.firstIndex { $0 != 0 } ?? nope
-    //
-    // Step 2: If it was not the last word
-    // If one of our 'inner words' swallowed '1' then we definitely do not need
-    // additional bit. We can just simply invert 'last' and use it as 2 complement:
-    //   let complement = ~last
-    //   let leadingZeroBitCount = complement.leadingZeroBitCount
-    //   return wordsWidth - leadingZeroBitCount
-    //
-    // Step 3: If 'last' is the one that handles '+1' then we may need additional bit
-    // Our last word will handle '+1', we can calculate full 2 complement in place:
-    //   let inverted = ~last
-    //   let complement = inverted + 1 // Will not overflow, because we checked for 0
-    // Now we are in the exactly same same place as 'smi':
-    //   let oneAsSign = 1
-    //   let complementLeadingOneBitCount = (~complement).leadingZeroBitCount
-    //   return wordsWidth - complementLeadingOneBitCount + oneAsSign
   }
 }
 
@@ -278,7 +280,10 @@ extension BigIntHeap {
         // To do 2 complement for negative numbers we need to invert and add '1'.
         // '0' after inverse is '1111', so by adding '1' we overflow.
         // We look for first non 0, so that we know at which word we need to stop adding.
-        self._decrementLimit = heap.storage.firstIndex { $0 != 0 } ?? Int.min
+        self._decrementLimit = heap.storage.withWordsBuffer { words in
+          return words.firstIndex { $0 != 0 } ?? Int.min
+        }
+
         assert(self._decrementLimit != Int.min, "Unexpected all words 0")
       }
     }
@@ -301,17 +306,20 @@ extension BigIntHeap {
         return self._heap.isPositive ? 0 : allOnes
       }
 
-      let word = self._heap.storage[index]
-      if self._heap.isPositive {
-        return word
-      }
+      return self._heap.storage.withWordsBuffer { words in
+        let word = words[index]
 
-      if index <= self._decrementLimit {
-        // If the 'word' was '0' then 'word &- 1' is 'max'
-        return ~(word &- 1)
-      }
+        if self._heap.isPositive {
+          return word
+        }
 
-      return ~word
+        if index <= self._decrementLimit {
+          // If the 'word' was '0' then 'word &- 1' is 'max'
+          return ~(word &- 1)
+        }
+
+        return ~word
+      }
     }
   }
 
@@ -363,16 +371,18 @@ extension Smi {
 extension BigIntHeap {
 
   internal var minRequiredWidth: Int {
-    guard let last = self.storage.last else {
-      assert(self.isZero)
-      return minRequiredWidthForZero
+    return self.storage.withWordsBuffer { words -> Int in
+      if words.isEmpty {
+        assert(self.isZero)
+        return minRequiredWidthForZero
+      }
+
+      let lastIndex = words.count - 1
+      let last = words[lastIndex]
+      let fullWordsWidth = (words.count - 1) * Word.bitWidth
+      let partialWordWidth = bitsInDigit(value: last)
+      return fullWordsWidth + partialWordWidth
     }
-
-    assert(!last.isZero)
-
-    let fullWordsWidth = (self.storage.count - 1) * Word.bitWidth
-    let partialWordWidth = bitsInDigit(value: last)
-    return fullWordsWidth + partialWordWidth
   }
 }
 
@@ -437,13 +447,15 @@ extension Smi {
 extension BigIntHeap {
 
   internal var trailingZeroBitCount: Int {
-    for (index, word) in self.storage.enumerated() {
-      if word != 0 { // swiftlint:disable:this for_where
-        return index * Word.bitWidth + word.trailingZeroBitCount
+    return self.storage.withWordsBuffer { words in
+      for (index, word) in words.enumerated() {
+        if word != 0 { // swiftlint:disable:this for_where
+          return index * Word.bitWidth + word.trailingZeroBitCount
+        }
       }
-    }
 
-    assert(self.isZero)
-    return trailingZeroBitCountForZero
+      assert(self.isZero)
+      return trailingZeroBitCountForZero
+    }
   }
 }

@@ -22,12 +22,14 @@ internal struct BigIntHeap: Equatable, Hashable {
   }
 
   internal var isEven: Bool {
-    guard let first = self.storage.first else {
-      assert(self.isZero)
-      return true // '0' is even
-    }
+    return self.storage.withWordsBuffer { words in
+      if words.isEmpty {
+        assert(self.isZero)
+        return true // '0' is even
+      }
 
-    return first & 0b1 == 0
+      return words[0] & 0b1 == 0
+    }
   }
 
   /// DO NOT USE in general code!
