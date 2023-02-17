@@ -20,16 +20,17 @@ extension BigIntHeap {
     }
 
     self.init(minimumStorageCapacity: 4)
+    let token = self.storage.guaranteeUniqueBufferReference()
 
     let radix = T(sign: .plus, exponent: T.Exponent(Word.bitWidth), significand: 1)
     repeat {
       let word = Word(float.truncatingRemainder(dividingBy: radix))
-      self.storage.append(word)
+      self.storage.append(token, element: word)
       float = (float / radix).rounded(.towardZero)
     } while !float.isZero
 
     if source < .zero {
-      self.storage.isNegative = true
+      self.storage.setIsNegative(token, value: true)
     }
 
     self.checkInvariants()
