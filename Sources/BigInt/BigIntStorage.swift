@@ -621,8 +621,22 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
     let lhsHeader = lhs.buffer.header
     let rhsHeader = rhs.buffer.header
 
-    return lhsHeader.signAndCount == rhsHeader.signAndCount
-      && zip(lhs, rhs).allSatisfy { $0.0 == $0.1 }
+    guard lhsHeader.signAndCount == rhsHeader.signAndCount else {
+      return false
+    }
+
+    return lhs.withWordsBuffer { lhs in
+      return rhs.withWordsBuffer { rhs in
+        // By hand is faster than: zip(lhs, rhs).allSatisfy { $0.0 == $0.1 }
+        for i in 0..<lhs.count {
+          if lhs[i] != rhs[i] {
+            return false
+          }
+        }
+
+        return true
+      }
+    }
   }
 
   // MARK: - Invariants
