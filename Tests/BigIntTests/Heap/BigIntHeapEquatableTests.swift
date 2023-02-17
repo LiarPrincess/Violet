@@ -74,18 +74,26 @@ class BigIntHeapEquatableTests: XCTestCase {
       let original = p.create()
 
       for i in 0..<original.storage.count {
-        // Word can't be above '.max'
-        if original.storage[i] != .max {
-          var plus1 = original.storage
-          plus1[i] += 1
-          XCTAssertNotEqual(original, BigIntHeap(storage: plus1), "\(original)")
+        var plus1 = original.storage
+        let plus1Token = plus1.guaranteeUniqueBufferReference()
+
+        plus1.withMutableWordsBuffer(plus1Token) { words in
+          // Word can't be above '.max'
+          if words[i] != .max {
+            words[i] += 1
+            XCTAssertNotEqual(original, BigIntHeap(storage: plus1), "\(original)")
+          }
         }
 
-        // Word can't be below '0'
-        if original.storage[i] != 0 {
-          var minus1 = original.storage
-          minus1[i] -= 1
-          XCTAssertNotEqual(original, BigIntHeap(storage: minus1), "\(original)")
+        var minus1 = original.storage
+        let minus1Token = minus1.guaranteeUniqueBufferReference()
+
+        minus1.withMutableWordsBuffer(minus1Token) { words in
+          // Word can't be below '0'
+          if words[i] != 0 {
+            words[i] -= 1
+            XCTAssertNotEqual(original, BigIntHeap(storage: minus1), "\(original)")
+          }
         }
       }
     }

@@ -29,10 +29,8 @@ extension BigIntStorage {
     }
 
     self.init(minimumCapacity: words.count)
-    self.isNegative = isNegative
-
-    for word in words {
-      self.append(word)
-    }
+    let token = self.guaranteeUniqueBufferReference()
+    self.setIsNegative(token, value: isNegative)
+    self.append(token, contentsOf: words)
   }
 }
