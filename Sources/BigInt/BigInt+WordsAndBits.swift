@@ -403,7 +403,9 @@ private func bitsInDigit<T: FixedWidthInteger>(value: T) -> Int {
 
 // MARK: - Trailing zero bit count
 
-private let trailingZeroBitCountForZero = 0
+// If the value is zero, then trailingZeroBitCount is equal to bitWidth, see:
+// https://developer.apple.com/documentation/swift/binaryinteger/trailingzerobitcount
+private let trailingZeroBitCountForZero = bitWidthForZero
 
 extension BigInt {
 

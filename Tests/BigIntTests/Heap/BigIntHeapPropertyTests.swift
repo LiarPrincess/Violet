@@ -282,7 +282,7 @@ class BigIntHeapPropertyTests: XCTestCase {
 
     let zero = BigIntHeap()
     let result = zero.trailingZeroBitCount
-    XCTAssertEqual(result, 0)
+    XCTAssertEqual(result, 1)
   }
 
   func test_trailingZeroBitCount_singleWord() {
