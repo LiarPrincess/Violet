@@ -85,7 +85,7 @@ extension BigIntHeap {
       }
     }
 
-    self.fixInvariants()
+    self.fixInvariants(token)
   }
 
   // MARK: - Left - heap
@@ -165,15 +165,14 @@ extension BigIntHeap {
     let needsFloorAdjustmentForNegativeNumbers = self.isNegative
       && self.hasAnyBitSet(wordShift: wordShift, bitShift: bitShift)
 
-    self.storage.dropFirst(wordCount: wordShift)
+    let token = self.storage.guaranteeUniqueBufferReference()
+    self.storage.dropFirst(token, wordCount: wordShift)
 
     // Nonsensical shifts (such as '1 >> 1000') return '0' (or '-1' for negative).
-    if self.storage.isEmpty {
-      self.storage.set(to: self.isNegative ? -1 : 0)
+    if self.storage.isZero {
+      self.storage.setTo(token, value: self.isNegative ? -1 : 0)
       return
     }
-
-    let token = self.storage.guaranteeUniqueBufferReference()
 
     // If we are shifting by multiply of 'Word' then we are done.
     // For example for 4 bit word if we shift by 4, 8, 12 or 16
@@ -227,11 +226,11 @@ extension BigIntHeap {
     // We need to fix invariants before we call any other operation,
     // because it may assume that all of the invariants are 'ok'.
     let wasNegative = self.isNegative
-    self.fixInvariants()
+    self.fixInvariants(token)
 
     if wasNegative && self.isZero {
       // '-1 >> 1000' = '-1'
-      self.storage.set(to: -1)
+      self.storage.setTo(token, value: -1)
     } else if needsFloorAdjustmentForNegativeNumbers {
       self.adjustAfterRightShift(token)
     }

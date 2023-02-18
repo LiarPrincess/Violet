@@ -57,7 +57,7 @@ extension BigIntHeap {
     case .greater: // 2 - 1, sign stays the same
       let token = self.storage.guaranteeUniqueBufferReference()
       Self.subMagnitude(token, bigger: &self.storage, smaller: other)
-      self.fixInvariants() // Fix possible '0' prefix
+      self.fixInvariants(token) // Fix possible '0' prefix
     }
   }
 
@@ -116,19 +116,11 @@ extension BigIntHeap {
       return
     }
 
-    // -x - (-y) = -x + y = -(x - y) = -(x + (-y))
-    if self.isNegative && other.isNegative {
-      self.negate() // -x -> x
-      self.add(other: other) // x + (-y)
-      self.negate() // -(x + (-y))
-      self.fixInvariants()
-      return
-    }
+    // We could do: -x - (-y) = -x + y = -(x - y) = -(x + (-y))
+    // But this would be slower.
 
     // Same sign -> we may need to cross 0.
     // For example '1 - 1' or '-2 - (-3)'.
-    assert(self.isPositive && other.isPositive)
-
     switch self.compareMagnitude(with: other) {
     case .equal: // 1 - 1
       self.storage.setToZero()
@@ -140,14 +132,14 @@ extension BigIntHeap {
 
       Self.subMagnitudes(otherToken, bigger: &otherCopy, smaller: self.storage)
       otherCopy.setIsNegative(otherToken, value: changedSign)
-      otherCopy.fixInvariants() // Fix possible '0' prefix
+      otherCopy.fixInvariants(otherToken) // Fix possible '0' prefix
 
       self.storage = otherCopy
 
     case .greater: // 2 - 1
       let token = self.storage.guaranteeUniqueBufferReference()
       Self.subMagnitudes(token, bigger: &self.storage, smaller: other.storage)
-      self.fixInvariants() // Fix possible '0' prefix
+      self.fixInvariants(token) // Fix possible '0' prefix
     }
   }
 

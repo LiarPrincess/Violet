@@ -1,5 +1,6 @@
 import Foundation
 
+// swiftlint:disable nesting
 // swiftlint:disable empty_count
 // swiftlint:disable file_length
 
@@ -230,11 +231,14 @@ internal struct BigIntStorage: Equatable, CustomStringConvertible {
   }
 
   /// Add all of the `Word`s from given collection to the buffer.
-  internal mutating func append<C: Collection>(
+  internal mutating func append(
     _ token: UniqueBufferToken,
-    contentsOf other: C
-  ) where C.Element == Word {
-    if other.isEmpty {
+    contentsOf other: UnsafeBufferPointer<Word>
+  ) {
+    // From docs:
+    // If the `baseAddress` of this buffer is `nil`, the count is zero. However,
+    // a buffer can have a `count` of zero even with a non-`nil` base address.
+    guard let otherPtr = other.baseAddress else {
       return
     }
 
@@ -243,11 +247,8 @@ internal struct BigIntStorage: Equatable, CustomStringConvertible {
     self.reserveCapacity(token, capacity: newCount) // Will  validate token
 
     self.buffer.withUnsafeMutablePointerToElements { startPtr in
-      var ptr = startPtr.advanced(by: oldCount)
-      for word in other {
-        ptr.pointee = word
-        ptr = ptr.successor()
-      }
+      let ptr = startPtr.advanced(by: oldCount)
+      ptr.assign(from: otherPtr, count: other.count)
     }
 
     self.unsafeSetCountWithoutToken(value: newCount)
@@ -312,6 +313,36 @@ internal struct BigIntStorage: Equatable, CustomStringConvertible {
     self.buffer = new
   }
 
+  // MARK: - Drop first
+
+  /// Remove first `k` elements.
+  internal mutating func dropFirst(_ token: UniqueBufferToken, wordCount count: Int) {
+    assert(count >= 0)
+
+    if count == 0 {
+      return
+    }
+
+    let oldCount = self.count
+
+    if count >= oldCount {
+      self.removeAll(token) // Will validate token
+      return
+    }
+
+    let newCount = oldCount - count
+    assert(newCount > 0) // We checked 'count >= self.count'
+    self.validateToken(token)
+
+    self.buffer.withUnsafeMutablePointerToElements { startPtr in
+      // Copy 'newCount' elements to front
+      let copySrcPtr = startPtr.advanced(by: count)
+      startPtr.assign(from: copySrcPtr, count: newCount)
+    }
+
+    self.unsafeSetCountWithoutToken(value: newCount)
+  }
+
   // MARK: - Reserve capacity
 
   internal mutating func reserveCapacity(_ token: UniqueBufferToken, capacity: Int) {
@@ -331,13 +362,11 @@ internal struct BigIntStorage: Equatable, CustomStringConvertible {
     }
   }
 
-  // MARK: - Remove all
+  // MARK: - Remove/replace all
 
   internal mutating func removeAll(_ token: UniqueBufferToken) {
     self.setCount(token, value: 0) // Will validate token.
   }
-
-  // MARK: - Replace all
 
   /// Replace all of the `Word`s with the contents of the buffer.
   internal mutating func replaceAll(
@@ -476,9 +505,9 @@ internal struct BigIntStorage: Equatable, CustomStringConvertible {
   /// Token confirming exclusive access to buffer.
   ///
   /// All of the `mutating` methods will require token as a proof of buffer ownership.
+  /// This type should be `move-only`, but Swift does not support it yet.
   internal struct UniqueBufferToken {
-    // TODO: make 'fileprivate'
-    internal init () {}
+    fileprivate init () {}
   }
 
   internal mutating func guaranteeUniqueBufferReference() -> UniqueBufferToken {
@@ -515,135 +544,5 @@ internal struct BigIntStorage: Equatable, CustomStringConvertible {
     dst.withUnsafeMutablePointerToElements { dstPtr in
       dstPtr.assign(repeating: value, count: count)
     }
-  }
-}
-
-// MARK: - Old
-
-extension BigIntStorage {
-
-  /// Add given `Word` to the buffer.
-  internal mutating func append(_ element: Word) {
-    let token = self.guaranteeUniqueBufferReference()
-    self.append(token, element: element)
-  }
-
-  /// Add all of the `Word`s from given collection to the buffer.
-  internal mutating func append<C: Collection>(
-    contentsOf other: C
-  ) where C.Element == Word {
-    if other.isEmpty {
-      return
-    }
-
-    let newCount = self.count + other.count
-    self.guaranteeUniqueBufferReference(withMinimumCapacity: newCount)
-
-    self.buffer.withUnsafeMutablePointerToElements { startPtr in
-      var ptr = startPtr.advanced(by: self.count)
-      for word in other {
-        ptr.pointee = word
-        ptr = ptr.successor()
-      }
-    }
-
-    self.unsafeSetCountWithoutToken(value: newCount)
-  }
-
-  /// Add given `Word`  at the start of the buffer specified number of times.
-  internal mutating func prepend(_ element: Word, count: Int) {
-    let token = self.guaranteeUniqueBufferReference()
-    self.prepend(token, element: element, count: count)
-  }
-
-  /// Remove first `k` elements.
-  internal mutating func dropFirst(wordCount count: Int) {
-    assert(count >= 0)
-
-    if count == 0 {
-      return
-    }
-
-    if count >= self.count {
-      self.removeAll()
-      return
-    }
-
-    self.guaranteeUniqueBufferReference()
-
-    let newCount = self.count - count
-    assert(newCount > 0) // We checked 'count >= self.count'
-
-    self.buffer.withUnsafeMutablePointerToElements { startPtr in
-      // Copy 'newCount' elements to front
-      let copySrcPtr = startPtr.advanced(by: count)
-      startPtr.assign(from: copySrcPtr, count: newCount)
-    }
-
-    self.unsafeSetCountWithoutToken(value: newCount)
-  }
-
-  /// Apply given function to every word
-  internal mutating func transformEveryWord(fn: (Word) -> Word) {
-    self.guaranteeUniqueBufferReference()
-
-    self.buffer.withUnsafeMutablePointerToElements { startPtr in
-      let endPtr = startPtr.advanced(by: self.count)
-
-      var ptr = startPtr
-      while ptr != endPtr {
-        let old = ptr.pointee
-        ptr.pointee = fn(old)
-        ptr = ptr.successor()
-      }
-    }
-  }
-
-  internal mutating func reserveCapacity(_ capacity: Int) {
-    self.guaranteeUniqueBufferReference(withMinimumCapacity: capacity)
-  }
-
-  internal mutating func removeAll() {
-    let token = self.guaranteeUniqueBufferReference()
-    self.removeAll(token)
-  }
-
-  /// Set `self` to represent given `UInt`.
-  internal mutating func set(to value: UInt) {
-    let token = self.guaranteeUniqueBufferReference()
-    self.setTo(token, value: value)
-  }
-
-  /// Set `self` to represent given `Int`.
-  internal mutating func set(to value: Int) {
-    let token = self.guaranteeUniqueBufferReference()
-    self.setTo(token, value: value)
-  }
-
-  private mutating func guaranteeUniqueBufferReference(
-    withMinimumCapacity minimumCapacity: Int
-  ) -> UniqueBufferToken {
-    if self.buffer.isUniqueReference() && self.capacity >= minimumCapacity {
-      return UniqueBufferToken()
-    }
-
-    // Well… shit, we have to allocate new buffer,
-    // but we can grow at the same time (2 birds - 1 stone).
-    let growFactor = 2
-    let capacity = Swift.max(minimumCapacity, growFactor * self.capacity, 1)
-
-    let new = Self.createBuffer(
-      header: self.buffer.header,
-      minimumCapacity: capacity
-    )
-
-    Self.memcpy(dst: new, src: self.buffer, count: self.count)
-    self.buffer = new
-    return UniqueBufferToken()
-  }
-
-  internal mutating func fixInvariants() {
-    let token = self.guaranteeUniqueBufferReference()
-    self.fixInvariants(token)
   }
 }

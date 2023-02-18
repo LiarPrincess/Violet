@@ -66,7 +66,7 @@ extension BigIntHeap {
     }
 
     self.storage.setIsNegative(token, value: preserveIsNegative)
-    self.fixInvariants()
+    self.fixInvariants(token)
   }
 
   // MARK: - Heap
@@ -115,7 +115,7 @@ extension BigIntHeap {
     token = self.storage.guaranteeUniqueBufferReference() // 'mulMagnitude' may reallocate
     self.storage.setIsNegative(token, value: isNegative)
 
-    self.fixInvariants()
+    self.fixInvariants(token)
   }
 
   private typealias Buffer = UnsafeMutableBufferPointer<BigIntStorage.Word>

@@ -93,19 +93,11 @@ extension BigIntHeap {
       return
     }
 
-    // Self negative, other positive:  -x + y = -(x - y)
-    if self.isNegative && other.isPositive {
-      self.negate() // -x -> x
-      self.sub(other: other) // x - y
-      self.negate() // -(x - y)
-      self.fixInvariants()
-      return
-    }
+    // We could do: -x + y = -(x - y)
+    // But this would be slower.
 
     // Self positive, other negative: x + (-y) = x - y
     // We may need to cross 0.
-    assert(self.isPositive && other.isNegative)
-
     switch self.compareMagnitude(with: other) {
     case .equal: // 1 + (-1)
       self.storage.setToZero()
@@ -117,14 +109,14 @@ extension BigIntHeap {
 
       Self.subMagnitudes(otherToken, bigger: &otherCopy, smaller: self.storage)
       otherCopy.setIsNegative(otherToken, value: changedSign)
-      otherCopy.fixInvariants() // Fix possible '0' prefix
+      otherCopy.fixInvariants(otherToken) // Fix possible '0' prefix
 
       self.storage = otherCopy
 
     case .greater: // 2 + (-1) = 2 - 1
       let token = self.storage.guaranteeUniqueBufferReference()
       Self.subMagnitudes(token, bigger: &self.storage, smaller: other.storage)
-      self.fixInvariants() // Fix possible '0' prefix
+      self.fixInvariants(token) // Fix possible '0' prefix
     }
   }
 
@@ -172,7 +164,9 @@ extension BigIntHeap {
         for i in commonCount..<maxCount {
           // Append remaining words if nothing to carry
           if carry == 0 {
-            lhs.append(contentsOf: rhs.suffix(from: i))
+            let suffixPtr = rhs.baseAddress?.advanced(by: i)
+            let suffix = UnsafeBufferPointer(start: suffixPtr, count: rhs.count - i)
+            lhs.append(lhsToken, contentsOf: suffix)
             break
           }
 

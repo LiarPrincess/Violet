@@ -62,7 +62,7 @@ extension BigIntHeap {
     let token = self.storage.guaranteeUniqueBufferReference()
     self.storage.setIsNegative(token, value: resultIsNegative)
 
-    self.fixInvariants()
+    self.fixInvariants(token)
 
     // Remainder is always less than the number we divide by.
     // So even if we divide by min value (for example for 'Int8' it is -128),
@@ -121,7 +121,7 @@ extension BigIntHeap {
       let token = self.storage.guaranteeUniqueBufferReference()
       let remainderMagnitude = Self.divMagnitude(token, &self.storage, by: other)
       self.storage.setIsNegative(token, value: resultIsNegative)
-      self.fixInvariants()
+      self.fixInvariants(token)
 
       return DivWordRemainder(isNegative: remainderIsNegative,
                               magnitude: remainderMagnitude)
@@ -181,33 +181,31 @@ extension BigIntHeap {
 
     let resultIsNegative = self.divIsNegative(otherIsNegative: other.isNegative)
     let remainderIsNegative = self.remIsNegative(otherIsNegative: other.isNegative)
+    var token = self.storage.guaranteeUniqueBufferReference()
 
     switch self.compareMagnitude(with: other) {
     case .equal: // 5 / 5 = 1 rem 0 and also 5 / (-5) = -1 rem 0
-      let token = self.storage.guaranteeUniqueBufferReference()
       self.storage.setTo(token, value: resultIsNegative ? -1 : 1)
       return .zero
 
     case .less: // 3 / 5 = 0 rem 3
       // Basically return 'self' as remainder
       // We have to do a little dance to avoid COW.
-      var remainder = self
+      self.storage.setIsNegative(token, value: remainderIsNegative)
+      let remainder = self
       self.storage.setToZero() // Will use predefined 'BigIntStorage.zero'
-      remainder.storage.isNegative = remainderIsNegative // No COW here
       return remainder
 
     case .greater:
-      var token = self.storage.guaranteeUniqueBufferReference()
       var remainder = Self.divMagnitude(token,  &self.storage, by: other.storage)
-
       token = self.storage.guaranteeUniqueBufferReference() // 'divMagnitude' may reallocate
       self.storage.setIsNegative(token, value: resultIsNegative)
 
-      self.fixInvariants()
+      self.fixInvariants(token)
 
       let remainderToken = remainder.storage.guaranteeUniqueBufferReference()
       remainder.storage.setIsNegative(remainderToken, value: remainderIsNegative)
-      remainder.fixInvariants()
+      remainder.fixInvariants(remainderToken)
       return remainder
     }
   }
@@ -266,13 +264,13 @@ extension BigIntHeap {
     }
 
     // 'lhs' holds the result
-    lhs.fixInvariants()
+    lhs.fixInvariants(lhsToken)
 
     // D8.
     // Undo the 'specialLeftShift' from the start of this function
     Self.specialRightShift(remainderToken, value: &remainder, shift: shift)
-    remainder.fixInvariants()
-    return BigIntHeap(storage: remainder)
+    remainder.fixInvariants(remainderToken)
+    return BigIntHeap(storageWithValidInvariants: remainder)
   }
 
   /// Do `remainder / rhs` updating `result`

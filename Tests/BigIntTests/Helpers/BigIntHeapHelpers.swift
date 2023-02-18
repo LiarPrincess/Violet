@@ -9,8 +9,17 @@ extension BigIntHeap {
   }
 
   internal init(isNegative: Bool, words: [Word]) {
-    let storage = BigIntStorage(isNegative: isNegative, words: words)
-    self.init(storage: storage)
+    var storage = BigIntStorage(isNegative: isNegative, words: words)
+    let token = storage.guaranteeUniqueBufferReference()
+    storage.fixInvariants(token)
+    self.init(storageWithValidInvariants: storage)
+  }
+
+  internal init(storage: BigIntStorage) {
+    var copy = storage
+    let token = copy.guaranteeUniqueBufferReference()
+    copy.fixInvariants(token)
+    self.init(storageWithValidInvariants: copy)
   }
 }
 
@@ -31,6 +40,9 @@ extension BigIntStorage {
     self.init(minimumCapacity: words.count)
     let token = self.guaranteeUniqueBufferReference()
     self.setIsNegative(token, value: isNegative)
-    self.append(token, contentsOf: words)
+
+    for word in words {
+      self.append(token, element: word)
+    }
   }
 }

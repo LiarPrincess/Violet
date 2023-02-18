@@ -71,15 +71,15 @@ internal struct BigIntHeap: Equatable, Hashable {
     self.storage = BigIntStorage(isNegative: isNegative, magnitude: magnitude)
   }
 
-  internal init(storage: BigIntStorage) {
+  internal init(storageWithValidInvariants storage: BigIntStorage) {
     self.storage = storage
-    self.fixInvariants()
+    self.checkInvariants()
   }
 
   // MARK: - Invariants
 
-  internal mutating func fixInvariants() {
-    self.storage.fixInvariants()
+  internal mutating func fixInvariants(_ token: UniqueBufferToken) {
+    self.storage.fixInvariants(token)
   }
 
   internal func checkInvariants() {

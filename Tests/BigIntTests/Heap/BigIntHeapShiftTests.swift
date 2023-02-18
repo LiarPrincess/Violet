@@ -302,12 +302,14 @@ class BigIntHeapShiftTests: XCTestCase {
     XCTAssertEqual(value.storage.count, 2)
     guard value.storage.count == 2 else { return } // Prevent 'out of range' trap
 
-    let lowWord = value.storage[0]
-    let expectedLowWord = Word(1) << (Word.bitWidth - 1)
-    XCTAssertEqual(lowWord, expectedLowWord)
+    value.storage.withWordsBuffer { words in
+      let lowWord = words[0]
+      let expectedLowWord = Word(1) << (Word.bitWidth - 1)
+      XCTAssertEqual(lowWord, expectedLowWord)
 
-    let highWord = value.storage[1]
-    XCTAssertEqual(highWord, 0b0101)
+      let highWord = words[1]
+      XCTAssertEqual(highWord, 0b0101)
+    }
   }
 
   func test_right_smi_butActuallyLeft() {

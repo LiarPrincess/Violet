@@ -85,15 +85,12 @@ extension BigIntHeap {
     // Just using '-' may overflow!
     let otherWord = Word(other.magnitude)
 
-    assert(!self.storage.isEmpty, "Unexpected '0'")
+    assert(!self.storage.isZero, "Unexpected '0'")
     let selfWord = self.storage.withWordsBuffer { $0[0] }
+    let result = selfWord & otherWord
 
-    self.storage.removeAll()
-    self.storage.append(selfWord & otherWord)
-
-    // 'other' is positive, so no matter what our sign is the result  will be '+'
-    self.storage.isNegative = false
-    self.fixInvariants()
+    let token = self.storage.guaranteeUniqueBufferReference()
+    self.storage.setTo(token, value: result)
   }
 
   /// void
@@ -166,19 +163,20 @@ extension BigIntHeap {
     }
 
     result.setIsNegative(token, value: self.isNegative && other.isNegative)
-    result.fixInvariants()
+    result.fixInvariants(token)
     self.storage = result
   }
 
   // MARK: - Or
 
   internal mutating func or(other: Smi.Storage) {
-    if self.isZero {
-      self.storage.set(to: Int(other))
+    if other.isZero {
       return
     }
 
-    if other.isZero {
+    if self.isZero {
+      let token = self.storage.guaranteeUniqueBufferReference()
+      self.storage.setTo(token, value: Int(other))
       return
     }
 
@@ -202,7 +200,7 @@ extension BigIntHeap {
 
     // 'other' is positive, so no matter what our sign stays the same
     // self.storage.isNegative = no changes
-    self.fixInvariants()
+    self.fixInvariants(token)
   }
 
   /// void
@@ -275,7 +273,7 @@ extension BigIntHeap {
     }
 
     result.setIsNegative(token, value: self.isNegative || other.isNegative)
-    result.fixInvariants()
+    result.fixInvariants(token)
     self.storage = result
   }
 
@@ -283,7 +281,8 @@ extension BigIntHeap {
 
   internal mutating func xor(other: Smi.Storage) {
     if self.isZero {
-      self.storage.set(to: Int(other))
+      let token = self.storage.guaranteeUniqueBufferReference()
+      self.storage.setTo(token, value: Int(other))
       return
     }
 
@@ -311,7 +310,7 @@ extension BigIntHeap {
 
     // 'other' is positive, so no matter what our sign stays the same
     // self.storage.isNegative = no changes
-    self.fixInvariants()
+    self.fixInvariants(token)
   }
 
   /// void
@@ -383,7 +382,7 @@ extension BigIntHeap {
     }
 
     result.setIsNegative(token, value: self.isNegative != other.isNegative)
-    result.fixInvariants()
+    result.fixInvariants(token)
     self.storage = result
   }
 }
