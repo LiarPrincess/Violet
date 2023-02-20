@@ -371,16 +371,22 @@ internal struct BigIntStorage: Equatable, CustomStringConvertible {
   /// Replace all of the `Word`s with the contents of the buffer.
   internal mutating func replaceAll(
     _ token: UniqueBufferToken,
-    withContentsOf other: UnsafeMutableBufferPointer<Word>
+    withContentsOf other: UnsafeBufferPointer<Word>
   ) {
     // From docs:
     // If the baseAddress of this buffer is nil, the count is zero.
     // However, a buffer can have a count of zero even with a non-nil base address.
     guard let otherPtr = other.baseAddress else {
+      self.setToZero()
       return
     }
 
     let newCount = other.count
+    if newCount == 0 {
+      self.setToZero()
+      return
+    }
+
     self.reserveCapacity(token, capacity: newCount) // Will validate token.
 
     self.buffer.withUnsafeMutablePointerToElements { ptr in
@@ -473,7 +479,7 @@ internal struct BigIntStorage: Equatable, CustomStringConvertible {
   internal mutating func fixInvariants(_ token: UniqueBufferToken) {
     self.validateToken(token)
 
-    // Trim prefix zeros
+    // Trim suffix zeros
     self.withWordsBuffer { words in
       while self.count > 0 && words[self.count - 1] == 0 {
         let newCount = self.count - 1
@@ -505,7 +511,11 @@ internal struct BigIntStorage: Equatable, CustomStringConvertible {
   /// Token confirming exclusive access to buffer.
   ///
   /// All of the `mutating` methods will require token as a proof of buffer ownership.
-  /// This type should be `move-only`, but Swift does not support it yet.
+  ///
+  /// This type should be `move-only`, but Swift does not support it yet:
+  /// - borrow for word change - `withMutableWordsBuffer`
+  /// - consume for buffer relocation - `append`; return new token
+  /// - consume for `setToZero`; does not return new token (shared value)
   internal struct UniqueBufferToken {
     fileprivate init () {}
   }

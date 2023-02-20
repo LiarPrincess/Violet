@@ -164,7 +164,7 @@ extension BigIntHeap {
     // Remove front 0
     let highWord = buffer[count - 1]
     let countWithoutZero = count - (highWord == 0 ? 1 : 0)
-    let resultBuffer = Buffer(start: buffer.baseAddress, count: countWithoutZero)
+    let resultBuffer = UnsafeBufferPointer(start: buffer.baseAddress, count: countWithoutZero)
     lhs.replaceAll(lhsToken, withContentsOf: resultBuffer)
   }
 

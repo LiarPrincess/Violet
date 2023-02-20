@@ -14,6 +14,8 @@
 import BigIntModule
 import XCTest
 
+// swiftlint:disable all
+
 extension BigInt {
 
   static func fac(_ n: BigInt) -> BigInt {
