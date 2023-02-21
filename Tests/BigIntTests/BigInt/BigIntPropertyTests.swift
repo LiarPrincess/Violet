@@ -163,7 +163,7 @@ class BigIntPropertyTests: XCTestCase {
 
   func test_trailingZeroBitCount_zero() {
     let zero = BigInt(0)
-    XCTAssertEqual(zero.trailingZeroBitCount, 0)
+    XCTAssertEqual(zero.trailingZeroBitCount, 1)
   }
 
   func test_trailingZeroBitCount_int() {

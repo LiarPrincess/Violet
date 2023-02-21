@@ -16,6 +16,8 @@
 import XCTest
 @testable import BigInt
 
+// swiftlint:disable all
+
 #if PERFORMANCE_TEST
 
 private struct TestValues {

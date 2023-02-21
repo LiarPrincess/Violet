@@ -9,8 +9,10 @@ extension BigIntHeap {
       hasher.combine(self.isNegative)
       hasher.combine(self.storage.count)
 
-      for word in self.storage {
-        hasher.combine(word)
+      self.storage.withWordsBuffer { words in
+        for word in words {
+          hasher.combine(word)
+        }
       }
     }
   }
@@ -30,9 +32,11 @@ extension BigIntHeap {
 
     // We have the same sign. Do we have the same magnitude?
     // If we do not have any words then we are '0'
-    let heapMagnitude = heap.storage.first ?? 0
-    let smiMagnitude = smi.magnitude
-    return heapMagnitude == smiMagnitude
+    return heap.storage.withWordsBuffer { words in
+      let heapMagnitude = words.first ?? 0
+      let smiMagnitude = smi.magnitude
+      return heapMagnitude == smiMagnitude
+    }
   }
 
   internal static func == (lhs: BigIntHeap, rhs: BigIntHeap) -> Bool {
@@ -104,10 +108,12 @@ extension BigIntHeap {
     }
 
     // If we do not have any words then we are '0'
-    let selfWord = self.storage.first ?? 0
-    return selfWord == other ? .equal :
-           selfWord > other ? .greater :
-          .less
+    return self.storage.withWordsBuffer { words in
+      let selfWord = words.first ?? 0
+      return selfWord == other ? .equal :
+             selfWord > other ? .greater :
+            .less
+    }
   }
 
   internal func compareMagnitude(with other: BigIntHeap) -> CompareMagnitudeResult {
@@ -121,18 +127,27 @@ extension BigIntHeap {
     }
 
     // Compare from most significant word
-    for (selfWord, otherWord) in zip(self.storage, other).reversed() {
-      if selfWord < otherWord {
-        return .less
-      }
+    return self.storage.withWordsBuffer { lhs in
+      return other.withWordsBuffer { rhs in
+        let count = lhs.count
 
-      if selfWord > otherWord {
-        return .greater
-      }
+        for i in stride(from: count - 1, through: 0, by: -1) {
+          let l = lhs[i]
+          let r = rhs[i]
 
-      // Equal -> compare next word
+          if l < r {
+            return .less
+          }
+
+          if l > r {
+            return .greater
+          }
+
+          // Equal -> compare next word
+        }
+
+        return .equal
+      }
     }
-
-    return .equal
   }
 }

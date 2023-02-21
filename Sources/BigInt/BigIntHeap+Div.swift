@@ -7,6 +7,8 @@
 // V8 implements exactly the "Algorithm D" without any noise/weirdness.
 // Their implementation is AMAZING.
 
+// swiftlint:disable file_length
+
 extension BigIntHeap {
 
   // MARK: - Sign
@@ -42,6 +44,7 @@ extension BigIntHeap {
   // MARK: - Smi
 
   /// Returns remainder.
+  /// May REALLOCATE BUFFER -> invalidates tokens.
   internal mutating func div(other: Smi.Storage) -> Smi.Storage {
     defer { self.checkInvariants() }
 
@@ -53,11 +56,13 @@ extension BigIntHeap {
     let resultIsNegative = self.divIsNegative(otherIsNegative: other.isNegative)
     let remainderIsNegative = self.remIsNegative(otherIsNegative: other.isNegative)
 
-    let word = Word(other.magnitude)
-    let wordRemainder = self.div(other: word)
+    let otherMagnitude = Word(other.magnitude)
+    let wordRemainder = self.div(other: otherMagnitude)
 
-    self.storage.isNegative = resultIsNegative
-    self.fixInvariants()
+    let token = self.storage.guaranteeUniqueBufferReference()
+    self.storage.setIsNegative(token, value: resultIsNegative)
+
+    self.fixInvariants(token)
 
     // Remainder is always less than the number we divide by.
     // So even if we divide by min value (for example for 'Int8' it is -128),
@@ -70,22 +75,19 @@ extension BigIntHeap {
 
   internal struct DivWordRemainder {
 
+    fileprivate static let zero = DivWordRemainder(isNegative: false, magnitude: 0)
+
     internal let isNegative: Bool
     internal let magnitude: Word
 
     internal var isPositive: Bool {
       return !self.isNegative
     }
-
-    fileprivate static var zero: DivWordRemainder {
-      return DivWordRemainder(isNegative: false, magnitude: 0)
-    }
   }
 
   /// Returns remainder.
+  /// May REALLOCATE BUFFER -> invalidates tokens.
   internal mutating func div(other: Word) -> DivWordRemainder {
-    defer { self.checkInvariants() }
-
     precondition(!other.isZero, "Division by zero")
 
     if other == 1 {
@@ -96,27 +98,30 @@ extension BigIntHeap {
       return .zero // 0 / n = 0
     }
 
+    defer { self.checkInvariants() }
+
     let resultIsNegative = self.divIsNegative(otherIsNegative: false)
     let remainderIsNegative = self.remIsNegative(otherIsNegative: other.isNegative)
 
     switch self.compareMagnitude(with: other) {
     case .equal: // 5 / 5 = 1 rem 0 and also 5 / (-5) = -1 rem 0
-      self.storage.set(to: resultIsNegative ? -1 : 1)
+      let token = self.storage.guaranteeUniqueBufferReference()
+      self.storage.setTo(token, value: resultIsNegative ? -1 : 1)
       return .zero
 
     case .less: // 3 / 5 = 0 rem 3
       // Basically return 'self' as remainder
       assert(self.storage.count == 1)
-      let remainderMagnitude = self.storage[0]
+      let remainderMagnitude = self.storage.withWordsBuffer { $0[0] }
       self.storage.setToZero()
       return DivWordRemainder(isNegative: remainderIsNegative,
                               magnitude: remainderMagnitude)
 
     case .greater:
-      let remainderMagnitude = Self.divMagnitude(dividend: &self, divisor: other)
-
-      self.storage.isNegative = resultIsNegative
-      self.fixInvariants()
+      let token = self.storage.guaranteeUniqueBufferReference()
+      let remainderMagnitude = Self.divMagnitude(token, &self.storage, by: other)
+      self.storage.setIsNegative(token, value: resultIsNegative)
+      self.fixInvariants(token)
 
       return DivWordRemainder(isNegative: remainderIsNegative,
                               magnitude: remainderMagnitude)
@@ -129,40 +134,41 @@ extension BigIntHeap {
   /// Only at the magnitude.
   ///
   /// Precondition: `dividend > divisor`
-  private static func divMagnitude(dividend: inout BigIntHeap,
-                                   divisor: Word) -> Word {
+  private static func divMagnitude(
+    _ dividendToken: UniqueBufferToken,
+    _ dividend: inout BigIntStorage,
+    by divisor: Word
+  ) -> Word {
     // Shifting right when 'other' is power of 2
     // would not work for negative numbers.
+    return dividend.withMutableWordsBuffer(dividendToken) { dividend -> Word in
+      var carry = Word.zero
 
-    var carry = Word.zero
-    for i in (0..<dividend.storage.count).reversed() {
-      let arg = (high: carry, low: dividend.storage[i])
-      (dividend.storage[i], carry) = divisor.dividingFullWidth(arg)
+      for i in (0..<dividend.count).reversed() {
+        let arg = (high: carry, low: dividend[i])
+        (dividend[i], carry) = divisor.dividingFullWidth(arg)
+      }
+
+      return carry
     }
-
-    return carry
   }
 
   // MARK: - Heap
 
-  private static var zero: BigIntHeap {
-    return BigIntHeap()
-  }
+  private static let zero = BigIntHeap()
 
   /// Returns remainder.
   internal mutating func div(other: BigIntHeap) -> BigIntHeap {
-    defer { self.checkInvariants() }
-
     // Special cases: other is '0', '1' or '-1'
     precondition(!other.isZero, "Division by zero")
 
     if other.hasMagnitudeOfOne {
-      if other.isPositive {
-        return .zero // x / 1 = x rem 0
+      // x /   1  =  x rem 0
+      // x / (-1) = -x rem 0
+      if other.isNegative {
+        self.negate()
       }
 
-      assert(other.isNegative)
-      self.negate() // x / (-1) = -x rem 0
       return .zero
     }
 
@@ -171,37 +177,40 @@ extension BigIntHeap {
       return .zero
     }
 
+    defer { self.checkInvariants() }
+
     let resultIsNegative = self.divIsNegative(otherIsNegative: other.isNegative)
     let remainderIsNegative = self.remIsNegative(otherIsNegative: other.isNegative)
+    var token = self.storage.guaranteeUniqueBufferReference()
 
     switch self.compareMagnitude(with: other) {
     case .equal: // 5 / 5 = 1 rem 0 and also 5 / (-5) = -1 rem 0
-      self.storage.set(to: resultIsNegative ? -1 : 1)
+      self.storage.setTo(token, value: resultIsNegative ? -1 : 1)
       return .zero
 
     case .less: // 3 / 5 = 0 rem 3
       // Basically return 'self' as remainder
       // We have to do a little dance to avoid COW.
-      var remainder = self
+      self.storage.setIsNegative(token, value: remainderIsNegative)
+      let remainder = self
       self.storage.setToZero() // Will use predefined 'BigIntStorage.zero'
-      remainder.storage.isNegative = remainderIsNegative // No COW here
       return remainder
 
     case .greater:
-      var remainder = Self.divMagnitude(dividend: &self, divisor: other)
+      var remainder = Self.divMagnitude(token,  &self.storage, by: other.storage)
+      token = self.storage.guaranteeUniqueBufferReference() // 'divMagnitude' may reallocate
+      self.storage.setIsNegative(token, value: resultIsNegative)
 
-      self.storage.isNegative = resultIsNegative
-      self.fixInvariants()
+      self.fixInvariants(token)
 
-      remainder.storage.isNegative = remainderIsNegative
-      remainder.fixInvariants()
+      let remainderToken = remainder.storage.guaranteeUniqueBufferReference()
+      remainder.storage.setIsNegative(remainderToken, value: remainderIsNegative)
+      remainder.fixInvariants(remainderToken)
       return remainder
     }
   }
 
   // MARK: - Oh no! We have to implement proper div logic!
-
-// swiftlint:disable function_body_length
 
   /// Returns remainder.
   ///
@@ -209,92 +218,145 @@ extension BigIntHeap {
   ///
   /// Will NOT look at the sign of any of those numbers!
   /// Only at the magnitude.
-  private static func divMagnitude(dividend: inout BigIntHeap,
-                                   divisor: BigIntHeap) -> BigIntHeap {
-// swiftlint:enable function_body_length
-
+  private static func divMagnitude(
+    _ lhsToken: UniqueBufferToken,
+    _ lhs: inout BigIntStorage,
+    by rhs: BigIntStorage
+  ) -> BigIntHeap {
     // Check for single word divisor, to guarantee 'n >= 2'
-    if divisor.storage.count == 1 {
-      let word = divisor.storage[0]
-      let remainder = Self.divMagnitude(dividend: &dividend, divisor: word)
+    if rhs.count == 1 {
+      let word = rhs.withWordsBuffer { $0[0] }
+      let remainder = Self.divMagnitude(lhsToken, &lhs, by: word)
       return BigIntHeap(remainder.magnitude)
     }
-
-    let n = divisor.storage.count
-    let m = dividend.storage.count - n
-
-    // Assuming that we already checked for '0'
-    assert(m >= 0)
-    assert(n >= 2) // We checked for 'divisor.storage.count == 1'
-    assert(Word.bitWidth == 64) // Other not tested
 
     // D1.
     // Left-shift inputs so that the divisor's MSB is '1'.
     // Note that: 'a / b = (a * n) / (b * n)'
-    let shift = divisor.storage[divisor.storage.count - 1].leadingZeroBitCount
-
-    // This is the correct value that should be used during calculation!
-    let shiftedDivisor = Self.specialLeftShift(value: divisor.storage,
-                                               shift: shift,
-                                               mode: .sameSizeResult)
+    let rhsLowWord = rhs.withWordsBuffer { $0[rhs.count - 1] }
+    let shift = rhsLowWord.leadingZeroBitCount
 
     // Holds the (continuously updated) remaining part of the dividend,
     // which eventually becomes the remainder.
-    var remainder = Self.specialLeftShift(value: dividend.storage,
-                                          shift: shift,
-                                          mode: .alwaysAddOneDigit)
+    var remainder = Self.specialLeftShift(lhs: lhs, shift: shift)
+    let remainderToken = remainder.guaranteeUniqueBufferReference()
+    // This is the correct value that should be used during calculation!
+    let shiftedRhs = Self.specialLeftShift(rhs: rhs, shift: shift)
+    defer { shiftedRhs.deallocate() }
 
-    // Preparations before loop:
+    let lhsCount = lhs.count
+    let rhsCount = rhs.count
 
-    // We no longer need 'dividend', since we will be using 'remainder',
-    // for actual division. We will use it to accumulate result instead.
-    dividend.storage.transformEveryWord { _ in 0 }
+    lhs.withMutableWordsBuffer(lhsToken) { lhs in
+      // We no longer need 'lhs', since we will be using 'remainder',
+      // for the actual division. We will use it to accumulate result instead.
+      lhs.assign(repeating: 0)
+
+      remainder.withMutableWordsBuffer(remainderToken) { remainder in
+        Self.inner(
+          lhsCount: lhsCount,
+          rhsCount: rhsCount,
+          lhsWhichBecomesRemainder: remainder,
+          rhs: shiftedRhs,
+          result: lhs
+        )
+      }
+    }
+
+    // 'lhs' holds the result
+    lhs.fixInvariants(lhsToken)
+
+    // D8.
+    // Undo the 'specialLeftShift' from the start of this function
+    Self.specialRightShift(remainderToken, value: &remainder, shift: shift)
+    remainder.fixInvariants(remainderToken)
+    return BigIntHeap(storageWithValidInvariants: remainder)
+  }
+
+  /// Do `remainder / rhs` updating `result`
+  private static func inner(
+    lhsCount: Int,
+    rhsCount: Int,
+    lhsWhichBecomesRemainder lhs: UnsafeMutableBufferPointer<Word>,
+    rhs: UnsafeBufferPointer<Word>,
+    result: UnsafeMutableBufferPointer<Word>
+  ) {
+    // Assuming that we already checked for '0'
+    assert(lhsCount >= rhsCount)
+    assert(rhsCount >= 2) // We checked for 'divisor.storage.count == 1'
+    assert(Word.bitWidth == 64) // Other not tested
+
+    let n = rhsCount
+    let m = lhsCount - rhsCount
+
     // In each iteration we will be dividing 'remainderHighWords' by 'divisorHighWords'
     // to estimate quotient word.
-    let divisorHighWords = (shiftedDivisor[n - 1], shiftedDivisor[n - 2])
+    let rhsHighWords = (rhs[n - 1], rhs[n - 2])
+
     // This will hold 'divisor * quotientGuess',
     // so that we do not have to allocate on every iteration.
-    var mulBuffer = TemporaryWordBuffer(capacity: n + 1)
+    var mulBuffer = MulBuffer(capacity: n + 1)
     defer { mulBuffer.deallocate() }
 
     // D2. D7.
     // Iterate over the dividend's digit (like the 'grad school' algorithm).
-    for j in stride(from: m, through: 0, by: -1) {
+    for i in stride(from: m, through: 0, by: -1) {
       // D3.
       // Estimate the current quotient digit by dividing the most significant
       // digits of dividend and divisor.
       // The result may be exact or it may be '1' too high.
-      let remainderHighWords = (remainder[j + n], remainder[j + n - 1], remainder[j + n - 2])
-      var quotientGuess = Self.approximateQuotient(dividing: remainderHighWords,
-                                                   by: divisorHighWords)
+      let remainderHighWords = (lhs[i + n], lhs[i + n - 1], lhs[i + n - 2])
+      var guess = Self.approximateQuotient(dividing: remainderHighWords, by: rhsHighWords)
 
       // D4. D5. D6.
       // Multiply the divisor with the current quotient digit,
       // and subtract it from the dividend.
       // If there was 'borrow', then the quotient digit was '1' too high,
       // so we must correct it and undo one subtraction of the (shifted) divisor.
-      Self.internalMultiply(lhs: shiftedDivisor, rhs: quotientGuess, into: &mulBuffer)
-      let borrow = Self.inPlaceSub(lhs: &remainder, rhs: mulBuffer, startIndex: j)
+      mulBuffer.removeAll()
+      Self.internalMultiply(lhs: rhs, rhs: guess, into: &mulBuffer)
+
+      let borrow = Self.inPlaceSub(lhs: lhs, rhs: mulBuffer, startIndex: i)
       if borrow != 0 {
-        let carry = Self.inPlaceAdd(lhs: &remainder, rhs: shiftedDivisor, startIndex: j)
-        remainder[j + n] += carry
-        quotientGuess -= 1
+        let carry = Self.inPlaceAdd(lhs: lhs, rhs: rhs, startIndex: i)
+        lhs[i + n] += carry
+        guess -= 1
       }
 
-      dividend.storage[j] = quotientGuess
+      result[i] = guess
     }
-
-    // 'dividend' holds the result
-    dividend.fixInvariants()
-
-    // D8.
-    // Undo the 'specialLeftShift' from the start of this function
-    Self.specialRightShift(value: &remainder, shift: shift)
-    remainder.fixInvariants()
-    return BigIntHeap(storage: remainder)
   }
 
-  // MARK: - Heap - Approximate quotient
+  private struct MulBuffer {
+
+    private let ptr: UnsafeMutableBufferPointer<Word>
+    fileprivate private(set) var count: Int
+
+    fileprivate subscript(index: Int) -> Word {
+      get { return self.ptr[index] }
+      set { self.ptr[index] = newValue }
+    }
+
+    fileprivate init(capacity: Int) {
+      self.ptr = UnsafeMutableBufferPointer<Word>.allocate(capacity: capacity)
+      self.count = 0
+    }
+
+    fileprivate mutating func append(_ word: Word) {
+      self[self.count] = word
+      self.count += 1
+    }
+
+    fileprivate mutating func removeAll() {
+      self.count = 0
+    }
+
+    fileprivate func deallocate() {
+      self.ptr.deallocate()
+    }
+  }
+
+  // MARK: - Approximate quotient
 
   /// See Knuth.
   private static func approximateQuotient(
@@ -333,57 +395,84 @@ extension BigIntHeap {
     return resultHigh > high || (resultHigh == high && resultLow > low)
   }
 
-  // MARK: - Heap - Special shifts
+  // MARK: - Special shifts
 
-  private enum SpecialLeftShiftMode {
-    case sameSizeResult
-    case alwaysAddOneDigit
-  }
+  private static func specialLeftShift(
+    lhs value: BigIntStorage,
+    shift: Int
+  ) -> BigIntStorage {
+    let count = value.count + 1
+    var result = BigIntStorage(repeating: .zero, count: count)
+    let token = result.guaranteeUniqueBufferReference()
 
-  private static func specialLeftShift(value: BigIntStorage,
-                                       shift: Int,
-                                       mode: SpecialLeftShiftMode) -> BigIntStorage {
-    var result: BigIntStorage
-    switch mode {
-    case .sameSizeResult:
-      result = BigIntStorage(repeating: .zero, count: value.count)
-    case .alwaysAddOneDigit:
-      result = BigIntStorage(repeating: .zero, count: value.count + 1)
-      result[result.count - 1] = value[value.count - 1] >> (Word.bitWidth - shift)
+    result.withMutableWordsBuffer(token) { result in
+      value.withWordsBuffer { value in
+        result[result.count - 1] = value[value.count - 1] >> (Word.bitWidth - shift)
+
+        for i in stride(from: value.count - 1, to: 0, by: -1) {
+          let high = value[i] << shift
+          let low = value[i - 1] >> (Word.bitWidth - shift)
+          result[i] = high | low
+        }
+
+        result[0] = value[0] << shift
+      }
     }
 
-    for i in stride(from: value.count - 1, to: 0, by: -1) {
-      let high = value[i] << shift
-      let low = value[i - 1] >> (Word.bitWidth - shift)
-      result[i] = high | low
-    }
-
-    result[0] = value[0] << shift
     return result
   }
 
-  private static func specialRightShift(value: inout BigIntStorage, shift: Int) {
+  private static func specialLeftShift(
+    rhs value: BigIntStorage,
+    shift: Int
+  ) -> UnsafeBufferPointer<Word> {
+    let count = value.count
+    let result = UnsafeMutableBufferPointer<Word>.allocate(capacity: count)
+    result.assign(repeating: 0)
+
+    value.withWordsBuffer { value in
+      for i in stride(from: value.count - 1, to: 0, by: -1) {
+        let high = value[i] << shift
+        let low = value[i - 1] >> (Word.bitWidth - shift)
+        result[i] = high | low
+      }
+
+      result[0] = value[0] << shift
+    }
+
+    return UnsafeBufferPointer(result)
+  }
+
+  private static func specialRightShift(
+    _ token: UniqueBufferToken,
+    value: inout BigIntStorage,
+    shift: Int
+  ) {
     if shift == 0 {
       return
     }
 
-    for i in 0..<(value.count - 1) {
-      let low = value[i] >> shift
-      let high = value[i + 1] << (Word.bitWidth - shift)
-      value[i] = high | low
-    }
+    value.withMutableWordsBuffer(token) { value in
+      for i in 0..<(value.count - 1) {
+        let low = value[i] >> shift
+        let high = value[i + 1] << (Word.bitWidth - shift)
+        value[i] = high | low
+      }
 
-    value[value.count - 1] = value[value.count - 1] >> shift
+      value[value.count - 1] = value[value.count - 1] >> shift
+    }
   }
 
-  // MARK: - Heap - Add, sub and mul
+  // MARK: - Add, sub, mul
 
   /// Adds `rhs` onto `lhs`, starting with `rhs` 0th digit at `lhs` `startIndex` digit.
   ///
   /// Returns the `carry` (0 or 1).
-  private static func inPlaceAdd(lhs: inout BigIntStorage,
-                                 rhs: BigIntStorage,
-                                 startIndex: Int) -> Word {
+  private static func inPlaceAdd(
+    lhs: UnsafeMutableBufferPointer<Word>,
+    rhs: UnsafeBufferPointer<Word>,
+    startIndex: Int
+  ) -> Word {
     var carry: Word = 0
 
     for i in 0..<rhs.count {
@@ -400,9 +489,11 @@ extension BigIntHeap {
   /// and `lhs` `startIndex` digit.
   ///
   /// Returns the `borrow` (0 or 1).
-  private static func inPlaceSub(lhs: inout BigIntStorage,
-                                 rhs: TemporaryWordBuffer,
-                                 startIndex: Int) -> Word {
+  private static func inPlaceSub(
+    lhs: UnsafeMutableBufferPointer<Word>,
+    rhs: MulBuffer,
+    startIndex: Int
+  ) -> Word {
     var borrow: Word = 0
 
     for i in 0..<rhs.count {
@@ -417,11 +508,12 @@ extension BigIntHeap {
 
   /// Multiplies `lhs` with `rhs` and adds `summand` to the result.
   /// `result` and `lhs` may be the same BigInt for in-place modification.
-  private static func internalMultiply(lhs: BigIntStorage,
-                                       rhs: Word,
-                                       into result: inout TemporaryWordBuffer) {
+  private static func internalMultiply(
+    lhs: UnsafeBufferPointer<Word>,
+    rhs: Word,
+    into result: inout MulBuffer
+  ) {
     var carry: Word = 0
-    result.removeAll()
 
     for i in 0..<lhs.count {
       let (high, low) = lhs[i].multipliedFullWidth(by: rhs)

@@ -135,23 +135,15 @@ internal struct BigIntPrototype {
   ) -> BigInt {
     assert(!T.isSigned)
     var result = BigInt()
-    var power = BigInt(1)
 
-    for word in magnitude {
-      // As for the magic '+1' in power:
-      // Without it (example for UInt8):
-      //   [255]  -> 255*1         = 255
-      //   [0, 1] -> 0  *1 + 1*255 = 255
-      //   So, we have 2 ways of representing '255' (aka. T.max)
-      // With it:
-      //   [255]  -> 255*1             = 255
-      //   [0, 1] -> 0  *1 + 1*(255+1) = 256
-      result += BigInt(word) * power
-      power *= BigInt(T.max) + 1
+    for (index, word) in magnitude.enumerated() {
+      var bits = BigInt(word)
+      bits <<= index * T.bitWidth
+      result |= bits
     }
 
     if !isPositive {
-      result *= -1
+      result.negate()
     }
 
     return result

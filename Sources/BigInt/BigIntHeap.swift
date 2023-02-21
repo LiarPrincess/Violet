@@ -1,6 +1,8 @@
 internal struct BigIntHeap: Equatable, Hashable {
 
   internal typealias Word = BigIntStorage.Word
+  /// Token confirming exclusive access to buffer.
+  internal typealias UniqueBufferToken = BigIntStorage.UniqueBufferToken
 
   // MARK: - Properties
 
@@ -20,12 +22,14 @@ internal struct BigIntHeap: Equatable, Hashable {
   }
 
   internal var isEven: Bool {
-    guard let first = self.storage.first else {
-      assert(self.isZero)
-      return true // '0' is even
-    }
+    return self.storage.withWordsBuffer { words in
+      if words.isEmpty {
+        assert(self.isZero)
+        return true // '0' is even
+      }
 
-    return first & 0b1 == 0
+      return words[0] & 0b1 == 0
+    }
   }
 
   /// DO NOT USE in general code!
@@ -46,7 +50,7 @@ internal struct BigIntHeap: Equatable, Hashable {
   }
 
   internal var hasMagnitudeOfOne: Bool {
-    return self.storage.count == 1 && self.storage[0] == 1
+    return self.storage.withWordsBuffer { $0.count == 1 && $0[0] == 1 }
   }
 
   // MARK: - Init
@@ -67,15 +71,15 @@ internal struct BigIntHeap: Equatable, Hashable {
     self.storage = BigIntStorage(isNegative: isNegative, magnitude: magnitude)
   }
 
-  internal init(storage: BigIntStorage) {
+  internal init(storageWithValidInvariants storage: BigIntStorage) {
     self.storage = storage
-    self.fixInvariants()
+    self.checkInvariants()
   }
 
   // MARK: - Invariants
 
-  internal mutating func fixInvariants() {
-    self.storage.fixInvariants()
+  internal mutating func fixInvariants(_ token: UniqueBufferToken) {
+    self.storage.fixInvariants(token)
   }
 
   internal func checkInvariants() {
@@ -94,7 +98,8 @@ internal struct BigIntHeap: Equatable, Hashable {
       return nil
     }
 
-    let word = self.storage[0]
+    let word = self.storage.withWordsBuffer { $0[0] }
+
     if let storage = word.asSmiIfPossible(isNegative: self.isNegative) {
       return Smi(storage)
     }

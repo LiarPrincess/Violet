@@ -138,7 +138,8 @@ class BigIntHeapDivTests: XCTestCase {
 
         let expectedWords = p.words.map { $0 >> power.n }
         var expected = BigIntHeap(isNegative: p.isNegative, words: expectedWords)
-        expected.fixInvariants()
+        let token = expected.storage.guaranteeUniqueBufferReference()
+        expected.fixInvariants(token)
 
         XCTAssertEqual(value, expected, "\(p) / \(power.value)")
         // Rem is '0' because we cleaned those bits
@@ -434,7 +435,8 @@ class BigIntHeapDivTests: XCTestCase {
 
         let expectedWords = p.words.map { $0 >> power.n }
         var expected = BigIntHeap(isNegative: p.isNegative, words: expectedWords)
-        expected.fixInvariants()
+        let token = expected.storage.guaranteeUniqueBufferReference()
+        expected.fixInvariants(token)
 
         // Rem is '0' because we cleaned those bits
         XCTAssertEqual(value, expected, "\(p) / \(power.value)")
