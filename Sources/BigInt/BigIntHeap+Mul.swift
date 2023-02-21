@@ -145,11 +145,14 @@ extension BigIntHeap {
   /// ```.
   internal static func mulMagnitude(lhs: inout BigIntStorage, rhs: BigIntStorage) {
     let resultCount = lhs.count + rhs.count
-    var result = BigIntStorage(repeating: 0, count: resultCount)
-    result.isNegative = lhs.isNegative
+
+    // If we used 'BigIntStorage' instead of a raw buffer then
+    // 'guaranteeUniqueBufferReference' would eat 50% of the performance.
+    var result = TemporaryWordBuffer(repeating: 0, count: resultCount)
+    defer { result.deallocate() }
 
     // We will use 'smaller' for inner loop in hope that it will generate
-    // smaller pressure on registers.
+    // smaller pressure on cache/memory.
     let (smaller, bigger) = lhs.count <= rhs.count ? (lhs, rhs) : (rhs, lhs)
 
     for biggerIndex in 0..<bigger.count {
@@ -173,6 +176,6 @@ extension BigIntHeap {
       result[biggerIndex + smaller.count] += carry
     }
 
-    lhs = result
+    lhs.replaceAll(withContentsOf: result)
   }
 }
