@@ -196,8 +196,6 @@ extension BigInt {
     radix: Int,
     sign: ParsedSign
   ) -> ParseMagnitudeResult {
-    let isNegative = sign.isNegative
-
     // Instead of using a single 'BigInt' and multiplying it by 'radix',
     // we will group scalars into words-sized chunks.
     // Then we will raise those chunks to appropriate power and add together.
@@ -227,6 +225,8 @@ extension BigInt {
       return .value(BigInt())
     }
 
+    let isNegative = sign.isNegative
+
     // Fast path for 'Smi' (avoids allocation for 'BigIntHeap')
     if groups.count == 1 {
       if let smi = mostSignificantGroup.asSmiIfPossible(isNegative: isNegative) {
@@ -235,17 +235,20 @@ extension BigInt {
     }
 
     var result = BigIntHeap(minimumStorageCapacity: groups.count)
-    result.storage.append(mostSignificantGroup)
-    result.storage.isNegative = isNegative
+    result.add(other: mostSignificantGroup)
 
     // 'dropLast' because we already added 'mostSignificantGroup'
     // 'reversed' because we want to start with 'high' powers
     for group in groups.dropLast().reversed() {
-      BigIntHeap.mulMagnitude(lhs: &result.storage, rhs: power)
-      BigIntHeap.addMagnitude(lhs: &result.storage, rhs: group)
+      result.mul(other: power)
+      result.add(other: group)
     }
 
-    result.fixInvariants()
+    // Sign does not apply to '0'
+    if isNegative {
+      result.negate()
+    }
+
     return .value(BigInt(result))
   }
 

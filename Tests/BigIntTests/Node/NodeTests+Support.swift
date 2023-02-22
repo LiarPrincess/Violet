@@ -12,44 +12,61 @@ extension NodeTests {
                          expecting: String,
                          file: StaticString = #file,
                          line: UInt = #line) {
-    self.unaryOp(value: value,
-                 expecting: expecting,
-                 op: { +$0 },
-                 file: file,
-                 line: line)
+    self.unaryOp(
+      value: value,
+      expecting: expecting,
+      op: { +$0 },
+      file: file,
+      line: line
+    )
   }
 
   internal func minusTest(value: String,
                           expecting: String,
                           file: StaticString = #file,
                           line: UInt = #line) {
-    self.unaryOp(value: value,
-                 expecting: expecting,
-                 op: { -$0 },
-                 file: file,
-                 line: line)
+    self.unaryOp(
+      value: value,
+      expecting: expecting,
+      op: { -$0 },
+      file: file,
+      line: line
+    )
   }
 
   internal func invertTest(value: String,
                            expecting: String,
                            file: StaticString = #file,
                            line: UInt = #line) {
-    self.unaryOp(value: value,
-                 expecting: expecting,
-                 op: { ~$0 },
-                 file: file,
-                 line: line)
+    self.unaryOp(
+      value: value,
+      expecting: expecting,
+      op: { ~$0 },
+      file: file,
+      line: line
+    )
   }
 
   internal typealias UnaryOperation = (BigInt) -> BigInt
 
-  private func unaryOp(value _value: String,
-                       expecting _expected: String,
+  private func unaryOp(value valueString: String,
+                       expecting expectedString: String,
                        op: UnaryOperation,
                        file: StaticString,
                        line: UInt) {
-    guard let value = self.parse(_value, file: file, line: line),
-          let expected = self.parse(_expected, file: file, line: line) else {
+    let value: BigInt
+    do {
+      value = try self.create(string: valueString, radix: 10)
+    } catch {
+      XCTFail("Unable to parse value: \(error)", file: file, line: line)
+      return
+    }
+
+    let expected: BigInt
+    do {
+      expected = try self.create(string: expectedString, radix: 10)
+    } catch {
+      XCTFail("Unable to parse expected: \(error)", file: file, line: line)
       return
     }
 
@@ -64,13 +81,15 @@ extension NodeTests {
                         expecting: String,
                         file: StaticString = #file,
                         line: UInt = #line) {
-    self.binaryOp(lhs: lhs,
-                  rhs: rhs,
-                  expecting: expecting,
-                  op: { $0 + $1 },
-                  inoutOp: { $0 += $1 },
-                  file: file,
-                  line: line)
+    self.binaryOp(
+      lhs: lhs,
+      rhs: rhs,
+      expecting: expecting,
+      op: { $0 + $1 },
+      inoutOp: { $0 += $1 },
+      file: file,
+      line: line
+    )
   }
 
   internal func subTest(lhs: String,
@@ -78,13 +97,15 @@ extension NodeTests {
                         expecting: String,
                         file: StaticString = #file,
                         line: UInt = #line) {
-    self.binaryOp(lhs: lhs,
-                  rhs: rhs,
-                  expecting: expecting,
-                  op: { $0 - $1 },
-                  inoutOp: { $0 -= $1 },
-                  file: file,
-                  line: line)
+    self.binaryOp(
+      lhs: lhs,
+      rhs: rhs,
+      expecting: expecting,
+      op: { $0 - $1 },
+      inoutOp: { $0 -= $1 },
+      file: file,
+      line: line
+    )
   }
 
   internal func mulTest(lhs: String,
@@ -92,13 +113,15 @@ extension NodeTests {
                         expecting: String,
                         file: StaticString = #file,
                         line: UInt = #line) {
-    self.binaryOp(lhs: lhs,
-                  rhs: rhs,
-                  expecting: expecting,
-                  op: { $0 * $1 },
-                  inoutOp: { $0 *= $1 },
-                  file: file,
-                  line: line)
+    self.binaryOp(
+      lhs: lhs,
+      rhs: rhs,
+      expecting: expecting,
+      op: { $0 * $1 },
+      inoutOp: { $0 *= $1 },
+      file: file,
+      line: line
+    )
   }
 
   internal func divTest(lhs: String,
@@ -106,13 +129,15 @@ extension NodeTests {
                         expecting: String,
                         file: StaticString = #file,
                         line: UInt = #line) {
-    self.binaryOp(lhs: lhs,
-                  rhs: rhs,
-                  expecting: expecting,
-                  op: { $0 / $1 },
-                  inoutOp: { $0 /= $1 },
-                  file: file,
-                  line: line)
+    self.binaryOp(
+      lhs: lhs,
+      rhs: rhs,
+      expecting: expecting,
+      op: { $0 / $1 },
+      inoutOp: { $0 /= $1 },
+      file: file,
+      line: line
+    )
   }
 
   internal func modTest(lhs: String,
@@ -120,13 +145,15 @@ extension NodeTests {
                         expecting: String,
                         file: StaticString = #file,
                         line: UInt = #line) {
-    self.binaryOp(lhs: lhs,
-                  rhs: rhs,
-                  expecting: expecting,
-                  op: { $0 % $1 },
-                  inoutOp: { $0 %= $1 },
-                  file: file,
-                  line: line)
+    self.binaryOp(
+      lhs: lhs,
+      rhs: rhs,
+      expecting: expecting,
+      op: { $0 % $1 },
+      inoutOp: { $0 %= $1 },
+      file: file,
+      line: line
+    )
   }
 
   internal func andTest(lhs: String,
@@ -134,13 +161,15 @@ extension NodeTests {
                         expecting: String,
                         file: StaticString = #file,
                         line: UInt = #line) {
-    self.binaryOp(lhs: lhs,
-                  rhs: rhs,
-                  expecting: expecting,
-                  op: { $0 & $1 },
-                  inoutOp: { $0 &= $1 },
-                  file: file,
-                  line: line)
+    self.binaryOp(
+      lhs: lhs,
+      rhs: rhs,
+      expecting: expecting,
+      op: { $0 & $1 },
+      inoutOp: { $0 &= $1 },
+      file: file,
+      line: line
+    )
   }
 
   internal func orTest(lhs: String,
@@ -148,13 +177,15 @@ extension NodeTests {
                        expecting: String,
                        file: StaticString = #file,
                        line: UInt = #line) {
-    self.binaryOp(lhs: lhs,
-                  rhs: rhs,
-                  expecting: expecting,
-                  op: { $0 | $1 },
-                  inoutOp: { $0 |= $1 },
-                  file: file,
-                  line: line)
+    self.binaryOp(
+      lhs: lhs,
+      rhs: rhs,
+      expecting: expecting,
+      op: { $0 | $1 },
+      inoutOp: { $0 |= $1 },
+      file: file,
+      line: line
+    )
   }
 
   internal func xorTest(lhs: String,
@@ -162,29 +193,50 @@ extension NodeTests {
                         expecting: String,
                         file: StaticString = #file,
                         line: UInt = #line) {
-    self.binaryOp(lhs: lhs,
-                  rhs: rhs,
-                  expecting: expecting,
-                  op: { $0 ^ $1 },
-                  inoutOp: { $0 ^= $1 },
-                  file: file,
-                  line: line)
+    self.binaryOp(
+      lhs: lhs,
+      rhs: rhs,
+      expecting: expecting,
+      op: { $0 ^ $1 },
+      inoutOp: { $0 ^= $1 },
+      file: file,
+      line: line
+    )
   }
 
   internal typealias BinaryOperation = (BigInt, BigInt) -> BigInt
   internal typealias InoutBinaryOperation = (inout BigInt, BigInt) -> Void
 
-  private func binaryOp(lhs _lhs: String,
-                        rhs _rhs: String,
-                        expecting _expected: String,
+  private func binaryOp(lhs lhsString: String,
+                        rhs rhsString: String,
+                        expecting expectedString: String,
                         op: BinaryOperation,
                         inoutOp: InoutBinaryOperation,
                         file: StaticString,
                         line: UInt) {
-    guard let lhs = self.parse(_lhs, file: file, line: line),
-          let lhsBeforeInout = self.parse(_lhs, file: file, line: line),
-          let rhs = self.parse(_rhs, file: file, line: line),
-          let expected = self.parse(_expected, file: file, line: line) else {
+    let lhs: BigInt
+    let lhsBeforeInout: BigInt // Later to check if 'inout' did not modify original
+    do {
+      lhs = try self.create(string: lhsString, radix: 10)
+      lhsBeforeInout = try self.create(string: lhsString, radix: 10)
+    } catch {
+      XCTFail("Unable to parse lhs: \(error)", file: file, line: line)
+      return
+    }
+
+    let rhs: BigInt
+    do {
+      rhs = try self.create(string: rhsString, radix: 10)
+    } catch {
+      XCTFail("Unable to parse rhs: \(error)", file: file, line: line)
+      return
+    }
+
+    let expected: BigInt
+    do {
+      expected = try self.create(string: expectedString, radix: 10)
+    } catch {
+      XCTFail("Unable to parse expected: \(error)", file: file, line: line)
       return
     }
 
@@ -197,24 +249,48 @@ extension NodeTests {
     inoutOp(&inoutLhs, rhs)
     XCTAssertEqual(inoutLhs, expected, "INOUT!!1", file: file, line: line)
 
-    // Make sure that 'inout' operation did not modify 'lhs'.
-    // (COW: they shared a single buffer -> inout should copy it before modification)
+    // Make sure that 'inout' did not modify original
     let inoutMsg = "Inout did modify shared/original value"
     XCTAssertEqual(lhs, lhsBeforeInout, inoutMsg, file: file, line: line)
   }
 
   // MARK: - Div mod
 
-  internal func divModTest(lhs _lhs: String,
-                           rhs _rhs: String,
-                           div _div: String,
-                           mod _mod: String,
+  internal func divModTest(lhs lhsString: String,
+                           rhs rhsString: String,
+                           div divString: String,
+                           mod modString: String,
                            file: StaticString = #file,
                            line: UInt = #line) {
-    guard let lhs = self.parse(_lhs, file: file, line: line),
-          let rhs = self.parse(_rhs, file: file, line: line),
-          let div = self.parse(_div, file: file, line: line),
-          let mod = self.parse(_mod, file: file, line: line) else {
+    let lhs: BigInt
+    do {
+      lhs = try self.create(string: lhsString, radix: 10)
+    } catch {
+      XCTFail("Unable to parse lhs: \(error)", file: file, line: line)
+      return
+    }
+
+    let rhs: BigInt
+    do {
+      rhs = try self.create(string: rhsString, radix: 10)
+    } catch {
+      XCTFail("Unable to parse rhs: \(error)", file: file, line: line)
+      return
+    }
+
+    let div: BigInt
+    do {
+      div = try self.create(string: divString, radix: 10)
+    } catch {
+      XCTFail("Unable to parse div: \(error)", file: file, line: line)
+      return
+    }
+
+    let mod: BigInt
+    do {
+      mod = try self.create(string: modString, radix: 10)
+    } catch {
+      XCTFail("Unable to parse mod: \(error)", file: file, line: line)
       return
     }
 
@@ -225,18 +301,29 @@ extension NodeTests {
 
   // MARK: - Power
 
-  internal func powerTest(base _base: String,
-                          exponent _exponent: Int,
-                          expecting _expected: String,
+  internal func powerTest(base baseString: String,
+                          exponent exponentInt: Int,
+                          expecting expectedString: String,
                           file: StaticString = #file,
                           line: UInt = #line) {
-    guard let base = self.parse(_base, file: file, line: line),
-          let expected = self.parse(_expected, file: file, line: line) else {
+    let base: BigInt
+    do {
+      base = try self.create(string: baseString, radix: 10)
+    } catch {
+      XCTFail("Unable to parse lhs: \(error)", file: file, line: line)
       return
     }
 
-    let exponent = BigInt(_exponent)
-    let result = base.power(exponent: exponent)
+    let expected: BigInt
+    do {
+      expected = try self.create(string: expectedString, radix: 10)
+    } catch {
+      XCTFail("Unable to parse expected: \(error)", file: file, line: line)
+      return
+    }
+
+    let exp = BigInt(exponentInt)
+    let result = base.power(exponent: exp)
     XCTAssertEqual(result, expected, file: file, line: line)
   }
 
@@ -247,13 +334,15 @@ extension NodeTests {
                               expecting: String,
                               file: StaticString = #file,
                               line: UInt = #line) {
-    self.shiftOp(value: value,
-                 count: count,
-                 expecting: expecting,
-                 op: { $0 << $1 },
-                 inoutOp: { $0 <<= $1 },
-                 file: file,
-                 line: line)
+    self.shiftOp(
+      value: value,
+      count: count,
+      expecting: expecting,
+      op: { $0 << $1 },
+      inoutOp: { $0 <<= $1 },
+      file: file,
+      line: line
+    )
   }
 
   internal func shiftRightTest(value: String,
@@ -261,32 +350,47 @@ extension NodeTests {
                                expecting: String,
                                file: StaticString = #file,
                                line: UInt = #line) {
-    self.shiftOp(value: value,
-                 count: count,
-                 expecting: expecting,
-                 op: { $0 >> $1 },
-                 inoutOp: { $0 >>= $1 },
-                 file: file,
-                 line: line)
+    self.shiftOp(
+      value: value,
+      count: count,
+      expecting: expecting,
+      op: { $0 >> $1 },
+      inoutOp: { $0 >>= $1 },
+      file: file,
+      line: line
+    )
   }
 
   internal typealias ShiftOperation = (BigInt, BigInt) -> BigInt
   internal typealias InoutShiftOperation = (inout BigInt, BigInt) -> Void
 
-  private func shiftOp(value _value: String,
-                       count _count: Int,
-                       expecting _expected: String,
+  private func shiftOp(value valueString: String,
+                       count countInt: Int,
+                       expecting expectedString: String,
                        op: ShiftOperation,
                        inoutOp: InoutShiftOperation,
                        file: StaticString,
                        line: UInt) {
-    guard let value = self.parse(_value, file: file, line: line),
-          let valueBeforeInout = self.parse(_value, file: file, line: line),
-          let expected = self.parse(_expected, file: file, line: line) else {
+
+    let value: BigInt
+    let valueBeforeInout: BigInt // Later to check if 'inout' did not modify original
+    do {
+      value = try self.create(string: valueString, radix: 10)
+      valueBeforeInout = try self.create(string: valueString, radix: 10)
+    } catch {
+      XCTFail("Unable to parse lhs: \(error)", file: file, line: line)
       return
     }
 
-    let count = BigInt(_count)
+    let count = BigInt(countInt)
+
+    let expected: BigInt
+    do {
+      expected = try self.create(string: expectedString, radix: 10)
+    } catch {
+      XCTFail("Unable to parse expected: \(error)", file: file, line: line)
+      return
+    }
 
     // Check 'standard' op
     let result = op(value, count)
@@ -297,21 +401,15 @@ extension NodeTests {
     inoutOp(&inoutValue, count)
     XCTAssertEqual(inoutValue, expected, "INOUT!!1", file: file, line: line)
 
-    // Make sure that 'inout' operation did not modify 'lhs'.
-    // (COW: they shared a single buffer -> inout should copy it before modification)
+    // Make sure that 'inout' did not modify original
     let inoutMsg = "Inout did modify shared/original value"
     XCTAssertEqual(value, valueBeforeInout, inoutMsg, file: file, line: line)
   }
 
   // MARK: - Helpers
 
-  /// Abstraction over `BigInt(_:radix:)`.
-  private func parse(_ string: String, file: StaticString, line: UInt) -> BigInt? {
-    do {
-      return try BigInt(string, radix: 10)
-    } catch {
-      XCTFail("Unable to parse '\(string)'.", file: file, line: line)
-      return nil
-    }
+  /// Abstraction over `BigInt.init(_:radix:)`.
+  private func create(string: String, radix: Int) throws -> BigInt {
+    return try BigInt(string, radix: radix)
   }
 }

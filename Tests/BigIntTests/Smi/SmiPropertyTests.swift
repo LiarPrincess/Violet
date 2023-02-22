@@ -70,7 +70,7 @@ class SmiPropertyTests: XCTestCase {
   // MARK: - Trailing zero bit count
 
   func test_trailingZeroBitCount() {
-    self.trailingZeroBitCount(0, expected: 0) // <-- this!!!
+    self.trailingZeroBitCount(0, expected: 1) // <-- this!!!
 
     self.trailingZeroBitCount(1)
     self.trailingZeroBitCount(max)

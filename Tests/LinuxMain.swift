@@ -1,7 +1,6 @@
 import XCTest
 
 import BigIntTests
-import BigIntTests_swift_numerics
 import FileSystemTests
 import RapunzelTests
 import UnicodeDataTests
@@ -15,7 +14,6 @@ import VioletVMTests
 
 var tests = [XCTestCaseEntry]()
 tests += BigIntTests.__allTests()
-tests += BigIntTests_swift_numerics.__allTests()
 tests += FileSystemTests.__allTests()
 tests += RapunzelTests.__allTests()
 tests += UnicodeDataTests.__allTests()

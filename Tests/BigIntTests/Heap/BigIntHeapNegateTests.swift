@@ -47,8 +47,10 @@ class BigIntHeapNegateTests: XCTestCase {
 
       // Same magnitude?
       XCTAssertEqual(value.storage.count, p.words.count)
-      for (negatedWord, originalWord) in zip(value.storage, p.words) {
-        XCTAssertEqual(negatedWord, originalWord)
+      value.storage.withWordsBuffer { value in
+        for (negatedWord, originalWord) in zip(value, p.words) {
+          XCTAssertEqual(negatedWord, originalWord)
+        }
       }
 
       // Double negation - back to normal
@@ -57,8 +59,10 @@ class BigIntHeapNegateTests: XCTestCase {
 
       // Same magnitude?
       XCTAssertEqual(value.storage.count, p.words.count)
-      for (negatedWord, originalWord) in zip(value.storage, p.words) {
-        XCTAssertEqual(negatedWord, originalWord)
+      value.storage.withWordsBuffer { value in
+        for (negatedWord, originalWord) in zip(value, p.words) {
+          XCTAssertEqual(negatedWord, originalWord)
+        }
       }
     }
   }
