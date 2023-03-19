@@ -7,7 +7,7 @@ private typealias TestCase = (x: String, y: String, quotient: String, remainder:
 
 /// Additional tests for `div` operation
 /// Based on: https://github.com/apple/swift/blob/master/test/Prototypes/BigInt.swift
-class BigIntDivTests: XCTestCase {
+class AppleBigIntDivTests: XCTestCase {
 
   // cspell:disable
   private let testCases: [TestCase] = [

@@ -1,12 +1,13 @@
 import XCTest
 @testable import BigInt
 
+// swiftlint:disable type_name
+
 private typealias Word = BigIntHeap.Word
 
-/// Reversible operation - operation for which exists 'reverse' operation
-/// that undoes its effect.
+/// Operations for which exists 'reverse' operation that undoes its effect.
 /// For example for addition it is subtraction: `(n + x) - x = n`.
-class BigIntReversibleOperationsTests: XCTestCase {
+class ApplyA_UndoA: XCTestCase {
 
   private lazy var smiValues = generateSmiValues(countButNotReally: 20)
   private lazy var heapValues = generateHeapValues(countButNotReally: 20)
@@ -154,14 +155,11 @@ class BigIntReversibleOperationsTests: XCTestCase {
                             line: UInt = #line) {
     for radix in [2, 5, 10, 16] {
       let string = String(value, radix: radix)
-      if let int = BigInt(string, radix: radix) {
-        XCTAssertEqual(int,
-                       value,
-                       "string: \(value), radix: \(radix)",
-                       file: file,
-                       line: line)
+
+      if let n = BigInt(string, radix: radix) {
+        XCTAssertEqual(n, value, "\(string), radix: \(radix)", file: file, line: line)
       } else {
-        XCTFail("string: \(value), radix: \(radix)", file: file, line: line)
+        XCTFail("\(string), radix: \(radix)", file: file, line: line)
       }
     }
   }
