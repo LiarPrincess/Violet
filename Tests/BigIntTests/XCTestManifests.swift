@@ -388,17 +388,11 @@ extension BigIntHeapShiftTests {
     //   `swift test --generate-linuxmain`
     // to regenerate.
     static let __allTests__BigIntHeapShiftTests = [
-        ("test_left_heap_butActuallyRight", test_left_heap_butActuallyRight),
-        ("test_left_heap_byBits", test_left_heap_byBits),
-        ("test_left_heap_byZero", test_left_heap_byZero),
         ("test_left_smi_butActuallyRight", test_left_smi_butActuallyRight),
         ("test_left_smi_byBits", test_left_smi_byBits),
         ("test_left_smi_byWholeWord", test_left_smi_byWholeWord),
         ("test_left_smi_byZero", test_left_smi_byZero),
         ("test_left_smi_exampleFromCode", test_left_smi_exampleFromCode),
-        ("test_right_heap_butActuallyRight", test_right_heap_butActuallyRight),
-        ("test_right_heap_byBits", test_right_heap_byBits),
-        ("test_right_heap_byZero", test_right_heap_byZero),
         ("test_right_smi_butActuallyLeft", test_right_smi_butActuallyLeft),
         ("test_right_smi_byBits", test_right_smi_byBits),
         ("test_right_smi_byMoreThanBitWidth", test_right_smi_byMoreThanBitWidth),
@@ -596,12 +590,11 @@ extension BigIntStorageTests {
     //   `swift test --generate-linuxmain`
     // to regenerate.
     static let __allTests__BigIntStorageTests = [
-        ("test_append", test_append),
-        ("test_append_cow", test_append_cow),
-        ("test_append_withGrow", test_append_withGrow),
-        ("test_appendCollection_cow", test_appendCollection_cow),
-        ("test_appendCollection_toNonZero", test_appendCollection_toNonZero),
-        ("test_appendCollection_toZero", test_appendCollection_toZero),
+        ("test_appendAssumingCapacity_cow", test_appendAssumingCapacity_cow),
+        ("test_appendAssumingCapacity_withinCapacity", test_appendAssumingCapacity_withinCapacity),
+        ("test_appendWithGrow_cow", test_appendWithGrow_cow),
+        ("test_appendWithGrow_grow", test_appendWithGrow_grow),
+        ("test_appendWithGrow_withinCapacity", test_appendWithGrow_withinCapacity),
         ("test_description", test_description),
         ("test_dropFirst_lessThanCount", test_dropFirst_lessThanCount),
         ("test_dropFirst_lessThanCount_cow", test_dropFirst_lessThanCount_cow),
@@ -616,7 +609,6 @@ extension BigIntStorageTests {
         ("test_isNegative_isPositive_for0", test_isNegative_isPositive_for0),
         ("test_memoryLayout", test_memoryLayout),
         ("test_prepend_cow", test_prepend_cow),
-        ("test_prepend_inNewBuffer", test_prepend_inNewBuffer),
         ("test_prepend_insideExistingBuffer", test_prepend_insideExistingBuffer),
         ("test_replaceAll_lessThanCount", test_replaceAll_lessThanCount),
         ("test_replaceAll_lessThanCount_cow", test_replaceAll_lessThanCount_cow),

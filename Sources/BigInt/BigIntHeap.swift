@@ -12,8 +12,7 @@ internal struct BigIntHeap: Equatable, Hashable {
     return self.storage.isZero
   }
 
-  /// `0` is also positive.
-  internal var isPositive: Bool {
+  internal var isPositiveOrZero: Bool {
     return self.storage.isPositive
   }
 
@@ -38,18 +37,18 @@ internal struct BigIntHeap: Equatable, Hashable {
   /// This is not one of those 'easy/fast' methods.
   /// It is only here for `BigInt.magnitude`.
   internal var magnitude: BigInt {
-    if self.isPositive {
+    if self.isPositiveOrZero {
       return BigInt(self)
     }
 
     var abs = self
     abs.negate()
-    abs.checkInvariants()
-    assert(abs.isPositive)
+    abs.storage.checkInvariants()
+    assert(abs.isPositiveOrZero)
     return BigInt(abs)
   }
 
-  internal var hasMagnitudeOfOne: Bool {
+  internal var isMagnitude1: Bool {
     return self.storage.withWordsBuffer { $0.count == 1 && $0[0] == 1 }
   }
 
@@ -73,17 +72,6 @@ internal struct BigIntHeap: Equatable, Hashable {
 
   internal init(storageWithValidInvariants storage: BigIntStorage) {
     self.storage = storage
-    self.checkInvariants()
-  }
-
-  // MARK: - Invariants
-
-  internal mutating func fixInvariants(_ token: UniqueBufferToken) {
-    self.storage.fixInvariants(token)
-  }
-
-  internal func checkInvariants() {
-    self.storage.checkInvariants()
   }
 
   // MARK: - Type conversion

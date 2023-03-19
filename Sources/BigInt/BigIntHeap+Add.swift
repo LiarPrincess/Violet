@@ -23,14 +23,14 @@ extension BigIntHeap {
     }
 
     if self.isZero {
-      let token = self.storage.guaranteeUniqueBufferReference()
-      self.storage.setTo(token, value: other)
+      let token = self.storage.guaranteeUniqueBufferReference(withCapacity: 1)
+      self.storage.setToAssumingCapacity(token, value: other)
       return
     }
 
-    defer { self.checkInvariants() }
+    defer { self.storage.checkInvariants() }
 
-    if self.isPositive {
+    if self.isPositiveOrZero {
       let token = self.storage.guaranteeUniqueBufferReference()
       Self.addMagnitude(token, lhs: &self.storage, rhs: other)
     } else {
@@ -56,9 +56,11 @@ extension BigIntHeap {
       var carry = rhs
 
       for i in 0..<lhs.count {
-        (carry, lhs[i]) = lhs[i].addingFullWidth(carry)
+        let (p, overflow) = lhs[i].addingReportingOverflow(carry)
+        carry = 1
+        lhs[i] = p
 
-        if carry == 0 {
+        if !overflow {
           return 0
         }
       }
@@ -67,7 +69,7 @@ extension BigIntHeap {
     }
 
     if carry != 0 {
-      lhs.append(lhsToken, element: carry)
+      lhs.appendWithPossibleGrow(lhsToken, element: carry)
     }
   }
 
@@ -84,12 +86,11 @@ extension BigIntHeap {
       return
     }
 
-    defer { self.checkInvariants() }
+    defer { self.storage.checkInvariants() }
 
     // If we have the same sign then we can simply add magnitude.
     if self.isNegative == other.isNegative {
-      let token = self.storage.guaranteeUniqueBufferReference()
-      Self.addMagnitudes(token, lhs: &self.storage, rhs: other.storage)
+      Self.addMagnitudes(lhs: &self.storage, rhs: other.storage)
       return
     }
 
@@ -116,69 +117,94 @@ extension BigIntHeap {
     case .greater: // 2 + (-1) = 2 - 1
       let token = self.storage.guaranteeUniqueBufferReference()
       Self.subMagnitudes(token, bigger: &self.storage, smaller: other.storage)
-      self.fixInvariants(token) // Fix possible '0' prefix
+      self.storage.fixInvariants(token) // Fix possible '0' prefix
     }
   }
 
   /// Will NOT look at the sign of any of those numbers!
   /// Only at the magnitude.
-  internal static func addMagnitudes(
-    _ lhsToken: UniqueBufferToken,
+  internal static func addMagnitudes(lhs: inout BigIntStorage, rhs: BigIntStorage) {
+    if lhs.count >= rhs.count {
+      Self.addMagnitudes_lhsLonger(lhs: &lhs, rhs: rhs)
+    } else {
+      Self.addMagnitudes_rhsLonger(lhs: &lhs, rhs: rhs)
+    }
+  }
+
+  private static func addMagnitudes_lhsLonger(
     lhs: inout BigIntStorage,
     rhs: BigIntStorage
   ) {
-    let commonCount = Swift.min(lhs.count, rhs.count)
-    let maxCount = Swift.max(lhs.count, rhs.count)
-    lhs.reserveCapacity(lhsToken, capacity: maxCount)
+    let token = lhs.guaranteeUniqueBufferReference()
 
-    // Add the words up to the common count, carrying any overflows
-    var carry = lhs.withMutableWordsBuffer(lhsToken) { lhs -> Word in
+    let carry = lhs.withMutableWordsBuffer(token) { lhs -> Word in
       return rhs.withWordsBuffer { rhs -> Word in
-        var carry: Word = 0
+        var carry = Self.addMagnitudes_common(lhs: lhs, rhs: rhs, count: rhs.count)
 
-        for i in 0..<commonCount {
-          (carry, lhs[i]) = lhs[i].addingFullWidth(rhs[i], carry)
-        }
-
-        return carry
-      }
-    }
-
-    // If there are leftover words in 'lhs', just need to handle any carries
-    if lhs.count > rhs.count {
-      carry = lhs.withMutableWordsBuffer(lhsToken) { lhs -> Word in
-        for i in commonCount..<maxCount {
+        for i in rhs.count..<lhs.count {
           if carry == 0 {
             return 0
           }
 
-          (carry, lhs[i]) = lhs[i].addingFullWidth(carry)
+          let (p, ov) = lhs[i].addingReportingOverflow(carry)
+          carry = ov ? 1 : 0
+          lhs[i] = p
         }
 
         return carry
       }
     }
-    // If there are leftover words in 'rhs', need to copy to 'lhs' with carries
-    else {
-      rhs.withWordsBuffer { rhs in
-        for i in commonCount..<maxCount {
-          // Append remaining words if nothing to carry
-          if carry == 0 {
-            let suffixPtr = rhs.baseAddress?.advanced(by: i)
-            let suffix = UnsafeBufferPointer(start: suffixPtr, count: rhs.count - i)
-            lhs.append(lhsToken, contentsOf: suffix)
-            break
-          }
 
-          let word: Word
-          (carry, word) = rhs[i].addingFullWidth(carry)
-          lhs.append(lhsToken, element: word)
+    if carry != 0 {
+      lhs.appendWithPossibleGrow(token, element: carry)
+    }
+  }
+
+  private static func addMagnitudes_rhsLonger(
+    lhs: inout BigIntStorage,
+    rhs: BigIntStorage
+  ) {
+    let lhsCountBefore = lhs.count
+    let token = lhs.guaranteeUniqueBufferReference(withCapacity: rhs.count)
+    lhs.setCount(token, value: rhs.count)
+
+    let carry = lhs.withMutableWordsBuffer(token) { lhs -> Word in
+      return rhs.withWordsBuffer { rhs -> Word in
+        var carry = Self.addMagnitudes_common(lhs: lhs, rhs: rhs, count: lhsCountBefore)
+
+        for i in lhsCountBefore..<rhs.count {
+          let (p, ov) = rhs[i].addingReportingOverflow(carry)
+          carry = ov ? 1 : 0
+          lhs[i] = p
         }
+
+        return carry
       }
     }
 
     if carry != 0 {
-      lhs.append(lhsToken, element: carry)
+      lhs.appendWithPossibleGrow(token, element: carry)
     }
+  }
+
+  /// Returns carry
+  private static func addMagnitudes_common(
+    lhs: UnsafeMutableBufferPointer<Word>,
+    rhs: UnsafeBufferPointer<Word>,
+    count: Int
+  ) -> Word {
+    var carry: Word = 0
+
+    for i in 0..<count {
+      let (p1, ov1) = lhs[i].addingReportingOverflow(rhs[i])
+      let (p2, ov2) = p1.addingReportingOverflow(carry)
+
+      // For some reason if we reorder the following lines on Intel
+      // it will be 20% slower.
+      carry = (ov1 ? 1 : 0) &+ (ov2 ? 1 : 0)
+      lhs[i] = p2
+    }
+
+    return carry
   }
 }

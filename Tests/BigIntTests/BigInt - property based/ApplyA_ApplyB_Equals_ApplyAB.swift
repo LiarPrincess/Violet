@@ -2,6 +2,8 @@ import XCTest
 @testable import BigInt
 
 // swiftlint:disable type_name
+// swiftlint:disable function_body_length
+// swiftlint:disable file_length
 
 private typealias Word = BigIntHeap.Word
 
@@ -22,25 +24,34 @@ private struct TestCase {
     self.c = op(self.a, self.b)
   }
 
-  fileprivate init(_ op: Operation, a: String, b: String) {
-    do {
-      self.a = try BigInt(a)
-    } catch {
-      fatalError("Unable to parse: '\(a)'.")
+  fileprivate init?(
+    _ op: Operation,
+    a: String,
+    b: String,
+    file: StaticString,
+    line: UInt
+  ) {
+    guard let aBig = BigInt(a) else {
+      XCTFail("Unable to parse: '\(a)'.", file: file, line: line)
+      return nil
     }
 
-    do {
-      self.b = try BigInt(b)
-    } catch {
-      fatalError("Unable to parse: '\(b)'.")
+    guard let bBig = BigInt(b) else {
+      XCTFail("Unable to parse: '\(b)'.", file: file, line: line)
+      return nil
     }
 
-    self.c = op(self.a, self.b)
+    self.a = aBig
+    self.b = bBig
+    self.c = op(aBig, bBig)
   }
 }
 
+// swiftlint:disable:next discouraged_optional_collection function_default_parameter_at_end
 private func createTestCases(_ op: TestCase.Operation,
-                             useBigNumbers: Bool = true) -> [TestCase] {
+                             useBigNumbers: Bool = true,
+                             file: StaticString,
+                             line: UInt) -> [TestCase]? {
   var strings = [
     "0",
     "1", "-1",
@@ -61,17 +72,20 @@ private func createTestCases(_ op: TestCase.Operation,
 
   var result = [TestCase]()
   for (a, b) in allPossiblePairings(lhs: strings, rhs: strings) {
-    let testCase = TestCase(op, a: a, b: b)
-    result.append(testCase)
+    if let testCase = TestCase(op, a: a, b: b, file: file, line: line) {
+      result.append(testCase)
+    } else {
+      return nil
+    }
   }
 
   return result
 }
 
-// MARK: - Tests
+// MARK: - Test class
 
 /// Operation that applied 2 times can also be expressed as a single application.
-/// For example: `(x + a) + b = x + (a + b)`.
+/// For example: `∀x, (x+a)+b = x+(a+b)`.
 ///
 /// This is not exactly associativity, because we will also do this for shifts:
 /// `(x >> a) >> b = x >> (a + b)`.
@@ -96,12 +110,14 @@ class ApplyA_ApplyB_Equals_ApplyAB: XCTestCase {
     }
   }
 
-  private let addTestCases = createTestCases(+)
-
   private func addTest(value: BigInt,
                        file: StaticString = #file,
                        line: UInt = #line) {
-    for testCase in self.addTestCases {
+    guard let testCases = createTestCases(+, file: file, line: line) else {
+      return
+    }
+
+    for testCase in testCases {
       let a_b = value + testCase.a + testCase.b
       let ab = value + testCase.c
 
@@ -117,14 +133,21 @@ class ApplyA_ApplyB_Equals_ApplyAB: XCTestCase {
       inoutA_B += testCase.a
       inoutA_B += testCase.b
 
+      XCTAssertEqual(
+        inoutA_B,
+        ab,
+        "\(value) += \(testCase.a) += \(testCase.b) vs \(value) + \(testCase.c)",
+        file: file,
+        line: line
+      )
+
       var inoutAB = value
       inoutAB += testCase.c
-      assert(inoutAB == ab)
 
       XCTAssertEqual(
         inoutA_B,
-        inoutAB,
-        "inout: \(value) + \(testCase.a) + \(testCase.b) vs \(value) + \(testCase.c)",
+        ab,
+        "\(value) += \(testCase.c) vs \(value) + \(testCase.c)",
         file: file,
         line: line
       )
@@ -147,13 +170,15 @@ class ApplyA_ApplyB_Equals_ApplyAB: XCTestCase {
     }
   }
 
-  // '+' because we need to add a + b
-  private let subTestCases = createTestCases(+)
-
   private func subTest(value: BigInt,
                        file: StaticString = #file,
                        line: UInt = #line) {
-    for testCase in self.subTestCases {
+    // '+' because: (x-a)-b = x-(a+b)
+    guard let testCases = createTestCases(+, file: file, line: line) else {
+      return
+    }
+
+    for testCase in testCases {
       let a_b = value - testCase.a - testCase.b
       let ab = value - testCase.c
 
@@ -169,14 +194,21 @@ class ApplyA_ApplyB_Equals_ApplyAB: XCTestCase {
       inoutA_B -= testCase.a
       inoutA_B -= testCase.b
 
+      XCTAssertEqual(
+        inoutA_B,
+        ab,
+        "\(value) -= \(testCase.a) -= \(testCase.b) vs \(value) - \(testCase.c)",
+        file: file,
+        line: line
+      )
+
       var inoutAB = value
       inoutAB -= testCase.c
-      assert(inoutAB == ab)
 
       XCTAssertEqual(
         inoutA_B,
-        inoutAB,
-        "inout: \(value) - \(testCase.a) - \(testCase.b) vs \(value) - \(testCase.c)",
+        ab,
+        "\(value) -= \(testCase.c) vs \(value) - \(testCase.c)",
         file: file,
         line: line
       )
@@ -199,12 +231,17 @@ class ApplyA_ApplyB_Equals_ApplyAB: XCTestCase {
     }
   }
 
-  private let mulTestCases = createTestCases(*, useBigNumbers: false)
-
   private func mulTest(value: BigInt,
                        file: StaticString = #file,
                        line: UInt = #line) {
-    for testCase in self.mulTestCases {
+    guard let testCases = createTestCases(*,
+                                          useBigNumbers: false,
+                                          file: file,
+                                          line: line) else {
+      return
+    }
+
+    for testCase in testCases {
       let a_b = value * testCase.a * testCase.b
       let ab = value * testCase.c
 
@@ -220,14 +257,21 @@ class ApplyA_ApplyB_Equals_ApplyAB: XCTestCase {
       inoutA_B *= testCase.a
       inoutA_B *= testCase.b
 
-      var inoutAB = value
-      inoutAB *= testCase.c
-      assert(inoutAB == ab)
-
       XCTAssertEqual(
         inoutA_B,
+        ab,
+        "\(value) *= \(testCase.a) *= \(testCase.b) vs \(value) * \(testCase.c)",
+        file: file,
+        line: line
+      )
+
+      var inoutAB = value
+      inoutAB *= testCase.c
+
+      XCTAssertEqual(
         inoutAB,
-        "inout: \(value) * \(testCase.a) * \(testCase.b) vs \(value) * \(testCase.c)",
+        ab,
+        "\(value) *= \(testCase.c) vs \(value) * \(testCase.c)",
         file: file,
         line: line
       )
@@ -251,10 +295,10 @@ class ApplyA_ApplyB_Equals_ApplyAB: XCTestCase {
   }
 
   private let divTestCases = [
-    TestCase(*, a: "3", b: "5"),
-    TestCase(*, a: "3", b: "-5"),
-    TestCase(*, a: "-3", b: "5"),
-    TestCase(*, a: "-3", b: "-5")
+    TestCase(*, a: 3, b: 5),
+    TestCase(*, a: 3, b: -5),
+    TestCase(*, a: -3, b: 5),
+    TestCase(*, a: -3, b: -5)
   ]
 
   private func divTest(value: BigInt,
@@ -276,14 +320,21 @@ class ApplyA_ApplyB_Equals_ApplyAB: XCTestCase {
       inoutA_B /= testCase.a
       inoutA_B /= testCase.b
 
+      XCTAssertEqual(
+        inoutA_B,
+        ab,
+        "\(value) /= \(testCase.a) /= \(testCase.b) vs \(value) / \(testCase.c)",
+        file: file,
+        line: line
+      )
+
       var inoutAB = value
       inoutAB /= testCase.c
-      assert(inoutAB == ab)
 
       XCTAssertEqual(
         inoutA_B,
-        inoutAB,
-        "inout: \(value) / \(testCase.a) / \(testCase.b) vs \(value) / \(testCase.c)",
+        ab,
+        "\(value) /= \(testCase.c) vs \(value) / \(testCase.c)",
         file: file,
         line: line
       )
@@ -306,10 +357,13 @@ class ApplyA_ApplyB_Equals_ApplyAB: XCTestCase {
     }
   }
 
+  // '+' because: (x << 3) << 5 = x << (3+5)
   private let shiftLeftTestCases: [TestCase] = [
+    // Shift by 0 is important to test!
     TestCase(+, a: 1, b: 0),
     TestCase(+, a: 1, b: 1),
     TestCase(+, a: 3, b: 5),
+    // More than Word
     TestCase(+, a: 7, b: Word.bitWidth - 5),
     TestCase(+, a: Word.bitWidth - 5, b: 7)
   ]
@@ -333,14 +387,21 @@ class ApplyA_ApplyB_Equals_ApplyAB: XCTestCase {
       inoutA_B <<= testCase.a
       inoutA_B <<= testCase.b
 
+      XCTAssertEqual(
+        inoutA_B,
+        ab,
+        "(\(value) <<= \(testCase.a)) <<= \(testCase.b) vs \(value) << \(testCase.c)",
+        file: file,
+        line: line
+      )
+
       var inoutAB = value
       inoutAB <<= testCase.c
-      assert(inoutAB == ab)
 
       XCTAssertEqual(
         inoutA_B,
-        inoutAB,
-        "inout: (\(value) << \(testCase.a)) << \(testCase.b) vs \(value) << \(testCase.c)",
+        ab,
+        "\(value) <<= \(testCase.c) vs \(value) << \(testCase.c)",
         file: file,
         line: line
       )
@@ -363,12 +424,16 @@ class ApplyA_ApplyB_Equals_ApplyAB: XCTestCase {
     }
   }
 
+  // '+' because: (x >> 3) >> 5 = x >> (3+5)
+  //
   // Right shift for more than 'Word.bitWidth' has a high probability
   // of shifting value into oblivion (0 or -1).
   private let shiftRightTestCases: [TestCase] = [
+    // Shift by 0 is important to test!
     TestCase(+, a: 1, b: 0),
     TestCase(+, a: 1, b: 1),
     TestCase(+, a: 3, b: 5),
+    // More than Word
     TestCase(+, a: 7, b: Word.bitWidth - 5),
     TestCase(+, a: Word.bitWidth - 5, b: 7)
   ]
@@ -392,14 +457,21 @@ class ApplyA_ApplyB_Equals_ApplyAB: XCTestCase {
       inoutA_B >>= testCase.a
       inoutA_B >>= testCase.b
 
+      XCTAssertEqual(
+        inoutA_B,
+        ab,
+        "(\(value) >>= \(testCase.a)) >>= \(testCase.b) vs \(value) >> \(testCase.c)",
+        file: file,
+        line: line
+      )
+
       var inoutAB = value
       inoutAB >>= testCase.c
-      assert(inoutAB == ab)
 
       XCTAssertEqual(
         inoutA_B,
-        inoutAB,
-        "inout: (\(value) >> \(testCase.a)) >> \(testCase.b) vs \(value) >> \(testCase.c)",
+        ab,
+        "\(value) >>= \(testCase.c) vs \(value) >> \(testCase.c)",
         file: file,
         line: line
       )

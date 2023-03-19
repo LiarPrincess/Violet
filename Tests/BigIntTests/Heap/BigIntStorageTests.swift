@@ -5,6 +5,24 @@ import XCTest
 
 private typealias Word = BigIntStorage.Word
 
+private func XCTAssertEqual(_ lhs: BigIntStorage,
+                            _ rhs: BigIntStorage,
+                            file: StaticString = #file,
+                            line: UInt = #line) {
+  let lhsBig = BigInt(lhs)
+  let rhsBig = BigInt(rhs)
+  XCTAssertEqual(lhsBig, rhsBig, file: file, line: line)
+}
+
+private func XCTAssertNotEqual(_ lhs: BigIntStorage,
+                               _ rhs: BigIntStorage,
+                               file: StaticString = #file,
+                               line: UInt = #line) {
+  let lhsBig = BigInt(lhs)
+  let rhsBig = BigInt(rhs)
+  XCTAssertNotEqual(lhsBig, rhsBig, file: file, line: line)
+}
+
 class BigIntStorageTests: XCTestCase {
 
   // MARK: - Memory layout
@@ -104,15 +122,15 @@ class BigIntStorageTests: XCTestCase {
     }
   }
 
-  // MARK: - Append word
+  // MARK: - Append with grow
 
-  func test_append() {
+  func test_appendWithGrow_withinCapacity() {
     let count = 4
     var storage = BigIntStorage(minimumCapacity: count)
     let token = storage.guaranteeUniqueBufferReference()
 
     for i in 0..<count {
-      storage.append(token, element: Word(i))
+      storage.appendWithPossibleGrow(token, element: Word(i))
     }
 
     XCTAssertEqual(storage.count, count)
@@ -124,19 +142,19 @@ class BigIntStorageTests: XCTestCase {
     }
   }
 
-  func test_append_withGrow() {
+  func test_appendWithGrow_grow() {
     var storage = BigIntStorage(minimumCapacity: 4)
     let token = storage.guaranteeUniqueBufferReference()
 
     let oldCapacity = storage.capacity
     for i in 0..<oldCapacity {
-      storage.append(token, element: Word(i))
+      storage.appendWithPossibleGrow(token, element: Word(i))
     }
     XCTAssertEqual(storage.count, oldCapacity)
     XCTAssertEqual(storage.capacity, oldCapacity)
 
     // This should grow
-    storage.append(token, element: 100)
+    storage.appendWithPossibleGrow(token, element: 100)
 
     XCTAssertEqual(storage.count, oldCapacity + 1)
     XCTAssertNotEqual(storage.capacity, oldCapacity)
@@ -151,81 +169,49 @@ class BigIntStorageTests: XCTestCase {
     }
   }
 
-  func test_append_cow() {
+  func test_appendWithGrow_cow() {
     let original = BigIntStorage(isNegative: false, words: 0, 1, 2)
 
     var copy = original
     let token = copy.guaranteeUniqueBufferReference()
-    copy.append(token, element: 100)
+    copy.appendWithPossibleGrow(token, element: 100)
 
     XCTAssertEqual(original, BigIntStorage(isNegative: false, words: 0, 1, 2))
     XCTAssertEqual(copy, BigIntStorage(isNegative: false, words: 0, 1, 2, 100))
   }
 
-  // MARK: - Append collection
+  // MARK: - Append assuming capacity
 
-  func test_appendCollection_toZero() {
-    var storage = BigIntStorage(isNegative: false, magnitude: 0)
+  func test_appendAssumingCapacity_withinCapacity() {
+    let count = 4
+    var storage = BigIntStorage(minimumCapacity: count)
     let token = storage.guaranteeUniqueBufferReference()
-    XCTAssertTrue(storage.isZero)
-    XCTAssertEqual(storage.count, 0)
 
-    let words: [Word] = [.min, 1, 5, .max, 7]
-    words.withUnsafeBufferPointer { ptr in
-      storage.append(token, contentsOf: ptr)
+    for i in 0..<count {
+      storage.appendAssumingCapacity(token, element: Word(i))
     }
 
-    XCTAssertFalse(storage.isZero)
-    XCTAssertEqual(storage.count, words.count)
+    XCTAssertEqual(storage.count, count)
 
-    storage.withWordsBuffer { storage in
-      for (s, w) in zip(storage, words) {
-        XCTAssertEqual(s, w)
-      }
-    }
-
-    // Check if we modified the shared value.
-    XCTAssertTrue(BigIntStorage.zero.isZero)
-  }
-
-  func test_appendCollection_toNonZero() {
-    let initialWords: [Word] = [.min, 1, 5, .max, 7]
-    var storage = BigIntStorage(isNegative: false, words: initialWords)
-    let token = storage.guaranteeUniqueBufferReference()
-    XCTAssertEqual(storage.count, initialWords.count)
-
-    let newWords: [Word] = [.min, .max, 7, .min, .max, 7, .min, .max, 7]
-    newWords.withUnsafeBufferPointer { ptr in
-      storage.append(token, contentsOf: ptr)
-    }
-
-    let finalWords = initialWords + newWords
-    XCTAssertEqual(storage.count, finalWords.count)
-
-    storage.withWordsBuffer { storage in
-      for (s, w) in zip(storage, finalWords) {
-        XCTAssertEqual(s, w)
+    storage.withWordsBuffer { words in
+      for i in 0..<count {
+        XCTAssertEqual(words[i], Word(i))
       }
     }
   }
 
-  func test_appendCollection_cow() {
-    let initialWords: [Word] = [.min, 1, 5, .max, 7]
-    let original = BigIntStorage(isNegative: false, words: initialWords)
+  func test_appendAssumingCapacity_cow() {
+    let original = BigIntStorage(isNegative: false, words: 0, 1, 2)
 
-    let newWords: [Word] = [.min, .max, 7, .min, .max, 7, .min, .max, 7]
     var copy = original
-    let token = copy.guaranteeUniqueBufferReference()
-    newWords.withUnsafeBufferPointer { ptr in
-      copy.append(token, contentsOf: ptr)
-    }
+    let token = copy.guaranteeUniqueBufferReference(withCapacity: 4)
+    copy.appendAssumingCapacity(token, element: 100)
 
-    let finalWords = initialWords + newWords
-    XCTAssertEqual(original, BigIntStorage(isNegative: false, words: initialWords))
-    XCTAssertEqual(copy, BigIntStorage(isNegative: false, words: finalWords))
+    XCTAssertEqual(original, BigIntStorage(isNegative: false, words: 0, 1, 2))
+    XCTAssertEqual(copy, BigIntStorage(isNegative: false, words: 0, 1, 2, 100))
   }
 
-  // MARK: - Prepend
+  // MARK: - Prepend assuming capacity
 
   func test_prepend_insideExistingBuffer() {
     let initialWords: [Word] = [.max, 1, .min, 7]
@@ -233,31 +219,15 @@ class BigIntStorageTests: XCTestCase {
     let token = storage.guaranteeUniqueBufferReference()
 
     for word in initialWords {
-      storage.append(token, element: word)
+      storage.appendAssumingCapacity(token, element: word)
     }
 
+    XCTAssertEqual(storage.count, initialWords.count)
     let prependCount = storage.capacity - storage.count
     XCTAssert(prependCount != 0, "Expected to have some space left")
 
-    storage.prepend(token, element: 42, count: prependCount)
+    storage.prependAssumingCapacity(token, element: 42, count: prependCount)
     XCTAssertEqual(storage.count, storage.capacity)
-    XCTAssertEqual(storage.count, initialWords.count + prependCount)
-
-    let finalWords = [Word](repeating: 42, count: prependCount) + initialWords
-    XCTAssertEqual(storage, BigIntStorage(isNegative: false, words: finalWords))
-  }
-
-  func test_prepend_inNewBuffer() {
-    let initialWords: [Word] = [.max, 1, .min, 7]
-    var storage = BigIntStorage(minimumCapacity: 8)
-    let token = storage.guaranteeUniqueBufferReference()
-
-    for word in initialWords {
-      storage.append(token, element: word)
-    }
-
-    let prependCount = storage.capacity // This will force allocation
-    storage.prepend(token, element: 42, count: prependCount)
     XCTAssertEqual(storage.count, initialWords.count + prependCount)
 
     let finalWords = [Word](repeating: 42, count: prependCount) + initialWords
@@ -266,21 +236,15 @@ class BigIntStorageTests: XCTestCase {
 
   func test_prepend_cow() {
     let initialWords: [Word] = [.max, 1, .min, 7]
-    var original = BigIntStorage(minimumCapacity: 8)
-    let originalToken = original.guaranteeUniqueBufferReference()
-
-    for word in initialWords {
-      original.append(originalToken, element: word)
-    }
+    let original = BigIntStorage(isNegative: false, words: initialWords)
 
     var copy = original
-    let copyToken = copy.guaranteeUniqueBufferReference()
-
-    let prependCount = copy.capacity - copy.count
-    XCTAssert(prependCount != 0, "Expected to have some space left")
+    let capacity = 8
+    let token = copy.guaranteeUniqueBufferReference(withCapacity: capacity)
 
     // This should always copy the 'original' buffer
-    copy.prepend(copyToken, element: 42, count: prependCount)
+    let prependCount = capacity - initialWords.count
+    copy.prependAssumingCapacity(token, element: 42, count: prependCount)
 
     XCTAssertEqual(original, BigIntStorage(isNegative: false, words: initialWords))
 
@@ -376,19 +340,24 @@ class BigIntStorageTests: XCTestCase {
 
     let words: [Word] = []
     words.withUnsafeBufferPointer { ptr in
-      storage.replaceAll(token, withContentsOf: ptr)
+      storage.replaceAllAssumingCapacity(token, withContentsOf: ptr)
     }
 
     XCTAssert(storage.isZero)
   }
 
   func test_replaceAll_moreThanCount() {
-    var storage = BigIntStorage(isNegative: false, words: [.max, 1, .min, 7])
+    var storage = BigIntStorage(minimumCapacity: 8)
     let token = storage.guaranteeUniqueBufferReference()
+    let initalWords: [Word] = [.max, 1, .min, 7]
+
+    for w in initalWords {
+      storage.appendAssumingCapacity(token, element: w)
+    }
 
     let words: [Word] = [0, 42, .max, 1, .min, 7]
     words.withUnsafeBufferPointer { ptr in
-      storage.replaceAll(token, withContentsOf: ptr)
+      storage.replaceAllAssumingCapacity(token, withContentsOf: ptr)
     }
 
     XCTAssertEqual(storage, BigIntStorage(isNegative: false, words: words))
@@ -399,10 +368,11 @@ class BigIntStorageTests: XCTestCase {
     let original = BigIntStorage(isNegative: false, words: initialWords)
 
     var copy = original
-    let token = copy.guaranteeUniqueBufferReference()
+    let token = copy.guaranteeUniqueBufferReference(withCapacity: 8)
     let words: [Word] = [0, 42, .max, 1, .min, 7]
+
     words.withUnsafeBufferPointer { ptr in
-      copy.replaceAll(token, withContentsOf: ptr)
+      copy.replaceAllAssumingCapacity(token, withContentsOf: ptr)
     }
 
     XCTAssertEqual(original.count, initialWords.count)
@@ -420,7 +390,7 @@ class BigIntStorageTests: XCTestCase {
 
     let words: [Word] = [0, 42]
     words.withUnsafeBufferPointer { ptr in
-      storage.replaceAll(token, withContentsOf: ptr)
+      storage.replaceAllAssumingCapacity(token, withContentsOf: ptr)
     }
 
     XCTAssertEqual(storage, BigIntStorage(isNegative: false, words: words))
@@ -430,11 +400,12 @@ class BigIntStorageTests: XCTestCase {
     let initialWords: [Word] = [.max, 1, .min, 7]
     let original = BigIntStorage(isNegative: false, words: initialWords)
 
-    var copy = original
-    let token = copy.guaranteeUniqueBufferReference()
     let words: [Word] = [0, 42]
+    var copy = original
+    let token = copy.guaranteeUniqueBufferReference(withCapacity: words.count)
+
     words.withUnsafeBufferPointer { ptr in
-      copy.replaceAll(token, withContentsOf: ptr)
+      copy.replaceAllAssumingCapacity(token, withContentsOf: ptr)
     }
 
     XCTAssertEqual(original.count, initialWords.count)
@@ -459,7 +430,7 @@ class BigIntStorageTests: XCTestCase {
 
     var withAppend = original
     let withAppendToken = withAppend.guaranteeUniqueBufferReference()
-    withAppend.append(withAppendToken, element: 100)
+    withAppend.appendWithPossibleGrow(withAppendToken, element: 100)
     XCTAssertNotEqual(original, withAppend)
 
     var changedFirst = original
@@ -483,8 +454,8 @@ class BigIntStorageTests: XCTestCase {
     for value in self.unsignedValues {
       // One of our values is '0' which shares storage,
       // so we have to renew token on every iteration
-      let token = storage.guaranteeUniqueBufferReference()
-      storage.setTo(token, value: value)
+      let token = storage.guaranteeUniqueBufferReference(withCapacity: 1)
+      storage.setToAssumingCapacity(token, value: value)
       XCTAssertEqual(storage, BigIntStorage(isNegative: false, magnitude: value))
     }
   }
@@ -494,8 +465,8 @@ class BigIntStorageTests: XCTestCase {
 
     for value in self.unsignedValues {
       var copy = original
-      let copyToken = copy.guaranteeUniqueBufferReference()
-      copy.setTo(copyToken, value: value)
+      let token = copy.guaranteeUniqueBufferReference(withCapacity: 1)
+      copy.setToAssumingCapacity(token, value: value)
       XCTAssertEqual(original, BigIntStorage(isNegative: false, words: 1, 2, 3))
     }
   }
@@ -510,8 +481,8 @@ class BigIntStorageTests: XCTestCase {
     for value in self.signedValues {
       // One of our values is '0' which shares storage,
       // so we have to renew token on every iteration
-      let token = storage.guaranteeUniqueBufferReference()
-      storage.setTo(token, value: value)
+      let token = storage.guaranteeUniqueBufferReference(withCapacity: 1)
+      storage.setToAssumingCapacity(token, value: value)
 
       let isNegative = value.isNegative
       let magnitude = value.magnitude
@@ -524,8 +495,8 @@ class BigIntStorageTests: XCTestCase {
 
     for value in self.signedValues {
       var copy = original
-      let copyToken = copy.guaranteeUniqueBufferReference()
-      copy.setTo(copyToken, value: value)
+      let token = copy.guaranteeUniqueBufferReference(withCapacity: 1)
+      copy.setToAssumingCapacity(token, value: value)
       XCTAssertEqual(original, BigIntStorage(isNegative: false, words: 1, 2, 3))
     }
   }

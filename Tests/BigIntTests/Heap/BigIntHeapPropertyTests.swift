@@ -27,14 +27,14 @@ class BigIntHeapPropertyTests: XCTestCase {
 
   func test_isPositive() {
     let zero = BigIntHeap(0)
-    XCTAssertTrue(zero.isPositive)
+    XCTAssertTrue(zero.isPositiveOrZero)
 
     for (word0, word1) in allPossiblePairings(values: self.nonZeroValues) {
       let positive = BigIntHeap(isNegative: false, words: word0, word1)
-      XCTAssertTrue(positive.isPositive)
+      XCTAssertTrue(positive.isPositiveOrZero)
 
       let negative = BigIntHeap(isNegative: true, words: word0, word1)
-      XCTAssertFalse(negative.isPositive)
+      XCTAssertFalse(negative.isPositiveOrZero)
     }
   }
 
@@ -106,24 +106,24 @@ class BigIntHeapPropertyTests: XCTestCase {
 
   func test_hasMagnitudeOfOne_true() {
     let positive = BigIntHeap(1)
-    XCTAssertTrue(positive.hasMagnitudeOfOne)
-    XCTAssertTrue(positive.isPositive)
+    XCTAssertTrue(positive.isMagnitude1)
+    XCTAssertTrue(positive.isPositiveOrZero)
 
     let negative = BigIntHeap(-1)
-    XCTAssertTrue(negative.hasMagnitudeOfOne)
+    XCTAssertTrue(negative.isMagnitude1)
     XCTAssertTrue(negative.isNegative)
   }
 
   func test_hasMagnitudeOfOne_false() {
     let zero = BigIntHeap(0)
-    XCTAssertFalse(zero.hasMagnitudeOfOne)
+    XCTAssertFalse(zero.isMagnitude1)
 
     for (word0, word1) in allPossiblePairings(values: self.nonZeroValues) {
       let positive = BigIntHeap(isNegative: false, words: word0, word1)
-      XCTAssertFalse(positive.hasMagnitudeOfOne)
+      XCTAssertFalse(positive.isMagnitude1)
 
       let negative = BigIntHeap(isNegative: true, words: word0, word1)
-      XCTAssertFalse(negative.hasMagnitudeOfOne)
+      XCTAssertFalse(negative.isMagnitude1)
     }
   }
 
@@ -242,9 +242,7 @@ class BigIntHeapPropertyTests: XCTestCase {
 
   func test_minRequiredWidth_heap() {
     for (string, expected) in MinRequiredWidthTestCases.heap {
-      do {
-        let int = try BigInt(string)
-
+      if let int = BigInt(string) {
         switch int.value {
         case .smi:
           // We have separate test for this
@@ -253,8 +251,8 @@ class BigIntHeapPropertyTests: XCTestCase {
           let result = h.minRequiredWidth
           XCTAssertEqual(result, expected, string)
         }
-      } catch {
-        XCTFail("\(string), error: \(error)")
+      } else {
+        XCTFail(string)
       }
     }
   }

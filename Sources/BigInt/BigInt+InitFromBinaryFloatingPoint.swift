@@ -1,8 +1,8 @@
-extension BigIntHeap {
+extension BigInt {
 
-  // Source:
-  // https://github.com/benrimmington/swift-numerics/blob/BigInt/Sources/BigIntModule/BigInt.swift
-  internal init<T: BinaryFloatingPoint>(_ source: T) {
+  private typealias Word = BigIntHeap.Word
+
+  public init<T: BinaryFloatingPoint>(_ source: T) {
     precondition(
       source.isFinite,
       "\(type(of: source)) value cannot be converted to BigInt because it is either infinite or NaN"
@@ -19,24 +19,27 @@ extension BigIntHeap {
       return
     }
 
-    self.init(minimumStorageCapacity: 4)
-    let token = self.storage.guaranteeUniqueBufferReference()
+    var storage = BigIntStorage(minimumCapacity: 4)
+    let token = storage.guaranteeUniqueBufferReference()
 
     let radix = T(sign: .plus, exponent: T.Exponent(Word.bitWidth), significand: 1)
     repeat {
       let word = Word(float.truncatingRemainder(dividingBy: radix))
-      self.storage.append(token, element: word)
+      storage.appendWithPossibleGrow(token, element: word)
       float = (float / radix).rounded(.towardZero)
     } while !float.isZero
 
     if source < .zero {
-      self.storage.setIsNegative(token, value: true)
+      storage.setIsNegative(token, value: true)
     }
 
-    self.checkInvariants()
+    storage.checkInvariants()
+    let heap = BigIntHeap(storageWithValidInvariants: storage)
+    self = BigInt(heap)
+    self.downgradeToSmiIfPossible()
   }
 
-  internal init?<T: BinaryFloatingPoint>(exactly source: T) {
+  public init?<T: BinaryFloatingPoint>(exactly source: T) {
     guard source.isFinite else {
       return nil
     }

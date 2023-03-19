@@ -34,39 +34,45 @@ extension BigIntHeap {
       return
     }
 
-    defer { self.checkInvariants() }
+    defer { self.storage.checkInvariants() }
 
-    // Sign stays the same (we know that x > 0):
-    //  1 * x =  x
-    // -1 * x = -x
-    let preserveIsNegative = self.isNegative
-    let token = self.storage.guaranteeUniqueBufferReference()
-
-    if self.hasMagnitudeOfOne {
-      self.storage.setTo(token, value: other)
+    if self.isMagnitude1 {
+      // Sign stays the same (we know that x > 0):
+      //  1 * x =  x
+      // -1 * x = -x
+      let preserveIsNegative = self.isNegative
+      let token = self.storage.guaranteeUniqueBufferReference(withCapacity: 1)
+      self.storage.setToAssumingCapacity(token, value: other)
       self.storage.setIsNegative(token, value: preserveIsNegative)
       return
     }
 
-    // And finally non-special case:
-    let carry = self.storage.withMutableWordsBuffer(token) { lhs -> Word in
+    let token = self.storage.guaranteeUniqueBufferReference()
+    Self.mulMagnitude(token, lhs: &self.storage, rhs: other)
+    self.storage.fixInvariants(token)
+  }
+
+  internal static func mulMagnitude(
+    _ lhsToken: UniqueBufferToken,
+    lhs: inout BigIntStorage,
+    rhs: Word
+  ) {
+    let carry = lhs.withMutableWordsBuffer(lhsToken) { lhs -> Word in
       var carry: Word = 0
 
       for i in 0..<lhs.count {
-        let (high, low) = lhs[i].multipliedFullWidth(by: other)
-        (carry, lhs[i]) = low.addingFullWidth(carry)
-        carry = carry &+ high
+        let (high, low) = lhs[i].multipliedFullWidth(by: rhs)
+        let (word, overflow) = low.addingReportingOverflow(carry)
+        carry = (overflow ? 1 : 0) &+ high
+        lhs[i] = word
       }
 
       return carry
     }
 
     if carry != 0 {
-      self.storage.append(token, element: carry)
+      lhs.appendWithPossibleGrow(lhsToken, element: carry)
     }
-
-    self.storage.setIsNegative(token, value: preserveIsNegative)
-    self.fixInvariants(token)
   }
 
   // MARK: - Heap
@@ -79,7 +85,7 @@ extension BigIntHeap {
       return
     }
 
-    if other.hasMagnitudeOfOne {
+    if other.isMagnitude1 {
       if other.isNegative {
         self.negate()
       }
@@ -91,9 +97,9 @@ extension BigIntHeap {
       return
     }
 
-    defer { self.checkInvariants() }
+    defer { self.storage.checkInvariants() }
 
-    if self.hasMagnitudeOfOne {
+    if self.isMagnitude1 {
       // Copy other, change sign if self == -1
       let changeSign = self.isNegative
       self.storage = other.storage
@@ -107,15 +113,13 @@ extension BigIntHeap {
 
     // And finally non-special case:
     var token = self.storage.guaranteeUniqueBufferReference()
-    Self.mulMagnitude(token, lhs: &self.storage, rhs: other.storage)
+    Self.mulMagnitude(lhs: &self.storage, rhs: other.storage)
 
     // If the signs are the same then we are positive.
     // '1 * 2 = 2' and also (-1) * (-2) = 2
-    let isNegative = self.isNegative != other.isNegative
     token = self.storage.guaranteeUniqueBufferReference() // 'mulMagnitude' may reallocate
-    self.storage.setIsNegative(token, value: isNegative)
-
-    self.fixInvariants(token)
+    self.storage.setIsNegative(token, value: self.isNegative != other.isNegative)
+    self.storage.fixInvariants(token)
   }
 
   private typealias Buffer = UnsafeMutableBufferPointer<BigIntStorage.Word>
@@ -135,11 +139,7 @@ extension BigIntHeap {
   /// ---------
   ///   4064247 <- this is result
   /// ```.
-  private static func mulMagnitude(
-    _ lhsToken: UniqueBufferToken,
-    lhs: inout BigIntStorage,
-    rhs: BigIntStorage
-  ) {
+  private static func mulMagnitude(lhs: inout BigIntStorage, rhs: BigIntStorage) {
     //           1111 1111 | count:  8                     1111 1111 | count:  8
     //         *   11 1111 | count:  6                   * 1111 1111 | count:  8
     //  = 1 2345 6665 4321 | count: 13          = 123 4567 8765 4321 | count: 13
@@ -165,7 +165,9 @@ extension BigIntHeap {
     let highWord = buffer[count - 1]
     let countWithoutZero = count - (highWord == 0 ? 1 : 0)
     let resultBuffer = UnsafeBufferPointer(start: buffer.baseAddress, count: countWithoutZero)
-    lhs.replaceAll(lhsToken, withContentsOf: resultBuffer)
+
+    let token = lhs.guaranteeUniqueBufferReference(withCapacity: countWithoutZero)
+    lhs.replaceAllAssumingCapacity(token, withContentsOf: resultBuffer)
   }
 
   // MARK: - Inner - direct
@@ -185,19 +187,23 @@ extension BigIntHeap {
 
       for smallerIndex in 0..<smaller.count {
         let smallerWord = smaller[smallerIndex]
-        let resultIndex = biggerIndex + smallerIndex
+        let resultIndex = biggerIndex &+ smallerIndex
 
         let (high, low) = biggerWord.multipliedFullWidth(by: smallerWord)
-        (carry, buffer[resultIndex]) = buffer[resultIndex].addingFullWidth(low, carry)
+        let (p1, ov1) = buffer[resultIndex].addingReportingOverflow(low)
+        let (p2, ov2) = p1.addingReportingOverflow(carry)
 
         // Let's deal with 'high' in the next iteration.
         // No overflow possible (we have unit test for this).
-        carry += high
+        // Btw. if you reorder this line to be 'high &+ overflows'
+        // it will be 20% slower on Intel.
+        carry = (ov1 ? 1 : 0) &+ (ov2 ? 1 : 0) &+ high
+        buffer[resultIndex] = p2
       }
 
       // Last operation ('mul' or 'add') produced overflow.
       // We can just add it in the right place.
-      buffer[biggerIndex + smaller.count] += carry
+      buffer[biggerIndex &+ smaller.count] &+= carry
     }
   }
 
@@ -239,15 +245,15 @@ extension BigIntHeap {
         // digit_t high;
         var high: Word = 0
         // digit_t low = digit_mul(X[j], Y[i - j], &high);
-        let low = digit_mul(x[j], y[i - j], &high)
+        let low = Self.digit_mul(x[j], y[i - j], &high)
         // digit_t carrybit;
         var carrybit: Word = 0
         // zi = digit_add2(zi, low, &carrybit);
-        zi = digit_add2(zi, low, &carrybit)
+        zi = Self.digit_add2(zi, low, &carrybit)
         // carry += carrybit;
         carry += carrybit
         // next = digit_add2(next, high, &carrybit);
-        next = digit_add2(next, high, &carrybit)
+        next = Self.digit_add2(next, high, &carrybit)
         // next_carry += carrybit;
         next_carry += carrybit
       }
@@ -257,7 +263,7 @@ extension BigIntHeap {
 
     // Unrolled first iteration: it's trivial.
     // Z[0] = digit_mul(X[0], Y[0], &next);
-    z[0] = digit_mul(x[0], y[0], &next)
+    z[0] = Self.digit_mul(x[0], y[0], &next)
 
     // Unrolled second iteration: a little less setup.
     var i = 1
@@ -276,7 +282,7 @@ extension BigIntHeap {
     // for (; i < Y.len(); i++)
     while i < y.count {
       // digit_t zi = digit_add2(next, carry, &carry);
-      let zi = digit_add2(next, carry, &carry)
+      let zi = Self.digit_add2(next, carry, &carry)
       // next = next_carry + carry;
       next = next_carry + carry
       // carry = 0;
@@ -300,7 +306,7 @@ extension BigIntHeap {
       // int min_x_index = i - max_y_index;
       let min_x_index = i - max_y_index
       // digit_t zi = digit_add2(next, carry, &carry);
-      let zi = digit_add2(next, carry, &carry)
+      let zi = Self.digit_add2(next, carry, &carry)
       // next = next_carry + carry;
       next = next_carry + carry
       // carry = 0;
@@ -314,7 +320,7 @@ extension BigIntHeap {
 
     // Write the last digit, and zero out any extra space in Z.
     // Z[i++] = digit_add2(next, carry, &carry);
-    z[i] = digit_add2(next, carry, &carry)
+    z[i] = Self.digit_add2(next, carry, &carry)
 
     // DCHECK(carry == 0);
     assert(carry == 0)

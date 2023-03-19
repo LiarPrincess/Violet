@@ -72,7 +72,7 @@ internal struct Smi: Hashable, CustomStringConvertible, CustomDebugStringConvert
     // Binary numbers have bigger range on the negative side.
     if self.value == Storage.min && other.value == Storage.min {
       var selfHeap = self.asHeap()
-      selfHeap.shiftLeft(count: Storage(1)) // * 2
+      selfHeap.shiftLeft(count: BigIntHeap.ReasonableCount(1)) // * 2
       return BigInt(selfHeap)
     }
 
@@ -238,7 +238,7 @@ internal struct Smi: Hashable, CustomStringConvertible, CustomDebugStringConvert
 
     // There is no other way than to upgrade 'self' to heap
     var selfHeap = self.asHeap()
-    selfHeap.shiftLeft(count: Storage(count))
+    selfHeap.shiftLeft(count: count)
     return BigInt(selfHeap)
   }
 

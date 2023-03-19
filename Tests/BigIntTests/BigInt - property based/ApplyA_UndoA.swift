@@ -154,12 +154,12 @@ class ApplyA_UndoA: XCTestCase {
                             file: StaticString = #file,
                             line: UInt = #line) {
     for radix in [2, 5, 10, 16] {
-      do {
-        let string = String(value, radix: radix)
-        let int = try BigInt(string, radix: radix)
-        XCTAssertEqual(int, value, "string: \(string)", file: file, line: line)
-      } catch {
-        XCTFail("radix: \(radix), error: \(error)", file: file, line: line)
+      let string = String(value, radix: radix)
+
+      if let n = BigInt(string, radix: radix) {
+        XCTAssertEqual(n, value, "\(string), radix: \(radix)", file: file, line: line)
+      } else {
+        XCTFail("\(string), radix: \(radix)", file: file, line: line)
       }
     }
   }

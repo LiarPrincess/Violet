@@ -1,8 +1,43 @@
 // In CPython:
 // Objects -> longobject.c // cSpell:disable-line
 
+// swiftlint:disable file_length
+
+extension UnicodeScalar {
+
+  /// Try to convert scalar to digit.
+  ///
+  /// Acceptable values:
+  /// - ascii numbers
+  /// - ascii lowercase letters (a - z)
+  /// - ascii uppercase letters (A - Z)
+  fileprivate var asDigit: BigIntHeap.Word? {
+    // Tip: use 'man ascii':
+    let a: BigIntHeap.Word = 0x61, z: BigIntHeap.Word = 0x7a
+    let A: BigIntHeap.Word = 0x41, Z: BigIntHeap.Word = 0x5a
+    let n0: BigIntHeap.Word = 0x30, n9: BigIntHeap.Word = 0x39
+
+    let value = BigIntHeap.Word(self.value)
+
+    if n0 <= value && value <= n9 {
+      return value - n0
+    }
+
+    if a <= value && value <= z {
+      return value - a + 10 // '+ 10' because 'a' is 10 not 0
+    }
+
+    if A <= value && value <= Z {
+      return value - A + 10
+    }
+
+    return nil
+  }
+}
+
 extension BigInt {
 
+  private typealias Word = BigIntHeap.Word
   private typealias Scalars = String.UnicodeScalarView.SubSequence
 
   // MARK: - Parsing error
@@ -169,6 +204,216 @@ extension BigInt {
     if octalErrorIfNonZero && !self.isZero {
       throw PythonParsingError.octalNonZero
     }
+  }
+
+  // MARK: - Sign
+
+  internal enum ParsedSign {
+    case positive
+    case negative
+    /// No sign in string, assume `positive`.
+    case notSpecified
+
+    fileprivate var isNegative: Bool {
+      switch self {
+      case .positive,
+           .notSpecified:
+        return false
+      case .negative:
+        return true
+      }
+    }
+
+    internal var wasExplicitlyProvided: Bool {
+      switch self {
+      case .positive,
+           .negative:
+        return true
+      case .notSpecified:
+        return false
+      }
+    }
+  }
+
+  internal enum ParseSignResult {
+    case emptyString
+    case sign(ParsedSign)
+  }
+
+  /// Parse sign and advance `scalars` if needed.
+  internal static func parseSign(
+    advancingIfFound scalars: inout String.UnicodeScalarView.SubSequence
+  ) -> ParseSignResult {
+    guard let first = scalars.first else {
+      return .emptyString
+    }
+
+    if first == "+" {
+      scalars = scalars.dropFirst()
+      return .sign(.positive)
+    }
+
+    if first == "-" {
+      scalars = scalars.dropFirst()
+      return .sign(.negative)
+    }
+
+    return .sign(.notSpecified)
+  }
+
+  // MARK: - Magnitude
+
+  internal enum ParseMagnitudeResult {
+    case value(BigInt)
+    case doubleUnderscore
+    case underscoreSuffix
+    case notDigit(UnicodeScalar)
+  }
+
+  /// Parse number without sign.
+  ///
+  /// Will skip prefix underscore, so if this is an error in your scenario then
+  /// handle it before calling this method.
+  internal static func parseMagnitude(
+    scalars: String.UnicodeScalarView.SubSequence,
+    radix: Int,
+    sign: ParsedSign
+  ) -> ParseMagnitudeResult {
+    // Instead of using a single 'BigInt' and multiplying it by 'radix',
+    // we will group scalars into words-sized chunks.
+    // Then we will raise those chunks to appropriate power and add together.
+    //
+    // For example:
+    // 1_2345_6789 = (1 * 10^8) + (2345 * 10^4) + (6789 * 10^0)
+    //
+    // So, we are doing most of our calculations in fast 'Word',
+    // and then we switch to slow BigInt for a few final operations.
+
+    let (scalarCountPerGroup, power) = Word.maxRepresentablePower(of: radix)
+    let radix = Word(radix)
+
+    // 'groups' are in in right-to-left (lowest power first) order.
+    let groups: [Word]
+    switch Self.parseGroups(scalars: scalars,
+                            radix: radix,
+                            scalarCountPerGroup: scalarCountPerGroup) {
+    case .groups(let g): groups = g
+    case .doubleUnderscore: return .doubleUnderscore
+    case .underscoreSuffix: return .underscoreSuffix
+    case .notDigit(let s): return .notDigit(s)
+    }
+
+    // Fast path: no groups -> 0
+    guard let mostSignificantGroup = groups.last else {
+      return .value(BigInt())
+    }
+
+    let isNegative = sign.isNegative
+
+    // Fast path for 'Smi' (avoids allocation for 'BigIntHeap')
+    if groups.count == 1 {
+      if let smi = mostSignificantGroup.asSmiIfPossible(isNegative: isNegative) {
+        return .value(BigInt(smi: smi))
+      }
+    }
+
+    var result = BigIntHeap(minimumStorageCapacity: groups.count)
+    result.add(other: mostSignificantGroup)
+
+    // 'dropLast' because we already added 'mostSignificantGroup'
+    // 'reversed' because we want to start with 'high' powers
+    for group in groups.dropLast().reversed() {
+      result.mul(other: power)
+      result.add(other: group)
+    }
+
+    // Sign does not apply to '0'
+    if isNegative {
+      result.negate()
+    }
+
+    return .value(BigInt(result))
+  }
+
+  private enum ParseGroupsResult {
+    case groups([Word])
+    case doubleUnderscore
+    case underscoreSuffix
+    case notDigit(UnicodeScalar)
+  }
+
+// swiftlint:disable function_body_length
+
+  /// Returns groups in right-to-left order!
+  private static func parseGroups(
+    scalars: String.UnicodeScalarView.SubSequence,
+    radix: Word,
+    scalarCountPerGroup: Int
+  ) -> ParseGroupsResult {
+// swiftlint:enable function_body_length
+
+    var result = [Word]()
+
+    let minimumCapacity = (scalars.count / scalarCountPerGroup) + 1
+    result.reserveCapacity(minimumCapacity)
+
+    // Group that we are currently working on, it will be added to 'result' later
+    var currentGroup = Word.zero
+
+    // Prevent '__' (but single '_' is ok)
+    var isPreviousUnderscore = false
+
+    // `123 = (1 * power^2) + (2 * power^1) + (3 * power^0)` etc.
+    var power = Word(1)
+
+    // Position in string, starting from the right
+    var indexExcludingUnderscores = 0
+
+    for scalar in scalars.reversed() {
+      let isUnderscore = scalar == "_"
+      defer { isPreviousUnderscore = isUnderscore }
+
+      if isUnderscore {
+        if isPreviousUnderscore {
+          return .doubleUnderscore
+        }
+
+        // This name is correct! Remember that we are going 'in reverse'!
+        let isLast = indexExcludingUnderscores == 0
+        if isLast {
+          return .underscoreSuffix
+        }
+
+        continue // Skip underscores
+      }
+
+      guard let digit = scalar.asDigit, digit < radix else {
+        return .notDigit(scalar)
+      }
+
+      // Prefix 'currentGroup' with current digit
+      currentGroup = power * digit + currentGroup
+      // Before the 'if', because we would have to '+1' to check 'isMultiple' anyway
+      indexExcludingUnderscores += 1
+
+      // Do not move 'power *= radix' here, because it will overflow!
+      // It has to be in 'else' case.
+      let isLastInGroup = indexExcludingUnderscores.isMultiple(of: scalarCountPerGroup)
+      if isLastInGroup {
+        // Append group even if it is '0' - we can have '0' words in the middle!
+        result.append(currentGroup)
+        currentGroup = 0
+        power = 1
+      } else {
+        power *= radix
+      }
+    }
+
+    if currentGroup != 0 {
+      result.append(currentGroup)
+    }
+
+    return .groups(result)
   }
 
   // MARK: - Trim

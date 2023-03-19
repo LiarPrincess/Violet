@@ -46,9 +46,7 @@ class AppleBigIntDivTests: XCTestCase {
     for testCaseStrings in self.testCases {
       let msg = "\(testCaseStrings.x) / \(testCaseStrings.y)"
 
-      do {
-        let values = try self.parseTestCase(case: testCaseStrings)
-
+      if let values = self.parseTestCase(case: testCaseStrings) {
         let x = values.x
         let y = values.y
         let result = x.quotientAndRemainder(dividingBy: y)
@@ -58,8 +56,8 @@ class AppleBigIntDivTests: XCTestCase {
 
         let mulResult = result.quotient * y + result.remainder
         XCTAssertEqual(mulResult, x, msg)
-      } catch {
-        XCTFail("\(msg), error: \(error)")
+      } else {
+        XCTFail(msg)
       }
     }
   }
@@ -71,13 +69,15 @@ class AppleBigIntDivTests: XCTestCase {
     fileprivate let remainder: BigInt
   }
 
-  private func parseTestCase(case c: TestCase) throws -> TestCaseValues {
+  private func parseTestCase(case c: TestCase) -> TestCaseValues? {
     let radix = 36
 
-    let x = try BigInt(c.x, radix: radix)
-    let y = try BigInt(c.y, radix: radix)
-    let quotient = try BigInt(c.quotient, radix: radix)
-    let remainder = try BigInt(c.remainder, radix: radix)
+    guard let x = BigInt(c.x, radix: radix),
+          let y = BigInt(c.y, radix: radix),
+          let quotient = BigInt(c.quotient, radix: radix),
+          let remainder = BigInt(c.remainder, radix: radix) else {
+      return nil
+    }
 
     return TestCaseValues(
       x: x,

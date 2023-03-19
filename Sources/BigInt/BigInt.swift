@@ -12,7 +12,7 @@ public struct BigInt: SignedInteger,
     case heap(BigIntHeap)
   }
 
-  internal private(set) var value: Storage
+  internal var value: Storage
 
   public var isOdd: Bool {
     return !self.isEven
@@ -41,7 +41,7 @@ public struct BigInt: SignedInteger,
     case let .smi(smi):
       return smi.value == 1
     case let .heap(heap):
-      return heap.isPositive && heap.hasMagnitudeOfOne
+      return heap.isPositiveOrZero && heap.isMagnitude1
     }
   }
 
@@ -55,18 +55,6 @@ public struct BigInt: SignedInteger,
       return smi.isNegative
     case let .heap(heap):
       return heap.isNegative
-    }
-  }
-
-  /// The magnitude of this value.
-  ///
-  /// For any numeric value `x`, `x.magnitude` is the absolute value of `x`.
-  public var magnitude: BigInt {
-    switch self.value {
-    case let .smi(smi):
-      return smi.magnitude
-    case let .heap(heap):
-      return heap.magnitude
     }
   }
 
@@ -105,21 +93,6 @@ public struct BigInt: SignedInteger,
     self.init(source)
   }
 
-  public init<T: BinaryFloatingPoint>(_ source: T) {
-    let heap = BigIntHeap(source)
-    self.value = .heap(heap)
-    self.downgradeToSmiIfPossible()
-  }
-
-  public init?<T: BinaryFloatingPoint>(exactly source: T) {
-    guard let heap = BigIntHeap(exactly: source) else {
-      return nil
-    }
-
-    self.value = .heap(heap)
-    self.downgradeToSmiIfPossible()
-  }
-
   internal init(smi value: Smi.Storage) {
     self.value = .smi(Smi(value))
   }
@@ -132,7 +105,7 @@ public struct BigInt: SignedInteger,
 
   // MARK: - Downgrade
 
-  private mutating func downgradeToSmiIfPossible() {
+  internal mutating func downgradeToSmiIfPossible() {
     switch self.value {
     case .smi:
       break
@@ -143,7 +116,63 @@ public struct BigInt: SignedInteger,
     }
   }
 
+  // MARK: - BinaryInteger
+
+  // Custom overloads for performance.
+
+  /// The magnitude of this value.
+  ///
+  /// For any numeric value `x`, `x.magnitude` is the absolute value of `x`.
+  public var magnitude: BigInt {
+    switch self.value {
+    case let .smi(smi):
+      return smi.magnitude
+    case let .heap(heap):
+      return heap.magnitude
+    }
+  }
+
+  private static let plusOne = BigInt(1)
+  private static let minusOne = BigInt(-1)
+
+  public func signum() -> BigInt {
+    if self.isNegative {
+      return Self.minusOne
+    }
+
+    return self.isZero ? Self.zero : Self.plusOne
+  }
+
+  public func isMultiple(of other: BigInt) -> Bool {
+    // Nothing but zero is a multiple of zero.
+    if other.isZero {
+      return self.isZero
+    }
+
+    switch (self.value, other.value) {
+    case let (.smi(lhsSmi), .smi(rhs)):
+      let result = lhsSmi.rem(other: rhs)
+      return result.isZero
+
+    case let (.smi(lhsSmi), .heap(rhs)):
+      var lhsHeap = BigIntHeap(lhsSmi.value)
+      lhsHeap.rem(other: rhs)
+      return lhsHeap.isZero
+
+    case (.heap(var lhsHeap), .smi(let rhs)):
+      lhsHeap.rem(other: rhs.value)
+      return lhsHeap.isZero
+
+    case (.heap(var lhsHeap), .heap(let rhs)):
+      lhsHeap.rem(other: rhs)
+      return lhsHeap.isZero
+    }
+  }
+
   // MARK: - Unary operators
+
+  // Do not implement '+'!
+  // Use the default implementation from protocol, it is 1000x faster.
 
   public static prefix func - (value: BigInt) -> BigInt {
     switch value.value {
@@ -160,10 +189,9 @@ public struct BigInt: SignedInteger,
     switch value.value {
     case .smi(let smi):
       return smi.inverted
-    case .heap(var heap):
-      // 'heap' is already a copy, so we can modify it without touching the 'value'
-      heap.invert()
-      return BigInt(heap)
+    case .heap(let heap):
+      let result = heap.invert()
+      return BigInt(result)
     }
   }
 
@@ -477,6 +505,8 @@ public struct BigInt: SignedInteger,
 
   // MARK: - And
 
+  // Default implementation is provided by the protocol,
+  // but if we write it by hand it will be 10% faster.
   public static func & (lhs: BigInt, rhs: BigInt) -> BigInt {
     switch (lhs.value, rhs.value) {
     case let (.smi(lhs), .smi(rhs)):
@@ -521,6 +551,8 @@ public struct BigInt: SignedInteger,
 
   // MARK: - Or
 
+  // Default implementation is provided by the protocol,
+  // but if we write it by hand it will be 10% faster.
   public static func | (lhs: BigInt, rhs: BigInt) -> BigInt {
     switch (lhs.value, rhs.value) {
     case let (.smi(lhs), .smi(rhs)):
@@ -565,6 +597,8 @@ public struct BigInt: SignedInteger,
 
   // MARK: - Xor
 
+  // Default implementation is provided by the protocol,
+  // but if we write it by hand it will be 10% faster.
   public static func ^ (lhs: BigInt, rhs: BigInt) -> BigInt {
     switch (lhs.value, rhs.value) {
     case let (.smi(lhs), .smi(rhs)):
@@ -609,138 +643,51 @@ public struct BigInt: SignedInteger,
 
   // MARK: - Shift left
 
-  public static func << (lhs: BigInt, rhs: BigInt) -> BigInt {
-    switch (lhs.value, rhs.value) {
-    case let (.smi(lhs), .smi(rhs)):
-      return lhs.shiftLeft(count: rhs.value)
-
-    case let (.smi(lhsSmi), .heap(rhs)):
-      var lhsHeap = BigIntHeap(lhsSmi.value)
-      lhsHeap.shiftLeft(count: rhs)
-      return BigInt(lhsHeap)
-
-    case (.heap(var lhs), .smi(let rhs)):
-      lhs.shiftLeft(count: rhs.value)
-      return BigInt(lhs)
-
-    case (.heap(var lhs), .heap(let rhs)):
-      lhs.shiftLeft(count: rhs)
-      return BigInt(lhs)
-    }
-  }
+  // '<<' has a default implementation which is as fast as hand written.
+  // public static func << <T: BinaryInteger>(lhs: BigInt, rhs: T) -> BigInt {
+  //   switch lhs.value {
+  //   case let .smi(lhs):
+  //     return lhs.shiftLeft(count: rhs)
+  //   case .heap(var lhs):
+  //     lhs.shiftLeft(count: rhs)
+  //     return BigInt(lhs)
+  //   }
+  // }
 
   public static func <<= <T: BinaryInteger>(lhs: inout BigInt, rhs: T) {
-    let rhsBig = BigInt(rhs)
-
-    switch (lhs.value, rhsBig.value) {
-    case let (.smi(lhsSmi), .smi(rhs)):
-      let result = lhsSmi.shiftLeft(count: rhs.value)
-      lhs.value = result.value
-
-    case let (.smi(lhsSmi), .heap(rhs)):
-      var lhsHeap = BigIntHeap(lhsSmi.value)
-      lhsHeap.shiftLeft(count: rhs)
-      lhs.value = .heap(lhsHeap)
-      lhs.downgradeToSmiIfPossible()
-
-    case (.heap(var lhsHeap), .smi(let rhs)):
+    switch lhs.value {
+    case .smi(let smi):
+      lhs = smi.shiftLeft(count: rhs)
+    case .heap(var heap):
       Self.releaseBufferToPreventCOW(&lhs)
-      lhsHeap.shiftLeft(count: rhs.value)
-      lhs.value = .heap(lhsHeap)
-      lhs.downgradeToSmiIfPossible()
-
-    case (.heap(var lhsHeap), .heap(let rhs)):
-      Self.releaseBufferToPreventCOW(&lhs)
-      lhsHeap.shiftLeft(count: rhs)
-      lhs.value = .heap(lhsHeap)
+      heap.shiftLeft(count: rhs)
+      lhs.value = .heap(heap)
       lhs.downgradeToSmiIfPossible()
     }
   }
 
   // MARK: - Shift right
 
-  public static func >> (lhs: BigInt, rhs: BigInt) -> BigInt {
-   switch (lhs.value, rhs.value) {
-   case let (.smi(lhs), .smi(rhs)):
-     return lhs.shiftRight(count: rhs.value)
-
-   case let (.smi(lhsSmi), .heap(rhs)):
-     var lhsHeap = BigIntHeap(lhsSmi.value)
-     lhsHeap.shiftRight(count: rhs)
-     return BigInt(lhsHeap)
-
-   case (.heap(var lhs), .smi(let rhs)):
-     lhs.shiftRight(count: rhs.value)
-     return BigInt(lhs)
-
-   case (.heap(var lhs), .heap(let rhs)):
-     lhs.shiftRight(count: rhs)
-     return BigInt(lhs)
-   }
-  }
+  // '>>' has a default implementation which is as fast as hand written.
+  // public static func >> <T: BinaryInteger>(lhs: BigInt, rhs: T) -> BigInt {
+  //   switch lhs.value {
+  //   case let .smi(lhs):
+  //     return lhs.shiftRight(count: rhs)
+  //   case .heap(var lhs):
+  //     lhs.shiftRight(count: rhs)
+  //     return BigInt(lhs)
+  //   }
+  // }
 
   public static func >>= <T: BinaryInteger>(lhs: inout BigInt, rhs: T) {
-    let rhsBig = BigInt(rhs)
-
-    switch (lhs.value, rhsBig.value) {
-    case let (.smi(lhsSmi), .smi(rhs)):
-      let result = lhsSmi.shiftRight(count: rhs.value)
-      lhs.value = result.value
-
-    case let (.smi(lhsSmi), .heap(rhs)):
-      var lhsHeap = BigIntHeap(lhsSmi.value)
-      lhsHeap.shiftRight(count: rhs)
-      lhs.value = .heap(lhsHeap)
-      lhs.downgradeToSmiIfPossible()
-
-    case (.heap(var lhsHeap), .smi(let rhs)):
+    switch lhs.value {
+    case .smi(let smi):
+      lhs = smi.shiftRight(count: rhs)
+    case .heap(var heap):
       Self.releaseBufferToPreventCOW(&lhs)
-      lhsHeap.shiftRight(count: rhs.value)
-      lhs.value = .heap(lhsHeap)
+      heap.shiftRight(count: rhs)
+      lhs.value = .heap(heap)
       lhs.downgradeToSmiIfPossible()
-
-    case (.heap(var lhsHeap), .heap(let rhs)):
-      Self.releaseBufferToPreventCOW(&lhs)
-      lhsHeap.shiftRight(count: rhs)
-      lhs.value = .heap(lhsHeap)
-      lhs.downgradeToSmiIfPossible()
-    }
-  }
-
-  // MARK: - String
-
-  public var description: String {
-    switch self.value {
-    case let .smi(smi):
-      return smi.description
-    case let .heap(heap):
-      return heap.description
-    }
-  }
-
-  public var debugDescription: String {
-    let value = String(self, radix: 10, uppercase: false)
-
-    let storage: String = {
-      switch self.value {
-      case let .smi(smi):
-        return smi.debugDescription
-      case let .heap(heap):
-        return heap.debugDescription
-      }
-    }()
-
-    return "\(value) (storage: \(storage))"
-  }
-
-  // 'toString' because we Java now
-  internal func toString(radix: Int, uppercase: Bool) -> String {
-    precondition(2 <= radix && radix <= 36, "radix must be in range 2...36")
-    switch self.value {
-    case let .smi(smi):
-      return smi.toString(radix: radix, uppercase: uppercase)
-    case let .heap(heap):
-      return heap.toString(radix: radix, uppercase: uppercase)
     }
   }
 

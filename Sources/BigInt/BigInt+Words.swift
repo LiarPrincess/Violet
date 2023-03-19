@@ -41,6 +41,11 @@
 // |  15 | 0000 1111 |        yes |     5 |  -15 |  1111 0001 |        yes |     5 |
 // +-----+-----------+------------+-------+------+------------+------------+-------+
 
+private let bitWidthForZero = 1
+// If the value is zero, then trailingZeroBitCount is equal to bitWidth, see:
+// https://developer.apple.com/documentation/swift/binaryinteger/trailingzerobitcount
+private let trailingZeroBitCountForZero = bitWidthForZero
+
 private func hasMostSignificantBit1<T: FixedWidthInteger>(value: T) -> Bool {
   let mostSignificantBit = value >> (T.bitWidth - 1)
   return mostSignificantBit == 1
@@ -51,8 +56,6 @@ private func hasMostSignificantBit0<T: FixedWidthInteger>(value: T) -> Bool {
 }
 
 // MARK: - Bit width
-
-private let bitWidthForZero = 1
 
 extension BigInt {
 
@@ -113,7 +116,7 @@ extension BigIntHeap {
         return wordsWidth - leadingZeroBitCount + zeroAsSign
       }
 
-      if self.isPositive {
+      if self.isPositiveOrZero {
         return bitWidthForPositive()
       }
 
@@ -273,7 +276,7 @@ extension BigIntHeap {
       let signWord = r == 0 ? 0 : 1 // This also handles additional word for '0'
       self._count = q + signWord
 
-      switch heap.isPositive {
+      switch heap.isPositiveOrZero {
       case true:
         self._decrementLimit = 0
       case false:
@@ -303,13 +306,13 @@ extension BigIntHeap {
       if isSignWord {
         // Sign extension
         let allOnes = Word.max
-        return self._heap.isPositive ? 0 : allOnes
+        return self._heap.isPositiveOrZero ? 0 : allOnes
       }
 
       return self._heap.storage.withWordsBuffer { words in
         let word = words[index]
 
-        if self._heap.isPositive {
+        if self._heap.isPositiveOrZero {
           return word
         }
 
@@ -412,10 +415,6 @@ private func bitsInDigit<T: FixedWidthInteger>(value: T) -> Int {
 }
 
 // MARK: - Trailing zero bit count
-
-// If the value is zero, then trailingZeroBitCount is equal to bitWidth, see:
-// https://developer.apple.com/documentation/swift/binaryinteger/trailingzerobitcount
-private let trailingZeroBitCountForZero = bitWidthForZero
 
 extension BigInt {
 
