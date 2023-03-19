@@ -124,8 +124,11 @@ class BuilderConstantsTests: XCTestCase {
     XCTAssertInstructions(code, .loadConst(index: 0), .loadConst(index: 0))
   }
 
-  func test_appendInteger_big() throws {
-    let value = try BigInt("42_42_42_42_42_42_42_42_42_42_42_42_42_42_42_42_42")
+  func test_appendInteger_big() {
+    guard let value = BigInt("4242424242424242424242424242424242") else {
+      XCTFail("Unable to parse")
+      return
+    }
 
     let builder = createBuilder()
     builder.appendInteger(value)

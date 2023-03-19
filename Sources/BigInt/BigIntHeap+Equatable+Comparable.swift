@@ -20,7 +20,6 @@ extension BigIntHeap {
   // MARK: - Equatable
 
   internal static func == (heap: BigIntHeap, smi: Smi.Storage) -> Bool {
-    // Different signs are never equal
     guard heap.isNegative == smi.isNegative else {
       return false
     }
@@ -40,7 +39,24 @@ extension BigIntHeap {
   }
 
   internal static func == (lhs: BigIntHeap, rhs: BigIntHeap) -> Bool {
-    return lhs.storage == rhs.storage
+    guard lhs.storage.isNegative == rhs.storage.isNegative else {
+      return false
+    }
+
+    return lhs.storage.withWordsBuffer { lhs in
+      return rhs.storage.withWordsBuffer { rhs in
+        guard lhs.count == rhs.count else {
+          return false
+        }
+
+        // By hand is faster than: zip(lhs, rhs).allSatisfy { $0.0 == $0.1 }
+        for i in 0..<lhs.count where lhs[i] != rhs[i] {
+          return false
+        }
+
+        return true
+      }
+    }
   }
 
   // MARK: - Comparable

@@ -25,18 +25,6 @@ private func XCTAssertNotEqual(_ lhs: BigIntStorage,
 
 class BigIntStorageTests: XCTestCase {
 
-  // MARK: - Memory layout
-
-  private enum FutureBigInt {
-    case smi(Smi)
-    case ptr(BigIntStorage)
-  }
-
-  func test_memoryLayout() {
-    XCTAssertEqual(MemoryLayout<FutureBigInt>.size, 8)
-    XCTAssertEqual(MemoryLayout<FutureBigInt>.stride, 8)
-  }
-
   // MARK: - Properties
 
   func test_isNegative_isPositive() {
@@ -62,18 +50,6 @@ class BigIntStorageTests: XCTestCase {
     storage.toggleIsNegative(token)
     XCTAssertFalse(storage.isPositive)
     XCTAssertTrue(storage.isNegative)
-  }
-
-  func test_isNegative_cow() {
-    let original = BigIntStorage(isNegative: false, words: 0, 1, 2)
-    let originalIsNegative = original.isNegative
-
-    var copy = original
-    let token = copy.guaranteeUniqueBufferReference()
-    copy.toggleIsNegative(token)
-
-    XCTAssertEqual(original.isNegative, originalIsNegative)
-    XCTAssertEqual(copy.isNegative, !originalIsNegative)
   }
 
   // MARK: - Word access

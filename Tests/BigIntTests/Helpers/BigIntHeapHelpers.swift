@@ -42,7 +42,7 @@ extension BigIntStorage {
     self.setIsNegative(token, value: isNegative)
 
     for word in words {
-      self.append(token, element: word)
+      self.appendAssumingCapacity(token, element: word)
     }
   }
 }

@@ -8,37 +8,64 @@ import VioletCore
 //
 // GMP function name is in the comment above method.
 
+// swiftlint:disable function_body_length
+
 extension BigIntHeap {
 
-  // MARK: - Left - smi
+  internal typealias ReasonableCount = UInt64
 
-  internal mutating func shiftLeft(count: Smi.Storage) {
-    defer { self.checkInvariants() }
+  internal mutating func shiftLeft<T: BinaryInteger>(count: T) {
+    let isNegative = count < T.zero
 
-    let countMagnitude = Word(count.magnitude)
-
-    if count.isPositive {
-      self.shiftLeft(count: countMagnitude)
+    if let count = ReasonableCount(exactly: count.magnitude) {
+      if isNegative {
+        self.shiftRight(count: count)
+      } else {
+        self.shiftLeft(count: count)
+      }
     } else {
-      self.shiftRight(count: countMagnitude)
+      if isNegative {
+        self.unreasonableRight(count: count)
+      } else {
+        self.unreasonableLeft()
+      }
     }
   }
 
-  // MARK: - Left - word
+  internal mutating func shiftRight <T: BinaryInteger>(count: T) {
+    let isNegative = count < T.zero
 
-  internal mutating func shiftLeft(count: Word) {
-    if self.isZero || count.isZero {
+    if let count = ReasonableCount(exactly: count.magnitude) {
+      if isNegative {
+        self.shiftLeft(count: count)
+      } else {
+        self.shiftRight(count: count)
+      }
+    } else {
+      if isNegative {
+        self.unreasonableLeft()
+      } else {
+        self.unreasonableRight(count: count)
+      }
+    }
+  }
+
+  // MARK: - Left
+
+  internal mutating func shiftLeft(count: ReasonableCount) {
+    if self.isZero || count == ReasonableCount.zero {
       return
     }
 
-    defer { self.checkInvariants() }
+    defer { self.storage.checkInvariants() }
 
-    let wordShift = Int(count / Word(Word.bitWidth))
-    let bitShift = Int(count % Word(Word.bitWidth))
+    let wordShift = Int(count / ReasonableCount(Word.bitWidth))
+    let bitShift = Int(count % ReasonableCount(Word.bitWidth))
 
     let wordCountBeforeShift = self.storage.count
-    let token = self.storage.guaranteeUniqueBufferReference()
-    self.storage.prepend(token, element: 0, count: wordShift)
+    let capacity = self.storage.count + wordShift + (bitShift == 0 ? 0 : 1)
+    let token = self.storage.guaranteeUniqueBufferReference(withCapacity: capacity)
+    self.storage.prependAssumingCapacity(token, element: 0, count: wordShift)
 
     // If we are shifting by multiply of 'Word' then we are done.
     // For example for 4 bit word if we shift by 4, 8, 12 or 16
@@ -64,88 +91,53 @@ extension BigIntHeap {
     //   [1011][0000] << 1 = [0001][0110][0000]
 
     // Append word that will be used for shifts from our most significant word.
-    self.storage.append(token, element: 0) // In example: [0000][1011][0000]
+    self.storage.appendAssumingCapacity(token, element: 0) // In example: [0000][1011][0000]
 
     let lowShift = bitShift // In example: 5 % 4 = 1
     let highShift = Word.bitWidth - lowShift // In example: 4 - 1 = 3
 
     self.storage.withMutableWordsBuffer(token) { words in
       for i in (0..<wordCountBeforeShift).reversed() {
-        let indexAfterWordShift = i + wordShift
+        let indexAfterWordShift = i &+ wordShift
 
         let word = words[indexAfterWordShift] // In example: [1011]
-        let lowPart = word << lowShift // In example: [1011] << 1 = [0110]
-        let highPart = word >> highShift // In example: [1011] >> 3 = [0001]
+        let lowPart = word &<< lowShift // In example: [1011] << 1 = [0110]
+        let highPart = word &>> highShift // In example: [1011] >> 3 = [0001]
 
         let lowIndex = indexAfterWordShift // In example: 1 + 0 = 1, [0000][this][0000]
-        let highIndex = lowIndex + 1 // In example: 1 + 1 = 2, [0000][1011][this]
+        let highIndex = lowIndex &+ 1 // In example: 1 + 1 = 2, [0000][1011][this]
 
         words[lowIndex] = lowPart
-        words[highIndex] = words[highIndex] | highPart
+        words[highIndex] |= highPart
       }
     }
 
-    self.fixInvariants(token)
+    self.storage.fixInvariants(token)
   }
 
-  // MARK: - Left - heap
-
-  internal mutating func shiftLeft(count: BigIntHeap) {
-    if count.isZero {
-      return
-    }
-
-    if count.isPositive {
-      guard let word = self.guaranteeSingleWord(shiftCount: count) else {
-        // Something is off.
-        // We will execute order 66 and kill the jedi before they take control
-        // over the whole galaxy (also known as ENOMEM).
-        trap(Self.unreasonableLeftShiftMsg)
-      }
-
-      self.shiftLeft(count: word)
-    } else {
-      guard let word = self.guaranteeSingleWord(shiftCount: count) else {
-        self.storage.setToZero()
-        return
-      }
-
-      self.shiftRight(count: word)
-    }
+  internal mutating func unreasonableLeft() {
+    // Something is off.
+    // We will execute order 66 and kill the jedi before they take control
+    // over the whole galaxy (also known as ENOMEM).
+    trap("Shifting by more than \(ReasonableCount.max) is not possible "
+       + "(and it is probably not what you want anyway, "
+       + "do you really have that much memory?).")
   }
 
-  // MARK: - Right - smi
-
-  internal mutating func shiftRight(count: Smi.Storage) {
-    defer { self.checkInvariants() }
-
-    let countMagnitude = Word(count.magnitude)
-
-    if count.isPositive {
-      self.shiftRight(count: countMagnitude)
-    } else {
-      self.shiftLeft(count: countMagnitude)
-    }
-  }
-
-  // MARK: - Right - word
-
-// swiftlint:disable function_body_length
-// cSpell:ignore bitcnt
+  // MARK: - Right
 
   /// static void
   /// mpz_div_q_2exp (mpz_t q, const mpz_t u, mp_bitcnt_t bitShift,
   ///     enum mpz_div_round_mode mode)
-  internal mutating func shiftRight(count: Word) {
-// swiftlint:enable function_body_length
-    if self.isZero || count.isZero {
+  internal mutating func shiftRight(count: ReasonableCount) {
+    if self.isZero || count == ReasonableCount.zero {
       return
     }
 
-    defer { self.checkInvariants() }
+    defer { self.storage.checkInvariants() }
 
-    let wordShift = Int(count / Word(Word.bitWidth))
-    let bitShift = Int(count % Word(Word.bitWidth))
+    let wordShift = Int(count / ReasonableCount(Word.bitWidth))
+    let bitShift = Int(count % ReasonableCount(Word.bitWidth))
 
     // Swift uses what would be 'GMP_DIV_FLOOR' mode in 'GMP'.
     // Which means that if we are negative and any of the removed bits is '1'
@@ -170,7 +162,8 @@ extension BigIntHeap {
 
     // Nonsensical shifts (such as '1 >> 1000') return '0' (or '-1' for negative).
     if self.storage.isZero {
-      self.storage.setTo(token, value: self.isNegative ? -1 : 0)
+      assert(self.storage.capacity != 0) // We checked for 0
+      self.storage.setToAssumingCapacity(token, value: self.isNegative ? -1 : 0)
       return
     }
 
@@ -208,17 +201,17 @@ extension BigIntHeap {
       for i in 0..<words.count {
         let word = words[i] // In example (for i = 1): [1011]
 
-        let lowPart = word << lowShift // In example: [1011] << 1 = [0110]
-        let highPart = word >> highShift // In example: [1011] >> 3 = [0001]
+        let lowPart = word &<< lowShift // In example: [1011] << 1 = [0110]
+        let highPart = word &>> highShift // In example: [1011] >> 3 = [0001]
 
         let highIndex = i // In example: 1 + 1 = 2, [0000][1011][this]
-        let lowIndex = highIndex - 1 // In example: 1 + 0 = 1, [0000][this][0000]
+        let lowIndex = highIndex &- 1 // In example: 1 + 0 = 1, [0000][this][0000]
 
         words[highIndex] = highPart
 
         // 1st moved word will try to write its 'lowPart' to index '-1'
         if lowIndex >= 0 {
-          words[lowIndex] = words[lowIndex] | lowPart
+          words[lowIndex] |= lowPart
         }
       }
     }
@@ -226,11 +219,12 @@ extension BigIntHeap {
     // We need to fix invariants before we call any other operation,
     // because it may assume that all of the invariants are 'ok'.
     let wasNegative = self.isNegative
-    self.fixInvariants(token)
+    self.storage.fixInvariants(token)
 
     if wasNegative && self.isZero {
       // '-1 >> 1000' = '-1'
-      self.storage.setTo(token, value: -1)
+      assert(self.storage.capacity != 0) // We checked for 0
+      self.storage.setToAssumingCapacity(token, value: -1)
     } else if needsFloorAdjustmentForNegativeNumbers {
       self.adjustAfterRightShift(token)
     }
@@ -257,44 +251,11 @@ extension BigIntHeap {
     Self.addMagnitude(token, lhs: &self.storage, rhs: Word(1))
   }
 
-  // MARK: - Right - heap
-
-  internal mutating func shiftRight(count: BigIntHeap) {
-    if count.isZero {
-      return
-    }
-
-    if count.isPositive {
-      guard let word = self.guaranteeSingleWord(shiftCount: count) else {
-        self.storage.setToZero()
-        return
-      }
-
-      self.shiftRight(count: word)
-    } else {
-      guard let word = self.guaranteeSingleWord(shiftCount: count) else {
-        // Something is off.
-        // We will execute order 66 and kill the jedi before they take control
-        // over the whole galaxy (also known as ENOMEM).
-        trap(Self.unreasonableLeftShiftMsg)
-      }
-
-      self.shiftLeft(count: word)
-    }
-  }
-
-  // MARK: - Sane left shift
-
-  private static let unreasonableLeftShiftMsg =
-    "Shifting by more than \(Word.max) is not possible "
-  + "(and it is probably not what you want anyway, "
-  + "do you really have that much memory?)."
-
-  private func guaranteeSingleWord(shiftCount: BigIntHeap) -> Word? {
-    guard shiftCount.storage.count == 1 else {
-      return nil
-    }
-
-    return shiftCount.storage.withWordsBuffer { $0[0] }
+  internal mutating func unreasonableRight<T: BinaryInteger>(count: T) {
+    // We assume that 'self.bitWidth' was below 'count'.
+    // Do we need an assertion here? Will we ever work on a such big numbers?
+    let new = self.isNegative ? -1 : 0
+    let token = self.storage.guaranteeUniqueBufferReference(withCapacity: 1)
+    self.storage.setToAssumingCapacity(token, value: new)
   }
 }

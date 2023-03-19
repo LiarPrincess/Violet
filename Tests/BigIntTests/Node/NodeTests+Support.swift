@@ -54,19 +54,13 @@ extension NodeTests {
                        op: UnaryOperation,
                        file: StaticString,
                        line: UInt) {
-    let value: BigInt
-    do {
-      value = try self.create(string: valueString, radix: 10)
-    } catch {
-      XCTFail("Unable to parse value: \(error)", file: file, line: line)
+    guard let value = self.create(string: valueString, radix: 10) else {
+      XCTFail("Unable to parse value", file: file, line: line)
       return
     }
 
-    let expected: BigInt
-    do {
-      expected = try self.create(string: expectedString, radix: 10)
-    } catch {
-      XCTFail("Unable to parse expected: \(error)", file: file, line: line)
+    guard let expected = self.create(string: expectedString, radix: 10) else {
+      XCTFail("Unable to parse expected", file: file, line: line)
       return
     }
 
@@ -214,29 +208,20 @@ extension NodeTests {
                         inoutOp: InoutBinaryOperation,
                         file: StaticString,
                         line: UInt) {
-    let lhs: BigInt
-    let lhsBeforeInout: BigInt // Later to check if 'inout' did not modify original
-    do {
-      lhs = try self.create(string: lhsString, radix: 10)
-      lhsBeforeInout = try self.create(string: lhsString, radix: 10)
-    } catch {
-      XCTFail("Unable to parse lhs: \(error)", file: file, line: line)
+    // 'lhsBeforeInout' to later check if 'inout' did not modify original
+    guard let lhs = self.create(string: lhsString, radix: 10),
+          let lhsBeforeInout = self.create(string: lhsString, radix: 10) else {
+      XCTFail("Unable to parse lhs", file: file, line: line)
       return
     }
 
-    let rhs: BigInt
-    do {
-      rhs = try self.create(string: rhsString, radix: 10)
-    } catch {
-      XCTFail("Unable to parse rhs: \(error)", file: file, line: line)
+    guard let rhs = self.create(string: rhsString, radix: 10) else {
+      XCTFail("Unable to parse rhs", file: file, line: line)
       return
     }
 
-    let expected: BigInt
-    do {
-      expected = try self.create(string: expectedString, radix: 10)
-    } catch {
-      XCTFail("Unable to parse expected: \(error)", file: file, line: line)
+    guard let expected = self.create(string: expectedString, radix: 10) else {
+      XCTFail("Unable to parse expected", file: file, line: line)
       return
     }
 
@@ -262,35 +247,23 @@ extension NodeTests {
                            mod modString: String,
                            file: StaticString = #file,
                            line: UInt = #line) {
-    let lhs: BigInt
-    do {
-      lhs = try self.create(string: lhsString, radix: 10)
-    } catch {
-      XCTFail("Unable to parse lhs: \(error)", file: file, line: line)
+    guard let lhs = self.create(string: lhsString, radix: 10) else {
+      XCTFail("Unable to parse lhs", file: file, line: line)
       return
     }
 
-    let rhs: BigInt
-    do {
-      rhs = try self.create(string: rhsString, radix: 10)
-    } catch {
-      XCTFail("Unable to parse rhs: \(error)", file: file, line: line)
+    guard let rhs = self.create(string: rhsString, radix: 10) else {
+      XCTFail("Unable to parse rhs", file: file, line: line)
       return
     }
 
-    let div: BigInt
-    do {
-      div = try self.create(string: divString, radix: 10)
-    } catch {
-      XCTFail("Unable to parse div: \(error)", file: file, line: line)
+    guard let div = self.create(string: divString, radix: 10) else {
+      XCTFail("Unable to parse div", file: file, line: line)
       return
     }
 
-    let mod: BigInt
-    do {
-      mod = try self.create(string: modString, radix: 10)
-    } catch {
-      XCTFail("Unable to parse mod: \(error)", file: file, line: line)
+    guard let mod = self.create(string: modString, radix: 10) else {
+      XCTFail("Unable to parse mod", file: file, line: line)
       return
     }
 
@@ -306,19 +279,13 @@ extension NodeTests {
                           expecting expectedString: String,
                           file: StaticString = #file,
                           line: UInt = #line) {
-    let base: BigInt
-    do {
-      base = try self.create(string: baseString, radix: 10)
-    } catch {
-      XCTFail("Unable to parse lhs: \(error)", file: file, line: line)
+    guard let base = self.create(string: baseString, radix: 10) else {
+      XCTFail("Unable to parse lhs", file: file, line: line)
       return
     }
 
-    let expected: BigInt
-    do {
-      expected = try self.create(string: expectedString, radix: 10)
-    } catch {
-      XCTFail("Unable to parse expected: \(error)", file: file, line: line)
+    guard let expected = self.create(string: expectedString, radix: 10) else {
+      XCTFail("Unable to parse expected", file: file, line: line)
       return
     }
 
@@ -372,23 +339,17 @@ extension NodeTests {
                        file: StaticString,
                        line: UInt) {
 
-    let value: BigInt
-    let valueBeforeInout: BigInt // Later to check if 'inout' did not modify original
-    do {
-      value = try self.create(string: valueString, radix: 10)
-      valueBeforeInout = try self.create(string: valueString, radix: 10)
-    } catch {
-      XCTFail("Unable to parse lhs: \(error)", file: file, line: line)
+    // 'valueBeforeInout' to later check if 'inout' did not modify original
+    guard let value = self.create(string: valueString, radix: 10),
+          let valueBeforeInout = self.create(string: valueString, radix: 10) else {
+      XCTFail("Unable to parse lhs", file: file, line: line)
       return
     }
 
     let count = BigInt(countInt)
 
-    let expected: BigInt
-    do {
-      expected = try self.create(string: expectedString, radix: 10)
-    } catch {
-      XCTFail("Unable to parse expected: \(error)", file: file, line: line)
+    guard let expected = self.create(string: expectedString, radix: 10) else {
+      XCTFail("Unable to parse expected", file: file, line: line)
       return
     }
 
@@ -409,7 +370,7 @@ extension NodeTests {
   // MARK: - Helpers
 
   /// Abstraction over `BigInt.init(_:radix:)`.
-  private func create(string: String, radix: Int) throws -> BigInt {
-    return try BigInt(string, radix: radix)
+  private func create(string: String, radix: Int) -> BigInt? {
+    return BigInt(string, radix: radix)
   }
 }

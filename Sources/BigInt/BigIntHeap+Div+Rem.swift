@@ -7,6 +7,7 @@
 // V8 implements exactly the "Algorithm D" without any noise/weirdness.
 // Their implementation is AMAZING.
 
+// swiftlint:disable function_body_length
 // swiftlint:disable file_length
 
 extension BigIntHeap {
@@ -46,12 +47,12 @@ extension BigIntHeap {
   /// Returns remainder.
   /// May REALLOCATE BUFFER -> invalidates tokens.
   internal mutating func div(other: Smi.Storage) -> Smi.Storage {
-    defer { self.checkInvariants() }
-
     if other == -1 {
       self.negate() // x / (-1) = -x
       return .zero
     }
+
+    defer { self.storage.checkInvariants() }
 
     let resultIsNegative = self.divIsNegative(otherIsNegative: other.isNegative)
     let remainderIsNegative = self.remIsNegative(otherIsNegative: other.isNegative)
@@ -62,7 +63,7 @@ extension BigIntHeap {
     let token = self.storage.guaranteeUniqueBufferReference()
     self.storage.setIsNegative(token, value: resultIsNegative)
 
-    self.fixInvariants(token)
+    self.storage.fixInvariants(token)
 
     // Remainder is always less than the number we divide by.
     // So even if we divide by min value (for example for 'Int8' it is -128),
@@ -98,15 +99,15 @@ extension BigIntHeap {
       return .zero // 0 / n = 0
     }
 
-    defer { self.checkInvariants() }
+    defer { self.storage.checkInvariants() }
 
     let resultIsNegative = self.divIsNegative(otherIsNegative: false)
     let remainderIsNegative = self.remIsNegative(otherIsNegative: other.isNegative)
 
     switch self.compareMagnitude(with: other) {
     case .equal: // 5 / 5 = 1 rem 0 and also 5 / (-5) = -1 rem 0
-      let token = self.storage.guaranteeUniqueBufferReference()
-      self.storage.setTo(token, value: resultIsNegative ? -1 : 1)
+      let token = self.storage.guaranteeUniqueBufferReference(withCapacity: 1)
+      self.storage.setToAssumingCapacity(token, value: resultIsNegative ? -1 : 1)
       return .zero
 
     case .less: // 3 / 5 = 0 rem 3
@@ -121,7 +122,7 @@ extension BigIntHeap {
       let token = self.storage.guaranteeUniqueBufferReference()
       let remainderMagnitude = Self.divMagnitude(token, &self.storage, by: other)
       self.storage.setIsNegative(token, value: resultIsNegative)
-      self.fixInvariants(token)
+      self.storage.fixInvariants(token)
 
       return DivWordRemainder(isNegative: remainderIsNegative,
                               magnitude: remainderMagnitude)
@@ -162,7 +163,7 @@ extension BigIntHeap {
     // Special cases: other is '0', '1' or '-1'
     precondition(!other.isZero, "Division by zero")
 
-    if other.hasMagnitudeOfOne {
+    if other.isMagnitude1 {
       // x /   1  =  x rem 0
       // x / (-1) = -x rem 0
       if other.isNegative {
@@ -177,35 +178,37 @@ extension BigIntHeap {
       return .zero
     }
 
-    defer { self.checkInvariants() }
+    defer { self.storage.checkInvariants() }
 
     let resultIsNegative = self.divIsNegative(otherIsNegative: other.isNegative)
     let remainderIsNegative = self.remIsNegative(otherIsNegative: other.isNegative)
-    var token = self.storage.guaranteeUniqueBufferReference()
 
     switch self.compareMagnitude(with: other) {
     case .equal: // 5 / 5 = 1 rem 0 and also 5 / (-5) = -1 rem 0
-      self.storage.setTo(token, value: resultIsNegative ? -1 : 1)
+      let token = self.storage.guaranteeUniqueBufferReference(withCapacity: 1)
+      self.storage.setToAssumingCapacity(token, value: resultIsNegative ? -1 : 1)
       return .zero
 
     case .less: // 3 / 5 = 0 rem 3
       // Basically return 'self' as remainder
       // We have to do a little dance to avoid COW.
+      let token = self.storage.guaranteeUniqueBufferReference()
       self.storage.setIsNegative(token, value: remainderIsNegative)
       let remainder = self
       self.storage.setToZero() // Will use predefined 'BigIntStorage.zero'
       return remainder
 
     case .greater:
-      var remainder = Self.divMagnitude(token,  &self.storage, by: other.storage)
+      var token = self.storage.guaranteeUniqueBufferReference()
+      var remainder = Self.divMagnitude(token, &self.storage, by: other.storage)
       token = self.storage.guaranteeUniqueBufferReference() // 'divMagnitude' may reallocate
       self.storage.setIsNegative(token, value: resultIsNegative)
 
-      self.fixInvariants(token)
+      self.storage.fixInvariants(token)
 
       let remainderToken = remainder.storage.guaranteeUniqueBufferReference()
       remainder.storage.setIsNegative(remainderToken, value: remainderIsNegative)
-      remainder.fixInvariants(remainderToken)
+      remainder.storage.fixInvariants(remainderToken)
       return remainder
     }
   }
@@ -344,7 +347,7 @@ extension BigIntHeap {
 
     fileprivate mutating func append(_ word: Word) {
       self[self.count] = word
-      self.count += 1
+      self.count &+= 1
     }
 
     fileprivate mutating func removeAll() {
@@ -497,10 +500,11 @@ extension BigIntHeap {
     var borrow: Word = 0
 
     for i in 0..<rhs.count {
-      let (word1, borrow1) = lhs[startIndex + i].subtractingReportingOverflow(rhs[i])
+      let lhsIndex = startIndex &+ i
+      let (word1, borrow1) = lhs[lhsIndex].subtractingReportingOverflow(rhs[i])
       let (word2, borrow2) = word1.subtractingReportingOverflow(borrow)
-      lhs[startIndex + i] = word2
       borrow = (borrow1 ? 1 : 0) + (borrow2 ? 1 : 0)
+      lhs[lhsIndex] = word2
     }
 
     return borrow
@@ -518,8 +522,8 @@ extension BigIntHeap {
     for i in 0..<lhs.count {
       let (high, low) = lhs[i].multipliedFullWidth(by: rhs)
       let (word, overflow) = low.addingReportingOverflow(carry)
+      carry = (overflow ? 1 : 0) &+ high
       result.append(word)
-      carry = high &+ (overflow ? 1 : 0)
     }
 
     // Add the leftover carry
@@ -531,19 +535,17 @@ extension BigIntHeap {
   // MARK: - Rem
 
   internal mutating func rem(other: Smi.Storage) {
-    defer { self.checkInvariants() }
-
     var copy = self
     let result = copy.div(other: other)
     self = BigIntHeap(result)
+    self.storage.checkInvariants()
   }
 
   internal mutating func rem(other: BigIntHeap) {
-    defer { self.checkInvariants() }
-
     var copy = self
     let result = copy.div(other: other)
     self = result
+    self.storage.checkInvariants()
   }
 
   // MARK: - Div rem

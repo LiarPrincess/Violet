@@ -80,33 +80,24 @@ class AppleBigIntDivTests: XCTestCase {
   private func parseTestCase(case c: TestCase,
                              file: StaticString = #file,
                              line: UInt = #line) -> TestCaseValues? {
-    let x: BigInt, y: BigInt, quotient: BigInt, remainder: BigInt
     let radix = 36
 
-    do {
-      x = try BigInt(c.x, radix: radix)
-    } catch {
+    guard let x = BigInt(c.x, radix: radix) else {
       XCTFail("Unable to parse x: \(c.x)", file: file, line: line)
       return nil
     }
 
-    do {
-      y = try BigInt(c.y, radix: radix)
-    } catch {
+    guard let y = BigInt(c.y, radix: radix) else {
       XCTFail("Unable to parse y: \(c.y)", file: file, line: line)
       return nil
     }
 
-    do {
-      quotient = try BigInt(c.quotient, radix: radix)
-    } catch {
+    guard let quotient = BigInt(c.quotient, radix: radix) else {
       XCTFail("Unable to parse quotient: \(c.quotient)", file: file, line: line)
       return nil
     }
 
-    do {
-      remainder = try BigInt(c.remainder, radix: radix)
-    } catch {
+    guard let remainder = BigInt(c.remainder, radix: radix) else {
       XCTFail("Unable to parse remainder: \(c.remainder)", file: file, line: line)
       return nil
     }

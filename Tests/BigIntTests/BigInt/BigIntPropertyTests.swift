@@ -135,12 +135,11 @@ class BigIntPropertyTests: XCTestCase {
 
   func test_minRequiredWidth_heap() {
     for (string, expected) in MinRequiredWidthTestCases.heap {
-      do {
-        let int = try BigInt(string)
+      if let int = BigInt(string) {
         let result = int.minRequiredWidth
         XCTAssertEqual(result, expected, string)
-      } catch {
-        XCTFail("\(string), error: \(error)")
+      } else {
+        XCTFail(string)
       }
     }
   }

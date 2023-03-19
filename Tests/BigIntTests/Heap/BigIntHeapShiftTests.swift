@@ -113,32 +113,6 @@ class BigIntHeapShiftTests: XCTestCase {
     }
   }
 
-  // MARK: - Left - heap
-
-  func test_left_heap_byZero() {
-    var value = BigIntHeap(isNegative: false, words: 0b01)
-    let expected = BigIntHeap(isNegative: false, words: 0b01)
-
-    value.shiftLeft(count: BigIntHeap(0))
-    XCTAssertEqual(value, expected, "\(value) == \(expected)")
-  }
-
-  func test_left_heap_byBits() {
-    var value = BigIntHeap(isNegative: false, words: 0b01)
-    let expected = BigIntHeap(isNegative: false, words: 0b10)
-
-    value.shiftLeft(count: BigIntHeap(1))
-    XCTAssertEqual(value, expected, "\(value) == \(expected)")
-  }
-
-  func test_left_heap_butActuallyRight() {
-    var value = BigIntHeap(isNegative: false, words: 0b11)
-    let expected = BigIntHeap(isNegative: false, words: 0b01)
-
-    value.shiftLeft(count: BigIntHeap(-1))
-    XCTAssertEqual(value, expected, "\(value) == \(expected)")
-  }
-
   // MARK: - Right - smi
 
   func test_right_smi_byZero() {
@@ -331,31 +305,5 @@ class BigIntHeapShiftTests: XCTestCase {
 
       XCTAssertEqual(value, expected, "\(value) >> \(bitShift)")
     }
-  }
-
-  // MARK: - Right - heap
-
-  func test_right_heap_byZero() {
-    var value = BigIntHeap(isNegative: false, words: 0b01)
-    let expected = BigIntHeap(isNegative: false, words: 0b01)
-
-    value.shiftRight(count: BigIntHeap(0))
-    XCTAssertEqual(value, expected, "\(value) == \(expected)")
-  }
-
-  func test_right_heap_byBits() {
-    var value = BigIntHeap(isNegative: false, words: 0b10)
-    let expected = BigIntHeap(isNegative: false, words: 0b01)
-
-    value.shiftRight(count: BigIntHeap(1))
-    XCTAssertEqual(value, expected, "\(value) == \(expected)")
-  }
-
-  func test_right_heap_butActuallyRight() {
-    var value = BigIntHeap(isNegative: false, words: 0b01)
-    let expected = BigIntHeap(isNegative: false, words: 0b10)
-
-    value.shiftRight(count: BigIntHeap(-1))
-    XCTAssertEqual(value, expected, "\(value) == \(expected)")
   }
 }

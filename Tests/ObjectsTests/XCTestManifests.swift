@@ -105,6 +105,8 @@ extension GenericLayoutTests {
         ("test_i32_i8_hole1_i16_i8_hole7_i64", test_i32_i8_hole1_i16_i8_hole7_i64),
         ("test_i32_i8_i8_i16_i64", test_i32_i8_i8_i16_i64),
         ("test_i32_i8_i8_u16x5_hole", test_i32_i8_i8_u16x5_hole),
+        ("test_int", test_int),
+        ("test_object", test_object),
     ]
 }
 

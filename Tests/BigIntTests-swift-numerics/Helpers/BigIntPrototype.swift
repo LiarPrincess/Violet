@@ -10,7 +10,7 @@
 //===----------------------------------------------------------------------===//
 
 import XCTest
-import BigInt
+@testable import BigInt
 
 // MARK: - BigIntPrototype
 
@@ -134,12 +134,35 @@ internal struct BigIntPrototype {
     magnitude: [T]
   ) -> BigInt {
     assert(!T.isSigned)
-    var result = BigInt()
 
-    for (index, word) in magnitude.enumerated() {
-      var bits = BigInt(word)
-      bits <<= index * T.bitWidth
-      result |= bits
+    if magnitude.isEmpty {
+      return BigInt()
+    }
+
+    var result: BigInt
+
+    if T.bitWidth == BigIntStorage.Word.bitWidth {
+      let count = magnitude.count
+      var storage = BigIntStorage(minimumCapacity: count)
+      let token = storage.guaranteeUniqueBufferReference(withCapacity: count)
+
+      magnitude.withContiguousStorageIfAvailable { tPtr in
+        tPtr.withMemoryRebound(to: BigIntStorage.Word.self) { wordsPtr in
+          storage.replaceAllAssumingCapacity(token, withContentsOf: wordsPtr)
+        }
+      }
+
+      storage.fixInvariants(token)
+      storage.checkInvariants()
+      result = BigInt(BigIntHeap(storageWithValidInvariants: storage))
+    } else {
+      result = BigInt()
+
+      for (index, word) in magnitude.enumerated() {
+        var bits = BigInt(word)
+        bits <<= index * T.bitWidth
+        result |= bits
+      }
     }
 
     if !isPositive {

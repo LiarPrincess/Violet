@@ -321,11 +321,11 @@ class NodeTests: XCTestCase {
 
   /// Abstraction over `BigInt(_:radix:)`.
   private func parse(_ string: String, file: StaticString, line: UInt) -> BigInt? {
-    do {
-      return try BigInt(string, radix: 10)
-    } catch {
-      XCTFail("Unable to parse '\(string)'.", file: file, line: line)
-      return nil
+    if let n = BigInt(string, radix: 10) {
+      return n
     }
+
+    XCTFail("Unable to parse '\(string)'.", file: file, line: line)
+    return nil
   }
 }

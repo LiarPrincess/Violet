@@ -17,39 +17,24 @@ class BigIntStringInitTests: XCTestCase {
 
   func test_empty_fails() {
     for radix in [2, 4, 7, 32] {
-      do {
-        _ = try self.create(string: "", radix: radix)
-        XCTFail("Expected error, radix: \(radix)")
-      } catch BigInt.ParsingError.emptyString {
-        // Expected
-      } catch {
-        XCTFail("Error: \(error), radix: \(radix)")
+      if self.create(string: "", radix: radix) != nil {
+        XCTFail("radix: \(radix)")
       }
     }
   }
 
   func test_onlyPlusSign_withoutDigits_fails() {
     for radix in [2, 4, 7, 32] {
-      do {
-        _ = try self.create(string: "+", radix: 10)
-        XCTFail("Expected error, radix: \(radix)")
-      } catch BigInt.ParsingError.signWithoutDigits {
-        // Expected
-      } catch {
-        XCTFail("Error: \(error), radix: \(radix)")
+      if self.create(string: "+", radix: 10) != nil {
+        XCTFail("radix: \(radix)")
       }
     }
   }
 
   func test_onlyMinusSign_withoutDigits_fails() {
     for radix in [2, 4, 7, 32] {
-      do {
-        _ = try self.create(string: "-", radix: 10)
-        XCTFail("Expected error, radix: \(radix)")
-      } catch BigInt.ParsingError.signWithoutDigits {
-        // Expected
-      } catch {
-        XCTFail("Error: \(error), radix: \(radix)")
+      if self.create(string: "-", radix: 10) != nil {
+        XCTFail("radix: \(radix)")
       }
     }
   }
@@ -60,11 +45,10 @@ class BigIntStringInitTests: XCTestCase {
     let zero = BigInt()
 
     for radix in [2, 4, 7, 32] {
-      do {
-        let result = try self.create(string: "0", radix: radix)
+      if let result = self.create(string: "0", radix: radix) {
         XCTAssertEqual(result, zero)
-      } catch {
-        XCTFail("Error: \(error), radix: \(radix)")
+      } else {
+        XCTFail("radix: \(radix)")
       }
     }
   }
@@ -73,11 +57,10 @@ class BigIntStringInitTests: XCTestCase {
     let zero = BigInt()
 
     for radix in [2, 4, 7, 32] {
-      do {
-        let result = try self.create(string: "+0", radix: radix)
+      if let result = self.create(string: "+0", radix: radix) {
         XCTAssertEqual(result, zero)
-      } catch {
-        XCTFail("Error: \(error), radix: \(radix)")
+      } else {
+        XCTFail("radix: \(radix)")
       }
     }
   }
@@ -86,11 +69,10 @@ class BigIntStringInitTests: XCTestCase {
     let zero = BigInt()
 
     for radix in [2, 4, 7, 32] {
-      do {
-        let result = try self.create(string: "-0", radix: radix)
+      if let result = self.create(string: "-0", radix: radix) {
         XCTAssertEqual(result, zero)
-      } catch {
-        XCTFail("Error: \(error), radix: \(radix)")
+      } else {
+        XCTFail("radix: \(radix)")
       }
     }
   }
@@ -100,11 +82,10 @@ class BigIntStringInitTests: XCTestCase {
     let input = String(repeating: "0", count: 42)
 
     for radix in [2, 4, 7, 32] {
-      do {
-        let result = try self.create(string: input, radix: radix)
+      if let result = self.create(string: input, radix: radix) {
         XCTAssertEqual(result, zero)
-      } catch {
-        XCTFail("Error: \(error), radix: \(radix)")
+      } else {
+        XCTFail("radix: \(radix)")
       }
     }
   }
@@ -115,16 +96,15 @@ class BigIntStringInitTests: XCTestCase {
     let radix = 10
 
     for smi in generateSmiValues(countButNotReally: 100) {
-      do {
-        let lowercase = String(smi, radix: radix, uppercase: false)
-        let lowercaseResult = try self.create(string: lowercase, radix: radix)
-        XCTAssert(lowercaseResult == smi, "\(lowercaseResult) == \(smi)")
+      let lowercase = String(smi, radix: radix, uppercase: false)
+      let uppercase = String(smi, radix: radix, uppercase: true)
 
-        let uppercase = String(smi, radix: radix, uppercase: true)
-        let uppercaseResult = try self.create(string: uppercase, radix: radix)
+      if let lowercaseResult = self.create(string: lowercase, radix: radix),
+         let uppercaseResult = self.create(string: uppercase, radix: radix) {
+        XCTAssert(lowercaseResult == smi, "\(lowercaseResult) == \(smi)")
         XCTAssert(uppercaseResult == smi, "\(uppercaseResult) == \(smi)")
-      } catch {
-        XCTFail("Smi: \(smi), error: \(error)")
+      } else {
+        XCTFail("Smi: \(smi)")
       }
     }
   }
@@ -245,7 +225,7 @@ class BigIntStringInitTests: XCTestCase {
       return (words, s)
     }
 
-    self.run(
+    self.runUnderscore(
       cases: cases,
       radix: 2
     )
@@ -257,7 +237,7 @@ class BigIntStringInitTests: XCTestCase {
       return (words, s)
     }
 
-    self.run(
+    self.runUnderscore(
       cases: cases,
       radix: 10
     )
@@ -287,93 +267,85 @@ class BigIntStringInitTests: XCTestCase {
     return result
   }
 
+  private func runUnderscore(cases: [StringTestCases.TestCase],
+                             radix: Int,
+                             file: StaticString = #file,
+                             line: UInt = #line) {
+    for (_, input) in cases {
+      // lowercased
+      if self.create(string: input.lowercased(), radix: radix) != nil {
+        XCTFail("Input: \(input)", file: file, line: line)
+      }
+
+      // uppercased
+      if self.create(string: input.uppercased(), radix: radix) != nil {
+        XCTFail("Input: \(input)", file: file, line: line)
+      }
+
+      // '+' sign
+      if self.create(string: "+" + input, radix: radix) != nil {
+        XCTFail("Input: \(input)", file: file, line: line)
+      }
+
+      // '-' sign
+      if self.create(string: "-" + input, radix: radix) != nil {
+        XCTFail("Input: \(input)", file: file, line: line)
+      }
+    }
+  }
+
   func test_underscore_prefix_withoutSign_fails() {
     for radix in [2, 4, 7, 32] {
-      do {
-        _ = try self.create(string: "_0101", radix: radix)
-        XCTFail("No error")
-      } catch BigInt.ParsingError.underscorePrefix {
-        // Expected
-      } catch {
-        XCTFail("Error: \(error), radix: \(radix)")
+      if self.create(string: "_0101", radix: radix) != nil {
+        XCTFail("radix: \(radix)")
       }
     }
   }
 
   func test_underscore_before_plusSign_fails() {
     for radix in [2, 4, 7, 32] {
-      do {
-        _ = try self.create(string: "_+0101", radix: radix)
-        XCTFail("No error")
-      } catch BigInt.ParsingError.underscorePrefix {
-        // Expected
-      } catch {
-        XCTFail("Error: \(error), radix: \(radix)")
+      if self.create(string: "_+0101", radix: radix) != nil {
+        XCTFail("radix: \(radix)")
       }
     }
   }
 
   func test_underscore_before_minusSign_fails() {
     for radix in [2, 4, 7, 32] {
-      do {
-        _ = try self.create(string: "_+0101", radix: radix)
-        XCTFail("No error")
-      } catch BigInt.ParsingError.underscorePrefix {
-        // Expected
-      } catch {
-        XCTFail("Error: \(error), radix: \(radix)")
+      if self.create(string: "_+0101", radix: radix) != nil {
+        XCTFail("radix: \(radix)")
       }
     }
   }
 
   func test_underscore_after_plusSign_fails() {
     for radix in [2, 4, 7, 32] {
-      do {
-        _ = try self.create(string: "+_0101", radix: radix)
-        XCTFail("No error")
-      } catch BigInt.ParsingError.underscoreAfterSign {
-        // Expected
-      } catch {
-        XCTFail("Error: \(error), radix: \(radix)")
+      if self.create(string: "+_0101", radix: radix) != nil {
+        XCTFail("radix: \(radix)")
       }
     }
   }
 
   func test_underscore_after_minusSign_fails() {
     for radix in [2, 4, 7, 32] {
-      do {
-        _ = try self.create(string: "-_0101", radix: radix)
-        XCTFail("No error")
-      } catch BigInt.ParsingError.underscoreAfterSign {
-        // Expected
-      } catch {
-        XCTFail("Error: \(error), radix: \(radix)")
+      if self.create(string: "-_0101", radix: radix) != nil {
+        XCTFail("radix: \(radix)")
       }
     }
   }
 
   func test_underscore_suffix_fails() {
     for radix in [2, 4, 7, 32] {
-      do {
-        _ = try self.create(string: "0101_", radix: radix)
-        XCTFail("No error")
-      } catch BigInt.ParsingError.underscoreSuffix {
-        // Expected
-      } catch {
-        XCTFail("Error: \(error), radix: \(radix)")
+      if self.create(string: "0101_", radix: radix) != nil {
+        XCTFail("radix: \(radix)")
       }
     }
   }
 
   func test_underscore_double_fails() {
     for radix in [2, 4, 7, 32] {
-      do {
-        _ = try self.create(string: "01__01", radix: radix)
-        XCTFail("No error")
-      } catch BigInt.ParsingError.doubleUnderscore {
-        // Expected
-      } catch {
-        XCTFail("Error: \(error), radix: \(radix)")
+      if self.create(string: "01__01", radix: radix) != nil {
+        XCTFail("radix: \(radix)")
       }
     }
   }
@@ -384,14 +356,8 @@ class BigIntStringInitTests: XCTestCase {
     let emoji = "😊"
 
     for radix in [2, 4, 7, 32] {
-      do {
-        _ = try self.create(string: "01\(emoji)01", radix: radix)
-        XCTFail("No error")
-      } catch let BigInt.ParsingError.notDigit(s, r) {
-        XCTAssertEqual(s, emoji.unicodeScalars.first)
-        XCTAssertEqual(r, radix)
-      } catch {
-        XCTFail("Error: \(error), radix: \(radix)")
+      if self.create(string: "01\(emoji)01", radix: radix) != nil {
+        XCTFail("radix: \(radix)")
       }
     }
   }
@@ -406,14 +372,8 @@ class BigIntStringInitTests: XCTestCase {
     ]
 
     for (radix, biggerThanRadix) in cases {
-      do {
-        _ = try self.create(string: "01\(biggerThanRadix)01", radix: radix)
-        XCTFail("No error")
-      } catch let BigInt.ParsingError.notDigit(s, r) {
-        XCTAssertEqual(s, biggerThanRadix)
-        XCTAssertEqual(r, radix)
-      } catch {
-        XCTFail("Error: \(error), radix: \(radix)")
+      if self.create(string: "01\(biggerThanRadix)01", radix: radix) != nil {
+        XCTFail("radix: \(radix)")
       }
     }
   }
@@ -421,8 +381,8 @@ class BigIntStringInitTests: XCTestCase {
   // MARK: - Helpers
 
   /// Abstraction over `BigInt.init(_:radix:)`.
-  private func create(string: String, radix: Int) throws -> BigInt {
-    return try BigInt(string, radix: radix)
+  private func create(string: String, radix: Int) -> BigInt? {
+    return BigInt(string, radix: radix)
   }
 
   private func run(cases: [StringTestCases.TestCase],
@@ -431,44 +391,40 @@ class BigIntStringInitTests: XCTestCase {
                    line: UInt = #line) {
     for (words, input) in cases {
       // lowercased
-      do {
-        let result = try self.create(string: input.lowercased(), radix: radix)
+      if let result = self.create(string: input.lowercased(), radix: radix) {
         let heap = BigIntHeap(isNegative: false, words: words)
         let expected = BigInt(heap)
         XCTAssertEqual(result, expected, input, file: file, line: line)
-      } catch {
-        XCTFail("Input: \(input), error: \(error)", file: file, line: line)
+      } else {
+        XCTFail("Input: \(input)", file: file, line: line)
       }
 
       // uppercased
-      do {
-        let result = try self.create(string: input.uppercased(), radix: radix)
+      if let result = self.create(string: input.uppercased(), radix: radix) {
         let heap = BigIntHeap(isNegative: false, words: words)
         let expected = BigInt(heap)
         XCTAssertEqual(result, expected, input, file: file, line: line)
-      } catch {
-        XCTFail("Input: \(input), error: \(error)", file: file, line: line)
+      } else {
+        XCTFail("Input: \(input)", file: file, line: line)
       }
 
       // '+' sign
-      do {
-        let result = try self.create(string: "+" + input, radix: radix)
+      if let result = self.create(string: "+" + input, radix: radix) {
         let heap = BigIntHeap(isNegative: false, words: words)
         let expected = BigInt(heap)
         XCTAssertEqual(result, expected, input, file: file, line: line)
-      } catch {
-        XCTFail("Input: \(input), error: \(error)", file: file, line: line)
+      } else {
+        XCTFail("Input: \(input)", file: file, line: line)
       }
 
       // '-' sign
-      do {
+      if let result = self.create(string: "-" + input, radix: radix) {
         assert(!words.isEmpty, "-0 should be handled differently")
-        let result = try self.create(string: "-" + input, radix: radix)
         let heap = BigIntHeap(isNegative: true, words: words)
         let expected = BigInt(heap)
         XCTAssertEqual(result, expected, input, file: file, line: line)
-      } catch {
-        XCTFail("Input: \(input), error: \(error)", file: file, line: line)
+      } else {
+        XCTFail("Input: \(input)", file: file, line: line)
       }
     }
   }

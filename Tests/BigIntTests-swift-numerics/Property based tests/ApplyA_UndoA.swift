@@ -167,10 +167,9 @@ class ApplyA_UndoA: XCTestCase {
     for radix in [2, 5, 10, 16] {
       let string = String(value, radix: radix)
 
-      do {
-        let int = try BigInt(string, radix: radix)
-        XCTAssertEqual(int, value, "\(string), radix: \(radix)", file: file, line: line)
-      } catch {
+      if let n = BigInt(string, radix: radix) {
+        XCTAssertEqual(n, value, "\(string), radix: \(radix)", file: file, line: line)
+      } else {
         XCTFail("\(string), radix: \(radix)", file: file, line: line)
       }
     }

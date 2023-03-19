@@ -153,12 +153,15 @@ class BigIntReversibleOperationsTests: XCTestCase {
                             file: StaticString = #file,
                             line: UInt = #line) {
     for radix in [2, 5, 10, 16] {
-      do {
-        let string = String(value, radix: radix)
-        let int = try BigInt(string, radix: radix)
-        XCTAssertEqual(int, value, "string: \(string)", file: file, line: line)
-      } catch {
-        XCTFail("radix: \(radix), error: \(error)", file: file, line: line)
+      let string = String(value, radix: radix)
+      if let int = BigInt(string, radix: radix) {
+        XCTAssertEqual(int,
+                       value,
+                       "string: \(value), radix: \(radix)",
+                       file: file,
+                       line: line)
+      } else {
+        XCTFail("string: \(value), radix: \(radix)", file: file, line: line)
       }
     }
   }
