@@ -22,23 +22,59 @@ private func ascii(_ n: BigIntStorage.Word, uppercase: Bool) -> UInt8 {
 }
 
 extension String {
-// In Swift this function is marked with '@available(SwiftStdlib 5.3, *)'.
-// The relation between Swift and SwiftStdlib version is complicated,
-// but 'swift(<5.6)' seems to work well. Though this is NOT CORRECT!
-#if swift(<5.6)
+
+  fileprivate typealias Initializer = (_ buffer: UnsafeMutableBufferPointer<UInt8>) -> Int
+
   /// Creates a new string with the specified capacity in UTF-8 code units, and
   /// then calls the given closure with a buffer covering the string's
   /// uninitialized memory.
   ///
   /// The closure should return the number of initialized code units.
-  fileprivate init(
+  fileprivate static func create(
     unsafeUninitializedCapacity capacity: Int,
-    initializingUTF8With initializer: (
-      _ buffer: UnsafeMutableBufferPointer<UInt8>
-    ) -> Int
-  ) {
+    initializingUTF8With initializer: Initializer
+  ) -> String {
+    // 'String(unsafeUninitializedCapacity:initializingUTF8With:)' is marked
+    // with '@available(SwiftStdlib 5.3, *)'. The relation between Swift and
+    // SwiftStdlib version is interesting (especially on Apple platforms).
+    // Tested on Swift 5.5.2 and newer (which obviously mean >Swift 5.3).
+    // As for the OS version check: I get it, but I'm not happy about it.
+
+#if os(macOS)
+    if #available(macOS 11.0, *) {
+      return String(unsafeUninitializedCapacity: capacity, initializingUTF8With: initializer)
+    } else {
+      return Self.shim(capacity: capacity, initializer: initializer)
+    }
+#elseif os(iOS)
+    if #available(iOS 14.0, *) {
+      return String(unsafeUninitializedCapacity: capacity, initializingUTF8With: initializer)
+    } else {
+      return Self.shim(capacity: capacity, initializer: initializer)
+    }
+#elseif os(tvOS)
+    if #available(tvOS 14.0, *) {
+      return String(unsafeUninitializedCapacity: capacity, initializingUTF8With: initializer)
+    } else {
+      return Self.shim(capacity: capacity, initializer: initializer)
+    }
+#elseif os(watchOS)
+    if #available(watchOS 7.0, *) {
+      return String(unsafeUninitializedCapacity: capacity, initializingUTF8With: initializer)
+    } else {
+      return Self.shim(capacity: capacity, initializer: initializer)
+    }
+#else
+    // Available in Swift 5.7.3 (older not tested).
+    // Use 'Self.shim(capacity:initializer:)' if not.
+    return String(unsafeUninitializedCapacity: capacity, initializingUTF8With: initializer)
+#endif
+  }
+
+  private static func shim(capacity: Int, initializer: Initializer) -> String {
     let nullCapacity = capacity + 1
     let ptr = UnsafeMutablePointer<UInt8>.allocate(capacity: nullCapacity)
+    defer { ptr.deallocate() }
 
     let bufferPtr = UnsafeMutableBufferPointer(start: ptr, count: capacity)
     let count = initializer(bufferPtr)
@@ -47,10 +83,8 @@ extension String {
     let nullBufferPtr = UnsafeMutableBufferPointer(start: ptr, count: nullCapacity)
     nullBufferPtr[count] = 0
 
-    self = String(cString: ptr) // Borrows 'ptr' to create owned copy.
-    ptr.deallocate()
+    return String(cString: ptr) // Borrows 'ptr' to create owned copy.
   }
-#endif
 }
 
 extension BigIntHeap: CustomStringConvertible {
@@ -130,7 +164,7 @@ extension BigIntHeap: CustomStringConvertible {
     let digitCount = Self.countDigitsPow2(words: words, bitsPerChar: bitsPerChar)
     let capacity = digitCount + (isNegative ? 1 : 0)
 
-    return String(unsafeUninitializedCapacity: capacity) { ptr in
+    return String.create(unsafeUninitializedCapacity: capacity) { ptr in
       var index = 0
 
       if isNegative {
@@ -183,7 +217,7 @@ extension BigIntHeap: CustomStringConvertible {
     let digitCount = Self.countDigitsPow2(words: words, bitsPerChar: bitsPerChar)
     let capacity = digitCount + (isNegative ? 1 : 0)
 
-    return String(unsafeUninitializedCapacity: capacity) { ptr in
+    return String.create(unsafeUninitializedCapacity: capacity) { ptr in
       var index = 0
 
       if isNegative {
@@ -261,7 +295,7 @@ extension BigIntHeap: CustomStringConvertible {
     let capacity = digitCount + (self.isNegative ? 1 : 0)
     let (charCountPerWord, power) = Word.maxRepresentablePower(of: radix)
 
-    return String(unsafeUninitializedCapacity: capacity) { ptr in
+    return String.create(unsafeUninitializedCapacity: capacity) { ptr in
       // We will write from the back
       var index = capacity - 1
 
@@ -297,6 +331,9 @@ extension BigIntHeap: CustomStringConvertible {
         let dstPtr = ptr.baseAddress! // swiftlint:disable:this force_unwrapping
         let srcPtr = dstPtr.advanced(by: index + 1)
         dstPtr.assign(from: srcPtr, count: count)
+        // For some reason we have to do this on macOS,
+        // otherwise the tests will fail (Swift 5.5.2).
+        dstPtr[count] = 0
       }
 
       return count
