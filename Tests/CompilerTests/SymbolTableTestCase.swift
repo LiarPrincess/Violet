@@ -6,6 +6,9 @@ import VioletParser
 /// Base class for all of the symbol table tests
 class SymbolTableTestCase: XCTestCase, ASTCreator {
 
+  // For Swift 6.1 compatibility with Foundation.
+  typealias Expression = VioletParser.Expression
+
   var builder = ASTBuilder()
 
   // MARK: - Create

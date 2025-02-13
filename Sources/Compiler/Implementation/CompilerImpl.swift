@@ -15,6 +15,9 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   internal typealias StatementResult = Void
   internal typealias ExpressionResult = Void
 
+  // For Swift 6.1 compatibility with Foundation.
+  internal typealias Expression = VioletParser.Expression
+
   /// Program that we are compiling.
   private let ast: AST
   /// Name of the file that this code object was loaded from.

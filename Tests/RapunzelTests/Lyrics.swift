@@ -9,7 +9,7 @@ typealias Lyrics = [Part]
 
 // MARK: - Rapunzel
 
-extension Lyrics: RapunzelConvertible {
+extension Lyrics: @retroactive RapunzelConvertible {
   public var doc: Doc {
     return self.stack()
   }

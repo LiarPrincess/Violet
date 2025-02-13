@@ -7,6 +7,9 @@ import VioletBytecode
 /// Base class for all of the compiler tests
 internal class CompileTestCase: XCTestCase, ASTCreator {
 
+  // For Swift 6.1 compatibility with Foundation.
+  typealias Expression = VioletParser.Expression
+
   internal var builder = ASTBuilder()
 
   // MARK: - Compile
