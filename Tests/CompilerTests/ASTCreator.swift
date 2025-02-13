@@ -12,6 +12,9 @@ internal protocol ASTCreator {}
 
 extension ASTCreator {
 
+  // For Swift 6.1 compatibility with Foundation.
+  typealias Expression = VioletParser.Expression
+
   private var id: ASTNodeId {
     // We have to increment 'id', because it is used as a key in 'SymbolTable'.
     let value = _id
