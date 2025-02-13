@@ -9,7 +9,7 @@ typealias Lyrics = [Part]
 
 // MARK: - Rapunzel
 
-extension Lyrics: @retroactive RapunzelConvertible {
+extension Lyrics: RapunzelConvertible {
   public var doc: Doc {
     return self.stack()
   }
@@ -51,7 +51,7 @@ extension Lyrics {
           "And it's warm and real and bright",
           "And the world has somehow shifted",
           "All at once everything looks different",
-          "Now that I see you"
+          "Now that I see you",
         ]
       ),
 
@@ -68,7 +68,7 @@ extension Lyrics {
           "Now she's here shining in the starlight",
           "Now she's here suddenly I know",
           "If she's here it's crystal clear",
-          "I'm where I'm meant to go"
+          "I'm where I'm meant to go",
         ]
       ),
       Part(
@@ -95,9 +95,9 @@ extension Lyrics {
           "All at once everything is different",
           "Now that I see you",
 
-          "Now that I see you"
+          "Now that I see you",
         ]
-      )
+      ),
     ]
   }
 }
